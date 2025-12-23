@@ -16,6 +16,7 @@ Supabase database linter detected **2 views** using `SECURITY DEFINER`:
 ### Why This Is a Problem
 
 `SECURITY DEFINER` views execute with the **creator's permissions** (usually a superuser), which can:
+
 - ❌ Bypass Row Level Security (RLS) policies
 - ❌ Expose sensitive data to unauthorized users
 - ❌ Create security vulnerabilities
@@ -23,6 +24,7 @@ Supabase database linter detected **2 views** using `SECURITY DEFINER`:
 ### Solution
 
 Use `SECURITY INVOKER` instead, which:
+
 - ✅ Executes with the **querying user's permissions**
 - ✅ Respects RLS policies
 - ✅ Maintains proper security boundaries
@@ -49,7 +51,8 @@ Use `SECURITY INVOKER` instead, which:
 6. Click **Run** (or press Cmd+Enter)
 7. Wait for completion (~5 seconds)
 
-**Expected Result**: 
+**Expected Result**:
+
 ```
 NOTICE: Fixed user_training_summary view to use SECURITY INVOKER
 NOTICE: All views now use SECURITY INVOKER
@@ -71,7 +74,7 @@ After running the migration, verify it worked:
 
 ```sql
 -- Check view security settings
-SELECT 
+SELECT
     viewname,
     viewowner,
     definition
@@ -116,4 +119,3 @@ SELECT * FROM postgrest_exposed_tables WHERE is_core_table = true LIMIT 5;
 - [Supabase RLS Documentation](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [PostgreSQL View Security](https://www.postgresql.org/docs/current/sql-createview.html)
 - [Supabase Database Linter](https://supabase.com/docs/guides/database/database-linter)
-

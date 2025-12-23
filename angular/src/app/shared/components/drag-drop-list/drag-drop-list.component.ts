@@ -5,10 +5,10 @@ import {
   CdkDragDrop,
   moveItemInArray,
   transferArrayItem,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { CardModule } from 'primeng/card';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { DragDropModule } from "@angular/cdk/drag-drop";
+import { CardModule } from "primeng/card";
 
 export interface DragDropItem {
   id: string;
@@ -22,7 +22,7 @@ export interface DragDropItem {
  * Uses CDK drag-drop module for reorderable lists
  */
 @Component({
-  selector: 'app-drag-drop-list',
+  selector: "app-drag-drop-list",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DragDropModule, CardModule],
@@ -69,11 +69,7 @@ export interface DragDropItem {
             (cdkDropListDropped)="onDrop($event)"
           >
             @for (item of targetItems(); track item.id) {
-              <div
-                cdkDrag
-                [cdkDragDisabled]="disabled()"
-                class="drag-item"
-              >
+              <div cdkDrag [cdkDragDisabled]="disabled()" class="drag-item">
                 <div class="drag-handle" cdkDragHandle>
                   <i class="pi pi-bars"></i>
                 </div>
@@ -86,9 +82,7 @@ export interface DragDropItem {
               </div>
             }
             @if (targetItems().length === 0) {
-              <div class="empty-state">
-                Drop items here
-              </div>
+              <div class="empty-state">Drop items here</div>
             }
           </div>
         </div>
@@ -143,7 +137,9 @@ export interface DragDropItem {
         border: 1px solid var(--p-border-color);
         border-radius: var(--p-border-radius);
         cursor: move;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
       }
 
       .drag-item:hover {
@@ -205,8 +201,8 @@ export class DragDropListComponent {
   // Angular 21: Use input() signal instead of @Input() with signal assignment
   items = input.required<DragDropItem[]>();
   targetItems = input<DragDropItem[]>([]);
-  listTitle = input<string>('Items');
-  targetListTitle = input<string>('Selected Items');
+  listTitle = input<string>("Items");
+  targetListTitle = input<string>("Selected Items");
   showTargetList = input<boolean>(false);
   disabled = input<boolean>(false);
   allowTransfer = input<boolean>(true);
@@ -220,7 +216,7 @@ export class DragDropListComponent {
       moveItemInArray(
         event.container.data,
         event.previousIndex,
-        event.currentIndex
+        event.currentIndex,
       );
     } else if (this.allowTransfer()) {
       // Transfer between lists
@@ -228,9 +224,8 @@ export class DragDropListComponent {
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
-        event.currentIndex
+        event.currentIndex,
       );
     }
   }
 }
-

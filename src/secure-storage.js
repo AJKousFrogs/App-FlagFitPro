@@ -10,26 +10,26 @@ import { logger } from "./logger.js";
 // Security Constants
 const CRYPTO_CONFIG = {
   ALGORITHM: "AES-GCM",
-  KEY_LENGTH: 256,                    // AES-256
-  IV_LENGTH: 12,                      // 96 bits for GCM
-  PBKDF2_ITERATIONS: 100000,          // 100k iterations for key derivation
-  PBKDF2_SALT: "flagfit-pro-v1",      // Salt for PBKDF2
+  KEY_LENGTH: 256, // AES-256
+  IV_LENGTH: 12, // 96 bits for GCM
+  PBKDF2_ITERATIONS: 100000, // 100k iterations for key derivation
+  PBKDF2_SALT: "flagfit-pro-v1", // Salt for PBKDF2
   HASH_ALGORITHM: "SHA-256",
-  SESSION_ID_LENGTH: 32,              // 256 bits
-  TOKEN_HASH_LENGTH: 32,              // First 32 chars of SHA-256
+  SESSION_ID_LENGTH: 32, // 256 bits
+  TOKEN_HASH_LENGTH: 32, // First 32 chars of SHA-256
 };
 
 // Cookie & Storage Constants
 const STORAGE_CONFIG = {
-  COOKIE_MAX_AGE: 24 * 60 * 60,       // 24 hours in seconds
+  COOKIE_MAX_AGE: 24 * 60 * 60, // 24 hours in seconds
   COOKIE_PATH: "/",
   COOKIE_SAME_SITE: "Strict",
 };
 
 // Fingerprint Constants
 const FINGERPRINT_CONFIG = {
-  TRUNCATE_LENGTH: 50,                // Truncate UA/canvas for privacy
-  TIME_PRECISION_MS: 60 * 60 * 1000,  // 1 hour precision (3600000ms)
+  TRUNCATE_LENGTH: 50, // Truncate UA/canvas for privacy
+  TIME_PRECISION_MS: 60 * 60 * 1000, // 1 hour precision (3600000ms)
 };
 
 export class SecureStorage {
@@ -81,7 +81,7 @@ export class SecureStorage {
           this._base64ToArrayBuffer(keyData.key),
           { name: CRYPTO_CONFIG.ALGORITHM },
           false,
-          ["encrypt", "decrypt"]
+          ["encrypt", "decrypt"],
         );
       } else {
         // Generate new key
@@ -94,7 +94,7 @@ export class SecureStorage {
           new TextEncoder().encode(fingerprint + sessionId),
           { name: "PBKDF2" },
           false,
-          ["deriveBits", "deriveKey"]
+          ["deriveBits", "deriveKey"],
         );
 
         // Derive AES-GCM key
@@ -103,20 +103,26 @@ export class SecureStorage {
             name: "PBKDF2",
             salt: new TextEncoder().encode(CRYPTO_CONFIG.PBKDF2_SALT),
             iterations: CRYPTO_CONFIG.PBKDF2_ITERATIONS,
-            hash: CRYPTO_CONFIG.HASH_ALGORITHM
+            hash: CRYPTO_CONFIG.HASH_ALGORITHM,
           },
           keyMaterial,
           { name: CRYPTO_CONFIG.ALGORITHM, length: CRYPTO_CONFIG.KEY_LENGTH },
           true,
-          ["encrypt", "decrypt"]
+          ["encrypt", "decrypt"],
         );
 
         // Export and store key for session reuse
-        const exportedKey = await crypto.subtle.exportKey("raw", this.cryptoKey);
-        sessionStorage.setItem("__crypto_key_data", JSON.stringify({
-          key: this._arrayBufferToBase64(exportedKey),
-          timestamp: Date.now()
-        }));
+        const exportedKey = await crypto.subtle.exportKey(
+          "raw",
+          this.cryptoKey,
+        );
+        sessionStorage.setItem(
+          "__crypto_key_data",
+          JSON.stringify({
+            key: this._arrayBufferToBase64(exportedKey),
+            timestamp: Date.now(),
+          }),
+        );
       }
 
       return this.cryptoKey;
@@ -150,14 +156,21 @@ export class SecureStorage {
 
     return btoa(
       JSON.stringify({
-        userAgent: navigator.userAgent.substring(0, FINGERPRINT_CONFIG.TRUNCATE_LENGTH),
+        userAgent: navigator.userAgent.substring(
+          0,
+          FINGERPRINT_CONFIG.TRUNCATE_LENGTH,
+        ),
         language: navigator.language,
         platform: navigator.platform,
         cookieEnabled: navigator.cookieEnabled,
-        canvasFingerprint: canvas.toDataURL().substring(0, FINGERPRINT_CONFIG.TRUNCATE_LENGTH),
+        canvasFingerprint: canvas
+          .toDataURL()
+          .substring(0, FINGERPRINT_CONFIG.TRUNCATE_LENGTH),
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         screen: `${screen.width}x${screen.height}`,
-        timestamp: Math.floor(Date.now() / FINGERPRINT_CONFIG.TIME_PRECISION_MS),
+        timestamp: Math.floor(
+          Date.now() / FINGERPRINT_CONFIG.TIME_PRECISION_MS,
+        ),
       }),
     );
   }
@@ -168,9 +181,13 @@ export class SecureStorage {
    */
   generateSessionId() {
     const stored = sessionStorage.getItem("__session_id");
-    if (stored) {return stored;}
+    if (stored) {
+      return stored;
+    }
 
-    const sessionId = Array.from(crypto.getRandomValues(new Uint8Array(CRYPTO_CONFIG.SESSION_ID_LENGTH)))
+    const sessionId = Array.from(
+      crypto.getRandomValues(new Uint8Array(CRYPTO_CONFIG.SESSION_ID_LENGTH)),
+    )
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
 
@@ -202,17 +219,19 @@ export class SecureStorage {
       }
 
       // Generate random IV (Initialization Vector)
-      const iv = crypto.getRandomValues(new Uint8Array(CRYPTO_CONFIG.IV_LENGTH));
+      const iv = crypto.getRandomValues(
+        new Uint8Array(CRYPTO_CONFIG.IV_LENGTH),
+      );
 
       // Encrypt the data
       const encodedText = new TextEncoder().encode(text);
       const encryptedBuffer = await crypto.subtle.encrypt(
         {
           name: CRYPTO_CONFIG.ALGORITHM,
-          iv: iv
+          iv: iv,
         },
         this.cryptoKey,
-        encodedText
+        encodedText,
       );
 
       // Combine IV and encrypted data
@@ -259,10 +278,10 @@ export class SecureStorage {
       const decryptedBuffer = await crypto.subtle.decrypt(
         {
           name: CRYPTO_CONFIG.ALGORITHM,
-          iv: iv
+          iv: iv,
         },
         this.cryptoKey,
-        encryptedData
+        encryptedData,
       );
 
       // Convert to string
@@ -318,7 +337,7 @@ export class SecureStorage {
    */
   _arrayBufferToBase64(buffer) {
     const bytes = new Uint8Array(buffer);
-    let binary = '';
+    let binary = "";
     for (let i = 0; i < bytes.byteLength; i++) {
       binary += String.fromCharCode(bytes[i]);
     }
@@ -386,8 +405,12 @@ export class SecureStorage {
 
     for (let i = 0; i < ca.length; i++) {
       let c = ca[i];
-      while (c.charAt(0) === " ") {c = c.substring(1, c.length);}
-      if (c.indexOf(nameEQ) === 0) {return c.substring(nameEQ.length, c.length);}
+      while (c.charAt(0) === " ") {
+        c = c.substring(1, c.length);
+      }
+      if (c.indexOf(nameEQ) === 0) {
+        return c.substring(nameEQ.length, c.length);
+      }
     }
     return null;
   }
@@ -489,7 +512,8 @@ export class SecureStorage {
           token = await this.decrypt(encryptedToken);
         } else {
           // Legacy XOR encryption - migrate to AES-GCM
-          const legacyKey = this.getBrowserFingerprint() + this.generateSessionId();
+          const legacyKey =
+            this.getBrowserFingerprint() + this.generateSessionId();
           token = this.simpleDecrypt(encryptedToken, btoa(legacyKey));
 
           if (token) {
@@ -500,7 +524,7 @@ export class SecureStorage {
         }
 
         // Verify token integrity
-        if (token && await this.verifyTokenHash(token)) {
+        if (token && (await this.verifyTokenHash(token))) {
           return token;
         } else {
           // Token corrupted, remove it
@@ -602,8 +626,12 @@ export class SecureStorage {
           userDataString = await this.decrypt(encryptedUserData);
         } else {
           // Legacy XOR encryption
-          const legacyKey = this.getBrowserFingerprint() + this.generateSessionId();
-          userDataString = this.simpleDecrypt(encryptedUserData, btoa(legacyKey));
+          const legacyKey =
+            this.getBrowserFingerprint() + this.generateSessionId();
+          userDataString = this.simpleDecrypt(
+            encryptedUserData,
+            btoa(legacyKey),
+          );
         }
 
         return userDataString ? JSON.parse(userDataString) : null;
@@ -675,11 +703,19 @@ export class SecureStorage {
       // Use SHA-256 for secure hashing
       const encoder = new TextEncoder();
       const data = encoder.encode(token);
-      const hashBuffer = await crypto.subtle.digest(CRYPTO_CONFIG.HASH_ALGORITHM, data);
+      const hashBuffer = await crypto.subtle.digest(
+        CRYPTO_CONFIG.HASH_ALGORITHM,
+        data,
+      );
       const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      const hashHex = hashArray
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
 
-      sessionStorage.setItem("__token_hash", hashHex.substring(0, CRYPTO_CONFIG.TOKEN_HASH_LENGTH));
+      sessionStorage.setItem(
+        "__token_hash",
+        hashHex.substring(0, CRYPTO_CONFIG.TOKEN_HASH_LENGTH),
+      );
     } catch (error) {
       logger.error("Failed to set token hash:", error);
     }
@@ -693,14 +729,22 @@ export class SecureStorage {
   async verifyTokenHash(token) {
     try {
       const storedHash = sessionStorage.getItem("__token_hash");
-      if (!storedHash) {return true;} // No hash stored, assume valid
+      if (!storedHash) {
+        return true;
+      } // No hash stored, assume valid
 
       // Compute hash of provided token
       const encoder = new TextEncoder();
       const data = encoder.encode(token);
-      const hashBuffer = await crypto.subtle.digest(CRYPTO_CONFIG.HASH_ALGORITHM, data);
+      const hashBuffer = await crypto.subtle.digest(
+        CRYPTO_CONFIG.HASH_ALGORITHM,
+        data,
+      );
       const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const expectedHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, CRYPTO_CONFIG.TOKEN_HASH_LENGTH);
+      const expectedHash = hashArray
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("")
+        .substring(0, CRYPTO_CONFIG.TOKEN_HASH_LENGTH);
 
       return storedHash === expectedHash;
     } catch (error) {

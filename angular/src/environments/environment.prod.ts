@@ -12,12 +12,17 @@ export const environment = {
     // Example build command: ng build --configuration=production --env=prod
     // Then use file replacement in angular.json to inject actual values
     // Fallback to empty string - will fail gracefully if not replaced
-    url: (typeof window !== 'undefined' && (window as any)._env?.SUPABASE_URL) || 
-         (typeof window !== 'undefined' && (window as any)._env?.VITE_SUPABASE_URL) || 
-         '',
-    anonKey: (typeof window !== 'undefined' && (window as any)._env?.SUPABASE_ANON_KEY) || 
-             (typeof window !== 'undefined' && (window as any)._env?.VITE_SUPABASE_ANON_KEY) || 
-             '',
+    url:
+      (typeof window !== "undefined" && (window as any)._env?.SUPABASE_URL) ||
+      (typeof window !== "undefined" &&
+        (window as any)._env?.VITE_SUPABASE_URL) ||
+      "",
+    anonKey:
+      (typeof window !== "undefined" &&
+        (window as any)._env?.SUPABASE_ANON_KEY) ||
+      (typeof window !== "undefined" &&
+        (window as any)._env?.VITE_SUPABASE_ANON_KEY) ||
+      "",
   },
   // Angular DevTools configuration (disabled in production)
   devtools: {

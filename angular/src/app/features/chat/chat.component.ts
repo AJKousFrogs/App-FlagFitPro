@@ -47,8 +47,8 @@ interface Channel {
     AvatarModule,
     BadgeModule,
     ScrollPanelModule,
-    MainLayoutComponent
-],
+    MainLayoutComponent,
+  ],
   template: `
     <app-main-layout>
       <div class="chat-page">
@@ -82,7 +82,7 @@ interface Channel {
             ></p-button>
           </div>
         </div>
-    
+
         <div class="chat-container">
           <!-- Channels Sidebar -->
           <div class="channels-sidebar">
@@ -91,12 +91,15 @@ interface Channel {
                 <h3 class="section-title">Channels</h3>
               </ng-template>
               <div class="channels-list">
-                @for (channel of channels(); track trackByChannelId($index, channel)) {
+                @for (
+                  channel of channels();
+                  track trackByChannelId($index, channel)
+                ) {
                   <div
                     class="channel-item"
                     [class.active]="channel.id === currentChannel().id"
                     (click)="selectChannel(channel)"
-                    >
+                  >
                     <i class="pi pi-hashtag"></i>
                     <span>{{ channel.name }}</span>
                     @if (channel.unread) {
@@ -110,36 +113,38 @@ interface Channel {
               </div>
             </p-card>
           </div>
-    
+
           <!-- Messages Area -->
           <div class="messages-area">
             <p-scrollPanel
               #scrollPanel
               styleClass="messages-scroll"
               [style]="{ height: 'calc(100vh - 200px)' }"
-              >
+            >
               <div class="messages-list">
-                @for (message of messages(); track trackByMessageId($index, message)) {
-                  <div
-                    class="message"
-                    [class.message-own]="message.isOwn"
-                    >
+                @for (
+                  message of messages();
+                  track trackByMessageId($index, message)
+                ) {
+                  <div class="message" [class.message-own]="message.isOwn">
                     <p-avatar
                       [label]="message.authorInitials"
                       styleClass="mr-2"
                       shape="circle"
-                    [style]="{
-                      'background-color': getAvatarColor(
-                        message.authorInitials
-                      ),
-                      color: '#fff',
-                    }"
-                      >
+                      [style]="{
+                        'background-color': getAvatarColor(
+                          message.authorInitials
+                        ),
+                        color: '#fff',
+                      }"
+                    >
                     </p-avatar>
                     <div class="message-content">
                       <div class="message-header">
                         <span class="message-author">{{ message.author }}</span>
-                        <span class="message-time">{{ message.timestamp }}</span>
+                        <span class="message-time">{{
+                          message.timestamp
+                        }}</span>
                       </div>
                       <div class="message-text">{{ message.content }}</div>
                     </div>
@@ -147,7 +152,7 @@ interface Channel {
                 }
               </div>
             </p-scrollPanel>
-    
+
             <!-- Message Input -->
             <div class="message-input-container">
               <input
@@ -156,7 +161,7 @@ interface Channel {
                 (keydown.enter)="sendMessage()"
                 placeholder="Type a message..."
                 class="message-input"
-                />
+              />
               <p-button
                 icon="pi pi-send"
                 (onClick)="sendMessage()"
@@ -167,7 +172,7 @@ interface Channel {
         </div>
       </div>
     </app-main-layout>
-    `,
+  `,
   styles: [
     `
       .chat-page {

@@ -1,55 +1,55 @@
 /**
  * Readiness Service
- * 
+ *
  * Evidence-based readiness scoring service
  * Combines session-RPE, ACWR, wellness, and game proximity into 0-100 readiness score
- * 
+ *
  * Evidence Base:
  * - Strong links between sleep duration/quality and readiness (Halson 2014, Fullagar et al. 2015)
  * - Wellness scores (mood, stress, soreness, fatigue) predict perceived performance (Saw et al. 2016)
  * - Team-sport contexts show stronger associations with self-reported wellness (McLellan et al. 2011)
  * - Simple sleep metrics can proxy broader wellness when resources are limited (Saw et al. 2016)
- * 
+ *
  * Weightings (Team-Sport Optimized):
  * - Workload (ACWR): 35% - Reduced from 40% to increase wellness/sleep influence
  * - Wellness Index: 30% - Increased from 25% for team-sport contexts
  * - Sleep: 20% - Maintained (strong evidence base)
  * - Game Proximity: 15% - Maintained
- * 
+ *
  * Cut-Points (Starting Points - Require Team Calibration):
  * - < 55: Low readiness → Deload
  * - 55-75: Moderate readiness → Maintain
  * - > 75: High readiness → Push
- * 
+ *
  * These thresholds are starting points based on common athlete monitoring scales.
  * Teams should calibrate using their own injury/performance history over time.
  */
 
-import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap, map } from 'rxjs/operators';
-import { ApiService } from './api.service';
-import { EvidenceConfigService } from './evidence-config.service';
-import { LoggerService } from './logger.service';
+import { Injectable, inject, signal } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable, throwError } from "rxjs";
+import { catchError, tap, map } from "rxjs/operators";
+import { ApiService } from "./api.service";
+import { EvidenceConfigService } from "./evidence-config.service";
+import { LoggerService } from "./logger.service";
 
-export type ReadinessLevel = 'low' | 'moderate' | 'high';
-export type Suggestion = 'deload' | 'maintain' | 'push';
-export type DataMode = 'full' | 'reduced'; // Full wellness data vs sleep-proxy mode
+export type ReadinessLevel = "low" | "moderate" | "high";
+export type Suggestion = "deload" | "maintain" | "push";
+export type DataMode = "full" | "reduced"; // Full wellness data vs sleep-proxy mode
 
 /**
  * Wellness Index modeled on common athlete monitoring scales
  * Uses 1-5 ratings for each component (standardized from 1-10 scale)
  */
 export interface WellnessIndex {
-  fatigue: number;        // 1-5 scale (1 = very fresh, 5 = exhausted)
-  sleepQuality: number;   // 1-5 scale (1 = poor, 5 = excellent)
-  soreness: number;       // 1-5 scale (1 = no soreness, 5 = very sore)
-  mood: number;           // 1-5 scale (1 = poor, 5 = excellent) - optional
-  stress: number;         // 1-5 scale (1 = no stress, 5 = very stressed) - optional
-  energy?: number;        // 1-5 scale (optional)
-  subscore: number;       // Calculated wellness subscore (0-100)
-  completeness: number;   // 0-100, percentage of wellness data available
+  fatigue: number; // 1-5 scale (1 = very fresh, 5 = exhausted)
+  sleepQuality: number; // 1-5 scale (1 = poor, 5 = excellent)
+  soreness: number; // 1-5 scale (1 = no soreness, 5 = very sore)
+  mood: number; // 1-5 scale (1 = poor, 5 = excellent) - optional
+  stress: number; // 1-5 scale (1 = no stress, 5 = very stressed) - optional
+  energy?: number; // 1-5 scale (optional)
+  subscore: number; // Calculated wellness subscore (0-100)
+  completeness: number; // 0-100, percentage of wellness data available
 }
 
 /**
@@ -58,29 +58,29 @@ export interface WellnessIndex {
 export interface ReadinessConfig {
   // Component weightings (team-sport optimized)
   weightings: {
-    workload: number;     // Default: 0.35 (35%)
-    wellness: number;     // Default: 0.30 (30%)
-    sleep: number;        // Default: 0.20 (20%)
-    proximity: number;    // Default: 0.15 (15%)
+    workload: number; // Default: 0.35 (35%)
+    wellness: number; // Default: 0.30 (30%)
+    sleep: number; // Default: 0.20 (20%)
+    proximity: number; // Default: 0.15 (15%)
   };
-  
+
   // Cut-points for readiness levels (starting points - require calibration)
   cutPoints: {
-    lowMax: number;       // Default: 55 - Below this = low readiness
+    lowMax: number; // Default: 55 - Below this = low readiness
     moderateMax: number; // Default: 75 - Below this = moderate readiness
     // Above moderateMax = high readiness
   };
-  
+
   // Reduced data mode settings
   reducedDataMode: {
-    enabled: boolean;                    // Default: true
+    enabled: boolean; // Default: true
     wellnessCompletenessThreshold: number; // Default: 60% - Below this, use sleep-proxy
-    sleepWeightMultiplier: number;       // Default: 1.5 - Increase sleep weight in reduced mode
+    sleepWeightMultiplier: number; // Default: 1.5 - Increase sleep weight in reduced mode
   };
-  
+
   // Wellness index settings
   wellnessIndex: {
-    use1to5Scale: boolean;  // Default: true - Convert 1-10 to 1-5
+    use1to5Scale: boolean; // Default: true - Convert 1-10 to 1-5
     requiredFields: string[]; // Default: ['fatigue', 'sleepQuality', 'soreness']
     optionalFields: string[]; // Default: ['mood', 'stress', 'energy']
   };
@@ -93,15 +93,15 @@ export interface ReadinessResponse {
   acwr: number;
   acuteLoad: number;
   chronicLoad: number;
-  dataMode: DataMode;              // NEW: Full vs reduced data mode
-  wellnessIndex?: WellnessIndex;    // NEW: Detailed wellness index
+  dataMode: DataMode; // NEW: Full vs reduced data mode
+  wellnessIndex?: WellnessIndex; // NEW: Detailed wellness index
   componentScores: {
     workload: number;
     wellness: number;
     sleep: number;
     proximity: number;
   };
-  calibrationNote?: string;         // NEW: Note about threshold calibration
+  calibrationNote?: string; // NEW: Note about threshold calibration
 }
 
 export interface ReadinessHistory {
@@ -113,7 +113,7 @@ export interface ReadinessHistory {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ReadinessService {
   private apiService = inject(ApiService);
@@ -126,7 +126,7 @@ export class ReadinessService {
    */
   private getDefaultConfigFromPreset(): ReadinessConfig {
     const evidenceConfig = this.evidenceConfigService.getReadinessConfig();
-    
+
     return {
       weightings: {
         workload: evidenceConfig.weightings.workload,
@@ -140,8 +140,10 @@ export class ReadinessService {
       },
       reducedDataMode: {
         enabled: evidenceConfig.reducedDataMode.enabled,
-        wellnessCompletenessThreshold: evidenceConfig.reducedDataMode.wellnessCompletenessThreshold,
-        sleepWeightMultiplier: evidenceConfig.reducedDataMode.sleepWeightMultiplier,
+        wellnessCompletenessThreshold:
+          evidenceConfig.reducedDataMode.wellnessCompletenessThreshold,
+        sleepWeightMultiplier:
+          evidenceConfig.reducedDataMode.sleepWeightMultiplier,
       },
       wellnessIndex: {
         use1to5Scale: evidenceConfig.wellnessIndex.use1to5Scale,
@@ -151,7 +153,9 @@ export class ReadinessService {
     };
   }
 
-  private readonly config = signal<ReadinessConfig>(this.getDefaultConfigFromPreset());
+  private readonly config = signal<ReadinessConfig>(
+    this.getDefaultConfigFromPreset(),
+  );
 
   readonly loading = signal(false);
   readonly current = signal<ReadinessResponse | null>(null);
@@ -165,85 +169,88 @@ export class ReadinessService {
     this.loading.set(true);
     this.error.set(null);
 
-    return this.apiService.post<ReadinessResponse>(
-      '/api/calc-readiness',
-      { athleteId }
-    ).pipe(
-      map((res) => res.data || ({} as ReadinessResponse)),
-      tap({
-        next: (res) => {
-          this.current.set(res);
+    return this.apiService
+      .post<ReadinessResponse>("/api/calc-readiness", { athleteId })
+      .pipe(
+        map((res) => res.data || ({} as ReadinessResponse)),
+        tap({
+          next: (res) => {
+            this.current.set(res);
+            this.loading.set(false);
+          },
+          error: (err) => {
+            this.error.set(err.message || "Failed to calculate readiness");
+            this.loading.set(false);
+          },
+        }),
+        catchError((error) => {
+          this.error.set(error.message || "Failed to calculate readiness");
           this.loading.set(false);
-        },
-        error: (err) => {
-          this.error.set(err.message || 'Failed to calculate readiness');
-          this.loading.set(false);
-        }
-      }),
-      catchError(error => {
-        this.error.set(error.message || 'Failed to calculate readiness');
-        this.loading.set(false);
-        return throwError(() => error);
-      })
-    );
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
    * Calculate readiness for a specific day
    */
-  calculateForDay(athleteId: string, day: string): Observable<ReadinessResponse> {
+  calculateForDay(
+    athleteId: string,
+    day: string,
+  ): Observable<ReadinessResponse> {
     this.loading.set(true);
     this.error.set(null);
 
-    return this.apiService.post<ReadinessResponse>(
-      '/api/calc-readiness',
-      { athleteId, day }
-    ).pipe(
-      map((res) => res.data || ({} as ReadinessResponse)),
-      tap({
-        next: (res) => {
-          this.current.set(res);
+    return this.apiService
+      .post<ReadinessResponse>("/api/calc-readiness", { athleteId, day })
+      .pipe(
+        map((res) => res.data || ({} as ReadinessResponse)),
+        tap({
+          next: (res) => {
+            this.current.set(res);
+            this.loading.set(false);
+          },
+          error: (err) => {
+            this.error.set(err.message || "Failed to calculate readiness");
+            this.loading.set(false);
+          },
+        }),
+        catchError((error) => {
+          this.error.set(error.message || "Failed to calculate readiness");
           this.loading.set(false);
-        },
-        error: (err) => {
-          this.error.set(err.message || 'Failed to calculate readiness');
-          this.loading.set(false);
-        }
-      }),
-      catchError(error => {
-        this.error.set(error.message || 'Failed to calculate readiness');
-        this.loading.set(false);
-        return throwError(() => error);
-      })
-    );
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
    * Get readiness history
    */
-  getHistory(athleteId: string, days: number = 7): Observable<ReadinessHistory[]> {
-    return this.apiService.get<ReadinessHistory[]>(
-      '/api/readiness-history',
-      { athleteId, days }
-    ).pipe(
-      map((res) => res.data || []),
-      tap(history => {
-        this.history.set(history);
-      }),
-      catchError(error => {
-        this.logger.error('Error fetching readiness history:', error);
-        return throwError(() => error);
-      })
-    );
+  getHistory(
+    athleteId: string,
+    days: number = 7,
+  ): Observable<ReadinessHistory[]> {
+    return this.apiService
+      .get<ReadinessHistory[]>("/api/readiness-history", { athleteId, days })
+      .pipe(
+        map((res) => res.data || []),
+        tap((history) => {
+          this.history.set(history);
+        }),
+        catchError((error) => {
+          this.logger.error("Error fetching readiness history:", error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
    * Get severity color for PrimeNG Tag
    */
-  getSeverity(level: ReadinessLevel): 'success' | 'warn' | 'danger' {
-    if (level === 'high') return 'success';
-    if (level === 'moderate') return 'warn';
-    return 'danger';
+  getSeverity(level: ReadinessLevel): "success" | "warn" | "danger" {
+    if (level === "high") return "success";
+    if (level === "moderate") return "warn";
+    return "danger";
   }
 
   /**
@@ -251,9 +258,9 @@ export class ReadinessService {
    */
   getSuggestionText(suggestion: Suggestion): string {
     const texts = {
-      push: 'Push day – you can tolerate higher intensity.',
-      maintain: 'Maintain day – keep planned workload.',
-      deload: 'Deload day – reduce intensity or volume.'
+      push: "Push day – you can tolerate higher intensity.",
+      maintain: "Maintain day – keep planned workload.",
+      deload: "Deload day – reduce intensity or volume.",
     };
     return texts[suggestion];
   }
@@ -263,9 +270,9 @@ export class ReadinessService {
    */
   getScoreColor(score: number): string {
     const cfg = this.config();
-    if (score > cfg.cutPoints.moderateMax) return 'text-green-600';
-    if (score >= cfg.cutPoints.lowMax) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score > cfg.cutPoints.moderateMax) return "text-green-600";
+    if (score >= cfg.cutPoints.lowMax) return "text-yellow-600";
+    return "text-red-600";
   }
 
   /**
@@ -274,9 +281,9 @@ export class ReadinessService {
    */
   getReadinessLevel(score: number): ReadinessLevel {
     const cfg = this.config();
-    if (score > cfg.cutPoints.moderateMax) return 'high';
-    if (score >= cfg.cutPoints.lowMax) return 'moderate';
-    return 'low';
+    if (score > cfg.cutPoints.moderateMax) return "high";
+    if (score >= cfg.cutPoints.lowMax) return "moderate";
+    return "low";
   }
 
   /**
@@ -284,9 +291,9 @@ export class ReadinessService {
    */
   getSuggestion(score: number): Suggestion {
     const cfg = this.config();
-    if (score > cfg.cutPoints.moderateMax) return 'push';
-    if (score >= cfg.cutPoints.lowMax) return 'maintain';
-    return 'deload';
+    if (score > cfg.cutPoints.moderateMax) return "push";
+    if (score >= cfg.cutPoints.lowMax) return "maintain";
+    return "deload";
   }
 
   /**
@@ -294,9 +301,11 @@ export class ReadinessService {
    */
   getCalibrationNote(): string {
     const cfg = this.config();
-    return `Readiness thresholds (Low: <${cfg.cutPoints.lowMax}, Moderate: ${cfg.cutPoints.lowMax}-${cfg.cutPoints.moderateMax}, High: >${cfg.cutPoints.moderateMax}) ` +
-           `are evidence-based starting points. Teams should calibrate these thresholds using their own ` +
-           `injury and performance history over time for optimal accuracy.`;
+    return (
+      `Readiness thresholds (Low: <${cfg.cutPoints.lowMax}, Moderate: ${cfg.cutPoints.lowMax}-${cfg.cutPoints.moderateMax}, High: >${cfg.cutPoints.moderateMax}) ` +
+      `are evidence-based starting points. Teams should calibrate these thresholds using their own ` +
+      `injury and performance history over time for optimal accuracy.`
+    );
   }
 
   /**
@@ -325,7 +334,12 @@ export class ReadinessService {
    */
   getEvidenceInfo(): {
     preset: string;
-    citations: Array<{ authors: string; year: number; title: string; doi?: string }>;
+    citations: Array<{
+      authors: string;
+      year: number;
+      title: string;
+      doi?: string;
+    }>;
     scienceNotes: {
       weightings: string;
       cutPoints: string;
@@ -334,7 +348,7 @@ export class ReadinessService {
   } {
     const preset = this.evidenceConfigService.getActivePreset();
     const readinessConfig = preset.readiness;
-    
+
     return {
       preset: `${preset.name} (${preset.version})`,
       citations: readinessConfig.citations.map((c: any) => ({
@@ -351,4 +365,3 @@ export class ReadinessService {
     };
   }
 }
-

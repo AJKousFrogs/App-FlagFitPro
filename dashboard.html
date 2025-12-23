@@ -15,15 +15,24 @@
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#089949" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
 
     <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
+    <link
+      rel="apple-touch-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
 
     <!-- Microsoft Tile -->
     <meta name="msapplication-TileColor" content="#089949" />
-    <meta name="msapplication-TileImage" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
+    <meta
+      name="msapplication-TileImage"
+      content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,15 +48,21 @@
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/dashboard.css" />
     <!-- Inline styles replacement utilities -->
-    <link rel="stylesheet" href="./src/css/utilities/inline-styles-replacement.css" />
+    <link
+      rel="stylesheet"
+      href="./src/css/utilities/inline-styles-replacement.css"
+    />
     <!-- Chatbot Component Styles -->
     <link rel="stylesheet" href="./src/css/components/chatbot.css" />
 
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js"></script>
-    
+
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
 
     <!-- Lucide Icons -->
     <script
@@ -86,15 +101,29 @@
     <script src="./src/js/achievements-widget.js" defer></script>
     <script src="./src/js/achievements-integration.js" defer></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
     <!-- Notification Panel Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/notification-panel-loader.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/notification-panel-loader.js"
+      defer
+    ></script>
     <!-- AI Chat Bubble Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/ai-chat-bubble-loader.js"
+      defer
+    ></script>
   </head>
   <body class="page-dashboard">
     <!-- Skip link for accessibility -->
-    <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
+    <a href="#main-content" class="skip-link" aria-label="Skip to main content"
+      >Skip to main content</a
+    >
     <div class="dashboard-container">
       <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
       <div data-sidebar-container></div>
@@ -112,8 +141,12 @@
           <div class="dashboard-center">
             <!-- Greeting -->
             <div class="dashboard-greeting">
-              <h1 id="userGreeting" class="text-heading-2xl text-primary">👋 Hello, there!</h1>
-              <p class="text-body-md text-secondary">How are you feeling today?</p>
+              <h1 id="userGreeting" class="text-heading-2xl text-primary">
+                👋 Hello, there!
+              </h1>
+              <p class="text-body-md text-secondary">
+                How are you feeling today?
+              </p>
             </div>
 
             <!-- Date Picker -->
@@ -135,7 +168,11 @@
                     aria-label="Select date"
                     class="date-picker-input-overlay"
                   />
-                  <span id="date-picker-display" class="date-picker-display date-picker-display-overlay">dd.mm.yyyy</span>
+                  <span
+                    id="date-picker-display"
+                    class="date-picker-display date-picker-display-overlay"
+                    >dd.mm.yyyy</span
+                  >
                   <button
                     class="date-today-btn"
                     id="today-btn"
@@ -232,24 +269,25 @@
                 INJURY TRACKING
               </h2>
               <p class="injury-description section-description">
-                Log any injuries or pain to help adjust your training schedule and recovery plan.
+                Log any injuries or pain to help adjust your training schedule
+                and recovery plan.
               </p>
-              
+
               <!-- Active Injuries Display -->
               <div id="active-injuries-list" class="active-injuries-list"></div>
-              
+
               <!-- Injury Form -->
               <div class="injury-form-container">
-                <button 
-                  type="button" 
-                  class="btn-add-injury" 
+                <button
+                  type="button"
+                  class="btn-add-injury"
                   id="btn-add-injury"
                   aria-label="Add new injury"
                 >
                   <i data-lucide="plus" class="icon-16 icon-inline"></i>
                   Add Injury / Pain Report
                 </button>
-                
+
                 <form id="injury-form" class="injury-form hidden">
                   <div class="form-group">
                     <label for="injury-type">Injury Type / Body Part:</label>
@@ -270,7 +308,7 @@
                       <option value="other">Other</option>
                     </select>
                   </div>
-                  
+
                   <div class="form-group">
                     <label for="injury-severity">Severity (1–10):</label>
                     <div class="severity-container">
@@ -292,7 +330,7 @@
                       <span>Severe</span>
                     </div>
                   </div>
-                  
+
                   <div class="form-group">
                     <label for="injury-description">Description:</label>
                     <textarea
@@ -303,16 +341,20 @@
                       required
                     ></textarea>
                   </div>
-                  
+
                   <div class="form-group">
                     <label for="injury-status">Status:</label>
                     <select id="injury-status" name="status" required>
-                      <option value="active">Active (Currently affecting training)</option>
+                      <option value="active">
+                        Active (Currently affecting training)
+                      </option>
                       <option value="recovering">Recovering (Improving)</option>
-                      <option value="monitoring">Monitoring (Minor, watching closely)</option>
+                      <option value="monitoring">
+                        Monitoring (Minor, watching closely)
+                      </option>
                     </select>
                   </div>
-                  
+
                   <div class="form-group">
                     <label for="injury-date">Date Started:</label>
                     <input
@@ -322,13 +364,17 @@
                       required
                     />
                   </div>
-                  
+
                   <div class="form-actions">
                     <button type="submit" class="btn-submit-injury">
                       <i data-lucide="save" class="icon-16 icon-inline"></i>
                       Save Injury Report
                     </button>
-                    <button type="button" class="btn-cancel-injury" id="btn-cancel-injury">
+                    <button
+                      type="button"
+                      class="btn-cancel-injury"
+                      id="btn-cancel-injury"
+                    >
                       Cancel
                     </button>
                   </div>
@@ -374,7 +420,10 @@
             </div>
 
             <!-- Achievements Widget -->
-            <div id="achievements-widget-container" class="u-margin-top-30"></div>
+            <div
+              id="achievements-widget-container"
+              class="u-margin-top-30"
+            ></div>
           </div>
 
           <!-- Right: Quick Sidebar -->
@@ -491,7 +540,7 @@
     <!-- Notification Panel (Loaded Dynamically) -->
     <div data-notification-panel-container></div>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

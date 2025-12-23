@@ -6,13 +6,13 @@ const {
   createSuccessResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
 // Password reset endpoint
 exports.handler = async (event, context) => {
   // Log function call
-  logFunctionCall('Auth-Reset-Password', event);
+  logFunctionCall("Auth-Reset-Password", event);
 
   // Handle CORS
   const headers = CORS_HEADERS;
@@ -49,7 +49,7 @@ exports.handler = async (event, context) => {
 
   try {
     // SECURITY: Validate request body
-    const validation = validateRequestBody(event.body, 'resetPassword');
+    const validation = validateRequestBody(event.body, "resetPassword");
     if (!validation.valid) {
       return validation.response;
     }

@@ -1,21 +1,21 @@
- 
 /**
  * Automated Script to Replace Footer with Dynamic Component
  * Replaces footer HTML markup with dynamic loader across multiple files
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const rootDir = path.join(__dirname, '..');
+const rootDir = path.join(__dirname, "..");
 
 // All HTML files to update (get all HTML files in root)
 const getAllHtmlFiles = () => {
-  return fs.readdirSync(rootDir)
-    .filter(file => file.endsWith('.html') && !file.startsWith('.'));
+  return fs
+    .readdirSync(rootDir)
+    .filter((file) => file.endsWith(".html") && !file.startsWith("."));
 };
 
 const filesToUpdate = getAllHtmlFiles();
@@ -32,12 +32,15 @@ function updateFile(fileName) {
   const filePath = path.join(rootDir, fileName);
 
   try {
-    let content = fs.readFileSync(filePath, 'utf8');
+    let content = fs.readFileSync(filePath, "utf8");
     let updated = false;
 
     // Step 1: Add footer-loader script before </head> if not already present
-    if (!content.includes('footer-loader.js')) {
-      content = content.replace('  </head>', `${footerLoaderScript}\n  </head>`);
+    if (!content.includes("footer-loader.js")) {
+      content = content.replace(
+        "  </head>",
+        `${footerLoaderScript}\n  </head>`,
+      );
       updated = true;
       console.log(`✓ Added footer-loader script to ${fileName}`);
     }
@@ -68,16 +71,20 @@ function updateFile(fileName) {
 
     if (!footerReplaced) {
       // Check if footer exists at all
-      if (content.includes('<footer')) {
-        console.warn(`⚠ Found footer but couldn't match pattern in ${fileName} - manual update needed`);
+      if (content.includes("<footer")) {
+        console.warn(
+          `⚠ Found footer but couldn't match pattern in ${fileName} - manual update needed`,
+        );
       } else {
-        console.log(`ℹ️  No footer found in ${fileName} (might be intentional)`);
+        console.log(
+          `ℹ️  No footer found in ${fileName} (might be intentional)`,
+        );
       }
     }
 
     // Write updated content back to file
     if (updated) {
-      fs.writeFileSync(filePath, content, 'utf8');
+      fs.writeFileSync(filePath, content, "utf8");
       console.log(`✅ Successfully updated ${fileName}\n`);
       return true;
     } else {
@@ -91,7 +98,7 @@ function updateFile(fileName) {
 }
 
 // Main execution
-console.log('🚀 Starting footer component replacement...\n');
+console.log("🚀 Starting footer component replacement...\n");
 console.log(`📝 Found ${filesToUpdate.length} HTML files to process\n`);
 
 let successCount = 0;
@@ -106,8 +113,8 @@ for (const fileName of filesToUpdate) {
   }
 }
 
-console.log('\n📊 Summary:');
+console.log("\n📊 Summary:");
 console.log(`   ✅ Successfully updated: ${successCount} files`);
 console.log(`   ⏭️  Skipped/No changes: ${skippedCount} files`);
 console.log(`   📝 Total files processed: ${filesToUpdate.length}`);
-console.log('\n✨ Footer component replacement complete!');
+console.log("\n✨ Footer component replacement complete!");

@@ -5,13 +5,13 @@ import {
   ElementRef,
   ChangeDetectionStrategy,
   signal,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { TableModule } from "primeng/table";
+import { ButtonModule } from "primeng/button";
 
 @Component({
-  selector: 'app-swipe-table',
+  selector: "app-swipe-table",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TableModule, ButtonModule],
@@ -41,7 +41,9 @@ import { ButtonModule } from 'primeng/button';
             (touchmove)="onTouchMove($event, rowIndex)"
             (touchend)="onTouchEnd($event, rowIndex)"
             [style.transform]="
-              swipingIndex === rowIndex ? 'translateX(-' + swipeDistance + 'px)' : 'translateX(0)'
+              swipingIndex === rowIndex
+                ? 'translateX(-' + swipeDistance + 'px)'
+                : 'translateX(0)'
             "
           >
             @for (col of columns(); track col.field) {
@@ -53,7 +55,9 @@ import { ButtonModule } from 'primeng/button';
               <!-- Swipe actions overlay -->
               <div
                 class="swipe-actions"
-                [class.visible]="swipingIndex === rowIndex && swipeDistance > 60"
+                [class.visible]="
+                  swipingIndex === rowIndex && swipeDistance > 60
+                "
               >
                 <button
                   class="action-btn edit"
@@ -192,7 +196,7 @@ export class SwipeTableComponent {
   onEdit = input<(row: any) => void>();
   onDelete = input<(row: any) => void>();
 
-  @ViewChild('tableContainer') tableContainer!: ElementRef;
+  @ViewChild("tableContainer") tableContainer!: ElementRef;
 
   swipingIndex: number | null = null;
   swipeDistance = 0;
@@ -264,7 +268,6 @@ export class SwipeTableComponent {
 
   getFieldValue(row: any, field: string): any {
     // Support nested fields like "user.name"
-    return field.split('.').reduce((obj, key) => obj?.[key], row);
+    return field.split(".").reduce((obj, key) => obj?.[key], row);
   }
 }
-

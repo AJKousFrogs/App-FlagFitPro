@@ -40,11 +40,21 @@
 <div class="rating-container">
   <label class="form-label">Read-only Rating</label>
   <div class="rating rating-readonly" data-rating="4">
-    <span class="rating-star filled"><i data-lucide="star" style="width: 24px; height: 24px"></i></span>
-    <span class="rating-star filled"><i data-lucide="star" style="width: 24px; height: 24px"></i></span>
-    <span class="rating-star filled"><i data-lucide="star" style="width: 24px; height: 24px"></i></span>
-    <span class="rating-star filled"><i data-lucide="star" style="width: 24px; height: 24px"></i></span>
-    <span class="rating-star"><i data-lucide="star" style="width: 24px; height: 24px"></i></span>
+    <span class="rating-star filled"
+      ><i data-lucide="star" style="width: 24px; height: 24px"></i
+    ></span>
+    <span class="rating-star filled"
+      ><i data-lucide="star" style="width: 24px; height: 24px"></i
+    ></span>
+    <span class="rating-star filled"
+      ><i data-lucide="star" style="width: 24px; height: 24px"></i
+    ></span>
+    <span class="rating-star filled"
+      ><i data-lucide="star" style="width: 24px; height: 24px"></i
+    ></span>
+    <span class="rating-star"
+      ><i data-lucide="star" style="width: 24px; height: 24px"></i
+    ></span>
   </div>
   <div class="rating-value">4 / 5</div>
 </div>
@@ -54,15 +64,25 @@
   <label class="form-label">Small Rating</label>
   <div class="rating rating-sm" id="rating-2" role="group" aria-label="Rating">
     <input type="radio" id="rating-2-5" name="rating-2" value="5" />
-    <label for="rating-2-5" class="rating-star"><i data-lucide="star" style="width: 16px; height: 16px"></i></label>
+    <label for="rating-2-5" class="rating-star"
+      ><i data-lucide="star" style="width: 16px; height: 16px"></i
+    ></label>
     <input type="radio" id="rating-2-4" name="rating-2" value="4" />
-    <label for="rating-2-4" class="rating-star"><i data-lucide="star" style="width: 16px; height: 16px"></i></label>
+    <label for="rating-2-4" class="rating-star"
+      ><i data-lucide="star" style="width: 16px; height: 16px"></i
+    ></label>
     <input type="radio" id="rating-2-3" name="rating-2" value="3" />
-    <label for="rating-2-3" class="rating-star"><i data-lucide="star" style="width: 16px; height: 16px"></i></label>
+    <label for="rating-2-3" class="rating-star"
+      ><i data-lucide="star" style="width: 16px; height: 16px"></i
+    ></label>
     <input type="radio" id="rating-2-2" name="rating-2" value="2" />
-    <label for="rating-2-2" class="rating-star"><i data-lucide="star" style="width: 16px; height: 16px"></i></label>
+    <label for="rating-2-2" class="rating-star"
+      ><i data-lucide="star" style="width: 16px; height: 16px"></i
+    ></label>
     <input type="radio" id="rating-2-1" name="rating-2" value="1" />
-    <label for="rating-2-1" class="rating-star"><i data-lucide="star" style="width: 16px; height: 16px"></i></label>
+    <label for="rating-2-1" class="rating-star"
+      ><i data-lucide="star" style="width: 16px; height: 16px"></i
+    ></label>
   </div>
 </div>
 
@@ -71,15 +91,25 @@
   <label class="form-label">Large Rating</label>
   <div class="rating rating-lg" id="rating-3" role="group" aria-label="Rating">
     <input type="radio" id="rating-3-5" name="rating-3" value="5" />
-    <label for="rating-3-5" class="rating-star"><i data-lucide="star" style="width: 32px; height: 32px"></i></label>
+    <label for="rating-3-5" class="rating-star"
+      ><i data-lucide="star" style="width: 32px; height: 32px"></i
+    ></label>
     <input type="radio" id="rating-3-4" name="rating-3" value="4" />
-    <label for="rating-3-4" class="rating-star"><i data-lucide="star" style="width: 32px; height: 32px"></i></label>
+    <label for="rating-3-4" class="rating-star"
+      ><i data-lucide="star" style="width: 32px; height: 32px"></i
+    ></label>
     <input type="radio" id="rating-3-3" name="rating-3" value="3" />
-    <label for="rating-3-3" class="rating-star"><i data-lucide="star" style="width: 32px; height: 32px"></i></label>
+    <label for="rating-3-3" class="rating-star"
+      ><i data-lucide="star" style="width: 32px; height: 32px"></i
+    ></label>
     <input type="radio" id="rating-3-2" name="rating-3" value="2" />
-    <label for="rating-3-2" class="rating-star"><i data-lucide="star" style="width: 32px; height: 32px"></i></label>
+    <label for="rating-3-2" class="rating-star"
+      ><i data-lucide="star" style="width: 32px; height: 32px"></i
+    ></label>
     <input type="radio" id="rating-3-1" name="rating-3" value="1" />
-    <label for="rating-3-1" class="rating-star"><i data-lucide="star" style="width: 32px; height: 32px"></i></label>
+    <label for="rating-3-1" class="rating-star"
+      ><i data-lucide="star" style="width: 32px; height: 32px"></i
+    ></label>
   </div>
 </div>
 
@@ -139,26 +169,25 @@
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Update rating value display
-    const ratings = document.querySelectorAll('.rating:not(.rating-readonly)');
-    ratings.forEach(rating => {
+    const ratings = document.querySelectorAll(".rating:not(.rating-readonly)");
+    ratings.forEach((rating) => {
       const inputs = rating.querySelectorAll('input[type="radio"]');
-      const valueDisplay = rating.parentElement.querySelector('.rating-value');
-      
-      inputs.forEach(input => {
-        input.addEventListener('change', function() {
+      const valueDisplay = rating.parentElement.querySelector(".rating-value");
+
+      inputs.forEach((input) => {
+        input.addEventListener("change", function () {
           if (valueDisplay) {
-            valueDisplay.textContent = this.value + ' / 5';
+            valueDisplay.textContent = this.value + " / 5";
           }
         });
       });
     });
-    
+
     // Initialize lucide icons
     if (window.lucide) {
       window.lucide.createIcons();
     }
   });
 </script>
-

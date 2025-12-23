@@ -30,7 +30,7 @@
 2. **Deprecated Styles**: `component-styles.scss` (1,660 lines)
    - Complete migration to `standardized-components.scss`
 
-3. **Large Files**: 
+3. **Large Files**:
    - `training-program-data.js` (10,435 lines) - Split needed
    - `qb-training-program-data.js` (7,510 lines) - Split needed
 
@@ -42,7 +42,7 @@
 ## 📊 KEY METRICS
 
 - **Console Statements**: 2,872 across 315 files
-- **TODO/FIXME Markers**: 1,032 across 131 files  
+- **TODO/FIXME Markers**: 1,032 across 131 files
 - **Files with innerHTML**: 75 files (XSS risk)
 - **Large Files (>5000 lines)**: 3 files
 
@@ -60,16 +60,19 @@
 ## 🎯 RECOMMENDED ACTION PLAN
 
 ### Week 1: Critical Fixes
+
 - [ ] Fix setInterval memory leak
 - [ ] Remove `.netlify/functions-serve/` from repo
 - [ ] Audit innerHTML usage in critical paths
 
 ### Week 2: High Priority
+
 - [ ] Extract `safeQuery()` utility
 - [ ] Complete SCSS migration
 - [ ] Merge design token files
 
 ### Week 3-4: Code Quality
+
 - [ ] Split large files
 - [ ] Replace console statements with logger
 - [ ] Remove dead code
@@ -77,4 +80,3 @@
 ---
 
 **See full report for detailed analysis and proposed fixes.**
-

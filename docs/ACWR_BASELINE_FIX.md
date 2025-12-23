@@ -37,14 +37,14 @@ The original ACWR calculation had critical issues:
 
 ### Risk Levels
 
-| Risk Level | Condition | ACWR Value | Meaning |
-|------------|-----------|------------|---------|
-| `baseline_building` | < 21 days of data | `NULL` | Building baseline, ACWR not yet reliable |
-| `baseline_low` | Chronic load < 50 | `NULL` | Baseline too low, increase training gradually |
-| `low` | ACWR < 0.8 | 0.0 - 0.79 | Detraining risk |
-| `optimal` | ACWR 0.8-1.3 | 0.8 - 1.3 | Sweet spot, optimal training load |
-| `moderate` | ACWR 1.3-1.5 | 1.3 - 1.5 | Moderate injury risk |
-| `high` | ACWR > 1.5 | > 1.5 | High injury risk |
+| Risk Level          | Condition         | ACWR Value | Meaning                                       |
+| ------------------- | ----------------- | ---------- | --------------------------------------------- |
+| `baseline_building` | < 21 days of data | `NULL`     | Building baseline, ACWR not yet reliable      |
+| `baseline_low`      | Chronic load < 50 | `NULL`     | Baseline too low, increase training gradually |
+| `low`               | ACWR < 0.8        | 0.0 - 0.79 | Detraining risk                               |
+| `optimal`           | ACWR 0.8-1.3      | 0.8 - 1.3  | Sweet spot, optimal training load             |
+| `moderate`          | ACWR 1.3-1.5      | 1.3 - 1.5  | Moderate injury risk                          |
+| `high`              | ACWR > 1.5        | > 1.5      | High injury risk                              |
 
 ---
 
@@ -127,29 +127,35 @@ SELECT * FROM calculate_acwr_safe('player-uuid-here', CURRENT_DATE);
 ```typescript
 interface ACWRData {
   acwr: number | null;
-  risk_level: 'baseline_building' | 'baseline_low' | 'low' | 'optimal' | 'moderate' | 'high';
+  risk_level:
+    | "baseline_building"
+    | "baseline_low"
+    | "low"
+    | "optimal"
+    | "moderate"
+    | "high";
   baseline_days: number;
   acute_7: number;
   chronic_28: number;
   daily_load: number;
-  baseline_status: 'building' | 'low' | 'unknown' | 'ready';
+  baseline_status: "building" | "low" | "unknown" | "ready";
   message: string;
 }
 
 // Display logic
 function displayACWRStatus(data: ACWRData) {
-  if (data.baseline_status === 'building') {
+  if (data.baseline_status === "building") {
     return `Building baseline (${data.baseline_days}/28 days). ACWR will be calculated once sufficient data is available.`;
   }
-  
-  if (data.baseline_status === 'low') {
+
+  if (data.baseline_status === "low") {
     return `Baseline load is low (${data.chronic_28}). Consider gradually increasing training volume.`;
   }
-  
+
   if (data.acwr === null) {
-    return 'Unable to calculate ACWR. Please ensure you have logged training sessions.';
+    return "Unable to calculate ACWR. Please ensure you have logged training sessions.";
   }
-  
+
   return `ACWR: ${data.acwr.toFixed(2)} (Risk: ${data.risk_level})`;
 }
 ```
@@ -157,11 +163,13 @@ function displayACWRStatus(data: ACWRData) {
 ### UI Components
 
 1. **Baseline Progress Bar**
+
    ```
    Building baseline: [████████░░░░░░░░░░░░░░░░░░] 8/28 days
    ```
 
 2. **ACWR Display** (when ready)
+
    ```
    ACWR: 1.15 (Optimal)
    Acute Load: 450
@@ -179,18 +187,21 @@ function displayACWRStatus(data: ACWRData) {
 ## Migration Steps
 
 1. **Run Migration**
+
    ```sql
    -- Run in development first
    \i database/migrations/046_fix_acwr_baseline_checks.sql
    ```
 
 2. **Backfill Existing Data**
+
    ```sql
    -- Update existing records with baseline_days
    SELECT backfill_baseline_days();
    ```
 
 3. **Verify Calculation**
+
    ```sql
    -- Test with a player
    SELECT * FROM get_acwr_with_baseline('test-player-uuid', CURRENT_DATE);
@@ -206,18 +217,22 @@ function displayACWRStatus(data: ACWRData) {
 ## Testing Scenarios
 
 ### Scenario 1: New User (< 21 days)
+
 - **Expected**: `baseline_status = 'building'`, `acwr = NULL`
 - **Message**: "Building baseline (X/28 days)"
 
 ### Scenario 2: Low Chronic Load (< 50)
+
 - **Expected**: `baseline_status = 'low'`, `acwr = NULL`
 - **Message**: "Baseline load is low. Consider gradually increasing training volume."
 
 ### Scenario 3: Sufficient Baseline (≥ 21 days, chronic ≥ 50)
+
 - **Expected**: `baseline_status = 'ready'`, `acwr = calculated value`
 - **Message**: "ACWR: X.XX (Risk: Y)"
 
 ### Scenario 4: Session Edit
+
 - **Expected**: Recalculation updates affected date range
 - **Test**: Edit a session, verify ACWR recalculates for next 28 days
 
@@ -228,6 +243,7 @@ function displayACWRStatus(data: ACWRData) {
 ### GET /api/training/load
 
 **Response Format:**
+
 ```json
 {
   "acwr": 1.15,
@@ -242,6 +258,7 @@ function displayACWRStatus(data: ACWRData) {
 ```
 
 **When Baseline Insufficient:**
+
 ```json
 {
   "acwr": null,
@@ -271,4 +288,3 @@ function displayACWRStatus(data: ACWRData) {
 - New functions use `calculate_acwr_safe()` for safe calculation
 - Baseline checks prevent unreliable ACWR values
 - UI should clearly communicate baseline status to users
-

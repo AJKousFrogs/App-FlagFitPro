@@ -9,15 +9,8 @@
     "agility_rating_max": 9,
     "power_rating_min": 7,
     "power_rating_max": 9,
-    "ideal_sports_backgrounds": [
-      "track_field",
-      "soccer",
-      "basketball"
-    ],
-    "secondary_sports_backgrounds": [
-      "rugby_sevens",
-      "tennis"
-    ],
+    "ideal_sports_backgrounds": ["track_field", "soccer", "basketball"],
+    "secondary_sports_backgrounds": ["rugby_sevens", "tennis"],
     "position_suitability": {
       "blitz": 7,
       "center": 7,
@@ -42,16 +35,8 @@
     "agility_rating_max": 10,
     "power_rating_min": 8,
     "power_rating_max": 9,
-    "ideal_sports_backgrounds": [
-      "soccer",
-      "basketball",
-      "rugby_sevens"
-    ],
-    "secondary_sports_backgrounds": [
-      "track_field",
-      "martial_arts",
-      "tennis"
-    ],
+    "ideal_sports_backgrounds": ["soccer", "basketball", "rugby_sevens"],
+    "secondary_sports_backgrounds": ["track_field", "martial_arts", "tennis"],
     "position_suitability": {
       "blitz": 8,
       "center": 8,
@@ -76,11 +61,7 @@
     "agility_rating_max": 10,
     "power_rating_min": 6,
     "power_rating_max": 8,
-    "ideal_sports_backgrounds": [
-      "soccer",
-      "basketball",
-      "tennis"
-    ],
+    "ideal_sports_backgrounds": ["soccer", "basketball", "tennis"],
     "secondary_sports_backgrounds": [
       "martial_arts",
       "gymnastics",
@@ -115,11 +96,7 @@
       "rugby_sevens",
       "american_football"
     ],
-    "secondary_sports_backgrounds": [
-      "wrestling",
-      "martial_arts",
-      "basketball"
-    ],
+    "secondary_sports_backgrounds": ["wrestling", "martial_arts", "basketball"],
     "position_suitability": {
       "blitz": 10,
       "center": 6,
@@ -144,11 +121,7 @@
     "agility_rating_max": 10,
     "power_rating_min": 7,
     "power_rating_max": 8,
-    "ideal_sports_backgrounds": [
-      "soccer",
-      "basketball",
-      "tennis"
-    ],
+    "ideal_sports_backgrounds": ["soccer", "basketball", "tennis"],
     "secondary_sports_backgrounds": [
       "martial_arts",
       "volleyball",

@@ -159,7 +159,9 @@ html[data-theme="dark"] body {
   background: var(--surface-elevated);
   border: 1px solid var(--color-border-primary);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 [data-theme="dark"] .card:hover,
@@ -189,7 +191,10 @@ html[data-theme="dark"] body {
   background: var(--surface-tertiary);
   border: 1px solid var(--color-border-primary);
   color: var(--color-text-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 [data-theme="dark"] input:hover,

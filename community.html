@@ -34,21 +34,27 @@
     <!-- Sidebar Utilities -->
     <script src="./src/js/utils/sidebar-utils.js" defer></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
-  
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <div class="dashboard-container">
-            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
       <div data-sidebar-container></div>
-        <!-- Top Bar (Loaded Dynamically) -->
-        <div data-topbar-container></div>
+      <!-- Top Bar (Loaded Dynamically) -->
+      <div data-topbar-container></div>
 
       <main
         class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
@@ -57,9 +63,7 @@
           class="header u-bg-primary u-padding-20 u-padding-x-30 u-radius-md u-shadow-sm u-margin-bottom-30 u-display-flex u-justify-between u-align-center"
         >
           <div>
-            <h1 class="text-heading-xl text-primary">
-              Community Hub
-            </h1>
+            <h1 class="text-heading-xl text-primary">Community Hub</h1>
             <p class="text-body-sm text-secondary">
               Connect with the flag football community
             </p>
@@ -110,11 +114,21 @@
             </div>
 
             <div id="postsContainer">
-              <div id="community-loading" class="community-loading" style="display: flex;">
+              <div
+                id="community-loading"
+                class="community-loading"
+                style="display: flex"
+              >
                 <div class="community-loading-spinner"></div>
-                <span style="margin-left: var(--space-3);">Loading community feed...</span>
+                <span style="margin-left: var(--space-3)"
+                  >Loading community feed...</span
+                >
               </div>
-              <div id="community-error" class="community-error" style="display: none;"></div>
+              <div
+                id="community-error"
+                class="community-error"
+                style="display: none"
+              ></div>
               <!-- Posts will be dynamically loaded here -->
             </div>
           </div>
@@ -293,7 +307,7 @@
         const container = document.getElementById("postsContainer");
         const loadingEl = document.getElementById("community-loading");
         const errorEl = document.getElementById("community-error");
-        
+
         if (!container) return;
 
         // Hide loading and error states
@@ -320,7 +334,7 @@
             const postHTML = createPostHTML(post, authManager.getCurrentUser());
             container.insertAdjacentHTML('beforeend', postHTML);
           });
-          
+
           // Initialize Lucide icons for new posts
           if (typeof lucide !== 'undefined') {
             lucide.createIcons(container);
@@ -340,12 +354,12 @@
               const inputContainer = commentsSection.querySelector('.comment-input-container');
               const existingComments = commentsSection.querySelectorAll('.comment');
               existingComments.forEach(c => c.remove());
-              
+
               comments.forEach(comment => {
                 const commentHTML = createCommentHTML(comment);
                 commentsSection.insertAdjacentHTML('beforeend', commentHTML);
               });
-              
+
               // Initialize Lucide icons for comments
               if (typeof lucide !== 'undefined') {
                 lucide.createIcons(commentsSection);
@@ -509,11 +523,11 @@
         const container = document.getElementById("postsContainer");
         const loadingEl = document.getElementById("community-loading");
         const errorEl = document.getElementById("community-error");
-        
+
         try {
           if (loadingEl) loadingEl.style.display = 'flex';
           if (errorEl) errorEl.style.display = 'none';
-          
+
           const response = await apiClient.get("/api/community/feed");
 
           if (response.success && response.data?.posts && response.data.posts.length > 0) {
@@ -530,13 +544,13 @@
         } catch (error) {
           console.error("Failed to load community feed:", error);
           if (loadingEl) loadingEl.style.display = 'none';
-          
+
           // Show error message, but don't show mock data
           if (errorEl) {
             errorEl.textContent = 'Failed to load community feed. Please try again later.';
             errorEl.style.display = 'block';
           }
-          
+
           // Only show mock data if explicitly enabled for development
           if (window.ENABLE_MOCK_DATA === true) {
             console.warn('[Community] Using mock data (development mode)');
@@ -561,7 +575,7 @@
         const authorInitials = getInitials(authorName);
         const location = post.location || '';
         const timeAgo = post.timeAgo || getTimeAgo(post.timestamp);
-        
+
         return `
                 <div class="post" data-post-id="${escapeHtml(post.id)}">
                     <div class="post-header">
@@ -619,7 +633,7 @@
         const authorName = comment.authorName || comment.author || 'Unknown';
         const content = comment.content || comment.text || '';
         const timeAgo = comment.timeAgo || getTimeAgo(comment.timestamp);
-        
+
         return `
                 <div class="comment">
                     <div class="comment-avatar">${getInitials(authorName)}</div>
@@ -734,7 +748,7 @@
         if (!commentsSection) return;
 
         const isShowing = commentsSection.classList.contains("show");
-        
+
         if (!isShowing && communityInitialized) {
           // Load comments if not already loaded
           const existingComments = enhancedCommunity.comments.get(postId);
@@ -744,7 +758,7 @@
         }
 
         commentsSection.classList.toggle("show");
-        
+
         // Initialize Lucide icons after showing comments
         if (!isShowing && window.lucide) {
           setTimeout(() => window.lucide.createIcons(), 100);
@@ -807,10 +821,10 @@
        */
       window.sharePost = async function (postId) {
         try {
-          const post = communityInitialized && enhancedCommunity.posts 
+          const post = communityInitialized && enhancedCommunity.posts
             ? enhancedCommunity.posts.find(p => p.id === postId)
             : null;
-          
+
           if (!post) {
             console.warn('[Community] Post not found:', postId);
             // Fallback: just copy the URL
@@ -845,7 +859,7 @@
       document.addEventListener("DOMContentLoaded", initCommunityPage);
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

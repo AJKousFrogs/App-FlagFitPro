@@ -140,7 +140,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease, opacity 0.2s ease;
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
   border-radius: var(--border-radius-sm);
   min-width: 32px;
   min-height: 32px;
@@ -269,7 +271,9 @@ body {
 
 /* Enhanced link styling */
 .login-forgot-link {
-  transition: color 0.2s ease, text-decoration 0.2s ease;
+  transition:
+    color 0.2s ease,
+    text-decoration 0.2s ease;
 }
 
 .login-forgot-link:hover {
@@ -277,7 +281,9 @@ body {
 }
 
 .login-create-link {
-  transition: color 0.2s ease, text-decoration 0.2s ease;
+  transition:
+    color 0.2s ease,
+    text-decoration 0.2s ease;
 }
 
 .login-create-link:hover {

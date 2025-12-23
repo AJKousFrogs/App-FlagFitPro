@@ -4,23 +4,26 @@ import {
   computed,
   inject,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { ChartModule } from 'primeng/chart';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { Select } from 'primeng/dropdown';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { DataViewModule } from 'primeng/dataview';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { NutritionService, NutritionGoal } from '../../../core/services/nutrition.service';
-import { firstValueFrom } from 'rxjs';
-import { LoggerService } from '../../../core/services/logger.service';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { ChartModule } from "primeng/chart";
+import { AutoCompleteModule } from "primeng/autocomplete";
+import { Select } from "primeng/dropdown";
+import { ButtonModule } from "primeng/button";
+import { TagModule } from "primeng/tag";
+import { DataViewModule } from "primeng/dataview";
+import { ProgressBarModule } from "primeng/progressbar";
+import {
+  NutritionService,
+  NutritionGoal,
+} from "../../../core/services/nutrition.service";
+import { firstValueFrom } from "rxjs";
+import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
-  selector: 'app-nutrition-dashboard',
+  selector: "app-nutrition-dashboard",
   standalone: true,
   imports: [
     CommonModule,
@@ -49,7 +52,8 @@ import { LoggerService } from '../../../core/services/logger.service';
             placeholder="Search USDA food database..."
             [dropdown]="true"
             [forceSelection]="false"
-            styleClass="food-autocomplete">
+            styleClass="food-autocomplete"
+          >
             <ng-template let-food pTemplate="item">
               <div class="food-suggestion">
                 <div class="food-info">
@@ -67,7 +71,8 @@ import { LoggerService } from '../../../core/services/logger.service';
             icon="pi pi-plus"
             label="Add Food"
             [disabled]="!selectedFood"
-            (onClick)="addFoodToMeal()">
+            (onClick)="addFoodToMeal()"
+          >
           </p-button>
         </div>
 
@@ -82,9 +87,12 @@ import { LoggerService } from '../../../core/services/logger.service';
               @for (suggestion of aiSuggestions(); track suggestion.name) {
                 <p-tag
                   [value]="suggestion.name"
-                  [severity]="suggestion.priority === 'high' ? 'success' : 'info'"
+                  [severity]="
+                    suggestion.priority === 'high' ? 'success' : 'info'
+                  "
                   (click)="addSuggestedFood(suggestion)"
-                  class="clickable-tag">
+                  class="clickable-tag"
+                >
                   {{ suggestion.name }} ({{ suggestion.benefit }})
                 </p-tag>
               }
@@ -100,13 +108,17 @@ import { LoggerService } from '../../../core/services/logger.service';
             <div
               class="goal-item"
               [class.achieved]="goal.current >= goal.target"
-              [class.warning]="goal.current < goal.target * 0.7 && goal.priority === 'high'">
+              [class.warning]="
+                goal.current < goal.target * 0.7 && goal.priority === 'high'
+              "
+            >
               <div class="goal-header">
                 <span class="nutrient-name">{{ goal.nutrient }}</span>
                 <p-tag
                   [value]="goal.priority"
                   [severity]="getPrioritySeverity(goal.priority)"
-                  size="small">
+                  size="small"
+                >
                 </p-tag>
               </div>
 
@@ -114,13 +126,18 @@ import { LoggerService } from '../../../core/services/logger.service';
                 <p-progressBar
                   [value]="(goal.current / goal.target) * 100"
                   [showValue]="false"
-                  [style]="getProgressStyle(goal)">
+                  [style]="getProgressStyle(goal)"
+                >
                 </p-progressBar>
 
                 <div class="progress-text">
-                  <span class="current">{{ goal.current | number: '1.1-1' }}</span>
+                  <span class="current">{{
+                    goal.current | number: "1.1-1"
+                  }}</span>
                   <span class="separator">/</span>
-                  <span class="target">{{ goal.target | number: '1.1-1' }} {{ goal.unit }}</span>
+                  <span class="target"
+                    >{{ goal.target | number: "1.1-1" }} {{ goal.unit }}</span
+                  >
                 </div>
               </div>
 
@@ -129,12 +146,16 @@ import { LoggerService } from '../../../core/services/logger.service';
                 <div class="nutrient-sources">
                   <small>Good sources:</small>
                   <div class="source-tags">
-                    @for (source of getNutrientSources(goal.nutrient); track source) {
+                    @for (
+                      source of getNutrientSources(goal.nutrient);
+                      track source
+                    ) {
                       <p-tag
                         [value]="source"
                         severity="secondary"
                         size="small"
-                        class="source-tag">
+                        class="source-tag"
+                      >
                       </p-tag>
                     }
                   </div>
@@ -152,7 +173,9 @@ import { LoggerService } from '../../../core/services/logger.service';
             <div class="meal-item">
               <div class="meal-header">
                 <h4>{{ meal.type }}</h4>
-                <span class="meal-time">{{ meal.timestamp | date: 'shortTime' }}</span>
+                <span class="meal-time">{{
+                  meal.timestamp | date: "shortTime"
+                }}</span>
                 <span class="meal-calories">{{ meal.totalCalories }} cal</span>
               </div>
 
@@ -160,7 +183,9 @@ import { LoggerService } from '../../../core/services/logger.service';
                 @for (food of meal.foods; track food.name) {
                   <div class="food-item">
                     <span class="food-name">{{ food.name }}</span>
-                    <span class="food-amount">{{ food.amount }} {{ food.unit }}</span>
+                    <span class="food-amount"
+                      >{{ food.amount }} {{ food.unit }}</span
+                    >
                   </div>
                 }
               </div>
@@ -172,7 +197,8 @@ import { LoggerService } from '../../../core/services/logger.service';
                   [data]="getMealNutritionChart(meal)"
                   [options]="doughnutOptions"
                   [width]="'150px'"
-                  [height]="'150px'">
+                  [height]="'150px'"
+                >
                 </p-chart>
               </div>
             </div>
@@ -182,14 +208,10 @@ import { LoggerService } from '../../../core/services/logger.service';
 
       <!-- Performance Impact Insights -->
       @if (performanceInsights().length > 0) {
-        <p-card
-          header="Performance Impact"
-          class="performance-insights-card">
+        <p-card header="Performance Impact" class="performance-insights-card">
           <div class="insights-list">
             @for (insight of performanceInsights(); track insight.title) {
-              <div
-                class="insight-item"
-                [class]="insight.type">
+              <div class="insight-item" [class]="insight.type">
                 <div class="insight-icon">
                   <i [class]="insight.icon"></i>
                 </div>
@@ -201,7 +223,8 @@ import { LoggerService } from '../../../core/services/logger.service';
                       [label]="insight.actionLabel"
                       size="small"
                       [text]="true"
-                      (onClick)="executeInsightAction(insight)">
+                      (onClick)="executeInsightAction(insight)"
+                    >
                     </p-button>
                   }
                 </div>
@@ -478,7 +501,7 @@ export class NutritionDashboardComponent {
   foodSuggestions = signal<any[]>([]);
   nutritionGoals = signal<NutritionGoal[]>([]);
   todaysMeals = signal<any[]>([]);
-  
+
   constructor() {
     // Angular 21: Initialize in constructor instead of OnInit
     this.loadNutritionGoals();
@@ -497,11 +520,10 @@ export class NutritionDashboardComponent {
     },
   };
 
-
   async searchFoods(event: any) {
     // Search USDA FoodData Central database
     const results = await firstValueFrom(
-      this.nutritionService.searchUSDAFoods(event.query)
+      this.nutritionService.searchUSDAFoods(event.query),
     );
     this.foodSuggestions.set(results);
   }
@@ -509,7 +531,7 @@ export class NutritionDashboardComponent {
   addFoodToMeal() {
     if (this.selectedFood) {
       firstValueFrom(
-        this.nutritionService.addFoodToCurrentMeal(this.selectedFood)
+        this.nutritionService.addFoodToCurrentMeal(this.selectedFood),
       ).then(() => {
         this.selectedFood = null;
         this.loadTodaysMeals(); // Refresh meals
@@ -520,7 +542,7 @@ export class NutritionDashboardComponent {
 
   addSuggestedFood(suggestion: any) {
     firstValueFrom(
-      this.nutritionService.addFoodToCurrentMeal(suggestion.food)
+      this.nutritionService.addFoodToCurrentMeal(suggestion.food),
     ).then(() => {
       this.loadTodaysMeals();
       this.loadNutritionGoals();
@@ -529,51 +551,50 @@ export class NutritionDashboardComponent {
 
   private async loadNutritionGoals() {
     const goals = await firstValueFrom(
-      this.nutritionService.getDailyNutritionGoals()
+      this.nutritionService.getDailyNutritionGoals(),
     );
     this.nutritionGoals.set(goals);
   }
 
   private async loadTodaysMeals() {
-    const meals = await firstValueFrom(
-      this.nutritionService.getTodaysMeals()
-    );
+    const meals = await firstValueFrom(this.nutritionService.getTodaysMeals());
     this.todaysMeals.set(meals);
   }
 
   private async loadAISuggestions() {
     const suggestions = await firstValueFrom(
-      this.nutritionService.getAINutritionSuggestions()
+      this.nutritionService.getAINutritionSuggestions(),
     );
     this.aiSuggestions.set(suggestions);
   }
 
   private async loadPerformanceInsights() {
     const insights = await firstValueFrom(
-      this.nutritionService.getPerformanceInsights()
+      this.nutritionService.getPerformanceInsights(),
     );
     this.performanceInsights.set(insights);
   }
 
   getPrioritySeverity(priority: string): string {
     switch (priority) {
-      case 'high':
-        return 'danger';
-      case 'medium':
-        return 'warn';
+      case "high":
+        return "danger";
+      case "medium":
+        return "warn";
       default:
-        return 'info';
+        return "info";
     }
   }
 
   getProgressStyle(goal: NutritionGoal) {
     const percentage = (goal.current / goal.target) * 100;
-    let color = '#10c96b'; // Green for achieved
+    let color = "#10c96b"; // Green for achieved
 
-    if (percentage < 50) color = '#ef4444'; // Red for low
-    else if (percentage < 80) color = '#f1c40f'; // Yellow for medium
+    if (percentage < 50)
+      color = "#ef4444"; // Red for low
+    else if (percentage < 80) color = "#f1c40f"; // Yellow for medium
 
-    return { '--p-progressbar-value-bg': color } as any;
+    return { "--p-progressbar-value-bg": color } as any;
   }
 
   getNutrientSources(nutrient: string): string[] {
@@ -583,13 +604,13 @@ export class NutritionDashboardComponent {
 
   getMealNutritionChart(meal: any) {
     return {
-      labels: ['Carbs', 'Protein', 'Fat'],
+      labels: ["Carbs", "Protein", "Fat"],
       datasets: [
         {
           data: [meal.carbs, meal.protein, meal.fat],
-          backgroundColor: ['#f1c40f', '#10c96b', '#ef4444'],
+          backgroundColor: ["#f1c40f", "#10c96b", "#ef4444"],
           borderWidth: 2,
-          borderColor: '#ffffff',
+          borderColor: "#ffffff",
         },
       ],
     };
@@ -597,7 +618,6 @@ export class NutritionDashboardComponent {
 
   executeInsightAction(insight: any) {
     // Handle insight actions (e.g., add recommended food, adjust meal timing)
-    this.logger.debug('Executing insight action:', insight);
+    this.logger.debug("Executing insight action:", insight);
   }
 }
-

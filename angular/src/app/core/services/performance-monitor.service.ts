@@ -38,7 +38,10 @@ export class PerformanceMonitorService {
     // Use effect() for initialization (zoneless-compatible)
     effect(() => {
       // Initialize if browser supports PerformanceObserver
-      if (typeof PerformanceObserver !== "undefined" && !this.performanceObserver) {
+      if (
+        typeof PerformanceObserver !== "undefined" &&
+        !this.performanceObserver
+      ) {
         this.startMonitoring();
       }
     });
@@ -190,10 +193,7 @@ export class PerformanceMonitorService {
   }
 
   private getMemoryUsage(): number {
-    if (
-      typeof performance !== "undefined" &&
-      (performance as any).memory
-    ) {
+    if (typeof performance !== "undefined" && (performance as any).memory) {
       const memory = (performance as any).memory;
       return Math.round(memory.usedJSHeapSize / 1048576); // Convert to MB
     }
@@ -206,7 +206,9 @@ export class PerformanceMonitorService {
     const paintEntries = performance.getEntriesByType(
       "paint",
     ) as PerformancePaintTiming[];
-    const fcp = paintEntries.find((entry) => entry.name === "first-contentful-paint");
+    const fcp = paintEntries.find(
+      (entry) => entry.name === "first-contentful-paint",
+    );
     return fcp ? Math.round(fcp.startTime) : 0;
   }
 
@@ -229,9 +231,16 @@ export class PerformanceMonitorService {
     if (value <= threshold.warning) {
       return 100;
     } else if (value <= threshold.critical) {
-      return 50 + (50 * (threshold.critical - value)) / (threshold.critical - threshold.warning);
+      return (
+        50 +
+        (50 * (threshold.critical - value)) /
+          (threshold.critical - threshold.warning)
+      );
     }
-    return Math.max(0, 50 - (50 * (value - threshold.critical)) / threshold.critical);
+    return Math.max(
+      0,
+      50 - (50 * (value - threshold.critical)) / threshold.critical,
+    );
   }
 
   private getStatus(
@@ -321,4 +330,3 @@ export class PerformanceMonitorService {
     );
   }
 }
-

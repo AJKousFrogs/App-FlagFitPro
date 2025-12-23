@@ -45,24 +45,25 @@ If you need to use any of these scripts:
 ## Example: Converting from Neon to Supabase
 
 **Before (Neon):**
+
 ```javascript
-import { neon } from '@neondatabase/serverless';
+import { neon } from "@neondatabase/serverless";
 const sql = neon(process.env.DATABASE_URL);
 await sql`SELECT * FROM table`;
 ```
 
 **After (Supabase):**
+
 ```javascript
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
+  process.env.SUPABASE_SERVICE_KEY,
 );
-const { data } = await supabase.from('table').select('*');
+const { data } = await supabase.from("table").select("*");
 ```
 
 ---
 
 **Archived**: 2024
 **Reason**: Project migrated from Neon DB to Supabase
-

@@ -20,16 +20,16 @@ interface NavItem {
       [class.sidebar-open]="isOpen()"
       role="navigation"
       aria-label="Main navigation"
-      >
+    >
       <div
         class="sidebar-logo"
         (click)="navigateToDashboard()"
         title="FlagFit Pro"
         aria-label="Go to dashboard"
-        >
+      >
         <i class="pi pi-activity icon-20"></i>
       </div>
-    
+
       <nav class="nav-section" aria-label="Main navigation">
         @for (item of navItems; track trackByRoute($index, item)) {
           <a
@@ -39,7 +39,7 @@ interface NavItem {
             class="nav-item"
             [attr.aria-label]="item.ariaLabel"
             [id]="'nav-' + item.route.replace('/', '')"
-            >
+          >
             <span class="nav-item-icon">
               <i [class]="'pi ' + item.icon + ' icon-24'"></i>
             </span>
@@ -54,7 +54,7 @@ interface NavItem {
       (click)="closeSidebar()"
       aria-hidden="true"
     ></div>
-    `,
+  `,
   styles: [
     `
       .sidebar {

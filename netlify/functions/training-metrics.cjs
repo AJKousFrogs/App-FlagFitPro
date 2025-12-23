@@ -7,7 +7,11 @@
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { executeQuery, parseAthleteId, parseDateParam } = require("./utils/db-query-helper.cjs");
+const {
+  executeQuery,
+  parseAthleteId,
+  parseDateParam,
+} = require("./utils/db-query-helper.cjs");
 const { successResponse } = require("./utils/response-helper.cjs");
 
 /**
@@ -15,9 +19,9 @@ const { successResponse } = require("./utils/response-helper.cjs");
  */
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'training-metrics',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "training-metrics",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     handler: async (event, context, { userId }) => {
       // Parse query parameters
       const { valid, athleteId, error } = parseAthleteId(event, userId);
@@ -25,7 +29,7 @@ exports.handler = async (event, context) => {
         return error;
       }
 
-      const startDate = parseDateParam(event, 'startDate', null);
+      const startDate = parseDateParam(event, "startDate", null);
 
       // Build query
       let query = supabaseAdmin
@@ -44,7 +48,6 @@ exports.handler = async (event, context) => {
       }
 
       return successResponse(result.data);
-    }
+    },
   });
 };
-

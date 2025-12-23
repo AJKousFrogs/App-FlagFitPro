@@ -4,7 +4,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 
 /**
  * Loading State Component
- * 
+ *
  * Displays a consistent loading state while data is being fetched
  * Follows PLAYER_DATA_DISPLAY_LOGIC.md guidelines for loading states
  */
@@ -71,4 +71,3 @@ export class LoadingStateComponent {
   size = input<number>(50);
   compact = input<boolean>(false);
 }
-

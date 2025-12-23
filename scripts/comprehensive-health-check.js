@@ -1,5 +1,4 @@
 #!/usr/bin/env node
- 
 
 // Comprehensive Health Check Script for Production Readiness
 // Validates all aspects of the Flag Football app before deployment
@@ -8,8 +7,8 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import fs from "fs/promises";
 import path from "path";
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
 
 const execAsync = promisify(exec);
 
@@ -712,12 +711,15 @@ class HealthChecker {
 
     try {
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+      const supabaseKey =
+        process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
 
       if (!supabaseUrl || !supabaseKey) {
         database.issues.push("Missing Supabase environment variables");
         database.status = "critical";
-        this.results.criticalIssues.push("Database: Missing SUPABASE_URL or SUPABASE_KEY");
+        this.results.criticalIssues.push(
+          "Database: Missing SUPABASE_URL or SUPABASE_KEY",
+        );
         this.results.categories.database = database;
         console.log(`   Score: ${database.score}/100`);
         return;
@@ -730,8 +732,8 @@ class HealthChecker {
 
         // Test query
         const { data, error, count } = await supabase
-          .from('users')
-          .select('id', { count: 'exact', head: true })
+          .from("users")
+          .select("id", { count: "exact", head: true })
           .limit(1);
 
         const queryTime = Date.now() - startTime;
@@ -753,14 +755,14 @@ class HealthChecker {
         }
 
         // Check for critical tables
-        const criticalTables = ['users', 'teams', 'training_sessions'];
+        const criticalTables = ["users", "teams", "training_sessions"];
         let tablesFound = 0;
 
         for (const table of criticalTables) {
           try {
             const { error: tableError } = await supabase
               .from(table)
-              .select('id')
+              .select("id")
               .limit(1);
 
             if (!tableError) {
@@ -776,7 +778,9 @@ class HealthChecker {
         database.metrics.totalTables = criticalTables.length;
 
         if (tablesFound < criticalTables.length) {
-          database.issues.push(`Missing critical tables: ${criticalTables.length - tablesFound}`);
+          database.issues.push(
+            `Missing critical tables: ${criticalTables.length - tablesFound}`,
+          );
         }
 
         // Check database migrations
@@ -788,15 +792,20 @@ class HealthChecker {
         } catch {
           database.issues.push("Cannot access migrations directory");
         }
-
       } catch (error) {
         database.issues.push(`Database connection failed: ${error.message}`);
         database.status = "critical";
-        this.results.criticalIssues.push(`Database: Connection failed - ${error.message}`);
+        this.results.criticalIssues.push(
+          `Database: Connection failed - ${error.message}`,
+        );
       }
 
       database.status =
-        database.score > 70 ? "good" : database.score > 40 ? "warning" : "critical";
+        database.score > 70
+          ? "good"
+          : database.score > 40
+            ? "warning"
+            : "critical";
     } catch (error) {
       database.issues.push(`Database check failed: ${error.message}`);
       database.score = 0;
@@ -825,14 +834,20 @@ class HealthChecker {
 
       try {
         const functionFiles = await fs.readdir(functionsDir);
-        totalFunctions = functionFiles.filter(f => f.endsWith('.cjs') || f.endsWith('.js')).length;
+        totalFunctions = functionFiles.filter(
+          (f) => f.endsWith(".cjs") || f.endsWith(".js"),
+        ).length;
         functionsFound = totalFunctions;
 
         api.metrics.functionsFound = functionsFound;
         api.score += Math.min(functionsFound * 2, 40); // Up to 40 points for functions
 
         // Check for critical functions
-        const criticalFunctions = ['auth-me.cjs', 'dashboard.cjs', 'auth-login.cjs'];
+        const criticalFunctions = [
+          "auth-me.cjs",
+          "dashboard.cjs",
+          "auth-login.cjs",
+        ];
         let criticalFound = 0;
 
         for (const func of criticalFunctions) {
@@ -860,7 +875,10 @@ class HealthChecker {
 
       // Check for API documentation
       try {
-        const apiDocs = await fs.readFile("./docs/API_DOCUMENTATION.md", "utf8");
+        const apiDocs = await fs.readFile(
+          "./docs/API_DOCUMENTATION.md",
+          "utf8",
+        );
         if (apiDocs.length > 1000) {
           api.score += 15; // 15 points for API docs
         }
@@ -892,16 +910,13 @@ class HealthChecker {
 
     try {
       // Required environment variables
-      const requiredVars = [
-        'SUPABASE_URL',
-        'SUPABASE_ANON_KEY',
-      ];
+      const requiredVars = ["SUPABASE_URL", "SUPABASE_ANON_KEY"];
 
       // Optional but recommended
       const recommendedVars = [
-        'SUPABASE_SERVICE_KEY',
-        'JWT_SECRET',
-        'NODE_ENV',
+        "SUPABASE_SERVICE_KEY",
+        "JWT_SECRET",
+        "NODE_ENV",
       ];
 
       let foundRequired = 0;
@@ -920,7 +935,9 @@ class HealthChecker {
         if (process.env[varName]) {
           foundRecommended++;
         } else {
-          env.issues.push(`Missing recommended environment variable: ${varName}`);
+          env.issues.push(
+            `Missing recommended environment variable: ${varName}`,
+          );
         }
       }
 
@@ -985,7 +1002,8 @@ class HealthChecker {
     // Categories
     report += `## Categories\n\n`;
     Object.entries(this.results.categories).forEach(([category, data]) => {
-      const statusIcon = data.status === "good" ? "✅" : data.status === "warning" ? "⚠️" : "❌";
+      const statusIcon =
+        data.status === "good" ? "✅" : data.status === "warning" ? "⚠️" : "❌";
       report += `### ${statusIcon} ${category.charAt(0).toUpperCase() + category.slice(1)}\n\n`;
       report += `**Score:** ${data.score}/100\n\n`;
 

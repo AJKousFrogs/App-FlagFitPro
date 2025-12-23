@@ -5,19 +5,19 @@ import {
   signal,
   ChangeDetectionStrategy,
   inject,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { YouTubePlayerModule } from '@angular/youtube-player';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { LoggerService } from '../../../core/services/logger.service';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { YouTubePlayerModule } from "@angular/youtube-player";
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
+import { LoggerService } from "../../../core/services/logger.service";
 
 /**
  * Angular 21 Official YouTube Player Component
  * Uses @angular/youtube-player package (Angular 21 native)
  */
 @Component({
-  selector: 'app-youtube-player-official',
+  selector: "app-youtube-player-official",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, YouTubePlayerModule, CardModule, ButtonModule],
@@ -120,7 +120,7 @@ export class YoutubePlayerOfficialComponent implements OnInit, OnDestroy {
 
   playerReady = signal<boolean>(false);
   isPlaying = signal<boolean>(false);
-  playerState = signal<string>('UNSTARTED');
+  playerState = signal<string>("UNSTARTED");
 
   ngOnInit(): void {
     // Load YouTube IFrame API script if not already loaded
@@ -136,9 +136,9 @@ export class YoutubePlayerOfficialComponent implements OnInit, OnDestroy {
       return; // Script already loaded
     }
 
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName("script")[0];
     firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
   }
 
@@ -147,26 +147,32 @@ export class YoutubePlayerOfficialComponent implements OnInit, OnDestroy {
   }
 
   onStateChange(event: YT.OnStateChangeEvent): void {
-    const states = ['UNSTARTED', 'ENDED', 'PLAYING', 'PAUSED', 'BUFFERING', 'CUED'];
-    const state = states[event.data] || 'UNKNOWN';
+    const states = [
+      "UNSTARTED",
+      "ENDED",
+      "PLAYING",
+      "PAUSED",
+      "BUFFERING",
+      "CUED",
+    ];
+    const state = states[event.data] || "UNKNOWN";
     this.playerState.set(state);
-    this.isPlaying.set(state === 'PLAYING');
+    this.isPlaying.set(state === "PLAYING");
   }
 
   onError(event: YT.OnErrorEvent): void {
-    this.logger.error('YouTube Player Error:', event);
-    this.playerState.set('ERROR');
+    this.logger.error("YouTube Player Error:", event);
+    this.playerState.set("ERROR");
   }
 
   togglePlay(): void {
     // Note: The official YouTube player component handles play/pause internally
     // This is just for UI feedback
-    this.isPlaying.update(playing => !playing);
+    this.isPlaying.update((playing) => !playing);
   }
 
   stop(): void {
     this.isPlaying.set(false);
-    this.playerState.set('STOPPED');
+    this.playerState.set("STOPPED");
   }
 }
-

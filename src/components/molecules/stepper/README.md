@@ -48,4 +48,3 @@ A stepper/wizard component for multi-step forms and processes.
 - Uses `aria-current="step"` for active step
 - Includes `aria-label` for step buttons
 - Supports keyboard navigation
-

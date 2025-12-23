@@ -1,8 +1,15 @@
-import { Component, input, output, signal, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { DatePicker } from 'primeng/datepicker';
-import { ButtonModule } from 'primeng/button';
+import {
+  Component,
+  input,
+  output,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { DatePicker } from "primeng/datepicker";
+import { ButtonModule } from "primeng/button";
 
 export interface DateRange {
   start: Date | null;
@@ -11,12 +18,12 @@ export interface DateRange {
 
 /**
  * Date Range Component - Angular 21
- * 
+ *
  * A date range picker component with preset options
  * Uses Angular 21 signals for reactive state management
  */
 @Component({
-  selector: 'app-date-range',
+  selector: "app-date-range",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, DatePicker, ButtonModule],
@@ -25,7 +32,7 @@ export interface DateRange {
       @if (label()) {
         <label class="form-label">{{ label() }}</label>
       }
-      
+
       <!-- Presets -->
       @if (showPresets()) {
         <div class="date-range-presets">
@@ -35,12 +42,13 @@ export interface DateRange {
               [text]="true"
               size="small"
               (onClick)="applyPreset(preset.value)"
-              [class.active]="selectedPreset() === preset.value">
+              [class.active]="selectedPreset() === preset.value"
+            >
             </p-button>
           }
         </div>
       }
-      
+
       <!-- Date Range Inputs -->
       <div class="date-range-container">
         <div class="date-range-field">
@@ -59,14 +67,15 @@ export interface DateRange {
             (onSelect)="onStartDateChange()"
             [class.is-invalid]="invalid()"
             [attr.aria-invalid]="invalid() ? 'true' : null"
-            [attr.aria-describedby]="errorMessage() ? id() + '-error' : null">
+            [attr.aria-describedby]="errorMessage() ? id() + '-error' : null"
+          >
           </p-datepicker>
         </div>
-        
+
         <div class="date-range-separator">
           <i class="pi pi-arrow-right"></i>
         </div>
-        
+
         <div class="date-range-field">
           <label [for]="id() + '-end'" class="date-range-label">
             {{ endLabel() }}
@@ -82,92 +91,97 @@ export interface DateRange {
             [showButtonBar]="true"
             (onSelect)="onEndDateChange()"
             [class.is-invalid]="invalid()"
-            [attr.aria-invalid]="invalid() ? 'true' : null">
+            [attr.aria-invalid]="invalid() ? 'true' : null"
+          >
           </p-datepicker>
         </div>
       </div>
-      
+
       @if (helpText() && !errorMessage()) {
         <div class="form-help">{{ helpText() }}</div>
       }
       @if (errorMessage()) {
-        <div [id]="id() + '-error'" class="form-error" role="alert">{{ errorMessage() }}</div>
+        <div [id]="id() + '-error'" class="form-error" role="alert">
+          {{ errorMessage() }}
+        </div>
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .date-range-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .date-range-presets {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .date-range-container {
-      display: flex;
-      align-items: flex-end;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .date-range-field {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .date-range-label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--p-text-color);
-      margin-bottom: 0.5rem;
-    }
-
-    .date-range-separator {
-      display: flex;
-      align-items: center;
-      padding-bottom: 0.5rem;
-      color: var(--p-text-color-secondary);
-    }
-
-    .form-help {
-      font-size: 0.75rem;
-      color: var(--p-text-color-secondary);
-    }
-
-    .form-error {
-      font-size: 0.75rem;
-      color: var(--p-error-color);
-    }
-
-    @media (max-width: 640px) {
-      .date-range-container {
+      .date-range-group {
+        display: flex;
         flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .date-range-presets {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .date-range-container {
+        display: flex;
+        align-items: flex-end;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .date-range-field {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .date-range-label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--p-text-color);
+        margin-bottom: 0.5rem;
       }
 
       .date-range-separator {
-        transform: rotate(90deg);
-        padding: 0.5rem 0;
-        justify-content: center;
+        display: flex;
+        align-items: center;
+        padding-bottom: 0.5rem;
+        color: var(--p-text-color-secondary);
       }
-    }
-  `]
+
+      .form-help {
+        font-size: 0.75rem;
+        color: var(--p-text-color-secondary);
+      }
+
+      .form-error {
+        font-size: 0.75rem;
+        color: var(--p-error-color);
+      }
+
+      @media (max-width: 640px) {
+        .date-range-container {
+          flex-direction: column;
+        }
+
+        .date-range-separator {
+          transform: rotate(90deg);
+          padding: 0.5rem 0;
+          justify-content: center;
+        }
+      }
+    `,
+  ],
 })
 export class DateRangeComponent {
   // Configuration
   id = input<string>(`date-range-${Math.random().toString(36).substr(2, 9)}`);
   label = input<string>();
-  startLabel = input<string>('Start Date');
-  endLabel = input<string>('End Date');
+  startLabel = input<string>("Start Date");
+  endLabel = input<string>("End Date");
   helpText = input<string>();
   errorMessage = input<string>();
   disabled = input<boolean>(false);
@@ -175,94 +189,93 @@ export class DateRangeComponent {
   showPresets = input<boolean>(true);
   minDate = input<Date | null>(null);
   maxDate = input<Date | null>(null);
-  
+
   // State
   startDate = signal<Date | null>(null);
   endDate = signal<Date | null>(null);
   selectedPreset = signal<string | null>(null);
-  
+
   // Presets
-  presets = input<Array<{label: string, value: string}>>(() => [
-    { label: 'Today', value: 'today' },
-    { label: 'Yesterday', value: 'yesterday' },
-    { label: 'Last 7 Days', value: 'last7days' },
-    { label: 'Last 30 Days', value: 'last30days' },
-    { label: 'This Month', value: 'thisMonth' },
-    { label: 'Last Month', value: 'lastMonth' }
+  presets = input<Array<{ label: string; value: string }>>(() => [
+    { label: "Today", value: "today" },
+    { label: "Yesterday", value: "yesterday" },
+    { label: "Last 7 Days", value: "last7days" },
+    { label: "Last 30 Days", value: "last30days" },
+    { label: "This Month", value: "thisMonth" },
+    { label: "Last Month", value: "lastMonth" },
   ]);
-  
+
   // Outputs
   rangeChange = output<DateRange>();
-  
+
   onStartDateChange(): void {
     this.validateRange();
     this.emitChange();
   }
-  
+
   onEndDateChange(): void {
     this.validateRange();
     this.emitChange();
   }
-  
+
   applyPreset(preset: string): void {
     const today = new Date();
     let start: Date;
     let end: Date;
-    
-    switch(preset) {
-      case 'today':
+
+    switch (preset) {
+      case "today":
         start = new Date(today);
         end = new Date(today);
         break;
-      case 'yesterday':
+      case "yesterday":
         start = new Date(today);
         start.setDate(start.getDate() - 1);
         end = new Date(start);
         break;
-      case 'last7days':
+      case "last7days":
         start = new Date(today);
         start.setDate(start.getDate() - 7);
         end = new Date(today);
         break;
-      case 'last30days':
+      case "last30days":
         start = new Date(today);
         start.setDate(start.getDate() - 30);
         end = new Date(today);
         break;
-      case 'thisMonth':
+      case "thisMonth":
         start = new Date(today.getFullYear(), today.getMonth(), 1);
         end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
         break;
-      case 'lastMonth':
+      case "lastMonth":
         start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         end = new Date(today.getFullYear(), today.getMonth(), 0);
         break;
       default:
         return;
     }
-    
+
     this.startDate.set(start);
     this.endDate.set(end);
     this.selectedPreset.set(preset);
     this.validateRange();
     this.emitChange();
   }
-  
+
   private validateRange(): void {
     const start = this.startDate();
     const end = this.endDate();
-    
+
     if (start && end && end < start) {
       // Error will be shown via errorMessage input
       return;
     }
   }
-  
+
   private emitChange(): void {
     this.rangeChange.emit({
       start: this.startDate(),
-      end: this.endDate()
+      end: this.endDate(),
     });
   }
 }
-

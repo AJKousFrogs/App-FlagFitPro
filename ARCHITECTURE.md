@@ -3,6 +3,7 @@
 ## 🔐 Authentication Flow
 
 ### Frontend (Angular)
+
 Angular uses **Supabase directly** for authentication operations:
 
 - **Login:** `SupabaseService.signIn(email, password)`
@@ -12,6 +13,7 @@ Angular uses **Supabase directly** for authentication operations:
 - **Token:** Retrieved from Supabase session via `SupabaseService.getToken()`
 
 ### API Authentication
+
 All API calls use Bearer token authentication:
 
 1. Angular retrieves token from Supabase session
@@ -20,6 +22,7 @@ All API calls use Bearer token authentication:
 4. Functions use Supabase service role key for database operations
 
 ### Why Direct Supabase Auth?
+
 - ✅ Simpler architecture (no backend auth functions needed)
 - ✅ Built-in session management
 - ✅ Automatic token refresh
@@ -30,6 +33,7 @@ All API calls use Bearer token authentication:
 ## 🌐 API Endpoint Routing
 
 ### Request Flow
+
 ```
 Angular Component/Service
     ↓
@@ -49,6 +53,7 @@ Supabase Backend (via supabase-client.cjs)
 ```
 
 ### Base URL Detection
+
 Angular `ApiService` auto-detects base URL:
 
 - **Production (Netlify):** `/.netlify/functions`
@@ -57,6 +62,7 @@ Angular `ApiService` auto-detects base URL:
 - **Fallback:** `http://localhost:3001`
 
 ### Endpoint Normalization
+
 - Endpoints starting with `/api/` are kept as-is for Netlify redirects
 - If baseUrl ends with `/api`, `/api/` prefix is removed
 - Non-API endpoints (like `/auth-me`, `/training-stats`) are used directly
@@ -66,6 +72,7 @@ Angular `ApiService` auto-detects base URL:
 ## 🗄️ Database Access
 
 ### Backend Functions
+
 All backend functions use `supabase-client.cjs`:
 
 - **Service Role Key:** For admin operations (bypasses RLS)
@@ -73,6 +80,7 @@ All backend functions use `supabase-client.cjs`:
 - **Connection:** Singleton pattern for efficiency
 
 ### Frontend Direct Access
+
 Angular can also access Supabase directly:
 
 - **Read Operations:** Via Supabase client (respects RLS)
@@ -83,6 +91,7 @@ Angular can also access Supabase directly:
 ## 📁 File Structure
 
 ### Backend (Netlify Functions)
+
 ```
 netlify/functions/
 ├── {function-name}.cjs          # Function handlers
@@ -95,6 +104,7 @@ netlify/functions/
 ```
 
 ### Frontend (Angular)
+
 ```
 angular/src/app/
 ├── core/
@@ -115,23 +125,29 @@ angular/src/app/
 ## 🔧 Environment Variables
 
 ### Frontend (Angular)
+
 **Development:**
+
 - Set via `window._env` (injected by dev server)
 - Or via `localStorage` (development only)
 - Or via build script environment variables
 
 **Production:**
+
 - Injected during build via file replacement
 - Or via `window._env` (set by hosting platform)
 
 **Variables:**
+
 - `SUPABASE_URL` - Supabase project URL
 - `SUPABASE_ANON_KEY` - Supabase anonymous key
 
 ### Backend (Netlify Functions)
+
 **Set in Netlify Dashboard → Environment Variables**
 
 **Variables:**
+
 - `SUPABASE_URL` - Supabase project URL
 - `SUPABASE_SERVICE_KEY` - Service role key (admin operations)
 - `SUPABASE_ANON_KEY` - Anonymous key (optional, for some functions)
@@ -141,22 +157,26 @@ angular/src/app/
 ## 🛡️ Security Patterns
 
 ### Authentication
+
 1. **Frontend:** User authenticates via Supabase
 2. **Token:** Stored in Supabase session (secure, httpOnly cookies)
 3. **API Calls:** Token sent via Authorization header
 4. **Backend:** Token verified using `auth-helper.cjs`
 
 ### Authorization
+
 - **Row Level Security (RLS):** Enforced by Supabase for direct queries
 - **Service Role Key:** Used for admin operations (bypasses RLS)
 - **User Context:** Extracted from verified JWT token
 
 ### Rate Limiting
+
 - Applied via `base-handler.cjs`
 - Types: `READ`, `CREATE`, `AUTH`, `DEFAULT`
 - Limits: Configurable per function
 
 ### CORS
+
 - Handled automatically by Netlify Functions
 - Headers set via `CORS_HEADERS` in error-handler.cjs
 
@@ -165,6 +185,7 @@ angular/src/app/
 ## 📊 Endpoint Status
 
 ### ✅ Implemented
+
 - `/auth-me` - Token verification
 - `/api/dashboard/*` - Dashboard data
 - `/api/analytics/*` - Analytics data
@@ -176,14 +197,17 @@ angular/src/app/
 - `/knowledge-search` - Knowledge base
 
 ### ⚠️ Missing (High Priority)
+
 - `/api/training/suggestions` - AI training suggestions
 - `/api/weather/current` - Weather data
 
 ### ⚠️ Missing (Medium Priority)
+
 - `/api/nutrition/*` - Nutrition tracking
 - `/api/recovery/*` - Recovery protocols
 
 ### ⚠️ Missing (Low Priority)
+
 - `/api/admin/*` - Admin operations
 - `/api/coach/*` - Coach-specific features
 
@@ -194,16 +218,19 @@ See `ENDPOINT_STATUS.md` for detailed tracking.
 ## 🚀 Development Workflow
 
 ### Local Development
+
 1. **Start Dev Server:**
+
    ```bash
    # Option 1: Netlify Dev
    netlify dev
-   
+
    # Option 2: Enhanced Dev Server
    npm run dev:enhanced
    ```
 
 2. **Set Environment Variables:**
+
    ```bash
    export SUPABASE_URL="your-url"
    export SUPABASE_ANON_KEY="your-key"
@@ -215,13 +242,16 @@ See `ENDPOINT_STATUS.md` for detailed tracking.
    - Angular reads from `window._env`
 
 ### Building for Production
+
 1. **Set Environment Variables:**
+
    ```bash
    export SUPABASE_URL="your-url"
    export SUPABASE_ANON_KEY="your-key"
    ```
 
 2. **Build Angular:**
+
    ```bash
    cd angular && npm run build --configuration=production
    ```
@@ -235,6 +265,7 @@ See `ENDPOINT_STATUS.md` for detailed tracking.
 ## 🔄 Data Flow Examples
 
 ### Example 1: User Login
+
 ```
 User enters credentials
     ↓
@@ -250,6 +281,7 @@ Token available for API calls
 ```
 
 ### Example 2: Fetch Dashboard Data
+
 ```
 Component calls DashboardDataService.getDashboard()
     ↓
@@ -267,6 +299,7 @@ Returns data to Angular
 ```
 
 ### Example 3: Create Training Session
+
 ```
 Component calls TrainingDataService.createSession()
     ↓
@@ -288,6 +321,7 @@ Returns created session
 ## 📝 Best Practices
 
 ### Backend Functions
+
 1. **Always use `base-handler.cjs`** for consistent auth/error handling
 2. **Use service role key** for admin operations
 3. **Validate input** before database operations
@@ -295,6 +329,7 @@ Returns created session
 5. **Log important operations** for debugging
 
 ### Frontend Services
+
 1. **Use Supabase directly** for simple read operations
 2. **Use API functions** for write operations or complex logic
 3. **Handle errors** with user-friendly messages
@@ -302,6 +337,7 @@ Returns created session
 5. **Validate input** before API calls
 
 ### Security
+
 1. **Never expose service role key** to frontend
 2. **Always verify tokens** on backend
 3. **Use RLS policies** for data access control
@@ -313,21 +349,25 @@ Returns created session
 ## 🐛 Troubleshooting
 
 ### Angular Can't Connect to Supabase
+
 - Check `window._env.SUPABASE_URL` in browser console
 - Verify dev server is injecting environment variables
 - Check Supabase credentials are correct
 
 ### API Calls Fail with 401
+
 - Verify token is being sent (check Network tab)
 - Check token is valid (not expired)
 - Verify backend function is using `auth-helper.cjs` correctly
 
 ### API Calls Return 404
+
 - Check `netlify.toml` has redirect for endpoint
 - Verify function exists in `netlify/functions/`
 - Check endpoint path matches redirect pattern
 
 ### Environment Variables Not Working
+
 - Verify variables are set in Netlify Dashboard (production)
 - Check build script injects variables (local)
 - Verify Angular reads from correct source (`window._env` vs file replacement)
@@ -340,4 +380,3 @@ Returns created session
 - `PROPOSED_SOLUTION.md` - Implementation plan
 - `IMPLEMENTATION_PLAN.md` - Quick start guide
 - `ENDPOINT_STATUS.md` - Endpoint implementation status (to be created)
-

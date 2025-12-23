@@ -1,18 +1,18 @@
 /**
  * Training Metrics Service
- * 
+ *
  * Handles importing open-source sport-science datasets and retrieving
  * processed flag-football metrics including ACWR calculations.
- * 
+ *
  * @author FlagFit Pro Team
  */
 
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { ApiService } from './api.service';
-import { LoggerService } from './logger.service';
+import { Injectable, inject } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable, throwError } from "rxjs";
+import { catchError, map } from "rxjs/operators";
+import { ApiService } from "./api.service";
+import { LoggerService } from "./logger.service";
 
 export interface ACWRData {
   session_date: string;
@@ -41,7 +41,7 @@ export interface ImportDatasetResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class TrainingMetricsService {
   private apiService = inject(ApiService);
@@ -52,16 +52,17 @@ export class TrainingMetricsService {
    * Get ACWR data for an athlete using the stored procedure
    */
   async getACWR(athleteId: string): Promise<ACWRData[]> {
-    return this.apiService.post<{ data: ACWRData[] }>(
-      '/api/compute-acwr',
-      { athleteId }
-    ).pipe(
-      map(response => response.data?.data || []),
-      catchError(error => {
-        this.logger.error('Error fetching ACWR:', error);
-        return throwError(() => error);
-      })
-    ).toPromise().then(result => result || []);
+    return this.apiService
+      .post<{ data: ACWRData[] }>("/api/compute-acwr", { athleteId })
+      .pipe(
+        map((response) => response.data?.data || []),
+        catchError((error) => {
+          this.logger.error("Error fetching ACWR:", error);
+          return throwError(() => error);
+        }),
+      )
+      .toPromise()
+      .then((result) => result || []);
   }
 
   /**
@@ -71,18 +72,49 @@ export class TrainingMetricsService {
    */
   async importOpenDataset(
     athleteId: string,
-    dataset: Array<{ speed_m_s?: number; distance_m?: number; speed?: number; distance?: number }>
+    dataset: Array<{
+      speed_m_s?: number;
+      distance_m?: number;
+      speed?: number;
+      distance?: number;
+    }>,
   ): Promise<ImportDatasetResponse> {
-    return this.apiService.post<ImportDatasetResponse>(
-      '/api/import-open-data',
-      { athleteId, dataset }
-    ).pipe(
-      map(response => response.data || { ok: false, metrics: { total_volume: 0, high_speed_distance: 0, sprint_count: 0, duration_minutes: 0 } }),
-      catchError(error => {
-        this.logger.error('Error importing dataset:', error);
-        return throwError(() => error);
+    return this.apiService
+      .post<ImportDatasetResponse>("/api/import-open-data", {
+        athleteId,
+        dataset,
       })
-    ).toPromise().then(result => result || { ok: false, metrics: { total_volume: 0, high_speed_distance: 0, sprint_count: 0, duration_minutes: 0 } });
+      .pipe(
+        map(
+          (response) =>
+            response.data || {
+              ok: false,
+              metrics: {
+                total_volume: 0,
+                high_speed_distance: 0,
+                sprint_count: 0,
+                duration_minutes: 0,
+              },
+            },
+        ),
+        catchError((error) => {
+          this.logger.error("Error importing dataset:", error);
+          return throwError(() => error);
+        }),
+      )
+      .toPromise()
+      .then(
+        (result) =>
+          result || {
+            ok: false,
+            metrics: {
+              total_volume: 0,
+              high_speed_distance: 0,
+              sprint_count: 0,
+              duration_minutes: 0,
+            },
+          },
+      );
   }
 
   /**
@@ -90,18 +122,23 @@ export class TrainingMetricsService {
    * @param athleteId - UUID of the athlete
    */
   async get4WeekFlagMetrics(athleteId: string): Promise<FlagMetrics[]> {
-    const fourWeeksAgo = new Date(Date.now() - 28 * 86400000).toISOString().split('T')[0];
-    
-    return this.apiService.get<FlagMetrics[]>(
-      '/api/training-metrics',
-      { athleteId, startDate: fourWeeksAgo }
-    ).pipe(
-      map(response => response.data || []),
-      catchError(error => {
-        this.logger.error('Error fetching flag metrics:', error);
-        return throwError(() => error);
+    const fourWeeksAgo = new Date(Date.now() - 28 * 86400000)
+      .toISOString()
+      .split("T")[0];
+
+    return this.apiService
+      .get<FlagMetrics[]>("/api/training-metrics", {
+        athleteId,
+        startDate: fourWeeksAgo,
       })
-    ).toPromise().then(result => result || []);
+      .pipe(
+        map((response) => response.data || []),
+        catchError((error) => {
+          this.logger.error("Error fetching flag metrics:", error);
+          return throwError(() => error);
+        }),
+      )
+      .toPromise()
+      .then((result) => result || []);
   }
 }
-

@@ -1,4 +1,3 @@
- 
 // Script to update all HTML files with Lucide Icons
 // Run with: node scripts/update-icons.js
 

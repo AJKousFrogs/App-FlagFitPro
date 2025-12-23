@@ -15,12 +15,14 @@ This document summarizes the implementation of the Training Data Display & AI As
 ### 1. Backend Changes
 
 #### ✅ `training-sessions.cjs` - Updated Date Filtering
+
 - **Changed:** Parameter name from `includeFuture` to `includeUpcoming` (aligned with spec)
 - **Changed:** Date filtering now uses simple date comparison (`session_date <= today`) instead of end-of-day timestamp
 - **Default Behavior:** Always filters to sessions up to and including today unless `includeUpcoming=true`
 - **Location:** `netlify/functions/training-sessions.cjs`
 
 #### ✅ `training-stats-enhanced.cjs` - New Centralized Stats Endpoint
+
 - **Created:** New endpoint for comprehensive training statistics
 - **Features:**
   - ACWR calculation (Acute:Chronic Workload Ratio)
@@ -34,6 +36,7 @@ This document summarizes the implementation of the Training Data Display & AI As
 ### 2. Angular Service Refactoring
 
 #### ✅ `training-data.service.ts` - Refactored to Use Backend API
+
 - **Changed:** Removed direct Supabase queries
 - **Changed:** Now uses `ApiService` to call backend endpoints
 - **Added:** `TrainingSessionsOptions` interface for query parameters
@@ -42,6 +45,7 @@ This document summarizes the implementation of the Training Data Display & AI As
 - **Location:** `angular/src/app/core/services/training-data.service.ts`
 
 #### ✅ `training-stats-calculation.service.ts` - New Shared Service
+
 - **Created:** Centralized service for training statistics calculations
 - **Features:**
   - ACWR calculation methods
@@ -51,12 +55,14 @@ This document summarizes the implementation of the Training Data Display & AI As
 - **Location:** `angular/src/app/core/services/training-stats-calculation.service.ts`
 
 #### ✅ `api.service.ts` - Updated Endpoints
+
 - **Added:** `statsEnhanced` endpoint to training endpoints
 - **Location:** `angular/src/app/core/services/api.service.ts`
 
 ### 3. Vanilla JS Frontend Updates
 
 #### ✅ `training-api-service.js` - New API Service
+
 - **Created:** Service to fetch training sessions from backend API
 - **Features:**
   - Fetches from `/api/training/sessions` endpoint
@@ -66,17 +72,20 @@ This document summarizes the implementation of the Training Data Display & AI As
 - **Location:** `src/js/services/training-api-service.js`
 
 #### ✅ `training-page.js` - Updated to Use API
+
 - **Changed:** `initializePageState()` now uses `trainingApiService` instead of direct localStorage
 - **Behavior:** Tries API first, falls back to localStorage if API unavailable
 - **Location:** `src/js/pages/training-page.js`
 
 #### ✅ `api-config.js` - Updated Endpoints
+
 - **Added:** `sessions` and `statsEnhanced` endpoints to training configuration
 - **Location:** `src/api-config.js`
 
 ### 4. Database Schema Updates
 
 #### ✅ Migration `042_training_data_consistency.sql`
+
 - **Added:** `completed` boolean column to `training_sessions` table
 - **Added:** Indexes for performance:
   - `idx_training_sessions_user_date` - (user_id, session_date DESC)
@@ -92,27 +101,32 @@ This document summarizes the implementation of the Training Data Display & AI As
 ## 📋 Key Features Implemented
 
 ### Date Filtering: "Up to and Including Today"
+
 - ✅ All backend queries default to `session_date <= CURRENT_DATE`
 - ✅ Future sessions excluded from statistics by default
 - ✅ Optional `includeUpcoming` parameter to include future sessions when needed
 
 ### Single Source of Truth
+
 - ✅ Backend API (`training-sessions.cjs`) is the primary data source
 - ✅ Frontend services use backend API, not direct Supabase queries
 - ✅ localStorage used only as fallback/cache, not as source of truth
 
 ### Consistent Statistics
+
 - ✅ Centralized `training-stats-enhanced.cjs` endpoint
 - ✅ Shared `TrainingStatsCalculationService` for Angular components
 - ✅ Same calculations used across Analytics, Performance, and Game Tracker
 
 ### ACWR Calculation
+
 - ✅ Acute load: Sum of last 7 days
 - ✅ Chronic load: Average weekly load over last 28 days
 - ✅ ACWR = Acute / Chronic
 - ✅ Risk zones: detraining (<0.8), optimal (0.8-1.3), elevated (1.3-1.5), danger (>1.5)
 
 ### Weekly Volume Tracking
+
 - ✅ Total load (AU) for current week
 - ✅ Total duration (minutes)
 - ✅ Session count
@@ -125,34 +139,39 @@ This document summarizes the implementation of the Training Data Display & AI As
 ### For Existing Code Using Direct Supabase Queries
 
 **Before:**
+
 ```typescript
 // ❌ Direct Supabase query
 const { data } = await supabase
-  .from('training_sessions')
-  .select('*')
-  .eq('user_id', userId);
+  .from("training_sessions")
+  .select("*")
+  .eq("user_id", userId);
 ```
 
 **After:**
+
 ```typescript
 // ✅ Use backend API
 const sessions = await trainingDataService.getTrainingSessions({
-  includeUpcoming: false  // Default: only up to today
+  includeUpcoming: false, // Default: only up to today
 });
 ```
 
 ### For Existing Code Using localStorage
 
 **Before:**
+
 ```javascript
 // ❌ localStorage as source of truth
 const workouts = storageService.getRecentWorkouts();
 ```
 
 **After:**
+
 ```javascript
 // ✅ API first, localStorage as fallback
-const { trainingApiService } = await import('../services/training-api-service.js');
+const { trainingApiService } =
+  await import("../services/training-api-service.js");
 const workouts = await trainingApiService.getTrainingSessions({ limit: 50 });
 ```
 
@@ -161,18 +180,21 @@ const workouts = await trainingApiService.getTrainingSessions({ limit: 50 });
 ## 🧪 Testing Scenarios
 
 ### Scenario 1: User Opens App on Dec 14, 2025
+
 - ✅ Analytics shows all training sessions up to Dec 14
 - ✅ Future sessions (Dec 15+) excluded from stats
 - ✅ ACWR calculated from last 7 days (Dec 7-14)
 - ✅ Weekly volume includes sessions from current week only
 
 ### Scenario 2: User Views Training Page
+
 - ✅ Sessions loaded from backend API
 - ✅ Falls back to localStorage if API unavailable
 - ✅ Stats calculated using today as reference date
 - ✅ Future sessions shown separately if `includeUpcoming=true`
 
 ### Scenario 3: User Creates New Session
+
 - ✅ Session saved to backend via API
 - ✅ Cache cleared in `trainingApiService`
 - ✅ Next fetch returns updated data
@@ -182,7 +204,9 @@ const workouts = await trainingApiService.getTrainingSessions({ limit: 50 });
 ## 📝 API Endpoints Reference
 
 ### GET `/api/training/sessions`
+
 **Query Parameters:**
+
 - `startDate` (optional) - Filter sessions from this date
 - `endDate` (optional) - Filter sessions to this date (defaults to today)
 - `includeUpcoming` (optional, boolean) - Include future sessions (default: false)
@@ -190,6 +214,7 @@ const workouts = await trainingApiService.getTrainingSessions({ limit: 50 });
 - `limit` (optional) - Limit results (default: 50)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -210,11 +235,14 @@ const workouts = await trainingApiService.getTrainingSessions({ limit: 50 });
 ```
 
 ### GET `/training-stats-enhanced`
+
 **Query Parameters:**
+
 - `startDate` (optional) - Filter stats from this date
 - `endDate` (optional) - Filter stats to this date (defaults to today)
 
 **Response:**
+
 ```json
 {
   "success": true,

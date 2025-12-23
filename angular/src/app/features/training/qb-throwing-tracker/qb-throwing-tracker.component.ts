@@ -24,7 +24,7 @@ import { LoggerService } from "../../../core/services/logger.service";
     ButtonModule,
     InputNumberModule,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -137,7 +137,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 })
 export class QbThrowingTrackerComponent implements OnInit {
   private logger = inject(LoggerService);
-  
+
   sessionData = {
     totalThrows: 0,
     completionRate: 0,
@@ -165,4 +165,3 @@ export class QbThrowingTrackerComponent implements OnInit {
     this.logger.debug("Save session:", this.sessionData);
   }
 }
-

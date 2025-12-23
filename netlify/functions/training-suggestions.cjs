@@ -1,9 +1,9 @@
 // Netlify Function: Training Suggestions
 // Provides AI-powered training suggestions based on user history and performance
 
-const { baseHandler } = require('./utils/base-handler.cjs');
-const { createSuccessResponse } = require('./utils/error-handler.cjs');
-const { supabaseAdmin } = require('./supabase-client.cjs');
+const { baseHandler } = require("./utils/base-handler.cjs");
+const { createSuccessResponse } = require("./utils/error-handler.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 
 /**
  * Analyze user's training history to identify gaps and opportunities
@@ -13,26 +13,40 @@ async function analyzeTrainingHistory(userId) {
     // Get recent training sessions (last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
+
     const { data: sessions, error } = await supabaseAdmin
-      .from('training_sessions')
-      .select('session_type, duration_minutes, intensity_level, score, session_date, completed_at')
-      .eq('user_id', userId)
-      .gte('session_date', thirtyDaysAgo.toISOString().split('T')[0])
-      .order('session_date', { ascending: false });
+      .from("training_sessions")
+      .select(
+        "session_type, duration_minutes, intensity_level, score, session_date, completed_at",
+      )
+      .eq("user_id", userId)
+      .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
+      .order("session_date", { ascending: false });
 
     if (error) {
-      console.error('Error fetching training sessions:', error);
+      console.error("Error fetching training sessions:", error);
       return { sessions: [], error };
     }
 
     // Analyze session types
     const sessionTypes = {};
-    const totalDuration = { speed: 0, strength: 0, conditioning: 0, skill: 0, recovery: 0 };
-    const avgScores = { speed: [], strength: [], conditioning: [], skill: [], recovery: [] };
+    const totalDuration = {
+      speed: 0,
+      strength: 0,
+      conditioning: 0,
+      skill: 0,
+      recovery: 0,
+    };
+    const avgScores = {
+      speed: [],
+      strength: [],
+      conditioning: [],
+      skill: [],
+      recovery: [],
+    };
 
-    (sessions || []).forEach(session => {
-      const type = session.session_type || 'general';
+    (sessions || []).forEach((session) => {
+      const type = session.session_type || "general";
       if (!sessionTypes[type]) {
         sessionTypes[type] = 0;
       }
@@ -50,9 +64,10 @@ async function analyzeTrainingHistory(userId) {
 
     // Calculate averages
     const avgScoreByCategory = {};
-    Object.keys(avgScores).forEach(cat => {
+    Object.keys(avgScores).forEach((cat) => {
       if (avgScores[cat].length > 0) {
-        avgScoreByCategory[cat] = avgScores[cat].reduce((a, b) => a + b, 0) / avgScores[cat].length;
+        avgScoreByCategory[cat] =
+          avgScores[cat].reduce((a, b) => a + b, 0) / avgScores[cat].length;
       }
     });
 
@@ -61,10 +76,10 @@ async function analyzeTrainingHistory(userId) {
       sessionTypes,
       totalDuration,
       avgScoreByCategory,
-      totalSessions: (sessions || []).length
+      totalSessions: (sessions || []).length,
     };
   } catch (error) {
-    console.error('Error analyzing training history:', error);
+    console.error("Error analyzing training history:", error);
     return { sessions: [], error: error.message };
   }
 }
@@ -73,23 +88,43 @@ async function analyzeTrainingHistory(userId) {
  * Categorize session type into main categories
  */
 function categorizeSessionType(sessionType) {
-  const type = (sessionType || '').toLowerCase();
-  if (type.includes('speed') || type.includes('sprint') || type.includes('agility')) {
-    return 'speed';
+  const type = (sessionType || "").toLowerCase();
+  if (
+    type.includes("speed") ||
+    type.includes("sprint") ||
+    type.includes("agility")
+  ) {
+    return "speed";
   }
-  if (type.includes('strength') || type.includes('power') || type.includes('weight')) {
-    return 'strength';
+  if (
+    type.includes("strength") ||
+    type.includes("power") ||
+    type.includes("weight")
+  ) {
+    return "strength";
   }
-  if (type.includes('conditioning') || type.includes('cardio') || type.includes('endurance')) {
-    return 'conditioning';
+  if (
+    type.includes("conditioning") ||
+    type.includes("cardio") ||
+    type.includes("endurance")
+  ) {
+    return "conditioning";
   }
-  if (type.includes('skill') || type.includes('technique') || type.includes('drill')) {
-    return 'skill';
+  if (
+    type.includes("skill") ||
+    type.includes("technique") ||
+    type.includes("drill")
+  ) {
+    return "skill";
   }
-  if (type.includes('recovery') || type.includes('rest') || type.includes('stretch')) {
-    return 'recovery';
+  if (
+    type.includes("recovery") ||
+    type.includes("rest") ||
+    type.includes("stretch")
+  ) {
+    return "recovery";
   }
-  return 'general';
+  return "general";
 }
 
 /**
@@ -97,7 +132,8 @@ function categorizeSessionType(sessionType) {
  */
 function generateSuggestions(analysis, params = {}) {
   const suggestions = [];
-  const { sessionTypes, totalDuration, avgScoreByCategory, totalSessions } = analysis;
+  const { sessionTypes, totalDuration, avgScoreByCategory, totalSessions } =
+    analysis;
 
   // Check for missing training types
   const hasSpeedTraining = totalDuration.speed > 0;
@@ -110,17 +146,18 @@ function generateSuggestions(analysis, params = {}) {
   if (!hasSpeedTraining && totalSessions > 0) {
     suggestions.push({
       id: `speed-${Date.now()}`,
-      title: 'Speed & Agility Focus',
-      description: 'Add speed training to improve acceleration and agility',
+      title: "Speed & Agility Focus",
+      description: "Add speed training to improve acceleration and agility",
       formData: {
-        sessionType: 'speed',
+        sessionType: "speed",
         duration: 45,
-        equipment: ['cones', 'ladder', 'agility_poles'],
-        intensity: 'high',
-        focus: ['acceleration', 'agility', 'change_of_direction']
+        equipment: ["cones", "ladder", "agility_poles"],
+        intensity: "high",
+        focus: ["acceleration", "agility", "change_of_direction"],
       },
-      reason: 'You haven\'t done speed training recently. Speed work improves game performance.',
-      priority: 'high'
+      reason:
+        "You haven't done speed training recently. Speed work improves game performance.",
+      priority: "high",
     });
   }
 
@@ -128,17 +165,18 @@ function generateSuggestions(analysis, params = {}) {
   if (!hasStrengthTraining && totalSessions > 0) {
     suggestions.push({
       id: `strength-${Date.now()}`,
-      title: 'Strength & Power',
-      description: 'Add strength training to build power and prevent injuries',
+      title: "Strength & Power",
+      description: "Add strength training to build power and prevent injuries",
       formData: {
-        sessionType: 'strength',
+        sessionType: "strength",
         duration: 60,
-        equipment: ['weights', 'resistance_bands', 'bodyweight'],
-        intensity: 'medium',
-        focus: ['power', 'core', 'lower_body']
+        equipment: ["weights", "resistance_bands", "bodyweight"],
+        intensity: "medium",
+        focus: ["power", "core", "lower_body"],
       },
-      reason: 'Strength training complements your speed work and reduces injury risk.',
-      priority: 'high'
+      reason:
+        "Strength training complements your speed work and reduces injury risk.",
+      priority: "high",
     });
   }
 
@@ -146,17 +184,18 @@ function generateSuggestions(analysis, params = {}) {
   if (totalSessions >= 4 && !hasRecovery) {
     suggestions.push({
       id: `recovery-${Date.now()}`,
-      title: 'Recovery Session',
-      description: 'Add a recovery session to optimize performance',
+      title: "Recovery Session",
+      description: "Add a recovery session to optimize performance",
       formData: {
-        sessionType: 'recovery',
+        sessionType: "recovery",
         duration: 30,
-        equipment: ['foam_roller', 'stretch_bands'],
-        intensity: 'low',
-        focus: ['mobility', 'flexibility', 'recovery']
+        equipment: ["foam_roller", "stretch_bands"],
+        intensity: "low",
+        focus: ["mobility", "flexibility", "recovery"],
       },
-      reason: 'You\'ve been training frequently. Recovery sessions improve adaptation.',
-      priority: 'medium'
+      reason:
+        "You've been training frequently. Recovery sessions improve adaptation.",
+      priority: "medium",
     });
   }
 
@@ -164,17 +203,17 @@ function generateSuggestions(analysis, params = {}) {
   if (totalDuration.skill < totalDuration.speed && totalSessions > 2) {
     suggestions.push({
       id: `skill-${Date.now()}`,
-      title: 'Skill Development',
-      description: 'Focus on technique and skill refinement',
+      title: "Skill Development",
+      description: "Focus on technique and skill refinement",
       formData: {
-        sessionType: 'skill',
+        sessionType: "skill",
         duration: 60,
-        equipment: ['football', 'cones'],
-        intensity: 'medium',
-        focus: ['technique', 'accuracy', 'coordination']
+        equipment: ["football", "cones"],
+        intensity: "medium",
+        focus: ["technique", "accuracy", "coordination"],
       },
-      reason: 'Skill training improves game performance and technique.',
-      priority: 'medium'
+      reason: "Skill training improves game performance and technique.",
+      priority: "medium",
     });
   }
 
@@ -182,38 +221,39 @@ function generateSuggestions(analysis, params = {}) {
   if (totalDuration.conditioning < 120 && totalSessions > 0) {
     suggestions.push({
       id: `conditioning-${Date.now()}`,
-      title: 'Conditioning Work',
-      description: 'Build endurance and cardiovascular fitness',
+      title: "Conditioning Work",
+      description: "Build endurance and cardiovascular fitness",
       formData: {
-        sessionType: 'conditioning',
+        sessionType: "conditioning",
         duration: 45,
         equipment: [],
-        intensity: 'medium',
-        focus: ['endurance', 'cardiovascular', 'work_capacity']
+        intensity: "medium",
+        focus: ["endurance", "cardiovascular", "work_capacity"],
       },
-      reason: 'Conditioning improves your ability to maintain performance throughout games.',
-      priority: 'low'
+      reason:
+        "Conditioning improves your ability to maintain performance throughout games.",
+      priority: "low",
     });
   }
 
   // Check for upcoming games (from params)
   if (params.upcomingGames && params.upcomingGames.length > 0) {
     const daysUntilGame = params.upcomingGames[0].daysUntil || 0;
-    
+
     if (daysUntilGame <= 3 && daysUntilGame > 0) {
       suggestions.push({
         id: `taper-${Date.now()}`,
-        title: 'Pre-Game Taper',
-        description: 'Reduce intensity before your upcoming game',
+        title: "Pre-Game Taper",
+        description: "Reduce intensity before your upcoming game",
         formData: {
-          sessionType: 'recovery',
+          sessionType: "recovery",
           duration: 30,
           equipment: [],
-          intensity: 'low',
-          focus: ['mobility', 'activation', 'mental_preparation']
+          intensity: "low",
+          focus: ["mobility", "activation", "mental_preparation"],
         },
         reason: `Game in ${daysUntilGame} days. Tapering optimizes performance.`,
-        priority: 'high'
+        priority: "high",
       });
     }
   }
@@ -222,17 +262,17 @@ function generateSuggestions(analysis, params = {}) {
   if (totalSessions === 0) {
     suggestions.push({
       id: `starter-${Date.now()}`,
-      title: 'Balanced Training Plan',
-      description: 'Start with a well-rounded training session',
+      title: "Balanced Training Plan",
+      description: "Start with a well-rounded training session",
       formData: {
-        sessionType: 'conditioning',
+        sessionType: "conditioning",
         duration: 45,
-        equipment: ['football'],
-        intensity: 'medium',
-        focus: ['endurance', 'skill', 'general_fitness']
+        equipment: ["football"],
+        intensity: "medium",
+        focus: ["endurance", "skill", "general_fitness"],
       },
-      reason: 'Begin with a balanced session to establish your baseline.',
-      priority: 'high'
+      reason: "Begin with a balanced session to establish your baseline.",
+      priority: "high",
     });
   }
 
@@ -245,13 +285,13 @@ function generateSuggestions(analysis, params = {}) {
 async function handleRequest(event, context, { userId }) {
   try {
     let params = {};
-    
+
     // Parse request body if POST
-    if (event.httpMethod === 'POST' && event.body) {
+    if (event.httpMethod === "POST" && event.body) {
       try {
         params = JSON.parse(event.body);
       } catch (e) {
-        console.error('Error parsing request body:', e);
+        console.error("Error parsing request body:", e);
       }
     }
 
@@ -271,22 +311,21 @@ async function handleRequest(event, context, { userId }) {
       analysis: {
         totalSessions: analysis.totalSessions,
         sessionTypes: analysis.sessionTypes,
-        recommendations: suggestions.length
-      }
+        recommendations: suggestions.length,
+      },
     });
   } catch (error) {
-    console.error('Error in training-suggestions handler:', error);
+    console.error("Error in training-suggestions handler:", error);
     throw error;
   }
 }
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'Training-Suggestions',
-    allowedMethods: ['GET', 'POST'],
-    rateLimitType: 'READ',
+    functionName: "Training-Suggestions",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "READ",
     requireAuth: true,
-    handler: handleRequest
+    handler: handleRequest,
   });
 };
-

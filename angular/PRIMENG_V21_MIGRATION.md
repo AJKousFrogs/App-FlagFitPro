@@ -12,22 +12,24 @@ PrimeNG v21 introduced **breaking changes** in component names to align with mod
 
 ### Import Path Changes
 
-| Old Import (v16-v17) | New Import (v21) |
-|----------------------|------------------|
-| `import { DropdownModule } from "primeng/dropdown"` | `import { Select } from "primeng/select"` |
-| `import { CalendarModule } from "primeng/calendar"` | `import { DatePicker } from "primeng/datepicker"` |
-| `import { InputTextareaModule } from "primeng/inputtextarea"` | `import { Textarea } from "primeng/textarea"` |
-| `import { TabViewModule } from "primeng/tabview"` | `import { Tabs } from "primeng/tabs"` |
-| `import { InputSwitchModule } from "primeng/inputswitch"` | `import { ToggleSwitch } from "primeng/toggleswitch"` |
-| `import { InputTextarea } from "primeng/inputtextarea"` | `import { Textarea } from "primeng/textarea"` |
+| Old Import (v16-v17)                                          | New Import (v21)                                      |
+| ------------------------------------------------------------- | ----------------------------------------------------- |
+| `import { DropdownModule } from "primeng/dropdown"`           | `import { Select } from "primeng/select"`             |
+| `import { CalendarModule } from "primeng/calendar"`           | `import { DatePicker } from "primeng/datepicker"`     |
+| `import { InputTextareaModule } from "primeng/inputtextarea"` | `import { Textarea } from "primeng/textarea"`         |
+| `import { TabViewModule } from "primeng/tabview"`             | `import { Tabs } from "primeng/tabs"`                 |
+| `import { InputSwitchModule } from "primeng/inputswitch"`     | `import { ToggleSwitch } from "primeng/toggleswitch"` |
+| `import { InputTextarea } from "primeng/inputtextarea"`       | `import { Textarea } from "primeng/textarea"`         |
 
 ### Naming Pattern Changes
 
 **Old (Module-based)**:
+
 - Suffix: `Module`
 - Example: `DropdownModule`, `CalendarModule`
 
 **New (Standalone)**:
+
 - No suffix (direct component name)
 - Example: `Select`, `DatePicker`
 
@@ -38,29 +40,21 @@ PrimeNG v21 introduced **breaking changes** in component names to align with mod
 ### 1. analytics.component.ts
 
 **Current (Broken)**:
+
 ```typescript
 import { DropdownModule } from "primeng/dropdown";
 import { TabViewModule } from "primeng/tabview";
 
-imports: [
-  CommonModule,
-  DropdownModule,
-  ChartModule,
-  TabViewModule,
-]
+imports: [CommonModule, DropdownModule, ChartModule, TabViewModule];
 ```
 
 **Fixed**:
+
 ```typescript
 import { Select } from "primeng/select";
 import { Tabs } from "primeng/tabs";
 
-imports: [
-  CommonModule,
-  Select,
-  ChartModule,
-  Tabs,
-]
+imports: [CommonModule, Select, ChartModule, Tabs];
 ```
 
 ---
@@ -68,6 +62,7 @@ imports: [
 ### 2. game-tracker.component.ts
 
 **Current (Broken)**:
+
 ```typescript
 import { InputTextareaModule } from "primeng/inputtextarea";
 import { CalendarModule } from "primeng/calendar";
@@ -81,10 +76,11 @@ imports: [
   TableModule,
   CalendarModule,
   DropdownModule,
-]
+];
 ```
 
 **Fixed**:
+
 ```typescript
 import { Textarea } from "primeng/textarea";
 import { DatePicker } from "primeng/datepicker";
@@ -98,13 +94,14 @@ imports: [
   TableModule,
   DatePicker,
   Select,
-]
+];
 ```
 
 **Additional Fix Required**:
+
 ```typescript
 // Add missing FormsModule import
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from "@angular/forms";
 ```
 
 ---
@@ -112,23 +109,19 @@ import { FormsModule } from '@angular/forms';
 ### 3. performance-tracking.component.ts
 
 **Current (Broken)**:
+
 ```typescript
 import { CalendarModule } from "primeng/calendar";
 
-imports: [
-  CommonModule,
-  CalendarModule,
-]
+imports: [CommonModule, CalendarModule];
 ```
 
 **Fixed**:
+
 ```typescript
 import { DatePicker } from "primeng/datepicker";
 
-imports: [
-  CommonModule,
-  DatePicker,
-]
+imports: [CommonModule, DatePicker];
 ```
 
 ---
@@ -136,23 +129,19 @@ imports: [
 ### 4. profile.component.ts
 
 **Current (Broken)**:
+
 ```typescript
 import { TabViewModule } from "primeng/tabview";
 
-imports: [
-  CommonModule,
-  TabViewModule,
-]
+imports: [CommonModule, TabViewModule];
 ```
 
 **Fixed**:
+
 ```typescript
 import { Tabs } from "primeng/tabs";
 
-imports: [
-  CommonModule,
-  Tabs,
-]
+imports: [CommonModule, Tabs];
 ```
 
 ---
@@ -160,27 +149,21 @@ imports: [
 ### 5. settings.component.ts
 
 **Current (Broken)**:
+
 ```typescript
 import { InputSwitchModule } from "primeng/inputswitch";
 import { DropdownModule } from "primeng/dropdown";
 
-imports: [
-  CommonModule,
-  InputSwitchModule,
-  DropdownModule,
-]
+imports: [CommonModule, InputSwitchModule, DropdownModule];
 ```
 
 **Fixed**:
+
 ```typescript
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { Select } from "primeng/select";
 
-imports: [
-  CommonModule,
-  ToggleSwitch,
-  Select,
-]
+imports: [CommonModule, ToggleSwitch, Select];
 ```
 
 ---
@@ -188,23 +171,19 @@ imports: [
 ### 6. tournaments.component.ts
 
 **Current (Broken)**:
+
 ```typescript
 import { TabViewModule } from "primeng/tabview";
 
-imports: [
-  CommonModule,
-  TabViewModule,
-]
+imports: [CommonModule, TabViewModule];
 ```
 
 **Fixed**:
+
 ```typescript
 import { Tabs } from "primeng/tabs";
 
-imports: [
-  CommonModule,
-  Tabs,
-]
+imports: [CommonModule, Tabs];
 ```
 
 ---
@@ -212,23 +191,19 @@ imports: [
 ### 7. wellness.component.ts
 
 **Current (Broken)**:
+
 ```typescript
 import { CalendarModule } from "primeng/calendar";
 
-imports: [
-  CommonModule,
-  CalendarModule,
-]
+imports: [CommonModule, CalendarModule];
 ```
 
 **Fixed**:
+
 ```typescript
 import { DatePicker } from "primeng/datepicker";
 
-imports: [
-  CommonModule,
-  DatePicker,
-]
+imports: [CommonModule, DatePicker];
 ```
 
 ---
@@ -236,23 +211,19 @@ imports: [
 ### 8. community.component.ts
 
 **Current (Broken)**:
+
 ```typescript
 import { InputTextarea } from "primeng/inputtextarea";
 
-imports: [
-  CommonModule,
-  InputTextarea,
-]
+imports: [CommonModule, InputTextarea];
 ```
 
 **Fixed**:
+
 ```typescript
 import { Textarea } from "primeng/textarea";
 
-imports: [
-  CommonModule,
-  Textarea,
-]
+imports: [CommonModule, Textarea];
 ```
 
 ---
@@ -260,23 +231,19 @@ imports: [
 ### 9. smart-breadcrumbs.component.ts
 
 **Current (Broken)**:
+
 ```typescript
 import { DropdownModule } from "primeng/dropdown";
 
-imports: [
-  CommonModule,
-  DropdownModule,
-]
+imports: [CommonModule, DropdownModule];
 ```
 
 **Fixed**:
+
 ```typescript
 import { Select } from "primeng/select";
 
-imports: [
-  CommonModule,
-  Select,
-]
+imports: [CommonModule, Select];
 ```
 
 ---
@@ -286,11 +253,13 @@ imports: [
 ### Dropdown → Select
 
 **Old Template**:
+
 ```html
 <p-dropdown [options]="items" [(ngModel)]="selectedItem"></p-dropdown>
 ```
 
 **New Template**:
+
 ```html
 <p-select [options]="items" [(ngModel)]="selectedItem"></p-select>
 ```
@@ -298,11 +267,13 @@ imports: [
 ### Calendar → DatePicker
 
 **Old Template**:
+
 ```html
 <p-calendar [(ngModel)]="date" [showTime]="true"></p-calendar>
 ```
 
 **New Template**:
+
 ```html
 <p-datepicker [(ngModel)]="date" [showTime]="true"></p-datepicker>
 ```
@@ -310,6 +281,7 @@ imports: [
 ### TabView → Tabs
 
 **Old Template**:
+
 ```html
 <p-tabView>
   <p-tabPanel header="Tab 1">Content 1</p-tabPanel>
@@ -318,6 +290,7 @@ imports: [
 ```
 
 **New Template**:
+
 ```html
 <p-tabs>
   <p-tabpanel header="Tab 1">Content 1</p-tabpanel>
@@ -328,11 +301,13 @@ imports: [
 ### InputTextarea → Textarea
 
 **Old Template**:
+
 ```html
 <textarea pInputTextarea [(ngModel)]="text"></textarea>
 ```
 
 **New Template**:
+
 ```html
 <p-textarea [(ngModel)]="text"></p-textarea>
 ```
@@ -347,7 +322,7 @@ You can use this find-and-replace script to update all files at once:
 
 1. Open VS Code
 2. Press `Cmd+Shift+H` (Mac) or `Ctrl+Shift+H` (Windows)
-3. Enable regex mode (.*| icon)
+3. Enable regex mode (.\*| icon)
 4. Run these replacements:
 
 ```
@@ -435,6 +410,7 @@ echo "✅ Migration complete! Run 'npm run build' to verify."
 ## 📚 Official PrimeNG v21 Migration Guide
 
 For complete details, see:
+
 - https://primeng.org/installation
 - https://github.com/primefaces/primeng/releases/tag/21.0.0
 
@@ -444,12 +420,13 @@ For complete details, see:
 
 **Affected Files**: 9 components
 **Required Changes**:
+
 - TypeScript imports: ~20 lines
 - Template updates: ~15 lines
-**Estimated Time**: 15-30 minutes (with script) or 1-2 hours (manual)
+  **Estimated Time**: 15-30 minutes (with script) or 1-2 hours (manual)
 
 **After migration**, your application should build successfully!
 
 ---
 
-*Migration guide created: December 7, 2025*
+_Migration guide created: December 7, 2025_

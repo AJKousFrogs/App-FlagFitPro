@@ -13,6 +13,7 @@ This document outlines the comprehensive upgrades made to the build system and t
 ### Enhanced Build Scripts
 
 #### Main Build Script (`scripts/build.js`)
+
 - Comprehensive build pipeline
 - CSS minification with PostCSS and cssnano
 - JavaScript bundling and minification with esbuild
@@ -22,6 +23,7 @@ This document outlines the comprehensive upgrades made to the build system and t
 - Bundle analysis support (`--analyze`)
 
 #### JavaScript Build Script (`scripts/build-js.js`)
+
 - Uses esbuild for fast bundling
 - Tree-shaking enabled
 - Source maps generation
@@ -73,6 +75,7 @@ npm run clean:all
 ### Enhanced Vitest Configuration
 
 #### Key Features
+
 - **Coverage Thresholds**: Enforced minimum coverage (70% lines, functions, statements; 65% branches)
 - **Parallel Execution**: Multi-threaded test execution (up to 4 threads)
 - **Multiple Reporters**: Text, JSON, HTML, LCOV, JSON Summary
@@ -81,6 +84,7 @@ npm run clean:all
 - **Test Isolation**: Each test runs in isolation
 
 #### Coverage Configuration
+
 - Excludes test files, config files, and build artifacts
 - Generates multiple report formats
 - HTML coverage report for easy viewing
@@ -89,9 +93,10 @@ npm run clean:all
 ### Enhanced Playwright Configuration
 
 #### Key Features
+
 - **Multiple Browsers**: Chromium, Firefox, WebKit
 - **Mobile Testing**: Mobile Chrome and Safari
-- **CI Optimizations**: 
+- **CI Optimizations**:
   - Retry on failure
   - Trace retention on failure
   - Video recording on failure
@@ -147,6 +152,7 @@ npm run test:cross-browser
 ### GitHub Actions Workflows
 
 #### CI Pipeline (`.github/workflows/ci.yml`)
+
 1. **Lint & Format Check**
    - ESLint validation
    - Prettier format check
@@ -178,12 +184,14 @@ npm run test:cross-browser
    - Dependency vulnerability scanning
 
 #### Release Pipeline (`.github/workflows/release.yml`)
+
 - Triggered on version tags (`v*.*.*`)
 - Production build
 - Release archive creation
 - Artifact upload
 
 ### CI Features
+
 - **Parallel Execution**: Tests run in parallel for faster feedback
 - **Caching**: npm cache for faster installs
 - **Artifacts**: Build outputs and test reports preserved
@@ -193,11 +201,13 @@ npm run test:cross-browser
 ## 📊 Performance Improvements
 
 ### Build Performance
+
 - **esbuild**: 10-100x faster than traditional bundlers
 - **Parallel Processing**: CSS and JS build in parallel
 - **Incremental Builds**: Watch mode for faster development
 
 ### Test Performance
+
 - **Parallel Test Execution**: Up to 4 threads for unit/integration tests
 - **Test Isolation**: Prevents test interference
 - **Smart Retries**: Only retry failed tests
@@ -206,6 +216,7 @@ npm run test:cross-browser
 ## 🛠 Development Workflow
 
 ### Local Development
+
 ```bash
 # Start development server
 npm run dev
@@ -221,6 +232,7 @@ npm run test:e2e:ui
 ```
 
 ### Pre-commit Checklist
+
 1. Run linter: `npm run lint`
 2. Check formatting: `npm run lint:format`
 3. Run type check: `npm run type-check`
@@ -228,6 +240,7 @@ npm run test:e2e:ui
 5. Build: `npm run build`
 
 ### CI Pipeline Triggers
+
 - Push to `main` or `develop` branches
 - Pull requests to `main` or `develop`
 - Version tags for releases
@@ -242,11 +255,13 @@ npm run test:e2e:ui
 ## 🔍 Debugging
 
 ### Build Issues
+
 - Check build logs for specific errors
 - Use `--analyze` flag for bundle analysis
 - Verify environment variables are set
 
 ### Test Issues
+
 - Use `test:ui` for interactive debugging
 - Check coverage reports for untested code
 - Use `test:e2e:debug` for E2E debugging
@@ -266,4 +281,3 @@ npm run test:e2e:ui
 3. Run test suite: `npm run test:all`
 4. Review coverage: `npm run test:coverage:html`
 5. Set up CI/CD: Push to GitHub to trigger workflows
-

@@ -4,37 +4,37 @@ import {
   computed,
   ChangeDetectionStrategy,
   inject,
-} from '@angular/core';
+} from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule,
-} from '@angular/forms';
+} from "@angular/forms";
 
-import { FormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { StepsModule } from 'primeng/steps';
-import { ButtonModule } from 'primeng/button';
-import { SelectModule } from 'primeng/select';
-import { SliderModule } from 'primeng/slider';
-import { ChipModule } from 'primeng/chip';
-import { TagModule } from 'primeng/tag';
-import { TimelineModule } from 'primeng/timeline';
-import { DialogModule } from 'primeng/dialog';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { AIService } from '../../../core/services/ai.service';
-import { WeatherService } from '../../../core/services/weather.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { LoggerService } from '../../../core/services/logger.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { StepsModule } from "primeng/steps";
+import { ButtonModule } from "primeng/button";
+import { SelectModule } from "primeng/select";
+import { SliderModule } from "primeng/slider";
+import { ChipModule } from "primeng/chip";
+import { TagModule } from "primeng/tag";
+import { TimelineModule } from "primeng/timeline";
+import { DialogModule } from "primeng/dialog";
+import { ToggleButtonModule } from "primeng/togglebutton";
+import { AIService } from "../../../core/services/ai.service";
+import { WeatherService } from "../../../core/services/weather.service";
+import { AuthService } from "../../../core/services/auth.service";
+import { LoggerService } from "../../../core/services/logger.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 interface TrainingExercise {
   id: string;
   name: string;
   category: string;
   duration: number;
-  intensity: 'low' | 'medium' | 'high';
+  intensity: "low" | "medium" | "high";
   equipment: string[];
   description: string;
   videoUrl?: string;
@@ -51,7 +51,7 @@ interface Goal {
 }
 
 @Component({
-  selector: 'app-training-builder',
+  selector: "app-training-builder",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -66,13 +66,13 @@ interface Goal {
     TagModule,
     TimelineModule,
     DialogModule,
-    ToggleButtonModule
-],
+    ToggleButtonModule,
+  ],
   template: `
     <p-card header="Smart Training Session Builder" class="training-builder">
       <p-steps [(activeIndex)]="activeStep" [model]="steps" [readonly]="false">
       </p-steps>
-    
+
       <div class="step-content-wrapper">
         <!-- Step 1: Session Goals -->
         @if (activeStep === 0) {
@@ -84,7 +84,7 @@ interface Goal {
                   class="goal-card"
                   [class.selected]="isGoalSelected(goal.id)"
                   (click)="toggleGoal(goal.id)"
-                  >
+                >
                   <i [class]="goal.icon" [style.color]="goal.color"></i>
                   <h4>{{ goal.name }}</h4>
                   <p>{{ goal.description }}</p>
@@ -93,7 +93,7 @@ interface Goal {
                       value="AI Recommended"
                       severity="success"
                       icon="pi pi-sparkles"
-                      >
+                    >
                     </p-tag>
                   }
                 </div>
@@ -105,12 +105,12 @@ interface Goal {
                 icon="pi pi-arrow-right"
                 [disabled]="selectedGoals().length === 0"
                 (onClick)="activeStep = 1"
-                >
+              >
               </p-button>
             </div>
           </div>
         }
-    
+
         <!-- Step 2: Session Parameters -->
         @if (activeStep === 1) {
           <div class="step-content">
@@ -123,12 +123,11 @@ interface Goal {
                     [min]="15"
                     [max]="120"
                     [step]="15"
-                    >
+                  >
                   </p-slider>
-                  <span class="duration-display">{{
-                    sessionForm.get('duration')?.value
-                    }}
-                  minutes</span>
+                  <span class="duration-display"
+                    >{{ sessionForm.get("duration")?.value }} minutes</span
+                  >
                 </div>
                 <div class="form-field">
                   <label>Intensity Level</label>
@@ -138,7 +137,7 @@ interface Goal {
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Select intensity"
-                    >
+                  >
                     <ng-template let-option pTemplate="item">
                       <div class="intensity-option">
                         <span
@@ -156,7 +155,7 @@ interface Goal {
                 <p-chips
                   formControlName="equipment"
                   placeholder="Add equipment (optional)"
-                  >
+                >
                 </p-chips>
               </div>
               <!-- Weather-based recommendations -->
@@ -164,138 +163,139 @@ interface Goal {
                 <div class="weather-notice">
                   <i class="pi pi-sun"></i>
                   <span
-                    >{{ weatherData()?.condition }}, {{ weatherData()?.temperature }}°F</span
-                    >
-                    <p-tag
-                      [value]="weatherData()?.recommendation"
-                      [severity]="getWeatherSeverity()"
-                      >
-                    </p-tag>
-                  </div>
-                }
-              </form>
-              <div class="step-actions">
-                <p-button
-                  label="Previous"
-                  icon="pi pi-arrow-left"
-                  severity="secondary"
-                  [outlined]="true"
-                  (onClick)="activeStep = 0"
+                    >{{ weatherData()?.condition }},
+                    {{ weatherData()?.temperature }}°F</span
                   >
-                </p-button>
-                <p-button
-                  label="Generate Session"
-                  icon="pi pi-sparkles"
-                  [disabled]="sessionForm.invalid"
-                  (onClick)="generateSession(); activeStep = 2"
+                  <p-tag
+                    [value]="weatherData()?.recommendation"
+                    [severity]="getWeatherSeverity()"
                   >
-                </p-button>
-              </div>
+                  </p-tag>
+                </div>
+              }
+            </form>
+            <div class="step-actions">
+              <p-button
+                label="Previous"
+                icon="pi pi-arrow-left"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="activeStep = 0"
+              >
+              </p-button>
+              <p-button
+                label="Generate Session"
+                icon="pi pi-sparkles"
+                [disabled]="sessionForm.invalid"
+                (onClick)="generateSession(); activeStep = 2"
+              >
+              </p-button>
             </div>
-          }
-    
-          <!-- Step 3: Generated Session -->
-          @if (activeStep === 2) {
-            <div class="step-content">
-              <div class="session-overview">
-                <h3>Generated Training Session</h3>
-                <div class="session-stats">
-                  <div class="stat">
-                    <span class="label">Duration</span>
-                    <span class="value">{{ totalDuration() }} min</span>
-                  </div>
-                  <div class="stat">
-                    <span class="label">Exercises</span>
-                    <span class="value">{{ generatedExercises().length }}</span>
-                  </div>
-                  <div class="stat">
-                    <span class="label">Intensity</span>
-                    <p-tag
-                      [value]="sessionForm.get('intensity')?.value"
-                      [severity]="getIntensitySeverity()"
-                    ></p-tag>
-                  </div>
+          </div>
+        }
+
+        <!-- Step 3: Generated Session -->
+        @if (activeStep === 2) {
+          <div class="step-content">
+            <div class="session-overview">
+              <h3>Generated Training Session</h3>
+              <div class="session-stats">
+                <div class="stat">
+                  <span class="label">Duration</span>
+                  <span class="value">{{ totalDuration() }} min</span>
+                </div>
+                <div class="stat">
+                  <span class="label">Exercises</span>
+                  <span class="value">{{ generatedExercises().length }}</span>
+                </div>
+                <div class="stat">
+                  <span class="label">Intensity</span>
+                  <p-tag
+                    [value]="sessionForm.get('intensity')?.value"
+                    [severity]="getIntensitySeverity()"
+                  ></p-tag>
                 </div>
               </div>
-              <!-- Exercise Timeline -->
-              <p-timeline
-                [value]="timelineEvents()"
-                layout="vertical"
-                class="session-timeline"
-                >
-                <ng-template pTemplate="marker" let-event>
-                  <div class="timeline-marker" [class]="'marker-' + event.type">
-                    <i [class]="event.icon"></i>
-                  </div>
-                </ng-template>
-                <ng-template pTemplate="content" let-event>
-                  <p-card class="timeline-card">
-                    <div class="exercise-header">
-                      <h4>{{ event.title }}</h4>
-                      <div class="exercise-meta">
-                        <span class="duration">{{ event.duration }} min</span>
-                        @if (event.aiGenerated) {
-                          <p-tag
-                            value="AI Generated"
-                            severity="info"
-                            size="small"
-                            >
-                          </p-tag>
-                        }
-                      </div>
-                    </div>
-                    <p class="exercise-description">{{ event.description }}</p>
-                    <div class="exercise-actions">
-                      <p-button
-                        icon="pi pi-play"
-                        label="Preview"
-                        size="small"
-                        [text]="true"
-                        (onClick)="previewExercise(event)"
-                        >
-                      </p-button>
-                      <p-button
-                        icon="pi pi-pencil"
-                        label="Modify"
-                        size="small"
-                        [text]="true"
-                        (onClick)="modifyExercise(event)"
-                        >
-                      </p-button>
-                    </div>
-                  </p-card>
-                </ng-template>
-              </p-timeline>
-              <div class="step-actions">
-                <p-button
-                  label="Previous"
-                  icon="pi pi-arrow-left"
-                  severity="secondary"
-                  [outlined]="true"
-                  (onClick)="activeStep = 1"
-                  >
-                </p-button>
-                <p-button
-                  label="Start Session"
-                  icon="pi pi-play"
-                  severity="success"
-                  (onClick)="startSession()"
-                  >
-                </p-button>
-                <p-button
-                  label="Save for Later"
-                  icon="pi pi-bookmark"
-                  severity="secondary"
-                  [outlined]="true"
-                  (onClick)="saveSession()"
-                  >
-                </p-button>
-              </div>
             </div>
-          }
-        </div>
-      </p-card>
-    `,
+            <!-- Exercise Timeline -->
+            <p-timeline
+              [value]="timelineEvents()"
+              layout="vertical"
+              class="session-timeline"
+            >
+              <ng-template pTemplate="marker" let-event>
+                <div class="timeline-marker" [class]="'marker-' + event.type">
+                  <i [class]="event.icon"></i>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="content" let-event>
+                <p-card class="timeline-card">
+                  <div class="exercise-header">
+                    <h4>{{ event.title }}</h4>
+                    <div class="exercise-meta">
+                      <span class="duration">{{ event.duration }} min</span>
+                      @if (event.aiGenerated) {
+                        <p-tag
+                          value="AI Generated"
+                          severity="info"
+                          size="small"
+                        >
+                        </p-tag>
+                      }
+                    </div>
+                  </div>
+                  <p class="exercise-description">{{ event.description }}</p>
+                  <div class="exercise-actions">
+                    <p-button
+                      icon="pi pi-play"
+                      label="Preview"
+                      size="small"
+                      [text]="true"
+                      (onClick)="previewExercise(event)"
+                    >
+                    </p-button>
+                    <p-button
+                      icon="pi pi-pencil"
+                      label="Modify"
+                      size="small"
+                      [text]="true"
+                      (onClick)="modifyExercise(event)"
+                    >
+                    </p-button>
+                  </div>
+                </p-card>
+              </ng-template>
+            </p-timeline>
+            <div class="step-actions">
+              <p-button
+                label="Previous"
+                icon="pi pi-arrow-left"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="activeStep = 1"
+              >
+              </p-button>
+              <p-button
+                label="Start Session"
+                icon="pi pi-play"
+                severity="success"
+                (onClick)="startSession()"
+              >
+              </p-button>
+              <p-button
+                label="Save for Later"
+                icon="pi pi-bookmark"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="saveSession()"
+              >
+              </p-button>
+            </div>
+          </div>
+        }
+      </div>
+    </p-card>
+  `,
   styles: [
     `
       .training-builder {
@@ -547,9 +547,9 @@ export class TrainingBuilderComponent {
   activeStep = 0;
 
   steps = [
-    { label: 'Session Goals' },
-    { label: 'Parameters' },
-    { label: 'Your Session' },
+    { label: "Session Goals" },
+    { label: "Parameters" },
+    { label: "Your Session" },
   ];
 
   sessionForm: FormGroup;
@@ -560,47 +560,50 @@ export class TrainingBuilderComponent {
 
   availableGoals: Goal[] = [
     {
-      id: 'speed',
-      name: 'Speed Development',
-      description: 'Improve sprint speed and acceleration',
-      icon: 'pi pi-bolt',
-      color: '#10c96b',
+      id: "speed",
+      name: "Speed Development",
+      description: "Improve sprint speed and acceleration",
+      icon: "pi pi-bolt",
+      color: "#10c96b",
       aiRecommended: true,
     },
     {
-      id: 'agility',
-      name: 'Agility Training',
-      description: 'Enhance quick direction changes',
-      icon: 'pi pi-refresh',
-      color: '#f1c40f',
+      id: "agility",
+      name: "Agility Training",
+      description: "Enhance quick direction changes",
+      icon: "pi pi-refresh",
+      color: "#f1c40f",
       aiRecommended: false,
     },
     {
-      id: 'endurance',
-      name: 'Endurance Building',
-      description: 'Build cardiovascular stamina',
-      icon: 'pi pi-heart',
-      color: '#ef4444',
+      id: "endurance",
+      name: "Endurance Building",
+      description: "Build cardiovascular stamina",
+      icon: "pi pi-heart",
+      color: "#ef4444",
       aiRecommended: false,
     },
     {
-      id: 'skills',
-      name: 'Skill Development',
-      description: 'Practice position-specific skills',
-      icon: 'pi pi-star',
-      color: '#8b5cf6',
+      id: "skills",
+      name: "Skill Development",
+      description: "Practice position-specific skills",
+      icon: "pi pi-star",
+      color: "#8b5cf6",
       aiRecommended: true,
     },
   ];
 
   intensityLevels = [
-    { label: 'Light', value: 'low' },
-    { label: 'Moderate', value: 'medium' },
-    { label: 'Intense', value: 'high' },
+    { label: "Light", value: "low" },
+    { label: "Moderate", value: "medium" },
+    { label: "Intense", value: "high" },
   ];
 
   totalDuration = computed(() =>
-    this.generatedExercises().reduce((sum, exercise) => sum + exercise.duration, 0)
+    this.generatedExercises().reduce(
+      (sum, exercise) => sum + exercise.duration,
+      0,
+    ),
   );
 
   timelineEvents = computed(() => {
@@ -609,11 +612,11 @@ export class TrainingBuilderComponent {
 
     // Warmup
     events.push({
-      type: 'warmup',
-      icon: 'pi pi-sun',
-      title: 'Warm-up',
+      type: "warmup",
+      icon: "pi pi-sun",
+      title: "Warm-up",
       duration: 10,
-      description: 'Dynamic stretching and light movement',
+      description: "Dynamic stretching and light movement",
       aiGenerated: false,
     });
     currentTime += 10;
@@ -621,8 +624,8 @@ export class TrainingBuilderComponent {
     // Main exercises
     this.generatedExercises().forEach((exercise, index) => {
       events.push({
-        type: 'exercise',
-        icon: 'pi pi-play',
+        type: "exercise",
+        icon: "pi pi-play",
         title: exercise.name,
         duration: exercise.duration,
         description: exercise.description,
@@ -633,11 +636,11 @@ export class TrainingBuilderComponent {
       // Add rest period between exercises
       if (index < this.generatedExercises().length - 1) {
         events.push({
-          type: 'rest',
-          icon: 'pi pi-pause',
-          title: 'Rest Period',
+          type: "rest",
+          icon: "pi pi-pause",
+          title: "Rest Period",
           duration: 2,
-          description: 'Active recovery and hydration',
+          description: "Active recovery and hydration",
           aiGenerated: false,
         });
         currentTime += 2;
@@ -646,11 +649,11 @@ export class TrainingBuilderComponent {
 
     // Cooldown
     events.push({
-      type: 'cooldown',
-      icon: 'pi pi-check',
-      title: 'Cool-down',
+      type: "cooldown",
+      icon: "pi pi-check",
+      title: "Cool-down",
       duration: 10,
-      description: 'Static stretching and flexibility work',
+      description: "Static stretching and flexibility work",
       aiGenerated: false,
     });
 
@@ -660,11 +663,14 @@ export class TrainingBuilderComponent {
   constructor() {
     // Initialize form
     this.sessionForm = this.fb.group({
-      duration: [60, [Validators.required, Validators.min(15), Validators.max(120)]],
-      intensity: ['medium', Validators.required],
+      duration: [
+        60,
+        [Validators.required, Validators.min(15), Validators.max(120)],
+      ],
+      intensity: ["medium", Validators.required],
       equipment: [[]],
     });
-    
+
     // Angular 21: Initialize in constructor instead of OnInit
     this.loadWeatherData();
     this.loadAISuggestions();
@@ -690,7 +696,7 @@ export class TrainingBuilderComponent {
           if (suggestions && suggestions.length > 0) {
             this.availableGoals = this.availableGoals.map((goal) => {
               const suggestion = suggestions.find(
-                (s) => s.formData?.sessionType === goal.id
+                (s) => s.formData?.sessionType === goal.id,
               );
               return {
                 ...goal,
@@ -701,7 +707,7 @@ export class TrainingBuilderComponent {
         },
         error: () => {
           // Continue with default goals if AI service fails
-          this.logger.debug('AI service not available, using default goals');
+          this.logger.debug("AI service not available, using default goals");
         },
       });
   }
@@ -714,16 +720,16 @@ export class TrainingBuilderComponent {
     this.selectedGoals.update((current) =>
       current.includes(goalId)
         ? current.filter((id) => id !== goalId)
-        : [...current, goalId]
+        : [...current, goalId],
     );
   }
 
   generateSession() {
     // AI-powered session generation based on goals and parameters
-    const duration = this.sessionForm.get('duration')?.value || 60;
-    const intensity = this.sessionForm.get('intensity')?.value || 'medium';
+    const duration = this.sessionForm.get("duration")?.value || 60;
+    const intensity = this.sessionForm.get("intensity")?.value || "medium";
     const goals = this.selectedGoals();
-    const equipment = this.sessionForm.get('equipment')?.value || [];
+    const equipment = this.sessionForm.get("equipment")?.value || [];
 
     // Try AI service first
     const user = this.authService.getUser();
@@ -734,49 +740,49 @@ export class TrainingBuilderComponent {
           recentPerformance: [],
           upcomingGames: [],
         })
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (suggestions) => {
-          // Use AI suggestions if available
-          if (suggestions && suggestions.length > 0) {
-            const aiExercises = this.convertAISuggestionsToExercises(
-              suggestions,
+        .pipe(takeUntilDestroyed())
+        .subscribe({
+          next: (suggestions) => {
+            // Use AI suggestions if available
+            if (suggestions && suggestions.length > 0) {
+              const aiExercises = this.convertAISuggestionsToExercises(
+                suggestions,
+                duration,
+                intensity,
+                equipment,
+              );
+              if (aiExercises.length > 0) {
+                this.generatedExercises.set(aiExercises);
+                return;
+              }
+            }
+            // Fallback to rule-based generation
+            const exercises = this.generateExercisesForGoals(
+              goals,
               duration,
               intensity,
-              equipment
+              equipment,
             );
-            if (aiExercises.length > 0) {
-              this.generatedExercises.set(aiExercises);
-              return;
-            }
-          }
-          // Fallback to rule-based generation
-          const exercises = this.generateExercisesForGoals(
-            goals,
-            duration,
-            intensity,
-            equipment
-          );
-          this.generatedExercises.set(exercises);
-        },
-        error: () => {
-          // Fallback to rule-based generation
-          const exercises = this.generateExercisesForGoals(
-            goals,
-            duration,
-            intensity,
-            equipment
-          );
-          this.generatedExercises.set(exercises);
-        },
-      });
+            this.generatedExercises.set(exercises);
+          },
+          error: () => {
+            // Fallback to rule-based generation
+            const exercises = this.generateExercisesForGoals(
+              goals,
+              duration,
+              intensity,
+              equipment,
+            );
+            this.generatedExercises.set(exercises);
+          },
+        });
     } else {
       // Fallback to rule-based generation
       const exercises = this.generateExercisesForGoals(
         goals,
         duration,
         intensity,
-        equipment
+        equipment,
       );
       this.generatedExercises.set(exercises);
     }
@@ -786,14 +792,14 @@ export class TrainingBuilderComponent {
     suggestions: any[],
     duration: number,
     intensity: string,
-    equipment: string[]
+    equipment: string[],
   ): TrainingExercise[] {
     return suggestions
       .filter((s) => s.formData)
       .map((suggestion, index) => ({
         id: `ai-${suggestion.id}-${index}`,
         name: suggestion.title,
-        category: suggestion.formData.sessionType || 'mixed',
+        category: suggestion.formData.sessionType || "mixed",
         duration: suggestion.formData.duration || Math.floor(duration / 3),
         intensity: (suggestion.formData.intensity || intensity) as any,
         equipment: suggestion.formData.equipment || equipment,
@@ -806,55 +812,56 @@ export class TrainingBuilderComponent {
     goals: string[],
     duration: number,
     intensity: string,
-    equipment: string[] = []
+    equipment: string[] = [],
   ): TrainingExercise[] {
     // Mock exercise generation logic
     const exerciseDatabase: Record<string, TrainingExercise[]> = {
       speed: [
         {
-          id: 'sprint-intervals',
-          name: '40-Yard Sprints',
-          category: 'speed',
+          id: "sprint-intervals",
+          name: "40-Yard Sprints",
+          category: "speed",
           duration: 15,
           intensity: intensity as any,
-          equipment: ['cones'],
-          description: 'High-intensity sprint intervals to improve top speed',
+          equipment: ["cones"],
+          description: "High-intensity sprint intervals to improve top speed",
           aiRecommended: true,
         },
       ],
       agility: [
         {
-          id: 'cone-drill',
-          name: '5-10-5 Shuttle',
-          category: 'agility',
+          id: "cone-drill",
+          name: "5-10-5 Shuttle",
+          category: "agility",
           duration: 12,
           intensity: intensity as any,
-          equipment: ['cones'],
-          description: 'Lateral movement drill for quick direction changes',
+          equipment: ["cones"],
+          description: "Lateral movement drill for quick direction changes",
           aiRecommended: true,
         },
       ],
       endurance: [
         {
-          id: 'cardio-intervals',
-          name: 'Cardiovascular Intervals',
-          category: 'endurance',
+          id: "cardio-intervals",
+          name: "Cardiovascular Intervals",
+          category: "endurance",
           duration: 20,
           intensity: intensity as any,
           equipment: [],
-          description: 'High-intensity interval training for cardiovascular fitness',
+          description:
+            "High-intensity interval training for cardiovascular fitness",
           aiRecommended: false,
         },
       ],
       skills: [
         {
-          id: 'skill-drills',
-          name: 'Position-Specific Drills',
-          category: 'skills',
+          id: "skill-drills",
+          name: "Position-Specific Drills",
+          category: "skills",
           duration: 18,
           intensity: intensity as any,
-          equipment: ['football'],
-          description: 'Focused practice on position-specific techniques',
+          equipment: ["football"],
+          description: "Focused practice on position-specific techniques",
           aiRecommended: true,
         },
       ],
@@ -890,9 +897,9 @@ export class TrainingBuilderComponent {
         error: () => {
           // Fallback to mock data
           this.weatherData.set({
-            condition: 'Sunny',
+            condition: "Sunny",
             temperature: 72,
-            recommendation: 'Perfect for outdoor training',
+            recommendation: "Perfect for outdoor training",
           });
         },
       });
@@ -900,63 +907,74 @@ export class TrainingBuilderComponent {
 
   private getWeatherRecommendation(weather: any): string {
     if (!weather.suitable) {
-      return 'Indoor training recommended';
+      return "Indoor training recommended";
     }
     switch (weather.suitability) {
-      case 'excellent':
-        return 'Perfect for outdoor training';
-      case 'good':
-        return 'Good conditions for outdoor training';
-      case 'fair':
-        return 'Fair conditions - consider indoor option';
-      case 'poor':
-        return 'Indoor training recommended';
+      case "excellent":
+        return "Perfect for outdoor training";
+      case "good":
+        return "Good conditions for outdoor training";
+      case "fair":
+        return "Fair conditions - consider indoor option";
+      case "poor":
+        return "Indoor training recommended";
       default:
-        return 'Check conditions before training';
+        return "Check conditions before training";
     }
   }
 
-  getWeatherSeverity(): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
+  getWeatherSeverity():
+    | "success"
+    | "secondary"
+    | "info"
+    | "warn"
+    | "danger"
+    | "contrast" {
     const temp = this.weatherData()?.temperature || 70;
-    if (temp < 40 || temp > 90) return 'danger';
-    if (temp < 50 || temp > 85) return 'warn';
-    return 'success';
+    if (temp < 40 || temp > 90) return "danger";
+    if (temp < 50 || temp > 85) return "warn";
+    return "success";
   }
 
-  getIntensitySeverity(): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
-    const intensity = this.sessionForm.get('intensity')?.value;
+  getIntensitySeverity():
+    | "success"
+    | "secondary"
+    | "info"
+    | "warn"
+    | "danger"
+    | "contrast" {
+    const intensity = this.sessionForm.get("intensity")?.value;
     switch (intensity) {
-      case 'high':
-        return 'danger';
-      case 'medium':
-        return 'warn';
+      case "high":
+        return "danger";
+      case "medium":
+        return "warn";
       default:
-        return 'success';
+        return "success";
     }
   }
 
   previewExercise(event: any) {
     // Open exercise preview modal
-    this.logger.debug('Preview exercise:', event);
+    this.logger.debug("Preview exercise:", event);
   }
 
   modifyExercise(event: any) {
     // Open exercise modification modal
-    this.logger.debug('Modify exercise:', event);
+    this.logger.debug("Modify exercise:", event);
   }
 
   startSession() {
     // Navigate to active session view
-    this.logger.debug('Starting session with:', this.generatedExercises());
+    this.logger.debug("Starting session with:", this.generatedExercises());
   }
 
   saveSession() {
     // Save session template
-    this.logger.debug('Saving session template');
+    this.logger.debug("Saving session template");
   }
 
   trackByGoalId(index: number, goal: Goal): string {
     return goal.id;
   }
 }
-

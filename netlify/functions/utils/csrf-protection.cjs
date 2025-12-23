@@ -7,12 +7,12 @@
  */
 function getAllowedOrigins() {
   const origins = [
-    'http://localhost:4000',
-    'http://localhost:3000',
-    'http://localhost:8888',
-    'http://127.0.0.1:4000',
-    'http://127.0.0.1:3000',
-    'http://127.0.0.1:8888',
+    "http://localhost:4000",
+    "http://localhost:3000",
+    "http://localhost:8888",
+    "http://127.0.0.1:4000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8888",
   ];
 
   // Add production URL if available
@@ -34,7 +34,9 @@ function getAllowedOrigins() {
  * @returns {string|null} Origin or null
  */
 function extractOrigin(url) {
-  if (!url) {return null;}
+  if (!url) {
+    return null;
+  }
 
   try {
     const parsed = new URL(url);
@@ -53,28 +55,30 @@ function validateCSRF(event) {
   const method = event.httpMethod;
 
   // Only validate state-changing methods
-  if (!['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+  if (!["POST", "PUT", "DELETE", "PATCH"].includes(method)) {
     return null; // GET, HEAD, OPTIONS are safe
   }
 
   const allowedOrigins = getAllowedOrigins();
-  const origin = event.headers['origin'] || event.headers['Origin'];
-  const referer = event.headers['referer'] || event.headers['Referer'];
+  const origin = event.headers["origin"] || event.headers["Origin"];
+  const referer = event.headers["referer"] || event.headers["Referer"];
 
   // Check Origin header (preferred)
   if (origin) {
     if (!allowedOrigins.includes(origin)) {
-      console.warn(`[CSRF] Blocked request from unauthorized origin: ${origin}`);
+      console.warn(
+        `[CSRF] Blocked request from unauthorized origin: ${origin}`,
+      );
       return {
         statusCode: 403,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Forbidden',
-          message: 'CSRF validation failed: Invalid origin'
-        })
+          error: "Forbidden",
+          message: "CSRF validation failed: Invalid origin",
+        }),
       };
     }
     return null; // Valid origin
@@ -84,17 +88,19 @@ function validateCSRF(event) {
   if (referer) {
     const refererOrigin = extractOrigin(referer);
     if (!refererOrigin || !allowedOrigins.includes(refererOrigin)) {
-      console.warn(`[CSRF] Blocked request with unauthorized referer: ${referer}`);
+      console.warn(
+        `[CSRF] Blocked request with unauthorized referer: ${referer}`,
+      );
       return {
         statusCode: 403,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Forbidden',
-          message: 'CSRF validation failed: Invalid referer'
-        })
+          error: "Forbidden",
+          message: "CSRF validation failed: Invalid referer",
+        }),
       };
     }
     return null; // Valid referer
@@ -103,12 +109,13 @@ function validateCSRF(event) {
   // No Origin or Referer header - potentially suspicious
   // For APIs using custom headers (like Authorization), this is less critical
   // but we should still log it
-  console.warn('[CSRF] Request missing both Origin and Referer headers');
+  console.warn("[CSRF] Request missing both Origin and Referer headers");
 
   // For authenticated endpoints with JWT, we can be more lenient
   // since the Authorization header provides protection
-  const authHeader = event.headers['authorization'] || event.headers['Authorization'];
-  if (authHeader && authHeader.startsWith('Bearer ')) {
+  const authHeader =
+    event.headers["authorization"] || event.headers["Authorization"];
+  if (authHeader && authHeader.startsWith("Bearer ")) {
     // Has JWT token - allow (JWT itself provides CSRF protection)
     return null;
   }
@@ -117,13 +124,13 @@ function validateCSRF(event) {
   return {
     statusCode: 403,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       success: false,
-      error: 'Forbidden',
-      message: 'CSRF validation failed: Missing security headers'
-    })
+      error: "Forbidden",
+      message: "CSRF validation failed: Missing security headers",
+    }),
   };
 }
 
@@ -139,5 +146,5 @@ function applyCSRFProtection(event) {
 module.exports = {
   validateCSRF,
   applyCSRFProtection,
-  getAllowedOrigins
+  getAllowedOrigins,
 };

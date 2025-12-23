@@ -94,12 +94,16 @@ async function initCoachDashboard() {
     const coachName = document.getElementById("coachName");
     const userAvatar = document.getElementById("user-avatar");
 
-    if (coachAvatar) {coachAvatar.textContent = initials;}
+    if (coachAvatar) {
+      coachAvatar.textContent = initials;
+    }
     if (coachName) {
-coachName.textContent =
+      coachName.textContent =
         user.name || "Coach " + user.email?.split("@")[0] || "Coach Williams";
-}
-    if (userAvatar) {userAvatar.textContent = initials;}
+    }
+    if (userAvatar) {
+      userAvatar.textContent = initials;
+    }
   }
 
   loadPlayers();
@@ -335,24 +339,24 @@ function showPlayerModal(mode, player = null) {
 
   // Use setSafeContent to sanitize HTML before insertion
   setSafeContent(modal, modalContent, true, true);
-  
+
   // Replace onclick attributes with addEventListener
-  modal.querySelectorAll('[onclick]').forEach(element => {
-    const onclickAttr = element.getAttribute('onclick');
-    element.removeAttribute('onclick');
-    if (onclickAttr.includes('closest')) {
-      element.addEventListener('click', () => modal.remove());
-    } else if (onclickAttr.includes('submit')) {
-      element.addEventListener('click', (e) => {
+  modal.querySelectorAll("[onclick]").forEach((element) => {
+    const onclickAttr = element.getAttribute("onclick");
+    element.removeAttribute("onclick");
+    if (onclickAttr.includes("closest")) {
+      element.addEventListener("click", () => modal.remove());
+    } else if (onclickAttr.includes("submit")) {
+      element.addEventListener("click", (e) => {
         e.preventDefault();
         // Handle form submission
-        if (typeof window.handlePlayerFormSubmit === 'function') {
+        if (typeof window.handlePlayerFormSubmit === "function") {
           window.handlePlayerFormSubmit(e);
         }
       });
     }
   });
-  
+
   document.body.appendChild(modal);
 }
 
@@ -399,11 +403,11 @@ function showPlayerStatsModal(player) {
 
   // Use setSafeContent to sanitize HTML before insertion
   setSafeContent(modal, statsHtml, true, true);
-  
+
   // Replace onclick with addEventListener
-  const closeBtn = modal.querySelector('.close-stats-modal');
+  const closeBtn = modal.querySelector(".close-stats-modal");
   if (closeBtn) {
-    closeBtn.addEventListener('click', () => modal.remove());
+    closeBtn.addEventListener("click", () => modal.remove());
   }
 
   document.body.appendChild(modal);
@@ -450,11 +454,11 @@ function showAIAnalysisModal() {
 
   // Use setSafeContent to sanitize HTML before insertion
   setSafeContent(modal, analysisHtml, true, true);
-  
+
   // Replace onclick with addEventListener
-  const closeBtn = modal.querySelector('.close-analysis-modal');
+  const closeBtn = modal.querySelector(".close-analysis-modal");
   if (closeBtn) {
-    closeBtn.addEventListener('click', () => modal.remove());
+    closeBtn.addEventListener("click", () => modal.remove());
   }
 
   document.body.appendChild(modal);

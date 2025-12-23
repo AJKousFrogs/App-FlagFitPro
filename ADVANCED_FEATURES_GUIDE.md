@@ -11,6 +11,7 @@ This guide covers the new advanced features added to FlagFit Pro for training da
 Generates realistic test datasets for simulation and testing.
 
 **Usage:**
+
 ```typescript
 import { DatasetGeneratorService } from './core/services/dataset-generator.service';
 
@@ -33,6 +34,7 @@ const json = this.generator.generateDatasetJSON({ durationMinutes: 60 });
 ```
 
 **Options:**
+
 - `durationMinutes`: Session duration (default: 90)
 - `samplingRateHz`: Samples per second (default: 1)
 - `intensity`: 'low' | 'medium' | 'high' | 'game'
@@ -50,6 +52,7 @@ All dashboards now use Tailwind CSS for modern, responsive styling:
 - **MicrocyclePlannerComponent**: Weekly training plan dashboard
 
 **Tailwind Classes Used:**
+
 - Layout: `flex`, `grid`, `gap-*`, `p-*`, `m-*`
 - Colors: `bg-surface-primary`, `text-text-primary`, `border-gray-*`
 - Typography: `text-2xl`, `font-bold`, `font-semibold`
@@ -62,11 +65,13 @@ All dashboards now use Tailwind CSS for modern, responsive styling:
 Intelligent parser that handles CSV, JSON, and XML files from various wearable devices.
 
 **Supported Formats:**
+
 - **CSV**: Auto-detects speed/distance columns
 - **JSON**: Handles multiple JSON structures (arrays, nested objects)
 - **XML**: Parses GPS/activity XML formats
 
 **Device Support:**
+
 - Garmin
 - Polar
 - Suunto
@@ -75,6 +80,7 @@ Intelligent parser that handles CSV, JSON, and XML files from various wearable d
 - Generic formats
 
 **Usage:**
+
 ```typescript
 import { WearableParserService } from './core/services/wearable-parser.service';
 
@@ -86,7 +92,7 @@ async handleFileUpload(file: File) {
       deviceType: 'garmin', // Optional
       autoDetect: true
     });
-    
+
     console.log('Parsed data:', parsed.data);
     console.log('Metadata:', parsed.metadata);
     if (parsed.errors) {
@@ -99,6 +105,7 @@ async handleFileUpload(file: File) {
 ```
 
 **Features:**
+
 - Auto-detects speed/distance columns
 - Handles various units (km/h, m/s, pace)
 - Converts distances (km to m)
@@ -112,14 +119,16 @@ async handleFileUpload(file: File) {
 Visual traffic light display showing ACWR risk zones with animated indicators.
 
 **Usage:**
+
 ```typescript
-<app-traffic-light-risk 
-  [riskZone]="riskZone" 
+<app-traffic-light-risk
+  [riskZone]="riskZone"
   [acwrValue]="acwrValue">
 </app-traffic-light-risk>
 ```
 
 **Features:**
+
 - 5-light traffic light display (Red, Yellow, Green, Orange, Gray)
 - Animated active light with pulse effect
 - Risk zone scale with marker
@@ -127,6 +136,7 @@ Visual traffic light display showing ACWR risk zones with animated indicators.
 - Responsive design
 
 **Risk Zones:**
+
 - 🔴 **Danger Zone** (>1.50): Highest injury risk
 - 🟡 **Elevated Risk** (1.30-1.50): Caution needed
 - 🟢 **Sweet Spot** (0.80-1.30): Optimal training
@@ -140,11 +150,13 @@ Visual traffic light display showing ACWR risk zones with animated indicators.
 AI-powered weekly training planner that auto-suggests sprint loads based on ACWR.
 
 **Usage:**
+
 ```typescript
 <app-microcycle-planner [athleteId]="'athlete-uuid'"></app-microcycle-planner>
 ```
 
 **Features:**
+
 - 7-day sprint load plan
 - ACWR-based load adjustments
 - Intensity recommendations (low/medium/high/rest)
@@ -153,12 +165,14 @@ AI-powered weekly training planner that auto-suggests sprint loads based on ACWR
 - Traffic light integration
 
 **Planning Logic:**
+
 - **Danger Zone (ACWR > 1.5)**: Rest days + minimal sprint work
 - **Elevated Risk (1.3-1.5)**: Reduced volume, rest days every 3 days
 - **Sweet Spot (0.8-1.3)**: Normal training with high/medium intensity days
 - **Under-Training (<0.8)**: Increased load, more high-intensity days
 
 **Output Includes:**
+
 - Suggested sprint load per day
 - Maximum sprints allowed
 - Recommended duration
@@ -170,45 +184,43 @@ AI-powered weekly training planner that auto-suggests sprint loads based on ACWR
 Complete example using all features:
 
 ```typescript
-import { Component, OnInit } from '@angular/core';
-import { FlagLoadComponent } from './features/training/flag-load.component';
-import { ImportDatasetComponent } from './features/training/import-dataset.component';
-import { MicrocyclePlannerComponent } from './features/training/microcycle-planner.component';
-import { TrafficLightRiskComponent } from './shared/components/traffic-light-risk/traffic-light-risk.component';
+import { Component, OnInit } from "@angular/core";
+import { FlagLoadComponent } from "./features/training/flag-load.component";
+import { ImportDatasetComponent } from "./features/training/import-dataset.component";
+import { MicrocyclePlannerComponent } from "./features/training/microcycle-planner.component";
+import { TrafficLightRiskComponent } from "./shared/components/traffic-light-risk/traffic-light-risk.component";
 
 @Component({
-  selector: 'app-training-dashboard',
+  selector: "app-training-dashboard",
   standalone: true,
   imports: [
     FlagLoadComponent,
     ImportDatasetComponent,
     MicrocyclePlannerComponent,
-    TrafficLightRiskComponent
+    TrafficLightRiskComponent,
   ],
   template: `
     <div class="training-dashboard p-6 space-y-6">
       <!-- Import Data -->
       <app-import-dataset></app-import-dataset>
-      
+
       <!-- Current Status -->
-      <app-traffic-light-risk 
-        [riskZone]="riskZone()" 
-        [acwrValue]="acwrValue()">
+      <app-traffic-light-risk [riskZone]="riskZone()" [acwrValue]="acwrValue()">
       </app-traffic-light-risk>
-      
+
       <!-- Weekly Plan -->
       <app-microcycle-planner [athleteId]="athleteId"></app-microcycle-planner>
-      
+
       <!-- Historical Analysis -->
       <app-flag-load [athleteId]="athleteId"></app-flag-load>
     </div>
-  `
+  `,
 })
 export class TrainingDashboardComponent implements OnInit {
-  athleteId = 'your-athlete-id';
+  athleteId = "your-athlete-id";
   riskZone = signal(/* ... */);
   acwrValue = signal(1.2);
-  
+
   ngOnInit() {
     // Load data
   }
@@ -258,4 +270,3 @@ All components use Tailwind CSS with your design system tokens:
 - Tailwind classes work with your existing design tokens
 - File parser handles common errors gracefully
 - Generator creates realistic data patterns for testing
-

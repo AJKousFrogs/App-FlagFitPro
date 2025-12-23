@@ -9,9 +9,9 @@ const { successObjectResponse } = require("./utils/response-helper.cjs");
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'notifications-count',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "notifications-count",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     handler: async (event, context, { userId }) => {
       try {
         // Get unread count (already filters muted types)
@@ -22,12 +22,12 @@ exports.handler = async (event, context) => {
 
         return successObjectResponse({
           unreadCount,
-          lastOpenedAt
+          lastOpenedAt,
         });
       } catch (dbError) {
         console.error("Database error:", dbError);
         throw new Error("Failed to get notification count");
       }
-    }
+    },
   });
 };

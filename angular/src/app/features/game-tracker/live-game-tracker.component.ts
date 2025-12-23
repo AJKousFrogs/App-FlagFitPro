@@ -24,7 +24,10 @@ import { SelectButtonModule } from "primeng/selectbutton";
 import { SpeedDialModule } from "primeng/speeddial";
 import { MenuItem } from "primeng/api";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { SwipeGestureDirective, SwipeEvent } from "../../shared/directives/swipe-gesture.directive";
+import {
+  SwipeGestureDirective,
+  SwipeEvent,
+} from "../../shared/directives/swipe-gesture.directive";
 import { GameTimePipe } from "../../shared/pipes/game-time.pipe";
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
 import { ApiService } from "../../core/services/api.service";
@@ -252,11 +255,7 @@ interface Play {
           </div>
 
           <div class="form-actions">
-            <p-button
-              label="Cancel"
-              [text]="true"
-              (onClick)="cancelPlay()"
-            />
+            <p-button label="Cancel" [text]="true" (onClick)="cancelPlay()" />
             <p-button
               label="Save Play"
               (onClick)="savePlay()"
@@ -743,4 +742,3 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
     this.logger.info("Touchdown! 🎉");
   }
 }
-

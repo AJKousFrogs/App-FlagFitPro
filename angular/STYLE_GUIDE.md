@@ -70,10 +70,17 @@ export class ExampleComponent {
 }
 
 // ❌ INCORRECT
-import {Component,signal,computed} from '@angular/core'
-import {CommonModule} from '@angular/common'
-@Component({selector:'app-example',standalone:true,imports:[CommonModule]})
-export class ExampleComponent{count=signal(0);doubled=computed(()=>this.count()*2)}
+import { Component, signal, computed } from "@angular/core";
+import { CommonModule } from "@angular/common";
+@Component({
+  selector: "app-example",
+  standalone: true,
+  imports: [CommonModule],
+})
+export class ExampleComponent {
+  count = signal(0);
+  doubled = computed(() => this.count() * 2);
+}
 ```
 
 ---
@@ -179,7 +186,7 @@ export class MyService {
   constructor(
     private apiService: ApiService,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
   ) {}
 }
 ```
@@ -193,16 +200,16 @@ export class MyService {
 export class MyComponent {
   count = signal(0);
   doubled = computed(() => this.count() * 2);
-  
+
   increment() {
-    this.count.update(value => value + 1);
+    this.count.update((value) => value + 1);
   }
 }
 
 // ❌ INCORRECT
 export class MyComponent {
   count$ = new BehaviorSubject(0);
-  doubled$ = this.count$.pipe(map(count => count * 2));
+  doubled$ = this.count$.pipe(map((count) => count * 2));
 }
 ```
 
@@ -234,7 +241,7 @@ export class MyComponent {}
 // ✅ CORRECT
 export class MyComponent {
   count = signal(0);
-  
+
   constructor() {
     effect(() => {
       console.log("Count changed:", this.count());
@@ -245,7 +252,7 @@ export class MyComponent {
 // ❌ INCORRECT
 export class MyComponent {
   count = signal(0);
-  
+
   ngOnInit() {
     // Manual subscription not needed with signals
   }
@@ -285,17 +292,17 @@ import { MyService } from "../../services/my.service";
 export class ExampleComponent {
   // Inputs
   @Input() title = "";
-  
+
   // Signals
   count = signal(0);
   doubled = computed(() => this.count() * 2);
-  
+
   // Services
   private myService = inject(MyService);
-  
+
   // Methods
   increment() {
-    this.count.update(v => v + 1);
+    this.count.update((v) => v + 1);
   }
 }
 ```
@@ -318,14 +325,14 @@ template: `
   }
   
   <button (click)="handleClick()">Click</button>
-`
+`;
 
 // ❌ INCORRECT
 template: `
   <div *ngIf="isLoading">Loading...</div>
   <div *ngFor="let item of items">{{ item.name }}</div>
   <button (click)="handleClick()">Click</button>
-`
+`;
 ```
 
 ### Input/Output Properties
@@ -341,7 +348,7 @@ export class MyComponent {
   @Input() title = "";
   @Input() count = 0;
   @Output() clicked = new EventEmitter<void>();
-  
+
   // Angular 21 signal inputs (preferred)
   title = input<string>("");
   count = input<number>(0);
@@ -372,19 +379,19 @@ export class MyService {
   // Injected dependencies
   private http = inject(HttpClient);
   private router = inject(Router);
-  
+
   // Signals for state
   private readonly _data = signal<Data | null>(null);
   readonly data = this._data.asReadonly();
-  
+
   // Public methods
   loadData(): Observable<Data> {
     return this.http.get<Data>("/api/data").pipe(
-      tap(data => this._data.set(data)),
-      catchError(this.handleError)
+      tap((data) => this._data.set(data)),
+      catchError(this.handleError),
     );
   }
-  
+
   // Private methods
   private handleError(error: any): Observable<never> {
     console.error("Error:", error);
@@ -416,7 +423,7 @@ export class MyComponent {
   isLoading = signal(false);
   data = signal<Data[]>([]);
   error = signal<string | null>(null);
-  
+
   // Computed signals
   hasData = computed(() => this.data().length > 0);
   isEmpty = computed(() => !this.hasData() && !this.isLoading());
@@ -431,7 +438,7 @@ export class MyComponent {
 // ✅ CORRECT
 export class MyComponent {
   private dataService = inject(DataService);
-  
+
   loadData() {
     this.isLoading.set(true);
     this.dataService.getData().subscribe({
@@ -457,35 +464,32 @@ export class MyComponent {
 @Injectable()
 export class DashboardViewModel extends BaseViewModel {
   private dataService = inject(DashboardDataService);
-  
+
   // State signals
   readonly stats = signal<Stats[]>([]);
   readonly loading = signal(false);
-  
+
   // Computed signals
-  readonly totalStats = computed(() => 
-    this.stats().reduce((sum, s) => sum + s.value, 0)
+  readonly totalStats = computed(() =>
+    this.stats().reduce((sum, s) => sum + s.value, 0),
   );
-  
+
   override initialize() {
     this.loadData();
   }
-  
+
   private loadData() {
     this.loading.set(true);
-    this.subscribe(
-      this.dataService.getDashboard(),
-      {
-        next: (data) => {
-          this.stats.set(data.stats);
-          this.loading.set(false);
-        },
-        error: (err) => {
-          this.handleError(err);
-          this.loading.set(false);
-        },
-      }
-    );
+    this.subscribe(this.dataService.getDashboard(), {
+      next: (data) => {
+        this.stats.set(data.stats);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.handleError(err);
+        this.loading.set(false);
+      },
+    });
   }
 }
 ```
@@ -651,15 +655,15 @@ export class MyService {
   &__header {
     padding: var(--space-4);
   }
-  
+
   &__body {
     padding: var(--space-6);
   }
-  
+
   &__footer {
     padding: var(--space-4);
   }
-  
+
   &--highlighted {
     border: 2px solid var(--color-brand-primary);
   }
@@ -678,7 +682,7 @@ export class MyService {
     :host {
       display: block;
     }
-    
+
     .container {
       padding: var(--space-4);
     }
@@ -694,11 +698,11 @@ export class MyService {
 // ✅ CORRECT
 .container {
   padding: var(--space-4);
-  
+
   @media (min-width: 768px) {
     padding: var(--space-6);
   }
-  
+
   @media (min-width: 1024px) {
     padding: var(--space-8);
   }
@@ -718,7 +722,7 @@ export class MyService {
 describe("UserService", () => {
   let service: UserService;
   let httpMock: HttpTestingController;
-  
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -727,14 +731,14 @@ describe("UserService", () => {
     service = TestBed.inject(UserService);
     httpMock = TestBed.inject(HttpTestingController);
   });
-  
+
   it("should load user data", () => {
     const mockUser = { id: "1", name: "Test" };
-    
+
     service.loadUser("1").subscribe((user) => {
       expect(user).toEqual(mockUser);
     });
-    
+
     const req = httpMock.expectOne("/api/users/1");
     expect(req.request.method).toBe("GET");
     req.flush(mockUser);
@@ -751,20 +755,20 @@ describe("UserService", () => {
 describe("UserProfileComponent", () => {
   let component: UserProfileComponent;
   let fixture: ComponentFixture<UserProfileComponent>;
-  
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [UserProfileComponent],
     }).compileComponents();
-    
+
     fixture = TestBed.createComponent(UserProfileComponent);
     component = fixture.componentInstance;
   });
-  
+
   it("should display user name", () => {
     component.user = { id: "1", name: "Test User" };
     fixture.detectChanges();
-    
+
     const nameElement = fixture.nativeElement.querySelector(".user-name");
     expect(nameElement.textContent).toContain("Test User");
   });
@@ -781,7 +785,7 @@ describe("UserProfileComponent", () => {
 
 ```typescript
 // ✅ CORRECT
-<button 
+<button
   (click)="handleClick()"
   [attr.aria-label]="'Close dialog'"
   aria-describedby="dialog-description"
@@ -812,7 +816,7 @@ handleKeydown(event: KeyboardEvent) {
 // ✅ CORRECT
 export class ModalComponent {
   private focusTrap = inject(FocusTrap);
-  
+
   ngAfterViewInit() {
     this.focusTrap.focusInitialElement();
   }
@@ -849,7 +853,7 @@ const routes: Routes = [
 
 ### TrackBy Functions
 
-**Use trackBy for *ngFor (if using legacy syntax):**
+**Use trackBy for \*ngFor (if using legacy syntax):**
 
 ```typescript
 // ✅ CORRECT
@@ -874,7 +878,7 @@ export class MyService {
       catchError((error) => {
         console.error("Failed to load data:", error);
         return throwError(() => new Error("Failed to load data"));
-      })
+      }),
     );
   }
 }
@@ -907,14 +911,14 @@ this.dataService.loadData().subscribe({
 
 **Document public APIs:**
 
-```typescript
+````typescript
 // ✅ CORRECT
 /**
  * User Service
- * 
+ *
  * Provides user management functionality including
  * authentication, profile management, and user data retrieval.
- * 
+ *
  * @example
  * ```typescript
  * const userService = inject(UserService);
@@ -927,14 +931,14 @@ this.dataService.loadData().subscribe({
 export class UserService {
   /**
    * Get the current authenticated user
-   * 
+   *
    * @returns Observable that emits the current user or null if not authenticated
    */
   getCurrentUser(): Observable<User | null> {
     // Implementation
   }
 }
-```
+````
 
 ### Inline Comments
 
@@ -991,4 +995,3 @@ const delay = 2000;
 **Last Updated**: December 2025  
 **Version**: 1.0.0  
 **Angular Version**: 21.0+
-

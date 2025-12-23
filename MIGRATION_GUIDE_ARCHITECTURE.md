@@ -8,12 +8,12 @@ Move API calls to a pure data service:
 
 ```typescript
 // core/services/data/your-feature-data.service.ts
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class YourFeatureDataService {
   private apiService = inject(ApiService);
 
   getData(): Observable<YourData> {
-    return this.apiService.get<YourData>('/api/your-endpoint');
+    return this.apiService.get<YourData>("/api/your-endpoint");
   }
 }
 ```
@@ -36,13 +36,10 @@ export class YourFeatureViewModel extends BaseViewModel {
   }
 
   loadData() {
-    this.subscribe(
-      this.dataService.getData(),
-      {
-        next: (data) => this.data.set(data),
-        error: (err) => this.handleError(err)
-      }
-    );
+    this.subscribe(this.dataService.getData(), {
+      next: (data) => this.data.set(data),
+      error: (err) => this.handleError(err),
+    });
   }
 }
 ```
@@ -76,7 +73,7 @@ export class YourFeatureComponent {
 @Injectable()
 export class DashboardService {
   stats = signal([]); // State in service
-  
+
   loadDashboard() {
     this.apiService.get('/dashboard').subscribe(data => {
       this.stats.set(data); // State management in service
@@ -107,9 +104,9 @@ export class DashboardDataService {
 @Injectable()
 export class DashboardViewModel extends BaseViewModel {
   private dataService = inject(DashboardDataService);
-  
+
   readonly stats = signal<DashboardStats | null>(null);
-  
+
   loadDashboard() {
     this.subscribe(
       this.dataService.getDashboard(),
@@ -168,12 +165,9 @@ For live analytics, use ReactiveViewModel:
 ```typescript
 export class AnalyticsViewModel extends ReactiveViewModel {
   readonly data$ = this.createStream(
-    interval(5000).pipe(
-      switchMap(() => this.dataService.getData())
-    )
+    interval(5000).pipe(switchMap(() => this.dataService.getData())),
   );
 }
 ```
 
 This keeps real-time updates reactive but simple - no complex realtime mechanisms needed.
-

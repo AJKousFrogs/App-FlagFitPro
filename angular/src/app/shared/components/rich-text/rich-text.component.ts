@@ -1,15 +1,28 @@
-import { Component, input, output, forwardRef, signal, ChangeDetectionStrategy, viewChild, ElementRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  input,
+  output,
+  forwardRef,
+  signal,
+  ChangeDetectionStrategy,
+  viewChild,
+  ElementRef,
+} from "@angular/core";
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule,
+} from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 /**
  * Rich Text Editor Component - Angular 21
- * 
+ *
  * A rich text editor component using contenteditable
  * Uses Angular 21 signals and ControlValueAccessor for form integration
  */
 @Component({
-  selector: 'app-rich-text',
+  selector: "app-rich-text",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule],
@@ -17,8 +30,8 @@ import { CommonModule } from '@angular/common';
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => RichTextComponent),
-      multi: true
-    }
+      multi: true,
+    },
   ],
   template: `
     <div class="rich-text-group">
@@ -26,13 +39,18 @@ import { CommonModule } from '@angular/common';
         <label class="form-label">{{ label() }}</label>
       }
       <div class="rich-text-editor">
-        <div class="rich-text-toolbar" role="toolbar" [attr.aria-label]="label() || 'Text formatting'">
+        <div
+          class="rich-text-toolbar"
+          role="toolbar"
+          [attr.aria-label]="label() || 'Text formatting'"
+        >
           <button
             type="button"
             class="toolbar-btn"
             [class.active]="isCommandActive('bold')"
             (click)="executeCommand('bold')"
-            aria-label="Bold">
+            aria-label="Bold"
+          >
             <i class="pi pi-bold"></i>
           </button>
           <button
@@ -40,7 +58,8 @@ import { CommonModule } from '@angular/common';
             class="toolbar-btn"
             [class.active]="isCommandActive('italic')"
             (click)="executeCommand('italic')"
-            aria-label="Italic">
+            aria-label="Italic"
+          >
             <i class="pi pi-italic"></i>
           </button>
           <button
@@ -48,7 +67,8 @@ import { CommonModule } from '@angular/common';
             class="toolbar-btn"
             [class.active]="isCommandActive('underline')"
             (click)="executeCommand('underline')"
-            aria-label="Underline">
+            aria-label="Underline"
+          >
             <i class="pi pi-underline"></i>
           </button>
           <div class="toolbar-separator"></div>
@@ -57,7 +77,8 @@ import { CommonModule } from '@angular/common';
             class="toolbar-btn"
             [class.active]="isCommandActive('insertUnorderedList')"
             (click)="executeCommand('insertUnorderedList')"
-            aria-label="Bullet list">
+            aria-label="Bullet list"
+          >
             <i class="pi pi-list"></i>
           </button>
           <button
@@ -65,7 +86,8 @@ import { CommonModule } from '@angular/common';
             class="toolbar-btn"
             [class.active]="isCommandActive('insertOrderedList')"
             (click)="executeCommand('insertOrderedList')"
-            aria-label="Numbered list">
+            aria-label="Numbered list"
+          >
             <i class="pi pi-list-ordered"></i>
           </button>
           <div class="toolbar-separator"></div>
@@ -73,14 +95,16 @@ import { CommonModule } from '@angular/common';
             type="button"
             class="toolbar-btn"
             (click)="createLink()"
-            aria-label="Insert link">
+            aria-label="Insert link"
+          >
             <i class="pi pi-link"></i>
           </button>
           <button
             type="button"
             class="toolbar-btn"
             (click)="executeCommand('formatBlock', 'h2')"
-            aria-label="Heading">
+            aria-label="Heading"
+          >
             <i class="pi pi-heading"></i>
           </button>
         </div>
@@ -93,8 +117,8 @@ import { CommonModule } from '@angular/common';
           [attr.spellcheck]="spellcheck()"
           (input)="onInput()"
           (blur)="onBlur()"
-          [innerHTML]="value()">
-        </div>
+          [innerHTML]="value()"
+        ></div>
       </div>
       @if (helpText() && !errorMessage()) {
         <div class="form-help">{{ helpText() }}</div>
@@ -104,113 +128,115 @@ import { CommonModule } from '@angular/common';
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .rich-text-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+      .rich-text-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-    .rich-text-editor {
-      border: 1px solid var(--p-surface-border);
-      border-radius: var(--p-border-radius);
-      background: var(--p-surface-0);
-      overflow: hidden;
-    }
+      .rich-text-editor {
+        border: 1px solid var(--p-surface-border);
+        border-radius: var(--p-border-radius);
+        background: var(--p-surface-0);
+        overflow: hidden;
+      }
 
-    .rich-text-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.5rem;
-      border-bottom: 1px solid var(--p-surface-border);
-      background: var(--p-surface-50);
-      flex-wrap: wrap;
-    }
+      .rich-text-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.5rem;
+        border-bottom: 1px solid var(--p-surface-border);
+        background: var(--p-surface-50);
+        flex-wrap: wrap;
+      }
 
-    .toolbar-btn {
-      background: none;
-      border: none;
-      padding: 0.5rem;
-      cursor: pointer;
-      border-radius: var(--p-border-radius);
-      color: var(--p-text-color-secondary);
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+      .toolbar-btn {
+        background: none;
+        border: none;
+        padding: 0.5rem;
+        cursor: pointer;
+        border-radius: var(--p-border-radius);
+        color: var(--p-text-color-secondary);
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    .toolbar-btn:hover:not(:disabled) {
-      background: var(--p-surface-100);
-      color: var(--p-text-color);
-    }
+      .toolbar-btn:hover:not(:disabled) {
+        background: var(--p-surface-100);
+        color: var(--p-text-color);
+      }
 
-    .toolbar-btn.active {
-      background: var(--p-primary-color);
-      color: white;
-    }
+      .toolbar-btn.active {
+        background: var(--p-primary-color);
+        color: white;
+      }
 
-    .toolbar-separator {
-      width: 1px;
-      height: 1.5rem;
-      background: var(--p-surface-border);
-      margin: 0 0.25rem;
-    }
+      .toolbar-separator {
+        width: 1px;
+        height: 1.5rem;
+        background: var(--p-surface-border);
+        margin: 0 0.25rem;
+      }
 
-    .rich-text-content {
-      min-height: 200px;
-      max-height: 400px;
-      overflow-y: auto;
-      padding: 1rem;
-      font-size: 1rem;
-      line-height: 1.5;
-      color: var(--p-text-color);
-      outline: none;
-    }
+      .rich-text-content {
+        min-height: 200px;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 1rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: var(--p-text-color);
+        outline: none;
+      }
 
-    .rich-text-content:focus {
-      outline: 2px solid var(--p-primary-color);
-      outline-offset: -2px;
-    }
+      .rich-text-content:focus {
+        outline: 2px solid var(--p-primary-color);
+        outline-offset: -2px;
+      }
 
-    .rich-text-content p {
-      margin: 0 0 0.75rem 0;
-    }
+      .rich-text-content p {
+        margin: 0 0 0.75rem 0;
+      }
 
-    .rich-text-content p:last-child {
-      margin-bottom: 0;
-    }
+      .rich-text-content p:last-child {
+        margin-bottom: 0;
+      }
 
-    .rich-text-content ul,
-    .rich-text-content ol {
-      margin: 0.75rem 0;
-      padding-left: 2rem;
-    }
+      .rich-text-content ul,
+      .rich-text-content ol {
+        margin: 0.75rem 0;
+        padding-left: 2rem;
+      }
 
-    .rich-text-content a {
-      color: var(--p-primary-color);
-      text-decoration: underline;
-    }
+      .rich-text-content a {
+        color: var(--p-primary-color);
+        text-decoration: underline;
+      }
 
-    .form-help {
-      font-size: 0.75rem;
-      color: var(--p-text-color-secondary);
-    }
+      .form-help {
+        font-size: 0.75rem;
+        color: var(--p-text-color-secondary);
+      }
 
-    .form-error {
-      font-size: 0.75rem;
-      color: var(--p-error-color);
-    }
-  `]
+      .form-error {
+        font-size: 0.75rem;
+        color: var(--p-error-color);
+      }
+    `,
+  ],
 })
 export class RichTextComponent implements ControlValueAccessor {
-  contentEditable = viewChild<ElementRef<HTMLDivElement>>('contentEditable');
-  
+  contentEditable = viewChild<ElementRef<HTMLDivElement>>("contentEditable");
+
   // Configuration
   id = input<string>(`rich-text-${Math.random().toString(36).substr(2, 9)}`);
   label = input<string>();
@@ -218,15 +244,15 @@ export class RichTextComponent implements ControlValueAccessor {
   errorMessage = input<string>();
   disabled = input<boolean>(false);
   spellcheck = input<boolean>(true);
-  
+
   // Value signal
-  value = signal<string>('');
+  value = signal<string>("");
   private onChangeFn = (value: string) => {};
   private onTouchedFn = () => {};
-  
+
   // Events
   changed = output<string>();
-  
+
   onInput(): void {
     const element = this.contentEditable()?.nativeElement;
     if (element) {
@@ -236,49 +262,48 @@ export class RichTextComponent implements ControlValueAccessor {
       this.changed.emit(html);
     }
   }
-  
+
   onBlur(): void {
     this.onTouchedFn();
   }
-  
+
   executeCommand(command: string, value?: string): void {
     document.execCommand(command, false, value || undefined);
     this.onInput();
   }
-  
+
   isCommandActive(command: string): boolean {
     return document.queryCommandState(command);
   }
-  
+
   createLink(): void {
-    const url = prompt('Enter URL:');
+    const url = prompt("Enter URL:");
     if (url) {
-      this.executeCommand('createLink', url);
+      this.executeCommand("createLink", url);
     }
   }
-  
+
   // ControlValueAccessor implementation
   writeValue(value: string): void {
-    this.value.set(value || '');
+    this.value.set(value || "");
     const element = this.contentEditable()?.nativeElement;
     if (element && value) {
       element.innerHTML = value;
     }
   }
-  
+
   registerOnChange(fn: (value: string) => void): void {
     this.onChangeFn = fn;
   }
-  
+
   registerOnTouched(fn: () => void): void {
     this.onTouchedFn = fn;
   }
-  
+
   setDisabledState(isDisabled: boolean): void {
     const element = this.contentEditable()?.nativeElement;
     if (element) {
-      element.contentEditable = isDisabled ? 'false' : 'true';
+      element.contentEditable = isDisabled ? "false" : "true";
     }
   }
 }
-

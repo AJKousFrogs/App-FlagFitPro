@@ -1,6 +1,16 @@
-import { Component, input, forwardRef, signal, ChangeDetectionStrategy } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  input,
+  forwardRef,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule,
+} from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 export interface SelectOption {
   label: string;
@@ -10,12 +20,12 @@ export interface SelectOption {
 
 /**
  * Select Component - Angular 21
- * 
+ *
  * A dropdown select component with option support
  * Uses Angular 21 signals and ControlValueAccessor for form integration
  */
 @Component({
-  selector: 'app-select',
+  selector: "app-select",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule],
@@ -23,8 +33,8 @@ export interface SelectOption {
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => SelectComponent),
-      multi: true
-    }
+      multi: true,
+    },
   ],
   template: `
     <div class="form-group">
@@ -40,91 +50,96 @@ export interface SelectOption {
         (blur)="onBlur()"
         class="form-control"
         [attr.aria-invalid]="invalid() ? 'true' : null"
-        [attr.aria-describedby]="errorMessage() ? id() + '-error' : null">
+        [attr.aria-describedby]="errorMessage() ? id() + '-error' : null"
+      >
         <option [value]="null" disabled>{{ placeholder() }}</option>
         @for (option of options(); track option.value) {
-          <option 
-            [value]="option.value"
-            [disabled]="option.disabled">
+          <option [value]="option.value" [disabled]="option.disabled">
             {{ option.label }}
           </option>
         }
       </select>
       @if (errorMessage()) {
-        <div [id]="id() + '-error'" class="form-error">{{ errorMessage() }}</div>
+        <div [id]="id() + '-error'" class="form-error">
+          {{ errorMessage() }}
+        </div>
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-    label {
-      font-weight: 600;
-      color: var(--p-text-color);
-      font-size: 0.875rem;
-    }
+      label {
+        font-weight: 600;
+        color: var(--p-text-color);
+        font-size: 0.875rem;
+      }
 
-    .form-control {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid var(--p-surface-border);
-      border-radius: var(--p-border-radius);
-      font-size: 1rem;
-      background-color: var(--surface-primary);
-      color: var(--p-text-color);
-      transition: border-color 0.2s, box-shadow 0.2s;
-      font-family: inherit;
-      cursor: pointer;
-    }
+      .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--p-surface-border);
+        border-radius: var(--p-border-radius);
+        font-size: 1rem;
+        background-color: var(--surface-primary);
+        color: var(--p-text-color);
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        font-family: inherit;
+        cursor: pointer;
+      }
 
-    .form-control:focus {
-      outline: none;
-      border-color: var(--p-primary-color);
-      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
-    }
+      .form-control:focus {
+        outline: none;
+        border-color: var(--p-primary-color);
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+      }
 
-    .form-control:disabled {
-      background-color: var(--p-surface-100);
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
+      .form-control:disabled {
+        background-color: var(--p-surface-100);
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
 
-    .form-control.is-invalid {
-      border-color: var(--p-error-color);
-    }
+      .form-control.is-invalid {
+        border-color: var(--p-error-color);
+      }
 
-    .form-control.is-invalid:focus {
-      border-color: var(--p-error-color);
-      box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
-    }
+      .form-control.is-invalid:focus {
+        border-color: var(--p-error-color);
+        box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
+      }
 
-    option {
-      padding: 0.5rem;
-    }
+      option {
+        padding: 0.5rem;
+      }
 
-    option:disabled {
-      color: var(--p-text-color-secondary);
-    }
+      option:disabled {
+        color: var(--p-text-color-secondary);
+      }
 
-    .form-error {
-      font-size: 0.75rem;
-      color: var(--p-error-color);
-    }
-  `]
+      .form-error {
+        font-size: 0.75rem;
+        color: var(--p-error-color);
+      }
+    `,
+  ],
 })
 export class SelectComponent implements ControlValueAccessor {
   // Angular 21: Use input() signals instead of @Input()
   id = input<string>(`select-${Math.random().toString(36).substr(2, 9)}`);
   label = input<string>();
-  placeholder = input<string>('Select an option');
+  placeholder = input<string>("Select an option");
   options = input<SelectOption[]>([]);
   errorMessage = input<string>();
   disabled = input<boolean>(false);
@@ -164,4 +179,3 @@ export class SelectComponent implements ControlValueAccessor {
     // The template will use disabled() which combines both
   }
 }
-

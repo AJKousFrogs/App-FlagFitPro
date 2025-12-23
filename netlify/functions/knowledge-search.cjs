@@ -8,24 +8,24 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { buildNumericCondition } = require("./utils/sql-formatter.cjs");
 
 // SECURITY: Whitelist of allowed categories to prevent SQL injection
 const ALLOWED_CATEGORIES = [
-  'training',
-  'nutrition',
-  'recovery',
-  'technique',
-  'mental',
-  'injury',
-  'equipment',
-  'strategy'
+  "training",
+  "nutrition",
+  "recovery",
+  "technique",
+  "mental",
+  "injury",
+  "equipment",
+  "strategy",
 ];
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Knowledge-Search', event);
+  logFunctionCall("Knowledge-Search", event);
 
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 200, headers: CORS_HEADERS };
@@ -49,18 +49,22 @@ exports.handler = async (event, context) => {
       const { query, category, limit = 5 } = bodyData;
 
       // SECURITY: Validate input parameters
-      if (!query || typeof query !== 'string') {
-        return handleValidationError('Query parameter is required and must be a string');
+      if (!query || typeof query !== "string") {
+        return handleValidationError(
+          "Query parameter is required and must be a string",
+        );
       }
 
       if (query.length > 500) {
-        return handleValidationError('Query too long (max 500 characters)');
+        return handleValidationError("Query too long (max 500 characters)");
       }
 
       // Validate category against whitelist
       if (category) {
         if (!ALLOWED_CATEGORIES.includes(category)) {
-          return handleValidationError('Invalid category. Allowed: ' + ALLOWED_CATEGORIES.join(', '));
+          return handleValidationError(
+            "Invalid category. Allowed: " + ALLOWED_CATEGORIES.join(", "),
+          );
         }
       }
 
@@ -82,7 +86,7 @@ exports.handler = async (event, context) => {
       }
 
       // Build approval filter
-      let approvalFilter = '';
+      let approvalFilter = "";
       if (requireApproval) {
         if (includeExperimental) {
           approvalFilter = `AND kbe.approval_status IN ('approved', 'experimental')`;
@@ -92,9 +96,13 @@ exports.handler = async (event, context) => {
       }
 
       // Build quality score filter (SECURITY: Use safe formatting to prevent SQL injection)
-      let qualityFilter = '';
+      let qualityFilter = "";
       if (minQualityScore > 0) {
-        const scoreCondition = buildNumericCondition('kbe.source_quality_score', '>=', minQualityScore);
+        const scoreCondition = buildNumericCondition(
+          "kbe.source_quality_score",
+          ">=",
+          minQualityScore,
+        );
         qualityFilter = `AND (kbe.source_quality_score IS NULL OR ${scoreCondition})`;
       }
 
@@ -151,9 +159,9 @@ exports.handler = async (event, context) => {
       return createSuccessResponse(result.rows[0] || null);
     }
 
-    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   } catch (error) {
-    return handleServerError(error, 'Knowledge-Search');
+    return handleServerError(error, "Knowledge-Search");
   } finally {
     await pool.end();
   }

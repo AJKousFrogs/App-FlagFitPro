@@ -10,15 +10,28 @@
 -->
 
 <!-- Left Drawer -->
-<button type="button" class="btn btn-primary btn-md" onclick="openDrawer('drawer-left')">
+<button
+  type="button"
+  class="btn btn-primary btn-md"
+  onclick="openDrawer('drawer-left')"
+>
   Open Left Drawer
 </button>
 
-<div class="drawer-overlay" id="drawer-overlay-left" onclick="closeDrawer('drawer-left')"></div>
+<div
+  class="drawer-overlay"
+  id="drawer-overlay-left"
+  onclick="closeDrawer('drawer-left')"
+></div>
 <div class="drawer drawer-left" id="drawer-left">
   <div class="drawer-header">
     <h2 class="drawer-title">Left Drawer</h2>
-    <button type="button" class="drawer-close" onclick="closeDrawer('drawer-left')" aria-label="Close drawer">
+    <button
+      type="button"
+      class="drawer-close"
+      onclick="closeDrawer('drawer-left')"
+      aria-label="Close drawer"
+    >
       <i data-lucide="x" style="width: 24px; height: 24px"></i>
     </button>
   </div>
@@ -27,21 +40,40 @@
     <p>You can add any content here.</p>
   </div>
   <div class="drawer-footer">
-    <button type="button" class="btn btn-secondary btn-md" onclick="closeDrawer('drawer-left')">Cancel</button>
+    <button
+      type="button"
+      class="btn btn-secondary btn-md"
+      onclick="closeDrawer('drawer-left')"
+    >
+      Cancel
+    </button>
     <button type="button" class="btn btn-primary btn-md">Save</button>
   </div>
 </div>
 
 <!-- Right Drawer -->
-<button type="button" class="btn btn-primary btn-md" onclick="openDrawer('drawer-right')">
+<button
+  type="button"
+  class="btn btn-primary btn-md"
+  onclick="openDrawer('drawer-right')"
+>
   Open Right Drawer
 </button>
 
-<div class="drawer-overlay" id="drawer-overlay-right" onclick="closeDrawer('drawer-right')"></div>
+<div
+  class="drawer-overlay"
+  id="drawer-overlay-right"
+  onclick="closeDrawer('drawer-right')"
+></div>
 <div class="drawer drawer-right" id="drawer-right">
   <div class="drawer-header">
     <h2 class="drawer-title">Right Drawer</h2>
-    <button type="button" class="drawer-close" onclick="closeDrawer('drawer-right')" aria-label="Close drawer">
+    <button
+      type="button"
+      class="drawer-close"
+      onclick="closeDrawer('drawer-right')"
+      aria-label="Close drawer"
+    >
       <i data-lucide="x" style="width: 24px; height: 24px"></i>
     </button>
   </div>
@@ -52,15 +84,28 @@
 </div>
 
 <!-- Top Drawer -->
-<button type="button" class="btn btn-primary btn-md" onclick="openDrawer('drawer-top')">
+<button
+  type="button"
+  class="btn btn-primary btn-md"
+  onclick="openDrawer('drawer-top')"
+>
   Open Top Drawer
 </button>
 
-<div class="drawer-overlay" id="drawer-overlay-top" onclick="closeDrawer('drawer-top')"></div>
+<div
+  class="drawer-overlay"
+  id="drawer-overlay-top"
+  onclick="closeDrawer('drawer-top')"
+></div>
 <div class="drawer drawer-top" id="drawer-top">
   <div class="drawer-header">
     <h2 class="drawer-title">Top Drawer</h2>
-    <button type="button" class="drawer-close" onclick="closeDrawer('drawer-top')" aria-label="Close drawer">
+    <button
+      type="button"
+      class="drawer-close"
+      onclick="closeDrawer('drawer-top')"
+      aria-label="Close drawer"
+    >
       <i data-lucide="x" style="width: 24px; height: 24px"></i>
     </button>
   </div>
@@ -70,15 +115,28 @@
 </div>
 
 <!-- Bottom Drawer -->
-<button type="button" class="btn btn-primary btn-md" onclick="openDrawer('drawer-bottom')">
+<button
+  type="button"
+  class="btn btn-primary btn-md"
+  onclick="openDrawer('drawer-bottom')"
+>
   Open Bottom Drawer
 </button>
 
-<div class="drawer-overlay" id="drawer-overlay-bottom" onclick="closeDrawer('drawer-bottom')"></div>
+<div
+  class="drawer-overlay"
+  id="drawer-overlay-bottom"
+  onclick="closeDrawer('drawer-bottom')"
+></div>
 <div class="drawer drawer-bottom" id="drawer-bottom">
   <div class="drawer-header">
     <h2 class="drawer-title">Bottom Drawer</h2>
-    <button type="button" class="drawer-close" onclick="closeDrawer('drawer-bottom')" aria-label="Close drawer">
+    <button
+      type="button"
+      class="drawer-close"
+      onclick="closeDrawer('drawer-bottom')"
+      aria-label="Close drawer"
+    >
       <i data-lucide="x" style="width: 24px; height: 24px"></i>
     </button>
   </div>
@@ -98,7 +156,9 @@
     z-index: 999;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition:
+      opacity 0.3s ease,
+      visibility 0.3s ease;
   }
 
   .drawer-overlay.show {
@@ -110,7 +170,9 @@
     position: fixed;
     z-index: 1000;
     background: var(--p-surface-0, #ffffff);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
     display: flex;
     flex-direction: column;
     max-width: 100%;
@@ -225,46 +287,51 @@
 <script>
   function openDrawer(drawerId) {
     const drawer = document.getElementById(drawerId);
-    const overlay = document.getElementById(drawerId.replace('drawer-', 'drawer-overlay-'));
-    
+    const overlay = document.getElementById(
+      drawerId.replace("drawer-", "drawer-overlay-"),
+    );
+
     if (drawer && overlay) {
-      drawer.classList.add('open');
-      overlay.classList.add('show');
-      document.body.style.overflow = 'hidden';
-      
+      drawer.classList.add("open");
+      overlay.classList.add("show");
+      document.body.style.overflow = "hidden";
+
       // Focus trap
-      const firstFocusable = drawer.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      const firstFocusable = drawer.querySelector(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
       if (firstFocusable) {
         firstFocusable.focus();
       }
     }
   }
-  
+
   function closeDrawer(drawerId) {
     const drawer = document.getElementById(drawerId);
-    const overlay = document.getElementById(drawerId.replace('drawer-', 'drawer-overlay-'));
-    
+    const overlay = document.getElementById(
+      drawerId.replace("drawer-", "drawer-overlay-"),
+    );
+
     if (drawer && overlay) {
-      drawer.classList.remove('open');
-      overlay.classList.remove('show');
-      document.body.style.overflow = '';
+      drawer.classList.remove("open");
+      overlay.classList.remove("show");
+      document.body.style.overflow = "";
     }
   }
-  
+
   // Close on ESC key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      document.querySelectorAll('.drawer.open').forEach(drawer => {
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.querySelectorAll(".drawer.open").forEach((drawer) => {
         closeDrawer(drawer.id);
       });
     }
   });
-  
+
   // Initialize lucide icons
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener("DOMContentLoaded", () => {
     if (window.lucide) {
       window.lucide.createIcons();
     }
   });
 </script>
-

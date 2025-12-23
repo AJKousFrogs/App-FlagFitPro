@@ -32,14 +32,19 @@ import { ProgressBarModule } from "primeng/progressbar";
 
       <!-- Progress Bar -->
       <div class="progress-bar-wrapper">
-        @if (variant() === 'linear') {
+        @if (variant() === "linear") {
           <p-progressBar
             [value]="value()"
             [showValue]="false"
-            [style]="progressBarStyle()">
+            [style]="progressBarStyle()"
+          >
           </p-progressBar>
-        } @else if (variant() === 'circular') {
-          <div class="circular-progress" [style.width]="size() + 'px'" [style.height]="size() + 'px'">
+        } @else if (variant() === "circular") {
+          <div
+            class="circular-progress"
+            [style.width]="size() + 'px'"
+            [style.height]="size() + 'px'"
+          >
             <svg class="circular-svg" viewBox="0 0 100 100">
               <circle
                 class="circular-background"
@@ -48,7 +53,8 @@ import { ProgressBarModule } from "primeng/progressbar";
                 r="45"
                 [attr.stroke]="backgroundColor()"
                 [attr.stroke-width]="strokeWidth()"
-                fill="none" />
+                fill="none"
+              />
               <circle
                 class="circular-progress-circle"
                 cx="50"
@@ -59,19 +65,21 @@ import { ProgressBarModule } from "primeng/progressbar";
                 [attr.stroke-dasharray]="circumference()"
                 [attr.stroke-dashoffset]="dashOffset()"
                 fill="none"
-                [attr.stroke-linecap]="strokeLinecap()" />
+                [attr.stroke-linecap]="strokeLinecap()"
+              />
             </svg>
             @if (showValue()) {
               <div class="circular-value">{{ displayValue() }}</div>
             }
           </div>
-        } @else if (variant() === 'steps') {
+        } @else if (variant() === "steps") {
           <div class="steps-progress">
             @for (step of steps(); track step.label) {
               <div
                 class="step-item"
                 [class.active]="step.completed || step.active"
-                [class.completed]="step.completed">
+                [class.completed]="step.completed"
+              >
                 <div class="step-marker">
                   @if (step.completed) {
                     <i class="pi pi-check"></i>
@@ -285,14 +293,14 @@ export class ProgressIndicatorComponent {
   });
 
   containerClass = computed(() => {
-    const sizeClass =
-      this.size() !== "md" ? `progress-${this.size()}` : "";
+    const sizeClass = this.size() !== "md" ? `progress-${this.size()}` : "";
     return `progress-indicator-container ${sizeClass}`.trim();
   });
 
   progressBarStyle = computed(() => {
     return {
-      height: this.size() === "sm" ? "4px" : this.size() === "lg" ? "12px" : "8px",
+      height:
+        this.size() === "sm" ? "4px" : this.size() === "lg" ? "12px" : "8px",
     };
   });
 
@@ -317,4 +325,3 @@ export class ProgressIndicatorComponent {
     return steps.indexOf(step) === steps.length - 1;
   }
 }
-

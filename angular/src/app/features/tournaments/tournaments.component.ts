@@ -42,8 +42,8 @@ interface Tournament {
     Tabs,
     TabPanel,
     MainLayoutComponent,
-    PageHeaderComponent
-],
+    PageHeaderComponent,
+  ],
   template: `
     <app-main-layout>
       <div class="tournaments-page">
@@ -51,20 +51,19 @@ interface Tournament {
           title="Official Tournament Schedule 2026-2027"
           subtitle="International Flag Football Season featuring 7 major tournaments across Europe"
           icon="pi-trophy"
-          >
+        >
           <p-button label="Next Tournament" icon="pi pi-calendar"></p-button>
         </app-page-header>
-    
+
         <!-- Tournament Tabs -->
         <p-tabs>
           <p-tabpanel header="2026 Season" leftIcon="pi pi-calendar">
             <div class="tournaments-grid">
               @for (
-                tournament of tournaments2026(); track trackByTournamentId($index,
-                tournament)) {
-                <p-card
-                  class="tournament-card"
-                  >
+                tournament of tournaments2026();
+                track trackByTournamentId($index, tournament)
+              ) {
+                <p-card class="tournament-card">
                   <div class="tournament-header">
                     <p-tag
                       [value]="getStatusLabel(tournament.status)"
@@ -81,20 +80,26 @@ interface Tournament {
                         </div>
                         <div>
                           <div class="info-value">{{ tournament.date }}</div>
-                          <div class="info-label">{{ tournament.duration }}</div>
+                          <div class="info-label">
+                            {{ tournament.duration }}
+                          </div>
                         </div>
                       </div>
                       <div class="info-item">
                         <div class="info-icon">📍</div>
                         <div>
-                          <div class="info-value">{{ tournament.location }}</div>
+                          <div class="info-value">
+                            {{ tournament.location }}
+                          </div>
                           <div class="info-label">Location</div>
                         </div>
                       </div>
                       <div class="info-item">
                         <div class="info-icon">💰</div>
                         <div>
-                          <div class="info-value">{{ tournament.prizePool }}</div>
+                          <div class="info-value">
+                            {{ tournament.prizePool }}
+                          </div>
                           <div class="info-label">Prize pool</div>
                         </div>
                       </div>
@@ -105,7 +110,7 @@ interface Tournament {
                         <div>
                           <div class="info-value">
                             {{ tournament.teamsRegistered }}/{{
-                            tournament.teamsMax
+                              tournament.teamsMax
                             }}
                           </div>
                           <div class="info-label">Teams</div>
@@ -113,9 +118,7 @@ interface Tournament {
                       </div>
                     </div>
                     @if (tournament.progress !== undefined) {
-                      <div
-                        class="tournament-progress"
-                        >
+                      <div class="tournament-progress">
                         <div class="progress-label">
                           <span>Opens in</span>
                           <span>{{ tournament.daysUntil }} days</span>
@@ -142,11 +145,10 @@ interface Tournament {
           <p-tabpanel header="2027 Season" leftIcon="pi pi-calendar">
             <div class="tournaments-grid">
               @for (
-                tournament of tournaments2027(); track trackByTournamentId($index,
-                tournament)) {
-                <p-card
-                  class="tournament-card"
-                  >
+                tournament of tournaments2027();
+                track trackByTournamentId($index, tournament)
+              ) {
+                <p-card class="tournament-card">
                   <div class="tournament-header">
                     <p-tag
                       [value]="getStatusLabel(tournament.status)"
@@ -163,20 +165,26 @@ interface Tournament {
                         </div>
                         <div>
                           <div class="info-value">{{ tournament.date }}</div>
-                          <div class="info-label">{{ tournament.duration }}</div>
+                          <div class="info-label">
+                            {{ tournament.duration }}
+                          </div>
                         </div>
                       </div>
                       <div class="info-item">
                         <div class="info-icon">📍</div>
                         <div>
-                          <div class="info-value">{{ tournament.location }}</div>
+                          <div class="info-value">
+                            {{ tournament.location }}
+                          </div>
                           <div class="info-label">Location</div>
                         </div>
                       </div>
                       <div class="info-item">
                         <div class="info-icon">💰</div>
                         <div>
-                          <div class="info-value">{{ tournament.prizePool }}</div>
+                          <div class="info-value">
+                            {{ tournament.prizePool }}
+                          </div>
                           <div class="info-label">Prize pool</div>
                         </div>
                       </div>
@@ -187,7 +195,7 @@ interface Tournament {
                         <div>
                           <div class="info-value">
                             {{ tournament.teamsRegistered }}/{{
-                            tournament.teamsMax
+                              tournament.teamsMax
                             }}
                           </div>
                           <div class="info-label">Teams</div>
@@ -210,7 +218,7 @@ interface Tournament {
         </p-tabs>
       </div>
     </app-main-layout>
-    `,
+  `,
   styles: [
     `
       .tournaments-page {
@@ -427,7 +435,10 @@ export class TournamentsComponent implements OnInit {
   }
 
   getStatusSeverity(status: string): "info" | "success" | "secondary" | "warn" {
-    const severities: Record<string, "info" | "success" | "secondary" | "warn"> = {
+    const severities: Record<
+      string,
+      "info" | "success" | "secondary" | "warn"
+    > = {
       upcoming: "info",
       ongoing: "success",
       completed: "secondary",

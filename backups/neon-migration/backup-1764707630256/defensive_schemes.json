@@ -5,19 +5,9 @@
     "description": "Three defensive backs, one blitzer",
     "blitzers_count": 1,
     "defensive_backs_count": 3,
-    "scheme_strengths": [
-      "pass_coverage",
-      "deep_protection",
-      "zone_coverage"
-    ],
-    "scheme_weaknesses": [
-      "run_stopping",
-      "short_quick_passes"
-    ],
-    "ideal_situations": [
-      "known_passing_downs",
-      "deep_ball_protection"
-    ],
+    "scheme_strengths": ["pass_coverage", "deep_protection", "zone_coverage"],
+    "scheme_weaknesses": ["run_stopping", "short_quick_passes"],
+    "ideal_situations": ["known_passing_downs", "deep_ball_protection"],
     "player_requirements": {
       "blitz": {
         "power": 8,
@@ -41,14 +31,8 @@
       "versatile_pressure",
       "adaptable"
     ],
-    "scheme_weaknesses": [
-      "deep_coverage_gaps",
-      "coordination_complexity"
-    ],
-    "ideal_situations": [
-      "unknown_down_distance",
-      "balanced_offense"
-    ],
+    "scheme_weaknesses": ["deep_coverage_gaps", "coordination_complexity"],
+    "ideal_situations": ["unknown_down_distance", "balanced_offense"],
     "player_requirements": {
       "blitz": {
         "speed": 8,
@@ -67,19 +51,9 @@
     "description": "One defensive back, three blitzers",
     "blitzers_count": 3,
     "defensive_backs_count": 1,
-    "scheme_strengths": [
-      "maximum_pressure",
-      "run_stopping",
-      "quick_sacks"
-    ],
-    "scheme_weaknesses": [
-      "deep_coverage",
-      "big_play_vulnerability"
-    ],
-    "ideal_situations": [
-      "short_yardage",
-      "known_running_situations"
-    ],
+    "scheme_strengths": ["maximum_pressure", "run_stopping", "quick_sacks"],
+    "scheme_weaknesses": ["deep_coverage", "big_play_vulnerability"],
+    "ideal_situations": ["short_yardage", "known_running_situations"],
     "player_requirements": {
       "blitz": {
         "power": 9,
@@ -98,18 +72,9 @@
     "description": "Four blitzers, no traditional DBs",
     "blitzers_count": 4,
     "defensive_backs_count": 0,
-    "scheme_strengths": [
-      "all_out_pressure",
-      "immediate_disruption"
-    ],
-    "scheme_weaknesses": [
-      "zero_coverage",
-      "high_risk"
-    ],
-    "ideal_situations": [
-      "desperation_situations",
-      "last_play_defense"
-    ],
+    "scheme_strengths": ["all_out_pressure", "immediate_disruption"],
+    "scheme_weaknesses": ["zero_coverage", "high_risk"],
+    "ideal_situations": ["desperation_situations", "last_play_defense"],
     "player_requirements": {
       "blitz": {
         "speed": 9,

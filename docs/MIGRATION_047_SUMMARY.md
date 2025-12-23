@@ -9,6 +9,7 @@
 ## Overview
 
 Based on today's database analysis, we discovered:
+
 - **Total tables in database**: 247
 - **Tables exposed via PostgREST**: 82 core tables
 - **Coverage**: 33.1%
@@ -38,7 +39,8 @@ Migration 047 ensures these 82 tables have proper permissions for PostgREST API 
 7. Click **Run** (or press Cmd+Enter)
 8. Wait for completion (~5-10 seconds)
 
-**Expected Result**: 
+**Expected Result**:
+
 ```
 NOTICE: Granted PostgREST permissions on 82 tables
 Success. No rows returned
@@ -62,16 +64,16 @@ After running the migration, verify it worked:
 
 ```sql
 -- Check the view was created
-SELECT * FROM postgrest_exposed_tables 
-WHERE is_core_table = true 
+SELECT * FROM postgrest_exposed_tables
+WHERE is_core_table = true
 ORDER BY table_name;
 
 -- Should return 82 rows
 
 -- Check permissions
-SELECT 
-    grantee, 
-    table_name, 
+SELECT
+    grantee,
+    table_name,
     privilege_type
 FROM information_schema.role_table_grants
 WHERE table_schema = 'public'
@@ -197,4 +199,3 @@ This migration ensures proper PostgREST exposure for:
 3. ✅ Review RLS policies for these tables
 4. ✅ Update TypeScript types if needed
 5. ✅ Document API endpoints for these tables
-

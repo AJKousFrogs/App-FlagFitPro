@@ -1,7 +1,14 @@
-import { Component, input, output, signal, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { StepsModule } from 'primeng/steps';
-import { ButtonModule } from 'primeng/button';
+import {
+  Component,
+  input,
+  output,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { StepsModule } from "primeng/steps";
+import { ButtonModule } from "primeng/button";
 
 export interface StepperStep {
   label: string;
@@ -13,12 +20,12 @@ export interface StepperStep {
 
 /**
  * Stepper Component - Angular 21
- * 
+ *
  * A reusable stepper/wizard component for multi-step forms
  * Uses Angular 21 signals for reactive state management
  */
 @Component({
-  selector: 'app-stepper',
+  selector: "app-stepper",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, StepsModule, ButtonModule],
@@ -29,21 +36,23 @@ export interface StepperStep {
         [(activeIndex)]="currentStepIndex"
         [readonly]="readonly()"
         [class.stepper-vertical]="orientation() === 'vertical'"
-        (activeIndexChange)="onStepChange($event)">
+        (activeIndexChange)="onStepChange($event)"
+      >
       </p-steps>
-      
+
       <div class="stepper-content">
         @for (step of steps(); track $index) {
           @if ($index === currentStepIndex()) {
             <div
               class="step-panel"
-              [attr.aria-hidden]="$index !== currentStepIndex()">
+              [attr.aria-hidden]="$index !== currentStepIndex()"
+            >
               <ng-content [ngProjectAs]="'step-' + $index"></ng-content>
             </div>
           }
         }
       </div>
-      
+
       @if (showNavigation()) {
         <div class="stepper-actions">
           @if (currentStepIndex() > 0) {
@@ -52,7 +61,8 @@ export interface StepperStep {
               icon="pi pi-arrow-left"
               severity="secondary"
               [outlined]="true"
-              (onClick)="previous()">
+              (onClick)="previous()"
+            >
             </p-button>
           }
           <div class="stepper-actions-right">
@@ -62,7 +72,8 @@ export interface StepperStep {
                 icon="pi pi-arrow-right"
                 iconPos="right"
                 [disabled]="!canProceed()"
-                (onClick)="next()">
+                (onClick)="next()"
+              >
               </p-button>
             } @else {
               <p-button
@@ -70,7 +81,8 @@ export interface StepperStep {
                 icon="pi pi-check"
                 severity="success"
                 [disabled]="!canProceed()"
-                (onClick)="finish()">
+                (onClick)="finish()"
+              >
               </p-button>
             }
           </div>
@@ -78,85 +90,87 @@ export interface StepperStep {
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-
-    .stepper-group {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .stepper-content {
-      min-height: 300px;
-      padding: 1.5rem 0;
-    }
-
-    .step-panel {
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
+  styles: [
+    `
+      :host {
+        display: block;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+
+      .stepper-group {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
       }
-    }
 
-    .stepper-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--p-surface-border);
-    }
+      .stepper-content {
+        min-height: 300px;
+        padding: 1.5rem 0;
+      }
 
-    .stepper-actions-right {
-      display: flex;
-      gap: 0.75rem;
-    }
+      .step-panel {
+        animation: fadeIn 0.3s ease;
+      }
 
-    :host ::ng-deep .stepper-vertical .p-steps {
-      flex-direction: column;
-    }
-  `]
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .stepper-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--p-surface-border);
+      }
+
+      .stepper-actions-right {
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      :host ::ng-deep .stepper-vertical .p-steps {
+        flex-direction: column;
+      }
+    `,
+  ],
 })
 export class StepperComponent {
   // Configuration
   steps = input.required<StepperStep[]>();
   activeIndex = input<number>(0);
-  orientation = input<'horizontal' | 'vertical'>('horizontal');
+  orientation = input<"horizontal" | "vertical">("horizontal");
   readonly = input<boolean>(false);
   showNavigation = input<boolean>(true);
-  finishLabel = input<string>('Finish');
+  finishLabel = input<string>("Finish");
   allowStepClick = input<boolean>(true);
-  
+
   // State
   currentStepIndex = signal<number>(0);
-  
+
   // Computed
   canProceed = computed(() => {
     const currentStep = this.steps()[this.currentStepIndex()];
     return currentStep?.valid !== false && !currentStep?.disabled;
   });
-  
+
   // Outputs
   stepChange = output<number>();
   stepClick = output<number>();
   finished = output<void>();
-  
+
   constructor() {
     // Sync activeIndex input with currentStepIndex signal
     this.currentStepIndex.set(this.activeIndex());
   }
-  
+
   onStepChange(index: number): void {
     if (this.allowStepClick() && index !== this.currentStepIndex()) {
       this.currentStepIndex.set(index);
@@ -164,15 +178,18 @@ export class StepperComponent {
       this.stepClick.emit(index);
     }
   }
-  
+
   next(): void {
-    if (this.currentStepIndex() < this.steps().length - 1 && this.canProceed()) {
+    if (
+      this.currentStepIndex() < this.steps().length - 1 &&
+      this.canProceed()
+    ) {
       const nextIndex = this.currentStepIndex() + 1;
       this.currentStepIndex.set(nextIndex);
       this.stepChange.emit(nextIndex);
     }
   }
-  
+
   previous(): void {
     if (this.currentStepIndex() > 0) {
       const prevIndex = this.currentStepIndex() - 1;
@@ -180,7 +197,7 @@ export class StepperComponent {
       this.stepChange.emit(prevIndex);
     }
   }
-  
+
   goToStep(index: number): void {
     if (index >= 0 && index < this.steps().length && this.allowStepClick()) {
       this.currentStepIndex.set(index);
@@ -188,13 +205,13 @@ export class StepperComponent {
       this.stepClick.emit(index);
     }
   }
-  
+
   finish(): void {
     if (this.canProceed()) {
       this.finished.emit();
     }
   }
-  
+
   validateStep(index: number, isValid: boolean): void {
     const steps = [...this.steps()];
     if (steps[index]) {
@@ -204,4 +221,3 @@ export class StepperComponent {
     }
   }
 }
-

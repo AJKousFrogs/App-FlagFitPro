@@ -14,6 +14,7 @@ Updated Angular components to use the new centralized training data services, en
 ### 1. Analytics Component (`analytics.component.ts`)
 
 **Changes:**
+
 - ✅ Added `TrainingStatsCalculationService` and `TrainingDataService` imports
 - ✅ Added `loadTrainingStatistics()` method that:
   - Fetches comprehensive training stats using `TrainingStatsCalculationService`
@@ -23,6 +24,7 @@ Updated Angular components to use the new centralized training data services, en
 - ✅ Integrated training stats loading in `ngOnInit()`
 
 **Benefits:**
+
 - Training distribution chart now shows real data from backend
 - Metrics display actual training session counts
 - ACWR calculations use consistent backend-filtered data
@@ -34,12 +36,14 @@ Updated Angular components to use the new centralized training data services, en
 ### 2. Athlete Dashboard Component (`athlete-dashboard.component.ts`)
 
 **Changes:**
+
 - ✅ Added `TrainingDataService` import and injection
 - ✅ Updated `loadTodayWorkload()` to use `TrainingDataService.getTrainingSessions()` instead of direct API calls
 - ✅ Updated `loadNextSession()` to use `TrainingDataService.getTrainingSessions()` with `includeUpcoming: true`
 - ✅ Both methods now use consistent date filtering (up to and including today)
 
 **Benefits:**
+
 - Consistent data access pattern across components
 - Proper date filtering ensures only completed sessions are counted
 - Future sessions shown separately when explicitly requested
@@ -51,6 +55,7 @@ Updated Angular components to use the new centralized training data services, en
 ### 3. Training Plan Endpoint (`training-plan.cjs`)
 
 **Changes:**
+
 - ✅ Updated `getTrainingHistory()` to use consistent date filtering:
   - Changed from `todayEndOfDay` timestamp to simple date comparison
   - Now uses `session_date <= todayStr` (consistent with training-sessions endpoint)
@@ -59,6 +64,7 @@ Updated Angular components to use the new centralized training data services, en
   - Ensures only real/completed sessions are returned
 
 **Benefits:**
+
 - Consistent date filtering across all training endpoints
 - AI training assistant uses same filtered data as other components
 - Prevents future sessions from affecting ACWR and workload calculations
@@ -70,6 +76,7 @@ Updated Angular components to use the new centralized training data services, en
 ## 📊 Data Flow
 
 ### Before Updates:
+
 ```
 Component → Direct API Call → Supabase (inconsistent filtering)
          → localStorage (out of sync)
@@ -77,6 +84,7 @@ Component → Direct API Call → Supabase (inconsistent filtering)
 ```
 
 ### After Updates:
+
 ```
 Component → TrainingDataService → Backend API → Supabase (consistent filtering)
          → TrainingStatsCalculationService → Backend API → Centralized calculations
@@ -87,16 +95,19 @@ Component → TrainingDataService → Backend API → Supabase (consistent filte
 ## 🎯 Consistency Achievements
 
 ### Date Filtering
+
 - ✅ All components now filter to `date <= CURRENT_DATE` by default
 - ✅ Future sessions excluded from statistics calculations
 - ✅ Optional `includeUpcoming` parameter for planned sessions
 
 ### Statistics Calculations
+
 - ✅ ACWR calculated using same logic across all components
 - ✅ Weekly volume uses same date range (ISO week)
 - ✅ Streak calculations use same reference date (today)
 
 ### Data Sources
+
 - ✅ Single source of truth: Backend API endpoints
 - ✅ No direct Supabase queries from components
 - ✅ localStorage used only as fallback/cache

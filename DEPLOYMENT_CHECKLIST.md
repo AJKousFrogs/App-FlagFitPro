@@ -3,6 +3,7 @@
 ## Pre-Deployment Checklist
 
 ### 1. Environment Variables ✅
+
 Ensure these are set in Netlify Dashboard → Site Settings → Environment Variables:
 
 - [ ] `JWT_SECRET` - Secret key for JWT token verification
@@ -14,6 +15,7 @@ Ensure these are set in Netlify Dashboard → Site Settings → Environment Vari
 - [ ] `SUPABASE_ANON_KEY` - Supabase anonymous key
 
 ### 2. Database Migrations ✅
+
 Run the following migration to ensure database schema is up to date:
 
 ```bash
@@ -22,22 +24,26 @@ psql $DATABASE_URL -f database/migrations/030_advanced_ux_components_support.sql
 ```
 
 Or via Supabase SQL Editor:
+
 - Copy contents of `database/migrations/030_advanced_ux_components_support.sql`
 - Paste into Supabase SQL Editor
 - Execute
 
 **Required Tables:**
+
 - [ ] `training_sessions` table exists
 - [ ] `users` table exists
 - [ ] `athlete_performance_tests` table exists (optional, for enhanced metrics)
 
 **Required Columns in `training_sessions`:**
+
 - [ ] `equipment` (TEXT[])
 - [ ] `goals` (TEXT[])
 - [ ] `exercises` (JSONB)
 - [ ] `completed_at` (TIMESTAMP)
 
 ### 3. Netlify Configuration ✅
+
 Verify `netlify.toml` includes routes for new functions:
 
 - [ ] `/api/performance/metrics` → `performance-metrics`
@@ -45,6 +51,7 @@ Verify `netlify.toml` includes routes for new functions:
 - [ ] `/api/training/sessions` → `training-sessions`
 
 ### 4. Function Files ✅
+
 Verify all Netlify functions exist:
 
 - [ ] `netlify/functions/performance-metrics.cjs`
@@ -52,6 +59,7 @@ Verify all Netlify functions exist:
 - [ ] `netlify/functions/performance-heatmap.cjs`
 
 ### 5. Frontend Components ✅
+
 Verify Angular components are integrated:
 
 - [ ] `angular/src/app/shared/components/performance-dashboard/`
@@ -60,6 +68,7 @@ Verify Angular components are integrated:
 - [ ] `angular/src/app/shared/components/training-heatmap/`
 
 ### 6. API Service Configuration ✅
+
 Verify `angular/src/app/core/services/api.service.ts` includes:
 
 - [ ] `performance.metrics` endpoint
@@ -70,6 +79,7 @@ Verify `angular/src/app/core/services/api.service.ts` includes:
 ## Deployment Steps
 
 ### Step 1: Build Angular Application
+
 ```bash
 cd angular
 npm install
@@ -77,6 +87,7 @@ npm run build
 ```
 
 ### Step 2: Commit Changes
+
 ```bash
 git add .
 git commit -m "Add advanced UX/UI components and backend APIs"
@@ -84,10 +95,12 @@ git push origin main
 ```
 
 ### Step 3: Deploy to Netlify
+
 - Netlify will automatically deploy on push to main branch
 - Or manually trigger deployment from Netlify Dashboard
 
 ### Step 4: Verify Deployment
+
 1. Check Netlify build logs for errors
 2. Verify all functions deployed successfully
 3. Test API endpoints (see Testing Guide below)
@@ -95,6 +108,7 @@ git push origin main
 ## Post-Deployment Verification
 
 ### 1. Function Health Checks
+
 Test each endpoint:
 
 ```bash
@@ -112,6 +126,7 @@ curl https://your-site.netlify.app/api/performance/heatmap?timeRange=6months \
 ```
 
 ### 2. Frontend Component Testing
+
 - [ ] Navigate to Dashboard - verify Performance Dashboard component loads
 - [ ] Navigate to Training - verify Training Builder component loads
 - [ ] Test Training Builder wizard flow
@@ -119,24 +134,26 @@ curl https://your-site.netlify.app/api/performance/heatmap?timeRange=6months \
 - [ ] Test Training Heatmap (if integrated into a page)
 
 ### 3. Database Verification
+
 ```sql
 -- Check training_sessions table structure
-SELECT column_name, data_type 
-FROM information_schema.columns 
+SELECT column_name, data_type
+FROM information_schema.columns
 WHERE table_name = 'training_sessions';
 
 -- Verify indexes exist
-SELECT indexname, indexdef 
-FROM pg_indexes 
+SELECT indexname, indexdef
+FROM pg_indexes
 WHERE tablename = 'training_sessions';
 
 -- Check views exist
-SELECT viewname 
-FROM pg_views 
+SELECT viewname
+FROM pg_views
 WHERE viewname IN ('performance_metrics_summary', 'training_load_daily');
 ```
 
 ### 4. Error Monitoring
+
 - [ ] Check Netlify Function logs for errors
 - [ ] Monitor error rates in Netlify Analytics
 - [ ] Set up error alerts (optional)
@@ -146,6 +163,7 @@ WHERE viewname IN ('performance_metrics_summary', 'training_load_daily');
 If issues occur:
 
 1. **Revert Git Commit:**
+
    ```bash
    git revert HEAD
    git push origin main
@@ -166,13 +184,16 @@ If issues occur:
 ## Performance Optimization
 
 ### After Deployment:
+
 1. Monitor function execution times
 2. Check database query performance
 3. Optimize slow queries if needed
 4. Consider adding caching for frequently accessed data
 
 ### Database Indexes:
+
 All required indexes are created in the migration. Monitor:
+
 - Query performance on `training_sessions` table
 - Index usage statistics
 - Consider additional indexes based on query patterns
@@ -211,4 +232,3 @@ All required indexes are created in the migration. Monitor:
 
 **Last Updated:** 2024-01-XX  
 **Deployment Status:** Ready for Production
-

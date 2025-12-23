@@ -34,18 +34,24 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
-  
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <div class="dashboard-container">
-            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
       <div data-sidebar-container></div>
       <main
         class="main-content u-flex-1 u-min-width-0 u-overflow-hidden u-bg-primary"
@@ -368,7 +374,7 @@
     <!-- Chat Page JavaScript -->
     <script type="module" src="./src/js/pages/chat-page.js"></script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

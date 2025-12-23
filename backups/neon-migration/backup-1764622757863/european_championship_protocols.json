@@ -9,11 +9,7 @@
     "tournament_duration_days": 14,
     "average_temperature_celsius": "22.50",
     "average_humidity_percentage": "65.00",
-    "altitude_variations_meters": [
-      100,
-      300,
-      500
-    ],
+    "altitude_variations_meters": [100, 300, 500],
     "pre_tournament_hydration_protocol": "Begin hydration protocol 7 days before tournament with 20ml/kg/day baseline",
     "daily_hydration_targets_ml_per_kg": "18.00",
     "between_games_hydration_strategy": "150ml every 20 minutes between games, electrolyte replacement for games >2 hours apart",
@@ -40,11 +36,7 @@
     "tournament_duration_days": 16,
     "average_temperature_celsius": "20.00",
     "average_humidity_percentage": "70.00",
-    "altitude_variations_meters": [
-      0,
-      100,
-      200
-    ],
+    "altitude_variations_meters": [0, 100, 200],
     "pre_tournament_hydration_protocol": "Enhanced hydration protocol 10 days before with climate adaptation training",
     "daily_hydration_targets_ml_per_kg": "20.00",
     "between_games_hydration_strategy": "200ml every 15 minutes between games, increased sodium for high humidity conditions",

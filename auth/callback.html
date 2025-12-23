@@ -1,162 +1,177 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Signing in... - FlagFit Pro</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
-  <link rel="stylesheet" href="../src/css/main.css">
-  <!-- Supabase JS SDK from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
-  <!-- Supabase Configuration (Centralized) -->
-  <script src="../src/js/config/supabase-config.js" defer></script>
-  <style>
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 20px;
-      font-family: 'Inter', 'Poppins', sans-serif;
-    }
-    .callback-container {
-      background: white;
-      border-radius: 16px;
-      padding: 40px;
-      text-align: center;
-      max-width: 400px;
-      width: 100%;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-    .logo {
-      font-size: 4rem;
-      margin-bottom: 20px;
-    }
-    .title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 10px;
-    }
-    .subtitle {
-      color: #666;
-      margin-bottom: 30px;
-      line-height: 1.6;
-    }
-    .spinner {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #667eea;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .error-message {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      padding: 16px;
-      border-radius: 8px;
-      margin-top: 20px;
-      display: none;
-    }
-    .btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 20px;
-    }
-    .btn:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    }
-  </style>
-</head>
-<body>
-  <div class="callback-container">
-    <div class="logo">🔐</div>
-    <h1 class="title">Signing you in...</h1>
-    <p class="subtitle">Please wait while we complete your sign-in.</p>
-
-    <div class="spinner" id="spinner"></div>
-
-    <div class="error-message" id="errorMessage"></div>
-
-    <div id="errorActions" style="display: none;">
-      <a href="/login.html" class="btn">Return to Login</a>
-    </div>
-  </div>
-
-  <script type="module">
-    import { getSupabase } from '../src/js/services/supabase-client.js';
-    import { authManager } from '../src/auth-manager.js';
-
-    async function handleOAuthCallback() {
-      const spinner = document.getElementById('spinner');
-      const errorMessage = document.getElementById('errorMessage');
-      const errorActions = document.getElementById('errorActions');
-
-      try {
-        const supabase = getSupabase();
-
-        if (!supabase) {
-          throw new Error('Unable to connect to authentication service');
-        }
-
-        // Supabase automatically handles the OAuth callback
-        // The session listener in auth-manager will pick it up
-
-        // Wait a moment for the session to be established
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // Check if authenticated
-        const { data: { session }, error } = await supabase.auth.getSession();
-
-        if (error) {
-          throw error;
-        }
-
-        if (session) {
-          console.log('✅ OAuth authentication successful');
-
-          // Check if user needs to complete onboarding
-          const user = session.user;
-          const hasCompletedOnboarding = user.user_metadata?.onboarding_completed;
-
-          if (hasCompletedOnboarding) {
-            // Redirect to dashboard
-            window.location.href = '/dashboard.html';
-          } else {
-            // Redirect to onboarding for new users
-            window.location.href = '/onboarding.html';
-          }
-        } else {
-          throw new Error('No session found after OAuth callback');
-        }
-      } catch (error) {
-        console.error('OAuth callback error:', error);
-        spinner.style.display = 'none';
-        errorMessage.textContent = error.message || 'Authentication failed. Please try again.';
-        errorMessage.style.display = 'block';
-        errorActions.style.display = 'block';
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signing in... - FlagFit Pro</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="stylesheet" href="../src/css/main.css" />
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="../src/js/config/supabase-config.js" defer></script>
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        font-family: "Inter", "Poppins", sans-serif;
       }
-    }
+      .callback-container {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      .logo {
+        font-size: 4rem;
+        margin-bottom: 20px;
+      }
+      .title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        padding: 16px;
+        border-radius: 8px;
+        margin-top: 20px;
+        display: none;
+      }
+      .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 20px;
+      }
+      .btn:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="callback-container">
+      <div class="logo">🔐</div>
+      <h1 class="title">Signing you in...</h1>
+      <p class="subtitle">Please wait while we complete your sign-in.</p>
 
-    handleOAuthCallback();
-  </script>
-</body>
+      <div class="spinner" id="spinner"></div>
+
+      <div class="error-message" id="errorMessage"></div>
+
+      <div id="errorActions" style="display: none">
+        <a href="/login.html" class="btn">Return to Login</a>
+      </div>
+    </div>
+
+    <script type="module">
+      import { getSupabase } from "../src/js/services/supabase-client.js";
+      import { authManager } from "../src/auth-manager.js";
+
+      async function handleOAuthCallback() {
+        const spinner = document.getElementById("spinner");
+        const errorMessage = document.getElementById("errorMessage");
+        const errorActions = document.getElementById("errorActions");
+
+        try {
+          const supabase = getSupabase();
+
+          if (!supabase) {
+            throw new Error("Unable to connect to authentication service");
+          }
+
+          // Supabase automatically handles the OAuth callback
+          // The session listener in auth-manager will pick it up
+
+          // Wait a moment for the session to be established
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+
+          // Check if authenticated
+          const {
+            data: { session },
+            error,
+          } = await supabase.auth.getSession();
+
+          if (error) {
+            throw error;
+          }
+
+          if (session) {
+            console.log("✅ OAuth authentication successful");
+
+            // Check if user needs to complete onboarding
+            const user = session.user;
+            const hasCompletedOnboarding =
+              user.user_metadata?.onboarding_completed;
+
+            if (hasCompletedOnboarding) {
+              // Redirect to dashboard
+              window.location.href = "/dashboard.html";
+            } else {
+              // Redirect to onboarding for new users
+              window.location.href = "/onboarding.html";
+            }
+          } else {
+            throw new Error("No session found after OAuth callback");
+          }
+        } catch (error) {
+          console.error("OAuth callback error:", error);
+          spinner.style.display = "none";
+          errorMessage.textContent =
+            error.message || "Authentication failed. Please try again.";
+          errorMessage.style.display = "block";
+          errorActions.style.display = "block";
+        }
+      }
+
+      handleOAuthCallback();
+    </script>
+  </body>
 </html>

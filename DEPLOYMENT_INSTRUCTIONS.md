@@ -1,16 +1,19 @@
 # Deployment Instructions - FlagFit Pro Security Updates
 
 ## Overview
+
 This document provides step-by-step instructions for deploying the critical security updates implemented in this session.
 
 ## What Was Implemented
 
 ### 1. Code Fixes (Already Deployed to Repository)
+
 - ✅ Fixed onboarding state management dual source of truth issue (auth-manager.js:1110-1120)
 - ✅ Added email normalization to registration and login (auth-manager.js:423, 343)
 - ✅ Updated Supabase config to support CLI version 2.30.4
 
 ### 2. Database Migration (Requires Manual Deployment)
+
 - ⚠️ Role enforcement trigger and RLS policies (supabase/migrations/001_role_enforcement.sql)
 
 ## Deployment Steps
@@ -30,6 +33,7 @@ Since CLI authentication is encountering issues, deploy the migration manually:
    - Click "Run" to execute
 
 3. **Verify the Deployment**:
+
    ```sql
    -- Check if the trigger was created
    SELECT tgname, tgenabled
@@ -57,32 +61,40 @@ Since CLI authentication is encountering issues, deploy the migration manually:
 After deploying the migration, test the role enforcement:
 
 #### Test 1: Invalid Role Defaults to Player
+
 ```javascript
 // In browser console on your app
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const { data, error } = await supabaseClient.auth.signUp({
-  email: 'test-invalid-role@example.com',
-  password: 'SecurePass123!',
+  email: "test-invalid-role@example.com",
+  password: "SecurePass123!",
   options: {
-    data: { role: 'superadmin' } // Invalid role
-  }
+    data: { role: "superadmin" }, // Invalid role
+  },
 });
 
 // Expected: user.user_metadata.role should be 'player'
-console.assert(data.user.user_metadata.role === 'player', 'Role enforcement failed!');
+console.assert(
+  data.user.user_metadata.role === "player",
+  "Role enforcement failed!",
+);
 ```
 
 #### Test 2: Self-Admin Assignment is Blocked
+
 ```javascript
 // Attempt to upgrade existing user to admin
 const { data, error } = await supabaseClient.auth.updateUser({
-  data: { role: 'admin' }
+  data: { role: "admin" },
 });
 
 // Expected: role should remain unchanged (not admin)
-console.assert(data.user.user_metadata.role !== 'admin', 'Admin self-assignment was not blocked!');
+console.assert(
+  data.user.user_metadata.role !== "admin",
+  "Admin self-assignment was not blocked!",
+);
 ```
 
 ### Step 3: Verify RLS Policies
@@ -110,6 +122,7 @@ ORDER BY tablename, policyname;
 ```
 
 **Expected Results**:
+
 - All tables should have `rowsecurity = true`
 - Multiple policies should exist for each table
 
@@ -141,6 +154,7 @@ git push origin main
 After deployment, monitor the following:
 
 1. **Role Change Audit Log**:
+
    ```sql
    SELECT user_id, old_role, new_role, changed_at, change_reason
    FROM public.role_change_audit
@@ -197,6 +211,7 @@ git push origin main
 ### Supabase Config Changes
 
 The following config sections were commented out to support CLI v2.30.4:
+
 - `[db.network_restrictions]` - Not supported in older CLI
 - `[storage.analytics]` - Hosted platform only
 - `[storage.vector]` - Hosted platform only
@@ -222,18 +237,22 @@ Deployment is successful when:
 ### Common Issues
 
 **Issue**: Migration fails with permission error
+
 - **Solution**: Ensure you're using a database user with sufficient privileges (postgres role)
 
 **Issue**: Trigger doesn't fire
+
 - **Solution**: Check that the trigger is enabled:
   ```sql
   ALTER TABLE auth.users ENABLE TRIGGER enforce_role_on_user_change;
   ```
 
 **Issue**: RLS blocks legitimate access
+
 - **Solution**: Review policy conditions and ensure auth.uid() returns expected user ID
 
 **Issue**: Onboarding loop after deployment
+
 - **Solution**: Clear localStorage and verify user_metadata contains onboarding_completed field
 
 ### Getting Help
@@ -287,6 +306,7 @@ Use this checklist to track deployment progress:
 **Deployed By**: [Your Name]
 **Version**: 1.0.0
 **Related Documents**:
+
 - AUTHENTICATION.md
 - SESSION_AND_SECURITY.md
 - ONBOARDING.md

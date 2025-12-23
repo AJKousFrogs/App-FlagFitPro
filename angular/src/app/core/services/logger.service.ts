@@ -1,26 +1,29 @@
 /**
  * Angular Logger Service
  * Provides consistent logging with environment-aware levels for Angular components
- * 
+ *
  * @module core/services/logger
  * @version 1.0.0
  */
 
-import { Injectable } from '@angular/core';
-import { isDevMode } from '@angular/core';
+import { Injectable } from "@angular/core";
+import { isDevMode } from "@angular/core";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class LoggerService {
   private isDevelopment = isDevMode();
-  private logLevel: 'debug' | 'info' | 'warn' | 'error' | 'silent' = this.isDevelopment ? 'debug' : 'error';
+  private logLevel: "debug" | "info" | "warn" | "error" | "silent" = this
+    .isDevelopment
+    ? "debug"
+    : "error";
 
   /**
    * Set log level: 'debug', 'info', 'warn', 'error', 'silent'
    * @param level - Log level to set
    */
-  setLevel(level: 'debug' | 'info' | 'warn' | 'error' | 'silent'): void {
+  setLevel(level: "debug" | "info" | "warn" | "error" | "silent"): void {
     this.logLevel = level;
   }
 
@@ -29,10 +32,15 @@ export class LoggerService {
    * @param level - Log level to check
    * @returns Whether the level should be logged
    */
-  private shouldLog(level: 'debug' | 'info' | 'warn' | 'error'): boolean {
-    if (this.logLevel === 'silent') return false;
+  private shouldLog(level: "debug" | "info" | "warn" | "error"): boolean {
+    if (this.logLevel === "silent") return false;
 
-    const levels: ('debug' | 'info' | 'warn' | 'error')[] = ['debug', 'info', 'warn', 'error'];
+    const levels: ("debug" | "info" | "warn" | "error")[] = [
+      "debug",
+      "info",
+      "warn",
+      "error",
+    ];
     const currentLevelIndex = levels.indexOf(this.logLevel);
     const messageLevelIndex = levels.indexOf(level);
 
@@ -44,9 +52,9 @@ export class LoggerService {
    * @param args - Arguments to log
    */
   debug(...args: any[]): void {
-    if (!this.shouldLog('debug')) return;
+    if (!this.shouldLog("debug")) return;
     if (this.isDevelopment) {
-      console.log('🔍 [DEBUG]', ...args);
+      console.log("🔍 [DEBUG]", ...args);
     }
   }
 
@@ -55,9 +63,9 @@ export class LoggerService {
    * @param args - Arguments to log
    */
   info(...args: any[]): void {
-    if (!this.shouldLog('info')) return;
+    if (!this.shouldLog("info")) return;
     if (this.isDevelopment) {
-      console.log('ℹ️ [INFO]', ...args);
+      console.log("ℹ️ [INFO]", ...args);
     }
   }
 
@@ -66,8 +74,8 @@ export class LoggerService {
    * @param args - Arguments to log
    */
   warn(...args: any[]): void {
-    if (!this.shouldLog('warn')) return;
-    console.warn('⚠️ [WARN]', ...args);
+    if (!this.shouldLog("warn")) return;
+    console.warn("⚠️ [WARN]", ...args);
   }
 
   /**
@@ -75,9 +83,9 @@ export class LoggerService {
    * @param args - Arguments to log
    */
   error(...args: any[]): void {
-    if (!this.shouldLog('error')) return;
-    console.error('❌ [ERROR]', ...args);
-    
+    if (!this.shouldLog("error")) return;
+    console.error("❌ [ERROR]", ...args);
+
     // In production, could send to error tracking service
     if (!this.isDevelopment) {
       // Example: Send to error tracking service
@@ -90,10 +98,9 @@ export class LoggerService {
    * @param args - Arguments to log
    */
   success(...args: any[]): void {
-    if (!this.shouldLog('info')) return;
+    if (!this.shouldLog("info")) return;
     if (this.isDevelopment) {
-      console.log('✅ [SUCCESS]', ...args);
+      console.log("✅ [SUCCESS]", ...args);
     }
   }
 }
-

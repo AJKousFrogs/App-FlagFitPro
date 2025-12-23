@@ -9,7 +9,7 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -30,7 +30,8 @@ async function createTrainingSession(userId, sessionData) {
     } = sessionData;
 
     // Calculate total duration if not provided
-    const totalDuration = duration || exercises.reduce((sum, ex) => sum + (ex.duration || 0), 0);
+    const totalDuration =
+      duration || exercises.reduce((sum, ex) => sum + (ex.duration || 0), 0);
 
     // Map intensity to numeric value
     const intensityMap = {
@@ -108,7 +109,7 @@ async function createTrainingSession(userId, sessionData) {
  * Get training sessions for a user
  * Always filters to sessions up to and including today by default
  * This ensures training statistics only include completed/real data
- * 
+ *
  * Query params:
  * - userId (required, from auth)
  * - startDate (optional, defaults to beginning of time)
@@ -119,7 +120,13 @@ async function createTrainingSession(userId, sessionData) {
  */
 async function getTrainingSessions(userId, queryParams) {
   try {
-    const { status, startDate, endDate, limit = 50, includeUpcoming = false } = queryParams || {};
+    const {
+      status,
+      startDate,
+      endDate,
+      limit = 50,
+      includeUpcoming = false,
+    } = queryParams || {};
 
     let query = supabaseAdmin
       .from("training_sessions")
@@ -149,7 +156,10 @@ async function getTrainingSessions(userId, queryParams) {
       // Ensure endDate includes the full day
       const endDateInclusive = new Date(endDate);
       endDateInclusive.setHours(23, 59, 59, 999);
-      query = query.lte("session_date", endDateInclusive.toISOString().split("T")[0]);
+      query = query.lte(
+        "session_date",
+        endDateInclusive.toISOString().split("T")[0],
+      );
     }
 
     const { data: sessions, error } = await query;
@@ -166,7 +176,7 @@ async function getTrainingSessions(userId, queryParams) {
 }
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Training-Sessions', event);
+  logFunctionCall("Training-Sessions", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -197,7 +207,10 @@ exports.handler = async (event, context) => {
 
     // Handle GET request - retrieve sessions
     if (event.httpMethod === "GET") {
-      const sessions = await getTrainingSessions(userId, event.queryStringParameters);
+      const sessions = await getTrainingSessions(
+        userId,
+        event.queryStringParameters,
+      );
       return createSuccessResponse(sessions);
     }
 
@@ -212,7 +225,11 @@ exports.handler = async (event, context) => {
       }
 
       // Validate required fields
-      if (!sessionData.exercises || !Array.isArray(sessionData.exercises) || sessionData.exercises.length === 0) {
+      if (
+        !sessionData.exercises ||
+        !Array.isArray(sessionData.exercises) ||
+        sessionData.exercises.length === 0
+      ) {
         return handleValidationError("Exercises array is required");
       }
 
@@ -221,12 +238,12 @@ exports.handler = async (event, context) => {
       return createSuccessResponse(
         { session: result.session, id: result.id, note: result.note },
         201,
-        "Training session created successfully"
+        "Training session created successfully",
       );
     }
 
     // Method not allowed
-    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   } catch (error) {
     console.error("Error in training-sessions function:", error);
     console.error("Error stack:", error.stack);
@@ -235,7 +252,6 @@ exports.handler = async (event, context) => {
       name: error.name,
       code: error.code,
     });
-    return handleServerError(error, 'Training-Sessions');
+    return handleServerError(error, "Training-Sessions");
   }
 };
-

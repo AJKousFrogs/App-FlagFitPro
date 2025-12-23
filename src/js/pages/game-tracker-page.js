@@ -42,7 +42,9 @@ class GameTrackerPage {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("sidebar-overlay");
 
-    if (!sidebar) {return;}
+    if (!sidebar) {
+      return;
+    }
 
     const isOpen =
       sidebar.classList.contains("open") ||
@@ -50,11 +52,15 @@ class GameTrackerPage {
 
     if (isOpen) {
       sidebar.classList.remove("open", "mobile-open");
-      if (overlay) {overlay.classList.remove("active");}
+      if (overlay) {
+        overlay.classList.remove("active");
+      }
       document.body.classList.remove("sidebar-open", "menu-open");
     } else {
       sidebar.classList.add("open", "mobile-open");
-      if (overlay) {overlay.classList.add("active");}
+      if (overlay) {
+        overlay.classList.add("active");
+      }
       document.body.classList.add("sidebar-open", "menu-open");
     }
   }
@@ -189,15 +195,18 @@ class GameTrackerPage {
     const location = document.getElementById("location").value;
     const homeAway = document.getElementById("home-away").value;
     const weather = document.getElementById("weather").value;
-    const temperatureValue = parseFloat(document.getElementById("temperature").value);
-    const temperatureUnit = document.getElementById("temperature-unit")?.value || "fahrenheit";
+    const temperatureValue = parseFloat(
+      document.getElementById("temperature").value,
+    );
+    const temperatureUnit =
+      document.getElementById("temperature-unit")?.value || "fahrenheit";
     const fieldConditions = document.getElementById("field-conditions").value;
 
     // Convert temperature to Fahrenheit for storage (API expects Fahrenheit)
     let temperatureFahrenheit = null;
     if (!isNaN(temperatureValue)) {
       if (temperatureUnit === "celsius") {
-        temperatureFahrenheit = (temperatureValue * 9 / 5) + 32;
+        temperatureFahrenheit = (temperatureValue * 9) / 5 + 32;
       } else {
         temperatureFahrenheit = temperatureValue;
       }
@@ -213,7 +222,9 @@ class GameTrackerPage {
       location,
       isHomeGame: homeAway === "home",
       weather,
-      temperature: temperatureFahrenheit ? Math.round(temperatureFahrenheit) : null,
+      temperature: temperatureFahrenheit
+        ? Math.round(temperatureFahrenheit)
+        : null,
       temperatureUnit: temperatureUnit, // Store unit for display
       fieldConditions,
       teamScore: 0,
@@ -247,9 +258,15 @@ class GameTrackerPage {
     const trackingSection = document.getElementById("live-tracking-section");
     const listSection = document.getElementById("game-list-section");
 
-    if (setupSection) {setupSection.style.display = "none";}
-    if (trackingSection) {trackingSection.style.display = "block";}
-    if (listSection) {listSection.style.display = "none";}
+    if (setupSection) {
+      setupSection.style.display = "none";
+    }
+    if (trackingSection) {
+      trackingSection.style.display = "block";
+    }
+    if (listSection) {
+      listSection.style.display = "none";
+    }
 
     this.resetPlayForm();
     this.updateQuickStats();
@@ -260,9 +277,15 @@ class GameTrackerPage {
     const trackingSection = document.getElementById("live-tracking-section");
     const listSection = document.getElementById("game-list-section");
 
-    if (setupSection) {setupSection.style.display = "block";}
-    if (trackingSection) {trackingSection.style.display = "none";}
-    if (listSection) {listSection.style.display = "none";}
+    if (setupSection) {
+      setupSection.style.display = "block";
+    }
+    if (trackingSection) {
+      trackingSection.style.display = "none";
+    }
+    if (listSection) {
+      listSection.style.display = "none";
+    }
   }
 
   showGamesList() {
@@ -270,9 +293,15 @@ class GameTrackerPage {
     const trackingSection = document.getElementById("live-tracking-section");
     const listSection = document.getElementById("game-list-section");
 
-    if (setupSection) {setupSection.style.display = "none";}
-    if (trackingSection) {trackingSection.style.display = "none";}
-    if (listSection) {listSection.style.display = "block";}
+    if (setupSection) {
+      setupSection.style.display = "none";
+    }
+    if (trackingSection) {
+      trackingSection.style.display = "none";
+    }
+    if (listSection) {
+      listSection.style.display = "block";
+    }
 
     this.loadGamesList();
   }
@@ -280,24 +309,26 @@ class GameTrackerPage {
   async loadGamesList() {
     const gamesList = document.getElementById("games-list");
 
-    if (!gamesList) {return;}
+    if (!gamesList) {
+      return;
+    }
 
     // Show loading state using DOM methods
     gamesList.textContent = "";
     const emptyState = document.createElement("div");
     emptyState.className = "empty-state";
-    
+
     const loaderIcon = document.createElement("i");
     loaderIcon.setAttribute("data-lucide", "loader");
     loaderIcon.className = "icon-48 spinning";
-    
+
     const loadingText = document.createElement("p");
     loadingText.textContent = "Loading games...";
-    
+
     emptyState.appendChild(loaderIcon);
     emptyState.appendChild(loadingText);
     gamesList.appendChild(emptyState);
-    
+
     if (typeof lucide !== "undefined") {
       lucide.createIcons();
     }
@@ -316,23 +347,23 @@ class GameTrackerPage {
 
   renderGamesList(games, gamesList) {
     gamesList.textContent = "";
-    
+
     if (games.length === 0) {
       // Create empty state using DOM methods
       const emptyState = document.createElement("div");
       emptyState.className = "empty-state";
-      
+
       const calendarIcon = document.createElement("i");
       calendarIcon.setAttribute("data-lucide", "calendar");
       calendarIcon.className = "icon-48";
-      
+
       const emptyText = document.createElement("p");
       emptyText.textContent = "No games tracked yet";
-      
+
       emptyState.appendChild(calendarIcon);
       emptyState.appendChild(emptyText);
       gamesList.appendChild(emptyState);
-      
+
       if (typeof lucide !== "undefined") {
         lucide.createIcons();
       }
@@ -392,17 +423,20 @@ class GameTrackerPage {
     // Use setSafeContent to sanitize HTML before insertion
     // Data is already escaped via escapeHtml(), but we sanitize for extra safety
     setSafeContent(gamesList, gamesHtml, true, true);
-    
+
     // Add click event listeners to game items (replacing onclick attributes)
-    gamesList.querySelectorAll('.game-item').forEach(item => {
-      const gameId = item.getAttribute('data-game-id');
+    gamesList.querySelectorAll(".game-item").forEach((item) => {
+      const gameId = item.getAttribute("data-game-id");
       if (gameId) {
-        item.addEventListener('click', () => {
-          if (window.gameTrackerPage && typeof window.gameTrackerPage.loadGame === 'function') {
+        item.addEventListener("click", () => {
+          if (
+            window.gameTrackerPage &&
+            typeof window.gameTrackerPage.loadGame === "function"
+          ) {
             window.gameTrackerPage.loadGame(gameId);
           }
         });
-        item.style.cursor = 'pointer';
+        item.style.cursor = "pointer";
       }
     });
 
@@ -412,8 +446,12 @@ class GameTrackerPage {
   }
 
   determineGameResult(game) {
-    if (game.teamScore > game.opponentScore) {return "Win";}
-    if (game.teamScore < game.opponentScore) {return "Loss";}
+    if (game.teamScore > game.opponentScore) {
+      return "Win";
+    }
+    if (game.teamScore < game.opponentScore) {
+      return "Loss";
+    }
     return "Tie";
   }
 
@@ -452,9 +490,15 @@ class GameTrackerPage {
     const runSection = document.getElementById("run-play-section");
     const flagPullSection = document.getElementById("flag-pull-section");
 
-    if (passSection) {passSection.style.display = "none";}
-    if (runSection) {runSection.style.display = "none";}
-    if (flagPullSection) {flagPullSection.style.display = "none";}
+    if (passSection) {
+      passSection.style.display = "none";
+    }
+    if (runSection) {
+      runSection.style.display = "none";
+    }
+    if (flagPullSection) {
+      flagPullSection.style.display = "none";
+    }
 
     if (playType === "pass" && passSection) {
       passSection.style.display = "block";
@@ -527,18 +571,24 @@ class GameTrackerPage {
     this.playCounter++;
 
     // Get distance unit and convert if needed
-    const distanceUnit = document.getElementById("distance-unit")?.value || "imperial";
-    const distanceValue = parseFloat(document.getElementById("distance").value) || 0;
-    const distanceMeters = distanceUnit === "imperial" 
-      ? unitManager.convertDistance(distanceValue, "yards", "meters")
-      : distanceValue;
+    const distanceUnit =
+      document.getElementById("distance-unit")?.value || "imperial";
+    const distanceValue =
+      parseFloat(document.getElementById("distance").value) || 0;
+    const distanceMeters =
+      distanceUnit === "imperial"
+        ? unitManager.convertDistance(distanceValue, "yards", "meters")
+        : distanceValue;
 
     // Get route depth unit and convert if needed
-    const routeDepthUnit = document.getElementById("route-depth-unit")?.value || "imperial";
-    const routeDepthValue = parseFloat(document.getElementById("route-depth").value) || 0;
-    const routeDepthMeters = routeDepthUnit === "imperial"
-      ? unitManager.convertDistance(routeDepthValue, "yards", "meters")
-      : routeDepthValue;
+    const routeDepthUnit =
+      document.getElementById("route-depth-unit")?.value || "imperial";
+    const routeDepthValue =
+      parseFloat(document.getElementById("route-depth").value) || 0;
+    const routeDepthMeters =
+      routeDepthUnit === "imperial"
+        ? unitManager.convertDistance(routeDepthValue, "yards", "meters")
+        : routeDepthValue;
 
     const basePlay = {
       playNumber: this.playCounter,
@@ -572,12 +622,15 @@ class GameTrackerPage {
         dropReason: document.getElementById("drop-reason").value,
       };
     } else if (playType === "run") {
-      const yardsGainedValue = parseFloat(document.getElementById("yards-gained").value) || 0;
-      const yardsGainedUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
-      const yardsGainedMeters = yardsGainedUnit === "imperial"
-        ? unitManager.convertDistance(yardsGainedValue, "yards", "meters")
-        : yardsGainedValue;
-      
+      const yardsGainedValue =
+        parseFloat(document.getElementById("yards-gained").value) || 0;
+      const yardsGainedUnit =
+        localStorage.getItem("flagfit_distance_unit") || "imperial";
+      const yardsGainedMeters =
+        yardsGainedUnit === "imperial"
+          ? unitManager.convertDistance(yardsGainedValue, "yards", "meters")
+          : yardsGainedValue;
+
       play = {
         ...play,
         ballCarrierId: document.getElementById("ball-carrier").value,
@@ -639,20 +692,23 @@ class GameTrackerPage {
         yardLine: play.yardLine,
         playType: play.playType,
         playCategory: "offensive", // or "defensive" based on play type
-        primaryPlayerId: play.quarterbackId || play.ballCarrierId || play.defenderId,
+        primaryPlayerId:
+          play.quarterbackId || play.ballCarrierId || play.defenderId,
         secondaryPlayerIds: play.receiverId ? [play.receiverId] : [],
-        playResult: play.outcome || (play.isSuccessful ? "flag_pull" : "missed"),
+        playResult:
+          play.outcome || (play.isSuccessful ? "flag_pull" : "missed"),
         yardsGained: play.yardsGained || play.yardsGainedDisplay || 0, // Use meters if converted
         routeDepth: play.routeDepth || play.routeDepthDisplay || null, // Use meters if converted
         yardsAfterCatch: 0, // Could be calculated
-        isSuccessful: play.outcome === "completion" || play.isSuccessful || false,
+        isSuccessful:
+          play.outcome === "completion" || play.isSuccessful || false,
         isTurnover: play.outcome === "interception" || false,
         notes: play.playNotes || null,
       };
 
       const response = await apiClient.post(
         API_ENDPOINTS.games.plays(this.currentGame.gameId),
-        playData
+        playData,
       );
 
       if (response.success) {
@@ -670,10 +726,18 @@ class GameTrackerPage {
     const totalDropsEl = document.getElementById("total-drops");
     const totalFlagPullsEl = document.getElementById("total-flag-pulls");
 
-    if (totalPlaysEl) {totalPlaysEl.textContent = this.plays.length;}
-    if (totalCompletionsEl) {totalCompletionsEl.textContent = this.countCompletions(this.plays);}
-    if (totalDropsEl) {totalDropsEl.textContent = this.countDrops(this.plays);}
-    if (totalFlagPullsEl) {totalFlagPullsEl.textContent = this.countFlagPulls(this.plays);}
+    if (totalPlaysEl) {
+      totalPlaysEl.textContent = this.plays.length;
+    }
+    if (totalCompletionsEl) {
+      totalCompletionsEl.textContent = this.countCompletions(this.plays);
+    }
+    if (totalDropsEl) {
+      totalDropsEl.textContent = this.countDrops(this.plays);
+    }
+    if (totalFlagPullsEl) {
+      totalFlagPullsEl.textContent = this.countFlagPulls(this.plays);
+    }
   }
 
   countCompletions(plays) {
@@ -698,26 +762,29 @@ class GameTrackerPage {
   renderRecentPlays() {
     const recentPlaysList = document.getElementById("recent-plays-list");
 
-    if (!recentPlaysList) {return;}
+    if (!recentPlaysList) {
+      return;
+    }
 
     recentPlaysList.textContent = "";
-    
+
     if (this.plays.length === 0) {
       // Create empty state using DOM methods
       const emptyState = document.createElement("div");
       emptyState.className = "empty-state";
-      
+
       const clipboardIcon = document.createElement("i");
       clipboardIcon.setAttribute("data-lucide", "clipboard");
       clipboardIcon.className = "icon-48";
-      
+
       const emptyText = document.createElement("p");
-      emptyText.textContent = "No plays tracked yet. Start tracking plays above!";
-      
+      emptyText.textContent =
+        "No plays tracked yet. Start tracking plays above!";
+
       emptyState.appendChild(clipboardIcon);
       emptyState.appendChild(emptyText);
       recentPlaysList.appendChild(emptyState);
-      
+
       if (typeof lucide !== "undefined") {
         lucide.createIcons();
       }
@@ -732,7 +799,9 @@ class GameTrackerPage {
       .map((play) => {
         const badge = this.getPlayBadge(play);
         const description = this.getPlayDescription(play);
-        const safeNotes = play.playNotes ? escapeHtml(play.playNotes) : "No notes";
+        const safeNotes = play.playNotes
+          ? escapeHtml(play.playNotes)
+          : "No notes";
 
         return `
         <div class="play-item">
@@ -803,44 +872,52 @@ class GameTrackerPage {
   }
 
   formatDistance(play) {
-    const preferredUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+    const preferredUnit =
+      localStorage.getItem("flagfit_distance_unit") || "imperial";
     if (play.distanceDisplay && play.distanceUnit) {
       // Use stored display value and unit
       return `${play.distanceDisplay} ${play.distanceUnit === "imperial" ? "yds" : "m"}`;
     } else if (play.distance) {
       // Convert from meters to preferred unit
-      const distanceValue = preferredUnit === "imperial"
-        ? unitManager.convertDistance(play.distance, "meters", "yards")
-        : play.distance;
+      const distanceValue =
+        preferredUnit === "imperial"
+          ? unitManager.convertDistance(play.distance, "meters", "yards")
+          : play.distance;
       return `${Math.round(distanceValue)} ${preferredUnit === "imperial" ? "yds" : "m"}`;
     }
     return "0 yds";
   }
 
   formatYardsGained(play) {
-    const preferredUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+    const preferredUnit =
+      localStorage.getItem("flagfit_distance_unit") || "imperial";
     if (play.yardsGainedDisplay && play.yardsGainedUnit) {
       // Use stored display value and unit
       return `${play.yardsGainedDisplay} ${play.yardsGainedUnit === "imperial" ? "yds" : "m"}`;
     } else if (play.yardsGained) {
       // Convert from meters to preferred unit
-      const yardsValue = preferredUnit === "imperial"
-        ? unitManager.convertDistance(play.yardsGained, "meters", "yards")
-        : play.yardsGained;
+      const yardsValue =
+        preferredUnit === "imperial"
+          ? unitManager.convertDistance(play.yardsGained, "meters", "yards")
+          : play.yardsGained;
       return `${Math.round(yardsValue)} ${preferredUnit === "imperial" ? "yds" : "m"}`;
     }
     return "0 yds";
   }
 
   formatRouteDepth(play) {
-    if (!play.routeDepth && !play.routeDepthDisplay) {return "";}
-    const preferredUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+    if (!play.routeDepth && !play.routeDepthDisplay) {
+      return "";
+    }
+    const preferredUnit =
+      localStorage.getItem("flagfit_distance_unit") || "imperial";
     if (play.routeDepthDisplay && play.routeDepthUnit) {
       return `${play.routeDepthDisplay} ${play.routeDepthUnit === "imperial" ? "yds" : "m"}`;
     } else if (play.routeDepth) {
-      const depthValue = preferredUnit === "imperial"
-        ? unitManager.convertDistance(play.routeDepth, "meters", "yards")
-        : play.routeDepth;
+      const depthValue =
+        preferredUnit === "imperial"
+          ? unitManager.convertDistance(play.routeDepth, "meters", "yards")
+          : play.routeDepth;
       return `${depthValue.toFixed(1)} ${preferredUnit === "imperial" ? "yds" : "m"}`;
     }
     return "";
@@ -854,7 +931,9 @@ class GameTrackerPage {
 
   resetPlayForm() {
     const form = document.getElementById("play-entry-form");
-    if (form) {form.reset();}
+    if (form) {
+      form.reset();
+    }
 
     // Reset active states
     document
@@ -878,7 +957,9 @@ class GameTrackerPage {
   }
 
   updateScore() {
-    if (!this.currentGame) {return;}
+    if (!this.currentGame) {
+      return;
+    }
 
     const teamScore =
       parseInt(document.getElementById("team-score").value) || 0;
@@ -892,7 +973,9 @@ class GameTrackerPage {
   }
 
   async handleEndGame() {
-    if (!this.currentGame) {return;}
+    if (!this.currentGame) {
+      return;
+    }
 
     if (
       confirm("Are you sure you want to end this game? All data will be saved.")
@@ -914,19 +997,22 @@ class GameTrackerPage {
       // Save final game state to backend
       try {
         await gameStatsService.saveGame(this.currentGame);
-        
+
         // Update game scores in backend
-        if (this.currentGame.gameId && this.currentGame.gameId.startsWith("GAME_")) {
+        if (
+          this.currentGame.gameId &&
+          this.currentGame.gameId.startsWith("GAME_")
+        ) {
           const { apiClient } = await import("../../api-client.js");
           const { API_ENDPOINTS } = await import("../../api-config.js");
-          
+
           await apiClient.put(
             API_ENDPOINTS.games.update(this.currentGame.gameId),
             {
               teamScore: this.currentGame.teamScore,
               opponentScore: this.currentGame.opponentScore,
               gameResult: this.currentGame.gameResult,
-            }
+            },
           );
         }
       } catch (error) {

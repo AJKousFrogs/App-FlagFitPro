@@ -5,28 +5,32 @@ import {
   signal,
   ChangeDetectionStrategy,
   inject,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
 import {
   FormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule,
   FormsModule,
-} from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
-import { FormValidators, combineValidators, createSignalFormField } from '../../utils/form.utils';
-import { LoggerService } from '../../../core/services/logger.service';
+} from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
+import { InputTextModule } from "primeng/inputtext";
+import { MessageModule } from "primeng/message";
+import {
+  FormValidators,
+  combineValidators,
+  createSignalFormField,
+} from "../../utils/form.utils";
+import { LoggerService } from "../../../core/services/logger.service";
 
 /**
  * Angular 21 Forms Example Component
  * Demonstrates both reactive forms and signal-based form patterns
  */
 @Component({
-  selector: 'app-signal-form-example',
+  selector: "app-signal-form-example",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -58,8 +62,8 @@ import { LoggerService } from '../../../core/services/logger.service';
                 "
               />
               @if (
-                reactiveForm.get('name')?.invalid &&
-                reactiveForm.get('name')?.touched
+                reactiveForm.get("name")?.invalid &&
+                reactiveForm.get("name")?.touched
               ) {
                 <small class="p-error">Name is required</small>
               }
@@ -78,8 +82,8 @@ import { LoggerService } from '../../../core/services/logger.service';
                 "
               />
               @if (
-                reactiveForm.get('email')?.invalid &&
-                reactiveForm.get('email')?.touched
+                reactiveForm.get("email")?.invalid &&
+                reactiveForm.get("email")?.touched
               ) {
                 <small class="p-error">Valid email is required</small>
               }
@@ -96,11 +100,12 @@ import { LoggerService } from '../../../core/services/logger.service';
         <!-- Signal-Based Form State (Angular 21 Pattern with model() API) -->
         <div class="form-section">
           <h3>Signal-Based Form State (model() API)</h3>
-          <form (ngSubmit)="onSignalSubmit()" [attr.aria-label]="'Signal form example'">
+          <form
+            (ngSubmit)="onSignalSubmit()"
+            [attr.aria-label]="'Signal form example'"
+          >
             <div class="p-field mb-3">
-              <label for="signal-name" [class.required]="true">
-                Name
-              </label>
+              <label for="signal-name" [class.required]="true"> Name </label>
               <input
                 id="signal-name"
                 type="text"
@@ -109,26 +114,27 @@ import { LoggerService } from '../../../core/services/logger.service';
                 (blur)="nameField.touched.set(true)"
                 [class.ng-invalid]="nameField.showError()"
                 [attr.aria-invalid]="nameField.showError()"
-                [attr.aria-describedby]="nameField.showError() ? 'signal-name-error' : null"
+                [attr.aria-describedby]="
+                  nameField.showError() ? 'signal-name-error' : null
+                "
                 [attr.aria-required]="true"
                 placeholder="Enter your name"
                 autocomplete="name"
               />
               @if (nameField.showError()) {
-                <small 
-                  id="signal-name-error" 
-                  class="p-error" 
+                <small
+                  id="signal-name-error"
+                  class="p-error"
                   role="alert"
-                  [attr.aria-live]="'polite'">
+                  [attr.aria-live]="'polite'"
+                >
                   {{ nameField.error() }}
                 </small>
               }
             </div>
 
             <div class="p-field mb-3">
-              <label for="signal-email" [class.required]="true">
-                Email
-              </label>
+              <label for="signal-email" [class.required]="true"> Email </label>
               <input
                 id="signal-email"
                 type="email"
@@ -137,17 +143,20 @@ import { LoggerService } from '../../../core/services/logger.service';
                 (blur)="emailField.touched.set(true)"
                 [class.ng-invalid]="emailField.showError()"
                 [attr.aria-invalid]="emailField.showError()"
-                [attr.aria-describedby]="emailField.showError() ? 'signal-email-error' : null"
+                [attr.aria-describedby]="
+                  emailField.showError() ? 'signal-email-error' : null
+                "
                 [attr.aria-required]="true"
                 placeholder="Enter your email"
                 autocomplete="email"
               />
               @if (emailField.showError()) {
-                <small 
-                  id="signal-email-error" 
-                  class="p-error" 
+                <small
+                  id="signal-email-error"
+                  class="p-error"
                   role="alert"
-                  [attr.aria-live]="'polite'">
+                  [attr.aria-live]="'polite'"
+                >
                   {{ emailField.error() }}
                 </small>
               }
@@ -157,7 +166,9 @@ import { LoggerService } from '../../../core/services/logger.service';
               type="submit"
               label="Submit Signal Form"
               [disabled]="!isSignalFormValid()"
-              [attr.aria-describedby]="!isSignalFormValid() ? 'signal-form-validation-info' : null"
+              [attr.aria-describedby]="
+                !isSignalFormValid() ? 'signal-form-validation-info' : null
+              "
             />
             @if (!isSignalFormValid()) {
               <div id="signal-form-validation-info" class="sr-only">
@@ -173,14 +184,20 @@ import { LoggerService } from '../../../core/services/logger.service';
         <h4>Form Status</h4>
         <div class="status-item">
           <strong>Reactive Form Valid:</strong>
-          <span [class.valid]="reactiveForm.valid" [class.invalid]="!reactiveForm.valid">
-            {{ reactiveForm.valid ? 'Yes' : 'No' }}
+          <span
+            [class.valid]="reactiveForm.valid"
+            [class.invalid]="!reactiveForm.valid"
+          >
+            {{ reactiveForm.valid ? "Yes" : "No" }}
           </span>
         </div>
         <div class="status-item">
           <strong>Signal Form Valid:</strong>
-          <span [class.valid]="isSignalFormValid()" [class.invalid]="!isSignalFormValid()">
-            {{ isSignalFormValid() ? 'Yes' : 'No' }}
+          <span
+            [class.valid]="isSignalFormValid()"
+            [class.invalid]="!isSignalFormValid()"
+          >
+            {{ isSignalFormValid() ? "Yes" : "No" }}
           </span>
         </div>
       </div>
@@ -283,18 +300,18 @@ export class SignalFormExampleComponent {
   reactiveForm: FormGroup;
 
   // Signal-Based Form State (Angular 21 Pattern with model() API)
-  nameSignal = model<string>('');
-  emailSignal = model<string>('');
+  nameSignal = model<string>("");
+  emailSignal = model<string>("");
 
   // Enhanced form fields with validation
   nameField = createSignalFormField(
     () => this.nameSignal(),
-    FormValidators.required
+    FormValidators.required,
   );
 
   emailField = createSignalFormField(
     () => this.emailSignal(),
-    combineValidators(FormValidators.required, FormValidators.email)
+    combineValidators(FormValidators.required, FormValidators.email),
   );
 
   // Computed validation
@@ -304,14 +321,14 @@ export class SignalFormExampleComponent {
 
   constructor() {
     this.reactiveForm = this.fb.group({
-      name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
+      name: ["", [Validators.required]],
+      email: ["", [Validators.required, Validators.email]],
     });
   }
 
   onReactiveSubmit(): void {
     if (this.reactiveForm.valid) {
-      this.logger.debug('Reactive Form Submitted:', this.reactiveForm.value);
+      this.logger.debug("Reactive Form Submitted:", this.reactiveForm.value);
       // Handle submission
     } else {
       this.reactiveForm.markAllAsTouched();
@@ -325,7 +342,7 @@ export class SignalFormExampleComponent {
     this.emailField.touched.set(true);
 
     if (this.isSignalFormValid()) {
-      this.logger.debug('Signal Form Submitted:', {
+      this.logger.debug("Signal Form Submitted:", {
         name: this.nameSignal(),
         email: this.emailSignal(),
       });
@@ -337,19 +354,18 @@ export class SignalFormExampleComponent {
 
   // Accessibility: Focus first invalid field
   private focusFirstInvalidReactiveField(): void {
-    if (this.reactiveForm.get('name')?.invalid) {
-      document.getElementById('reactive-name')?.focus();
-    } else if (this.reactiveForm.get('email')?.invalid) {
-      document.getElementById('reactive-email')?.focus();
+    if (this.reactiveForm.get("name")?.invalid) {
+      document.getElementById("reactive-name")?.focus();
+    } else if (this.reactiveForm.get("email")?.invalid) {
+      document.getElementById("reactive-email")?.focus();
     }
   }
 
   private focusFirstInvalidSignalField(): void {
     if (this.nameField.showError()) {
-      document.getElementById('signal-name')?.focus();
+      document.getElementById("signal-name")?.focus();
     } else if (this.emailField.showError()) {
-      document.getElementById('signal-email')?.focus();
+      document.getElementById("signal-email")?.focus();
     }
   }
 }
-

@@ -11,15 +11,22 @@ const {
   handleNotFoundError,
   handleAuthorizationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest, checkTeamMembership, getUserTeamId } = require("./utils/auth-helper.cjs");
-const { applyRateLimit, getRateLimitType } = require("./utils/rate-limiter.cjs");
+const {
+  authenticateRequest,
+  checkTeamMembership,
+  getUserTeamId,
+} = require("./utils/auth-helper.cjs");
+const {
+  applyRateLimit,
+  getRateLimitType,
+} = require("./utils/rate-limiter.cjs");
 const crypto = require("crypto");
 
 // Secure game ID generation
 function generateGameId() {
-  const id = crypto.randomBytes(12).toString('base64url');
+  const id = crypto.randomBytes(12).toString("base64url");
   return `GAME_${id}`;
 }
 
@@ -29,9 +36,9 @@ const createGame = async (userId, gameData) => {
     checkEnvVars();
 
     // Validate input data
-    const validation = validate(gameData, 'createGame');
+    const validation = validate(gameData, "createGame");
     if (!validation.valid) {
-      throw new Error(validation.errors.join(', '));
+      throw new Error(validation.errors.join(", "));
     }
 
     // Sanitize input
@@ -54,7 +61,9 @@ const createGame = async (userId, gameData) => {
         location: sanitizedData.location || null,
         is_home_game: sanitizedData.isHomeGame !== false,
         weather_conditions: sanitizedData.weather || null,
-        temperature: sanitizedData.temperature ? parseInt(sanitizedData.temperature) : null,
+        temperature: sanitizedData.temperature
+          ? parseInt(sanitizedData.temperature)
+          : null,
         field_conditions: sanitizedData.fieldConditions || null,
         season: sanitizedData.season || new Date().getFullYear().toString(),
         tournament_name: sanitizedData.tournamentName || null,
@@ -65,7 +74,9 @@ const createGame = async (userId, gameData) => {
       .select()
       .single();
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     return data;
   } catch (error) {
     console.error("Error creating game:", error);
@@ -86,11 +97,14 @@ const getGames = async (userId, options = {}) => {
       .eq("user_id", userId)
       .limit(1);
 
-    if (teamError) {throw teamError;}
+    if (teamError) {
+      throw teamError;
+    }
 
-    const teamId = teamMemberships && teamMemberships.length > 0
-      ? teamMemberships[0].team_id
-      : `TEAM_${userId}`;
+    const teamId =
+      teamMemberships && teamMemberships.length > 0
+        ? teamMemberships[0].team_id
+        : `TEAM_${userId}`;
 
     let query = supabaseAdmin
       .from("games")
@@ -127,7 +141,9 @@ const getGames = async (userId, options = {}) => {
 
     const { data, error } = await query;
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     return data || [];
   } catch (error) {
     console.error("Error getting games:", error);
@@ -148,7 +164,7 @@ const getGameDetails = async (gameId) => {
 
     if (error) {
       // Handle not found error
-      if (error.code === 'PGRST116') {
+      if (error.code === "PGRST116") {
         throw new Error(`Game with ID ${gameId} not found`);
       }
       throw error;
@@ -177,7 +193,10 @@ const updateGame = async (userId, gameId, updates) => {
     }
 
     // Verify user is on this team
-    const { authorized, error: authError } = await checkTeamMembership(userId, game.team_id);
+    const { authorized, error: authError } = await checkTeamMembership(
+      userId,
+      game.team_id,
+    );
     if (!authorized) {
       throw new Error("You don't have permission to modify this game");
     }
@@ -186,7 +205,15 @@ const updateGame = async (userId, gameId, updates) => {
     const sanitizedUpdates = sanitize(updates);
 
     // Only allow certain fields to be updated
-    const allowedFields = ['team_score', 'opponent_score', 'weather_conditions', 'temperature', 'field_conditions', 'game_time', 'location'];
+    const allowedFields = [
+      "team_score",
+      "opponent_score",
+      "weather_conditions",
+      "temperature",
+      "field_conditions",
+      "game_time",
+      "location",
+    ];
     const filteredUpdates = {};
     for (const field of allowedFields) {
       if (sanitizedUpdates[field] !== undefined) {
@@ -204,7 +231,9 @@ const updateGame = async (userId, gameId, updates) => {
       .select()
       .single();
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     return data;
   } catch (error) {
     console.error("Error updating game:", error);
@@ -225,11 +254,14 @@ const savePlay = async (gameId, playData) => {
       .order("play_number", { ascending: false })
       .limit(1);
 
-    if (countError && countError.code !== "PGRST116") {throw countError;}
+    if (countError && countError.code !== "PGRST116") {
+      throw countError;
+    }
 
-    const playNumber = existingPlays && existingPlays.length > 0
-      ? existingPlays[0].play_number + 1
-      : 1;
+    const playNumber =
+      existingPlays && existingPlays.length > 0
+        ? existingPlays[0].play_number + 1
+        : 1;
 
     const { data, error } = await supabaseAdmin
       .from("game_events")
@@ -256,7 +288,9 @@ const savePlay = async (gameId, playData) => {
       .select()
       .single();
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     return data;
   } catch (error) {
     console.error("Error saving play:", error);
@@ -276,13 +310,16 @@ const getGameStats = async (gameId) => {
       .eq("game_id", gameId)
       .order("play_number", { ascending: true });
 
-    if (playsError) {throw playsError;}
+    if (playsError) {
+      throw playsError;
+    }
 
     // Calculate statistics
     const stats = {
       totalPlays: plays.length,
       completions: plays.filter((p) => p.play_result === "completion").length,
-      incompletions: plays.filter((p) => p.play_result === "incompletion").length,
+      incompletions: plays.filter((p) => p.play_result === "incompletion")
+        .length,
       drops: plays.filter((p) => p.play_result === "drop").length,
       flagPulls: plays.filter((p) => p.play_result === "flag_pull").length,
       touchdowns: plays.filter((p) => p.play_result === "touchdown").length,
@@ -304,14 +341,18 @@ const getPlayerGameStats = async (playerId, gameId) => {
     checkEnvVars();
 
     // SECURITY: Validate playerId format to prevent SQL injection
-    if (!playerId || typeof playerId !== 'string' || !/^[A-Z0-9_-]+$/i.test(playerId)) {
+    if (
+      !playerId ||
+      typeof playerId !== "string" ||
+      !/^[A-Z0-9_-]+$/i.test(playerId)
+    ) {
       throw new Error("Invalid player ID format");
     }
 
     // First verify the game exists and is not in the future
     const todayEndOfDay = new Date();
     todayEndOfDay.setHours(23, 59, 59, 999);
-    
+
     const { data: game, error: gameError } = await supabaseAdmin
       .from("games")
       .select("game_id, game_date")
@@ -331,7 +372,9 @@ const getPlayerGameStats = async (playerId, gameId) => {
       .eq("game_id", gameId)
       .eq("primary_player_id", playerId);
 
-    if (error1) {throw error1;}
+    if (error1) {
+      throw error1;
+    }
 
     // Query 2: Get plays where player is in secondary players array
     const { data: secondaryPlays, error: error2 } = await supabaseAdmin
@@ -340,18 +383,25 @@ const getPlayerGameStats = async (playerId, gameId) => {
       .eq("game_id", gameId)
       .contains("secondary_player_ids", [playerId]);
 
-    if (error2) {throw error2;}
+    if (error2) {
+      throw error2;
+    }
 
     // Combine results and remove duplicates
     const allPlays = [...(primaryPlays || []), ...(secondaryPlays || [])];
-    const uniquePlays = Array.from(new Map(allPlays.map(p => [p.id, p])).values());
+    const uniquePlays = Array.from(
+      new Map(allPlays.map((p) => [p.id, p])).values(),
+    );
 
     return {
       plays: uniquePlays.length,
-      completions: uniquePlays.filter((p) => p.play_result === "completion").length,
+      completions: uniquePlays.filter((p) => p.play_result === "completion")
+        .length,
       yards: uniquePlays.reduce((sum, p) => sum + (p.yards_gained || 0), 0),
-      touchdowns: uniquePlays.filter((p) => p.play_result === "touchdown").length,
-      flagPulls: uniquePlays.filter((p) => p.play_result === "flag_pull").length,
+      touchdowns: uniquePlays.filter((p) => p.play_result === "touchdown")
+        .length,
+      flagPulls: uniquePlays.filter((p) => p.play_result === "flag_pull")
+        .length,
     };
   } catch (error) {
     console.error("Error getting player game stats:", error);
@@ -361,7 +411,7 @@ const getPlayerGameStats = async (playerId, gameId) => {
 
 // Main handler
 exports.handler = async (event, context) => {
-  logFunctionCall('Games', event);
+  logFunctionCall("Games", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -385,12 +435,17 @@ exports.handler = async (event, context) => {
     const userId = auth.user.id;
 
     // SECURITY: Safe path parsing with regex
-    const pathMatch = event.path.match(/^\/\.netlify\/functions\/games\/?(.*)$/);
+    const pathMatch = event.path.match(
+      /^\/\.netlify\/functions\/games\/?(.*)$/,
+    );
     const path = pathMatch ? pathMatch[1] : "";
 
     // Parse request body for POST/PUT
     let body = {};
-    if (event.body && (event.httpMethod === "POST" || event.httpMethod === "PUT")) {
+    if (
+      event.body &&
+      (event.httpMethod === "POST" || event.httpMethod === "PUT")
+    ) {
       try {
         body = JSON.parse(event.body);
       } catch (parseError) {
@@ -406,10 +461,16 @@ exports.handler = async (event, context) => {
       result = await createGame(userId, body);
     } else if (event.httpMethod === "GET" && (path === "" || path === "/")) {
       result = await getGames(userId, queryParams);
-    } else if (event.httpMethod === "GET" && path.match(/^([A-Z0-9_-]+)\/stats$/i)) {
+    } else if (
+      event.httpMethod === "GET" &&
+      path.match(/^([A-Z0-9_-]+)\/stats$/i)
+    ) {
       const gameId = path.match(/^([A-Z0-9_-]+)\/stats$/i)[1];
       result = await getGameStats(gameId);
-    } else if (event.httpMethod === "GET" && path.match(/^([A-Z0-9_-]+)\/player-stats$/i)) {
+    } else if (
+      event.httpMethod === "GET" &&
+      path.match(/^([A-Z0-9_-]+)\/player-stats$/i)
+    ) {
       const gameId = path.match(/^([A-Z0-9_-]+)\/player-stats$/i)[1];
       const playerId = queryParams.playerId;
       if (!playerId) {
@@ -422,11 +483,14 @@ exports.handler = async (event, context) => {
     } else if (event.httpMethod === "PUT" && path.match(/^([A-Z0-9_-]+)$/i)) {
       const gameId = path.match(/^([A-Z0-9_-]+)$/i)[1];
       result = await updateGame(userId, gameId, body);
-    } else if (event.httpMethod === "POST" && path.match(/^([A-Z0-9_-]+)\/plays$/i)) {
+    } else if (
+      event.httpMethod === "POST" &&
+      path.match(/^([A-Z0-9_-]+)\/plays$/i)
+    ) {
       const gameId = path.match(/^([A-Z0-9_-]+)\/plays$/i)[1];
       result = await savePlay(gameId, body);
     } else {
-      return createErrorResponse("Endpoint not found", 404, 'not_found');
+      return createErrorResponse("Endpoint not found", 404, "not_found");
     }
 
     return createSuccessResponse(result);
@@ -434,14 +498,15 @@ exports.handler = async (event, context) => {
     console.error("Error in games function:", error);
 
     if (error.message && error.message.includes("not found")) {
-      return handleNotFoundError(error.message.replace("Game with ID ", "").replace(" not found", ""));
+      return handleNotFoundError(
+        error.message.replace("Game with ID ", "").replace(" not found", ""),
+      );
     }
 
     if (error.message && error.message.includes("permission")) {
       return handleAuthorizationError(error.message);
     }
 
-    return handleServerError(error, 'Games');
+    return handleServerError(error, "Games");
   }
 };
-

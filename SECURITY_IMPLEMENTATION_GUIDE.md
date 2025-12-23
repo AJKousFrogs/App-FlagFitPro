@@ -1,4 +1,5 @@
 # 🔒 Security Implementation Guide
+
 ## Remaining Security Hardening Tasks
 
 **Created**: 2025-11-29
@@ -11,11 +12,13 @@ This guide provides step-by-step instructions for implementing the remaining sec
 ## ✅ COMPLETED FIXES
 
 ### Critical (3/3)
+
 1. ✅ **Credential Rotation Guide** - See `SECURITY_CREDENTIAL_ROTATION.md`
 2. ✅ **Function() Constructor** - Fixed in `src/undo-manager.js`
 3. ✅ **document.write()** - Fixed in `analytics.html`
 
 ### High Priority (4/8)
+
 4. ✅ **Password Strength Sanitization** - Fixed in `login.html`
 5. ✅ **Injury Data Sanitization** - Fixed in `src/js/pages/dashboard-page.js`
 6. ✅ **Chat Message Sanitization** - Fixed in `src/js/pages/chat-page.js`
@@ -37,7 +40,14 @@ This guide provides step-by-step instructions for implementing the remaining sec
 
 ```javascript
 // Add at the top of the file
-const ALLOWED_CATEGORIES = ['training', 'nutrition', 'recovery', 'technique', 'mental', 'injury'];
+const ALLOWED_CATEGORIES = [
+  "training",
+  "nutrition",
+  "recovery",
+  "technique",
+  "mental",
+  "injury",
+];
 
 // In the handler function, before the query:
 if (category) {
@@ -46,9 +56,9 @@ if (category) {
       statusCode: 400,
       headers,
       body: JSON.stringify({
-        error: 'Invalid category',
-        allowed: ALLOWED_CATEGORIES
-      })
+        error: "Invalid category",
+        allowed: ALLOWED_CATEGORIES,
+      }),
     };
   }
 }
@@ -58,12 +68,13 @@ if (query && query.length > 500) {
   return {
     statusCode: 400,
     headers,
-    body: JSON.stringify({ error: 'Query too long (max 500 characters)' })
+    body: JSON.stringify({ error: "Query too long (max 500 characters)" }),
   };
 }
 ```
 
 **Testing**:
+
 ```bash
 # Test with invalid category
 curl -X POST https://your-site.com/.netlify/functions/knowledge-search \
@@ -113,7 +124,7 @@ class RateLimiter {
     if (!record || now > record.resetTime) {
       this.requests.set(identifier, {
         count: 1,
-        resetTime: now + windowMs
+        resetTime: now + windowMs,
       });
       return { allowed: true, remaining: maxRequests - 1 };
     }
@@ -125,7 +136,7 @@ class RateLimiter {
       return {
         allowed: false,
         remaining: 0,
-        retryAfter: Math.ceil((record.resetTime - now) / 1000)
+        retryAfter: Math.ceil((record.resetTime - now) / 1000),
       };
     }
 
@@ -143,13 +154,12 @@ module.exports = { limiter };
 ```javascript
 // netlify/functions/auth-login.cjs
 
-const { limiter } = require('./utils/rate-limiter.cjs');
+const { limiter } = require("./utils/rate-limiter.cjs");
 
 exports.handler = async (event, context) => {
   // Get IP address
-  const ip = event.headers['x-forwarded-for'] ||
-             event.headers['client-ip'] ||
-             'unknown';
+  const ip =
+    event.headers["x-forwarded-for"] || event.headers["client-ip"] || "unknown";
 
   // Check rate limit: 5 attempts per 15 minutes for login
   const limit = limiter.check(ip, 5, 900000);
@@ -158,23 +168,25 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 429,
       headers: {
-        'Retry-After': limit.retryAfter,
-        'X-RateLimit-Limit': '5',
-        'X-RateLimit-Remaining': '0',
-        'X-RateLimit-Reset': new Date(Date.now() + limit.retryAfter * 1000).toISOString()
+        "Retry-After": limit.retryAfter,
+        "X-RateLimit-Limit": "5",
+        "X-RateLimit-Remaining": "0",
+        "X-RateLimit-Reset": new Date(
+          Date.now() + limit.retryAfter * 1000,
+        ).toISOString(),
       },
       body: JSON.stringify({
-        error: 'Too many login attempts',
-        retryAfter: limit.retryAfter
-      })
+        error: "Too many login attempts",
+        retryAfter: limit.retryAfter,
+      }),
     };
   }
 
   // Add rate limit headers to response
   const headers = {
-    'Content-Type': 'application/json',
-    'X-RateLimit-Limit': '5',
-    'X-RateLimit-Remaining': limit.remaining.toString()
+    "Content-Type": "application/json",
+    "X-RateLimit-Limit": "5",
+    "X-RateLimit-Remaining": limit.remaining.toString(),
   };
 
   // ... rest of login logic
@@ -196,28 +208,35 @@ exports.handler = async (event, context) => {
 **Estimated Time**: 10 minutes
 
 **Current Code** (Line 9-10):
+
 ```javascript
 const JWT_SECRET =
   process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
 ```
 
 **Fix**:
+
 ```javascript
 // SECURITY: Never use default JWT secret - fail fast if not configured
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET || JWT_SECRET.length < 32) {
-  console.error('CRITICAL: JWT_SECRET environment variable must be set and at least 32 characters');
-  throw new Error('JWT_SECRET environment variable is required for security');
+  console.error(
+    "CRITICAL: JWT_SECRET environment variable must be set and at least 32 characters",
+  );
+  throw new Error("JWT_SECRET environment variable is required for security");
 }
 
 // Optional: Additional validation
-if (JWT_SECRET === 'your-super-secret-jwt-key-change-in-production') {
-  throw new Error('JWT_SECRET cannot use default value - please set a secure secret');
+if (JWT_SECRET === "your-super-secret-jwt-key-change-in-production") {
+  throw new Error(
+    "JWT_SECRET cannot use default value - please set a secure secret",
+  );
 }
 ```
 
 **Testing**:
+
 ```bash
 # Test locally without JWT_SECRET
 # netlify dev
@@ -236,6 +255,7 @@ if (JWT_SECRET === 'your-super-secret-jwt-key-change-in-production') {
 **Estimated Time**: 15 minutes
 
 **Current Code** (Lines 368-369):
+
 ```javascript
 const urlParams = new URLSearchParams(window.location.search);
 const token = urlParams.get("token");
@@ -246,6 +266,7 @@ if (token) {
 ```
 
 **Fix**:
+
 ```javascript
 const urlParams = new URLSearchParams(window.location.search);
 const token = urlParams.get("token");
@@ -256,24 +277,30 @@ const TOKEN_REGEX = /^[a-zA-Z0-9-_]{32,128}$/;
 
 if (token) {
   if (!TOKEN_REGEX.test(token)) {
-    console.warn('[Security] Invalid reset token format');
-    showMessage('errorMessage', 'Invalid or malformed reset link. Please request a new password reset.');
+    console.warn("[Security] Invalid reset token format");
+    showMessage(
+      "errorMessage",
+      "Invalid or malformed reset link. Please request a new password reset.",
+    );
     return;
   }
 
   // Additional validation: check if token looks like JWT
-  const tokenParts = token.split('.');
+  const tokenParts = token.split(".");
   if (tokenParts.length === 3) {
     // Likely a JWT - validate structure
     try {
       const payload = JSON.parse(atob(tokenParts[1]));
       if (!payload.exp || payload.exp < Date.now() / 1000) {
-        showMessage('errorMessage', 'Reset link has expired. Please request a new one.');
+        showMessage(
+          "errorMessage",
+          "Reset link has expired. Please request a new one.",
+        );
         return;
       }
     } catch (e) {
-      console.warn('[Security] Invalid token structure');
-      showMessage('errorMessage', 'Invalid reset link format.');
+      console.warn("[Security] Invalid token structure");
+      showMessage("errorMessage", "Invalid reset link format.");
       return;
     }
   }
@@ -286,6 +313,7 @@ if (token) {
 ```
 
 **Also apply to**:
+
 - Any other pages using URL parameters
 - OAuth callback handlers
 - Redirect URLs
@@ -306,15 +334,15 @@ if (token) {
 
 function validateCSRF(event) {
   // Skip CSRF for GET, HEAD, OPTIONS
-  if (['GET', 'HEAD', 'OPTIONS'].includes(event.httpMethod)) {
+  if (["GET", "HEAD", "OPTIONS"].includes(event.httpMethod)) {
     return { valid: true };
   }
 
-  const csrfToken = event.headers['x-csrf-token'];
-  const cookie = event.headers['cookie'];
+  const csrfToken = event.headers["x-csrf-token"];
+  const cookie = event.headers["cookie"];
 
   if (!cookie) {
-    return { valid: false, error: 'No session cookie' };
+    return { valid: false, error: "No session cookie" };
   }
 
   // Extract CSRF token from cookie
@@ -322,12 +350,12 @@ function validateCSRF(event) {
   const cookieToken = cookieMatch ? cookieMatch[1] : null;
 
   if (!csrfToken || !cookieToken) {
-    return { valid: false, error: 'Missing CSRF token' };
+    return { valid: false, error: "Missing CSRF token" };
   }
 
   // Compare tokens (constant-time comparison to prevent timing attacks)
   if (csrfToken !== cookieToken) {
-    return { valid: false, error: 'CSRF token mismatch' };
+    return { valid: false, error: "CSRF token mismatch" };
   }
 
   return { valid: true };
@@ -337,8 +365,9 @@ module.exports = { validateCSRF };
 ```
 
 **Usage in endpoints**:
+
 ```javascript
-const { validateCSRF } = require('./utils/csrf-validator.cjs');
+const { validateCSRF } = require("./utils/csrf-validator.cjs");
 
 exports.handler = async (event, context) => {
   // Validate CSRF for state-changing operations
@@ -346,7 +375,7 @@ exports.handler = async (event, context) => {
   if (!csrf.valid) {
     return {
       statusCode: 403,
-      body: JSON.stringify({ error: csrf.error || 'CSRF validation failed' })
+      body: JSON.stringify({ error: csrf.error || "CSRF validation failed" }),
     };
   }
 
@@ -363,17 +392,18 @@ exports.handler = async (event, context) => {
 **Estimated Time**: 30 minutes
 
 **Add after line 76**:
+
 ```javascript
 // Enhanced password validation function
 function validatePasswordComplexity(password) {
   const errors = [];
 
   if (password.length < 8) {
-    errors.push('Password must be at least 8 characters');
+    errors.push("Password must be at least 8 characters");
   }
 
   if (password.length > 128) {
-    errors.push('Password must be less than 128 characters');
+    errors.push("Password must be less than 128 characters");
   }
 
   const hasUpperCase = /[A-Z]/.test(password);
@@ -381,28 +411,40 @@ function validatePasswordComplexity(password) {
   const hasNumbers = /\d/.test(password);
   const hasSpecialChar = /[@$!%*?&#]/.test(password);
 
-  const complexity = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecialChar]
-    .filter(Boolean).length;
+  const complexity = [
+    hasUpperCase,
+    hasLowerCase,
+    hasNumbers,
+    hasSpecialChar,
+  ].filter(Boolean).length;
 
   if (complexity < 3) {
     errors.push(
-      'Password must contain at least 3 of: uppercase letters, lowercase letters, numbers, special characters (@$!%*?&#)'
+      "Password must contain at least 3 of: uppercase letters, lowercase letters, numbers, special characters (@$!%*?&#)",
     );
   }
 
   // Check for common weak passwords
   const commonPasswords = [
-    'password', '12345678', 'qwerty', 'abc123', 'monkey',
-    'letmein', 'trustno1', 'dragon', 'baseball', 'iloveyou'
+    "password",
+    "12345678",
+    "qwerty",
+    "abc123",
+    "monkey",
+    "letmein",
+    "trustno1",
+    "dragon",
+    "baseball",
+    "iloveyou",
   ];
 
   if (commonPasswords.includes(password.toLowerCase())) {
-    errors.push('Password is too common - please choose a stronger password');
+    errors.push("Password is too common - please choose a stronger password");
   }
 
   return {
     valid: errors.length === 0,
-    errors: errors
+    errors: errors,
   };
 }
 
@@ -411,12 +453,12 @@ function validateBySchema(data, schemaName) {
   // ... existing code ...
 
   // Add password complexity check for register schema
-  if (schemaName === 'register' && data.password) {
+  if (schemaName === "register" && data.password) {
     const passwordCheck = validatePasswordComplexity(data.password);
     if (!passwordCheck.valid) {
       return {
         valid: false,
-        errors: { password: passwordCheck.errors }
+        errors: { password: passwordCheck.errors },
       };
     }
   }
@@ -434,6 +476,7 @@ function validateBySchema(data, schemaName) {
 **Estimated Time**: 20 minutes
 
 **Add to netlify.toml**:
+
 ```toml
 [[headers]]
   for = "/*"
@@ -489,11 +532,13 @@ function validateBySchema(data, schemaName) {
 ### 15-26. Additional Medium/Low Priority Items
 
 **15. Consistent Input Sanitization**
+
 - Audit all form inputs
 - Ensure validation on both frontend and backend
 - Use whitelist approach when possible
 
 **16. Secure Cookie Flags**
+
 ```javascript
 // When setting cookies:
 document.cookie = `auth_token=${token}; Secure; HttpOnly; SameSite=Strict; Max-Age=3600`;
@@ -501,6 +546,7 @@ document.cookie = `auth_token=${token}; Secure; HttpOnly; SameSite=Strict; Max-A
 
 **17. Missing HTTPS Enforcement**
 Add to `netlify.toml`:
+
 ```toml
 [[redirects]]
   from = "http://*"
@@ -510,39 +556,46 @@ Add to `netlify.toml`:
 ```
 
 **18. Autocomplete Settings**
+
 ```html
 <!-- For password fields -->
-<input type="password" name="new-password" autocomplete="new-password">
-<input type="password" name="current-password" autocomplete="current-password">
+<input type="password" name="new-password" autocomplete="new-password" />
+<input
+  type="password"
+  name="current-password"
+  autocomplete="current-password"
+/>
 
 <!-- Disable for sensitive data -->
-<input type="text" name="credit-card" autocomplete="off">
+<input type="text" name="credit-card" autocomplete="off" />
 ```
 
 **19. Subresource Integrity (SRI)**
+
 ```html
 <!-- Add integrity hashes to CDN scripts -->
 <script
   src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
   integrity="sha384-..."
-  crossorigin="anonymous">
-</script>
+  crossorigin="anonymous"
+></script>
 ```
 
 Generate SRI hashes at: https://www.srihash.org/
 
 **20. Error Message Sanitization**
+
 ```javascript
 // Don't expose stack traces to users
 try {
   // ... code
 } catch (error) {
-  console.error('[Internal]', error); // Log full error server-side
+  console.error("[Internal]", error); // Log full error server-side
   return {
     statusCode: 500,
     body: JSON.stringify({
-      error: 'An error occurred' // Generic message to user
-    })
+      error: "An error occurred", // Generic message to user
+    }),
   };
 }
 ```
@@ -552,6 +605,7 @@ try {
 ## 📝 IMPLEMENTATION CHECKLIST
 
 ### Phase 1: High Priority (Week 1)
+
 - [ ] SQL injection protection (knowledge-search.cjs)
 - [ ] Backend rate limiting (all functions)
 - [ ] Fix JWT secret validation
@@ -559,6 +613,7 @@ try {
 - [ ] Test all changes
 
 ### Phase 2: Medium Priority (Week 2)
+
 - [ ] Backend CSRF validation
 - [ ] Password complexity validation
 - [ ] Security headers in netlify.toml
@@ -566,6 +621,7 @@ try {
 - [ ] HTTPS enforcement
 
 ### Phase 3: Polish (Week 3)
+
 - [ ] Add SRI hashes to CDN scripts
 - [ ] Consistent error handling
 - [ ] Input validation audit
@@ -579,6 +635,7 @@ try {
 ### Security Testing Tools
 
 **1. OWASP ZAP**
+
 ```bash
 # Install
 brew install --cask owasp-zap
@@ -588,6 +645,7 @@ zap-cli quick-scan --self-contained https://your-site.com
 ```
 
 **2. SQLMap (SQL Injection)**
+
 ```bash
 # Test knowledge search endpoint
 sqlmap -u "https://your-site.com/.netlify/functions/knowledge-search" \
@@ -596,6 +654,7 @@ sqlmap -u "https://your-site.com/.netlify/functions/knowledge-search" \
 ```
 
 **3. Manual Testing Checklist**
+
 - [ ] Try XSS in all input fields
 - [ ] Test CSRF protection
 - [ ] Verify rate limiting
@@ -609,24 +668,28 @@ sqlmap -u "https://your-site.com/.netlify/functions/knowledge-search" \
 ## 📊 MONITORING & LOGGING
 
 **Add to backend functions**:
+
 ```javascript
 // Security event logging
 function logSecurityEvent(type, details) {
-  console.log(JSON.stringify({
-    timestamp: new Date().toISOString(),
-    type: type,
-    severity: 'warning',
-    ...details
-  }));
+  console.log(
+    JSON.stringify({
+      timestamp: new Date().toISOString(),
+      type: type,
+      severity: "warning",
+      ...details,
+    }),
+  );
 }
 
 // Usage examples:
-logSecurityEvent('rate_limit_exceeded', { ip, endpoint: '/auth-login' });
-logSecurityEvent('invalid_token', { ip, tokenFormat: 'malformed' });
-logSecurityEvent('csrf_validation_failed', { ip, endpoint });
+logSecurityEvent("rate_limit_exceeded", { ip, endpoint: "/auth-login" });
+logSecurityEvent("invalid_token", { ip, tokenFormat: "malformed" });
+logSecurityEvent("csrf_validation_failed", { ip, endpoint });
 ```
 
 **Monitor in Netlify Dashboard**:
+
 - Function logs
 - Rate limiting metrics
 - Error rates
@@ -637,6 +700,7 @@ logSecurityEvent('csrf_validation_failed', { ip, endpoint });
 ## 🔐 SECURITY MAINTENANCE
 
 **Monthly Tasks**:
+
 - [ ] Review security logs
 - [ ] Update dependencies (`npm audit fix`)
 - [ ] Rotate JWT secrets (if compromised)
@@ -644,6 +708,7 @@ logSecurityEvent('csrf_validation_failed', { ip, endpoint });
 - [ ] Check for new OWASP Top 10 updates
 
 **Quarterly Tasks**:
+
 - [ ] Full security audit
 - [ ] Penetration testing
 - [ ] Review access controls

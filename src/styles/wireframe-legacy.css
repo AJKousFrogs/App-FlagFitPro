@@ -90,7 +90,14 @@ main {
 }
 
 /* All elements get wireframe borders */
-div, section, article, aside, header, footer, nav, main {
+div,
+section,
+article,
+aside,
+header,
+footer,
+nav,
+main {
   border: 1px solid #ccc;
   margin: 5px;
   padding: 10px;
@@ -112,7 +119,8 @@ div, section, article, aside, header, footer, nav, main {
 }
 
 /* Button hover enhancements */
-.cta-secondary:hover, .cta-primary:hover {
+.cta-secondary:hover,
+.cta-primary:hover {
   transform: translateY(-1px);
   transition: all 0.2s ease;
 }
@@ -193,8 +201,18 @@ div, section, article, aside, header, footer, nav, main {
 }
 
 /* Utility classes */
-.text-center { text-align: center; }
-.text-bold { font-weight: bold; }
-.margin-top { margin-top: 15px; }
-.margin-bottom { margin-bottom: 15px; }
-.padding { padding: 15px; }
+.text-center {
+  text-align: center;
+}
+.text-bold {
+  font-weight: bold;
+}
+.margin-top {
+  margin-top: 15px;
+}
+.margin-bottom {
+  margin-bottom: 15px;
+}
+.padding {
+  padding: 15px;
+}

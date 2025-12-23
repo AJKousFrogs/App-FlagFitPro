@@ -109,9 +109,9 @@
        */
       function loadPolyfill(src) {
         return new Promise((resolve, reject) => {
-          const script = document.createElement('script');
+          const script = document.createElement("script");
           script.src = src;
-          script.crossOrigin = 'anonymous';
+          script.crossOrigin = "anonymous";
           script.onload = resolve;
           script.onerror = reject;
           document.head.appendChild(script);
@@ -120,43 +120,57 @@
 
       // Promise polyfill for older browsers
       if (!window.Promise) {
-        loadPolyfill('https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js')
-          .catch(err => console.error('Failed to load Promise polyfill:', err));
+        loadPolyfill(
+          "https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js",
+        ).catch((err) =>
+          console.error("Failed to load Promise polyfill:", err),
+        );
       }
 
       // Fetch polyfill for older browsers
       if (!window.fetch) {
-        loadPolyfill('https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.js')
-          .catch(err => console.error('Failed to load Fetch polyfill:', err));
+        loadPolyfill(
+          "https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.js",
+        ).catch((err) => console.error("Failed to load Fetch polyfill:", err));
       }
     </script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
     <!-- AI Chat Bubble Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
-  
+    <script
+      type="module"
+      src="./src/js/components/ai-chat-bubble-loader.js"
+      defer
+    ></script>
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
+
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
-    
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
+
     <!-- Analytics Page Script - Load AFTER Chart.js -->
     <script type="module" src="./src/js/pages/analytics-page.js" defer></script>
-
   </head>
   <body>
     <!-- Skip link for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <div class="dashboard-container">
-            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
       <div data-sidebar-container></div>
-<main
+      <main
         class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
         id="main-content"
       >
-                <!-- Top Bar (Loaded Dynamically) -->
+        <!-- Top Bar (Loaded Dynamically) -->
         <div data-topbar-container></div>
 
         <div class="analytics-container u-margin-y-auto">
@@ -311,7 +325,9 @@
             <!-- Training Distribution Chart -->
             <div class="chart-card">
               <div class="chart-header">
-                <h3 class="chart-title card-title">Training Session Distribution</h3>
+                <h3 class="chart-title card-title">
+                  Training Session Distribution
+                </h3>
                 <div class="chart-actions">
                   <button class="btn btn-secondary" type="button">
                     Filter
@@ -347,7 +363,9 @@
             <!-- Position Performance Chart -->
             <div class="chart-card">
               <div class="chart-header">
-                <h3 class="chart-title card-title">Position Performance Comparison</h3>
+                <h3 class="chart-title card-title">
+                  Position Performance Comparison
+                </h3>
                 <div class="chart-actions">
                   <button class="btn btn-secondary" type="button">
                     Benchmarks
@@ -383,7 +401,9 @@
             <!-- Olympic Progress Chart -->
             <div class="chart-card">
               <div class="chart-header">
-                <h3 class="chart-title card-title">Olympic Qualification Progress</h3>
+                <h3 class="chart-title card-title">
+                  Olympic Qualification Progress
+                </h3>
                 <div class="chart-actions">
                   <button class="btn btn-secondary" type="button">
                     Timeline
@@ -419,7 +439,9 @@
             <!-- Injury Risk Chart -->
             <div class="chart-card">
               <div class="chart-header">
-                <h3 class="chart-title card-title">Team Injury Risk Assessment</h3>
+                <h3 class="chart-title card-title">
+                  Team Injury Risk Assessment
+                </h3>
                 <div class="chart-actions">
                   <button class="btn btn-secondary" type="button">
                     Prevention
@@ -456,7 +478,9 @@
             <!-- Speed Development Chart -->
             <div class="chart-card">
               <div class="chart-header">
-                <h3 class="chart-title card-title">Speed Development Progress</h3>
+                <h3 class="chart-title card-title">
+                  Speed Development Progress
+                </h3>
                 <div class="chart-controls">
                   <div class="control-group">
                     <label class="control-label" for="timePeriod"
@@ -564,7 +588,7 @@
       </main>
     </div>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

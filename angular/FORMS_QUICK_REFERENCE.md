@@ -6,14 +6,14 @@
 
 ```typescript
 export class MyComponent {
-  name = signal<string>('');
+  name = signal<string>("");
   nameTouched = signal<boolean>(false);
-  
+
   nameError = computed(() => {
     if (!nameTouched()) return null;
     return FormValidators.required(name());
   });
-  
+
   isFormValid = computed(() => !nameError());
 }
 ```
@@ -24,11 +24,11 @@ export class MyComponent {
 export class MyComponent {
   form: FormGroup;
   submitted = signal(false);
-  
+
   emailError = computed(() => {
-    const control = this.form.get('email');
-    return control && (submitted() || control.touched) 
-      ? getFormControlError(control) 
+    const control = this.form.get("email");
+    return control && (submitted() || control.touched)
+      ? getFormControlError(control)
       : null;
   });
 }
@@ -37,25 +37,22 @@ export class MyComponent {
 ## 📋 Form Validators
 
 ```typescript
-import { FormValidators, combineValidators } from '../shared/utils/form.utils';
+import { FormValidators, combineValidators } from "../shared/utils/form.utils";
 
 // Required
-FormValidators.required(value)
+FormValidators.required(value);
 
 // Email
-FormValidators.email(value)
+FormValidators.email(value);
 
 // Min Length
-FormValidators.minLength(8)(value)
+FormValidators.minLength(8)(value);
 
 // Password
-FormValidators.password(value)
+FormValidators.password(value);
 
 // Combine
-combineValidators(
-  FormValidators.required,
-  FormValidators.email
-)(value)
+combineValidators(FormValidators.required, FormValidators.email)(value);
 ```
 
 ## 🎯 Template Usage
@@ -70,19 +67,16 @@ combineValidators(
   [class.ng-invalid]="nameError()"
 />
 @if (nameError()) {
-  <small class="p-error">{{ nameError() }}</small>
+<small class="p-error">{{ nameError() }}</small>
 }
 ```
 
 ### Reactive Form
 
 ```html
-<input
-  formControlName="email"
-  [class.ng-invalid]="emailError()"
-/>
+<input formControlName="email" [class.ng-invalid]="emailError()" />
 @if (emailError()) {
-  <small class="p-error">{{ emailError() }}</small>
+<small class="p-error">{{ emailError() }}</small>
 }
 ```
 
@@ -96,4 +90,3 @@ combineValidators(
 ## 📚 Full Documentation
 
 See `ANGULAR_21_FORMS_UPGRADE.md` for complete guide.
-

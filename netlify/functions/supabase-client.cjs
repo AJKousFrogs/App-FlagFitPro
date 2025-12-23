@@ -22,7 +22,7 @@ try {
       },
     });
   }
-  
+
   if (supabaseUrl && supabaseAnonKey) {
     // Create Supabase client with anon key for regular operations
     supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -37,112 +37,130 @@ const db = {
   // User operations
   users: {
     async findByEmail(email) {
-      requireSupabaseAdmin('findByEmail');
-      
+      requireSupabaseAdmin("findByEmail");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("users")
-          .select("id, email, name, role, avatar_url, email_verified, created_at, updated_at")
+          .select(
+            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+          )
           .eq("email", email)
           .single();
 
         if (error && error.code !== "PGRST116") {
           // PGRST116 = no rows found
-          throw enhanceSupabaseError(error, 'findByEmail');
+          throw enhanceSupabaseError(error, "findByEmail");
         }
 
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'findByEmail');
+        throw enhanceSupabaseError(error, "findByEmail");
       }
     },
 
     async create(userData) {
-      requireSupabaseAdmin('create user');
-      
+      requireSupabaseAdmin("create user");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("users")
           .insert(userData)
-          .select("id, email, name, role, avatar_url, email_verified, created_at, updated_at")
+          .select(
+            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+          )
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'create user');}
+        if (error) {
+          throw enhanceSupabaseError(error, "create user");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'create user');
+        throw enhanceSupabaseError(error, "create user");
       }
     },
 
     async findById(id) {
-      requireSupabaseAdmin('findById');
-      
+      requireSupabaseAdmin("findById");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("users")
-          .select("id, email, name, role, avatar_url, email_verified, created_at, updated_at")
+          .select(
+            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+          )
           .eq("id", id)
           .single();
 
         if (error && error.code !== "PGRST116") {
-          throw enhanceSupabaseError(error, 'findById');
+          throw enhanceSupabaseError(error, "findById");
         }
 
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'findById');
+        throw enhanceSupabaseError(error, "findById");
       }
     },
 
     async update(id, updates) {
-      requireSupabaseAdmin('update user');
-      
+      requireSupabaseAdmin("update user");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("users")
           .update({ ...updates, updated_at: new Date() })
           .eq("id", id)
-          .select("id, email, name, role, avatar_url, email_verified, created_at, updated_at")
+          .select(
+            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+          )
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'update user');}
+        if (error) {
+          throw enhanceSupabaseError(error, "update user");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'update user');
+        throw enhanceSupabaseError(error, "update user");
       }
     },
 
     async setVerificationToken(userId, token) {
-      requireSupabaseAdmin('setVerificationToken');
-      
+      requireSupabaseAdmin("setVerificationToken");
+
       try {
         const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
         const { data, error } = await supabaseAdmin
           .from("users")
-          .update({ 
+          .update({
             verification_token: token,
             verification_token_expires_at: expiry.toISOString(),
-            updated_at: new Date()
+            updated_at: new Date(),
           })
           .eq("id", userId)
-          .select("id, email, name, role, avatar_url, email_verified, created_at, updated_at")
+          .select(
+            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+          )
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'setVerificationToken');}
+        if (error) {
+          throw enhanceSupabaseError(error, "setVerificationToken");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'setVerificationToken');
+        throw enhanceSupabaseError(error, "setVerificationToken");
       }
     },
 
     async verifyEmail(token) {
-      requireSupabaseAdmin('verifyEmail');
-      
+      requireSupabaseAdmin("verifyEmail");
+
       try {
         // Find user by verification token
         const { data: user, error: findError } = await supabaseAdmin
           .from("users")
-          .select("id, email, name, role, avatar_url, email_verified, verification_token, verification_token_expires_at, created_at, updated_at")
+          .select(
+            "id, email, name, role, avatar_url, email_verified, verification_token, verification_token_expires_at, created_at, updated_at",
+          )
           .eq("verification_token", token)
           .single();
 
@@ -166,25 +184,31 @@ const db = {
         // Mark email as verified and clear token
         const { data, error } = await supabaseAdmin
           .from("users")
-          .update({ 
+          .update({
             email_verified: true,
             verification_token: null,
             verification_token_expires_at: null,
-            updated_at: new Date()
+            updated_at: new Date(),
           })
           .eq("id", user.id)
-          .select("id, email, name, role, avatar_url, email_verified, created_at, updated_at")
+          .select(
+            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+          )
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'verifyEmail');}
+        if (error) {
+          throw enhanceSupabaseError(error, "verifyEmail");
+        }
         return { alreadyVerified: false, user: data };
       } catch (error) {
         // Don't enhance user-friendly errors
-        if (error.message === "Invalid or expired verification token" || 
-            error.message === "Verification token has expired") {
+        if (
+          error.message === "Invalid or expired verification token" ||
+          error.message === "Verification token has expired"
+        ) {
           throw error;
         }
-        throw enhanceSupabaseError(error, 'verifyEmail');
+        throw enhanceSupabaseError(error, "verifyEmail");
       }
     },
   },
@@ -192,54 +216,66 @@ const db = {
   // Training operations
   training: {
     async getUserStats(userId) {
-      requireSupabaseAdmin('getUserStats');
-      
+      requireSupabaseAdmin("getUserStats");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("training_sessions")
-          .select("id, user_id, session_date, session_type, duration_minutes, intensity_level, status, score, completed_at, created_at, updated_at")
+          .select(
+            "id, user_id, session_date, session_type, duration_minutes, intensity_level, status, score, completed_at, created_at, updated_at",
+          )
           .eq("user_id", userId)
           .order("completed_at", { ascending: false });
 
-        if (error) {throw enhanceSupabaseError(error, 'getUserStats');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getUserStats");
+        }
         return data || [];
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getUserStats');
+        throw enhanceSupabaseError(error, "getUserStats");
       }
     },
 
     async createSession(sessionData) {
-      requireSupabaseAdmin('createSession');
-      
+      requireSupabaseAdmin("createSession");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("training_sessions")
           .insert(sessionData)
-          .select("id, user_id, session_date, session_type, duration_minutes, intensity_level, status, score, completed_at, created_at, updated_at")
+          .select(
+            "id, user_id, session_date, session_type, duration_minutes, intensity_level, status, score, completed_at, created_at, updated_at",
+          )
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'createSession');}
+        if (error) {
+          throw enhanceSupabaseError(error, "createSession");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'createSession');
+        throw enhanceSupabaseError(error, "createSession");
       }
     },
 
     async getRecentSessions(userId, limit = 10) {
-      requireSupabaseAdmin('getRecentSessions');
-      
+      requireSupabaseAdmin("getRecentSessions");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("training_sessions")
-          .select("id, user_id, session_date, session_type, duration_minutes, intensity_level, status, score, completed_at, created_at, updated_at")
+          .select(
+            "id, user_id, session_date, session_type, duration_minutes, intensity_level, status, score, completed_at, created_at, updated_at",
+          )
           .eq("user_id", userId)
           .order("completed_at", { ascending: false })
           .limit(limit);
 
-        if (error) {throw enhanceSupabaseError(error, 'getRecentSessions');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getRecentSessions");
+        }
         return data || [];
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getRecentSessions');
+        throw enhanceSupabaseError(error, "getRecentSessions");
       }
     },
   },
@@ -247,8 +283,8 @@ const db = {
   // Team operations
   teams: {
     async getUserTeams(userId) {
-      requireSupabaseAdmin('getUserTeams');
-      
+      requireSupabaseAdmin("getUserTeams");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("team_members")
@@ -269,16 +305,18 @@ const db = {
           )
           .eq("user_id", userId);
 
-        if (error) {throw enhanceSupabaseError(error, 'getUserTeams');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getUserTeams");
+        }
         return data || [];
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getUserTeams');
+        throw enhanceSupabaseError(error, "getUserTeams");
       }
     },
 
     async getTeamMembers(teamId) {
-      requireSupabaseAdmin('getTeamMembers');
-      
+      requireSupabaseAdmin("getTeamMembers");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("team_members")
@@ -300,10 +338,12 @@ const db = {
           )
           .eq("team_id", teamId);
 
-        if (error) {throw enhanceSupabaseError(error, 'getTeamMembers');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getTeamMembers");
+        }
         return data || [];
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getTeamMembers');
+        throw enhanceSupabaseError(error, "getTeamMembers");
       }
     },
   },
@@ -311,8 +351,8 @@ const db = {
   // Community operations
   community: {
     async getFeedPosts(limit = 20) {
-      requireSupabaseAdmin('getFeedPosts');
-      
+      requireSupabaseAdmin("getFeedPosts");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("posts")
@@ -335,16 +375,18 @@ const db = {
           .order("created_at", { ascending: false })
           .limit(limit);
 
-        if (error) {throw enhanceSupabaseError(error, 'getFeedPosts');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getFeedPosts");
+        }
         return data || [];
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getFeedPosts');
+        throw enhanceSupabaseError(error, "getFeedPosts");
       }
     },
 
     async createPost(postData) {
-      requireSupabaseAdmin('createPost');
-      
+      requireSupabaseAdmin("createPost");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("posts")
@@ -367,10 +409,12 @@ const db = {
           )
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'createPost');}
+        if (error) {
+          throw enhanceSupabaseError(error, "createPost");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'createPost');
+        throw enhanceSupabaseError(error, "createPost");
       }
     },
   },
@@ -378,12 +422,14 @@ const db = {
   // Tournament operations
   tournaments: {
     async getList(status = "all", limit = 20) {
-      requireSupabaseAdmin('getTournamentList');
-      
+      requireSupabaseAdmin("getTournamentList");
+
       try {
         let query = supabaseAdmin
           .from("tournaments")
-          .select("id, name, description, start_date, end_date, status, location, created_at, updated_at")
+          .select(
+            "id, name, description, start_date, end_date, status, location, created_at, updated_at",
+          )
           .order("start_date", { ascending: true })
           .limit(limit);
 
@@ -393,16 +439,18 @@ const db = {
 
         const { data, error } = await query;
 
-        if (error) {throw enhanceSupabaseError(error, 'getTournamentList');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getTournamentList");
+        }
         return data || [];
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getTournamentList');
+        throw enhanceSupabaseError(error, "getTournamentList");
       }
     },
 
     async getDetails(tournamentId) {
-      requireSupabaseAdmin('getTournamentDetails');
-      
+      requireSupabaseAdmin("getTournamentDetails");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("tournaments")
@@ -432,10 +480,12 @@ const db = {
           .eq("id", tournamentId)
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'getTournamentDetails');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getTournamentDetails");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getTournamentDetails');
+        throw enhanceSupabaseError(error, "getTournamentDetails");
       }
     },
   },
@@ -443,8 +493,8 @@ const db = {
   // Games operations
   games: {
     async getRecentGames(teamId = null, limit = 10) {
-      requireSupabaseAdmin('getRecentGames');
-      
+      requireSupabaseAdmin("getRecentGames");
+
       try {
         let query = supabaseAdmin
           .from("games")
@@ -474,15 +524,19 @@ const db = {
           .limit(limit);
 
         if (teamId) {
-          query = query.or(`home_team_id.eq.${teamId},away_team_id.eq.${teamId}`);
+          query = query.or(
+            `home_team_id.eq.${teamId},away_team_id.eq.${teamId}`,
+          );
         }
 
         const { data, error } = await query;
 
-        if (error) {throw enhanceSupabaseError(error, 'getRecentGames');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getRecentGames");
+        }
         return data || [];
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getRecentGames');
+        throw enhanceSupabaseError(error, "getRecentGames");
       }
     },
   },
@@ -490,8 +544,8 @@ const db = {
   // Chat operations
   chat: {
     async getMessages(channel, limit = 50) {
-      requireSupabaseAdmin('getMessages');
-      
+      requireSupabaseAdmin("getMessages");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("chat_messages")
@@ -514,16 +568,18 @@ const db = {
           .order("created_at", { ascending: false })
           .limit(limit);
 
-        if (error) {throw enhanceSupabaseError(error, 'getMessages');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getMessages");
+        }
         return data?.reverse() || []; // Reverse to show oldest first
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getMessages');
+        throw enhanceSupabaseError(error, "getMessages");
       }
     },
 
     async createMessage(messageData) {
-      requireSupabaseAdmin('createMessage');
-      
+      requireSupabaseAdmin("createMessage");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("chat_messages")
@@ -545,10 +601,12 @@ const db = {
           )
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'createMessage');}
+        if (error) {
+          throw enhanceSupabaseError(error, "createMessage");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'createMessage');
+        throw enhanceSupabaseError(error, "createMessage");
       }
     },
   },
@@ -556,22 +614,24 @@ const db = {
   // Notifications operations
   notifications: {
     async getUserNotifications(userId, options = {}) {
-      requireSupabaseAdmin('getUserNotifications');
-      
+      requireSupabaseAdmin("getUserNotifications");
+
       const {
         limit = 20,
         page = 1,
         onlyUnread = false,
-        lastOpenedAt = null
+        lastOpenedAt = null,
       } = options;
-      
+
       try {
         // Get muted types to filter out
         const mutedTypes = await this.getMutedTypes(userId);
-        
+
         let query = supabaseAdmin
           .from("notifications")
-          .select("id, user_id, notification_type, message, is_read, created_at, updated_at")
+          .select(
+            "id, user_id, notification_type, message, is_read, created_at, updated_at",
+          )
           .eq("user_id", userId);
 
         // Filter by read status if requested
@@ -587,24 +647,26 @@ const db = {
 
         const { data, error } = await query;
 
-        if (error) {throw enhanceSupabaseError(error, 'getUserNotifications');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getUserNotifications");
+        }
 
         // Filter out muted types in memory (more reliable than query filter)
         let filteredData = data || [];
         if (mutedTypes.length > 0) {
           filteredData = filteredData.filter(
-            notif => !mutedTypes.includes(notif.notification_type)
+            (notif) => !mutedTypes.includes(notif.notification_type),
           );
         }
 
         // Get last opened timestamp for "new since last open" indicator
-        const lastOpened = lastOpenedAt || await this.getLastOpenedAt(userId);
+        const lastOpened = lastOpenedAt || (await this.getLastOpenedAt(userId));
 
         // Transform database format to frontend format
         return filteredData.map((notif) => {
           const created = new Date(notif.created_at);
           const isNew = lastOpened ? created > new Date(lastOpened) : false;
-          
+
           return {
             id: notif.id,
             type: notif.notification_type || "general",
@@ -616,131 +678,153 @@ const db = {
           };
         });
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getUserNotifications');
+        throw enhanceSupabaseError(error, "getUserNotifications");
       }
     },
 
     async markAsRead(userId, notificationId) {
-      requireSupabaseAdmin('markAsRead');
-      
+      requireSupabaseAdmin("markAsRead");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("notifications")
-          .update({ 
+          .update({
             is_read: true,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq("id", notificationId)
           .eq("user_id", userId)
-          .select("id, user_id, notification_type, message, is_read, created_at, updated_at")
+          .select(
+            "id, user_id, notification_type, message, is_read, created_at, updated_at",
+          )
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'markAsRead');}
+        if (error) {
+          throw enhanceSupabaseError(error, "markAsRead");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'markAsRead');
+        throw enhanceSupabaseError(error, "markAsRead");
       }
     },
 
     async markManyAsRead(userId, notificationIds) {
-      requireSupabaseAdmin('markManyAsRead');
-      
+      requireSupabaseAdmin("markManyAsRead");
+
       if (!Array.isArray(notificationIds) || notificationIds.length === 0) {
-        throw new Error('notificationIds must be a non-empty array');
+        throw new Error("notificationIds must be a non-empty array");
       }
-      
+
       try {
         const { data, error } = await supabaseAdmin
           .from("notifications")
-          .update({ 
+          .update({
             is_read: true,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq("user_id", userId)
           .in("id", notificationIds)
-          .select("id, user_id, notification_type, message, is_read, created_at, updated_at");
+          .select(
+            "id, user_id, notification_type, message, is_read, created_at, updated_at",
+          );
 
-        if (error) {throw enhanceSupabaseError(error, 'markManyAsRead');}
+        if (error) {
+          throw enhanceSupabaseError(error, "markManyAsRead");
+        }
         return data || [];
       } catch (error) {
-        throw enhanceSupabaseError(error, 'markManyAsRead');
+        throw enhanceSupabaseError(error, "markManyAsRead");
       }
     },
 
     async markAllAsRead(userId) {
-      requireSupabaseAdmin('markAllAsRead');
-      
+      requireSupabaseAdmin("markAllAsRead");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("notifications")
-          .update({ 
+          .update({
             is_read: true,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq("user_id", userId)
           .eq("is_read", false)
-          .select("id, user_id, notification_type, message, is_read, created_at, updated_at");
+          .select(
+            "id, user_id, notification_type, message, is_read, created_at, updated_at",
+          );
 
-        if (error) {throw enhanceSupabaseError(error, 'markAllAsRead');}
+        if (error) {
+          throw enhanceSupabaseError(error, "markAllAsRead");
+        }
         return data || [];
       } catch (error) {
-        throw enhanceSupabaseError(error, 'markAllAsRead');
+        throw enhanceSupabaseError(error, "markAllAsRead");
       }
     },
 
     async getUnreadCount(userId) {
-      requireSupabaseAdmin('getUnreadCount');
-      
+      requireSupabaseAdmin("getUnreadCount");
+
       try {
         // Get muted categories
         const mutedTypes = await this.getMutedTypes(userId);
-        
+
         const query = supabaseAdmin
           .from("notifications")
-          .select("*", { count: 'exact', head: true })
+          .select("*", { count: "exact", head: true })
           .eq("user_id", userId)
           .eq("is_read", false);
-        
+
         const { count: totalCount, error } = await query;
-        
-        if (error) {throw enhanceSupabaseError(error, 'getUnreadCount');}
-        
+
+        if (error) {
+          throw enhanceSupabaseError(error, "getUnreadCount");
+        }
+
         // Filter out muted types - for accurate count, subtract muted unread count
         let count = totalCount || 0;
         if (mutedTypes.length > 0 && count > 0) {
           // Get count of muted unread notifications
           const mutedQuery = supabaseAdmin
             .from("notifications")
-            .select("*", { count: 'exact', head: true })
+            .select("*", { count: "exact", head: true })
             .eq("user_id", userId)
             .eq("is_read", false)
             .in("notification_type", mutedTypes);
-          
+
           const { count: mutedCount } = await mutedQuery;
           count = Math.max(0, count - (mutedCount || 0));
         }
-        
+
         return count;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getUnreadCount');
+        throw enhanceSupabaseError(error, "getUnreadCount");
       }
     },
 
     async createNotification(userId, notificationData) {
-      requireSupabaseAdmin('createNotification');
-      
-      const {
-        type,
-        message,
-        priority = 'medium'
-      } = notificationData;
-      
+      requireSupabaseAdmin("createNotification");
+
+      const { type, message, priority = "medium" } = notificationData;
+
       // Validate notification type
-      const validTypes = ['training', 'achievement', 'team', 'wellness', 'general', 'game', 'tournament', 'injury_risk', 'weather'];
+      const validTypes = [
+        "training",
+        "achievement",
+        "team",
+        "wellness",
+        "general",
+        "game",
+        "tournament",
+        "injury_risk",
+        "weather",
+      ];
       if (!validTypes.includes(type)) {
-        throw new Error(`Invalid notification type: ${type}. Must be one of: ${validTypes.join(', ')}`);
+        throw new Error(
+          `Invalid notification type: ${type}. Must be one of: ${validTypes.join(", ")}`,
+        );
       }
-      
+
       try {
         const { data, error } = await supabaseAdmin
           .from("notifications")
@@ -749,21 +833,25 @@ const db = {
             notification_type: type,
             message: message,
             priority: priority,
-            is_read: false
+            is_read: false,
           })
-          .select("id, user_id, notification_type, message, is_read, created_at, updated_at")
+          .select(
+            "id, user_id, notification_type, message, is_read, created_at, updated_at",
+          )
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'createNotification');}
+        if (error) {
+          throw enhanceSupabaseError(error, "createNotification");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'createNotification');
+        throw enhanceSupabaseError(error, "createNotification");
       }
     },
 
     async updateLastOpenedAt(userId) {
-      requireSupabaseAdmin('updateLastOpenedAt');
-      
+      requireSupabaseAdmin("updateLastOpenedAt");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("users")
@@ -772,16 +860,18 @@ const db = {
           .select("id, notification_last_opened_at")
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'updateLastOpenedAt');}
+        if (error) {
+          throw enhanceSupabaseError(error, "updateLastOpenedAt");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'updateLastOpenedAt');
+        throw enhanceSupabaseError(error, "updateLastOpenedAt");
       }
     },
 
     async getLastOpenedAt(userId) {
-      requireSupabaseAdmin('getLastOpenedAt');
-      
+      requireSupabaseAdmin("getLastOpenedAt");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("users")
@@ -789,16 +879,18 @@ const db = {
           .eq("id", userId)
           .single();
 
-        if (error) {throw enhanceSupabaseError(error, 'getLastOpenedAt');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getLastOpenedAt");
+        }
         return data?.notification_last_opened_at || null;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getLastOpenedAt');
+        throw enhanceSupabaseError(error, "getLastOpenedAt");
       }
     },
 
     async getMutedTypes(userId) {
-      requireSupabaseAdmin('getMutedTypes');
-      
+      requireSupabaseAdmin("getMutedTypes");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("user_notification_preferences")
@@ -806,70 +898,78 @@ const db = {
           .eq("user_id", userId)
           .eq("muted", true);
 
-        if (error) {throw enhanceSupabaseError(error, 'getMutedTypes');}
-        return (data || []).map(p => p.notification_type);
+        if (error) {
+          throw enhanceSupabaseError(error, "getMutedTypes");
+        }
+        return (data || []).map((p) => p.notification_type);
       } catch (error) {
         // If table doesn't exist yet, return empty array
-        if (error.code === '42P01') {
+        if (error.code === "42P01") {
           return [];
         }
-        throw enhanceSupabaseError(error, 'getMutedTypes');
+        throw enhanceSupabaseError(error, "getMutedTypes");
       }
     },
 
     async getUserPreferences(userId) {
-      requireSupabaseAdmin('getUserPreferences');
-      
+      requireSupabaseAdmin("getUserPreferences");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("user_notification_preferences")
           .select("notification_type, muted, push_enabled, in_app_enabled")
           .eq("user_id", userId);
 
-        if (error) {throw enhanceSupabaseError(error, 'getUserPreferences');}
-        
+        if (error) {
+          throw enhanceSupabaseError(error, "getUserPreferences");
+        }
+
         // Return as object keyed by type
         const preferences = {};
-        (data || []).forEach(pref => {
+        (data || []).forEach((pref) => {
           preferences[pref.notification_type] = {
             muted: pref.muted,
             pushEnabled: pref.push_enabled,
-            inAppEnabled: pref.in_app_enabled
+            inAppEnabled: pref.in_app_enabled,
           };
         });
-        
+
         return preferences;
       } catch (error) {
         // If table doesn't exist yet, return defaults
-        if (error.code === '42P01') {
+        if (error.code === "42P01") {
           return {};
         }
-        throw enhanceSupabaseError(error, 'getUserPreferences');
+        throw enhanceSupabaseError(error, "getUserPreferences");
       }
     },
 
     async updateUserPreferences(userId, preferences) {
-      requireSupabaseAdmin('updateUserPreferences');
-      
+      requireSupabaseAdmin("updateUserPreferences");
+
       try {
         const updates = Object.entries(preferences).map(([type, prefs]) => ({
           user_id: userId,
           notification_type: type,
           muted: prefs.muted || false,
-          push_enabled: prefs.pushEnabled !== undefined ? prefs.pushEnabled : true,
-          in_app_enabled: prefs.inAppEnabled !== undefined ? prefs.inAppEnabled : true
+          push_enabled:
+            prefs.pushEnabled !== undefined ? prefs.pushEnabled : true,
+          in_app_enabled:
+            prefs.inAppEnabled !== undefined ? prefs.inAppEnabled : true,
         }));
-        
+
         // Use upsert to insert or update
         const { data, error } = await supabaseAdmin
           .from("user_notification_preferences")
-          .upsert(updates, { onConflict: 'user_id,notification_type' })
+          .upsert(updates, { onConflict: "user_id,notification_type" })
           .select();
 
-        if (error) {throw enhanceSupabaseError(error, 'updateUserPreferences');}
+        if (error) {
+          throw enhanceSupabaseError(error, "updateUserPreferences");
+        }
         return data;
       } catch (error) {
-        throw enhanceSupabaseError(error, 'updateUserPreferences');
+        throw enhanceSupabaseError(error, "updateUserPreferences");
       }
     },
   },
@@ -877,50 +977,54 @@ const db = {
   // Sponsors operations
   sponsors: {
     async getActiveSponsors() {
-      requireSupabaseAdmin('getActiveSponsors');
-      
+      requireSupabaseAdmin("getActiveSponsors");
+
       try {
         const { data, error } = await supabaseAdmin
           .from("sponsors")
-          .select("id, name, logo_url, website_url, description, is_active, display_order, created_at, updated_at")
+          .select(
+            "id, name, logo_url, website_url, description, is_active, display_order, created_at, updated_at",
+          )
           .eq("is_active", true)
           .order("display_order", { ascending: true });
 
-        if (error) {throw enhanceSupabaseError(error, 'getActiveSponsors');}
+        if (error) {
+          throw enhanceSupabaseError(error, "getActiveSponsors");
+        }
         return data || [];
       } catch (error) {
-        throw enhanceSupabaseError(error, 'getActiveSponsors');
+        throw enhanceSupabaseError(error, "getActiveSponsors");
       }
     },
   },
 };
 
 // Helper function to enhance Supabase errors with context
-function enhanceSupabaseError(error, context = 'Database operation') {
+function enhanceSupabaseError(error, context = "Database operation") {
   // Handle connection errors
-  if (error.message?.includes('fetch failed') || error.name === 'TypeError') {
+  if (error.message?.includes("fetch failed") || error.name === "TypeError") {
     const enhancedError = new Error(
-      `Failed to connect to Supabase during ${context}. Check SUPABASE_URL (${supabaseUrl ? 'set' : 'MISSING'}) and network connectivity.`
+      `Failed to connect to Supabase during ${context}. Check SUPABASE_URL (${supabaseUrl ? "set" : "MISSING"}) and network connectivity.`,
     );
     enhancedError.originalError = error;
-    enhancedError.code = 'SUPABASE_CONNECTION_ERROR';
+    enhancedError.code = "SUPABASE_CONNECTION_ERROR";
     return enhancedError;
   }
 
   // Handle specific Supabase error codes
   const errorCodeMap = {
-    'PGRST116': 'No rows found',
-    '42P01': 'Table does not exist',
-    '23505': 'Unique constraint violation',
-    '23503': 'Foreign key constraint violation',
-    '42501': 'Insufficient privileges',
-    '23514': 'Check constraint violation',
-    '23502': 'Not null constraint violation',
+    PGRST116: "No rows found",
+    "42P01": "Table does not exist",
+    23505: "Unique constraint violation",
+    23503: "Foreign key constraint violation",
+    42501: "Insufficient privileges",
+    23514: "Check constraint violation",
+    23502: "Not null constraint violation",
   };
 
   if (error.code && errorCodeMap[error.code]) {
     const enhancedError = new Error(
-      `${context} failed: ${errorCodeMap[error.code]}${error.message ? ` - ${error.message}` : ''}`
+      `${context} failed: ${errorCodeMap[error.code]}${error.message ? ` - ${error.message}` : ""}`,
     );
     enhancedError.originalError = error;
     enhancedError.code = error.code;
@@ -938,10 +1042,10 @@ function enhanceSupabaseError(error, context = 'Database operation') {
 }
 
 // Helper function to check supabaseAdmin and throw if not initialized
-function requireSupabaseAdmin(context = 'Database operation') {
+function requireSupabaseAdmin(context = "Database operation") {
   if (!supabaseAdmin) {
     throw new Error(
-      `Supabase admin client is not initialized for ${context}. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.`
+      `Supabase admin client is not initialized for ${context}. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.`,
     );
   }
 }
@@ -966,10 +1070,18 @@ function getTimeAgo(dateString) {
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMinutes < 1) {return "Just now";}
-  if (diffMinutes < 60) {return `${diffMinutes} minute${diffMinutes !== 1 ? "s" : ""} ago`;}
-  if (diffHours < 24) {return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;}
-  if (diffDays < 7) {return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;}
+  if (diffMinutes < 1) {
+    return "Just now";
+  }
+  if (diffMinutes < 60) {
+    return `${diffMinutes} minute${diffMinutes !== 1 ? "s" : ""} ago`;
+  }
+  if (diffHours < 24) {
+    return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
+  }
+  if (diffDays < 7) {
+    return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
+  }
   const weeks = Math.floor(diffDays / 7);
   return `${weeks} week${weeks !== 1 ? "s" : ""} ago`;
 }
@@ -978,21 +1090,29 @@ function getTimeAgo(dateString) {
 function checkEnvVars() {
   if (!supabaseUrl || !supabaseServiceKey || !supabaseAnonKey) {
     const missing = [];
-    if (!supabaseUrl) {missing.push("SUPABASE_URL");}
-    if (!supabaseServiceKey) {missing.push("SUPABASE_SERVICE_KEY");}
-    if (!supabaseAnonKey) {missing.push("SUPABASE_ANON_KEY");}
-    
+    if (!supabaseUrl) {
+      missing.push("SUPABASE_URL");
+    }
+    if (!supabaseServiceKey) {
+      missing.push("SUPABASE_SERVICE_KEY");
+    }
+    if (!supabaseAnonKey) {
+      missing.push("SUPABASE_ANON_KEY");
+    }
+
     console.error("Missing environment variables:", missing.join(", "));
     console.error("Current env vars:", {
-      SUPABASE_URL: supabaseUrl ? `${supabaseUrl.substring(0, 20)}...` : 'MISSING',
-      SUPABASE_SERVICE_KEY: supabaseServiceKey ? 'SET' : 'MISSING',
-      SUPABASE_ANON_KEY: supabaseAnonKey ? 'SET' : 'MISSING',
+      SUPABASE_URL: supabaseUrl
+        ? `${supabaseUrl.substring(0, 20)}...`
+        : "MISSING",
+      SUPABASE_SERVICE_KEY: supabaseServiceKey ? "SET" : "MISSING",
+      SUPABASE_ANON_KEY: supabaseAnonKey ? "SET" : "MISSING",
     });
     throw new Error(
       `Missing required Supabase environment variables: ${missing.join(", ")}. Please set them in Netlify.`,
     );
   }
-  
+
   // Validate URL format
   try {
     new URL(supabaseUrl);
@@ -1002,14 +1122,16 @@ function checkEnvVars() {
       `Invalid SUPABASE_URL format. Expected a valid URL, got: ${supabaseUrl?.substring(0, 50)}...`,
     );
   }
-  
+
   // Also check if clients were initialized
   if (!supabaseAdmin || !supabase) {
     console.error("Supabase clients not initialized properly");
     console.error("Client status:", {
       supabaseAdmin: !!supabaseAdmin,
       supabase: !!supabase,
-      supabaseUrl: supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'MISSING',
+      supabaseUrl: supabaseUrl
+        ? `${supabaseUrl.substring(0, 30)}...`
+        : "MISSING",
     });
     throw new Error(
       "Supabase clients failed to initialize. Please check your environment variables.",

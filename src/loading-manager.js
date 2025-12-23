@@ -60,7 +60,9 @@ export class LoadingManager {
     // Add cancel handler
     if (cancellable && onCancel && cancelBtn) {
       cancelBtn.addEventListener("click", () => {
-        if (onCancel) {onCancel();}
+        if (onCancel) {
+          onCancel();
+        }
         this.hideLoading(loaderId);
       });
     }
@@ -98,7 +100,9 @@ export class LoadingManager {
       container = document.querySelector(container);
     }
 
-    if (!container) {return;}
+    if (!container) {
+      return;
+    }
 
     const skeletons = [];
     for (let i = 0; i < count; i++) {
@@ -152,7 +156,9 @@ export class LoadingManager {
       container = document.querySelector(container);
     }
 
-    if (!container) {return;}
+    if (!container) {
+      return;
+    }
 
     const progressId = `progress-${Date.now()}`;
     const percentage = Math.round((current / total) * 100);
@@ -192,19 +198,23 @@ export class LoadingManager {
   // Update progress
   updateProgress(progressId, current, total) {
     const progressBar = document.getElementById(progressId);
-    if (!progressBar) {return;}
+    if (!progressBar) {
+      return;
+    }
 
     const percentage = Math.round((current / total) * 100);
     const bar = progressBar.querySelector(".progress-bar");
     const text = progressBar.querySelector(".progress-text");
 
-    if (bar) {bar.style.width = `${percentage}%`;}
+    if (bar) {
+      bar.style.width = `${percentage}%`;
+    }
     if (text) {
-SecureDOMUtils.setTextContent(
+      SecureDOMUtils.setTextContent(
         text,
         `${current} of ${total} (${percentage}%)`,
       );
-}
+    }
   }
 
   // Show inline loading state
@@ -213,7 +223,9 @@ SecureDOMUtils.setTextContent(
       element = document.querySelector(element);
     }
 
-    if (!element) {return;}
+    if (!element) {
+      return;
+    }
 
     if (isLoading) {
       element.classList.add("is-loading");
@@ -234,7 +246,9 @@ SecureDOMUtils.setTextContent(
       element = document.querySelector(element);
     }
 
-    if (!element) {return;}
+    if (!element) {
+      return;
+    }
 
     const savingId = `saving-${Date.now()}`;
     const indicator = SecureDOMUtils.createElement(element, "div", {

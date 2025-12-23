@@ -53,12 +53,16 @@ export class PerformanceUtils {
     return function executedFunction(...args) {
       const later = () => {
         timeout = null;
-        if (!immediate) {func.apply(this, args);}
+        if (!immediate) {
+          func.apply(this, args);
+        }
       };
       const callNow = immediate && !timeout;
       clearTimeout(timeout);
       timeout = setTimeout(later, wait);
-      if (callNow) {func.apply(this, args);}
+      if (callNow) {
+        func.apply(this, args);
+      }
     };
   }
 
@@ -87,7 +91,9 @@ export class PerformanceUtils {
   static getCachedResponse(key) {
     const cached = this.cache.get(key);
 
-    if (!cached) {return null;}
+    if (!cached) {
+      return null;
+    }
 
     if (Date.now() > cached.expiration) {
       this.cache.delete(key);

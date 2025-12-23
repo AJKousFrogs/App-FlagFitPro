@@ -8,6 +8,7 @@
 ## Executive Summary
 
 This audit identified **6 major categories** of deprecated/obsolete code:
+
 1. **Deprecated npm packages** (1 critical)
 2. **Deprecated JavaScript functions** (5 functions)
 3. **Deprecated SCSS files** (3 files)
@@ -20,25 +21,30 @@ This audit identified **6 major categories** of deprecated/obsolete code:
 ## 1. Deprecated NPM Packages
 
 ### Critical: `node-fetch` (v3.3.2)
+
 **Status**: ⚠️ **DEPRECATED**  
 **Location**: `package.json:96`
 
-**Issue**: 
+**Issue**:
+
 - `node-fetch` v3+ is deprecated
 - Node.js 18+ has native `fetch()` API built-in
 - No need for external dependency
 
 **Recommendation**:
+
 ```json
 // Remove from package.json
 // Replace all imports with native fetch
 ```
 
 **Files using node-fetch**:
+
 - `scripts/fetch-research-articles.js` (line 20)
 - **Action**: Replace `import fetch from "node-fetch"` with native `fetch` (Node.js 18+)
 
-**Action Required**: 
+**Action Required**:
+
 - ✅ Remove `node-fetch` from dependencies
 - ✅ Update all imports to use native `fetch`
 - ✅ Test all API calls
@@ -52,13 +58,15 @@ This audit identified **6 major categories** of deprecated/obsolete code:
 **Status**: ⚠️ **DEPRECATED** (marked with `@deprecated`)
 
 **Functions**:
+
 - `saveToStorage()` (line 193)
 - `getFromStorage()` (line 200)
 - `removeFromStorage()` (line 207)
 
 **Replacement**: Use `storageService` from `src/js/services/storage-service-unified.js`
 
-**Current Usage**: 
+**Current Usage**:
+
 - ✅ **Good news**: No actual usage found in codebase (only definitions)
 - Still exported in `shared.js` utils object (lines 701-703)
 - Backward compatibility exports in `storage-service-unified.js` (lines 361-363)
@@ -70,6 +78,7 @@ This audit identified **6 major categories** of deprecated/obsolete code:
   - `src/js/components/top-bar-loader.js`, `src/js/components/base-component-loader.js`
 
 **Action Required**:
+
 - ✅ Remove deprecated functions from `shared.js`
 - ✅ Update all imports to use `storageService` directly
 - ✅ Remove backward compatibility exports once migration complete
@@ -81,16 +90,19 @@ This audit identified **6 major categories** of deprecated/obsolete code:
 **Status**: ⚠️ **DEPRECATED** (marked with `@deprecated`)
 
 **Functions**:
+
 - `simpleEncrypt()` (line 283)
 - `simpleDecrypt()` (line 300)
 
 **Replacement**: Use `encrypt()` and `decrypt()` methods instead
 
 **Current Usage**:
+
 - Still used internally for legacy data migration (lines 493, 606)
 - Should be removed after all legacy data is migrated
 
 **Action Required**:
+
 - ⚠️ Keep until all legacy encrypted data is migrated
 - ✅ Add migration script to convert old encrypted data
 - ✅ Remove after migration complete
@@ -102,6 +114,7 @@ This audit identified **6 major categories** of deprecated/obsolete code:
 **Status**: ⚠️ **DEPRECATED** (marked with deprecation warnings)
 
 **Files**:
+
 1. `angular/src/assets/styles/_variables.scss`
 2. `angular/src/assets/styles/_tokens.scss`
 3. `angular/src/assets/styles/_theme.scss`
@@ -109,11 +122,13 @@ This audit identified **6 major categories** of deprecated/obsolete code:
 **Replacement**: Use `angular/src/assets/styles/design-system-tokens.scss`
 
 **Current Status**:
+
 - All three files redirect to `design-system-tokens.scss` via `@import`
 - Kept for backward compatibility
 - Migration guide referenced: `DESIGN_SYSTEM_REVAMP_SUMMARY.md`
 
 **Action Required**:
+
 - ✅ Verify all Angular components use new tokens
 - ✅ Remove deprecated files once migration complete
 - ✅ Update any remaining imports
@@ -126,12 +141,14 @@ This audit identified **6 major categories** of deprecated/obsolete code:
 
 **Status**: ⚠️ **SECURITY RISK** (XSS vulnerability)
 
-**Issue**: 
+**Issue**:
+
 - `innerHTML` can execute malicious scripts
 - Should use `textContent` or safe DOM manipulation
 - Consider using DOMPurify for HTML content
 
 **High-Risk Files** (most instances):
+
 - `roster.html`: 17 instances
 - `wellness.html`: 18 instances
 - `src/js/pages/dashboard-page.js`: 10 instances
@@ -140,6 +157,7 @@ This audit identified **6 major categories** of deprecated/obsolete code:
 - `src/js/pages/chat-page.js`: 10 instances
 
 **Recommendation**:
+
 ```javascript
 // Instead of:
 element.innerHTML = userContent;
@@ -147,11 +165,12 @@ element.innerHTML = userContent;
 // Use:
 element.textContent = userContent;
 // OR for HTML:
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 element.innerHTML = DOMPurify.sanitize(userContent);
 ```
 
 **Action Required**:
+
 - ⚠️ **HIGH PRIORITY**: Audit all `innerHTML` usage
 - ✅ Replace with `textContent` where possible
 - ✅ Use DOMPurify for trusted HTML content
@@ -164,6 +183,7 @@ element.innerHTML = DOMPurify.sanitize(userContent);
 **Status**: ✅ **ALREADY FIXED**
 
 **Location**: `analytics.html:103`
+
 - Comment indicates `document.write()` was replaced with safe dynamic script loading
 - No actual usage found
 
@@ -176,20 +196,24 @@ element.innerHTML = DOMPurify.sanitize(userContent);
 **Categories**:
 
 ### 5.1 High Priority TODOs
+
 - **Drag and drop**: `src/js/components/enhanced-training-schedule.js:610`
 - **Preferences panel**: `src/js/components/enhanced-notification-center.js:792`
 - **API integrations**: Multiple files need actual API calls instead of TODOs
 
 ### 5.2 Angular Component TODOs
+
 - `angular/src/app/shared/components/training-builder/training-builder.component.ts`: 2 TODOs
 - `angular/src/app/shared/components/header/header.component.ts`: 3 TODOs
 - `angular/src/app/features/training/training.component.ts`: 3 TODOs
 - `angular/src/app/core/services/acwr-alerts.service.ts`: 4 TODOs
 
 ### 5.3 Service Worker TODOs
+
 - `sw.js`: 2 TODOs for IndexedDB queries
 
 **Action Required**:
+
 - ✅ Create issue tracker for all TODOs
 - ✅ Prioritize by feature importance
 - ✅ Implement or remove placeholder TODOs
@@ -202,16 +226,19 @@ element.innerHTML = DOMPurify.sanitize(userContent);
 
 **Status**: ⚠️ **HIGH SEVERITY VULNERABILITY**
 
-**Issue**: 
+**Issue**:
+
 - `jws < 3.2.3` has improper HMAC signature verification (CWE-347)
 - CVSS Score: 7.5
 - Affects: `node_modules/netlify-cli/node_modules/jws`
 
-**Current Fix**: 
+**Current Fix**:
+
 - Package.json has override for `jws: ^4.0.1` (lines 135-142)
 - Postinstall script: `scripts/fix-jws-vulnerability.js`
 
 **Action Required**:
+
 - ✅ Verify override is working: `npm audit`
 - ✅ Ensure postinstall script runs correctly
 - ✅ Monitor for updates
@@ -224,11 +251,13 @@ element.innerHTML = DOMPurify.sanitize(userContent);
 
 **Location**: `angular/src/app/core/services/auth.service.ts`
 
-**Issue**: 
+**Issue**:
+
 - Using `BehaviorSubject` import but not using it
 - Some subscriptions without proper cleanup
 
 **Action Required**:
+
 - ✅ Remove unused imports
 - ✅ Use `takeUntilDestroyed()` for subscriptions (Angular 19 best practice)
 
@@ -238,11 +267,13 @@ element.innerHTML = DOMPurify.sanitize(userContent);
 
 **Status**: ⚠️ **17 instances found**
 
-**Issue**: 
+**Issue**:
+
 - Console.log should be replaced with proper logging service
 - Especially in production code
 
 **Action Required**:
+
 - ✅ Replace with logger service
 - ✅ Use Angular's console only in development
 - ✅ Consider logging library (e.g., Sentry)
@@ -252,10 +283,12 @@ element.innerHTML = DOMPurify.sanitize(userContent);
 ## 8. Duplicate/Obsolete Files
 
 ### Migration Scripts
+
 - `scripts/migrate-to-unified-storage.js`: Exists but may not be fully executed
 - Check if all files listed in script have been migrated
 
 ### Backup Files
+
 - ✅ No `.backup` files found
 - ✅ No `.old` files found
 - ✅ No `.deprecated` files found
@@ -265,16 +298,19 @@ element.innerHTML = DOMPurify.sanitize(userContent);
 ## Priority Action Items
 
 ### 🔴 Critical (Fix Immediately)
+
 1. **Remove `node-fetch` dependency** - Use native fetch
 2. **Fix `jws` vulnerability** - Verify override is working
 3. **Audit `innerHTML` usage** - Replace with safe alternatives
 
 ### 🟡 High Priority (Fix Soon)
+
 4. **Remove deprecated storage functions** - Complete migration
 5. **Remove deprecated SCSS files** - Complete Angular migration
 6. **Implement or remove TODOs** - Clean up incomplete code
 
 ### 🟢 Medium Priority (Plan for Future)
+
 7. **Remove legacy encryption functions** - After data migration
 8. **Replace console.log** - With proper logging service
 9. **Fix RxJS patterns** - Use Angular 19 best practices
@@ -315,6 +351,7 @@ element.innerHTML = DOMPurify.sanitize(userContent);
 ## Recommendations
 
 1. **Add ESLint Rules**:
+
    ```javascript
    "no-restricted-syntax": [
      "error",
@@ -339,4 +376,3 @@ element.innerHTML = DOMPurify.sanitize(userContent);
 
 **Generated**: Automated audit  
 **Next Review**: After completing priority fixes
-

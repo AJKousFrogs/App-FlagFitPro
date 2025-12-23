@@ -8,7 +8,7 @@ const {
   createErrorResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -20,9 +20,9 @@ function calculateTrend(currentValue, previousValue) {
   if (!previousValue || previousValue === 0) {
     return { trend: "stable", trendValue: 0 };
   }
-  
+
   const change = ((currentValue - previousValue) / previousValue) * 100;
-  
+
   if (change > 2) {
     return { trend: "up", trendValue: Math.abs(change) };
   } else if (change < -2) {
@@ -73,7 +73,7 @@ async function getPerformanceMetrics(userId) {
 
     // Speed metric (from sprint times or speed training sessions)
     const speedSessions = trainingSessions.filter(
-      (s) => s.session_type === "speed" || s.drill_type?.includes("sprint")
+      (s) => s.session_type === "speed" || s.drill_type?.includes("sprint"),
     );
     const speedValues = performanceTests
       .filter((t) => t.test_type === "40YardDash" || t.test_type === "sprint")
@@ -91,7 +91,9 @@ async function getPerformanceMetrics(userId) {
       }
     } else if (speedSessions.length > 0) {
       // Estimate from session performance scores
-      const avgScore = speedSessions.reduce((sum, s) => sum + (s.performance_score || 75), 0) / speedSessions.length;
+      const avgScore =
+        speedSessions.reduce((sum, s) => sum + (s.performance_score || 75), 0) /
+        speedSessions.length;
       speedValue = 15 + (avgScore / 100) * 5; // Scale to mph
     }
 
@@ -109,10 +111,11 @@ async function getPerformanceMetrics(userId) {
 
     // Accuracy metric (from technical training or pass accuracy tests)
     const accuracyTests = performanceTests.filter(
-      (t) => t.test_type === "pass_accuracy" || t.test_type === "throwing_accuracy"
+      (t) =>
+        t.test_type === "pass_accuracy" || t.test_type === "throwing_accuracy",
     );
     const technicalSessions = trainingSessions.filter(
-      (s) => s.session_type === "technical" || s.drill_type?.includes("pass")
+      (s) => s.session_type === "technical" || s.drill_type?.includes("pass"),
     );
 
     let accuracyValue = 87.3;
@@ -120,12 +123,20 @@ async function getPerformanceMetrics(userId) {
     let accuracyTrend = { trend: "stable", trendValue: 0 };
 
     if (accuracyTests.length > 0) {
-      accuracyValue = accuracyTests[0].best_result || accuracyTests[0].average_result;
+      accuracyValue =
+        accuracyTests[0].best_result || accuracyTests[0].average_result;
       if (accuracyTests.length > 1) {
-        accuracyTrend = calculateTrend(accuracyTests[0].best_result, accuracyTests[1].best_result);
+        accuracyTrend = calculateTrend(
+          accuracyTests[0].best_result,
+          accuracyTests[1].best_result,
+        );
       }
     } else if (technicalSessions.length > 0) {
-      const avgScore = technicalSessions.reduce((sum, s) => sum + (s.performance_score || 75), 0) / technicalSessions.length;
+      const avgScore =
+        technicalSessions.reduce(
+          (sum, s) => sum + (s.performance_score || 75),
+          0,
+        ) / technicalSessions.length;
       accuracyValue = 70 + (avgScore / 100) * 25; // Scale to percentage
     }
 
@@ -143,7 +154,7 @@ async function getPerformanceMetrics(userId) {
 
     // Endurance metric (from duration and completion rates)
     const enduranceSessions = trainingSessions.filter(
-      (s) => s.session_type === "endurance" || s.duration_minutes > 60
+      (s) => s.session_type === "endurance" || s.duration_minutes > 60,
     );
 
     let enduranceValue = 75;
@@ -152,7 +163,9 @@ async function getPerformanceMetrics(userId) {
 
     if (enduranceSessions.length > 0) {
       const recentSessions = enduranceSessions.slice(0, 5);
-      const avgDuration = recentSessions.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) / recentSessions.length;
+      const avgDuration =
+        recentSessions.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) /
+        recentSessions.length;
       enduranceValue = Math.round(avgDuration);
 
       if (recentSessions.length > 1) {
@@ -224,7 +237,7 @@ function getDefaultMetrics() {
 }
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Performance-Metrics', event);
+  logFunctionCall("Performance-Metrics", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -237,7 +250,11 @@ exports.handler = async (event, context) => {
   try {
     // Only allow GET requests
     if (event.httpMethod !== "GET") {
-      return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
     }
 
     // Check environment variables
@@ -270,7 +287,6 @@ exports.handler = async (event, context) => {
       name: error.name,
       code: error.code,
     });
-    return handleServerError(error, 'Performance-Metrics');
+    return handleServerError(error, "Performance-Metrics");
   }
 };
-

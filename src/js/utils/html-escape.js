@@ -9,7 +9,7 @@
  * @returns {string} Safe string with HTML characters escaped
  */
 export function escapeHtml(unsafe) {
-  if (typeof unsafe !== 'string') {
+  if (typeof unsafe !== "string") {
     return unsafe;
   }
 
@@ -29,8 +29,8 @@ export function escapeHtml(unsafe) {
  */
 export function escapeObjectFields(obj, fields) {
   const escaped = { ...obj };
-  fields.forEach(field => {
-    if (typeof escaped[field] === 'string') {
+  fields.forEach((field) => {
+    if (typeof escaped[field] === "string") {
       escaped[field] = escapeHtml(escaped[field]);
     }
   });

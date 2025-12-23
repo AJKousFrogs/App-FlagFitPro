@@ -57,6 +57,7 @@
 ```
 
 **Semantic Aliases:**
+
 ```
 --space-xs   → --space-1   (4px)
 --space-sm   → --space-2   (8px)
@@ -328,8 +329,8 @@
 
 ```typescript
 // Toggle dark mode
-document.documentElement.setAttribute('data-theme', 'dark');
-document.documentElement.setAttribute('data-theme', 'light');
+document.documentElement.setAttribute("data-theme", "dark");
+document.documentElement.setAttribute("data-theme", "light");
 ```
 
 ---
@@ -360,10 +361,10 @@ color: var(--color-text-primary);
 
 ```scss
 /* BAD */
-padding: 15px;  /* Not on 8-point grid */
+padding: 15px; /* Not on 8-point grid */
 
 /* GOOD */
-padding: var(--space-4);  /* 16px - on grid */
+padding: var(--space-4); /* 16px - on grid */
 ```
 
 ---
@@ -381,14 +382,17 @@ padding: var(--space-4);  /* 16px - on grid */
 ## 🎯 Finding Tokens
 
 ### Need a color?
+
 → Check `design-tokens.scss` comments  
 → Look for `--color-*` or `--surface-*`
 
 ### Need spacing?
+
 → Use 8-point grid: `--space-1` to `--space-24`  
 → Prefer semantic: `--space-xs`, `--space-md`, `--space-lg`
 
 ### Need typography?
+
 → Use semantic sizes: `--text-xs` to `--text-5xl`  
 → Use heading sizes: `--font-heading-*`  
 → Use body sizes: `--font-body-*`
@@ -404,4 +408,3 @@ padding: var(--space-4);  /* 16px - on grid */
 - ✅ Use semantic variable names
 
 **Print this page and keep it handy! 📄**
-

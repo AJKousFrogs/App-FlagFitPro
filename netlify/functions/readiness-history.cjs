@@ -7,7 +7,12 @@
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { executeQuery, parseAthleteId, parseIntParam, calculateDateRange } = require("./utils/db-query-helper.cjs");
+const {
+  executeQuery,
+  parseAthleteId,
+  parseIntParam,
+  calculateDateRange,
+} = require("./utils/db-query-helper.cjs");
 const { successResponse } = require("./utils/response-helper.cjs");
 
 /**
@@ -15,9 +20,9 @@ const { successResponse } = require("./utils/response-helper.cjs");
  */
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'readiness-history',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "readiness-history",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     handler: async (event, context, { userId }) => {
       // Parse query parameters
       // NOTE: In production, verify user has permission to view requested athleteId
@@ -26,7 +31,7 @@ exports.handler = async (event, context) => {
         return error;
       }
 
-      const days = parseIntParam(event, 'days', 7, 1, 365);
+      const days = parseIntParam(event, "days", 7, 1, 365);
       const { startDate, endDate } = calculateDateRange(days, false); // Backward-looking
 
       // Get readiness scores
@@ -38,13 +43,15 @@ exports.handler = async (event, context) => {
         .lte("day", endDate.toISOString().slice(0, 10))
         .order("day", { ascending: false });
 
-      const result = await executeQuery(query, "Failed to retrieve readiness history");
+      const result = await executeQuery(
+        query,
+        "Failed to retrieve readiness history",
+      );
       if (!result.success) {
         return result.error;
       }
 
       return successResponse(result.data);
-    }
+    },
   });
 };
-

@@ -9,6 +9,7 @@ This guide shows you how to add real-time data updates to your FlagFit Pro pages
 ## 📦 Installation (Already Done!)
 
 The Supabase client is already installed and configured:
+
 - ✅ Package: `@supabase/supabase-js@2.58.0`
 - ✅ Client: `src/js/services/supabase-client.js`
 - ✅ Auto-initialized on import
@@ -20,7 +21,7 @@ The Supabase client is already installed and configured:
 ### 1. Import the Helpers
 
 ```javascript
-import { supabaseHelpers } from './src/js/services/supabase-client.js';
+import { supabaseHelpers } from "./src/js/services/supabase-client.js";
 ```
 
 ### 2. Subscribe to Real-time Updates
@@ -28,12 +29,12 @@ import { supabaseHelpers } from './src/js/services/supabase-client.js';
 ```javascript
 // Subscribe to new chat messages
 const subscription = supabaseHelpers.subscribeToChatMessages(
-  'team-general', // channel name
+  "team-general", // channel name
   (newMessage) => {
     // This callback runs when a new message arrives
-    console.log('New message:', newMessage);
+    console.log("New message:", newMessage);
     displayMessage(newMessage); // Your function to show the message
-  }
+  },
 );
 ```
 
@@ -52,12 +53,15 @@ subscription.unsubscribe();
 
 ```javascript
 // chat-page.js
-import { supabaseHelpers, realtimeManager } from '../../js/services/supabase-client.js';
+import {
+  supabaseHelpers,
+  realtimeManager,
+} from "../../js/services/supabase-client.js";
 
 let chatSubscription = null;
 
 async function initChatPage() {
-  const currentChannel = 'team-general';
+  const currentChannel = "team-general";
 
   // Subscribe to new messages
   chatSubscription = supabaseHelpers.subscribeToChatMessages(
@@ -69,7 +73,7 @@ async function initChatPage() {
         user: newMessage.user_id,
         message: newMessage.content,
         timestamp: newMessage.created_at,
-        avatar: newMessage.users?.avatar_url
+        avatar: newMessage.users?.avatar_url,
       });
 
       // Scroll to bottom
@@ -77,14 +81,14 @@ async function initChatPage() {
 
       // Play notification sound
       playNotificationSound();
-    }
+    },
   );
 
-  console.log('✅ Chat real-time enabled');
+  console.log("✅ Chat real-time enabled");
 }
 
 // Clean up when leaving page
-window.addEventListener('beforeunload', () => {
+window.addEventListener("beforeunload", () => {
   if (chatSubscription) {
     chatSubscription.unsubscribe();
   }
@@ -95,8 +99,8 @@ window.addEventListener('beforeunload', () => {
 
 ```javascript
 // notification-manager.js
-import { supabaseHelpers } from './js/services/supabase-client.js';
-import { authManager } from './auth-manager.js';
+import { supabaseHelpers } from "./js/services/supabase-client.js";
+import { authManager } from "./auth-manager.js";
 
 let notificationSubscription = null;
 
@@ -115,14 +119,14 @@ export async function initRealTimeNotifications() {
       showToast({
         title: notification.title,
         message: notification.message,
-        type: notification.type
+        type: notification.type,
       });
 
       // Play sound
-      if (notification.type === 'urgent') {
+      if (notification.type === "urgent") {
         playUrgentSound();
       }
-    }
+    },
   );
 }
 
@@ -134,7 +138,7 @@ authManager.onLogin(initRealTimeNotifications);
 
 ```javascript
 // game-tracker-page.js
-import { supabaseHelpers } from '../../js/services/supabase-client.js';
+import { supabaseHelpers } from "../../js/services/supabase-client.js";
 
 let gameSubscription = null;
 
@@ -145,8 +149,8 @@ async function initGameTracker(gameId) {
     (gameUpdate) => {
       const { eventType, new: newData, old: oldData } = gameUpdate;
 
-      switch(eventType) {
-        case 'UPDATE':
+      switch (eventType) {
+        case "UPDATE":
           // Update score
           updateScoreboard(newData.home_score, newData.away_score);
 
@@ -155,11 +159,11 @@ async function initGameTracker(gameId) {
 
           // Show what changed
           if (newData.home_score !== oldData.home_score) {
-            showScoreAnimation('home', newData.home_score);
+            showScoreAnimation("home", newData.home_score);
           }
           break;
 
-        case 'INSERT':
+        case "INSERT":
           // New game play recorded
           addPlayToTimeline(newData);
           break;
@@ -167,7 +171,7 @@ async function initGameTracker(gameId) {
 
       // Refresh stats
       refreshPlayerStats();
-    }
+    },
   );
 }
 
@@ -183,7 +187,7 @@ function cleanupGameTracker() {
 
 ```javascript
 // community-page.js
-import { supabaseHelpers } from '../../js/services/supabase-client.js';
+import { supabaseHelpers } from "../../js/services/supabase-client.js";
 
 let feedSubscription = null;
 
@@ -192,10 +196,10 @@ async function initCommunityFeed() {
   feedSubscription = supabaseHelpers.subscribeToCommunityPosts((newPost) => {
     // Add post to top of feed
     const postElement = createPostElement(newPost);
-    const feedContainer = document.getElementById('community-feed');
+    const feedContainer = document.getElementById("community-feed");
 
     // Animate new post
-    postElement.classList.add('new-post-animation');
+    postElement.classList.add("new-post-animation");
     feedContainer.insertBefore(postElement, feedContainer.firstChild);
 
     // Show notification
@@ -204,7 +208,7 @@ async function initCommunityFeed() {
 }
 
 // Clean up
-window.addEventListener('beforeunload', () => {
+window.addEventListener("beforeunload", () => {
   feedSubscription?.unsubscribe();
 });
 ```
@@ -213,8 +217,8 @@ window.addEventListener('beforeunload', () => {
 
 ```javascript
 // dashboard-page.js
-import { supabaseHelpers } from '../../js/services/supabase-client.js';
-import { authManager } from '../../auth-manager.js';
+import { supabaseHelpers } from "../../js/services/supabase-client.js";
+import { authManager } from "../../auth-manager.js";
 
 let trainingSubscription = null;
 
@@ -226,16 +230,16 @@ async function initTrainingUpdates() {
     (update) => {
       const { eventType, new: newData } = update;
 
-      if (eventType === 'INSERT') {
+      if (eventType === "INSERT") {
         // New training session completed
         updateTrainingStats();
         refreshPerformanceChart();
         showAchievementUnlock(newData);
-      } else if (eventType === 'UPDATE') {
+      } else if (eventType === "UPDATE") {
         // Training session updated
         refreshCurrentSession(newData);
       }
-    }
+    },
   );
 }
 ```
@@ -244,7 +248,7 @@ async function initTrainingUpdates() {
 
 ```javascript
 // tournaments-page.js
-import { supabaseHelpers } from '../../js/services/supabase-client.js';
+import { supabaseHelpers } from "../../js/services/supabase-client.js";
 
 let tournamentSubscription = null;
 
@@ -256,11 +260,11 @@ async function initTournamentUpdates(tournamentId) {
       loadTournamentBracket(tournamentId);
 
       // Show update notification
-      if (update.eventType === 'UPDATE') {
+      if (update.eventType === "UPDATE") {
         const message = getTournamentUpdateMessage(update.new);
         showTournamentAlert(message);
       }
-    }
+    },
   );
 }
 ```
@@ -272,64 +276,73 @@ async function initTournamentUpdates(tournamentId) {
 ### Custom Subscription with Filters
 
 ```javascript
-import { realtimeManager } from './src/js/services/supabase-client.js';
+import { realtimeManager } from "./src/js/services/supabase-client.js";
 
 // Subscribe to specific team's messages only
 const teamSubscription = realtimeManager.subscribe(
-  'chat_messages',
+  "chat_messages",
   {
-    event: 'INSERT',
-    filter: `team_id=eq.${teamId}`
+    event: "INSERT",
+    filter: `team_id=eq.${teamId}`,
   },
   (payload) => {
-    console.log('Team message:', payload.new);
-  }
+    console.log("Team message:", payload.new);
+  },
 );
 ```
 
 ### Subscribe to Multiple Events
 
 ```javascript
-import { realtimeManager } from './src/js/services/supabase-client.js';
+import { realtimeManager } from "./src/js/services/supabase-client.js";
 
 // Subscribe to all game changes (INSERT, UPDATE, DELETE)
 const gameSubscription = realtimeManager.subscribe(
-  'games',
+  "games",
   {
-    event: '*', // All events
-    filter: `id=eq.${gameId}`
+    event: "*", // All events
+    filter: `id=eq.${gameId}`,
   },
   (payload) => {
-    switch(payload.eventType) {
-      case 'INSERT':
-        console.log('New game created:', payload.new);
+    switch (payload.eventType) {
+      case "INSERT":
+        console.log("New game created:", payload.new);
         break;
-      case 'UPDATE':
-        console.log('Game updated:', payload.new);
+      case "UPDATE":
+        console.log("Game updated:", payload.new);
         break;
-      case 'DELETE':
-        console.log('Game deleted:', payload.old);
+      case "DELETE":
+        console.log("Game deleted:", payload.old);
         break;
     }
-  }
+  },
 );
 ```
 
 ### Managing Multiple Subscriptions
 
 ```javascript
-import { realtimeManager } from './src/js/services/supabase-client.js';
+import { realtimeManager } from "./src/js/services/supabase-client.js";
 
 // Create multiple subscriptions
-const chatSub = supabaseHelpers.subscribeToChatMessages('team-general', handleMessage);
-const notifSub = supabaseHelpers.subscribeToNotifications(userId, handleNotification);
-const gameSub = supabaseHelpers.subscribeToGameUpdates(gameId, handleGameUpdate);
+const chatSub = supabaseHelpers.subscribeToChatMessages(
+  "team-general",
+  handleMessage,
+);
+const notifSub = supabaseHelpers.subscribeToNotifications(
+  userId,
+  handleNotification,
+);
+const gameSub = supabaseHelpers.subscribeToGameUpdates(
+  gameId,
+  handleGameUpdate,
+);
 
 // Check how many are active
-console.log('Active subscriptions:', realtimeManager.getActiveCount());
+console.log("Active subscriptions:", realtimeManager.getActiveCount());
 
 // List all active subscriptions
-console.log('Subscriptions:', realtimeManager.listActive());
+console.log("Subscriptions:", realtimeManager.listActive());
 
 // Clean up all at once
 await realtimeManager.unsubscribeAll();
@@ -349,7 +362,7 @@ function initPage() {
   subscription = supabaseHelpers.subscribeToChatMessages(channel, callback);
 }
 
-window.addEventListener('beforeunload', () => {
+window.addEventListener("beforeunload", () => {
   subscription?.unsubscribe();
 });
 
@@ -370,14 +383,14 @@ const subscription = supabaseHelpers.subscribeToChatMessages(
     try {
       displayMessage(message);
     } catch (error) {
-      console.error('Failed to display message:', error);
-      showErrorToast('Failed to load new message');
+      console.error("Failed to display message:", error);
+      showErrorToast("Failed to load new message");
     }
-  }
+  },
 );
 
 if (!subscription) {
-  console.warn('Failed to set up real-time subscription');
+  console.warn("Failed to set up real-time subscription");
   fallbackToPolling(); // Alternative approach
 }
 ```
@@ -385,7 +398,7 @@ if (!subscription) {
 ### 3. Debounce Rapid Updates
 
 ```javascript
-import { debounce } from './utils.js';
+import { debounce } from "./utils.js";
 
 // ✅ Good - Debounce rapid updates
 const debouncedRefresh = debounce(() => {
@@ -396,25 +409,26 @@ const subscription = supabaseHelpers.subscribeToGameUpdates(
   gameId,
   (update) => {
     debouncedRefresh();
-  }
+  },
 );
 ```
 
 ### 4. Use Connection Status
 
 ```javascript
-import { getSupabase } from './src/js/services/supabase-client.js';
+import { getSupabase } from "./src/js/services/supabase-client.js";
 
 const supabase = getSupabase();
 
 // Monitor connection status
-supabase.channel('connection-monitor')
-  .on('system', { event: '*' }, (payload) => {
-    if (payload.status === 'SUBSCRIBED') {
-      console.log('✅ Real-time connected');
+supabase
+  .channel("connection-monitor")
+  .on("system", { event: "*" }, (payload) => {
+    if (payload.status === "SUBSCRIBED") {
+      console.log("✅ Real-time connected");
       hideOfflineIndicator();
-    } else if (payload.status === 'CHANNEL_ERROR') {
-      console.error('❌ Real-time connection error');
+    } else if (payload.status === "CHANNEL_ERROR") {
+      console.error("❌ Real-time connection error");
       showOfflineIndicator();
     }
   })
@@ -429,11 +443,10 @@ supabase.channel('connection-monitor')
 
 ```javascript
 // 1. Import the helper
-import('./src/js/services/supabase-client.js').then(({ supabaseHelpers }) => {
-
+import("./src/js/services/supabase-client.js").then(({ supabaseHelpers }) => {
   // 2. Subscribe to community posts
   const sub = supabaseHelpers.subscribeToCommunityPosts((post) => {
-    console.log('📢 New post:', post);
+    console.log("📢 New post:", post);
   });
 
   // 3. Now create a post in Supabase Dashboard or another tab
@@ -460,10 +473,10 @@ import('./src/js/services/supabase-client.js').then(({ supabaseHelpers }) => {
 ### Enable Debug Logging
 
 ```javascript
-import { logger } from './src/logger.js';
+import { logger } from "./src/logger.js";
 
 // Set logger to debug mode
-logger.setLevel('debug');
+logger.setLevel("debug");
 
 // Now you'll see detailed logs from Supabase client
 ```
@@ -471,24 +484,24 @@ logger.setLevel('debug');
 ### Check Subscription Status
 
 ```javascript
-import { realtimeManager } from './src/js/services/supabase-client.js';
+import { realtimeManager } from "./src/js/services/supabase-client.js";
 
 // Get all active subscriptions
 console.table(realtimeManager.listActive());
 
 // Check connection count
-console.log('Active connections:', realtimeManager.getActiveCount());
+console.log("Active connections:", realtimeManager.getActiveCount());
 ```
 
 ### View Channel Status in DevTools
 
 ```javascript
-import { getSupabase } from './src/js/services/supabase-client.js';
+import { getSupabase } from "./src/js/services/supabase-client.js";
 
 const supabase = getSupabase();
 
 // Access the realtime connection
-console.log('Realtime channels:', supabase.realtime.channels);
+console.log("Realtime channels:", supabase.realtime.channels);
 ```
 
 ---
@@ -498,9 +511,11 @@ console.log('Realtime channels:', supabase.realtime.channels);
 ### supabaseHelpers
 
 #### `subscribeToChatMessages(channel, callback)`
+
 Subscribe to new chat messages in a channel.
 
 **Parameters:**
+
 - `channel` (string): Channel name (e.g., 'team-general')
 - `callback` (function): Called with new message data
 
@@ -509,9 +524,11 @@ Subscribe to new chat messages in a channel.
 ---
 
 #### `subscribeToNotifications(userId, callback)`
+
 Subscribe to user notifications.
 
 **Parameters:**
+
 - `userId` (string): User ID
 - `callback` (function): Called with new notification data
 
@@ -520,9 +537,11 @@ Subscribe to user notifications.
 ---
 
 #### `subscribeToTeamUpdates(teamId, callback)`
+
 Subscribe to team changes.
 
 **Parameters:**
+
 - `teamId` (string): Team ID
 - `callback` (function): Called with team update
 
@@ -531,9 +550,11 @@ Subscribe to team changes.
 ---
 
 #### `subscribeToGameUpdates(gameId, callback)`
+
 Subscribe to game updates (scores, plays, etc.).
 
 **Parameters:**
+
 - `gameId` (string): Game ID (optional - omit to subscribe to all games)
 - `callback` (function): Called with game update
 
@@ -542,9 +563,11 @@ Subscribe to game updates (scores, plays, etc.).
 ---
 
 #### `subscribeToCommunityPosts(callback)`
+
 Subscribe to new community posts.
 
 **Parameters:**
+
 - `callback` (function): Called with new post data
 
 **Returns:** Subscription object
@@ -552,9 +575,11 @@ Subscribe to new community posts.
 ---
 
 #### `subscribeToTrainingSessions(userId, callback)`
+
 Subscribe to training session updates.
 
 **Parameters:**
+
 - `userId` (string): User ID
 - `callback` (function): Called with training update
 
@@ -563,9 +588,11 @@ Subscribe to training session updates.
 ---
 
 #### `subscribeToTournaments(tournamentId, callback)`
+
 Subscribe to tournament updates.
 
 **Parameters:**
+
 - `tournamentId` (string): Tournament ID (optional)
 - `callback` (function): Called with tournament update
 
@@ -576,12 +603,14 @@ Subscribe to tournament updates.
 ### realtimeManager
 
 #### `subscribe(table, options, callback)`
+
 Low-level subscription method.
 
 **Parameters:**
+
 - `table` (string): Table name
 - `options` (object):
-  - `event` (string): 'INSERT', 'UPDATE', 'DELETE', or '*'
+  - `event` (string): 'INSERT', 'UPDATE', 'DELETE', or '\*'
   - `filter` (string): SQL filter (e.g., 'id=eq.123')
   - `schema` (string): Schema name (default: 'public')
 - `callback` (function): Called with change payload
@@ -591,14 +620,17 @@ Low-level subscription method.
 ---
 
 #### `unsubscribe(channelName)`
+
 Unsubscribe from a specific channel.
 
 **Parameters:**
+
 - `channelName` (string): Channel name
 
 ---
 
 #### `unsubscribeAll()`
+
 Unsubscribe from all channels.
 
 **Returns:** Promise
@@ -606,6 +638,7 @@ Unsubscribe from all channels.
 ---
 
 #### `getActiveCount()`
+
 Get number of active subscriptions.
 
 **Returns:** Number
@@ -613,6 +646,7 @@ Get number of active subscriptions.
 ---
 
 #### `listActive()`
+
 List all active subscriptions.
 
 **Returns:** Array of subscription info

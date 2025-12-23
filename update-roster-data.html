@@ -20,18 +20,28 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Universal Form Validator -->
-    <script type="module" src="./src/js/components/universal-form-validator.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/universal-form-validator.js"
+      defer
+    ></script>
     <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/footer-loader.js"
+      defer
+    ></script>
     <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
     <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
-  
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <div class="container">
@@ -365,7 +375,9 @@
         }
 
         if (teamRoster.find((p) => p.number === number)) {
-          alert("Jersey number already exists. Please choose a different number.");
+          alert(
+            "Jersey number already exists. Please choose a different number.",
+          );
           return;
         }
 
@@ -464,7 +476,7 @@ const teamInfo = {
       // Form validation is handled by UniversalFormValidator (auto-initialized)
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

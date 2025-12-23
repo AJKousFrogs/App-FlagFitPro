@@ -50,7 +50,9 @@
   background: white;
   color: var(--color-primary, #089949);
   border: none;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease; /* Smooth transition without transform */
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease; /* Smooth transition without transform */
 }
 
 .ai-scheduler-banner .btn-white:hover {
@@ -470,7 +472,14 @@
 
 /* Gradient Background for CTA Card */
 .u-bg-gradient-primary {
-  background: var(--gradient-primary, linear-gradient(135deg, var(--color-primary, #089949) 0%, var(--color-primary-dark, #036d35) 100%));
+  background: var(
+    --gradient-primary,
+    linear-gradient(
+      135deg,
+      var(--color-primary, #089949) 0%,
+      var(--color-primary-dark, #036d35) 100%
+    )
+  );
 }
 
 /* Responsive */
@@ -508,4 +517,3 @@
     flex-direction: column;
   }
 }
-

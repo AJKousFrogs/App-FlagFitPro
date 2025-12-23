@@ -9,10 +9,10 @@ export function generateCSRFToken() {
   const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
-  
+
   // Store in sessionStorage
   sessionStorage.setItem("csrfToken", token);
-  
+
   return token;
 }
 
@@ -63,10 +63,8 @@ const DEFAULT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
  * @returns {Object} Rate limit state and functions
  */
 export function initializeRateLimiting(actionName, options = {}) {
-  const {
-    maxAttempts = DEFAULT_MAX_ATTEMPTS,
-    windowMs = DEFAULT_WINDOW_MS
-  } = options;
+  const { maxAttempts = DEFAULT_MAX_ATTEMPTS, windowMs = DEFAULT_WINDOW_MS } =
+    options;
 
   const attemptsKey = `${RATE_LIMIT_KEY_PREFIX}${actionName}_attempts`;
   const lastAttemptKey = `${RATE_LIMIT_KEY_PREFIX}${actionName}_lastAttempt`;
@@ -76,16 +74,19 @@ export function initializeRateLimiting(actionName, options = {}) {
    */
   function getRateLimitState() {
     const attempts = parseInt(localStorage.getItem(attemptsKey) || "0", 10);
-    const lastAttempt = parseInt(localStorage.getItem(lastAttemptKey) || "0", 10);
+    const lastAttempt = parseInt(
+      localStorage.getItem(lastAttemptKey) || "0",
+      10,
+    );
     const timeSinceLastAttempt = Date.now() - lastAttempt;
-    
+
     // Reset if window has passed
     if (timeSinceLastAttempt > windowMs) {
       return {
         attempts: 0,
         lastAttempt: 0,
         isLimited: false,
-        timeRemaining: 0
+        timeRemaining: 0,
       };
     }
 
@@ -93,7 +94,7 @@ export function initializeRateLimiting(actionName, options = {}) {
       attempts,
       lastAttempt,
       isLimited: attempts >= maxAttempts,
-      timeRemaining: Math.max(0, windowMs - timeSinceLastAttempt)
+      timeRemaining: Math.max(0, windowMs - timeSinceLastAttempt),
     };
   }
 
@@ -145,7 +146,7 @@ export function initializeRateLimiting(actionName, options = {}) {
     recordAttempt,
     isRateLimited,
     getTimeRemaining,
-    reset
+    reset,
   };
 }
 
@@ -156,17 +157,15 @@ export function initializeRateLimiting(actionName, options = {}) {
 export function createLoginRateLimiter() {
   return initializeRateLimiting("login", {
     maxAttempts: 3,
-    windowMs: 15 * 60 * 1000 // 15 minutes
+    windowMs: 15 * 60 * 1000, // 15 minutes
   });
 }
 
 // Make functions globally available for backward compatibility
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.generateCSRFToken = generateCSRFToken;
   window.getCSRFToken = getCSRFToken;
   window.validateCSRFToken = validateCSRFToken;
   window.setCSRFTokenInForm = setCSRFTokenInForm;
   window.createLoginRateLimiter = createLoginRateLimiter;
 }
-
-

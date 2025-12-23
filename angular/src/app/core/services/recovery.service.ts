@@ -74,7 +74,7 @@ export class RecoveryService {
       .get<RecoveryData>(API_ENDPOINTS.recovery.metrics)
       .pipe(
         map((response) => response.data || this.getMockRecoveryData()),
-        catchError(() => of(this.getMockRecoveryData()))
+        catchError(() => of(this.getMockRecoveryData())),
       );
   }
 
@@ -86,14 +86,16 @@ export class RecoveryService {
       .get<RecoveryProtocol[]>(API_ENDPOINTS.recovery.protocols)
       .pipe(
         map((response) => response.data || []),
-        catchError(() => of(this.getMockProtocols()))
+        catchError(() => of(this.getMockProtocols())),
       );
   }
 
   /**
    * Start a recovery session
    */
-  startRecoverySession(protocol: RecoveryProtocol): Observable<RecoverySession> {
+  startRecoverySession(
+    protocol: RecoveryProtocol,
+  ): Observable<RecoverySession> {
     return this.apiService
       .post<RecoverySession>(API_ENDPOINTS.recovery.startSession, {
         protocolId: protocol.id,
@@ -106,7 +108,7 @@ export class RecoveryService {
             startTime: new Date(session.startTime),
           };
         }),
-        catchError(() => of(this.createMockSession(protocol)))
+        catchError(() => of(this.createMockSession(protocol))),
       );
   }
 
@@ -118,7 +120,7 @@ export class RecoveryService {
       .post<boolean>(API_ENDPOINTS.recovery.completeSession, {})
       .pipe(
         map((response) => response.success || false),
-        catchError(() => of(false))
+        catchError(() => of(false)),
       );
   }
 
@@ -130,7 +132,7 @@ export class RecoveryService {
       .post<boolean>(API_ENDPOINTS.recovery.stopSession, {})
       .pipe(
         map((response) => response.success || false),
-        catchError(() => of(false))
+        catchError(() => of(false)),
       );
   }
 
@@ -142,7 +144,7 @@ export class RecoveryService {
       .get<ResearchInsight[]>(API_ENDPOINTS.recovery.researchInsights)
       .pipe(
         map((response) => response.data || []),
-        catchError(() => of(this.getMockResearchInsights()))
+        catchError(() => of(this.getMockResearchInsights())),
       );
   }
 
@@ -154,7 +156,7 @@ export class RecoveryService {
       .get<number[]>(API_ENDPOINTS.recovery.weeklyTrends)
       .pipe(
         map((response) => response.data || []),
-        catchError(() => of([75, 78, 72, 85, 80, 77, 82]))
+        catchError(() => of([75, 78, 72, 85, 80, 77, 82])),
       );
   }
 
@@ -170,10 +172,10 @@ export class RecoveryService {
           of({
             Cryotherapy: 8.5,
             Compression: 7.8,
-            'Manual Therapy': 8.2,
-            'Heat Therapy': 7.5,
-          })
-        )
+            "Manual Therapy": 8.2,
+            "Heat Therapy": 7.5,
+          }),
+        ),
       );
   }
 
@@ -183,36 +185,36 @@ export class RecoveryService {
       overallScore: 78,
       metrics: [
         {
-          name: 'Sleep Quality',
+          name: "Sleep Quality",
           value: 8.2,
-          unit: '/10',
+          unit: "/10",
           percentage: 82,
-          icon: 'pi pi-moon',
-          color: '#10c96b',
+          icon: "pi pi-moon",
+          color: "#10c96b",
         },
         {
-          name: 'Heart Rate Variability',
+          name: "Heart Rate Variability",
           value: 45,
-          unit: 'ms',
+          unit: "ms",
           percentage: 75,
-          icon: 'pi pi-heart',
-          color: '#10c96b',
+          icon: "pi pi-heart",
+          color: "#10c96b",
         },
         {
-          name: 'Muscle Soreness',
+          name: "Muscle Soreness",
           value: 3,
-          unit: '/10',
+          unit: "/10",
           percentage: 70,
-          icon: 'pi pi-exclamation-circle',
-          color: '#f1c40f',
+          icon: "pi pi-exclamation-circle",
+          color: "#f1c40f",
         },
         {
-          name: 'Stress Level',
+          name: "Stress Level",
           value: 4,
-          unit: '/10',
+          unit: "/10",
           percentage: 60,
-          icon: 'pi pi-info-circle',
-          color: '#f1c40f',
+          icon: "pi pi-info-circle",
+          color: "#f1c40f",
         },
       ],
     };
@@ -221,136 +223,136 @@ export class RecoveryService {
   private getMockProtocols(): RecoveryProtocol[] {
     return [
       {
-        id: '1',
-        name: 'Cold Water Immersion',
+        id: "1",
+        name: "Cold Water Immersion",
         description:
-          '15-minute cold water immersion protocol shown to reduce muscle soreness and inflammation.',
-        category: 'Cryotherapy',
+          "15-minute cold water immersion protocol shown to reduce muscle soreness and inflammation.",
+        category: "Cryotherapy",
         duration: 15,
-        priority: 'high',
-        evidenceLevel: 'Strong',
+        priority: "high",
+        evidenceLevel: "Strong",
         studyCount: 24,
         benefits: [
-          'Reduces muscle soreness',
-          'Decreases inflammation',
-          'Improves recovery time',
-          'Enhances sleep quality',
+          "Reduces muscle soreness",
+          "Decreases inflammation",
+          "Improves recovery time",
+          "Enhances sleep quality",
         ],
         steps: [
           {
-            id: '1',
-            title: 'Preparation',
-            description: 'Prepare cold water bath (10-15°C)',
+            id: "1",
+            title: "Preparation",
+            description: "Prepare cold water bath (10-15°C)",
             duration: 2,
-            icon: 'pi pi-cog',
+            icon: "pi pi-cog",
             completed: false,
             active: false,
           },
           {
-            id: '2',
-            title: 'Immersion',
-            description: 'Immerse body up to shoulders for 10 minutes',
+            id: "2",
+            title: "Immersion",
+            description: "Immerse body up to shoulders for 10 minutes",
             duration: 10,
-            icon: 'pi pi-water',
+            icon: "pi pi-water",
             completed: false,
             active: false,
           },
           {
-            id: '3',
-            title: 'Warm-up',
-            description: 'Gradual warm-up with light movement',
+            id: "3",
+            title: "Warm-up",
+            description: "Gradual warm-up with light movement",
             duration: 3,
-            icon: 'pi pi-sun',
+            icon: "pi pi-sun",
             completed: false,
             active: false,
           },
         ],
       },
       {
-        id: '2',
-        name: 'Compression Therapy',
+        id: "2",
+        name: "Compression Therapy",
         description:
-          '30-minute compression session using compression garments or devices.',
-        category: 'Compression',
+          "30-minute compression session using compression garments or devices.",
+        category: "Compression",
         duration: 30,
-        priority: 'medium',
-        evidenceLevel: 'Moderate',
+        priority: "medium",
+        evidenceLevel: "Moderate",
         studyCount: 18,
         benefits: [
-          'Improves circulation',
-          'Reduces swelling',
-          'Accelerates recovery',
+          "Improves circulation",
+          "Reduces swelling",
+          "Accelerates recovery",
         ],
         steps: [
           {
-            id: '1',
-            title: 'Setup',
-            description: 'Apply compression garments or device',
+            id: "1",
+            title: "Setup",
+            description: "Apply compression garments or device",
             duration: 2,
-            icon: 'pi pi-cog',
+            icon: "pi pi-cog",
             completed: false,
             active: false,
           },
           {
-            id: '2',
-            title: 'Compression Session',
-            description: 'Maintain compression for 25 minutes',
+            id: "2",
+            title: "Compression Session",
+            description: "Maintain compression for 25 minutes",
             duration: 25,
-            icon: 'pi pi-compress',
+            icon: "pi pi-compress",
             completed: false,
             active: false,
           },
           {
-            id: '3',
-            title: 'Recovery',
-            description: 'Remove compression and assess',
+            id: "3",
+            title: "Recovery",
+            description: "Remove compression and assess",
             duration: 3,
-            icon: 'pi pi-check',
+            icon: "pi pi-check",
             completed: false,
             active: false,
           },
         ],
       },
       {
-        id: '3',
-        name: 'Foam Rolling Protocol',
+        id: "3",
+        name: "Foam Rolling Protocol",
         description:
-          '20-minute self-myofascial release using foam roller targeting major muscle groups.',
-        category: 'Manual Therapy',
+          "20-minute self-myofascial release using foam roller targeting major muscle groups.",
+        category: "Manual Therapy",
         duration: 20,
-        priority: 'medium',
-        evidenceLevel: 'Moderate',
+        priority: "medium",
+        evidenceLevel: "Moderate",
         studyCount: 15,
         benefits: [
-          'Improves flexibility',
-          'Reduces muscle tension',
-          'Enhances mobility',
+          "Improves flexibility",
+          "Reduces muscle tension",
+          "Enhances mobility",
         ],
         steps: [
           {
-            id: '1',
-            title: 'Warm-up',
-            description: 'Light movement to warm muscles',
+            id: "1",
+            title: "Warm-up",
+            description: "Light movement to warm muscles",
             duration: 3,
-            icon: 'pi pi-sun',
+            icon: "pi pi-sun",
             completed: false,
             active: false,
           },
           {
-            id: '2',
-            title: 'Rolling',
-            description: 'Foam roll major muscle groups',
+            id: "2",
+            title: "Rolling",
+            description: "Foam roll major muscle groups",
             duration: 15,
-            icon: 'pi pi-circle',
+            icon: "pi pi-circle",
             completed: false,
             active: false,
           },
           {
-            id: '3',
-            title: 'Stretching',
-            description: 'Light stretching to finish',
+            id: "3",
+            title: "Stretching",
+            description: "Light stretching to finish",
             duration: 2,
-            icon: 'pi pi-arrows-alt',
+            icon: "pi pi-arrows-alt",
             completed: false,
             active: false,
           },
@@ -361,7 +363,7 @@ export class RecoveryService {
 
   private createMockSession(protocol: RecoveryProtocol): RecoverySession {
     return {
-      id: 'session-1',
+      id: "session-1",
       protocol,
       startTime: new Date(),
       duration: protocol.duration * 60, // Convert to seconds
@@ -373,30 +375,29 @@ export class RecoveryService {
   private getMockResearchInsights(): ResearchInsight[] {
     return [
       {
-        id: '1',
+        id: "1",
         title:
-          'Effects of Cold Water Immersion on Recovery from Exercise-Induced Muscle Damage',
+          "Effects of Cold Water Immersion on Recovery from Exercise-Induced Muscle Damage",
         summary:
-          'This systematic review found that cold water immersion significantly reduces muscle soreness and improves recovery markers compared to passive recovery.',
-        authors: 'Bleakley et al.',
+          "This systematic review found that cold water immersion significantly reduces muscle soreness and improves recovery markers compared to passive recovery.",
+        authors: "Bleakley et al.",
         year: 2012,
-        journal: 'British Journal of Sports Medicine',
-        doi: '10.1136/bjsports-2011-090061',
-        category: 'Cryotherapy',
+        journal: "British Journal of Sports Medicine",
+        doi: "10.1136/bjsports-2011-090061",
+        category: "Cryotherapy",
       },
       {
-        id: '2',
+        id: "2",
         title:
-          'Compression Garments and Recovery from Exercise-Induced Muscle Damage',
+          "Compression Garments and Recovery from Exercise-Induced Muscle Damage",
         summary:
-          'Research demonstrates that compression garments can reduce perceived muscle soreness and improve recovery time following intense exercise.',
-        authors: 'Hill et al.',
+          "Research demonstrates that compression garments can reduce perceived muscle soreness and improve recovery time following intense exercise.",
+        authors: "Hill et al.",
         year: 2014,
-        journal: 'Journal of Strength and Conditioning Research',
-        doi: '10.1519/JSC.0000000000000288',
-        category: 'Compression',
+        journal: "Journal of Strength and Conditioning Research",
+        doi: "10.1519/JSC.0000000000000288",
+        category: "Compression",
       },
     ];
   }
 }
-

@@ -13,21 +13,30 @@
   <div class="carousel-wrapper">
     <div class="carousel-track" id="carousel-track-1">
       <div class="carousel-slide active">
-        <img src="https://via.placeholder.com/800x400/089949/ffffff?text=Slide+1" alt="Slide 1" />
+        <img
+          src="https://via.placeholder.com/800x400/089949/ffffff?text=Slide+1"
+          alt="Slide 1"
+        />
         <div class="carousel-caption">
           <h3>First Slide</h3>
           <p>This is the first slide of the carousel.</p>
         </div>
       </div>
       <div class="carousel-slide">
-        <img src="https://via.placeholder.com/800x400/667eea/ffffff?text=Slide+2" alt="Slide 2" />
+        <img
+          src="https://via.placeholder.com/800x400/667eea/ffffff?text=Slide+2"
+          alt="Slide 2"
+        />
         <div class="carousel-caption">
           <h3>Second Slide</h3>
           <p>This is the second slide of the carousel.</p>
         </div>
       </div>
       <div class="carousel-slide">
-        <img src="https://via.placeholder.com/800x400/f59e0b/ffffff?text=Slide+3" alt="Slide 3" />
+        <img
+          src="https://via.placeholder.com/800x400/f59e0b/ffffff?text=Slide+3"
+          alt="Slide 3"
+        />
         <div class="carousel-caption">
           <h3>Third Slide</h3>
           <p>This is the third slide of the carousel.</p>
@@ -35,18 +44,43 @@
       </div>
     </div>
   </div>
-  
-  <button type="button" class="carousel-nav carousel-prev" onclick="carouselPrev('carousel-1')" aria-label="Previous slide">
+
+  <button
+    type="button"
+    class="carousel-nav carousel-prev"
+    onclick="carouselPrev('carousel-1')"
+    aria-label="Previous slide"
+  >
     <i data-lucide="chevron-left" style="width: 24px; height: 24px"></i>
   </button>
-  <button type="button" class="carousel-nav carousel-next" onclick="carouselNext('carousel-1')" aria-label="Next slide">
+  <button
+    type="button"
+    class="carousel-nav carousel-next"
+    onclick="carouselNext('carousel-1')"
+    aria-label="Next slide"
+  >
     <i data-lucide="chevron-right" style="width: 24px; height: 24px"></i>
   </button>
-  
+
   <div class="carousel-indicators">
-    <button type="button" class="carousel-indicator active" onclick="carouselGoTo('carousel-1', 0)" aria-label="Go to slide 1"></button>
-    <button type="button" class="carousel-indicator" onclick="carouselGoTo('carousel-1', 1)" aria-label="Go to slide 2"></button>
-    <button type="button" class="carousel-indicator" onclick="carouselGoTo('carousel-1', 2)" aria-label="Go to slide 3"></button>
+    <button
+      type="button"
+      class="carousel-indicator active"
+      onclick="carouselGoTo('carousel-1', 0)"
+      aria-label="Go to slide 1"
+    ></button>
+    <button
+      type="button"
+      class="carousel-indicator"
+      onclick="carouselGoTo('carousel-1', 1)"
+      aria-label="Go to slide 2"
+    ></button>
+    <button
+      type="button"
+      class="carousel-indicator"
+      onclick="carouselGoTo('carousel-1', 2)"
+      aria-label="Go to slide 3"
+    ></button>
   </div>
 </div>
 
@@ -164,78 +198,77 @@
 
 <script>
   const carouselState = {};
-  
+
   function initCarousel(carouselId) {
     const container = document.getElementById(carouselId);
     if (!container) return;
-    
-    const track = container.querySelector('.carousel-track');
-    const slides = track.querySelectorAll('.carousel-slide');
-    
+
+    const track = container.querySelector(".carousel-track");
+    const slides = track.querySelectorAll(".carousel-slide");
+
     carouselState[carouselId] = {
       currentIndex: 0,
       slides: slides,
-      total: slides.length
+      total: slides.length,
     };
-    
+
     updateCarousel(carouselId);
   }
-  
+
   function updateCarousel(carouselId) {
     const state = carouselState[carouselId];
     if (!state) return;
-    
+
     const container = document.getElementById(carouselId);
-    const indicators = container.querySelectorAll('.carousel-indicator');
-    
+    const indicators = container.querySelectorAll(".carousel-indicator");
+
     // Update slides
     state.slides.forEach((slide, index) => {
-      slide.classList.toggle('active', index === state.currentIndex);
+      slide.classList.toggle("active", index === state.currentIndex);
     });
-    
+
     // Update indicators
     indicators.forEach((indicator, index) => {
-      indicator.classList.toggle('active', index === state.currentIndex);
+      indicator.classList.toggle("active", index === state.currentIndex);
     });
   }
-  
+
   function carouselNext(carouselId) {
     const state = carouselState[carouselId];
     if (!state) return;
-    
+
     state.currentIndex = (state.currentIndex + 1) % state.total;
     updateCarousel(carouselId);
   }
-  
+
   function carouselPrev(carouselId) {
     const state = carouselState[carouselId];
     if (!state) return;
-    
+
     state.currentIndex = (state.currentIndex - 1 + state.total) % state.total;
     updateCarousel(carouselId);
   }
-  
+
   function carouselGoTo(carouselId, index) {
     const state = carouselState[carouselId];
     if (!state) return;
-    
+
     state.currentIndex = index;
     updateCarousel(carouselId);
   }
-  
+
   // Initialize carousels on load
-  document.addEventListener('DOMContentLoaded', () => {
-    initCarousel('carousel-1');
-    
+  document.addEventListener("DOMContentLoaded", () => {
+    initCarousel("carousel-1");
+
     // Auto-play (optional)
     setInterval(() => {
-      carouselNext('carousel-1');
+      carouselNext("carousel-1");
     }, 5000);
-    
+
     // Initialize lucide icons
     if (window.lucide) {
       window.lucide.createIcons();
     }
   });
 </script>
-

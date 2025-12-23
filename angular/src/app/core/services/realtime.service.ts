@@ -5,13 +5,13 @@
  * Provides a centralized way to subscribe to database changes.
  */
 
-import { Injectable, inject, signal, effect } from '@angular/core';
-import { SupabaseService } from './supabase.service';
-import { RealtimeChannel } from '@supabase/supabase-js';
-import { LoggerService } from './logger.service';
+import { Injectable, inject, signal, effect } from "@angular/core";
+import { SupabaseService } from "./supabase.service";
+import { RealtimeChannel } from "@supabase/supabase-js";
+import { LoggerService } from "./logger.service";
 
 export interface RealtimeEvent<T = any> {
-  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+  eventType: "INSERT" | "UPDATE" | "DELETE";
   table: string;
   schema: string;
   new: T;
@@ -22,7 +22,7 @@ export interface RealtimeEvent<T = any> {
 export type RealtimeCallback<T = any> = (event: RealtimeEvent<T>) => void;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class RealtimeService {
   private supabase = inject(SupabaseService);
@@ -31,7 +31,9 @@ export class RealtimeService {
 
   // Connection status
   readonly isConnected = signal(false);
-  readonly connectionStatus = signal<'connected' | 'disconnected' | 'connecting'>('disconnected');
+  readonly connectionStatus = signal<
+    "connected" | "disconnected" | "connecting"
+  >("disconnected");
 
   constructor() {
     this.initializeConnectionStatus();
@@ -46,10 +48,10 @@ export class RealtimeService {
     effect(() => {
       const session = this.supabase.session();
       if (session) {
-        this.connectionStatus.set('connected');
+        this.connectionStatus.set("connected");
         this.isConnected.set(true);
       } else {
-        this.connectionStatus.set('disconnected');
+        this.connectionStatus.set("disconnected");
         this.isConnected.set(false);
       }
     });
@@ -62,15 +64,15 @@ export class RealtimeService {
     // Use signal instead of property access
     const userId = this.supabase.currentUser()?.id;
     if (!userId) {
-      this.logger.warn('Cannot subscribe: No user logged in');
+      this.logger.warn("Cannot subscribe: No user logged in");
       return () => {};
     }
 
     return this.createSubscription(
-      'training_sessions',
-      'training_sessions',
+      "training_sessions",
+      "training_sessions",
       `user_id=eq.${userId}`,
-      callback
+      callback,
     );
   }
 
@@ -80,15 +82,15 @@ export class RealtimeService {
   subscribeToGames(callback: RealtimeCallback): () => void {
     const userId = this.supabase.currentUser()?.id;
     if (!userId) {
-      this.logger.warn('Cannot subscribe: No user logged in');
+      this.logger.warn("Cannot subscribe: No user logged in");
       return () => {};
     }
 
     return this.createSubscription(
-      'games',
-      'games',
+      "games",
+      "games",
       `user_id=eq.${userId}`,
-      callback
+      callback,
     );
   }
 
@@ -98,15 +100,15 @@ export class RealtimeService {
   subscribeToWellness(callback: RealtimeCallback): () => void {
     const userId = this.supabase.currentUser()?.id;
     if (!userId) {
-      this.logger.warn('Cannot subscribe: No user logged in');
+      this.logger.warn("Cannot subscribe: No user logged in");
       return () => {};
     }
 
     return this.createSubscription(
-      'wellness',
-      'wellness_entries',
+      "wellness",
+      "wellness_entries",
       `athlete_id=eq.${userId}`,
-      callback
+      callback,
     );
   }
 
@@ -116,32 +118,35 @@ export class RealtimeService {
   subscribeToPerformance(callback: RealtimeCallback): () => void {
     const userId = this.supabase.currentUser()?.id;
     if (!userId) {
-      this.logger.warn('Cannot subscribe: No user logged in');
+      this.logger.warn("Cannot subscribe: No user logged in");
       return () => {};
     }
 
     return this.createSubscription(
-      'performance',
-      'performance_metrics',
+      "performance",
+      "performance_metrics",
       `athlete_id=eq.${userId}`,
-      callback
+      callback,
     );
   }
 
   /**
    * Subscribe to team updates (for coaches)
    */
-  subscribeToTeamUpdates(teamId: string, callback: RealtimeCallback): () => void {
+  subscribeToTeamUpdates(
+    teamId: string,
+    callback: RealtimeCallback,
+  ): () => void {
     if (!teamId) {
-      this.logger.warn('Cannot subscribe: No team ID provided');
+      this.logger.warn("Cannot subscribe: No team ID provided");
       return () => {};
     }
 
     return this.createSubscription(
       `team_${teamId}`,
-      'team_members',
+      "team_members",
       `team_id=eq.${teamId}`,
-      callback
+      callback,
     );
   }
 
@@ -151,32 +156,35 @@ export class RealtimeService {
   subscribeToReadiness(callback: RealtimeCallback): () => void {
     const userId = this.supabase.currentUser()?.id;
     if (!userId) {
-      this.logger.warn('Cannot subscribe: No user logged in');
+      this.logger.warn("Cannot subscribe: No user logged in");
       return () => {};
     }
 
     return this.createSubscription(
-      'readiness',
-      'readiness_scores',
+      "readiness",
+      "readiness_scores",
       `athlete_id=eq.${userId}`,
-      callback
+      callback,
     );
   }
 
   /**
    * Subscribe to chat/messages
    */
-  subscribeToMessages(conversationId: string, callback: RealtimeCallback): () => void {
+  subscribeToMessages(
+    conversationId: string,
+    callback: RealtimeCallback,
+  ): () => void {
     if (!conversationId) {
-      this.logger.warn('Cannot subscribe: No conversation ID provided');
+      this.logger.warn("Cannot subscribe: No conversation ID provided");
       return () => {};
     }
 
     return this.createSubscription(
       `messages_${conversationId}`,
-      'messages',
+      "messages",
       `conversation_id=eq.${conversationId}`,
-      callback
+      callback,
     );
   }
 
@@ -187,7 +195,7 @@ export class RealtimeService {
     channelName: string,
     tableName: string,
     filter: string,
-    callback: RealtimeCallback
+    callback: RealtimeCallback,
   ): () => void {
     // Check if channel already exists
     if (this.channels.has(channelName)) {
@@ -199,12 +207,12 @@ export class RealtimeService {
     const channel = this.supabase.client
       .channel(channelName)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
+          event: "*",
+          schema: "public",
           table: tableName,
-          filter: filter
+          filter: filter,
         },
         (payload: any) => {
           const event: RealtimeEvent = {
@@ -213,15 +221,15 @@ export class RealtimeService {
             schema: payload.schema,
             new: payload.new,
             old: payload.old,
-            errors: payload.errors
+            errors: payload.errors,
           };
           callback(event);
-        }
+        },
       )
       .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
+        if (status === "SUBSCRIBED") {
           this.logger.success(`Subscribed to ${channelName}`);
-        } else if (status === 'CHANNEL_ERROR') {
+        } else if (status === "CHANNEL_ERROR") {
           this.logger.error(`Error subscribing to ${channelName}`);
         }
       });

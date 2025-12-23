@@ -16,12 +16,14 @@ Phase 1 focused on fixing critical blockers that affect core user experience and
 **Issue**: Read status lost on reload—users see stale data
 
 **Changes Made**:
+
 - ✅ Enhanced `markOneRead()` in `NotificationStore` with better error handling
 - ✅ Added API response validation to ensure persistence
 - ✅ Added automatic notification reload after marking as read to sync with server state
 - ✅ Improved error messages with detailed logging
 
 **Files Modified**:
+
 - `src/js/pages/dashboard-page.js` - Enhanced `markOneRead()` and `markAllRead()` methods
 - Added automatic state sync after API calls
 
@@ -34,12 +36,14 @@ Phase 1 focused on fixing critical blockers that affect core user experience and
 **Issue**: Users can't see unread count—defeats purpose
 
 **Changes Made**:
+
 - ✅ Enhanced `refreshBadge()` method to handle multiple response formats
 - ✅ Improved fallback logic in `top-bar.js` for badge count initialization
 - ✅ Added automatic badge refresh after marking notifications as read
 - ✅ Enhanced error handling with fallback to calculated count
 
 **Files Modified**:
+
 - `src/js/pages/dashboard-page.js` - Enhanced `refreshBadge()` method
 - `src/components/organisms/top-bar/top-bar.js` - Improved fallback API call with Netlify Functions support
 
@@ -54,12 +58,14 @@ Phase 1 focused on fixing critical blockers that affect core user experience and
 **Status**: ✅ **Already Implemented**
 
 **Verification**:
+
 - ✅ ACWR service uses `EvidenceConfigService` for evidence-based thresholds
 - ✅ Thresholds are sourced from Gabbett (2016) and other research
 - ✅ Citations and science notes are included in configuration
 - ✅ Evidence presets are available for different populations
 
 **Files Verified**:
+
 - `angular/src/app/core/services/acwr.service.ts` - Uses EvidenceConfigService
 - `angular/src/app/core/services/evidence-config.service.ts` - Manages evidence presets
 - `angular/src/app/core/config/evidence-config.ts` - Defines evidence-based configurations
@@ -73,11 +79,13 @@ Phase 1 focused on fixing critical blockers that affect core user experience and
 **Status**: ✅ **Already Exists**
 
 **Verification**:
+
 - ✅ Backend endpoint supports bulk operations (`{ ids: [array] }`)
 - ✅ API helper function `markNotificationsAsRead(ids)` exists in `api-config.js`
 - ✅ Endpoint handles single, bulk, and "all" operations
 
 **Files Verified**:
+
 - `netlify/functions/notifications.cjs` - Supports bulk operations
 - `src/api-config.js` - Contains `markNotificationsAsRead()` helper
 
@@ -90,6 +98,7 @@ Phase 1 focused on fixing critical blockers that affect core user experience and
 **Issue**: Silent failures = users frustrated
 
 **Changes Made**:
+
 - ✅ Added comprehensive error handling to `markOneRead()` and `markAllRead()`
 - ✅ Enhanced error messages with detailed logging
 - ✅ Added fallback error display using `ErrorHandler` or console
@@ -97,6 +106,7 @@ Phase 1 focused on fixing critical blockers that affect core user experience and
 - ✅ Added automatic badge refresh even on errors to sync state
 
 **Files Modified**:
+
 - `src/js/pages/dashboard-page.js` - Enhanced error handling in notification methods
 
 **Result**: Users now see clear error messages when operations fail, and system gracefully handles errors.
@@ -105,13 +115,13 @@ Phase 1 focused on fixing critical blockers that affect core user experience and
 
 ## 📊 Impact Summary
 
-| Issue | Status | Impact | Effort |
-|-------|--------|--------|--------|
-| Notification persistence | ✅ Fixed | HIGH - Affects all users | 2-3 hrs |
-| Badge count | ✅ Fixed | HIGH - Core UX signal | 1-2 hrs |
-| ACWR evidence | ✅ Verified | CRITICAL - Training logic | Already done |
-| Bulk endpoint | ✅ Verified | MEDIUM - Efficiency | Already exists |
-| Error handling | ✅ Enhanced | MEDIUM - User experience | 1-2 hrs |
+| Issue                    | Status      | Impact                    | Effort         |
+| ------------------------ | ----------- | ------------------------- | -------------- |
+| Notification persistence | ✅ Fixed    | HIGH - Affects all users  | 2-3 hrs        |
+| Badge count              | ✅ Fixed    | HIGH - Core UX signal     | 1-2 hrs        |
+| ACWR evidence            | ✅ Verified | CRITICAL - Training logic | Already done   |
+| Bulk endpoint            | ✅ Verified | MEDIUM - Efficiency       | Already exists |
+| Error handling           | ✅ Enhanced | MEDIUM - User experience  | 1-2 hrs        |
 
 **Total Effort**: ~4-7 hours (less than estimated due to existing implementations)
 
@@ -191,4 +201,3 @@ Phase 1 focused on fixing critical blockers that affect core user experience and
 - ✅ System reliability improved
 
 **Phase 1 Status**: ✅ **COMPLETE** - All critical blockers resolved!
-

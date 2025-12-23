@@ -85,6 +85,7 @@ After running migrations, you'll have:
 ## 📞 Support
 
 If you encounter issues:
+
 1. Check error files in this directory
 2. Review migration file for syntax errors
 3. Verify dependencies (tables must exist before foreign keys)
@@ -93,4 +94,3 @@ If you encounter issues:
 ---
 
 **All files are ready for execution. Follow the execution plan to run them on Supabase.**
-

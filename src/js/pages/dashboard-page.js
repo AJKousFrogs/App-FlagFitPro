@@ -14,15 +14,15 @@ import { initializeLucideIcons } from "../utils/shared.js";
  */
 function setButtonLoading(button, loadingText = "Loading...") {
   // Store original button content safely using temp container pattern
-  const temp = document.createElement('div');
+  const temp = document.createElement("div");
   temp.appendChild(button.cloneNode(true));
   // eslint-disable-next-line no-restricted-syntax -- Safe extraction of existing button HTML for restoration (temp container pattern)
   const originalHTML = temp.innerHTML;
   button.dataset.originalHtml = originalHTML;
   button.disabled = true;
-  
+
   // Clear and create loading icon using DOM
-  button.textContent = '';
+  button.textContent = "";
   const icon = document.createElement("i");
   icon.setAttribute("data-lucide", "loader-2");
   icon.className = "icon-16 icon-inline";
@@ -72,7 +72,7 @@ class NotificationStore {
    * Notify all listeners of state changes
    */
   notify() {
-    this.listeners.forEach(callback => callback(this.getState()));
+    this.listeners.forEach((callback) => callback(this.getState()));
   }
 
   /**
@@ -83,7 +83,7 @@ class NotificationStore {
       notifications: this.notifications,
       unreadCount: this.unreadCount,
       loading: this.loading,
-      error: this.error
+      error: this.error,
     };
   }
 
@@ -99,7 +99,7 @@ class NotificationStore {
    * Calculate unread count from notifications
    */
   calculateUnreadCount() {
-    return this.notifications.filter(n => !n.read).length;
+    return this.notifications.filter((n) => !n.read).length;
   }
 
   /**
@@ -111,30 +111,33 @@ class NotificationStore {
     try {
       // Get last opened timestamp from store or API
       const lastOpenedAt = this.lastOpenedAt || null;
-      
+
       const response = await apiClient.get(
         API_ENDPOINTS.dashboard.notifications,
-        { ...options, lastOpenedAt }
+        { ...options, lastOpenedAt },
       );
 
       let notifications = [];
       if (response && response.success && response.data) {
         if (Array.isArray(response.data)) {
           notifications = response.data;
-        } else if (response.data.notifications && Array.isArray(response.data.notifications)) {
+        } else if (
+          response.data.notifications &&
+          Array.isArray(response.data.notifications)
+        ) {
           notifications = response.data.notifications;
         } else if (response.data.data && Array.isArray(response.data.data)) {
           notifications = response.data.data;
         }
       }
 
-      const unreadCount = notifications.filter(n => !n.read).length;
+      const unreadCount = notifications.filter((n) => !n.read).length;
 
       this.setState({
         notifications,
         unreadCount,
         loading: false,
-        error: null
+        error: null,
       });
 
       return notifications;
@@ -142,7 +145,7 @@ class NotificationStore {
       logger.warn("Failed to load notifications:", error);
       this.setState({
         loading: false,
-        error: error.message || "Failed to load notifications"
+        error: error.message || "Failed to load notifications",
       });
       throw error;
     }
@@ -155,7 +158,7 @@ class NotificationStore {
     try {
       // Use query parameter for more reliable routing
       await apiClient.patch(
-        `${API_ENDPOINTS.dashboard.notifications}?action=last-opened`
+        `${API_ENDPOINTS.dashboard.notifications}?action=last-opened`,
       );
       this.lastOpenedAt = new Date().toISOString();
       this.notify();
@@ -168,7 +171,9 @@ class NotificationStore {
    * Mark a single notification as read (optimistic update)
    */
   async markOneRead(id) {
-    const notification = this.notifications.find(n => String(n.id) === String(id));
+    const notification = this.notifications.find(
+      (n) => String(n.id) === String(id),
+    );
     if (!notification || notification.read) {
       return;
     }
@@ -184,12 +189,14 @@ class NotificationStore {
       // Use the API helper function for consistency
       const response = await apiClient.post(
         API_ENDPOINTS.dashboard.notifications,
-        { notificationId: String(id) }
+        { notificationId: String(id) },
       );
 
       // Verify API response indicates success
-      if (!response || (response.success === false)) {
-        throw new Error(response?.error || "Failed to mark notification as read");
+      if (!response || response.success === false) {
+        throw new Error(
+          response?.error || "Failed to mark notification as read",
+        );
       }
 
       // Success - state already updated optimistically
@@ -205,9 +212,10 @@ class NotificationStore {
       this.notify();
 
       // Show error toast with more details
-      const errorMessage = error?.message || "Couldn't mark notification as read, please retry.";
+      const errorMessage =
+        error?.message || "Couldn't mark notification as read, please retry.";
       logger.error("Failed to mark notification as read:", error);
-      
+
       if (window.ErrorHandler) {
         window.ErrorHandler.showError(errorMessage);
       } else {
@@ -223,15 +231,17 @@ class NotificationStore {
    * Mark all notifications as read
    */
   async markAllRead() {
-    const unreadNotifications = this.notifications.filter(n => !n.read);
+    const unreadNotifications = this.notifications.filter((n) => !n.read);
     if (unreadNotifications.length === 0) {
       logger.debug("No unread notifications to mark as read");
       return;
     }
 
     // Optimistic update
-    const previousState = this.notifications.map(n => ({ ...n }));
-    this.notifications.forEach(n => { n.read = true; });
+    const previousState = this.notifications.map((n) => ({ ...n }));
+    this.notifications.forEach((n) => {
+      n.read = true;
+    });
     const previousUnreadCount = this.unreadCount;
     this.unreadCount = 0;
     this.notify();
@@ -240,16 +250,20 @@ class NotificationStore {
       // Use the API helper function for consistency
       const response = await apiClient.post(
         API_ENDPOINTS.dashboard.notifications,
-        { notificationId: "all" }
+        { notificationId: "all" },
       );
 
       // Verify API response indicates success
-      if (!response || (response.success === false)) {
-        throw new Error(response?.error || "Failed to mark all notifications as read");
+      if (!response || response.success === false) {
+        throw new Error(
+          response?.error || "Failed to mark all notifications as read",
+        );
       }
 
       // Success - state already updated optimistically
-      logger.debug(`Marked ${unreadNotifications.length} notifications as read successfully`);
+      logger.debug(
+        `Marked ${unreadNotifications.length} notifications as read successfully`,
+      );
       this.notify();
       return true;
     } catch (error) {
@@ -260,9 +274,11 @@ class NotificationStore {
       this.notify();
 
       // Show error toast with more details
-      const errorMessage = error?.message || "Couldn't mark all notifications as read, please retry.";
+      const errorMessage =
+        error?.message ||
+        "Couldn't mark all notifications as read, please retry.";
       logger.error("Failed to mark all notifications as read:", error);
-      
+
       if (window.ErrorHandler) {
         window.ErrorHandler.showError(errorMessage);
       } else {
@@ -281,7 +297,7 @@ class NotificationStore {
     try {
       // Ensure auth manager is initialized
       await authManager.waitForInit();
-      
+
       if (!authManager.isAuthenticated()) {
         logger.debug("User not authenticated, skipping badge refresh");
         this.unreadCount = 0;
@@ -295,14 +311,16 @@ class NotificationStore {
         apiClient.setAuthToken(token);
       }
 
-      const response = await apiClient.get(API_ENDPOINTS.dashboard.notificationsCount);
-      
+      const response = await apiClient.get(
+        API_ENDPOINTS.dashboard.notificationsCount,
+      );
+
       // Handle different response formats
       let count = 0;
       if (response) {
         if (response.success !== false && response.data) {
           count = response.data.unreadCount || response.data.count || 0;
-        } else if (typeof response === 'number') {
+        } else if (typeof response === "number") {
           count = response;
         } else if (response.unreadCount !== undefined) {
           count = response.unreadCount;
@@ -316,19 +334,27 @@ class NotificationStore {
       return count;
     } catch (error) {
       // Handle authentication errors gracefully
-      if (error.status === 401 || error.message?.includes("Authentication required")) {
-        logger.debug("Authentication required for badge refresh, user may not be logged in");
+      if (
+        error.status === 401 ||
+        error.message?.includes("Authentication required")
+      ) {
+        logger.debug(
+          "Authentication required for badge refresh, user may not be logged in",
+        );
         this.unreadCount = 0;
         this.notify();
         return 0;
       }
-      
+
       logger.warn("Failed to refresh badge count from API:", error);
       // Fallback to calculating from current notifications
       const calculatedCount = this.calculateUnreadCount();
       this.unreadCount = calculatedCount;
       this.notify();
-      logger.debug("Using calculated badge count as fallback:", calculatedCount);
+      logger.debug(
+        "Using calculated badge count as fallback:",
+        calculatedCount,
+      );
       return calculatedCount;
     }
   }
@@ -396,13 +422,19 @@ class DashboardPage {
       }
 
       const user = authManager.getCurrentUser();
-      const onboardingCompleted = user?.user_metadata?.onboarding_completed || 
-                                  storageService.get("onboardingCompleted", null, { usePrefix: false });
+      const onboardingCompleted =
+        user?.user_metadata?.onboarding_completed ||
+        storageService.get("onboardingCompleted", null, { usePrefix: false });
 
       // If onboarding not completed and not already on onboarding page, redirect
-      if (!onboardingCompleted && !window.location.pathname.includes('onboarding.html')) {
-        logger.info("User has not completed onboarding, redirecting to onboarding page");
-        window.location.href = '/onboarding.html';
+      if (
+        !onboardingCompleted &&
+        !window.location.pathname.includes("onboarding.html")
+      ) {
+        logger.info(
+          "User has not completed onboarding, redirecting to onboarding page",
+        );
+        window.location.href = "/onboarding.html";
       }
     } catch (error) {
       logger.warn("Could not check onboarding completion:", error);
@@ -419,26 +451,26 @@ class DashboardPage {
       const user = authManager.getCurrentUser();
 
       if (user) {
-        const greetingEl = document.getElementById('userGreeting');
+        const greetingEl = document.getElementById("userGreeting");
         if (greetingEl) {
           // Get user's first name - check multiple possible locations
-          let firstName = 'there';
-          
+          let firstName = "there";
+
           if (user.user_metadata?.first_name) {
             firstName = user.user_metadata.first_name;
           } else if (user.user_metadata?.name) {
-            firstName = user.user_metadata.name.split(' ')[0];
+            firstName = user.user_metadata.name.split(" ")[0];
           } else if (user.name) {
-            firstName = user.name.split(' ')[0];
+            firstName = user.name.split(" ")[0];
           } else if (user.email) {
-            firstName = user.email.split('@')[0];
+            firstName = user.email.split("@")[0];
           }
 
           greetingEl.textContent = `👋 Welcome back, ${firstName}!`;
         }
       }
     } catch (error) {
-      logger.error('[Dashboard] Error updating greeting:', error);
+      logger.error("[Dashboard] Error updating greeting:", error);
     }
   }
 
@@ -449,7 +481,10 @@ class DashboardPage {
     // Subscribe to store changes
     this.notificationStore.subscribe((state) => {
       // Use enhanced notification center if available, otherwise fallback to basic rendering
-      if (window.enhancedNotificationCenter && window.enhancedNotificationCenter.panel) {
+      if (
+        window.enhancedNotificationCenter &&
+        window.enhancedNotificationCenter.panel
+      ) {
         // Enhanced center will handle rendering
         return;
       }
@@ -474,11 +509,15 @@ class DashboardPage {
 
     // Initialize enhanced notification center if available
     try {
-      const { default: enhancedNotificationCenter } = await import('../components/enhanced-notification-center.js');
+      const { default: enhancedNotificationCenter } =
+        await import("../components/enhanced-notification-center.js");
       await enhancedNotificationCenter.init(this.notificationStore);
-      logger.debug('[Dashboard] Enhanced notification center initialized');
+      logger.debug("[Dashboard] Enhanced notification center initialized");
     } catch (error) {
-      logger.debug('[Dashboard] Enhanced notification center not available, using basic rendering:', error);
+      logger.debug(
+        "[Dashboard] Enhanced notification center not available, using basic rendering:",
+        error,
+      );
     }
   }
 
@@ -509,20 +548,22 @@ class DashboardPage {
    */
   showNotificationLoading() {
     const notificationList = document.getElementById("notification-list");
-    if (!notificationList) {return;}
+    if (!notificationList) {
+      return;
+    }
 
     // Clear and create loading state using DOM manipulation
-    notificationList.textContent = '';
+    notificationList.textContent = "";
     const loadingDiv = document.createElement("div");
     loadingDiv.className = "notification-loading";
-    
+
     const spinner = document.createElement("div");
     spinner.className = "notification-loading-spinner";
-    
+
     const text = document.createElement("div");
     text.className = "notification-loading-text";
     text.textContent = "Loading notifications...";
-    
+
     loadingDiv.appendChild(spinner);
     loadingDiv.appendChild(text);
     notificationList.appendChild(loadingDiv);
@@ -533,21 +574,23 @@ class DashboardPage {
    */
   showNotificationError(error) {
     const notificationList = document.getElementById("notification-list");
-    if (!notificationList) {return;}
+    if (!notificationList) {
+      return;
+    }
 
     // Clear and create error state using DOM manipulation
-    notificationList.textContent = '';
+    notificationList.textContent = "";
     const errorDiv = document.createElement("div");
     errorDiv.className = "notification-error";
-    
+
     const icon = document.createElement("div");
     icon.className = "notification-error-icon";
     icon.textContent = "⚠️";
-    
+
     const text = document.createElement("div");
     text.className = "notification-error-text";
     text.textContent = error;
-    
+
     const retryBtn = document.createElement("button");
     retryBtn.className = "notification-retry-btn";
     retryBtn.textContent = "Retry";
@@ -556,7 +599,7 @@ class DashboardPage {
         window.dashboardPage.loadNotifications();
       }
     });
-    
+
     errorDiv.appendChild(icon);
     errorDiv.appendChild(text);
     errorDiv.appendChild(retryBtn);
@@ -570,7 +613,9 @@ class DashboardPage {
     const badge = document.getElementById("notification-badge");
     const live = document.getElementById("notification-live");
 
-    if (!badge || !live) {return;}
+    if (!badge || !live) {
+      return;
+    }
 
     if (count > 0) {
       badge.textContent = String(count);
@@ -589,7 +634,7 @@ class DashboardPage {
     try {
       // Ensure auth manager is initialized and user is authenticated
       await authManager.waitForInit();
-      
+
       if (!authManager.isAuthenticated()) {
         logger.debug("User not authenticated, skipping badge refresh");
         this.updateBadge(0);
@@ -606,12 +651,17 @@ class DashboardPage {
       this.updateBadge(count);
     } catch (error) {
       // Handle authentication errors gracefully
-      if (error.status === 401 || error.message?.includes("Authentication required")) {
-        logger.debug("Authentication required for badge refresh, user may not be logged in");
+      if (
+        error.status === 401 ||
+        error.message?.includes("Authentication required")
+      ) {
+        logger.debug(
+          "Authentication required for badge refresh, user may not be logged in",
+        );
         this.updateBadge(0);
         return;
       }
-      
+
       logger.warn("Failed to refresh badge:", error);
       // Use count from store as fallback
       this.updateBadge(this.notificationStore.unreadCount);
@@ -630,7 +680,8 @@ class DashboardPage {
       }
 
       // Dynamically import profile completion manager
-      const { profileCompletionManager } = await import("../../profile-completion.js");
+      const { profileCompletionManager } =
+        await import("../../profile-completion.js");
 
       // Check if profile needs completion
       if (profileCompletionManager.needsCompletion()) {
@@ -654,35 +705,36 @@ class DashboardPage {
     const banner = document.createElement("div");
     banner.id = "profile-completion-banner";
     banner.className = "profile-completion-banner";
-    
+
     // Create banner content using DOM manipulation
     const content = document.createElement("div");
     content.className = "profile-completion-banner-content";
-    
+
     const iconDiv = document.createElement("div");
     iconDiv.className = "profile-completion-banner-icon";
     const icon = document.createElement("i");
     icon.setAttribute("data-lucide", "alert-circle");
     icon.className = "icon-20";
     iconDiv.appendChild(icon);
-    
+
     const textDiv = document.createElement("div");
     textDiv.className = "profile-completion-banner-text";
     const strong = document.createElement("strong");
     strong.textContent = "Complete Your Profile";
     const span = document.createElement("span");
-    span.textContent = "Finish setting up your account to get the most out of FlagFit Pro.";
+    span.textContent =
+      "Finish setting up your account to get the most out of FlagFit Pro.";
     textDiv.appendChild(strong);
     textDiv.appendChild(span);
-    
+
     const actionsDiv = document.createElement("div");
     actionsDiv.className = "profile-completion-banner-actions";
-    
+
     const completeBtn = document.createElement("button");
     completeBtn.className = "btn btn-primary btn-sm";
     completeBtn.id = "complete-profile-btn";
     completeBtn.textContent = "Complete Profile";
-    
+
     const dismissBtn = document.createElement("button");
     dismissBtn.className = "btn btn-secondary btn-sm";
     dismissBtn.id = "dismiss-profile-banner";
@@ -691,15 +743,15 @@ class DashboardPage {
     dismissIcon.setAttribute("data-lucide", "x");
     dismissIcon.className = "icon-16";
     dismissBtn.appendChild(dismissIcon);
-    
+
     actionsDiv.appendChild(completeBtn);
     actionsDiv.appendChild(dismissBtn);
-    
+
     content.appendChild(iconDiv);
     content.appendChild(textDiv);
     content.appendChild(actionsDiv);
     banner.appendChild(content);
-    
+
     // Initialize Lucide icons
     initializeLucideIcons(banner);
 
@@ -789,7 +841,8 @@ class DashboardPage {
 
     if (completeBtnEl) {
       completeBtnEl.addEventListener("click", async () => {
-        const { profileCompletionManager } = await import("../../profile-completion.js");
+        const { profileCompletionManager } =
+          await import("../../profile-completion.js");
         profileCompletionManager.showProfileCompletionModal(false); // false = not required, can skip
         this.hideProfileCompletionBanner();
       });
@@ -849,17 +902,17 @@ class DashboardPage {
     window.toggleSidebar = () => this.toggleSidebar();
     window.toggleNotifications = () => this.toggleNotifications();
     window.markAllAsRead = () => this.markAllAsRead();
-    
+
     // Make dashboardPage and notificationStore globally available
     window.dashboardPage = this;
     window.notificationStore = this.notificationStore;
-    
+
     // Make getNotificationCount available globally
     window.getNotificationCount = async () => {
       try {
         // Ensure auth manager is initialized
         await authManager.waitForInit();
-        
+
         if (!authManager.isAuthenticated()) {
           return 0;
         }
@@ -868,7 +921,10 @@ class DashboardPage {
         return count;
       } catch (error) {
         // Handle authentication errors gracefully
-        if (error.status === 401 || error.message?.includes("Authentication required")) {
+        if (
+          error.status === 401 ||
+          error.message?.includes("Authentication required")
+        ) {
           return 0;
         }
         logger.warn("Failed to get notification count:", error);
@@ -887,7 +943,9 @@ class DashboardPage {
     const overlay = document.getElementById("sidebar-overlay");
     const toggleBtn = document.getElementById("mobile-menu-toggle");
 
-    if (!sidebar) {return;}
+    if (!sidebar) {
+      return;
+    }
 
     const isOpen =
       sidebar.classList.contains("open") ||
@@ -895,14 +953,18 @@ class DashboardPage {
 
     if (isOpen) {
       sidebar.classList.remove("open", "mobile-open");
-      if (overlay) {overlay.classList.remove("active");}
+      if (overlay) {
+        overlay.classList.remove("active");
+      }
       document.body.classList.remove("sidebar-open", "menu-open");
       if (toggleBtn) {
         toggleBtn.setAttribute("aria-expanded", "false");
       }
     } else {
       sidebar.classList.add("open", "mobile-open");
-      if (overlay) {overlay.classList.add("active");}
+      if (overlay) {
+        overlay.classList.add("active");
+      }
       document.body.classList.add("sidebar-open", "menu-open");
       if (toggleBtn) {
         toggleBtn.setAttribute("aria-expanded", "true");
@@ -914,10 +976,12 @@ class DashboardPage {
     const panel = document.getElementById("notification-panel");
     const bell = document.getElementById("notification-bell");
 
-    if (!panel || !bell) {return;}
+    if (!panel || !bell) {
+      return;
+    }
 
     const isOpen = panel.classList.contains("is-open");
-    
+
     if (isOpen) {
       this.closeNotificationPanel();
     } else {
@@ -932,7 +996,9 @@ class DashboardPage {
     const panel = document.getElementById("notification-panel");
     const bell = document.getElementById("notification-bell");
 
-    if (!panel || !bell) {return;}
+    if (!panel || !bell) {
+      return;
+    }
 
     panel.classList.add("is-open");
     bell.setAttribute("aria-expanded", "true");
@@ -954,7 +1020,9 @@ class DashboardPage {
     const panel = document.getElementById("notification-panel");
     const bell = document.getElementById("notification-bell");
 
-    if (!panel || !bell) {return;}
+    if (!panel || !bell) {
+      return;
+    }
 
     panel.classList.remove("is-open");
     bell.setAttribute("aria-expanded", "false");
@@ -975,7 +1043,9 @@ class DashboardPage {
       const panel = document.getElementById("notification-panel");
       const bell = document.getElementById("notification-bell");
 
-      if (!panel || !bell) {return;}
+      if (!panel || !bell) {
+        return;
+      }
 
       // Check if click is outside panel and not on bell
       const clickedPanel = panel.contains(e.target);
@@ -1012,8 +1082,12 @@ class DashboardPage {
     } catch (error) {
       // Error handling is done in the store
       // For development, you might want to show mock data
-      if (error.isConnectionRefused || 
-          (error.isNetworkError && error.message && error.message.includes("Failed to fetch"))) {
+      if (
+        error.isConnectionRefused ||
+        (error.isNetworkError &&
+          error.message &&
+          error.message.includes("Failed to fetch"))
+      ) {
         // Silently fall back to mock data in development
         logger.debug("Using mock notifications in development");
         this.renderNotifications(this.getMockNotifications());
@@ -1052,7 +1126,9 @@ class DashboardPage {
 
   renderNotifications(notifications) {
     const notificationList = document.getElementById("notification-list");
-    if (!notificationList) {return;}
+    if (!notificationList) {
+      return;
+    }
 
     // Ensure notifications is an array
     if (!Array.isArray(notifications)) {
@@ -1065,22 +1141,23 @@ class DashboardPage {
 
     if (notifications.length === 0) {
       // Clear and create empty state using DOM manipulation
-      notificationList.textContent = '';
+      notificationList.textContent = "";
       const emptyDiv = document.createElement("div");
       emptyDiv.className = "notification-empty";
-      
+
       const icon = document.createElement("div");
       icon.className = "notification-empty-icon";
       icon.textContent = "🔔";
-      
+
       const title = document.createElement("div");
       title.className = "notification-empty-title";
       title.textContent = "No notifications yet";
-      
+
       const text = document.createElement("div");
       text.className = "notification-empty-text";
-      text.textContent = "You're all caught up! New notifications will appear here.";
-      
+      text.textContent =
+        "You're all caught up! New notifications will appear here.";
+
       emptyDiv.appendChild(icon);
       emptyDiv.appendChild(title);
       emptyDiv.appendChild(text);
@@ -1089,19 +1166,19 @@ class DashboardPage {
     }
 
     // Clear and render notifications using DOM manipulation
-    notificationList.textContent = '';
-    notifications.forEach(notif => {
+    notificationList.textContent = "";
+    notifications.forEach((notif) => {
       const item = document.createElement("div");
       item.className = `notification-item ${notif.read ? "read" : ""} ${notif.new ? "new" : ""}`;
       item.setAttribute("data-id", String(notif.id));
-      
+
       const icon = document.createElement("div");
       icon.className = "notification-icon";
       icon.textContent = this.getNotificationIcon(notif.type);
-      
+
       const content = document.createElement("div");
       content.className = "notification-content";
-      
+
       const title = document.createElement("div");
       title.className = "notification-title";
       title.textContent = notif.title;
@@ -1111,22 +1188,22 @@ class DashboardPage {
         badge.textContent = "New";
         title.appendChild(badge);
       }
-      
+
       const message = document.createElement("div");
       message.className = "notification-message";
       message.textContent = notif.message;
-      
+
       const time = document.createElement("div");
       time.className = "notification-time";
       time.textContent = notif.time;
-      
+
       content.appendChild(title);
       content.appendChild(message);
       content.appendChild(time);
-      
+
       item.appendChild(icon);
       item.appendChild(content);
-      
+
       if (!notif.read) {
         const markReadBtn = document.createElement("button");
         markReadBtn.className = "notification-mark-read";
@@ -1134,7 +1211,7 @@ class DashboardPage {
         markReadBtn.textContent = "×";
         item.appendChild(markReadBtn);
       }
-      
+
       notificationList.appendChild(item);
     });
 
@@ -1306,7 +1383,7 @@ class DashboardPage {
 
       // Prepare wellness data for selected date
       const dateStr = this.formatDateForInput(this.selectedDate);
-      
+
       // Use user ID if available, otherwise use a fallback identifier
       const userId = user
         ? user.id || user.email
@@ -1326,10 +1403,12 @@ class DashboardPage {
       if (user) {
         try {
           // Use performance-data endpoint for wellness (POST)
-          const endpoint = API_ENDPOINTS.performanceData?.wellness || '/api/performance-data/wellness';
+          const endpoint =
+            API_ENDPOINTS.performanceData?.wellness ||
+            "/api/performance-data/wellness";
           await apiClient.post(endpoint, wellnessCheckIn);
           logger.success("Wellness check-in submitted successfully");
-          
+
           // Show success message
           this.showNotification(
             "Wellness check-in submitted successfully! ✓",
@@ -1355,17 +1434,16 @@ class DashboardPage {
       }
 
       // Fallback to localStorage (for unauthenticated users or API failures)
-      const saved = storageService.get("wellnessCheckIns", [], { usePrefix: false });
+      const saved = storageService.get("wellnessCheckIns", [], {
+        usePrefix: false,
+      });
       // Remove existing entry for this date
       const filtered = saved.filter((w) => w.date !== dateStr);
       filtered.push(wellnessCheckIn);
       storageService.set("wellnessCheckIns", filtered, { usePrefix: false });
 
       // Show success message
-      this.showNotification(
-        "Wellness check-in saved locally! ✓",
-        "success",
-      );
+      this.showNotification("Wellness check-in saved locally! ✓", "success");
 
       // Reload data to show updated status
       await this.loadDateData();
@@ -1419,14 +1497,24 @@ class DashboardPage {
 
       // Get training session details from button dataset or card
       const sessionButton = e.target.closest(".btn-start-session") || e.target;
-      const trainingType = sessionButton.dataset.sessionType || 
-        document.querySelector(".training-time")?.textContent?.split("—")[1]?.trim() || 
+      const trainingType =
+        sessionButton.dataset.sessionType ||
+        document
+          .querySelector(".training-time")
+          ?.textContent?.split("—")[1]
+          ?.trim() ||
         "Training";
-      const trainingTime = sessionButton.dataset.sessionTime || 
-        document.querySelector(".training-time")?.textContent?.match(/\d{2}:\d{2}/)?.[0] || 
+      const trainingTime =
+        sessionButton.dataset.sessionTime ||
+        document
+          .querySelector(".training-time")
+          ?.textContent?.match(/\d{2}:\d{2}/)?.[0] ||
         "18:30";
-      const coach = sessionButton.dataset.coach || 
-        document.querySelector(".training-info")?.textContent?.replace("Coach: ", "") ||
+      const coach =
+        sessionButton.dataset.coach ||
+        document
+          .querySelector(".training-info")
+          ?.textContent?.replace("Coach: ", "") ||
         "Ales Zaksek";
       const duration = sessionButton.dataset.duration || 70;
 
@@ -1437,7 +1525,9 @@ class DashboardPage {
         startTime: new Date().toISOString(),
         scheduledTime: trainingTime,
         duration_minutes: parseInt(duration) || 70,
-        session_date: sessionButton.dataset.date || this.formatDateForInput(this.selectedDate),
+        session_date:
+          sessionButton.dataset.date ||
+          this.formatDateForInput(this.selectedDate),
       };
 
       logger.debug("📝 Session data:", sessionData);
@@ -1449,7 +1539,9 @@ class DashboardPage {
       } catch (apiError) {
         // Fallback to localStorage
         logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = storageService.get("trainingSessions", [], { usePrefix: false });
+        const saved = storageService.get("trainingSessions", [], {
+          usePrefix: false,
+        });
         saved.push({ ...sessionData, status: "in_progress" });
         storageService.set("trainingSessions", saved, { usePrefix: false });
       }
@@ -1463,7 +1555,7 @@ class DashboardPage {
           date: sessionDate,
           status: "in_progress",
         },
-        { usePrefix: false }
+        { usePrefix: false },
       );
 
       // Show success and redirect to training schedule page
@@ -1503,10 +1595,14 @@ class DashboardPage {
       const supplementKey = item.getAttribute("data-supplement");
       const toggleInput = item.querySelector(".supplement-toggle-input");
 
-      if (!toggleInput || !supplementKey) {return;}
+      if (!toggleInput || !supplementKey) {
+        return;
+      }
 
       // Load saved state
-      const savedState = storageService.get("supplements", null, { usePrefix: false });
+      const savedState = storageService.get("supplements", null, {
+        usePrefix: false,
+      });
       if (savedState) {
         if (savedState[supplementKey]?.taken) {
           toggleInput.checked = true;
@@ -1586,7 +1682,9 @@ class DashboardPage {
       }
 
       // Fallback to localStorage (for unauthenticated users or API failures)
-      const saved = storageService.get("supplementLogs", [], { usePrefix: false });
+      const saved = storageService.get("supplementLogs", [], {
+        usePrefix: false,
+      });
 
       // Remove existing entry for this supplement on selected date
       const filtered = saved.filter((log) => {
@@ -1668,24 +1766,26 @@ class DashboardPage {
     const nextBtn = document.getElementById("next-day-btn");
     const todayBtn = document.getElementById("today-btn");
 
-    if (!datePicker) {return;}
+    if (!datePicker) {
+      return;
+    }
 
     // Initialize date picker with today's date
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     this.selectedDate = today;
     datePicker.value = this.formatDateForInput(today);
-    
+
     // Update date picker display to show dd.mm.yyyy format
     this.updateDatePickerDisplay();
-    
+
     this.updateDateStatus();
 
     // Date picker change handler - prevent future dates
     datePicker.addEventListener("change", (e) => {
       const selectedDate = new Date(e.target.value);
       selectedDate.setHours(0, 0, 0, 0);
-      
+
       // Don't allow selecting future dates
       if (this.isFuture(selectedDate)) {
         this.showNotification("Cannot select future dates", "warning");
@@ -1698,13 +1798,13 @@ class DashboardPage {
         this.loadDateData();
         return;
       }
-      
+
       this.selectedDate = selectedDate;
       this.updateDatePickerDisplay();
       this.updateDateStatus();
       this.loadDateData();
     });
-    
+
     // Set max date to today to prevent selecting future dates in the date picker
     datePicker.setAttribute("max", this.formatDateForInput(today));
 
@@ -1740,13 +1840,13 @@ class DashboardPage {
       nextBtn.addEventListener("click", () => {
         const nextDate = new Date(this.selectedDate);
         nextDate.setDate(nextDate.getDate() + 1);
-        
+
         // Don't allow selecting future dates
         if (this.isFuture(nextDate)) {
           this.showNotification("Cannot select future dates", "warning");
           return;
         }
-        
+
         this.selectedDate = nextDate;
         this.updateDatePickerDisplay();
         this.updateDateStatus();
@@ -1806,15 +1906,19 @@ class DashboardPage {
   updateDatePickerDisplay() {
     const datePicker = document.getElementById("dashboard-date-picker");
     const dateDisplay = document.getElementById("date-picker-display");
-    
-    if (!datePicker) {return;}
+
+    if (!datePicker) {
+      return;
+    }
 
     // Update the date picker value (for HTML5 date input)
     datePicker.value = this.formatDateForInput(this.selectedDate);
-    
+
     // Update custom display overlay to show dd.mm.yyyy format
     if (dateDisplay) {
-      dateDisplay.textContent = this.formatDateForDisplayDDMMYYYY(this.selectedDate);
+      dateDisplay.textContent = this.formatDateForDisplayDDMMYYYY(
+        this.selectedDate,
+      );
     }
   }
 
@@ -1822,7 +1926,9 @@ class DashboardPage {
     const indicator = document.getElementById("date-indicator");
     const info = document.getElementById("date-info");
 
-    if (!indicator || !info) {return;}
+    if (!indicator || !info) {
+      return;
+    }
 
     const isToday = this.isToday(this.selectedDate);
     const isFuture = this.isFuture(this.selectedDate);
@@ -1912,10 +2018,12 @@ class DashboardPage {
 
   updateDateDataStatus(wellnessLoaded, supplementsLoaded) {
     const info = document.getElementById("date-info");
-    if (!info) {return;}
+    if (!info) {
+      return;
+    }
 
     const isFuture = this.isFuture(this.selectedDate);
-    
+
     // For future dates, show appropriate message
     if (isFuture) {
       info.classList.remove("has-data", "no-data");
@@ -1961,7 +2069,9 @@ class DashboardPage {
   async loadWellnessForDate(dateStr) {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) {return false;}
+      if (!user) {
+        return false;
+      }
 
       // Skip API call for future dates
       const isFuture = this.isFuture(this.selectedDate);
@@ -1978,22 +2088,25 @@ class DashboardPage {
 
       // Try API first - use performance-data endpoint for wellness data
       try {
-        const endpoint = API_ENDPOINTS.performanceData?.wellness || API_ENDPOINTS.wellness?.get || '/api/performance-data/wellness';
+        const endpoint =
+          API_ENDPOINTS.performanceData?.wellness ||
+          API_ENDPOINTS.wellness?.get ||
+          "/api/performance-data/wellness";
         const response = await apiClient.get(endpoint, {
           date: dateStr,
-          type: 'wellness',
+          type: "wellness",
         });
-        
+
         // Handle array response (from performance-data endpoint)
         if (response && response.data) {
           let wellness = null;
           if (Array.isArray(response.data)) {
             // Find wellness entry for the specific date
-            wellness = response.data.find(w => w.date === dateStr);
+            wellness = response.data.find((w) => w.date === dateStr);
           } else if (response.data.date === dateStr) {
             wellness = response.data;
           }
-          
+
           if (wellness) {
             this.wellnessData = {
               energy: wellness.energy || null,
@@ -2011,7 +2124,9 @@ class DashboardPage {
       }
 
       // Load from localStorage
-      const saved = storageService.get("wellnessCheckIns", [], { usePrefix: false });
+      const saved = storageService.get("wellnessCheckIns", [], {
+        usePrefix: false,
+      });
       const wellnessForDate = saved.find((w) => w.date === dateStr);
 
       if (wellnessForDate) {
@@ -2076,7 +2191,9 @@ class DashboardPage {
   async loadSupplementsForDate(dateStr) {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) {return false;}
+      if (!user) {
+        return false;
+      }
 
       // Skip API call for future dates
       const isFuture = this.isFuture(this.selectedDate);
@@ -2098,34 +2215,43 @@ class DashboardPage {
 
       // Try API first - use performance-data endpoint for supplements
       try {
-        const endpoint = API_ENDPOINTS.performanceData?.supplements || API_ENDPOINTS.supplements?.get || '/api/performance-data/supplements';
+        const endpoint =
+          API_ENDPOINTS.performanceData?.supplements ||
+          API_ENDPOINTS.supplements?.get ||
+          "/api/performance-data/supplements";
         const response = await apiClient.get(endpoint, {
           date: dateStr,
-          type: 'supplements',
+          type: "supplements",
         });
-        
+
         if (response && response.data) {
           let supplements = [];
           if (Array.isArray(response.data)) {
             // Filter supplements for the specific date
-            supplements = response.data.filter(s => {
-              const logDate = s.date || (s.timestamp ? new Date(s.timestamp).toISOString().split('T')[0] : null);
+            supplements = response.data.filter((s) => {
+              const logDate =
+                s.date ||
+                (s.timestamp
+                  ? new Date(s.timestamp).toISOString().split("T")[0]
+                  : null);
               return logDate === dateStr;
             });
           } else if (response.data.date === dateStr) {
             supplements = [response.data];
           }
-          
+
           supplements.forEach((log) => {
             if (log.supplement && this.supplements[log.supplement]) {
               this.supplements[log.supplement] = {
                 taken: log.taken || false,
                 time: log.timestamp || null,
               };
-              if (log.taken) {hasData = true;}
+              if (log.taken) {
+                hasData = true;
+              }
             }
           });
-          
+
           if (supplements.length > 0) {
             this.updateSupplementsUI();
             return hasData;
@@ -2137,7 +2263,9 @@ class DashboardPage {
       }
 
       // Load from localStorage
-      const saved = storageService.get("supplementLogs", [], { usePrefix: false });
+      const saved = storageService.get("supplementLogs", [], {
+        usePrefix: false,
+      });
       const supplementsForDate = saved.filter((s) => {
         const logDate =
           s.date ||
@@ -2189,10 +2317,18 @@ class DashboardPage {
     try {
       const user = authManager.getCurrentUser();
       const isToday = this.isToday(this.selectedDate);
-      
+
       // Get day of week (0 = Sunday, 6 = Saturday)
       const dayOfWeek = this.selectedDate.getDay();
-      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const dayNames = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
       const dayName = dayNames[dayOfWeek];
 
       let trainingSession = null;
@@ -2203,14 +2339,21 @@ class DashboardPage {
           startDate: dateStr,
           endDate: dateStr,
           includeUpcoming: true, // Include today and future dates
-          limit: 10
+          limit: 10,
         });
 
         if (response && response.success && response.data) {
-          const sessions = Array.isArray(response.data) ? response.data : (response.data.sessions || []);
+          const sessions = Array.isArray(response.data)
+            ? response.data
+            : response.data.sessions || [];
           // Find session for this specific date
-          trainingSession = sessions.find(s => {
-            const sessionDate = s.session_date || s.date || (s.created_at ? new Date(s.created_at).toISOString().split('T')[0] : null);
+          trainingSession = sessions.find((s) => {
+            const sessionDate =
+              s.session_date ||
+              s.date ||
+              (s.created_at
+                ? new Date(s.created_at).toISOString().split("T")[0]
+                : null);
             return sessionDate === dateStr;
           });
         }
@@ -2222,27 +2365,40 @@ class DashboardPage {
       if (!trainingSession) {
         try {
           // Try to get training plan for this week
-          const trainingPlanResponse = await apiClient.get(API_ENDPOINTS.training?.schedule || '/api/training/schedule', {
-            date: dateStr
-          });
+          const trainingPlanResponse = await apiClient.get(
+            API_ENDPOINTS.training?.schedule || "/api/training/schedule",
+            {
+              date: dateStr,
+            },
+          );
 
-          if (trainingPlanResponse && trainingPlanResponse.success && trainingPlanResponse.data) {
-            const schedule = trainingPlanResponse.data.schedule || trainingPlanResponse.data;
+          if (
+            trainingPlanResponse &&
+            trainingPlanResponse.success &&
+            trainingPlanResponse.data
+          ) {
+            const schedule =
+              trainingPlanResponse.data.schedule || trainingPlanResponse.data;
             // Find training for this day of week
-            const daySchedule = Array.isArray(schedule) 
-              ? schedule.find(s => {
+            const daySchedule = Array.isArray(schedule)
+              ? schedule.find((s) => {
                   const sDate = s.date ? new Date(s.date) : null;
-                  return sDate && sDate.toISOString().split('T')[0] === dateStr;
+                  return sDate && sDate.toISOString().split("T")[0] === dateStr;
                 })
               : null;
-            
+
             if (daySchedule) {
               trainingSession = {
-                session_type: daySchedule.session_type || daySchedule.type || daySchedule.title,
-                session_time: daySchedule.time || daySchedule.session_time || '18:30',
-                duration_minutes: daySchedule.duration || daySchedule.duration_minutes || 70,
-                coach: daySchedule.coach || 'Ales Zaksek',
-                date: dateStr
+                session_type:
+                  daySchedule.session_type ||
+                  daySchedule.type ||
+                  daySchedule.title,
+                session_time:
+                  daySchedule.time || daySchedule.session_time || "18:30",
+                duration_minutes:
+                  daySchedule.duration || daySchedule.duration_minutes || 70,
+                coach: daySchedule.coach || "Ales Zaksek",
+                date: dateStr,
               };
             }
           }
@@ -2266,13 +2422,15 @@ class DashboardPage {
    * Update the training card with real data
    */
   updateTrainingCard(trainingSession, dayName, isToday) {
-    const trainingCard = document.querySelector('.todays-training-card');
-    if (!trainingCard) {return;}
+    const trainingCard = document.querySelector(".todays-training-card");
+    if (!trainingCard) {
+      return;
+    }
 
-    const trainingTimeEl = trainingCard.querySelector('.training-time');
-    const trainingInfoEls = trainingCard.querySelectorAll('.training-info');
-    const startSessionBtn = trainingCard.querySelector('.btn-start-session');
-    const sectionTitle = trainingCard.querySelector('.section-title');
+    const trainingTimeEl = trainingCard.querySelector(".training-time");
+    const trainingInfoEls = trainingCard.querySelectorAll(".training-info");
+    const startSessionBtn = trainingCard.querySelector(".btn-start-session");
+    const sectionTitle = trainingCard.querySelector(".section-title");
 
     // Update title based on whether it's today
     if (sectionTitle) {
@@ -2287,10 +2445,14 @@ class DashboardPage {
 
     if (trainingSession) {
       // Format time (e.g., "18:30" or extract from session_time)
-      const sessionTime = trainingSession.session_time || trainingSession.time || '18:30';
-      const sessionType = trainingSession.session_type || trainingSession.type || 'Training';
-      const duration = trainingSession.duration_minutes || trainingSession.duration || 70;
-      const coach = trainingSession.coach || trainingSession.coach_name || 'Ales Zaksek';
+      const sessionTime =
+        trainingSession.session_time || trainingSession.time || "18:30";
+      const sessionType =
+        trainingSession.session_type || trainingSession.type || "Training";
+      const duration =
+        trainingSession.duration_minutes || trainingSession.duration || 70;
+      const coach =
+        trainingSession.coach || trainingSession.coach_name || "Ales Zaksek";
 
       // Update training time display
       if (trainingTimeEl) {
@@ -2311,22 +2473,24 @@ class DashboardPage {
         startSessionBtn.dataset.sessionTime = sessionTime;
         startSessionBtn.dataset.duration = duration;
         startSessionBtn.dataset.coach = coach;
-        startSessionBtn.dataset.date = this.formatDateForInput(this.selectedDate);
+        startSessionBtn.dataset.date = this.formatDateForInput(
+          this.selectedDate,
+        );
       }
     } else {
       // No training scheduled
       if (trainingTimeEl) {
-        trainingTimeEl.textContent = '🕒 No training scheduled';
+        trainingTimeEl.textContent = "🕒 No training scheduled";
       }
       if (trainingInfoEls.length >= 1) {
-        trainingInfoEls[0].textContent = '';
+        trainingInfoEls[0].textContent = "";
       }
       if (trainingInfoEls.length >= 2) {
-        trainingInfoEls[1].textContent = '';
+        trainingInfoEls[1].textContent = "";
       }
       if (startSessionBtn) {
         startSessionBtn.disabled = true;
-        startSessionBtn.textContent = 'NO SESSION';
+        startSessionBtn.textContent = "NO SESSION";
         delete startSessionBtn.dataset.sessionType;
       }
     }
@@ -2351,7 +2515,6 @@ class DashboardPage {
     }
 
     // Legacy notification code removed - using errorHandler instead
-    
   }
 
   setupInjuryTracking() {
@@ -2362,8 +2525,10 @@ class DashboardPage {
 
     if (addBtn && injuryForm) {
       addBtn.addEventListener("click", () => {
-        injuryForm.style.display = injuryForm.style.display === "none" ? "block" : "none";
-        addBtn.style.display = injuryForm.style.display === "none" ? "flex" : "none";
+        injuryForm.style.display =
+          injuryForm.style.display === "none" ? "block" : "none";
+        addBtn.style.display =
+          injuryForm.style.display === "none" ? "flex" : "none";
       });
     }
 
@@ -2377,7 +2542,8 @@ class DashboardPage {
 
     // Setup severity slider
     const severitySlider = document.getElementById("injury-severity");
-    const severityValue = severitySlider?.parentElement.querySelector(".severity-value");
+    const severityValue =
+      severitySlider?.parentElement.querySelector(".severity-value");
     if (severitySlider && severityValue) {
       severitySlider.addEventListener("input", (e) => {
         severityValue.textContent = e.target.value;
@@ -2463,7 +2629,10 @@ class DashboardPage {
       restoreButton(button);
     } catch (error) {
       logger.error("Failed to save injury report:", error);
-      this.showNotification("Failed to save injury report. Please try again.", "error");
+      this.showNotification(
+        "Failed to save injury report. Please try again.",
+        "error",
+      );
       restoreButton(button);
     }
   }
@@ -2471,7 +2640,9 @@ class DashboardPage {
   async loadInjuries() {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) {return;}
+      if (!user) {
+        return;
+      }
 
       let injuries = [];
 
@@ -2479,17 +2650,23 @@ class DashboardPage {
       try {
         const response = await apiClient.get(API_ENDPOINTS.wellness.injuries);
         if (response && response.data && Array.isArray(response.data)) {
-          injuries = response.data.filter(i =>
-            i.status === "active" || i.status === "recovering" || i.status === "monitoring"
+          injuries = response.data.filter(
+            (i) =>
+              i.status === "active" ||
+              i.status === "recovering" ||
+              i.status === "monitoring",
           );
         }
       } catch (apiError) {
         // Fallback to localStorage
         logger.warn("API unavailable, loading from localStorage:", apiError);
         const saved = storageService.get("injuries", [], { usePrefix: false });
-        injuries = saved.filter(i =>
-          i.userId === (user.id || user.email) &&
-          (i.status === "active" || i.status === "recovering" || i.status === "monitoring")
+        injuries = saved.filter(
+          (i) =>
+            i.userId === (user.id || user.email) &&
+            (i.status === "active" ||
+              i.status === "recovering" ||
+              i.status === "monitoring"),
         );
       }
 
@@ -2502,10 +2679,12 @@ class DashboardPage {
 
   renderInjuries() {
     const container = document.getElementById("active-injuries-list");
-    if (!container) {return;}
+    if (!container) {
+      return;
+    }
 
     if (this.injuries.length === 0) {
-      container.textContent = '';
+      container.textContent = "";
       const p = document.createElement("p");
       p.className = "injury-description";
       p.style.margin = "0";
@@ -2516,40 +2695,50 @@ class DashboardPage {
     }
 
     // SECURITY: Render injuries using DOM manipulation to prevent XSS
-    container.textContent = '';
-    this.injuries.forEach(injury => {
-      const statusClass = injury.status === "recovered" ? "recovered" :
-                         injury.status === "monitoring" ? "monitoring" : "active";
-      const statusLabel = injury.status === "recovered" ? "Recovered" :
-                         injury.status === "monitoring" ? "Monitoring" : "Active";
+    container.textContent = "";
+    this.injuries.forEach((injury) => {
+      const statusClass =
+        injury.status === "recovered"
+          ? "recovered"
+          : injury.status === "monitoring"
+            ? "monitoring"
+            : "active";
+      const statusLabel =
+        injury.status === "recovered"
+          ? "Recovered"
+          : injury.status === "monitoring"
+            ? "Monitoring"
+            : "Active";
 
       // Sanitize user-provided fields to prevent XSS
-      const safeType = injury.type || '';
+      const safeType = injury.type || "";
       const safeDescription = injury.description || "No description";
       const safeSeverity = parseInt(injury.severity) || 0;
       const safeId = String(injury.id || injury.startDate);
 
       const item = document.createElement("div");
       item.className = `injury-item ${statusClass}`;
-      
+
       const info = document.createElement("div");
       info.className = "injury-item-info";
-      
+
       const title = document.createElement("div");
       title.className = "injury-item-title";
       title.textContent = `${safeType.charAt(0).toUpperCase() + safeType.slice(1)} - Severity: ${safeSeverity}/10`;
-      
+
       const details = document.createElement("div");
       details.className = "injury-item-details";
-      const startDate = injury.startDate ? new Date(injury.startDate).toLocaleDateString() : "Unknown";
+      const startDate = injury.startDate
+        ? new Date(injury.startDate).toLocaleDateString()
+        : "Unknown";
       details.textContent = `${safeDescription} • Started: ${startDate} • Status: ${statusLabel}`;
-      
+
       info.appendChild(title);
       info.appendChild(details);
-      
+
       const actions = document.createElement("div");
       actions.className = "injury-item-actions";
-      
+
       if (injury.status !== "recovered") {
         const markRecoveredBtn = document.createElement("button");
         markRecoveredBtn.className = "btn-mark-recovered";
@@ -2557,14 +2746,14 @@ class DashboardPage {
         markRecoveredBtn.textContent = "Mark Recovered";
         actions.appendChild(markRecoveredBtn);
       }
-      
+
       item.appendChild(info);
       item.appendChild(actions);
       container.appendChild(item);
     });
 
     // Add event listeners for mark recovered buttons
-    container.querySelectorAll(".btn-mark-recovered").forEach(btn => {
+    container.querySelectorAll(".btn-mark-recovered").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const injuryId = e.target.dataset.injuryId;
         this.markInjuryRecovered(injuryId);
@@ -2575,7 +2764,9 @@ class DashboardPage {
   async markInjuryRecovered(injuryId) {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) {return;}
+      if (!user) {
+        return;
+      }
 
       // Update injury status
       try {
@@ -2588,9 +2779,10 @@ class DashboardPage {
         // Fallback to localStorage
         logger.warn("API unavailable, updating localStorage:", apiError);
         const saved = storageService.get("injuries", [], { usePrefix: false });
-        const injuryIndex = saved.findIndex(i =>
-          (i.id || i.startDate) === injuryId &&
-          i.userId === (user.id || user.email)
+        const injuryIndex = saved.findIndex(
+          (i) =>
+            (i.id || i.startDate) === injuryId &&
+            i.userId === (user.id || user.email),
         );
         if (injuryIndex !== -1) {
           saved[injuryIndex].status = "recovered";
@@ -2612,7 +2804,7 @@ class DashboardPage {
 const dashboardPage = new DashboardPage();
 
 // Make API client and endpoints available globally for notification-manager.js
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.apiClient = window.apiClient || apiClient;
   window.API_ENDPOINTS = window.API_ENDPOINTS || API_ENDPOINTS;
 }

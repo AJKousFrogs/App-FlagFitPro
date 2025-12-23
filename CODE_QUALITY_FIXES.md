@@ -3,6 +3,7 @@
 ## Issues Fixed
 
 ### 1. ✅ Removed Unused Variables
+
 - **TrafficLightRiskComponent**: Removed unused `acwrValueSignal` computed property
 - **MicrocyclePlannerComponent**: Removed unused `dayName` variable in `calculateDayPlan`
 - **DatasetGeneratorService**: Removed unused `phase` variable
@@ -10,22 +11,27 @@
 ### 2. ✅ Eliminated Code Duplication
 
 #### Duplicate Methods
+
 - **MicrocyclePlannerComponent**: Consolidated `getRiskColor()` to call `getACWRColor()` instead of duplicating logic
 
 #### Duplicate Error Handling
+
 - **ImportDatasetComponent**: Created `ErrorHandlerUtil` utility class to centralize error message creation
 - All three import methods (`parseAndImport`, `generateAndImport`, `import`) now use shared error handling
 
 #### Duplicate Value Calculation Logic
+
 - **WearableParserService**: Extracted `calculateMissingValue()` helper method
 - Removed duplicate speed/distance calculation logic from CSV and JSON parsers
 
 ### 3. ✅ Centralized Constants
+
 - Created `training-thresholds.ts` constants file
 - **DatasetGeneratorService**: Now imports thresholds from constants instead of hardcoding
 - Prevents inconsistencies across codebase
 
 ### 4. ✅ Removed Unused Imports
+
 - **FlagLoadComponent**: Removed unused `CardModule` and `TableModule` imports (using native HTML table now)
 
 ## New Files Created
@@ -62,4 +68,3 @@
 ✅ No unused imports or variables
 ✅ Consistent error handling patterns
 ✅ Centralized constants
-

@@ -26,7 +26,7 @@ import { LoggerService } from "../../../core/services/logger.service";
     Tabs,
     TabPanel,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -66,7 +66,10 @@ import { LoggerService } from "../../../core/services/logger.service";
                 <h3>Injury Risk Analysis</h3>
               </ng-template>
               <div class="risk-analysis">
-                <p>Based on your training load and wellness data, your current injury risk is:</p>
+                <p>
+                  Based on your training load and wellness data, your current
+                  injury risk is:
+                </p>
                 <div class="risk-score">
                   <span class="score-value">{{ injuryRisk() }}%</span>
                   <span class="score-label">Low Risk</span>
@@ -152,10 +155,18 @@ export class EnhancedAnalyticsComponent implements OnInit {
     try {
       // TODO: Call API to load enhanced analytics
       // const response = await this.apiService.getEnhancedAnalytics();
-      
+
       // Mock chart data
       this.performanceChartData.set({
-        labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7"],
+        labels: [
+          "Week 1",
+          "Week 2",
+          "Week 3",
+          "Week 4",
+          "Week 5",
+          "Week 6",
+          "Week 7",
+        ],
         datasets: [
           {
             label: "Performance Score",
@@ -175,4 +186,3 @@ export class EnhancedAnalyticsComponent implements OnInit {
     this.logger.debug("Export report");
   }
 }
-

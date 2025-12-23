@@ -8,7 +8,7 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -193,9 +193,8 @@ const formatWorkoutName = (workoutType) => {
   );
 };
 
-
 exports.handler = async (event, context) => {
-  logFunctionCall('Training-Stats', event);
+  logFunctionCall("Training-Stats", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -254,12 +253,16 @@ exports.handler = async (event, context) => {
         score: score || Math.floor(Math.random() * 20) + 80,
       });
 
-      return createSuccessResponse(sessionData, 201, "Training session completed successfully");
+      return createSuccessResponse(
+        sessionData,
+        201,
+        "Training session completed successfully",
+      );
     }
 
     // Method not allowed
-    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   } catch (error) {
-    return handleServerError(error, 'Training-Stats');
+    return handleServerError(error, "Training-Stats");
   }
 };

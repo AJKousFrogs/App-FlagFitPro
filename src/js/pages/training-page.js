@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (typeof lucide !== "undefined") {
     lucide.createIcons();
   }
-  
+
   // Check authentication - wait for auth manager to initialize first
   const isAuthenticated = await authManager.requireAuth();
   if (!isAuthenticated) {
@@ -90,7 +90,9 @@ function toggleSidebar() {
   const overlay = document.getElementById("sidebar-overlay");
   const toggleBtn = document.getElementById("mobile-menu-toggle");
 
-  if (!sidebar) {return;}
+  if (!sidebar) {
+    return;
+  }
 
   const isOpen =
     sidebar.classList.contains("open") ||
@@ -98,23 +100,31 @@ function toggleSidebar() {
 
   if (isOpen) {
     sidebar.classList.remove("open", "mobile-open");
-    if (overlay) {overlay.classList.remove("active");}
+    if (overlay) {
+      overlay.classList.remove("active");
+    }
     document.body.classList.remove("sidebar-open", "menu-open");
     if (toggleBtn) {
       toggleBtn.setAttribute("aria-expanded", "false");
     }
     // Return focus to toggle button
-    if (toggleBtn) {toggleBtn.focus();}
+    if (toggleBtn) {
+      toggleBtn.focus();
+    }
   } else {
     sidebar.classList.add("open", "mobile-open");
-    if (overlay) {overlay.classList.add("active");}
+    if (overlay) {
+      overlay.classList.add("active");
+    }
     document.body.classList.add("sidebar-open", "menu-open");
     if (toggleBtn) {
       toggleBtn.setAttribute("aria-expanded", "true");
     }
     // Focus first nav item for accessibility
     const firstNavItem = sidebar.querySelector(".nav-item");
-    if (firstNavItem) {firstNavItem.focus();}
+    if (firstNavItem) {
+      firstNavItem.focus();
+    }
   }
 }
 
@@ -134,27 +144,31 @@ function initializeTrainingVideos() {
     if (container) {
       // Create fallback message using DOM methods instead of innerHTML
       const fallbackDiv = document.createElement("div");
-      fallbackDiv.style.cssText = "background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;";
-      
+      fallbackDiv.style.cssText =
+        "background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;";
+
       const heading = document.createElement("h3");
-      heading.style.cssText = "color: var(--text-primary); margin-bottom: 1rem;";
+      heading.style.cssText =
+        "color: var(--text-primary); margin-bottom: 1rem;";
       heading.textContent = "📺 Training Videos";
-      
+
       const message = document.createElement("p");
-      message.style.cssText = "color: var(--text-secondary); margin-bottom: 1.5rem;";
+      message.style.cssText =
+        "color: var(--text-secondary); margin-bottom: 1.5rem;";
       message.textContent = "Training videos are temporarily unavailable.";
-      
+
       const link = document.createElement("a");
-      link.href = "https://www.youtube.com/results?search_query=flag+football+training+drills";
+      link.href =
+        "https://www.youtube.com/results?search_query=flag+football+training+drills";
       link.target = "_blank";
       link.rel = "noopener noreferrer";
       link.className = "btn btn-primary";
       link.textContent = "Search YouTube Manually";
-      
+
       fallbackDiv.appendChild(heading);
       fallbackDiv.appendChild(message);
       fallbackDiv.appendChild(link);
-      
+
       container.textContent = "";
       container.appendChild(fallbackDiv);
     }
@@ -174,14 +188,23 @@ async function loadDaySpecificVideos(selectedDate = null) {
 
   try {
     const date = selectedDate || new Date();
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = date.toISOString().split("T")[0];
     const dayOfWeek = date.getDay();
-    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dayNames = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ];
     const dayName = dayNames[dayOfWeek];
     const displayDayName = dayName.charAt(0).toUpperCase() + dayName.slice(1);
 
     // Import protocols
-    const { MORNING_MOBILITY_ROUTINE, DAILY_FOAM_ROLLING } = await import("../../js/data/shared-protocols.js");
+    const { MORNING_MOBILITY_ROUTINE, DAILY_FOAM_ROLLING } =
+      await import("../../js/data/shared-protocols.js");
     const { apiClient, API_ENDPOINTS } = await import("../../api-config.js");
 
     // Get morning routine video for this day
@@ -195,13 +218,20 @@ async function loadDaySpecificVideos(selectedDate = null) {
         startDate: dateStr,
         endDate: dateStr,
         includeUpcoming: true,
-        limit: 10
+        limit: 10,
       });
 
       if (response && response.success && response.data) {
-        const sessions = Array.isArray(response.data) ? response.data : (response.data.sessions || []);
-        trainingSession = sessions.find(s => {
-          const sessionDate = s.session_date || s.date || (s.created_at ? new Date(s.created_at).toISOString().split('T')[0] : null);
+        const sessions = Array.isArray(response.data)
+          ? response.data
+          : response.data.sessions || [];
+        trainingSession = sessions.find((s) => {
+          const sessionDate =
+            s.session_date ||
+            s.date ||
+            (s.created_at
+              ? new Date(s.created_at).toISOString().split("T")[0]
+              : null);
           return sessionDate === dateStr;
         });
       }
@@ -212,23 +242,36 @@ async function loadDaySpecificVideos(selectedDate = null) {
     // If no session found, try schedule
     if (!trainingSession) {
       try {
-        const scheduleResponse = await apiClient.get(API_ENDPOINTS.training?.schedule || '/api/training/schedule', {
-          date: dateStr
-        });
-        if (scheduleResponse && scheduleResponse.success && scheduleResponse.data) {
-          const schedule = scheduleResponse.data.schedule || scheduleResponse.data;
-          const daySchedule = Array.isArray(schedule) 
-            ? schedule.find(s => {
+        const scheduleResponse = await apiClient.get(
+          API_ENDPOINTS.training?.schedule || "/api/training/schedule",
+          {
+            date: dateStr,
+          },
+        );
+        if (
+          scheduleResponse &&
+          scheduleResponse.success &&
+          scheduleResponse.data
+        ) {
+          const schedule =
+            scheduleResponse.data.schedule || scheduleResponse.data;
+          const daySchedule = Array.isArray(schedule)
+            ? schedule.find((s) => {
                 const sDate = s.date ? new Date(s.date) : null;
-                return sDate && sDate.toISOString().split('T')[0] === dateStr;
+                return sDate && sDate.toISOString().split("T")[0] === dateStr;
               })
             : null;
-          
+
           if (daySchedule) {
             trainingSession = {
-              session_type: daySchedule.session_type || daySchedule.type || daySchedule.title,
-              session_time: daySchedule.time || daySchedule.session_time || '18:30',
-              duration_minutes: daySchedule.duration || daySchedule.duration_minutes || 70,
+              session_type:
+                daySchedule.session_type ||
+                daySchedule.type ||
+                daySchedule.title,
+              session_time:
+                daySchedule.time || daySchedule.session_time || "18:30",
+              duration_minutes:
+                daySchedule.duration || daySchedule.duration_minutes || 70,
             };
           }
         }
@@ -240,27 +283,44 @@ async function loadDaySpecificVideos(selectedDate = null) {
     // Determine video categories based on training session type
     let trainingVideoCategories = [];
     if (trainingSession) {
-      const sessionType = (trainingSession.session_type || '').toLowerCase();
-      if (sessionType.includes('speed') || sessionType.includes('sprint')) {
-        trainingVideoCategories = ['warm-up', 'sprint-drills', 'cool-down'];
-      } else if (sessionType.includes('strength')) {
-        trainingVideoCategories = ['warm-up', 'plyometrics', 'cool-down'];
-      } else if (sessionType.includes('agility')) {
-        trainingVideoCategories = ['warm-up', 'agility', 'flag-specific', 'cool-down'];
+      const sessionType = (trainingSession.session_type || "").toLowerCase();
+      if (sessionType.includes("speed") || sessionType.includes("sprint")) {
+        trainingVideoCategories = ["warm-up", "sprint-drills", "cool-down"];
+      } else if (sessionType.includes("strength")) {
+        trainingVideoCategories = ["warm-up", "plyometrics", "cool-down"];
+      } else if (sessionType.includes("agility")) {
+        trainingVideoCategories = [
+          "warm-up",
+          "agility",
+          "flag-specific",
+          "cool-down",
+        ];
       } else {
-        trainingVideoCategories = ['warm-up', 'sprint-drills', 'agility', 'cool-down'];
+        trainingVideoCategories = [
+          "warm-up",
+          "sprint-drills",
+          "agility",
+          "cool-down",
+        ];
       }
     } else {
       // Default training videos
-      trainingVideoCategories = ['warm-up', 'sprint-drills', 'agility', 'cool-down'];
+      trainingVideoCategories = [
+        "warm-up",
+        "sprint-drills",
+        "agility",
+        "cool-down",
+      ];
     }
 
     // Load training videos using YouTube service
-    const { youTubeTrainingService } = await import("../../youtube-training-service.js");
+    const { youTubeTrainingService } =
+      await import("../../youtube-training-service.js");
     const trainingVideos = {};
     for (const category of trainingVideoCategories) {
       try {
-        trainingVideos[category] = await youTubeTrainingService.getTrainingVideos(category, 3);
+        trainingVideos[category] =
+          await youTubeTrainingService.getTrainingVideos(category, 3);
       } catch (error) {
         logger.warn(`Could not load ${category} videos:`, error);
         trainingVideos[category] = [];
@@ -275,26 +335,27 @@ async function loadDaySpecificVideos(selectedDate = null) {
       morningRoutine,
       foamRolling,
       trainingSession,
-      trainingVideos
+      trainingVideos,
     });
-
   } catch (error) {
     logger.error("Error loading day-specific videos:", error);
     // Create error message using DOM methods instead of innerHTML
     const errorDiv = document.createElement("div");
-    errorDiv.style.cssText = "background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;";
-    
+    errorDiv.style.cssText =
+      "background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;";
+
     const heading = document.createElement("h3");
     heading.style.cssText = "color: var(--text-primary); margin-bottom: 1rem;";
     heading.textContent = "📺 Training Videos";
-    
+
     const message = document.createElement("p");
-    message.style.cssText = "color: var(--text-secondary); margin-bottom: 1.5rem;";
+    message.style.cssText =
+      "color: var(--text-secondary); margin-bottom: 1.5rem;";
     message.textContent = "Unable to load videos. Please try again later.";
-    
+
     errorDiv.appendChild(heading);
     errorDiv.appendChild(message);
-    
+
     container.textContent = "";
     container.appendChild(errorDiv);
   }
@@ -304,13 +365,21 @@ async function loadDaySpecificVideos(selectedDate = null) {
  * Render day-specific videos in the container
  */
 function renderDaySpecificVideos(container, data) {
-  const { date, dateStr, dayName, morningRoutine, foamRolling, trainingSession, trainingVideos } = data;
-  
+  const {
+    date,
+    dateStr,
+    dayName,
+    morningRoutine,
+    foamRolling,
+    trainingSession,
+    trainingVideos,
+  } = data;
+
   // Format date for display
-  const formattedDate = date.toLocaleDateString('en-GB', { 
-    day: '2-digit', 
-    month: '2-digit', 
-    year: 'numeric' 
+  const formattedDate = date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 
   let html = `
@@ -383,18 +452,18 @@ function renderDaySpecificVideos(container, data) {
       <div class="video-section">
         <h3 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
           <span>🏋️</span>
-          <span>Training Session Videos${trainingSession ? ` - ${trainingSession.session_type || 'Training'}` : ''}</span>
+          <span>Training Session Videos${trainingSession ? ` - ${trainingSession.session_type || "Training"}` : ""}</span>
         </h3>
   `;
 
   // Render training videos by category
   const categoryNames = {
-    'warm-up': '🔥 Warm-Up & Activation',
-    'sprint-drills': '⚡ Sprint Drills',
-    'agility': '🏃 Agility & Change of Direction',
-    'plyometrics': '💪 Power & Plyometrics',
-    'flag-specific': '🏈 Flag Football Specific',
-    'cool-down': '😌 Cool-Down & Recovery'
+    "warm-up": "🔥 Warm-Up & Activation",
+    "sprint-drills": "⚡ Sprint Drills",
+    agility: "🏃 Agility & Change of Direction",
+    plyometrics: "💪 Power & Plyometrics",
+    "flag-specific": "🏈 Flag Football Specific",
+    "cool-down": "😌 Cool-Down & Recovery",
   };
 
   for (const [category, videos] of Object.entries(trainingVideos)) {
@@ -407,7 +476,7 @@ function renderDaySpecificVideos(container, data) {
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
       `;
 
-      videos.forEach(video => {
+      videos.forEach((video) => {
         html += `
           <div style="border: 1px solid var(--color-border-primary); border-radius: 8px; overflow: hidden; background: var(--surface-primary);">
             <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;">
@@ -416,14 +485,14 @@ function renderDaySpecificVideos(container, data) {
                 src="https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen
-                title="${video.title || 'Training Video'}">
+                title="${video.title || "Training Video"}">
               </iframe>
             </div>
             <div style="padding: 0.75rem;">
               <h5 style="margin: 0 0 0.25rem 0; color: var(--text-primary); font-size: 0.9rem; line-height: 1.3;">
-                ${video.title || 'Training Video'}
+                ${video.title || "Training Video"}
               </h5>
-              ${video.channelTitle ? `<p style="margin: 0; color: var(--text-secondary); font-size: 0.8rem;">${video.channelTitle}</p>` : ''}
+              ${video.channelTitle ? `<p style="margin: 0; color: var(--text-secondary); font-size: 0.8rem;">${video.channelTitle}</p>` : ""}
             </div>
           </div>
         `;
@@ -436,11 +505,11 @@ function renderDaySpecificVideos(container, data) {
     }
   }
 
-  if (Object.values(trainingVideos).every(v => !v || v.length === 0)) {
+  if (Object.values(trainingVideos).every((v) => !v || v.length === 0)) {
     html += `
       <div style="text-align: center; padding: 2rem; background: var(--surface-secondary); border-radius: 8px;">
         <p style="color: var(--text-secondary); margin: 0;">
-          ${trainingSession ? `No training videos available for ${trainingSession.session_type || 'this session'}.` : 'No training scheduled for this date.'}
+          ${trainingSession ? `No training videos available for ${trainingSession.session_type || "this session"}.` : "No training scheduled for this date."}
         </p>
       </div>
     `;
@@ -457,16 +526,16 @@ function renderDaySpecificVideos(container, data) {
   setSafeContent(container, html, true, true);
 
   // Add date picker event listener
-  const datePicker = document.getElementById('video-date-picker');
+  const datePicker = document.getElementById("video-date-picker");
   if (datePicker) {
-    datePicker.addEventListener('change', (e) => {
+    datePicker.addEventListener("change", (e) => {
       const newDate = new Date(e.target.value);
       loadDaySpecificVideos(newDate);
     });
   }
 
   // Initialize Lucide icons if available
-  if (typeof lucide !== 'undefined') {
+  if (typeof lucide !== "undefined") {
     lucide.createIcons();
   }
 }
@@ -513,8 +582,10 @@ async function initializePageState() {
   // Load recent workouts from backend API (with localStorage fallback)
   let recentWorkouts = [];
   try {
-    recentWorkouts = await trainingApiService.getTrainingSessions({ limit: 50 });
-    
+    recentWorkouts = await trainingApiService.getTrainingSessions({
+      limit: 50,
+    });
+
     // If API returns empty and we have localStorage data, use it as fallback
     if (recentWorkouts.length === 0) {
       const localWorkouts = storageService.getRecentWorkouts();
@@ -524,10 +595,13 @@ async function initializePageState() {
       }
     }
   } catch (error) {
-    logger.error("Error loading training sessions from API, using localStorage:", error);
+    logger.error(
+      "Error loading training sessions from API, using localStorage:",
+      error,
+    );
     recentWorkouts = storageService.getRecentWorkouts();
   }
-  
+
   trainingPageState.setRecentWorkouts(recentWorkouts);
 
   // Calculate stats
@@ -549,37 +623,63 @@ async function initializePageState() {
   let currentProgram = null;
   // Use a more defensive approach: check method exists and wrap in try-catch
   try {
-    if (storageService && storageService.getOffseasonProgram && typeof storageService.getOffseasonProgram === 'function') {
+    if (
+      storageService &&
+      storageService.getOffseasonProgram &&
+      typeof storageService.getOffseasonProgram === "function"
+    ) {
       currentProgram = storageService.getOffseasonProgram();
     } else {
       // Fallback: use generic get method if getOffseasonProgram doesn't exist
-      if (storageService && storageService.get && typeof storageService.get === 'function') {
-        currentProgram = storageService.get('offseasonProgram', null, { usePrefix: true });
+      if (
+        storageService &&
+        storageService.get &&
+        typeof storageService.get === "function"
+      ) {
+        currentProgram = storageService.get("offseasonProgram", null, {
+          usePrefix: true,
+        });
       } else {
-        logger.warn('storageService.getOffseasonProgram is not available and fallback failed');
+        logger.warn(
+          "storageService.getOffseasonProgram is not available and fallback failed",
+        );
       }
     }
   } catch (error) {
-    logger.error('Error loading offseason program:', error);
+    logger.error("Error loading offseason program:", error);
   }
-  
+
   let qbProgram = null;
   try {
-    if (storageService && storageService.getQBProgram && typeof storageService.getQBProgram === 'function') {
+    if (
+      storageService &&
+      storageService.getQBProgram &&
+      typeof storageService.getQBProgram === "function"
+    ) {
       qbProgram = storageService.getQBProgram();
     } else {
       // Fallback: use generic get method if getQBProgram doesn't exist
-      if (storageService && storageService.get && typeof storageService.get === 'function') {
-        qbProgram = storageService.get('qbProgram', null, { usePrefix: true });
+      if (
+        storageService &&
+        storageService.get &&
+        typeof storageService.get === "function"
+      ) {
+        qbProgram = storageService.get("qbProgram", null, { usePrefix: true });
       } else {
-        logger.warn('storageService.getQBProgram is not available and fallback failed');
+        logger.warn(
+          "storageService.getQBProgram is not available and fallback failed",
+        );
       }
     }
   } catch (error) {
-    logger.error('Error loading QB program:', error);
+    logger.error("Error loading QB program:", error);
   }
-  if (currentProgram) {trainingPageState.setCurrentProgram(currentProgram);}
-  if (qbProgram) {trainingPageState.setQBProgram(qbProgram);}
+  if (currentProgram) {
+    trainingPageState.setCurrentProgram(currentProgram);
+  }
+  if (qbProgram) {
+    trainingPageState.setQBProgram(qbProgram);
+  }
 
   // Set up global function for workout exercises (needed by workout.html)
   window.getWorkoutExercises = (type) =>
@@ -930,20 +1030,28 @@ async function handleAIChat(e) {
 
 // Initialize Enhanced Training Schedule
 async function initializeEnhancedSchedule() {
-  const scheduleContainer = document.getElementById('enhanced-schedule-container') || 
-                           document.querySelector('[data-enhanced-schedule]');
-  
+  const scheduleContainer =
+    document.getElementById("enhanced-schedule-container") ||
+    document.querySelector("[data-enhanced-schedule]");
+
   if (scheduleContainer) {
     try {
-      const { default: enhancedTrainingSchedule } = await import('../components/enhanced-training-schedule.js');
-      await enhancedTrainingSchedule.init(scheduleContainer.id || 'enhanced-schedule-container', {
-        enableRealtime: true,
-        enableAI: true,
-        enableDragDrop: true
-      });
-      logger.debug('[TrainingPage] Enhanced training schedule initialized');
+      const { default: enhancedTrainingSchedule } =
+        await import("../components/enhanced-training-schedule.js");
+      await enhancedTrainingSchedule.init(
+        scheduleContainer.id || "enhanced-schedule-container",
+        {
+          enableRealtime: true,
+          enableAI: true,
+          enableDragDrop: true,
+        },
+      );
+      logger.debug("[TrainingPage] Enhanced training schedule initialized");
     } catch (error) {
-      logger.warn('[TrainingPage] Enhanced training schedule not available:', error);
+      logger.warn(
+        "[TrainingPage] Enhanced training schedule not available:",
+        error,
+      );
     }
   }
 }
@@ -951,21 +1059,25 @@ async function initializeEnhancedSchedule() {
 // Initialize Enhanced Training Assistant
 async function initializeEnhancedTrainingAssistant() {
   try {
-    const { default: enhancedTrainingAssistant } = await import('../components/enhanced-training-assistant.js');
+    const { default: enhancedTrainingAssistant } =
+      await import("../components/enhanced-training-assistant.js");
     await enhancedTrainingAssistant.init();
-    
+
     // Override AI chat button to use enhanced assistant
-    const aiChatBtn = document.querySelector('.ai-chat-button');
+    const aiChatBtn = document.querySelector(".ai-chat-button");
     if (aiChatBtn) {
-      aiChatBtn.addEventListener('click', async (e) => {
+      aiChatBtn.addEventListener("click", async (e) => {
         e.preventDefault();
         await enhancedTrainingAssistant.open();
       });
     }
-    
-    logger.debug('[TrainingPage] Enhanced training assistant initialized');
+
+    logger.debug("[TrainingPage] Enhanced training assistant initialized");
   } catch (error) {
-    logger.warn('[TrainingPage] Enhanced training assistant not available:', error);
+    logger.warn(
+      "[TrainingPage] Enhanced training assistant not available:",
+      error,
+    );
   }
 }
 
@@ -1123,7 +1235,9 @@ function createTrainingPlanModal(title, plan) {
 
   // Close on overlay click
   modal.onclick = (e) => {
-    if (e.target === modal) {modal.remove();}
+    if (e.target === modal) {
+      modal.remove();
+    }
   };
 
   return modal;

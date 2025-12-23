@@ -23,6 +23,7 @@
 This comprehensive technical documentation consolidates all wireframe specifications, design systems, and implementation guidelines for the Flag Football Training App. The documentation integrates the high-quality HTML wireframes from the `Wireframes clean/` directory with existing markdown specifications to provide a complete development reference.
 
 **Key Integration Points:**
+
 - **4 Complete HTML Wireframes**: Dashboard, Tournament, Community, Training
 - **Ultra-Minimal Design System**: Consistent across all wireframes
 - **Mobile-First Responsive Design**: Touch-friendly interactions
@@ -40,9 +41,9 @@ All wireframes follow the **Ultra-Minimal Wireframe Design System**:
 ```css
 /* Core Design Variables */
 :root {
-    --space-small: 8px;
-    --space-medium: 16px;
-    --container-max-width: 1200px;
+  --space-small: 8px;
+  --space-medium: 16px;
+  --container-max-width: 1200px;
 }
 
 /* Typography */
@@ -59,6 +60,7 @@ body {
 ### **1.2 Navigation System**
 
 Consistent navigation across all pages:
+
 - **Brand Identity**: Logo + App Name
 - **Primary Navigation**: Dashboard, Training, Tournaments, Community, Profile
 - **Action Items**: Search, Notifications, Theme Toggle, Avatar Menu
@@ -67,6 +69,7 @@ Consistent navigation across all pages:
 ### **1.3 Layout Structure**
 
 Standard page layout:
+
 ```
 ┌─────────────────────────────────────────┐
 │ Navigation Bar                          │
@@ -90,44 +93,49 @@ Standard page layout:
 ## **2. DASHBOARD WIREFRAME SPECIFICATIONS**
 
 ### **2.1 File Reference**
+
 **Source**: `Wireframes clean/dashboard-complete-wireframe.html` (162KB, 5118 lines)
 
 ### **2.2 Core Features**
 
 #### **Performance Overview Section**
+
 ```html
 <div class="performance-overview">
-    <div class="performance-card">
-        <h3>Current Performance</h3>
-        <div class="performance-metrics">
-            <div class="metric">
-                <span class="label">40-Yard Dash</span>
-                <span class="value">4.6s</span>
-                <span class="trend improving">+0.1s</span>
-            </div>
-            <div class="metric">
-                <span class="label">Completion Rate</span>
-                <span class="value">72%</span>
-                <span class="trend improving">+5%</span>
-            </div>
-        </div>
+  <div class="performance-card">
+    <h3>Current Performance</h3>
+    <div class="performance-metrics">
+      <div class="metric">
+        <span class="label">40-Yard Dash</span>
+        <span class="value">4.6s</span>
+        <span class="trend improving">+0.1s</span>
+      </div>
+      <div class="metric">
+        <span class="label">Completion Rate</span>
+        <span class="value">72%</span>
+        <span class="trend improving">+5%</span>
+      </div>
     </div>
+  </div>
 </div>
 ```
 
 #### **AI Coach Integration**
+
 - **Real-time Performance Analysis**
 - **Olympic Standard Comparisons**
 - **Personalized Recommendations**
 - **Injury Prevention Alerts**
 
 #### **Training Progress Tracking**
+
 - **Daily Streaks**: Visual progress indicators
 - **Weekly Goals**: Achievement tracking
 - **Monthly Analytics**: Performance trends
 - **Position-Specific Metrics**: QB/WR/DB focus areas
 
 ### **2.3 Mobile Responsive Features**
+
 - **Touch-Friendly Buttons**: Minimum 44px touch targets
 - **Swipe Gestures**: Horizontal scrolling for metrics
 - **Collapsible Sections**: Space optimization
@@ -138,6 +146,7 @@ Standard page layout:
 ## **3. TOURNAMENT WIREFRAME SPECIFICATIONS**
 
 ### **3.1 File Reference**
+
 **Source**: `Wireframes clean/tournament-complete-wireframe.html` (64KB, 1993 lines)
 
 ### **3.2 Enhanced Features**
@@ -168,12 +177,14 @@ Standard page layout:
 ```
 
 #### **Tournament Schedule Management**
+
 - **Multi-Day Tournament Support**: Friday-Sunday events
 - **Break Planning Integration**: 30-minute break optimization
 - **Nutrition Timing**: Pre-game, during-game, post-game protocols
 - **Recovery Protocols**: Foam rolling, stretching, hydration
 
 #### **Team Chemistry System**
+
 - **Player Rating System**: 5 categories (Communication, Teamwork, Leadership, Performance, Attitude)
 - **Critical Player Warnings**: 6.0/10 threshold with AI recommendations
 - **Team Building Activities**: Communication workshops, team retreats
@@ -182,6 +193,7 @@ Standard page layout:
 ### **3.3 Break Planning Integration**
 
 #### **30-Minute Break Optimization**
+
 ```
 BREAK TIMELINE STRUCTURE:
 ┌─────────────────────────────────────────┐
@@ -194,6 +206,7 @@ BREAK TIMELINE STRUCTURE:
 ```
 
 #### **Recovery Equipment Checklist**
+
 - **Essential Equipment**: Foam roller, lacrosse ball, resistance bands
 - **Nutrition Supplies**: Protein powder, electrolyte tablets, energy bars
 - **Optional Premium**: Massage gun, ice bath, compression boots
@@ -203,43 +216,48 @@ BREAK TIMELINE STRUCTURE:
 ## **4. COMMUNITY WIREFRAME SPECIFICATIONS**
 
 ### **4.1 File Reference**
+
 **Source**: `Wireframes clean/community-complete-wireframe.html` (67KB, 2203 lines)
 
 ### **4.2 Community Features**
 
 #### **Discussion Forums**
+
 ```html
 <div class="community-forums">
-    <div class="forum-categories">
-        <div class="category">
-            <h3>Training Tips</h3>
-            <span class="thread-count">1,247 threads</span>
-        </div>
-        <div class="category">
-            <h3>Tournament Talk</h3>
-            <span class="thread-count">892 threads</span>
-        </div>
-        <div class="category">
-            <h3>Equipment Reviews</h3>
-            <span class="thread-count">456 threads</span>
-        </div>
+  <div class="forum-categories">
+    <div class="category">
+      <h3>Training Tips</h3>
+      <span class="thread-count">1,247 threads</span>
     </div>
+    <div class="category">
+      <h3>Tournament Talk</h3>
+      <span class="thread-count">892 threads</span>
+    </div>
+    <div class="category">
+      <h3>Equipment Reviews</h3>
+      <span class="thread-count">456 threads</span>
+    </div>
+  </div>
 </div>
 ```
 
 #### **Team Communication**
+
 - **Real-time Chat**: Team-specific channels
 - **File Sharing**: Playbooks, training videos
 - **Event Coordination**: Practice schedules, tournament planning
 - **Announcements**: Coach communications
 
 #### **Leaderboards & Rankings**
+
 - **Individual Performance**: Personal stats tracking
 - **Team Rankings**: League standings
 - **Achievement System**: Badges and milestones
 - **Social Features**: Follow other players, share achievements
 
 ### **4.3 Social Features**
+
 - **Player Profiles**: Detailed statistics and achievements
 - **Team Pages**: Roster, schedule, performance history
 - **Photo/Video Sharing**: Training clips, game highlights
@@ -250,6 +268,7 @@ BREAK TIMELINE STRUCTURE:
 ## **5. TRAINING WIREFRAME SPECIFICATIONS**
 
 ### **5.1 File Reference**
+
 **Source**: `Wireframes clean/training-complete-wireframe.html` (76KB, 2435 lines)
 
 ### **5.2 Olympic-Level Training Features**
@@ -277,18 +296,21 @@ BREAK TIMELINE STRUCTURE:
 ```
 
 #### **AI Coach Integration**
+
 - **Performance Analysis**: Real-time feedback
 - **Olympic Standards**: Elite athlete benchmarks
 - **Injury Prevention**: Risk assessment and recommendations
 - **Personalized Drills**: Position-specific training programs
 
 #### **Training Session Management**
+
 - **Session Planning**: Structured workout routines
 - **Progress Tracking**: Performance metrics over time
 - **Video Integration**: Technique analysis
 - **Social Features**: Share achievements, compete with teammates
 
 ### **5.3 Advanced Training Features**
+
 - **Plyometrics Training**: Olympic-level explosive movements
 - **Recovery Protocols**: Post-training optimization
 - **Nutrition Integration**: Pre/post workout fueling
@@ -299,6 +321,7 @@ BREAK TIMELINE STRUCTURE:
 ## **6. DESIGN SYSTEM SPECIFICATIONS**
 
 ### **6.1 Color Palette**
+
 ```css
 /* Primary Colors */
 --primary-blue: #3b82f6;
@@ -315,6 +338,7 @@ BREAK TIMELINE STRUCTURE:
 ```
 
 ### **6.2 Typography System**
+
 ```css
 /* Font Hierarchy */
 --font-family: Arial, sans-serif;
@@ -332,6 +356,7 @@ BREAK TIMELINE STRUCTURE:
 ```
 
 ### **6.3 Spacing System**
+
 ```css
 /* Spacing Scale */
 --space-xs: 4px;
@@ -391,6 +416,7 @@ BREAK TIMELINE STRUCTURE:
 ## **7. RESPONSIVE DESIGN SPECIFICATIONS**
 
 ### **7.1 Breakpoint System**
+
 ```css
 /* Mobile First Approach */
 --breakpoint-sm: 480px;
@@ -400,12 +426,14 @@ BREAK TIMELINE STRUCTURE:
 ```
 
 ### **7.2 Mobile Optimizations**
+
 - **Touch Targets**: Minimum 44px for interactive elements
 - **Gesture Support**: Swipe, pinch, tap interactions
 - **Performance**: Optimized loading for mobile networks
 - **Accessibility**: Screen reader support, high contrast mode
 
 ### **7.3 Tablet Adaptations**
+
 - **Side-by-Side Layouts**: Efficient use of screen real estate
 - **Touch-Friendly Navigation**: Larger buttons and menus
 - **Content Prioritization**: Most important features prominently displayed
@@ -415,12 +443,14 @@ BREAK TIMELINE STRUCTURE:
 ## **8. ACCESSIBILITY REQUIREMENTS**
 
 ### **8.1 WCAG 2.1 AA Compliance**
+
 - **Color Contrast**: Minimum 4.5:1 ratio for normal text
 - **Keyboard Navigation**: Full functionality without mouse
 - **Screen Reader Support**: Proper ARIA labels and semantic HTML
 - **Focus Management**: Visible focus indicators
 
 ### **8.2 Inclusive Design**
+
 - **Multiple Input Methods**: Touch, keyboard, voice
 - **Customizable Interface**: Font size, color scheme adjustments
 - **Error Prevention**: Clear error messages and validation
@@ -431,12 +461,14 @@ BREAK TIMELINE STRUCTURE:
 ## **9. PERFORMANCE REQUIREMENTS**
 
 ### **9.1 Loading Performance**
+
 - **First Contentful Paint**: < 1.5 seconds
 - **Largest Contentful Paint**: < 2.5 seconds
 - **Cumulative Layout Shift**: < 0.1
 - **First Input Delay**: < 100ms
 
 ### **9.2 Optimization Strategies**
+
 - **Code Splitting**: Lazy loading for non-critical components
 - **Image Optimization**: WebP format, responsive images
 - **Caching Strategy**: Service worker for offline functionality
@@ -447,18 +479,21 @@ BREAK TIMELINE STRUCTURE:
 ## **10. INTEGRATION SPECIFICATIONS**
 
 ### **10.1 Database Integration**
+
 - **NEON Database**: Primary data storage
 - **Real-time Sync**: Live updates across devices
 - **Offline Support**: Local storage with sync when online
 - **Data Validation**: Input sanitization and type checking
 
 ### **10.2 API Integration**
+
 - **RESTful APIs**: Standard HTTP methods
 - **GraphQL Support**: Efficient data fetching
 - **Authentication**: JWT tokens with refresh mechanism
 - **Rate Limiting**: API usage monitoring and limits
 
 ### **10.3 Third-Party Services**
+
 - **Weather API**: Training condition adjustments
 - **Nutrition Database**: USDA food data integration
 - **Analytics**: Performance tracking and insights
@@ -469,12 +504,14 @@ BREAK TIMELINE STRUCTURE:
 ## **11. SECURITY REQUIREMENTS**
 
 ### **11.1 Data Protection**
+
 - **Encryption**: AES-256 for data at rest and in transit
 - **Authentication**: Multi-factor authentication support
 - **Authorization**: Role-based access control
 - **Audit Logging**: Comprehensive activity tracking
 
 ### **11.2 Privacy Compliance**
+
 - **GDPR Compliance**: Data protection and user rights
 - **COPPA Compliance**: Children's privacy protection
 - **Data Minimization**: Only collect necessary information
@@ -485,12 +522,14 @@ BREAK TIMELINE STRUCTURE:
 ## **12. TESTING STRATEGY**
 
 ### **12.1 Automated Testing**
+
 - **Unit Tests**: Component-level testing with Jest
 - **Integration Tests**: API and database integration
 - **E2E Tests**: User journey testing with Cypress
 - **Performance Tests**: Load testing and optimization
 
 ### **12.2 Manual Testing**
+
 - **Usability Testing**: User experience validation
 - **Accessibility Testing**: Screen reader and keyboard navigation
 - **Cross-Browser Testing**: Chrome, Firefox, Safari, Edge
@@ -501,12 +540,14 @@ BREAK TIMELINE STRUCTURE:
 ## **13. DEPLOYMENT SPECIFICATIONS**
 
 ### **13.1 Environment Setup**
+
 - **Development**: Local development with hot reloading
 - **Staging**: Pre-production testing environment
 - **Production**: Live application deployment
 - **Monitoring**: Performance and error tracking
 
 ### **13.2 CI/CD Pipeline**
+
 - **Code Quality**: ESLint, Prettier, TypeScript checking
 - **Testing**: Automated test suite execution
 - **Build Process**: Optimized production builds
@@ -517,12 +558,14 @@ BREAK TIMELINE STRUCTURE:
 ## **14. MAINTENANCE & UPDATES**
 
 ### **14.1 Version Control**
+
 - **Git Workflow**: Feature branches with pull requests
 - **Release Management**: Semantic versioning
 - **Changelog**: Comprehensive update documentation
 - **Rollback Strategy**: Quick recovery from issues
 
 ### **14.2 Monitoring & Analytics**
+
 - **Error Tracking**: Real-time error monitoring
 - **Performance Monitoring**: Core Web Vitals tracking
 - **User Analytics**: Usage patterns and feature adoption
@@ -533,12 +576,14 @@ BREAK TIMELINE STRUCTURE:
 ## **15. FUTURE ENHANCEMENTS**
 
 ### **15.1 Planned Features**
+
 - **Advanced Analytics**: Machine learning insights
 - **Virtual Reality**: Immersive training experiences
 - **Social Features**: Enhanced community interactions
 - **Mobile App**: Native iOS and Android applications
 
 ### **15.2 Scalability Considerations**
+
 - **Microservices Architecture**: Modular service design
 - **Cloud Infrastructure**: Scalable hosting solutions
 - **Global Distribution**: CDN for international users
@@ -549,6 +594,7 @@ BREAK TIMELINE STRUCTURE:
 ## **APPENDIX A: WIREFRAME FILES REFERENCE**
 
 ### **A.1 Complete HTML Wireframes**
+
 1. **Dashboard**: `Wireframes clean/dashboard-complete-wireframe.html`
    - Size: 162KB, 5118 lines
    - Features: Performance overview, AI coach, training progress
@@ -566,6 +612,7 @@ BREAK TIMELINE STRUCTURE:
    - Features: Position-specific training, AI coach, Olympic standards
 
 ### **A.2 Supporting Documentation**
+
 - **Design System**: `docs/MODERN_DESIGN_SYSTEM_2025.md`
 - **Navigation**: `docs/NAVIGATION_WIREFRAME_2025.md`
 - **Architecture**: `docs/ARCHITECTURE.md`
@@ -576,6 +623,7 @@ BREAK TIMELINE STRUCTURE:
 ## **APPENDIX B: IMPLEMENTATION CHECKLIST**
 
 ### **B.1 Development Phases**
+
 - [ ] **Phase 1**: Core wireframe implementation
 - [ ] **Phase 2**: Responsive design optimization
 - [ ] **Phase 3**: Accessibility compliance
@@ -584,6 +632,7 @@ BREAK TIMELINE STRUCTURE:
 - [ ] **Phase 6**: Deployment and monitoring
 
 ### **B.2 Quality Gates**
+
 - [ ] **Code Review**: All changes reviewed by team
 - [ ] **Testing**: Automated and manual testing complete
 - [ ] **Performance**: Core Web Vitals meet targets

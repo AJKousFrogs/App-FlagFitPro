@@ -17,6 +17,7 @@ This is a comprehensive, flexible training database designed for flag football a
 ### Core Tables
 
 #### 1. **positions**
+
 Defines available positions in flag football.
 
 ```sql
@@ -27,6 +28,7 @@ Defines available positions in flag football.
 ```
 
 #### 2. **training_programs**
+
 Annual or seasonal training programs (e.g., "QB Annual Program 2025-2026").
 
 ```sql
@@ -40,6 +42,7 @@ Annual or seasonal training programs (e.g., "QB Annual Program 2025-2026").
 ```
 
 #### 3. **training_phases**
+
 Mesocycles within a program (Foundation, Power, Explosive, Tournament Maintenance).
 
 ```sql
@@ -52,6 +55,7 @@ Mesocycles within a program (Foundation, Power, Explosive, Tournament Maintenanc
 ```
 
 #### 4. **training_weeks**
+
 Microcycles within a phase with progressive loading.
 
 ```sql
@@ -65,6 +69,7 @@ Microcycles within a phase with progressive loading.
 ```
 
 #### 5. **exercises**
+
 Exercise library with position-specific tagging.
 
 ```sql
@@ -81,6 +86,7 @@ Exercise library with position-specific tagging.
 ```
 
 #### 6. **training_sessions**
+
 Individual training sessions within a week.
 
 ```sql
@@ -96,6 +102,7 @@ Individual training sessions within a week.
 ```
 
 #### 7. **session_exercises**
+
 Links exercises to sessions with prescribed sets/reps/load (Many-to-Many).
 
 ```sql
@@ -112,6 +119,7 @@ Links exercises to sessions with prescribed sets/reps/load (Many-to-Many).
 ```
 
 #### 8. **workout_logs**
+
 Records of completed workouts by players.
 
 ```sql
@@ -126,6 +134,7 @@ Records of completed workouts by players.
 ```
 
 #### 9. **exercise_logs**
+
 Detailed logs of each exercise performed within a workout.
 
 ```sql
@@ -140,6 +149,7 @@ Detailed logs of each exercise performed within a workout.
 ```
 
 #### 10. **load_monitoring**
+
 Tracks ACWR for injury prevention (auto-updated via trigger).
 
 ```sql
@@ -154,12 +164,14 @@ Tracks ACWR for injury prevention (auto-updated via trigger).
 ```
 
 **ACWR Interpretation:**
+
 - **< 0.8**: Low (detraining risk)
 - **0.8 - 1.3**: Optimal (sweet spot)
 - **1.3 - 1.5**: Moderate risk
 - **> 1.5**: High injury risk
 
 #### 11. **position_specific_metrics**
+
 Flexible tracking for position-unique metrics.
 
 ```sql
@@ -175,11 +187,13 @@ Flexible tracking for position-unique metrics.
 ```
 
 **Example QB Metrics:**
+
 - Throwing Volume: 100 throws, 320 throws
 - Weekly Total: 310-400 throws
 - Monthly Total: 1,320-1,600 throws
 
 #### 12. **player_programs**
+
 Assigns training programs to specific players.
 
 ```sql
@@ -193,6 +207,7 @@ Assigns training programs to specific players.
 ```
 
 #### 13. **training_videos**
+
 Library of training videos (exercise demos, technique, position-specific).
 
 ```sql
@@ -216,6 +231,7 @@ Library of training videos (exercise demos, technique, position-specific).
 ### ACWR Calculation Functions
 
 #### 1. `calculate_daily_load(player_uuid, log_date)`
+
 Calculates total training load for a day (sum of RPE × duration).
 
 ```sql
@@ -224,6 +240,7 @@ SELECT calculate_daily_load('player-uuid', '2026-01-15');
 ```
 
 #### 2. `calculate_acute_load(player_uuid, reference_date)`
+
 Calculates 7-day rolling average load.
 
 ```sql
@@ -232,6 +249,7 @@ SELECT calculate_acute_load('player-uuid', '2026-01-15');
 ```
 
 #### 3. `calculate_chronic_load(player_uuid, reference_date)`
+
 Calculates 28-day rolling average load.
 
 ```sql
@@ -240,6 +258,7 @@ SELECT calculate_chronic_load('player-uuid', '2026-01-15');
 ```
 
 #### 4. `get_injury_risk_level(acwr_value)`
+
 Determines injury risk based on ACWR.
 
 ```sql
@@ -252,9 +271,11 @@ SELECT get_injury_risk_level(1.45);
 ## Automatic Triggers
 
 ### `trigger_update_load_monitoring`
+
 Automatically updates `load_monitoring` table when a workout is logged.
 
 **What it does:**
+
 1. Calculates daily load (RPE × duration)
 2. Calculates acute load (7-day average)
 3. Calculates chronic load (28-day average)
@@ -263,9 +284,11 @@ Automatically updates `load_monitoring` table when a workout is logged.
 6. Inserts/updates load_monitoring record
 
 **Triggered by:**
+
 - INSERT or UPDATE on `workout_logs` table
 
 **Example:**
+
 ```sql
 -- Player logs a workout
 INSERT INTO workout_logs (player_id, session_id, completed_at, rpe, duration_minutes)
@@ -285,17 +308,20 @@ VALUES ('player-uuid', 'session-uuid', NOW(), 8.0, 60);
 ## Row Level Security (RLS)
 
 ### Players
+
 - **View**: Own workout logs, assigned programs, own load data
 - **Manage**: Own workout logs, exercise logs
 - **Cannot**: View other players' data, modify programs
 
 ### Coaches
+
 - **View**: All workout logs, all load data, all programs
 - **Manage**: Programs, phases, weeks, sessions, exercises, videos
 - **Update**: Coach feedback on workout logs
 - **Cannot**: Modify player workout logs (except feedback)
 
 ### Public
+
 - **View**: Positions, training videos, exercises
 
 ---
@@ -461,19 +487,20 @@ ORDER BY week DESC;
 
 ### Sample Week 1 Schedule (Foundation Phase)
 
-| Day | Session | Type | Duration | Key Exercises |
-|-----|---------|------|----------|---------------|
-| Monday AM | QB Routine | Position-Specific | 30 min | Mobility, arm care |
-| Monday PM | Lower Body | Strength | 60 min | Trap bar DL, Front squat, Single-leg RDL |
-| Tuesday AM | QB Routine | Position-Specific | 30 min | Mobility, arm care |
-| Tuesday PM | Speed & Throwing | Skill | 90 min | 3-step accel, 40m sprints, 100 throws |
-| Wednesday AM | QB Routine | Position-Specific | 30 min | Mobility, arm care |
-| Wednesday PM | Upper Body | Strength | 60 min | Landmine press, Pallof press, Arm care |
-| Thursday | Active Recovery | Recovery | 45 min | Light movement, foam rolling |
-| Friday AM | QB Routine | Position-Specific | 30 min | Mobility, arm care |
-| Friday PM | Power & Throwing | Power | 90 min | Med ball, Jumps, 100 throws |
+| Day          | Session          | Type              | Duration | Key Exercises                            |
+| ------------ | ---------------- | ----------------- | -------- | ---------------------------------------- |
+| Monday AM    | QB Routine       | Position-Specific | 30 min   | Mobility, arm care                       |
+| Monday PM    | Lower Body       | Strength          | 60 min   | Trap bar DL, Front squat, Single-leg RDL |
+| Tuesday AM   | QB Routine       | Position-Specific | 30 min   | Mobility, arm care                       |
+| Tuesday PM   | Speed & Throwing | Skill             | 90 min   | 3-step accel, 40m sprints, 100 throws    |
+| Wednesday AM | QB Routine       | Position-Specific | 30 min   | Mobility, arm care                       |
+| Wednesday PM | Upper Body       | Strength          | 60 min   | Landmine press, Pallof press, Arm care   |
+| Thursday     | Active Recovery  | Recovery          | 45 min   | Light movement, foam rolling             |
+| Friday AM    | QB Routine       | Position-Specific | 30 min   | Mobility, arm care                       |
+| Friday PM    | Power & Throwing | Power             | 90 min   | Med ball, Jumps, 100 throws              |
 
 **Weekly Totals:**
+
 - Training sessions: 7
 - Throwing volume: 100 throws (Week 1 baseline)
 - Strength load: 20% BW
@@ -486,12 +513,14 @@ ORDER BY week DESC;
 ### Adding a New Position (e.g., Wide Receiver)
 
 1. **Insert Position**
+
 ```sql
 INSERT INTO positions (name, display_name, description)
 VALUES ('WR', 'Wide Receiver', 'Primary pass catchers and route runners');
 ```
 
 2. **Create WR-Specific Program**
+
 ```sql
 INSERT INTO training_programs (name, position_id, description, start_date, end_date)
 VALUES (
@@ -504,6 +533,7 @@ VALUES (
 ```
 
 3. **Create WR-Specific Exercises**
+
 ```sql
 INSERT INTO exercises (name, category, position_specific, applicable_positions, metrics_tracked)
 VALUES (
@@ -516,6 +546,7 @@ VALUES (
 ```
 
 4. **Track WR-Specific Metrics**
+
 ```sql
 INSERT INTO position_specific_metrics (player_id, position_id, metric_name, metric_value, metric_unit)
 VALUES (
@@ -639,6 +670,7 @@ ORDER BY se.exercise_order;
 **Issue**: `load_monitoring` table not updating after workout log.
 
 **Solution**: Check trigger is enabled:
+
 ```sql
 SELECT tgname, tgenabled
 FROM pg_trigger
@@ -646,6 +678,7 @@ WHERE tgname = 'trigger_update_load_monitoring';
 ```
 
 Re-create trigger if needed:
+
 ```sql
 DROP TRIGGER IF EXISTS trigger_update_load_monitoring ON workout_logs;
 -- Then re-run trigger creation from schema file
@@ -656,11 +689,13 @@ DROP TRIGGER IF EXISTS trigger_update_load_monitoring ON workout_logs;
 **Issue**: Getting empty results when data exists.
 
 **Solution**: Check your JWT role:
+
 ```sql
 SELECT current_setting('request.jwt.claims', true)::json->>'role';
 ```
 
 Ensure user has correct role in `user_metadata`:
+
 ```sql
 UPDATE auth.users
 SET raw_user_meta_data = raw_user_meta_data || '{"role": "player"}'::jsonb
@@ -672,11 +707,13 @@ WHERE id = 'user-uuid';
 **Issue**: Position-specific metrics not saving.
 
 **Solution**: Ensure position_id is correct:
+
 ```sql
 SELECT id, name FROM positions WHERE name = 'QB';
 ```
 
 Check workout_log_id exists:
+
 ```sql
 SELECT id FROM workout_logs WHERE player_id = 'player-uuid' ORDER BY completed_at DESC LIMIT 1;
 ```
@@ -750,6 +787,7 @@ GROUP BY u.id, p.name, prog.name, pp.compliance_rate;
 ## Support
 
 For issues or questions:
+
 - Create an issue in the GitHub repository
 - Check Supabase logs for RLS/trigger issues
 - Verify JWT claims for authentication problems

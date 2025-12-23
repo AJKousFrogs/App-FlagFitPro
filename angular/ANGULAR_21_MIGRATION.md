@@ -13,6 +13,7 @@ This guide documents the migration from Angular 19 to Angular 21 for FlagFit Pro
 ## 🎯 Key Changes in Angular 21
 
 ### Major Features
+
 1. **Zoneless Change Detection** - Stable, optional zone.js (we'll keep zone.js for now)
 2. **Signal Forms** - Experimental signal-based forms (optional)
 3. **Vitest Integration** - Default test runner (replaces Karma/Jasmine)
@@ -20,6 +21,7 @@ This guide documents the migration from Angular 19 to Angular 21 for FlagFit Pro
 5. **NgClass/NgStyle Migrations** - Automatic migrations available
 
 ### Breaking Changes
+
 - TypeScript 5.7+ required
 - Zone.js 0.16.0+ recommended
 - Some deprecated APIs removed
@@ -49,6 +51,7 @@ ng update @angular/core@21 @angular/cli@21
 ```
 
 This will:
+
 - Update all Angular packages to version 21
 - Update Angular CLI to version 21
 - Update TypeScript if needed
@@ -91,6 +94,7 @@ ng generate @angular/core:ngstyle-to-style
 ### Step 7: Update angular.json (if needed)
 
 The Angular CLI update should handle most changes, but verify:
+
 - Build configuration is correct
 - Test configuration (if migrating to Vitest)
 
@@ -111,17 +115,17 @@ npm test
 No changes required if keeping zone.js. The current configuration:
 
 ```typescript
-provideZoneChangeDetection({ eventCoalescing: true })
+provideZoneChangeDetection({ eventCoalescing: true });
 ```
 
 Will continue to work. If you want to experiment with zoneless:
 
 ```typescript
 // Optional: Enable zoneless (experimental)
-import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { provideExperimentalZonelessChangeDetection } from "@angular/core";
 
 // Replace provideZoneChangeDetection with:
-provideExperimentalZonelessChangeDetection()
+provideExperimentalZonelessChangeDetection();
 ```
 
 ### angular.json
@@ -160,25 +164,28 @@ If you're using Karma/Jasmine, you can continue using it. Angular 21 doesn't for
 Angular 21 recommends Vitest. To migrate:
 
 1. Install Vitest:
+
 ```bash
 npm install --save-dev vitest @vitest/ui
 ```
 
 2. Create `vitest.config.ts`:
+
 ```typescript
-import { defineConfig } from 'vitest/config';
-import angular from '@analogjs/vite-plugin-angular';
+import { defineConfig } from "vitest/config";
+import angular from "@analogjs/vite-plugin-angular";
 
 export default defineConfig({
   plugins: [angular()],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: "jsdom",
   },
 });
 ```
 
 3. Update package.json:
+
 ```json
 {
   "scripts": {
@@ -193,18 +200,22 @@ export default defineConfig({
 ## ⚠️ Breaking Changes to Watch For
 
 ### 1. Deprecated APIs Removed
+
 - Check for any deprecated Angular APIs
 - Review console warnings during build
 
 ### 2. PrimeNG Component Changes
+
 - Review PrimeNG 21 changelog for component API changes
 - Test all PrimeNG components used in the app
 
 ### 3. TypeScript Strictness
+
 - Angular 21 may enforce stricter TypeScript checks
 - Fix any new type errors
 
 ### 4. RxJS Compatibility
+
 - Ensure RxJS version is compatible (7.8.0 should work)
 
 ---
@@ -242,12 +253,14 @@ export default defineConfig({
 ## 🔍 Post-Migration Verification
 
 ### Build Verification
+
 ```bash
 npm run build
 # Should complete without errors
 ```
 
 ### Runtime Verification
+
 ```bash
 npm start
 # Test all major features:
@@ -259,6 +272,7 @@ npm start
 ```
 
 ### Test Verification
+
 ```bash
 npm test
 # All tests should pass
@@ -269,15 +283,19 @@ npm test
 ## 🐛 Troubleshooting
 
 ### Issue: Build fails with TypeScript errors
+
 **Solution**: Update TypeScript to 5.9.0 and fix type errors
 
 ### Issue: PrimeNG components not rendering
+
 **Solution**: Ensure PrimeNG 21 is installed and check component imports
 
 ### Issue: Zone.js errors
+
 **Solution**: Verify zone.js version is 0.16.0+
 
 ### Issue: Test failures
+
 **Solution**: Review test configuration and update if migrating to Vitest
 
 ---
@@ -310,4 +328,3 @@ npm test
 **Migration Status**: Ready to execute  
 **Estimated Time**: 1-2 hours  
 **Risk Level**: Medium (major version upgrade)
-

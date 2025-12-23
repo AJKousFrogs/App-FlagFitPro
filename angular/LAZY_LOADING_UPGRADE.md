@@ -7,12 +7,14 @@
 **Auth-Aware Preloading Strategy** (`auth-aware-preload.strategy.ts`)
 
 Intelligently preloads routes based on:
+
 - **User authentication status**: Only preloads authenticated routes for logged-in users
 - **Route priority**: High-priority routes (dashboard, training, analytics) preload immediately
 - **Network-friendly delays**: Other routes preload after delays to avoid overwhelming slow connections
 - **Configurable per route**: Routes can opt-out with `data.preload = false`
 
 **Benefits**:
+
 - Faster navigation for authenticated users
 - Reduced initial bundle size
 - Better code splitting
@@ -23,6 +25,7 @@ Intelligently preloads routes based on:
 **Feature-Based Route Groups** (`feature-routes.ts`)
 
 Routes are now organized by feature area:
+
 - **Public Routes**: Landing, login, register, reset-password
 - **Dashboard Routes**: Dashboard (high priority)
 - **Training Routes**: Training, workout, exercise-library
@@ -34,6 +37,7 @@ Routes are now organized by feature area:
 - **Profile Routes**: Profile, settings
 
 **Benefits**:
+
 - Better code organization
 - Easier to maintain
 - Clear feature boundaries
@@ -46,10 +50,10 @@ Routes are now organized by feature area:
 ```typescript
 provideRouter(
   routes,
-  withComponentInputBinding(),    // Route params as component inputs
-  withViewTransitions(),            // Smooth page transitions
-  withPreloading(AuthAwarePreloadStrategy) // Smart preloading
-)
+  withComponentInputBinding(), // Route params as component inputs
+  withViewTransitions(), // Smooth page transitions
+  withPreloading(AuthAwarePreloadStrategy), // Smart preloading
+);
 ```
 
 ## 📋 Route Data Options
@@ -60,7 +64,7 @@ provideRouter(
 {
   path: "dashboard",
   loadComponent: () => import("./dashboard.component"),
-  data: { 
+  data: {
     preload: true,        // Enable preloading (default: true for auth routes)
     priority: 'high'      // High priority routes preload immediately
   }
@@ -80,14 +84,18 @@ provideRouter(
 ## 🚀 Preloading Behavior
 
 ### High-Priority Routes
+
 These routes preload **immediately** after authentication:
+
 - `/dashboard`
 - `/training`
 - `/analytics`
 - `/roster`
 
 ### Standard Authenticated Routes
+
 These routes preload after a **2-second delay**:
+
 - `/tournaments`
 - `/community`
 - `/chat`
@@ -101,24 +109,30 @@ These routes preload after a **2-second delay**:
 - `/workout`
 
 ### Public Routes
+
 These routes preload after a **5-second delay**:
+
 - `/` (landing)
 - `/login`
 - `/register`
 - `/reset-password`
 
 ### Never Preloaded
+
 Routes with `data.preload = false`:
+
 - `/game-tracker` (heavy component)
 
 ## 📊 Code Splitting Benefits
 
 ### Before Upgrade
+
 - All routes loaded individually
 - No intelligent preloading
 - Larger initial bundle
 
 ### After Upgrade
+
 - Routes grouped by feature
 - Smart preloading based on auth status
 - Smaller initial bundle
@@ -131,13 +145,13 @@ Routes with `data.preload = false`:
 To use a different preloading strategy, update `app.config.ts`:
 
 ```typescript
-import { PreloadAllModules } from '@angular/router';
+import { PreloadAllModules } from "@angular/router";
 
 // Use Angular's default preload all strategy
-withPreloading(PreloadAllModules)
+withPreloading(PreloadAllModules);
 
 // Or use custom strategy
-withPreloading(AuthAwarePreloadStrategy)
+withPreloading(AuthAwarePreloadStrategy);
 ```
 
 ### Customize Preload Delays
@@ -178,6 +192,7 @@ private readonly highPriorityRoutes = [
 ### Monitoring
 
 Use Angular DevTools or browser DevTools to monitor:
+
 - Bundle sizes
 - Load times
 - Preloading behavior
@@ -232,4 +247,3 @@ Regularly check bundle sizes to ensure optimal code splitting.
 - [Angular Router Preloading](https://angular.dev/guide/router/router-preloading)
 - [Angular Code Splitting](https://angular.dev/guide/code-splitting)
 - [Angular Standalone Components](https://angular.dev/guide/components/importing)
-

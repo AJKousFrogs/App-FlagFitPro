@@ -7,21 +7,27 @@ Angular DevTools for Angular 21 provides powerful debugging capabilities that ma
 ## ✨ Key Features Available
 
 ### 🔍 Visual Signal Graph Explorer
+
 Navigate through your application's component tree to inspect and modify component states, providing a clear visualization of the application's structure and signal dependencies.
 
 ### ⚡ Real-Time Change Detection Tracing
+
 Monitor change detection cycles as they occur in real-time, helping identify performance bottlenecks and understand the triggers behind each cycle.
 
 ### 🧠 Hydration Troubleshooting
+
 Debug server-side rendering (SSR) and hydration issues with enhanced visibility into the hydration process.
 
 ### 🔄 Component-Level Load-Time Analysis
+
 Utilize the Profiler tab to measure the time taken by each component during rendering, enabling targeted optimization of slow-loading components.
 
 ### 🧰 Router Event Inspector
+
 Inspect router events and navigation flows with the Router Tree feature, providing insights into routing behavior.
 
 ### 🎯 Better Profiling for Slow Components
+
 The Profiler provides detailed insights into component performance, highlighting areas that may require optimization to improve application responsiveness.
 
 ---
@@ -56,14 +62,14 @@ export const appConfig: ApplicationConfig = {
   providers: [
     // Zoneless change detection enables better DevTools integration
     provideExperimentalZonelessChangeDetection(),
-    
+
     // Router debug tracing (development only)
     provideRouter(
       routes,
       withComponentInputBinding(),
       withViewTransitions(),
       withPreloading(AuthAwarePreloadStrategy),
-      ...(isDevMode() ? [withDebugTracing()] : []) // Router event inspector
+      ...(isDevMode() ? [withDebugTracing()] : []), // Router event inspector
     ),
     // ... other providers
   ],
@@ -107,6 +113,7 @@ Source maps are enabled in development mode for better debugging:
 ### Accessing Angular DevTools
 
 1. **Start the development server**:
+
    ```bash
    cd angular
    npm start
@@ -142,6 +149,7 @@ Source maps are enabled in development mode for better debugging:
    - Performance bottlenecks
 
 **Tips for Profiling**:
+
 - Focus on slow components (highlighted in red)
 - Look for unnecessary re-renders
 - Identify components that trigger excessive change detection
@@ -195,26 +203,31 @@ For SSR applications:
 ## 🎨 Best Practices
 
 ### 1. Profile Regularly
+
 - Profile before and after optimizations
 - Use profiling to identify performance regressions
 - Focus on user-critical paths
 
 ### 2. Monitor Change Detection
+
 - Keep change detection cycles minimal
 - Use OnPush change detection strategy where possible
 - Leverage signals for reactive updates
 
 ### 3. Component Analysis
+
 - Regularly review component render times
 - Identify components that render unnecessarily
 - Optimize slow components first
 
 ### 4. Router Debugging
+
 - Use router event inspector to debug navigation issues
 - Monitor route guards and resolvers
 - Check for unnecessary route reloads
 
 ### 5. Signal Debugging
+
 - Use signal formatters in console
 - Visualize signal dependencies
 - Understand signal propagation
@@ -226,11 +239,13 @@ For SSR applications:
 ### DevTools Not Showing Angular Tab
 
 **Possible causes**:
+
 1. Extension not installed
 2. Application not running in development mode
 3. Angular version mismatch
 
 **Solutions**:
+
 - Verify extension is installed and enabled
 - Ensure `ng serve` is running (not production build)
 - Check Angular version: `ng version` (should be 21.x)
@@ -238,30 +253,36 @@ For SSR applications:
 ### Profiler Not Recording
 
 **Possible causes**:
+
 1. Application in production mode
 2. Source maps disabled
 
 **Solutions**:
+
 - Use `ng serve` (development mode)
 - Verify `sourceMap: true` in `angular.json`
 
 ### Change Detection Tracing Not Working
 
 **Possible causes**:
+
 1. Zoneless change detection not enabled
 2. DevTools settings not configured
 
 **Solutions**:
+
 - Verify `provideExperimentalZonelessChangeDetection()` is in app config
 - Enable change detection tracing in DevTools settings
 
 ### Router Events Not Showing
 
 **Possible causes**:
+
 1. Router debug tracing not enabled
 2. Router Tree feature not enabled in DevTools
 
 **Solutions**:
+
 - Verify `withDebugTracing()` is added in development mode
 - Enable Router Tree in DevTools settings (experimental features)
 
@@ -279,24 +300,28 @@ For SSR applications:
 ## 🎯 Quick Reference
 
 ### Enable Router Debug Tracing
+
 ```typescript
-provideRouter(routes, withDebugTracing())
+provideRouter(routes, withDebugTracing());
 ```
 
 ### Enable Zoneless Change Detection
+
 ```typescript
-provideExperimentalZonelessChangeDetection()
+provideExperimentalZonelessChangeDetection();
 ```
 
 ### Check Dev Mode
+
 ```typescript
-import { isDevMode } from '@angular/core';
+import { isDevMode } from "@angular/core";
 console.log(isDevMode()); // true in development
 ```
 
 ### Console Signal Formatting
+
 ```typescript
-import { signal } from '@angular/core';
+import { signal } from "@angular/core";
 const mySignal = signal(42);
 console.log(mySignal); // Formatted output in Angular 21
 ```
@@ -319,4 +344,3 @@ console.log(mySignal); // Formatted output in Angular 21
 **Happy Debugging! 🎉**
 
 Debugging Angular 21 apps is genuinely fun compared to older versions. Enjoy the enhanced developer experience!
-

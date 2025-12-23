@@ -10,7 +10,7 @@ import { CommonModule } from "@angular/common";
 import { ButtonModule } from "primeng/button";
 import { ProgressBarModule } from "primeng/progressbar";
 import { MessageModule } from "primeng/message";
-import { LoggerService } from '../../../core/services/logger.service';
+import { LoggerService } from "../../../core/services/logger.service";
 
 export interface ImageUploadResult {
   file: File;
@@ -40,7 +40,8 @@ export interface ImageUploadResult {
           (dragover)="onDragOver($event)"
           (dragleave)="onDragLeave($event)"
           (drop)="onDrop($event)"
-          (click)="triggerFileInput()">
+          (click)="triggerFileInput()"
+        >
           <input
             #fileInput
             type="file"
@@ -48,11 +49,14 @@ export interface ImageUploadResult {
             [disabled]="disabled()"
             (change)="onFileSelected($event)"
             class="file-input-hidden"
-            [attr.aria-label]="label() || 'Image upload'" />
+            [attr.aria-label]="label() || 'Image upload'"
+          />
 
           <div class="upload-content">
             <i class="pi pi-image upload-icon"></i>
-            <p class="upload-label">{{ label() || "Drop image here or click to browse" }}</p>
+            <p class="upload-label">
+              {{ label() || "Drop image here or click to browse" }}
+            </p>
             <p class="upload-hint">{{ hint() }}</p>
           </div>
         </div>
@@ -67,13 +71,15 @@ export interface ImageUploadResult {
               [alt]="uploadedImage()!.file.name"
               class="preview-image"
               [style.max-width]="maxWidth() + 'px'"
-              [style.max-height]="maxHeight() + 'px'" />
+              [style.max-height]="maxHeight() + 'px'"
+            />
             @if (showRemoveButton()) {
               <button
                 type="button"
                 class="remove-image-btn"
                 (click)="removeImage()"
-                aria-label="Remove image">
+                aria-label="Remove image"
+              >
                 <i class="pi pi-times"></i>
               </button>
             }
@@ -82,10 +88,13 @@ export interface ImageUploadResult {
           <!-- Image Info -->
           <div class="image-info">
             <span class="image-name">{{ uploadedImage()!.file.name }}</span>
-            <span class="image-size">{{ formatFileSize(uploadedImage()!.file.size) }}</span>
+            <span class="image-size">{{
+              formatFileSize(uploadedImage()!.file.size)
+            }}</span>
             @if (uploadedImage()!.file.width && uploadedImage()!.file.height) {
               <span class="image-dimensions">
-                {{ uploadedImage()!.file.width }} × {{ uploadedImage()!.file.height }}
+                {{ uploadedImage()!.file.width }} ×
+                {{ uploadedImage()!.file.height }}
               </span>
             }
           </div>
@@ -97,7 +106,8 @@ export interface ImageUploadResult {
                 label="Crop Image"
                 icon="pi pi-crop"
                 size="small"
-                (onClick)="enableCrop()">
+                (onClick)="enableCrop()"
+              >
               </p-button>
             </div>
           }
@@ -109,20 +119,19 @@ export interface ImageUploadResult {
               <input
                 type="number"
                 [value]="resizeWidth()"
-                (input)="resizeWidth.set(+($any($event.target).value))"
+                (input)="resizeWidth.set(+$any($event.target).value)"
                 [min]="minWidth()"
-                [max]="maxWidth()" />
+                [max]="maxWidth()"
+              />
               <label>Height:</label>
               <input
                 type="number"
                 [value]="resizeHeight()"
-                (input)="resizeHeight.set(+($any($event.target).value))"
+                (input)="resizeHeight.set(+$any($event.target).value)"
                 [min]="minHeight()"
-                [max]="maxHeight()" />
-              <p-button
-                label="Resize"
-                size="small"
-                (onClick)="resizeImage()">
+                [max]="maxHeight()"
+              />
+              <p-button label="Resize" size="small" (onClick)="resizeImage()">
               </p-button>
             </div>
           }
@@ -390,8 +399,8 @@ export class ImageUploadComponent {
     if (file.size > this.maxFileSize()) {
       this.errorMessage.set(
         `Image exceeds maximum size of ${this.formatFileSize(
-          this.maxFileSize()
-        )}`
+          this.maxFileSize(),
+        )}`,
       );
       return;
     }
@@ -423,7 +432,7 @@ export class ImageUploadComponent {
       }
     } catch (error) {
       this.errorMessage.set(
-        error instanceof Error ? error.message : "Failed to process image"
+        error instanceof Error ? error.message : "Failed to process image",
       );
     }
   }
@@ -487,7 +496,7 @@ export class ImageUploadComponent {
     } catch (error) {
       this.uploadProgress.set(0);
       this.errorMessage.set(
-        error instanceof Error ? error.message : "Upload failed"
+        error instanceof Error ? error.message : "Upload failed",
       );
       this.uploadError.emit(error as Error);
     }
@@ -523,7 +532,6 @@ export class ImageUploadComponent {
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   }
 }
-

@@ -19,6 +19,7 @@ This document defines the complete database schema with required fields, constra
 **Purpose**: Extended user profile information
 
 **Schema:**
+
 ```sql
 CREATE TABLE profiles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -49,11 +50,13 @@ CREATE TRIGGER update_profiles_updated_at
 ```
 
 **Required Fields:**
+
 - `user_id` (FK to auth.users)
 - `role_global`
 - `email_normalized`
 
 **Constraints:**
+
 - `user_id` unique (one profile per user)
 - `email_normalized` unique
 - `role_global` must be one of: 'player', 'coach', 'admin'
@@ -68,6 +71,7 @@ CREATE TRIGGER update_profiles_updated_at
 **Purpose**: Team information
 
 **Schema:**
+
 ```sql
 CREATE TABLE teams (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -95,10 +99,12 @@ CREATE INDEX idx_teams_deleted_at ON teams(deleted_at) WHERE deleted_at IS NULL;
 ```
 
 **Required Fields:**
+
 - `name`
 - `coach_id`
 
 **Constraints:**
+
 - `name` unique per active team (if enforced)
 - `coach_id` must reference valid user
 
@@ -113,6 +119,7 @@ CREATE INDEX idx_teams_deleted_at ON teams(deleted_at) WHERE deleted_at IS NULL;
 **Purpose**: Team membership with roles
 
 **Schema:**
+
 ```sql
 CREATE TABLE team_members (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -139,12 +146,14 @@ CREATE INDEX idx_team_members_status ON team_members(status);
 ```
 
 **Required Fields:**
+
 - `team_id`
 - `user_id`
 - `role_team`
 - `status`
 
 **Constraints:**
+
 - `(team_id, user_id)` unique per active membership
 - `role_team` must be one of: 'coach', 'assistant_coach', 'player'
 - `status` must be one of: 'active', 'inactive', 'suspended'
@@ -161,6 +170,7 @@ CREATE INDEX idx_team_members_status ON team_members(status);
 **Purpose**: Team invitation system
 
 **Schema:**
+
 ```sql
 CREATE TABLE team_invitations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -180,7 +190,7 @@ CREATE TABLE team_invitations (
 );
 
 -- Constraints
-CREATE UNIQUE INDEX idx_team_invitations_pending ON team_invitations(team_id, email_normalized) 
+CREATE UNIQUE INDEX idx_team_invitations_pending ON team_invitations(team_id, email_normalized)
   WHERE status = 'pending';
 CREATE INDEX idx_team_invitations_team_id ON team_invitations(team_id);
 CREATE INDEX idx_team_invitations_email ON team_invitations(email_normalized);
@@ -190,6 +200,7 @@ CREATE INDEX idx_team_invitations_expires_at ON team_invitations(expires_at);
 ```
 
 **Required Fields:**
+
 - `team_id`
 - `email_normalized`
 - `token_hash`
@@ -198,6 +209,7 @@ CREATE INDEX idx_team_invitations_expires_at ON team_invitations(expires_at);
 - `invited_by`
 
 **Constraints:**
+
 - `(team_id, email_normalized)` unique where `status = 'pending'`
 - `token_hash` unique
 - `status` must be one of: 'pending', 'accepted', 'expired', 'revoked'
@@ -212,6 +224,7 @@ CREATE INDEX idx_team_invitations_expires_at ON team_invitations(expires_at);
 **Purpose**: Training program templates
 
 **Schema:**
+
 ```sql
 CREATE TABLE training_programs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -236,12 +249,14 @@ CREATE INDEX idx_training_programs_dates ON training_programs(start_date, end_da
 ```
 
 **Required Fields:**
+
 - `name`
 - `start_date`
 - `end_date`
 - `created_by`
 
 **Constraints:**
+
 - `end_date` must be after `start_date`
 - `version` increments on updates (if immutability enforced)
 
@@ -256,6 +271,7 @@ CREATE INDEX idx_training_programs_dates ON training_programs(start_date, end_da
 **Purpose**: Assign programs to players
 
 **Schema:**
+
 ```sql
 CREATE TABLE program_assignments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -271,7 +287,7 @@ CREATE TABLE program_assignments (
 );
 
 -- Constraints
-CREATE UNIQUE INDEX idx_program_assignments_active ON program_assignments(player_id, program_id) 
+CREATE UNIQUE INDEX idx_program_assignments_active ON program_assignments(player_id, program_id)
   WHERE status = 'active' AND (active_to IS NULL OR active_to >= CURRENT_DATE);
 CREATE INDEX idx_program_assignments_player ON program_assignments(player_id);
 CREATE INDEX idx_program_assignments_program ON program_assignments(program_id);
@@ -280,6 +296,7 @@ CREATE INDEX idx_program_assignments_dates ON program_assignments(active_from, a
 ```
 
 **Required Fields:**
+
 - `program_id`
 - `player_id`
 - `assigned_by`
@@ -287,6 +304,7 @@ CREATE INDEX idx_program_assignments_dates ON program_assignments(active_from, a
 - `status`
 
 **Constraints:**
+
 - Only one active assignment per `(player_id, program_id)` at a time
 - `active_to` must be after `active_from` if provided
 - `status` must be one of: 'active', 'paused', 'completed', 'cancelled'
@@ -300,6 +318,7 @@ CREATE INDEX idx_program_assignments_dates ON program_assignments(active_from, a
 **Purpose**: Completed workout sessions
 
 **Schema:**
+
 ```sql
 CREATE TABLE workout_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -325,12 +344,14 @@ CREATE INDEX idx_workout_logs_player_date ON workout_logs(player_id, DATE(comple
 ```
 
 **Required Fields:**
+
 - `player_id`
 - `completed_at`
 - `duration_minutes`
 - `rpe`
 
 **Constraints:**
+
 - `duration_minutes` must be positive
 - `rpe` must be between 1 and 10
 
@@ -343,6 +364,7 @@ CREATE INDEX idx_workout_logs_player_date ON workout_logs(player_id, DATE(comple
 **Purpose**: Individual exercise performance within workouts
 
 **Schema:**
+
 ```sql
 CREATE TABLE exercise_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -363,6 +385,7 @@ CREATE INDEX idx_exercise_logs_exercise_version ON exercise_logs(exercise_id, ex
 ```
 
 **Required Fields:**
+
 - `workout_log_id`
 - `exercise_id`
 - `actual_json`
@@ -376,6 +399,7 @@ CREATE INDEX idx_exercise_logs_exercise_version ON exercise_logs(exercise_id, ex
 **Purpose**: Daily training load aggregation
 
 **Schema:**
+
 ```sql
 CREATE TABLE load_daily (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -394,11 +418,13 @@ CREATE INDEX idx_load_daily_player_date_range ON load_daily(player_id, date);
 ```
 
 **Required Fields:**
+
 - `player_id`
 - `date`
 - `daily_load`
 
 **Constraints:**
+
 - `(player_id, date)` unique
 - `daily_load` must be non-negative
 
@@ -411,6 +437,7 @@ CREATE INDEX idx_load_daily_player_date_range ON load_daily(player_id, date);
 **Purpose**: ACWR and load metrics
 
 **Schema:**
+
 ```sql
 CREATE TABLE load_metrics (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -434,10 +461,12 @@ CREATE INDEX idx_load_metrics_risk ON load_metrics(risk_level);
 ```
 
 **Required Fields:**
+
 - `player_id`
 - `date`
 
 **Constraints:**
+
 - `(player_id, date)` unique
 - `baseline_days` must be between 0 and 28
 - `risk_level` must be one of: 'baseline_building', 'baseline_low', 'low', 'optimal', 'moderate', 'high'
@@ -451,6 +480,7 @@ CREATE INDEX idx_load_metrics_risk ON load_metrics(risk_level);
 **Purpose**: Exercise library with versioning
 
 **Schema:**
+
 ```sql
 CREATE TABLE exercise_library (
   id UUID NOT NULL,
@@ -470,11 +500,13 @@ CREATE INDEX idx_exercise_library_category ON exercise_library(category);
 ```
 
 **Required Fields:**
+
 - `id`
 - `version`
 - `name`
 
 **Constraints:**
+
 - `(id, version)` unique (immutable per version)
 - New versions created instead of updates
 
@@ -487,6 +519,7 @@ CREATE INDEX idx_exercise_library_category ON exercise_library(category);
 **Purpose**: Tournament information
 
 **Schema:**
+
 ```sql
 CREATE TABLE tournaments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -514,6 +547,7 @@ CREATE INDEX idx_tournaments_created_by ON tournaments(created_by);
 ```
 
 **Required Fields:**
+
 - `name`
 - `start_date`
 - `end_date`
@@ -522,6 +556,7 @@ CREATE INDEX idx_tournaments_created_by ON tournaments(created_by);
 - `status`
 
 **Constraints:**
+
 - `end_date` must be after `start_date`
 - `registration_deadline` must be before or equal to `start_date`
 - `status` must be one of: 'upcoming', 'active', 'completed', 'cancelled'
@@ -537,6 +572,7 @@ CREATE INDEX idx_tournaments_created_by ON tournaments(created_by);
 **Purpose**: Team tournament registrations
 
 **Schema:**
+
 ```sql
 CREATE TABLE tournament_registrations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -556,12 +592,14 @@ CREATE INDEX idx_tournament_registrations_status ON tournament_registrations(sta
 ```
 
 **Required Fields:**
+
 - `tournament_id`
 - `team_id`
 - `registered_at`
 - `status`
 
 **Constraints:**
+
 - `(tournament_id, team_id)` unique
 - `status` must be one of: 'registered', 'withdrawn', 'disqualified'
 
@@ -574,6 +612,7 @@ CREATE INDEX idx_tournament_registrations_status ON tournament_registrations(sta
 **Purpose**: Raw analytics events (short retention)
 
 **Schema:**
+
 ```sql
 CREATE TABLE analytics_events (
   id BIGSERIAL PRIMARY KEY,
@@ -598,6 +637,7 @@ CREATE INDEX idx_analytics_events_session ON analytics_events(session_id);
 ```
 
 **Required Fields:**
+
 - `event_type`
 - `session_id`
 - `created_at`
@@ -613,6 +653,7 @@ CREATE INDEX idx_analytics_events_session ON analytics_events(session_id);
 **Purpose**: Aggregated analytics (long retention)
 
 **Schema:**
+
 ```sql
 CREATE TABLE analytics_aggregates (
   id BIGSERIAL PRIMARY KEY,
@@ -633,11 +674,13 @@ CREATE INDEX idx_analytics_aggregates_date ON analytics_aggregates(aggregation_d
 ```
 
 **Required Fields:**
+
 - `aggregation_type`
 - `aggregation_date`
 - `metrics`
 
 **Constraints:**
+
 - `(user_id, team_id, aggregation_type, aggregation_date)` unique
 - `aggregation_type` must be one of: 'daily', 'weekly', 'monthly'
 
@@ -672,12 +715,14 @@ CREATE INDEX idx_analytics_aggregates_date ON analytics_aggregates(aggregation_d
 ## Audit Fields
 
 All tables include:
+
 - `created_at`: Timestamp of creation
 - `updated_at`: Timestamp of last update (auto-updated via trigger)
 - `created_by`: User who created the record (if applicable)
 - `updated_by`: User who last updated the record (if applicable)
 
 **Trigger Function:**
+
 ```sql
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -693,9 +738,11 @@ $$ LANGUAGE plpgsql;
 ## Soft Delete Pattern
 
 Tables with soft delete include:
+
 - `deleted_at TIMESTAMPTZ`: NULL = active, timestamp = deleted
 
 **Query Pattern:**
+
 ```sql
 -- Active records only
 SELECT * FROM teams WHERE deleted_at IS NULL;
@@ -710,4 +757,3 @@ SELECT * FROM teams;
 
 - [RLS_POLICY_SPECIFICATION.md](./RLS_POLICY_SPECIFICATION.md) - RLS policy details
 - [database/schema.sql](../database/schema.sql) - Full schema SQL
-

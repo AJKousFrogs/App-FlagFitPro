@@ -22,15 +22,13 @@ It is no longer used in the application.
 
 ```javascript
 // Import Supabase client
-import { supabase } from '../js/services/supabase-client.js';
+import { supabase } from "../js/services/supabase-client.js";
 
 // Example query
-const { data, error } = await supabase
-  .from('table_name')
-  .select('*');
+const { data, error } = await supabase.from("table_name").select("*");
 ```
 
 For more information, see:
+
 - `src/js/config/supabase-config.js` - Configuration
 - `src/js/services/supabase-client.js` - Client setup
-

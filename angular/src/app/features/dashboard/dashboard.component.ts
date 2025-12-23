@@ -28,14 +28,14 @@ import { HeaderService } from "../../core/services/header.service";
     TagModule,
     AthleteDashboardComponent,
     CoachDashboardComponent,
-],
+  ],
   template: `
-    @if (userRole() === 'coach') {
+    @if (userRole() === "coach") {
       <app-coach-dashboard></app-coach-dashboard>
     } @else {
       <app-athlete-dashboard></app-athlete-dashboard>
     }
-    `,
+  `,
   styles: [
     `
       .dashboard-content {
@@ -151,7 +151,7 @@ export class DashboardComponent {
   // Signal-based user role computation
   userRole = computed(() => {
     const user = this.authService.currentUser();
-    return user?.role || 'player';
+    return user?.role || "player";
   });
 
   constructor() {

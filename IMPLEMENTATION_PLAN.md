@@ -1,4 +1,5 @@
 # Implementation Plan: Routing & API Standardization
+
 **Developer Handover Document**  
 **Last Updated:** 2025-01-22
 
@@ -18,6 +19,7 @@
 ## 1. Canonical Routing Rules
 
 ### Rule 1: Canonical UI Routes Do Not Use `.html`
+
 **All `.html` pages are legacy and must redirect to Angular routes.**
 
 - ✅ Canonical: `/dashboard`, `/training`, `/analytics`
@@ -25,6 +27,7 @@
 - **Action:** All `.html` routes redirect (301) to canonical routes
 
 ### Rule 2: Angular Handles Deep Links (SPA Fallback)
+
 **All non-asset paths rewrite to `/index.html` for Angular router.**
 
 - ✅ Assets: `/src/**`, `/dist/**`, `/*.css`, `/*.js`, `/*.png`, etc. → serve directly
@@ -32,6 +35,7 @@
 - ✅ SPA: `/*` → `/index.html` (200 rewrite, not redirect)
 
 ### Rule 3: Sidebar Uses Angular Router Links Only
+
 **No direct `.html` references in navigation.**
 
 - ✅ Use Angular `routerLink` directive
@@ -39,6 +43,7 @@
 - ❌ No `href="/page.html"` in sidebar
 
 ### Rule 4: Public Flows Have Angular Routes
+
 **Even minimal UI flows must have Angular routes for consistency.**
 
 - `/verify-email` → Angular component (even if just shows message)
@@ -52,65 +57,69 @@
 
 ### 2.1 Critical Routes (Must Exist - Build Breaking)
 
-| Route | Component | Guard | Priority | Status |
-|-------|-----------|-------|----------|--------|
-| `/workout` | `WorkoutComponent` | `authGuard` | 🔴 Critical | ❌ Missing |
-| `/exercise-library` | `ExerciseLibraryComponent` | `authGuard` | 🔴 Critical | ❌ Missing |
-| `/onboarding` | `OnboardingComponent` | None | 🔴 Critical | ❌ Missing |
-| `/verify-email` | `VerifyEmailComponent` | None | 🔴 Critical | ❌ Missing |
-| `/accept-invitation` | `AcceptInvitationComponent` | None | 🔴 Critical | ❌ Missing |
+| Route                | Component                   | Guard       | Priority    | Status     |
+| -------------------- | --------------------------- | ----------- | ----------- | ---------- |
+| `/workout`           | `WorkoutComponent`          | `authGuard` | 🔴 Critical | ❌ Missing |
+| `/exercise-library`  | `ExerciseLibraryComponent`  | `authGuard` | 🔴 Critical | ❌ Missing |
+| `/onboarding`        | `OnboardingComponent`       | None        | 🔴 Critical | ❌ Missing |
+| `/verify-email`      | `VerifyEmailComponent`      | None        | 🔴 Critical | ❌ Missing |
+| `/accept-invitation` | `AcceptInvitationComponent` | None        | 🔴 Critical | ❌ Missing |
 
 ### 2.2 High Priority Routes (Structure, Not Pile of Pages)
 
-| Route | Component | Guard | Priority | Status |
-|-------|-----------|-------|----------|--------|
-| `/team/create` | `TeamCreateComponent` | `authGuard` | 🟡 High | ❌ Missing |
-| `/training/schedule` | `TrainingScheduleComponent` | `authGuard` | 🟡 High | ❌ Missing |
-| `/training/qb/schedule` | `QbTrainingScheduleComponent` | `authGuard`, `roleGuard('qb')` | 🟡 High | ❌ Missing |
-| `/training/qb/throwing` | `QbThrowingTrackerComponent` | `authGuard`, `roleGuard('qb')` | 🟡 High | ❌ Missing |
-| `/training/qb/assessment` | `QbAssessmentToolsComponent` | `authGuard`, `roleGuard('qb')` | 🟡 High | ❌ Missing |
-| `/training/ai-scheduler` | `AiTrainingSchedulerComponent` | `authGuard` | 🟡 High | ❌ Missing |
-| `/coach/dashboard` | `CoachDashboardComponent` | `authGuard`, `roleGuard('coach')` | 🟡 High | ⚠️ Route mismatch |
-| `/analytics/enhanced` | `EnhancedAnalyticsComponent` | `authGuard` | 🟡 High | ⚠️ Or merge into `/analytics` |
+| Route                     | Component                      | Guard                             | Priority | Status                        |
+| ------------------------- | ------------------------------ | --------------------------------- | -------- | ----------------------------- |
+| `/team/create`            | `TeamCreateComponent`          | `authGuard`                       | 🟡 High  | ❌ Missing                    |
+| `/training/schedule`      | `TrainingScheduleComponent`    | `authGuard`                       | 🟡 High  | ❌ Missing                    |
+| `/training/qb/schedule`   | `QbTrainingScheduleComponent`  | `authGuard`, `roleGuard('qb')`    | 🟡 High  | ❌ Missing                    |
+| `/training/qb/throwing`   | `QbThrowingTrackerComponent`   | `authGuard`, `roleGuard('qb')`    | 🟡 High  | ❌ Missing                    |
+| `/training/qb/assessment` | `QbAssessmentToolsComponent`   | `authGuard`, `roleGuard('qb')`    | 🟡 High  | ❌ Missing                    |
+| `/training/ai-scheduler`  | `AiTrainingSchedulerComponent` | `authGuard`                       | 🟡 High  | ❌ Missing                    |
+| `/coach/dashboard`        | `CoachDashboardComponent`      | `authGuard`, `roleGuard('coach')` | 🟡 High  | ⚠️ Route mismatch             |
+| `/analytics/enhanced`     | `EnhancedAnalyticsComponent`   | `authGuard`                       | 🟡 High  | ⚠️ Or merge into `/analytics` |
 
 ### 2.3 Existing Routes (Verify Correctness)
 
-| Route | Component | Guard | Status |
-|-------|-----------|-------|--------|
-| `/` | `LandingComponent` | None | ✅ Exists |
-| `/login` | `LoginComponent` | None | ✅ Exists |
-| `/register` | `RegisterComponent` | None | ✅ Exists |
-| `/reset-password` | `ResetPasswordComponent` | None | ✅ Exists |
-| `/dashboard` | `DashboardComponent` | `authGuard`, `headerConfigGuard` | ✅ Exists |
-| `/training` | `TrainingComponent` | `authGuard`, `headerConfigGuard` | ✅ Exists |
-| `/analytics` | `AnalyticsComponent` | `authGuard`, `headerConfigGuard` | ✅ Exists |
-| `/performance-tracking` | `PerformanceTrackingComponent` | `authGuard` | ✅ Exists |
-| `/roster` | `RosterComponent` | `authGuard` | ✅ Exists |
-| `/coach` | `CoachComponent` | `authGuard` | ✅ Exists |
-| `/game-tracker` | `GameTrackerComponent` | `authGuard` | ✅ Exists |
-| `/tournaments` | `TournamentsComponent` | `authGuard` | ✅ Exists |
-| `/wellness` | `WellnessComponent` | `authGuard` | ✅ Exists |
-| `/acwr` | `AcwrDashboardComponent` | `authGuard` | ✅ Exists |
-| `/community` | `CommunityComponent` | `authGuard` | ✅ Exists |
-| `/chat` | `ChatComponent` | `authGuard` | ✅ Exists |
-| `/profile` | `ProfileComponent` | `authGuard` | ✅ Exists |
-| `/settings` | `SettingsComponent` | `authGuard` | ✅ Exists |
+| Route                   | Component                      | Guard                            | Status    |
+| ----------------------- | ------------------------------ | -------------------------------- | --------- |
+| `/`                     | `LandingComponent`             | None                             | ✅ Exists |
+| `/login`                | `LoginComponent`               | None                             | ✅ Exists |
+| `/register`             | `RegisterComponent`            | None                             | ✅ Exists |
+| `/reset-password`       | `ResetPasswordComponent`       | None                             | ✅ Exists |
+| `/dashboard`            | `DashboardComponent`           | `authGuard`, `headerConfigGuard` | ✅ Exists |
+| `/training`             | `TrainingComponent`            | `authGuard`, `headerConfigGuard` | ✅ Exists |
+| `/analytics`            | `AnalyticsComponent`           | `authGuard`, `headerConfigGuard` | ✅ Exists |
+| `/performance-tracking` | `PerformanceTrackingComponent` | `authGuard`                      | ✅ Exists |
+| `/roster`               | `RosterComponent`              | `authGuard`                      | ✅ Exists |
+| `/coach`                | `CoachComponent`               | `authGuard`                      | ✅ Exists |
+| `/game-tracker`         | `GameTrackerComponent`         | `authGuard`                      | ✅ Exists |
+| `/tournaments`          | `TournamentsComponent`         | `authGuard`                      | ✅ Exists |
+| `/wellness`             | `WellnessComponent`            | `authGuard`                      | ✅ Exists |
+| `/acwr`                 | `AcwrDashboardComponent`       | `authGuard`                      | ✅ Exists |
+| `/community`            | `CommunityComponent`           | `authGuard`                      | ✅ Exists |
+| `/chat`                 | `ChatComponent`                | `authGuard`                      | ✅ Exists |
+| `/profile`              | `ProfileComponent`             | `authGuard`                      | ✅ Exists |
+| `/settings`             | `SettingsComponent`            | `authGuard`                      | ✅ Exists |
 
 ### 2.4 Guard Strategy
 
 **Auth Guard** (`authGuard`):
+
 - Blocks unauthenticated users
 - Redirects to `/login` with return URL
 
 **Role Guard** (`roleGuard(role)`):
+
 - Checks user role (coach, player, admin)
 - Returns 403 or redirects if unauthorized
 
 **Feature Flag Guard** (`featureFlagGuard(flag)`):
+
 - Enables/disables features based on flags
 - Example: `featureFlagGuard('qbTools')` for QB-specific features
 
 **Header Config Guard** (`headerConfigGuard`):
+
 - Sets page-specific header configuration
 - Used for dashboard/analytics pages
 
@@ -292,6 +301,7 @@
 ```
 
 **Note:** Netlify automatically excludes:
+
 - `/api/*` (handled by function redirects)
 - Static assets (`*.css`, `*.js`, `*.png`, etc.)
 - Files in `dist/`, `src/` directories
@@ -301,6 +311,7 @@
 ## 4. API Standardization Rules
 
 ### Rule 1: Frontend Calls Only `/api/...`
+
 **No direct `/.netlify/functions/...` references in browser code.**
 
 - ✅ Frontend calls: `/api/dashboard/overview`
@@ -312,11 +323,13 @@
 **Pattern:** Single function handles all routes for a domain with internal routing.
 
 **Current Examples:**
+
 - `analytics.cjs` → handles `/api/analytics/*`
 - `coach.cjs` → handles `/api/coach/*`
 - `community.cjs` → handles `/api/community/*`
 
 **Extend This Pattern To:**
+
 - `dashboard.cjs` → handles `/api/dashboard/*`
 - `training.cjs` → handles `/api/training/*`
 - `tournaments.cjs` → handles `/api/tournaments/*`
@@ -389,7 +402,7 @@
 exports.handler = async (event, context) => {
   // Extract sub-path
   const path = event.path.replace("/.netlify/functions/dashboard", "");
-  
+
   // Route to handler
   if (path.includes("/overview") || path.endsWith("/overview")) {
     return await getDashboardOverview(userId);
@@ -409,99 +422,107 @@ exports.handler = async (event, context) => {
 
 ### 5.1 Dashboard Endpoints
 
-| Endpoint | Config Reference | Function | Decision | Priority | Notes |
-|----------|------------------|----------|----------|----------|-------|
-| `/api/dashboard/overview` | ✅ Exists | ✅ `dashboard.cjs` | ✅ Keep | 🔴 Critical | Main dashboard data |
-| `/api/dashboard/training-calendar` | ✅ Exists | ❌ Missing | ⚠️ **DECIDE** | 🟡 High | Add to `dashboard.cjs` or delete |
-| `/api/dashboard/olympic-qualification` | ✅ Exists | ❌ Missing | ⚠️ **DECIDE** | 🟡 Medium | Real feature or placeholder? |
-| `/api/dashboard/sponsor-rewards` | ✅ Exists | ❌ Missing | ⚠️ **DECIDE** | 🟢 Low | Real feature or placeholder? |
-| `/api/dashboard/wearables` | ✅ Exists | ❌ Missing | ⚠️ **DECIDE** | 🟢 Low | Real feature or placeholder? |
-| `/api/dashboard/team-chemistry` | ✅ Exists | ❌ Missing | ⚠️ **DECIDE** | 🟡 Medium | Real feature or placeholder? |
-| `/api/dashboard/daily-quote` | ✅ Exists | ❌ Missing | ⚠️ **DECIDE** | 🟢 Low | Real feature or placeholder? |
-| `/api/dashboard/health` | ✅ Exists | ❌ Missing | ⚠️ **DECIDE** | 🟡 Medium | Health check endpoint |
+| Endpoint                               | Config Reference | Function           | Decision      | Priority    | Notes                            |
+| -------------------------------------- | ---------------- | ------------------ | ------------- | ----------- | -------------------------------- |
+| `/api/dashboard/overview`              | ✅ Exists        | ✅ `dashboard.cjs` | ✅ Keep       | 🔴 Critical | Main dashboard data              |
+| `/api/dashboard/training-calendar`     | ✅ Exists        | ❌ Missing         | ⚠️ **DECIDE** | 🟡 High     | Add to `dashboard.cjs` or delete |
+| `/api/dashboard/olympic-qualification` | ✅ Exists        | ❌ Missing         | ⚠️ **DECIDE** | 🟡 Medium   | Real feature or placeholder?     |
+| `/api/dashboard/sponsor-rewards`       | ✅ Exists        | ❌ Missing         | ⚠️ **DECIDE** | 🟢 Low      | Real feature or placeholder?     |
+| `/api/dashboard/wearables`             | ✅ Exists        | ❌ Missing         | ⚠️ **DECIDE** | 🟢 Low      | Real feature or placeholder?     |
+| `/api/dashboard/team-chemistry`        | ✅ Exists        | ❌ Missing         | ⚠️ **DECIDE** | 🟡 Medium   | Real feature or placeholder?     |
+| `/api/dashboard/daily-quote`           | ✅ Exists        | ❌ Missing         | ⚠️ **DECIDE** | 🟢 Low      | Real feature or placeholder?     |
+| `/api/dashboard/health`                | ✅ Exists        | ❌ Missing         | ⚠️ **DECIDE** | 🟡 Medium   | Health check endpoint            |
 
 **Decision Framework:**
+
 - **If Real Feature:** Implement minimal response in `dashboard.cjs`, evolve later
 - **If Placeholder:** Delete from `api-config.js` and remove references
 
 **Recommended Actions:**
+
 1. **Implement:** `training-calendar`, `team-chemistry`, `health`
 2. **Delete:** `sponsor-rewards`, `wearables`, `daily-quote` (unless product confirms)
 3. **Defer:** `olympic-qualification` (confirm with product)
 
 ### 5.2 Training Endpoints
 
-| Endpoint | Config Reference | Function | Decision | Priority | Notes |
-|----------|------------------|----------|----------|----------|-------|
-| `/api/training/stats` | ✅ Exists | ✅ `training-stats.cjs` | ⚠️ Fix redirect | 🔴 Critical | Mismatch: config expects `/api/training/stats`, function is `/training-stats` |
-| `/api/training/stats-enhanced` | ✅ Exists | ✅ `training-stats-enhanced.cjs` | ⚠️ Fix redirect | 🟡 High | Mismatch: config expects `/api/training/stats-enhanced`, function is `/training-stats-enhanced` |
-| `/api/training/sessions` | ✅ Exists | ✅ `training-sessions.cjs` | ✅ Keep | 🔴 Critical | Works correctly |
-| `/api/training/complete` | ✅ Exists | ✅ `training-complete.cjs` | ✅ Keep | 🔴 Critical | Works correctly |
-| `/api/training/suggestions` | ✅ Exists | ✅ `training-suggestions.cjs` | ✅ Keep | 🔴 Critical | Works correctly |
+| Endpoint                       | Config Reference | Function                         | Decision        | Priority    | Notes                                                                                           |
+| ------------------------------ | ---------------- | -------------------------------- | --------------- | ----------- | ----------------------------------------------------------------------------------------------- |
+| `/api/training/stats`          | ✅ Exists        | ✅ `training-stats.cjs`          | ⚠️ Fix redirect | 🔴 Critical | Mismatch: config expects `/api/training/stats`, function is `/training-stats`                   |
+| `/api/training/stats-enhanced` | ✅ Exists        | ✅ `training-stats-enhanced.cjs` | ⚠️ Fix redirect | 🟡 High     | Mismatch: config expects `/api/training/stats-enhanced`, function is `/training-stats-enhanced` |
+| `/api/training/sessions`       | ✅ Exists        | ✅ `training-sessions.cjs`       | ✅ Keep         | 🔴 Critical | Works correctly                                                                                 |
+| `/api/training/complete`       | ✅ Exists        | ✅ `training-complete.cjs`       | ✅ Keep         | 🔴 Critical | Works correctly                                                                                 |
+| `/api/training/suggestions`    | ✅ Exists        | ✅ `training-suggestions.cjs`    | ✅ Keep         | 🔴 Critical | Works correctly                                                                                 |
 
 **Action Required:**
+
 - Add redirects for `/api/training/stats` → `/.netlify/functions/training-stats`
 - Add redirects for `/api/training/stats-enhanced` → `/.netlify/functions/training-stats-enhanced`
 - OR: Consolidate into `training.cjs` router function
 
 ### 5.3 Community Endpoints
 
-| Endpoint | Config Reference | Function | Decision | Priority | Notes |
-|----------|------------------|----------|----------|----------|-------|
-| `/api/community/feed` | ✅ Exists | ✅ `community.cjs` | ✅ Keep | 🔴 Critical | Works correctly |
-| `/api/community/posts` | ✅ Exists | ✅ `community.cjs` | ✅ Keep | 🔴 Critical | Works correctly |
-| `/api/community/challenges` | ✅ Exists | ❌ Missing | ⚠️ **IMPLEMENT** | 🟡 High | Core engagement feature |
-| `/api/community/leaderboard` | ✅ Exists | ✅ `community.cjs` | ✅ Keep | 🟡 High | Works correctly |
-| `/api/community/health` | ✅ Exists | ❌ Missing | ⚠️ **IMPLEMENT** | 🟡 Medium | Health check endpoint |
+| Endpoint                     | Config Reference | Function           | Decision         | Priority    | Notes                   |
+| ---------------------------- | ---------------- | ------------------ | ---------------- | ----------- | ----------------------- |
+| `/api/community/feed`        | ✅ Exists        | ✅ `community.cjs` | ✅ Keep          | 🔴 Critical | Works correctly         |
+| `/api/community/posts`       | ✅ Exists        | ✅ `community.cjs` | ✅ Keep          | 🔴 Critical | Works correctly         |
+| `/api/community/challenges`  | ✅ Exists        | ❌ Missing         | ⚠️ **IMPLEMENT** | 🟡 High     | Core engagement feature |
+| `/api/community/leaderboard` | ✅ Exists        | ✅ `community.cjs` | ✅ Keep          | 🟡 High     | Works correctly         |
+| `/api/community/health`      | ✅ Exists        | ❌ Missing         | ⚠️ **IMPLEMENT** | 🟡 Medium   | Health check endpoint   |
 
 **Action Required:**
+
 - Add `challenges` handler to `community.cjs`
 - Add `health` handler to `community.cjs`
 
 ### 5.4 Wellness & Supplements Endpoints
 
-| Endpoint | Config Reference | Function | Decision | Priority | Notes |
-|----------|------------------|----------|----------|----------|-------|
-| `/api/wellness/checkin` | ✅ Exists | ❌ Missing | ⚠️ **IMPLEMENT** | 🔴 Critical | Required for AI coaching |
-| `/api/supplements/log` | ✅ Exists | ❌ Missing | ⚠️ **IMPLEMENT** | 🔴 Critical | Required for AI coaching |
-| `/api/performance-data/wellness` | ✅ Exists | ✅ `performance-data.cjs` | ✅ Keep | 🔴 Critical | Works correctly |
-| `/api/performance-data/supplements` | ✅ Exists | ✅ `performance-data.cjs` | ✅ Keep | 🔴 Critical | Works correctly |
+| Endpoint                            | Config Reference | Function                  | Decision         | Priority    | Notes                    |
+| ----------------------------------- | ---------------- | ------------------------- | ---------------- | ----------- | ------------------------ |
+| `/api/wellness/checkin`             | ✅ Exists        | ❌ Missing                | ⚠️ **IMPLEMENT** | 🔴 Critical | Required for AI coaching |
+| `/api/supplements/log`              | ✅ Exists        | ❌ Missing                | ⚠️ **IMPLEMENT** | 🔴 Critical | Required for AI coaching |
+| `/api/performance-data/wellness`    | ✅ Exists        | ✅ `performance-data.cjs` | ✅ Keep          | 🔴 Critical | Works correctly          |
+| `/api/performance-data/supplements` | ✅ Exists        | ✅ `performance-data.cjs` | ✅ Keep          | 🔴 Critical | Works correctly          |
 
 **Action Required:**
+
 - Create `wellness.cjs` function with `checkin` handler
 - Create `supplements.cjs` function with `log` handler
 - OR: Add to `performance-data.cjs` (if keeping unified approach)
 
 ### 5.5 Player Stats & Training Plan Endpoints
 
-| Endpoint | Config Reference | Function | Decision | Priority | Notes |
-|----------|------------------|----------|----------|----------|-------|
-| `/api/player-stats/aggregated` | ✅ Exists | ✅ `player-stats.cjs` | ⚠️ Fix redirect | 🔴 Critical | Missing redirect |
-| `/api/player-stats/date-range` | ✅ Exists | ✅ `player-stats.cjs` | ⚠️ Fix redirect | 🔴 Critical | Missing redirect |
-| `/api/training-plan` | ✅ Exists | ✅ `training-plan.cjs` | ⚠️ Fix redirect | 🔴 Critical | Missing redirect |
+| Endpoint                       | Config Reference | Function               | Decision        | Priority    | Notes            |
+| ------------------------------ | ---------------- | ---------------------- | --------------- | ----------- | ---------------- |
+| `/api/player-stats/aggregated` | ✅ Exists        | ✅ `player-stats.cjs`  | ⚠️ Fix redirect | 🔴 Critical | Missing redirect |
+| `/api/player-stats/date-range` | ✅ Exists        | ✅ `player-stats.cjs`  | ⚠️ Fix redirect | 🔴 Critical | Missing redirect |
+| `/api/training-plan`           | ✅ Exists        | ✅ `training-plan.cjs` | ⚠️ Fix redirect | 🔴 Critical | Missing redirect |
 
 **Action Required:**
+
 - Add redirects for `/api/player-stats/*` → `/.netlify/functions/player-stats`
 - Add redirects for `/api/training-plan` → `/.netlify/functions/training-plan`
 
 ### 5.6 Algorithms Endpoints
 
-| Endpoint | Config Reference | Function | Decision | Priority | Notes |
-|----------|------------------|----------|----------|----------|-------|
-| `/api/algorithms/health` | ✅ Exists | ❌ Missing | ⚠️ **DECIDE** | 🟡 Medium | Delete or implement |
+| Endpoint                 | Config Reference | Function   | Decision      | Priority  | Notes               |
+| ------------------------ | ---------------- | ---------- | ------------- | --------- | ------------------- |
+| `/api/algorithms/health` | ✅ Exists        | ❌ Missing | ⚠️ **DECIDE** | 🟡 Medium | Delete or implement |
 
 **Action Required:**
+
 - Create `algorithms.cjs` with health endpoint
 - OR: Delete from `api-config.js` if not needed
 
 ### 5.7 Tournaments Endpoints
 
-| Endpoint | Config Reference | Function | Decision | Priority | Notes |
-|----------|------------------|----------|----------|----------|-------|
-| `/api/tournaments` | ✅ Exists | ✅ `tournaments.cjs` | ✅ Keep | 🔴 Critical | Works correctly |
-| `/api/tournaments/health` | ✅ Exists | ❌ Missing | ⚠️ **IMPLEMENT** | 🟡 Medium | Add to `tournaments.cjs` |
+| Endpoint                  | Config Reference | Function             | Decision         | Priority    | Notes                    |
+| ------------------------- | ---------------- | -------------------- | ---------------- | ----------- | ------------------------ |
+| `/api/tournaments`        | ✅ Exists        | ✅ `tournaments.cjs` | ✅ Keep          | 🔴 Critical | Works correctly          |
+| `/api/tournaments/health` | ✅ Exists        | ❌ Missing           | ⚠️ **IMPLEMENT** | 🟡 Medium   | Add to `tournaments.cjs` |
 
 **Action Required:**
+
 - Add `health` handler to `tournaments.cjs`
 
 ---
@@ -511,12 +532,14 @@ exports.handler = async (event, context) => {
 ### Phase 1: Stabilize Navigation + API Wiring (Week 1)
 
 **Goals:**
+
 - Add missing Angular routes (critical list)
 - Redirect all `.html` → canonical routes
 - Update sidebar to Angular routes only
 - Standardize API config to `/api/...` (remove Netlify conditionals)
 
 **Tasks:**
+
 1. ✅ Add routes to `angular/src/app/core/routes/feature-routes.ts`:
    - `/workout`
    - `/exercise-library`
@@ -533,6 +556,7 @@ exports.handler = async (event, context) => {
    - Standardize all endpoints to `/api/...` format
 
 **Acceptance Criteria:**
+
 - All legacy `.html` routes redirect correctly
 - Sidebar navigation uses Angular router
 - No direct Netlify function references in frontend code
@@ -540,12 +564,14 @@ exports.handler = async (event, context) => {
 ### Phase 2: Finish Missing APIs + Remove Drift (Week 2)
 
 **Goals:**
+
 - Implement missing dashboard endpoints or delete them
 - Implement wellness check-in + supplements log
 - Add redirects for player-stats and training-plan
 - Create router-style functions for missing domains
 
 **Tasks:**
+
 1. ✅ Create/update `dashboard.cjs`:
    - Add handlers for: `training-calendar`, `team-chemistry`, `health`
    - Delete or defer: `sponsor-rewards`, `wearables`, `daily-quote`, `olympic-qualification`
@@ -567,6 +593,7 @@ exports.handler = async (event, context) => {
    - `/api/supplements/*` → `/.netlify/functions/supplements`
 
 **Acceptance Criteria:**
+
 - All endpoints in `api-config.js` resolve correctly
 - No "404" or "endpoint not found" errors
 - Wellness and supplements data can be logged
@@ -574,11 +601,13 @@ exports.handler = async (event, context) => {
 ### Phase 3: AI Coaching Revamp (Week 3-4)
 
 **Goals:**
+
 - Add risk-tiering + context-first pipeline
 - Integrate wellness + load + injuries into AI responses
 - Add feedback loop + coach visibility
 
 **Tasks:**
+
 1. ✅ Create `user-context.cjs` endpoint:
    - Returns: body metrics, injuries, role, last 7/28 day loads, active program, team role
 
@@ -597,6 +626,7 @@ exports.handler = async (event, context) => {
    - Add injury flags to context
 
 **Acceptance Criteria:**
+
 - AI responses are contextualized to user data
 - Risk-tiering prevents unsafe medical advice
 - Feedback loop tracks recommendation quality
@@ -606,6 +636,7 @@ exports.handler = async (event, context) => {
 ## 7. Testing Checklist
 
 ### Route Testing:
+
 - [ ] Test all Angular routes load correctly
 - [ ] Test all `.html` redirects work (301)
 - [ ] Test sidebar navigation links
@@ -614,6 +645,7 @@ exports.handler = async (event, context) => {
 - [ ] Test SPA fallback works
 
 ### API Testing:
+
 - [ ] Test all API endpoints return correct responses
 - [ ] Test Netlify function redirects work
 - [ ] Test API error handling (404, 401, 500)
@@ -622,6 +654,7 @@ exports.handler = async (event, context) => {
 - [ ] Test CORS headers
 
 ### Button/Link Testing:
+
 - [ ] Test all `routerLink` navigation
 - [ ] Test all `data-action` buttons (legacy pages)
 - [ ] Test all `data-navigate-to` links
@@ -636,6 +669,7 @@ exports.handler = async (event, context) => {
 ### Backend Style: Path-Based Router Functions
 
 **Current Pattern:**
+
 - Functions use `event.path.replace("/.netlify/functions/<name>", "")` to extract sub-paths
 - Switch-case or if-else chains route to handlers
 - `baseHandler` utility provides middleware (auth, rate limiting, CORS)
@@ -644,8 +678,8 @@ exports.handler = async (event, context) => {
 
 ```javascript
 // netlify/functions/dashboard.cjs
-const { baseHandler } = require('./utils/base-handler.cjs');
-const { createSuccessResponse } = require('./utils/error-handler.cjs');
+const { baseHandler } = require("./utils/base-handler.cjs");
+const { createSuccessResponse } = require("./utils/error-handler.cjs");
 
 async function getTrainingCalendar(userId) {
   // Implementation
@@ -657,12 +691,12 @@ async function getTeamChemistry(userId) {
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'dashboard',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "dashboard",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     handler: async (event, context, { userId }) => {
       const path = event.path.replace("/.netlify/functions/dashboard", "");
-      
+
       if (path.includes("/training-calendar")) {
         const data = await getTrainingCalendar(userId);
         return createSuccessResponse(data);
@@ -672,7 +706,7 @@ exports.handler = async (event, context) => {
       } else {
         return createErrorResponse("Endpoint not found", 404);
       }
-    }
+    },
   });
 };
 ```
@@ -682,6 +716,7 @@ exports.handler = async (event, context) => {
 ## 9. Quick Reference: Route Table
 
 ### UI Routes (Angular)
+
 ```
 / → LandingComponent
 /login → LoginComponent
@@ -717,6 +752,7 @@ exports.handler = async (event, context) => {
 ```
 
 ### API Routes (Netlify Functions)
+
 ```
 /api/dashboard/* → dashboard.cjs
 /api/training/* → training.cjs (or training-stats.cjs, etc.)
@@ -737,4 +773,3 @@ exports.handler = async (event, context) => {
 
 **Document Status:** ✅ Ready for Developer Handover  
 **Next Review:** After Phase 1 completion
-

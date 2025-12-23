@@ -36,4 +36,3 @@ A date picker component for selecting dates.
 - Includes aria-label for icon button
 - Supports aria-describedby for help text
 - Error states use aria-invalid
-

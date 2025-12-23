@@ -23,7 +23,7 @@ class SimpleCache {
    * @returns {string} Cache key
    */
   generateKey(...parts) {
-    return parts.filter(p => p !== undefined && p !== null).join(':');
+    return parts.filter((p) => p !== undefined && p !== null).join(":");
   }
 
   /**
@@ -57,7 +57,7 @@ class SimpleCache {
    * @param {number} ttl - Time to live in seconds (default: 300 = 5 minutes)
    */
   set(key, value, ttl = 300) {
-    const expiresAt = ttl > 0 ? Date.now() + (ttl * 1000) : null;
+    const expiresAt = ttl > 0 ? Date.now() + ttl * 1000 : null;
 
     this.cache.set(key, {
       value,
@@ -115,9 +115,13 @@ class SimpleCache {
     return {
       ...this.stats,
       size: this.cache.size,
-      hitRate: this.stats.hits + this.stats.misses > 0
-        ? (this.stats.hits / (this.stats.hits + this.stats.misses) * 100).toFixed(2) + '%'
-        : '0%',
+      hitRate:
+        this.stats.hits + this.stats.misses > 0
+          ? (
+              (this.stats.hits / (this.stats.hits + this.stats.misses)) *
+              100
+            ).toFixed(2) + "%"
+          : "0%",
     };
   }
 
@@ -179,43 +183,43 @@ async function getOrFetch(key, fetcher, ttl = 300) {
  */
 const CACHE_TTL = {
   // Static/rarely changing data
-  KNOWLEDGE_BASE: 3600,      // 1 hour
-  USER_PROFILE: 1800,        // 30 minutes
-  TEAM_INFO: 1800,           // 30 minutes
+  KNOWLEDGE_BASE: 3600, // 1 hour
+  USER_PROFILE: 1800, // 30 minutes
+  TEAM_INFO: 1800, // 30 minutes
 
   // Semi-dynamic data
-  ANALYTICS: 300,            // 5 minutes
-  LEADERBOARD: 300,          // 5 minutes
-  TOURNAMENTS: 300,          // 5 minutes
+  ANALYTICS: 300, // 5 minutes
+  LEADERBOARD: 300, // 5 minutes
+  TOURNAMENTS: 300, // 5 minutes
 
   // Frequently changing data
-  DASHBOARD: 60,             // 1 minute
-  TRAINING_STATS: 60,        // 1 minute
-  PERFORMANCE: 60,           // 1 minute
+  DASHBOARD: 60, // 1 minute
+  TRAINING_STATS: 60, // 1 minute
+  PERFORMANCE: 60, // 1 minute
 
   // Real-time data (very short cache)
-  GAMES: 30,                 // 30 seconds
-  LIVE_SCORES: 10,           // 10 seconds
+  GAMES: 30, // 30 seconds
+  LIVE_SCORES: 10, // 10 seconds
 
   // Default
-  DEFAULT: 300,              // 5 minutes
+  DEFAULT: 300, // 5 minutes
 };
 
 /**
  * Cache key prefixes for organization
  */
 const CACHE_PREFIX = {
-  ANALYTICS: 'analytics',
-  DASHBOARD: 'dashboard',
-  TRAINING: 'training',
-  PERFORMANCE: 'performance',
-  USER: 'user',
-  TEAM: 'team',
-  GAME: 'game',
-  WELLNESS: 'wellness',
-  SUPPLEMENTS: 'supplements',
-  MEASUREMENTS: 'measurements',
-  TRENDS: 'trends',
+  ANALYTICS: "analytics",
+  DASHBOARD: "dashboard",
+  TRAINING: "training",
+  PERFORMANCE: "performance",
+  USER: "user",
+  TEAM: "team",
+  GAME: "game",
+  WELLNESS: "wellness",
+  SUPPLEMENTS: "supplements",
+  MEASUREMENTS: "measurements",
+  TRENDS: "trends",
 };
 
 /**
@@ -238,12 +242,15 @@ function invalidatePrefixCache(prefix) {
 }
 
 // Auto-cleanup expired entries every 5 minutes
-setInterval(() => {
-  const removed = cache.cleanup();
-  if (removed > 0) {
-    console.log(`Cache cleanup: Removed ${removed} expired entries`);
-  }
-}, 5 * 60 * 1000);
+setInterval(
+  () => {
+    const removed = cache.cleanup();
+    if (removed > 0) {
+      console.log(`Cache cleanup: Removed ${removed} expired entries`);
+    }
+  },
+  5 * 60 * 1000,
+);
 
 module.exports = {
   cache,

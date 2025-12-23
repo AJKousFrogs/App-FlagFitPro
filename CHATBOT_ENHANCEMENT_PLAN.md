@@ -15,9 +15,10 @@ This document outlines a comprehensive enhancement plan for the FlagFit AI Chatb
 ### 1.1 Database Schema Updates
 
 #### Add Team Type Field
+
 ```sql
 -- Migration: Add team type and region fields
-ALTER TABLE teams ADD COLUMN IF NOT EXISTS team_type VARCHAR(20) DEFAULT 'domestic' 
+ALTER TABLE teams ADD COLUMN IF NOT EXISTS team_type VARCHAR(20) DEFAULT 'domestic'
   CHECK (team_type IN ('domestic', 'international'));
 ALTER TABLE teams ADD COLUMN IF NOT EXISTS region VARCHAR(100);
 ALTER TABLE teams ADD COLUMN IF NOT EXISTS country_code VARCHAR(3);
@@ -27,28 +28,29 @@ CREATE INDEX IF NOT EXISTS idx_teams_region ON teams(region);
 ```
 
 #### Create Chatbot Context Table
+
 ```sql
 -- Store user context for chatbot personalization
 CREATE TABLE IF NOT EXISTS chatbot_user_context (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  
+
   -- Role and team context
   user_role VARCHAR(20) NOT NULL CHECK (user_role IN ('player', 'coach', 'admin')),
   primary_team_id UUID REFERENCES teams(id),
   team_type VARCHAR(20), -- 'domestic', 'international'
-  
+
   -- Personalization preferences
   preferred_topics TEXT[], -- Topics user frequently asks about
   expertise_level VARCHAR(20), -- 'beginner', 'intermediate', 'advanced'
-  
+
   -- Usage statistics
   total_queries INTEGER DEFAULT 0,
   last_query_at TIMESTAMP,
-  
+
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW(),
-  
+
   UNIQUE(user_id)
 );
 
@@ -71,17 +73,17 @@ class RoleAwareResponseGenerator {
    */
   adjustForRole(baseResponse, intent, entities) {
     const { role, teamType } = this.userContext;
-    
+
     // Coach-specific enhancements
-    if (role === 'coach') {
+    if (role === "coach") {
       return this.enhanceForCoach(baseResponse, intent, entities);
     }
-    
+
     // Admin-specific enhancements
-    if (role === 'admin') {
+    if (role === "admin") {
       return this.enhanceForAdmin(baseResponse, intent, entities);
     }
-    
+
     // Athlete-specific (default)
     return this.enhanceForAthlete(baseResponse, intent, entities);
   }
@@ -92,41 +94,53 @@ class RoleAwareResponseGenerator {
     // - Schedule design and periodization
     // - Team management
     // - Player development protocols
-    
-    if (intent === 'protocol' || entities.training?.length > 0) {
-      return response + '\n\n**💡 Coach Tip:** Consider tracking these metrics in your training logs:\n' +
-        '- Volume (sets × reps × load)\n' +
-        '- RPE (Rate of Perceived Exertion)\n' +
-        '- Recovery markers (sleep, HRV)\n' +
-        '- Player feedback scores';
+
+    if (intent === "protocol" || entities.training?.length > 0) {
+      return (
+        response +
+        "\n\n**💡 Coach Tip:** Consider tracking these metrics in your training logs:\n" +
+        "- Volume (sets × reps × load)\n" +
+        "- RPE (Rate of Perceived Exertion)\n" +
+        "- Recovery markers (sleep, HRV)\n" +
+        "- Player feedback scores"
+      );
     }
-    
+
     if (entities.supplements?.length > 0) {
-      return response + '\n\n**📊 For Your Team:** Monitor supplement compliance and track any side effects. ' +
-        'Consider creating a team nutrition protocol document.';
+      return (
+        response +
+        "\n\n**📊 For Your Team:** Monitor supplement compliance and track any side effects. " +
+        "Consider creating a team nutrition protocol document."
+      );
     }
-    
+
     return response;
   }
 
   enhanceForAthlete(response, intent, entities) {
     // Athletes get more self-training protocols
     // Focus on individual performance and recovery
-    
-    if (intent === 'protocol') {
-      return response + '\n\n**📱 Track This:** Log your sessions in the FlagFit app to monitor progress over time.';
+
+    if (intent === "protocol") {
+      return (
+        response +
+        "\n\n**📱 Track This:** Log your sessions in the FlagFit app to monitor progress over time."
+      );
     }
-    
+
     return response;
   }
 
   enhanceForAdmin(response, intent, entities) {
     // Admins get system-level information
     // Can include analytics and governance info
-    
-    return response + '\n\n**🔧 Admin Note:** This response is based on ' +
+
+    return (
+      response +
+      "\n\n**🔧 Admin Note:** This response is based on " +
       `${this.getEvidenceLevel(response)} evidence. ` +
-      'Review knowledge base entries for quality control.';
+      "Review knowledge base entries for quality control."
+    );
   }
 
   /**
@@ -134,31 +148,37 @@ class RoleAwareResponseGenerator {
    */
   adjustForTeamType(response, entities) {
     const { teamType } = this.userContext;
-    
-    if (teamType === 'international') {
+
+    if (teamType === "international") {
       // International teams may have different regulations
       // Different competition schedules
       // Different recovery protocols due to travel
-      
+
       if (entities.recovery?.length > 0) {
-        return response + '\n\n**🌍 International Consideration:** ' +
-          'When traveling across time zones, adjust recovery protocols. ' +
-          'Consider jet lag management strategies.';
+        return (
+          response +
+          "\n\n**🌍 International Consideration:** " +
+          "When traveling across time zones, adjust recovery protocols. " +
+          "Consider jet lag management strategies."
+        );
       }
-      
+
       if (entities.training?.length > 0) {
-        return response + '\n\n**🌍 International Note:** ' +
-          'Be aware of different competition calendars and adjust periodization accordingly.';
+        return (
+          response +
+          "\n\n**🌍 International Note:** " +
+          "Be aware of different competition calendars and adjust periodization accordingly."
+        );
       }
     }
-    
+
     return response;
   }
 
   getEvidenceLevel(response) {
     // Extract evidence level from response metadata
     // This would be set by the answer generator
-    return 'moderate'; // Placeholder
+    return "moderate"; // Placeholder
   }
 }
 ```
@@ -177,7 +197,7 @@ async loadUserContext() {
         'Authorization': `Bearer ${this.getAuthToken()}`
       }
     });
-    
+
     if (response.ok) {
       const context = await response.json();
       this.userContext = context;
@@ -186,7 +206,7 @@ async loadUserContext() {
   } catch (error) {
     logger.warn('Failed to load user context:', error);
   }
-  
+
   // Fallback: use default context
   this.userContext = {
     role: 'player',
@@ -198,15 +218,15 @@ async loadUserContext() {
 // In getResponse method, add role-aware processing:
 async getResponse(userMessage) {
   // ... existing code ...
-  
+
   // Load user context if not already loaded
   if (!this.userContext) {
     await this.loadUserContext();
   }
-  
+
   // Generate base response
   let answer = answerGenerator.generateAnswer(parsedQuestion, knowledgeEntry, articles);
-  
+
   // Apply role-aware adjustments
   if (this.roleAwareGenerator) {
     answer = this.roleAwareGenerator.adjustForRole(
@@ -219,7 +239,7 @@ async getResponse(userMessage) {
       parsedQuestion.entities
     );
   }
-  
+
   // ... rest of existing code ...
 }
 ```
@@ -231,6 +251,7 @@ async getResponse(userMessage) {
 ### 2.1 Database Schema for User Profile Data
 
 The following tables already exist and can be used:
+
 - `users` table: `height_cm`, `weight_kg`, `position`, `birth_date`
 - `injuries` table: injury history
 - `training_sessions` table: training schedule
@@ -249,22 +270,27 @@ class PersonalizationService {
   }
 
   async getUserProfile() {
-    if (this.profileCache && Date.now() - this.profileCache.timestamp < this.cacheTimeout) {
+    if (
+      this.profileCache &&
+      Date.now() - this.profileCache.timestamp < this.cacheTimeout
+    ) {
       return this.profileCache.data;
     }
 
     try {
-      const response = await fetch(`/.netlify/functions/user-profile?userId=${this.userId}`);
+      const response = await fetch(
+        `/.netlify/functions/user-profile?userId=${this.userId}`,
+      );
       if (response.ok) {
         const profile = await response.json();
         this.profileCache = {
           data: profile,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
         return profile;
       }
     } catch (error) {
-      logger.error('Failed to load user profile:', error);
+      logger.error("Failed to load user profile:", error);
     }
 
     return null;
@@ -297,10 +323,10 @@ class PersonalizationService {
 
     // Add injury history context
     if (profile.injuries && profile.injuries.length > 0) {
-      parsedQuestion.entities.injuryHistory = profile.injuries.map(i => ({
+      parsedQuestion.entities.injuryHistory = profile.injuries.map((i) => ({
         type: i.type,
         status: i.status,
-        severity: i.severity
+        severity: i.severity,
       }));
     }
 
@@ -308,7 +334,7 @@ class PersonalizationService {
     if (profile.trainingFrequency) {
       parsedQuestion.entities.trainingSchedule = {
         frequency: profile.trainingFrequency,
-        typicalDuration: profile.typicalDuration
+        typicalDuration: profile.typicalDuration,
       };
     }
 
@@ -319,31 +345,39 @@ class PersonalizationService {
    * Generates personalized recommendations based on profile
    */
   generatePersonalizedRecommendations(parsedQuestion, baseAnswer) {
-    const { bodyStats, position, injuryHistory, trainingSchedule } = parsedQuestion.entities;
-    
+    const { bodyStats, position, injuryHistory, trainingSchedule } =
+      parsedQuestion.entities;
+
     let personalized = baseAnswer;
 
     // Position-specific recommendations
     if (position) {
-      personalized += this.getPositionSpecificAdvice(position, parsedQuestion.intent);
+      personalized += this.getPositionSpecificAdvice(
+        position,
+        parsedQuestion.intent,
+      );
     }
 
     // Injury-aware recommendations
     if (injuryHistory && injuryHistory.length > 0) {
-      const activeInjuries = injuryHistory.filter(i => 
-        ['active', 'recovering', 'monitoring'].includes(i.status)
+      const activeInjuries = injuryHistory.filter((i) =>
+        ["active", "recovering", "monitoring"].includes(i.status),
       );
-      
+
       if (activeInjuries.length > 0) {
-        personalized += '\n\n**⚠️ Injury Considerations:** ' +
+        personalized +=
+          "\n\n**⚠️ Injury Considerations:** " +
           `Based on your injury history, be cautious with ${this.getInjuryRiskAreas(activeInjuries)}. ` +
-          'Consider consulting with a healthcare provider before starting new protocols.';
+          "Consider consulting with a healthcare provider before starting new protocols.";
       }
     }
 
     // Training schedule-aware recommendations
     if (trainingSchedule) {
-      personalized += this.getScheduleAwareAdvice(trainingSchedule, parsedQuestion.intent);
+      personalized += this.getScheduleAwareAdvice(
+        trainingSchedule,
+        parsedQuestion.intent,
+      );
     }
 
     return personalized;
@@ -351,33 +385,41 @@ class PersonalizationService {
 
   getPositionSpecificAdvice(position, intent) {
     const positionAdvice = {
-      'QB': {
-        protocol: '\n\n**🏈 QB-Specific:** Focus on throwing mechanics and lower body power development.',
-        recovery: '\n\n**🏈 QB-Specific:** Pay special attention to shoulder and core recovery.',
-        training: '\n\n**🏈 QB-Specific:** Include rotational power and accuracy drills.'
+      QB: {
+        protocol:
+          "\n\n**🏈 QB-Specific:** Focus on throwing mechanics and lower body power development.",
+        recovery:
+          "\n\n**🏈 QB-Specific:** Pay special attention to shoulder and core recovery.",
+        training:
+          "\n\n**🏈 QB-Specific:** Include rotational power and accuracy drills.",
       },
-      'WR': {
-        protocol: '\n\n**🏈 WR-Specific:** Emphasize speed, agility, and route-running precision.',
-        recovery: '\n\n**🏈 WR-Specific:** Focus on hamstring and hip flexor recovery.',
-        training: '\n\n**🏈 WR-Specific:** Include sprint mechanics and change-of-direction work.'
+      WR: {
+        protocol:
+          "\n\n**🏈 WR-Specific:** Emphasize speed, agility, and route-running precision.",
+        recovery:
+          "\n\n**🏈 WR-Specific:** Focus on hamstring and hip flexor recovery.",
+        training:
+          "\n\n**🏈 WR-Specific:** Include sprint mechanics and change-of-direction work.",
       },
       // ... other positions
     };
 
-    return positionAdvice[position]?.[intent] || '';
+    return positionAdvice[position]?.[intent] || "";
   }
 
   getInjuryRiskAreas(injuries) {
-    const riskAreas = injuries.map(i => i.type).join(', ');
-    return riskAreas || 'these areas';
+    const riskAreas = injuries.map((i) => i.type).join(", ");
+    return riskAreas || "these areas";
   }
 
   getScheduleAwareAdvice(schedule, intent) {
-    if (intent === 'protocol' && schedule.frequency < 3) {
-      return '\n\n**📅 Schedule Note:** With your current training frequency, ' +
-        'focus on quality over quantity. Ensure adequate recovery between sessions.';
+    if (intent === "protocol" && schedule.frequency < 3) {
+      return (
+        "\n\n**📅 Schedule Note:** With your current training frequency, " +
+        "focus on quality over quantity. Ensure adequate recovery between sessions."
+      );
     }
-    return '';
+    return "";
   }
 }
 ```
@@ -390,12 +432,15 @@ class PersonalizationService {
 exports.handler = async (event, context) => {
   const userId = event.queryStringParameters?.userId;
   if (!userId) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'userId required' }) };
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "userId required" }),
+    };
   }
 
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
   });
 
   try {
@@ -403,11 +448,14 @@ exports.handler = async (event, context) => {
     const userResult = await pool.query(
       `SELECT id, height_cm, weight_kg, position, birth_date, role
        FROM users WHERE id = $1`,
-      [userId]
+      [userId],
     );
 
     if (userResult.rows.length === 0) {
-      return { statusCode: 404, body: JSON.stringify({ error: 'User not found' }) };
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ error: "User not found" }),
+      };
     }
 
     const user = userResult.rows[0];
@@ -418,7 +466,7 @@ exports.handler = async (event, context) => {
        FROM injuries
        WHERE user_id = $1 AND status IN ('active', 'recovering', 'monitoring')
        ORDER BY start_date DESC`,
-      [userId]
+      [userId],
     );
 
     // Get training frequency (last 30 days)
@@ -431,7 +479,7 @@ exports.handler = async (event, context) => {
        WHERE user_id = $1 
          AND session_date >= CURRENT_DATE - INTERVAL '30 days'
          AND status = 'completed'`,
-      [userId]
+      [userId],
     );
 
     // Get primary team info
@@ -442,7 +490,7 @@ exports.handler = async (event, context) => {
        WHERE tm.user_id = $1 AND tm.status = 'active'
        ORDER BY tm.joined_at DESC
        LIMIT 1`,
-      [userId]
+      [userId],
     );
 
     const profile = {
@@ -450,19 +498,19 @@ exports.handler = async (event, context) => {
       injuries: injuriesResult.rows,
       trainingFrequency: trainingResult.rows[0]?.session_count || 0,
       typicalDuration: trainingResult.rows[0]?.avg_duration || null,
-      primaryTeam: teamResult.rows[0] || null
+      primaryTeam: teamResult.rows[0] || null,
     };
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(profile)
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(profile),
     };
   } catch (error) {
-    console.error('Error fetching user profile:', error);
+    console.error("Error fetching user profile:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Internal server error' })
+      body: JSON.stringify({ error: "Internal server error" }),
     };
   } finally {
     await pool.end();
@@ -478,24 +526,24 @@ exports.handler = async (event, context) => {
 
 ```sql
 -- Add governance fields to knowledge_base_entries
-ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS 
-  approval_status VARCHAR(20) DEFAULT 'pending' 
+ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS
+  approval_status VARCHAR(20) DEFAULT 'pending'
   CHECK (approval_status IN ('pending', 'approved', 'rejected', 'experimental'));
 
-ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS 
-  approval_level VARCHAR(20) DEFAULT 'league' 
+ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS
+  approval_level VARCHAR(20) DEFAULT 'league'
   CHECK (approval_level IN ('league', 'coach', 'research', 'experimental'));
 
-ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS 
+ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS
   approved_by UUID REFERENCES users(id);
-ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS 
+ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS
   approved_at TIMESTAMP;
-ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS 
+ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS
   approval_notes TEXT;
 
-ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS 
+ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS
   research_source_ids UUID[]; -- Links to research_articles
-ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS 
+ALTER TABLE knowledge_base_entries ADD COLUMN IF NOT EXISTS
   source_quality_score DECIMAL(3,2); -- 0.0 to 1.0
 
 -- Create index for approval status
@@ -567,7 +615,7 @@ async searchKnowledgeBase(query, category = null, options = {}) {
 
   // Order by quality and evidence strength
   searchQuery += `
-    ORDER BY 
+    ORDER BY
       kbe.approval_status = 'approved' DESC,
       kbe.source_quality_score DESC NULLS LAST,
       kbe.evidence_strength DESC,
@@ -639,24 +687,28 @@ addEvidenceIndicators(response, knowledgeEntry) {
 ## Implementation Order & Timeline
 
 ### Week 1: Foundation
+
 1. ✅ Create database migrations for role-aware context
 2. ✅ Create `chatbot_user_context` table
 3. ✅ Add team type fields to teams table
 4. ✅ Create user-context API endpoint
 
 ### Week 2: Role-Aware Implementation
+
 1. ✅ Build `role-aware-response-generator.js`
 2. ✅ Integrate role detection in chatbot
 3. ✅ Test role-specific responses
 4. ✅ Add team type adjustments
 
 ### Week 3: Personalization
+
 1. ✅ Build `personalization-service.js`
 2. ✅ Create user-profile API endpoint
 3. ✅ Integrate profile data into question parsing
 4. ✅ Add position-specific and injury-aware responses
 
 ### Week 4: Knowledge Governance
+
 1. ✅ Add governance fields to knowledge_base_entries
 2. ✅ Update knowledge base service with approval filters
 3. ✅ Add evidence indicators to responses
@@ -667,6 +719,7 @@ addEvidenceIndicators(response, knowledgeEntry) {
 ## Testing Checklist
 
 ### Role-Aware Testing
+
 - [ ] Coach receives stat entry and schedule design content
 - [ ] Athlete receives self-training protocols
 - [ ] Admin receives system-level information
@@ -674,6 +727,7 @@ addEvidenceIndicators(response, knowledgeEntry) {
 - [ ] Domestic teams get standard protocols
 
 ### Personalization Testing
+
 - [ ] Body metrics (height/weight) used in nutrition calculations
 - [ ] Position-specific advice appears for QB, WR, etc.
 - [ ] Active injuries trigger warnings
@@ -681,6 +735,7 @@ addEvidenceIndicators(response, knowledgeEntry) {
 - [ ] Missing profile data gracefully handled
 
 ### Knowledge Governance Testing
+
 - [ ] Only approved entries shown by default
 - [ ] Experimental entries marked appropriately
 - [ ] Evidence indicators display correctly
@@ -698,4 +753,3 @@ addEvidenceIndicators(response, knowledgeEntry) {
 3. **"Turn this into a microservice behind an API"** → Create chatbot API service
 
 Let me know which direction you'd like to pursue first, and I'll provide the detailed implementation code!
-

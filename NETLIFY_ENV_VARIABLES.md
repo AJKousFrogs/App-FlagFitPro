@@ -6,13 +6,14 @@ These variables are **required** for the application to function. Without them, 
 
 ### 1. Supabase Configuration (REQUIRED)
 
-| Variable Name | Description | Where to Find | Example |
-|--------------|-------------|---------------|---------|
-| `SUPABASE_URL` | Your Supabase project URL | Supabase Dashboard → Settings → API | `https://xxxxx.supabase.co` |
+| Variable Name          | Description                     | Where to Find                                          | Example                                   |
+| ---------------------- | ------------------------------- | ------------------------------------------------------ | ----------------------------------------- |
+| `SUPABASE_URL`         | Your Supabase project URL       | Supabase Dashboard → Settings → API                    | `https://xxxxx.supabase.co`               |
 | `SUPABASE_SERVICE_KEY` | Service role key (admin access) | Supabase Dashboard → Settings → API → Service Role Key | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
-| `SUPABASE_ANON_KEY` | Anonymous/public key | Supabase Dashboard → Settings → API → anon/public Key | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `SUPABASE_ANON_KEY`    | Anonymous/public key            | Supabase Dashboard → Settings → API → anon/public Key  | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
 
 **⚠️ IMPORTANT:**
+
 - `SUPABASE_SERVICE_KEY` is **secret** - never expose it in frontend code
 - `SUPABASE_ANON_KEY` is safe for frontend use
 - All three are required for backend functions to work
@@ -25,15 +26,17 @@ These variables enable additional features but the app will work without them (w
 
 ### 2. Weather API (Optional)
 
-| Variable Name | Description | Where to Get | Example |
-|--------------|-------------|--------------|---------|
+| Variable Name         | Description                             | Where to Get                   | Example           |
+| --------------------- | --------------------------------------- | ------------------------------ | ----------------- |
 | `OPENWEATHER_API_KEY` | OpenWeatherMap API key for weather data | https://openweathermap.org/api | `abc123def456...` |
 
 **What happens without it:**
+
 - Weather endpoint returns mock data
 - Training suitability calculations use default values
 
 **How to get:**
+
 1. Sign up at https://openweathermap.org/
 2. Go to API Keys section
 3. Copy your API key
@@ -45,8 +48,8 @@ These variables enable additional features but the app will work without them (w
 
 Some older functions use direct PostgreSQL connections. If you're using Supabase, these are **not needed** (Supabase handles the database).
 
-| Variable Name | Description | When Needed |
-|--------------|-------------|-------------|
+| Variable Name  | Description                  | When Needed                                                  |
+| -------------- | ---------------------------- | ------------------------------------------------------------ |
 | `DATABASE_URL` | PostgreSQL connection string | Only if using direct DB connection (legacy, not recommended) |
 
 **Note:** Most functions now use Supabase, so these are typically **not required**.
@@ -59,12 +62,13 @@ Choose **ONE** email provider option below. Email features won't work without at
 
 #### Option A: Gmail (Easiest)
 
-| Variable Name | Description | How to Get |
-|--------------|-------------|------------|
-| `GMAIL_EMAIL` | Your Gmail address | Your Gmail account |
+| Variable Name        | Description        | How to Get                       |
+| -------------------- | ------------------ | -------------------------------- |
+| `GMAIL_EMAIL`        | Your Gmail address | Your Gmail account               |
 | `GMAIL_APP_PASSWORD` | Gmail App Password | Gmail → Security → App Passwords |
 
 **How to get Gmail App Password:**
+
 1. Go to Google Account settings
 2. Security → 2-Step Verification (must be enabled)
 3. App Passwords → Generate new app password
@@ -72,26 +76,28 @@ Choose **ONE** email provider option below. Email features won't work without at
 
 #### Option B: SendGrid (Recommended for Production)
 
-| Variable Name | Description | How to Get |
-|--------------|-------------|------------|
+| Variable Name      | Description      | How to Get                      |
+| ------------------ | ---------------- | ------------------------------- |
 | `SENDGRID_API_KEY` | SendGrid API key | https://sendgrid.com → API Keys |
 
 **Benefits:**
+
 - More reliable for production
 - Better deliverability
 - Free tier: 100 emails/day
 
 #### Option C: Custom SMTP Server
 
-| Variable Name | Description | Example |
-|--------------|-------------|---------|
-| `SMTP_HOST` | SMTP server hostname | `smtp.gmail.com` |
-| `SMTP_PORT` | SMTP port (usually 587 or 465) | `587` |
-| `SMTP_USER` | SMTP username | `your-email@example.com` |
-| `SMTP_PASS` | SMTP password | `your-password` |
-| `SMTP_SECURE` | Use TLS/SSL (true/false) | `true` |
+| Variable Name | Description                    | Example                  |
+| ------------- | ------------------------------ | ------------------------ |
+| `SMTP_HOST`   | SMTP server hostname           | `smtp.gmail.com`         |
+| `SMTP_PORT`   | SMTP port (usually 587 or 465) | `587`                    |
+| `SMTP_USER`   | SMTP username                  | `your-email@example.com` |
+| `SMTP_PASS`   | SMTP password                  | `your-password`          |
+| `SMTP_SECURE` | Use TLS/SSL (true/false)       | `true`                   |
 
 **What happens without email config:**
+
 - Password reset emails won't work
 - Email verification won't work
 - Team invitation emails won't work
@@ -102,6 +108,7 @@ Choose **ONE** email provider option below. Email features won't work without at
 ## Complete Variable List
 
 ### Minimum Required (3 variables)
+
 ```
 SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -109,6 +116,7 @@ SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ### Recommended Setup (4-5 variables)
+
 ```
 SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -119,6 +127,7 @@ GMAIL_APP_PASSWORD=your-app-password
 ```
 
 ### Full Production Setup (All features)
+
 ```
 SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -187,6 +196,7 @@ SENDGRID_API_KEY=SG.xxxxx...
    ```bash
    curl https://your-site.netlify.app/api/health
    ```
+
    - Should return success (not 500 error)
 
 ---
@@ -194,20 +204,24 @@ SENDGRID_API_KEY=SG.xxxxx...
 ## ⚠️ Common Mistakes
 
 ### ❌ Wrong Variable Names
+
 - `SUPABASE_URL` ✅ (correct)
 - `SUPABASEURL` ❌ (wrong - missing underscore)
 - `supabase_url` ❌ (wrong - lowercase)
 
 ### ❌ Missing Quotes
+
 - Don't add quotes around values in Netlify UI
 - `https://xxxxx.supabase.co` ✅
 - `"https://xxxxx.supabase.co"` ❌ (quotes included)
 
 ### ❌ Wrong Keys
+
 - Make sure you're using the **Service Role Key** for `SUPABASE_SERVICE_KEY`
 - Not the anon key (that goes in `SUPABASE_ANON_KEY`)
 
 ### ❌ Not Redeploying
+
 - Variables are only available after redeploy
 - Add variables → Trigger deploy → Test
 
@@ -226,6 +240,7 @@ SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 ```
 
 **Optional (but recommended):**
+
 ```
 OPENWEATHER_API_KEY=your-key-here
 GMAIL_EMAIL=your-email@gmail.com
@@ -271,4 +286,3 @@ Before deploying, make sure you have:
 ---
 
 **That's it!** Once these variables are set, your Netlify functions will connect to Supabase and all features will work. 🚀
-

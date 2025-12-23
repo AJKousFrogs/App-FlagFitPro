@@ -6,11 +6,11 @@ const {
   createSuccessResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
-exports.handler = async (event, context) =>  {
-  logFunctionCall('Validate-Invitation', event);
+exports.handler = async (event, context) => {
+  logFunctionCall("Validate-Invitation", event);
 
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 200, headers: CORS_HEADERS };
@@ -38,8 +38,9 @@ exports.handler = async (event, context) =>  {
     const supabase = getSupabaseClient();
 
     const { data: invitation, error: inviteError } = await supabase
-      .from('team_invitations')
-      .select(`
+      .from("team_invitations")
+      .select(
+        `
         id,
         team_id,
         email,
@@ -56,39 +57,49 @@ exports.handler = async (event, context) =>  {
           season,
           home_city
         )
-      `)
-      .eq('token', token)
+      `,
+      )
+      .eq("token", token)
       .single();
 
     if (inviteError || !invitation) {
       return {
         statusCode: 404,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Invalid invitation token" }),
+        body: JSON.stringify({
+          success: false,
+          error: "Invalid invitation token",
+        }),
       };
     }
 
-    if (invitation.status === 'accepted') {
+    if (invitation.status === "accepted") {
       return {
         statusCode: 400,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "This invitation has already been accepted" }),
+        body: JSON.stringify({
+          success: false,
+          error: "This invitation has already been accepted",
+        }),
       };
     }
 
     const now = new Date();
     const expiresAt = new Date(invitation.expires_at);
 
-    if (now > expiresAt || invitation.status === 'expired') {
+    if (now > expiresAt || invitation.status === "expired") {
       await supabase
-        .from('team_invitations')
-        .update({ status: 'expired' })
-        .eq('id', invitation.id);
+        .from("team_invitations")
+        .update({ status: "expired" })
+        .eq("id", invitation.id);
 
       return {
         statusCode: 400,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "This invitation has expired" }),
+        body: JSON.stringify({
+          success: false,
+          error: "This invitation has expired",
+        }),
       };
     }
 
@@ -106,7 +117,7 @@ exports.handler = async (event, context) =>  {
         },
       },
       200,
-      "Invitation is valid"
+      "Invitation is valid",
     );
   } catch (error) {
     console.error("Error validating invitation:", error);

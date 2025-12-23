@@ -107,8 +107,8 @@ interface Play {
     TagModule,
     RadioButtonModule,
     MainLayoutComponent,
-    PageHeaderComponent
-],
+    PageHeaderComponent,
+  ],
   templateUrl: "./game-tracker.component.html",
   styleUrls: ["./game-tracker.component.css"],
 })
@@ -583,8 +583,13 @@ export class GameTrackerComponent implements OnInit {
     return types[playType] || playType;
   }
 
-  getPlayTypeSeverity(playType: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
-    const severities: Record<string, "success" | "secondary" | "info" | "warn" | "danger" | "contrast"> = {
+  getPlayTypeSeverity(
+    playType: string,
+  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "secondary" | "info" | "warn" | "danger" | "contrast"
+    > = {
       pass_play: "info",
       run_play: "success",
       flag_pull: "warn",
@@ -664,8 +669,13 @@ export class GameTrackerComponent implements OnInit {
     element?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  getResultSeverity(result: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
-    const severities: Record<string, "success" | "secondary" | "info" | "warn" | "danger" | "contrast"> = {
+  getResultSeverity(
+    result: string,
+  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "secondary" | "info" | "warn" | "danger" | "contrast"
+    > = {
       win: "success",
       loss: "danger",
       tie: "info",

@@ -107,6 +107,7 @@ USING (auth.is_admin());
 ```
 
 **Access Patterns:**
+
 - ✅ User reads own profile
 - ✅ User updates own profile
 - ✅ User reads public info of teammates
@@ -182,6 +183,7 @@ USING (
 ```
 
 **Access Patterns:**
+
 - ✅ Team members read their teams
 - ✅ Public teams readable by all
 - ✅ Coaches update their teams
@@ -265,6 +267,7 @@ USING (user_id = auth.user_id());
 ```
 
 **Access Patterns:**
+
 - ✅ Team members read roster
 - ✅ Coaches add/update/remove members
 - ✅ Users can leave teams
@@ -363,6 +366,7 @@ WITH CHECK (
 ```
 
 **Access Patterns:**
+
 - ✅ Coaches create/read/update invitations for their teams
 - ✅ Users read invitations sent to their email
 - ✅ Public can read invitations by token (for signup)
@@ -435,6 +439,7 @@ WITH CHECK (
 ```
 
 **Access Patterns:**
+
 - ✅ Players read/create/update own logs
 - ✅ Coaches read team members' logs
 - ✅ Coaches add feedback to team logs
@@ -477,6 +482,7 @@ WITH CHECK (true);
 ```
 
 **Access Patterns:**
+
 - ✅ Players read own metrics
 - ✅ Coaches read team metrics
 - ✅ System updates metrics (via triggers)
@@ -517,6 +523,7 @@ WITH CHECK (created_by = auth.user_id());
 ```
 
 **Access Patterns:**
+
 - ✅ Coaches read/create/update own programs
 - ✅ Players read assigned programs
 - ❌ Players cannot read unassigned programs
@@ -574,6 +581,7 @@ USING (created_by = auth.user_id());
 ```
 
 **Access Patterns:**
+
 - ✅ Public tournaments readable by all
 - ✅ Organizers manage their tournaments
 - ✅ Registered teams read private tournaments
@@ -623,6 +631,7 @@ WITH CHECK (auth.is_admin());
 ```
 
 **Access Patterns:**
+
 - ✅ Published posts readable by all
 - ✅ Authors create/update/delete own posts
 - ✅ Admins can moderate all posts
@@ -672,6 +681,7 @@ USING (auth.is_admin());
 ```
 
 **Access Patterns:**
+
 - ✅ Users insert own events
 - ✅ Users read own events
 - ✅ Coaches read team events
@@ -691,6 +701,7 @@ const supabase = createClient(url, serviceRoleKey);
 ```
 
 **Use Cases:**
+
 - System operations (load calculations, aggregations)
 - Admin operations (moderation, user management)
 - Batch operations (migrations, data cleanup)
@@ -741,4 +752,3 @@ RESET request.jwt.claims;
 
 - [DATABASE_SCHEMA_CONSTRAINTS.md](./DATABASE_SCHEMA_CONSTRAINTS.md) - Schema details
 - [database/supabase-rls-policies.sql](../database/supabase-rls-policies.sql) - Implementation SQL
-

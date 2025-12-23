@@ -1,58 +1,58 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import SponsorBanner from '../components/SponsorBanner';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import SponsorBanner from "../components/SponsorBanner";
 
 const LoginPage = ({ onLogin }) => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Only log in development mode
-    const isDev = process.env.NODE_ENV === 'development';
-    if (isDev) console.log('🔍 Form submitted!', formData);
+    const isDev = process.env.NODE_ENV === "development";
+    if (isDev) console.log("🔍 Form submitted!", formData);
 
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
-      if (isDev) console.log('🔄 Starting login process...');
+      if (isDev) console.log("🔄 Starting login process...");
 
       // Basic validation
       if (!formData.email || !formData.password) {
-        if (isDev) console.log('❌ Validation failed - missing fields');
-        throw new Error('Please fill in all fields');
+        if (isDev) console.log("❌ Validation failed - missing fields");
+        throw new Error("Please fill in all fields");
       }
 
-      if (isDev) console.log('✅ Validation passed, simulating API call...');
+      if (isDev) console.log("✅ Validation passed, simulating API call...");
 
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      if (isDev) console.log('📞 Calling onLogin function...');
+      if (isDev) console.log("📞 Calling onLogin function...");
 
       // Call the onLogin function from App.jsx
       if (onLogin) {
-        if (isDev) console.log('✅ onLogin function exists, calling it...');
+        if (isDev) console.log("✅ onLogin function exists, calling it...");
         onLogin(formData);
       } else {
-        if (isDev) console.log('⚠️ onLogin function is undefined!');
+        if (isDev) console.log("⚠️ onLogin function is undefined!");
       }
 
-      if (isDev) console.log('🧭 Navigating to dashboard...');
+      if (isDev) console.log("🧭 Navigating to dashboard...");
       // Navigate to dashboard
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
-      if (isDev) console.log('❌ Error occurred:', err.message);
-      setError(err.message || 'Login failed. Please try again.');
+      if (isDev) console.log("❌ Error occurred:", err.message);
+      setError(err.message || "Login failed. Please try again.");
     } finally {
-      if (isDev) console.log('🏁 Login process finished');
+      if (isDev) console.log("🏁 Login process finished");
       setIsLoading(false);
     }
   };
@@ -60,7 +60,7 @@ const LoginPage = ({ onLogin }) => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -69,27 +69,30 @@ const LoginPage = ({ onLogin }) => {
       <div className="login-form">
         <h2>Welcome Back! 🏈</h2>
         <div>Ready to dominate today&apos;s training? (Hot Reload Test ✅)</div>
-        
+
         {/* Top Banner for Free Users */}
-        <SponsorBanner 
-          position="top" 
-          size="wide" 
+        <SponsorBanner
+          position="top"
+          size="wide"
           isPremium={false}
           sponsor={{
-            name: 'LaprimaFit',
-            logo: '💪',
-            message: 'Start your fitness journey with premium equipment',
-            cta: 'Get Started',
-            link: '#'
+            name: "LaprimaFit",
+            logo: "💪",
+            message: "Start your fitness journey with premium equipment",
+            cta: "Get Started",
+            link: "#",
           }}
         />
-        
+
         {error && (
-          <div className="error-message" style={{ color: 'red', marginBottom: '1rem' }}>
+          <div
+            className="error-message"
+            style={{ color: "red", marginBottom: "1rem" }}
+          >
             {error}
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit} aria-label="Login form">
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -122,7 +125,7 @@ const LoginPage = ({ onLogin }) => {
               aria-invalid={error ? "true" : "false"}
             />
           </div>
-          
+
           <button
             type="submit"
             className="login-btn"
@@ -130,20 +133,20 @@ const LoginPage = ({ onLogin }) => {
             aria-label="Sign in to your account"
             aria-busy={isLoading}
             style={{
-              cursor: 'pointer',
-              backgroundColor: '#fff',
-              border: '2px solid #333',
-              padding: '12px',
-              width: '100%',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              margin: '15px 0'
+              cursor: "pointer",
+              backgroundColor: "#fff",
+              border: "2px solid #333",
+              padding: "12px",
+              width: "100%",
+              fontSize: "16px",
+              fontWeight: "bold",
+              margin: "15px 0",
             }}
           >
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {isLoading ? "Signing In..." : "Sign In"}
           </button>
         </form>
-        
+
         <div className="login-options">
           <button
             className="social-login-btn"
@@ -160,13 +163,13 @@ const LoginPage = ({ onLogin }) => {
             📱 Continue with Phone
           </button>
         </div>
-        
+
         <div className="login-links">
           <Link to="/forgot-password">Forgot Password?</Link>
           <span>Don&apos;t have an account? </span>
           <Link to="/register">Create Account</Link>
         </div>
-        
+
         {/* Sponsor Logos Section */}
         <div className="sponsor-section">
           <h3>Powered by our sponsors</h3>
@@ -181,4 +184,4 @@ const LoginPage = ({ onLogin }) => {
   );
 };
 
-export default LoginPage; 
+export default LoginPage;

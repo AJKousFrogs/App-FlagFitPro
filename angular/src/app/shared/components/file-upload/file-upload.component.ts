@@ -48,7 +48,8 @@ export interface UploadedFile {
         (dragover)="onDragOver($event)"
         (dragleave)="onDragLeave($event)"
         (drop)="onDrop($event)"
-        (click)="triggerFileInput()">
+        (click)="triggerFileInput()"
+      >
         <input
           #fileInput
           type="file"
@@ -57,13 +58,16 @@ export interface UploadedFile {
           [disabled]="disabled()"
           (change)="onFileSelected($event)"
           class="file-input-hidden"
-          [attr.aria-label]="label() || 'File upload'" />
+          [attr.aria-label]="label() || 'File upload'"
+        />
 
         <div class="upload-content">
           @if (uploadedFiles().length === 0) {
             <div class="upload-placeholder">
               <i class="pi pi-cloud-upload upload-icon"></i>
-              <p class="upload-label">{{ label() || "Drop files here or click to browse" }}</p>
+              <p class="upload-label">
+                {{ label() || "Drop files here or click to browse" }}
+              </p>
               <p class="upload-hint">{{ hint() }}</p>
             </div>
           } @else {
@@ -74,7 +78,9 @@ export interface UploadedFile {
                     <i class="pi pi-file file-icon"></i>
                     <div class="file-details">
                       <span class="file-name">{{ file.name }}</span>
-                      <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                      <span class="file-size">{{
+                        formatFileSize(file.size)
+                      }}</span>
                     </div>
                   </div>
                   @if (showRemoveButton()) {
@@ -82,7 +88,8 @@ export interface UploadedFile {
                       type="button"
                       class="remove-file-btn"
                       (click)="removeFile(file)"
-                      [attr.aria-label]="'Remove ' + file.name">
+                      [attr.aria-label]="'Remove ' + file.name"
+                    >
                       <i class="pi pi-times"></i>
                     </button>
                   }
@@ -368,7 +375,7 @@ export class FileUploadComponent {
   triggerFileInput(): void {
     if (this.disabled()) return;
     const fileInput = document.querySelector(
-      ".file-input-hidden"
+      ".file-input-hidden",
     ) as HTMLInputElement;
     fileInput?.click();
   }
@@ -382,19 +389,16 @@ export class FileUploadComponent {
       if (file.size > this.maxFileSize()) {
         this.errorMessage.set(
           `File "${file.name}" exceeds maximum size of ${this.formatFileSize(
-            this.maxFileSize()
-          )}`
+            this.maxFileSize(),
+          )}`,
         );
         continue;
       }
 
       // Validate file type
-      if (
-        this.acceptedTypes() !== "*/*" &&
-        !this.isFileTypeAccepted(file)
-      ) {
+      if (this.acceptedTypes() !== "*/*" && !this.isFileTypeAccepted(file)) {
         this.errorMessage.set(
-          `File "${file.name}" is not an accepted file type`
+          `File "${file.name}" is not an accepted file type`,
         );
         continue;
       }
@@ -476,9 +480,7 @@ export class FileUploadComponent {
       setTimeout(() => {
         clearInterval(progressInterval);
         this.uploadProgress.set(100);
-        const urls = files.map(
-          (f) => `https://example.com/uploads/${f.name}`
-        );
+        const urls = files.map((f) => `https://example.com/uploads/${f.name}`);
         files.forEach((f, i) => {
           f.url = urls[i];
         });
@@ -487,7 +489,7 @@ export class FileUploadComponent {
     } catch (error) {
       this.uploadProgress.set(0);
       this.errorMessage.set(
-        error instanceof Error ? error.message : "Upload failed"
+        error instanceof Error ? error.message : "Upload failed",
       );
       this.uploadError.emit(error as Error);
     }
@@ -505,7 +507,7 @@ export class FileUploadComponent {
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   }
 
   isImageFile(file: UploadedFile): boolean {
@@ -524,4 +526,3 @@ export class FileUploadComponent {
 
   previewFiles = signal<UploadedFile[]>([]);
 }
-

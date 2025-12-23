@@ -49,6 +49,7 @@ SELECT 'exercises', COUNT(*) FROM exercises;
 ```
 
 **Expected results:**
+
 ```
 positions          | 6     (QB, WR, DB, Center, LB, Blitzer)
 training_programs  | 1     (QB Annual Program 2025-2026)
@@ -64,6 +65,7 @@ exercises          | 30+   (QB-specific and general exercises)
 If you prefer command line, follow these steps:
 
 ### Prerequisites
+
 - Install PostgreSQL: `brew install postgresql`
 - OR Install psql only: `brew install libpq`
 
@@ -129,6 +131,7 @@ LIMIT 25;
 ```
 
 **Should show gradual progression:**
+
 - Nov W1: 50 throws
 - Dec W1: 80 throws
 - Jan W1: 120 throws
@@ -168,18 +171,24 @@ SELECT
 ## Troubleshooting
 
 ### Error: "relation already exists"
+
 **Solution**: Tables already exist. Either:
+
 1. Drop existing tables first (CAREFUL - this deletes data!)
 2. Or modify the SQL to use `CREATE TABLE IF NOT EXISTS` (already included)
 
 ### Error: "permission denied"
+
 **Solution**: Make sure you're using the `SUPABASE_SERVICE_KEY`, not `SUPABASE_ANON_KEY`
 
 ### Error: "syntax error near 'ARRAY'"
+
 **Solution**: PostgreSQL version too old. Supabase uses PostgreSQL 15+, which supports arrays.
 
 ### No errors but empty tables
+
 **Solution**: Check if RLS (Row Level Security) is blocking queries. Try disabling RLS temporarily:
+
 ```sql
 ALTER TABLE positions DISABLE ROW LEVEL SECURITY;
 ```
@@ -215,6 +224,7 @@ ALTER TABLE positions DISABLE ROW LEVEL SECURITY;
 ## Support
 
 If you encounter issues:
+
 1. Check Supabase logs in Dashboard → Logs
 2. Verify service key is correct in `.env`
 3. Ensure you're using the correct project (`pvziciccwxgftcielknm`)

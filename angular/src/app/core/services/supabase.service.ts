@@ -1,5 +1,11 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { createClient, SupabaseClient, User, Session, AuthChangeEvent } from "@supabase/supabase-js";
+import {
+  createClient,
+  SupabaseClient,
+  User,
+  Session,
+  AuthChangeEvent,
+} from "@supabase/supabase-js";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
 
@@ -9,7 +15,7 @@ import { LoggerService } from "./logger.service";
 export class SupabaseService {
   private logger = inject(LoggerService);
   private supabase: SupabaseClient;
-  
+
   // UI State: Use signals instead of BehaviorSubject
   private readonly _currentUser = signal<User | null>(null);
   private readonly _session = signal<Session | null>(null);
@@ -25,17 +31,29 @@ export class SupabaseService {
   constructor() {
     // Validate Supabase configuration
     if (!environment.supabase.url || !environment.supabase.anonKey) {
-      this.logger.error('[SupabaseService] Missing Supabase configuration!');
-      this.logger.error('[SupabaseService] URL:', environment.supabase.url || 'MISSING');
-      this.logger.error('[SupabaseService] AnonKey:', environment.supabase.anonKey ? 'SET' : 'MISSING');
-      this.logger.error('[SupabaseService] For local dev, ensure dev server injects window._env');
-      this.logger.error('[SupabaseService] For production, use Angular file replacement to inject values');
-      throw new Error('Supabase configuration is required. Set SUPABASE_URL and SUPABASE_ANON_KEY.');
+      this.logger.error("[SupabaseService] Missing Supabase configuration!");
+      this.logger.error(
+        "[SupabaseService] URL:",
+        environment.supabase.url || "MISSING",
+      );
+      this.logger.error(
+        "[SupabaseService] AnonKey:",
+        environment.supabase.anonKey ? "SET" : "MISSING",
+      );
+      this.logger.error(
+        "[SupabaseService] For local dev, ensure dev server injects window._env",
+      );
+      this.logger.error(
+        "[SupabaseService] For production, use Angular file replacement to inject values",
+      );
+      throw new Error(
+        "Supabase configuration is required. Set SUPABASE_URL and SUPABASE_ANON_KEY.",
+      );
     }
 
     this.supabase = createClient(
       environment.supabase.url,
-      environment.supabase.anonKey
+      environment.supabase.anonKey,
     );
 
     // Initialize session and set up auth listener
@@ -49,11 +67,13 @@ export class SupabaseService {
     this._currentUser.set(data.session?.user ?? null);
 
     // Listen for auth changes
-    this.supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
-      this.logger.debug("Auth state changed:", event);
-      this._session.set(session);
-      this._currentUser.set(session?.user ?? null);
-    });
+    this.supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        this.logger.debug("Auth state changed:", event);
+        this._session.set(session);
+        this._currentUser.set(session?.user ?? null);
+      },
+    );
   }
 
   /**

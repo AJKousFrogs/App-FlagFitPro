@@ -68,12 +68,14 @@ export class WellnessService {
    * @param timeframe - Time range (e.g., '7d', '30d', '3m')
    * Returns Observable for complex async work (API calls)
    */
-  getWellnessData(timeframe: string = '30d'): Observable<WellnessResponse> {
+  getWellnessData(timeframe: string = "30d"): Observable<WellnessResponse> {
     return this.apiService
-      .get<WellnessResponse>(API_ENDPOINTS.performanceData.wellness, { timeframe })
+      .get<WellnessResponse>(API_ENDPOINTS.performanceData.wellness, {
+        timeframe,
+      })
       .pipe(
-        map(response => response.data || { success: false, data: [] }),
-        tap(wellnessResponse => {
+        map((response) => response.data || { success: false, data: [] }),
+        tap((wellnessResponse) => {
           if (wellnessResponse.success && wellnessResponse.data) {
             // Update signals (UI state) from async operation
             this._wellnessData.set(wellnessResponse.data);
@@ -81,7 +83,7 @@ export class WellnessService {
               this._averages.set(wellnessResponse.averages);
             }
           }
-        })
+        }),
       );
   }
 
@@ -90,7 +92,7 @@ export class WellnessService {
    */
   logWellness(data: Partial<WellnessData>): Observable<any> {
     const wellnessEntry = {
-      date: data.date || new Date().toISOString().split('T')[0],
+      date: data.date || new Date().toISOString().split("T")[0],
       sleep: data.sleep,
       energy: data.energy,
       stress: data.stress,
@@ -106,8 +108,8 @@ export class WellnessService {
       .pipe(
         tap(() => {
           // Refresh wellness data after successful post
-          this.getWellnessData('30d').subscribe();
-        })
+          this.getWellnessData("30d").subscribe();
+        }),
       );
   }
 
@@ -122,7 +124,7 @@ export class WellnessService {
       data.soreness ? 10 - data.soreness : undefined, // Invert soreness
       data.motivation,
       data.mood,
-      data.hydration
+      data.hydration,
     ].filter((m): m is number => m !== undefined && m !== null);
 
     if (metrics.length === 0) return 0;
@@ -135,33 +137,35 @@ export class WellnessService {
    * Get wellness status based on score
    */
   getWellnessStatus(score: number): {
-    status: 'excellent' | 'good' | 'fair' | 'poor';
+    status: "excellent" | "good" | "fair" | "poor";
     color: string;
     message: string;
   } {
     if (score >= 8) {
       return {
-        status: 'excellent',
-        color: '#10c96b',
-        message: 'Your wellness is excellent! Keep up the great work.'
+        status: "excellent",
+        color: "#10c96b",
+        message: "Your wellness is excellent! Keep up the great work.",
       };
     } else if (score >= 6) {
       return {
-        status: 'good',
-        color: '#2196f3',
-        message: 'Your wellness is good. Small improvements can make a big difference.'
+        status: "good",
+        color: "#2196f3",
+        message:
+          "Your wellness is good. Small improvements can make a big difference.",
       };
     } else if (score >= 4) {
       return {
-        status: 'fair',
-        color: '#ff9800',
-        message: 'Your wellness needs attention. Focus on recovery and rest.'
+        status: "fair",
+        color: "#ff9800",
+        message: "Your wellness needs attention. Focus on recovery and rest.",
       };
     } else {
       return {
-        status: 'poor',
-        color: '#f44336',
-        message: 'Your wellness is concerning. Consider taking a rest day and consulting a coach.'
+        status: "poor",
+        color: "#f44336",
+        message:
+          "Your wellness is concerning. Consider taking a rest day and consulting a coach.",
       };
     }
   }
@@ -171,17 +175,25 @@ export class WellnessService {
    */
   getWellnessTrends(data: WellnessData[]): {
     metric: string;
-    trend: 'improving' | 'declining' | 'stable';
+    trend: "improving" | "declining" | "stable";
     change: number;
   }[] {
     if (data.length < 2) return [];
 
-    const metrics = ['sleep', 'energy', 'stress', 'soreness', 'motivation', 'mood', 'hydration'];
+    const metrics = [
+      "sleep",
+      "energy",
+      "stress",
+      "soreness",
+      "motivation",
+      "mood",
+      "hydration",
+    ];
     const trends: any[] = [];
 
-    metrics.forEach(metric => {
+    metrics.forEach((metric) => {
       const values = data
-        .map(d => (d as any)[metric])
+        .map((d) => (d as any)[metric])
         .filter((v): v is number => v !== undefined && v !== null);
 
       if (values.length < 2) return;
@@ -195,13 +207,18 @@ export class WellnessService {
       const change = ((recentAvg - earlierAvg) / earlierAvg) * 100;
 
       // For stress and soreness, lower is better
-      const invertMetrics = ['stress', 'soreness'];
+      const invertMetrics = ["stress", "soreness"];
       const adjustedChange = invertMetrics.includes(metric) ? -change : change;
 
       trends.push({
         metric,
-        trend: adjustedChange > 5 ? 'improving' : adjustedChange < -5 ? 'declining' : 'stable',
-        change: Math.round(Math.abs(change) * 10) / 10
+        trend:
+          adjustedChange > 5
+            ? "improving"
+            : adjustedChange < -5
+              ? "declining"
+              : "stable",
+        change: Math.round(Math.abs(change) * 10) / 10,
       });
     });
 
@@ -215,31 +232,41 @@ export class WellnessService {
     const recommendations: string[] = [];
 
     if (data.sleep !== undefined && data.sleep < 6) {
-      recommendations.push('Prioritize 7-9 hours of sleep for optimal recovery');
+      recommendations.push(
+        "Prioritize 7-9 hours of sleep for optimal recovery",
+      );
     }
 
     if (data.energy !== undefined && data.energy < 5) {
-      recommendations.push('Consider a rest day or light training session');
+      recommendations.push("Consider a rest day or light training session");
     }
 
     if (data.stress !== undefined && data.stress > 7) {
-      recommendations.push('Practice stress management techniques like meditation or breathing exercises');
+      recommendations.push(
+        "Practice stress management techniques like meditation or breathing exercises",
+      );
     }
 
     if (data.soreness !== undefined && data.soreness > 7) {
-      recommendations.push('Focus on recovery protocols: foam rolling, stretching, ice baths');
+      recommendations.push(
+        "Focus on recovery protocols: foam rolling, stretching, ice baths",
+      );
     }
 
     if (data.hydration !== undefined && data.hydration < 6) {
-      recommendations.push('Increase water intake to support performance and recovery');
+      recommendations.push(
+        "Increase water intake to support performance and recovery",
+      );
     }
 
     if (data.motivation !== undefined && data.motivation < 5) {
-      recommendations.push('Try varying your training routine to maintain engagement');
+      recommendations.push(
+        "Try varying your training routine to maintain engagement",
+      );
     }
 
     if (recommendations.length === 0) {
-      recommendations.push('Keep up the excellent wellness habits!');
+      recommendations.push("Keep up the excellent wellness habits!");
     }
 
     return recommendations;

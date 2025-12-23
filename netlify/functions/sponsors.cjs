@@ -7,7 +7,7 @@ const {
   handleServerError,
   handleDatabaseError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
 exports.handler = async (event, context) => {
@@ -57,8 +57,14 @@ exports.handler = async (event, context) => {
     // Build proxy URL for logos to bypass COEP restrictions
     const getProxyUrl = (originalUrl) => {
       // Get base URL from event headers or use default
-      const host = event.headers?.host || event.headers?.Host || "webflagfootballfrogs.netlify.app";
-      const protocol = event.headers?.["x-forwarded-proto"] || event.headers?.["X-Forwarded-Proto"] || "https";
+      const host =
+        event.headers?.host ||
+        event.headers?.Host ||
+        "webflagfootballfrogs.netlify.app";
+      const protocol =
+        event.headers?.["x-forwarded-proto"] ||
+        event.headers?.["X-Forwarded-Proto"] ||
+        "https";
       const baseUrl = `${protocol}://${host}`;
       return `${baseUrl}/.netlify/functions/sponsor-logo?url=${encodeURIComponent(originalUrl)}`;
     };
@@ -66,16 +72,17 @@ exports.handler = async (event, context) => {
     // Return sponsors data with proxied logo URLs
     // If no sponsors found, return empty array (frontend will use fallback)
     return createSuccessResponse({
-      sponsors: sponsors.length > 0 
-        ? sponsors.map((sponsor) => ({
-            id: sponsor.id,
-            name: sponsor.name,
-            logoUrl: getProxyUrl(sponsor.logo_url),
-            originalLogoUrl: sponsor.logo_url, // Keep original for reference
-            websiteUrl: sponsor.website_url || null,
-            displayOrder: sponsor.display_order || 0,
-          }))
-        : [],
+      sponsors:
+        sponsors.length > 0
+          ? sponsors.map((sponsor) => ({
+              id: sponsor.id,
+              name: sponsor.name,
+              logoUrl: getProxyUrl(sponsor.logo_url),
+              originalLogoUrl: sponsor.logo_url, // Keep original for reference
+              websiteUrl: sponsor.website_url || null,
+              displayOrder: sponsor.display_order || 0,
+            }))
+          : [],
     });
   } catch (error) {
     console.error("Error in sponsors function:", error);
@@ -86,4 +93,3 @@ exports.handler = async (event, context) => {
     });
   }
 };
-

@@ -22,21 +22,21 @@ This document outlines the comprehensive technical architecture of the elite-lev
 ```typescript
 // Component Architecture Example
 @Component({
-  selector: 'app-dashboard',
+  selector: "app-dashboard",
   standalone: true,
   imports: [CommonModule, PrimeNGModules],
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  templateUrl: "./dashboard.component.html",
+  styleUrls: ["./dashboard.component.scss"],
 })
 export class DashboardComponent {
-  userId = signal<string>('');
+  userId = signal<string>("");
   olympicData = signal<OlympicQualificationData | null>(null);
   performanceMetrics = signal<PerformanceMetrics[]>([]);
   teamChemistry = signal<TeamChemistryAnalysis | null>(null);
 
   constructor(
     private performanceService: PerformanceDataService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     // 800+ lines of sophisticated implementation
     // Real-time data integration
@@ -96,11 +96,11 @@ angular/src/app/
 @Injectable({ providedIn: 'root' })
 export class RealtimeSyncService {
   private supabase = inject(SupabaseClient);
-  
+
   subscribeToUpdates(userId: string): Observable<any> {
     return this.supabase
       .channel(`athletes:${userId}`)
-      .on('postgres_changes', 
+      .on('postgres_changes',
         { event: '*', schema: 'public', table: 'performance_metrics' },
         (payload) => {
           // Handle Olympic qualification updates
@@ -117,6 +117,7 @@ export class RealtimeSyncService {
 ```
 
 #### **Performance Optimization**
+
 - **Code Splitting**: Route-based and component-based lazy loading
 - **Bundle Optimization**: Tree-shaking and dead code elimination
 - **Image Optimization**: Progressive loading with WebP format support
@@ -128,17 +129,19 @@ export class RealtimeSyncService {
 
 ```typescript
 // API Route Example - Olympic Qualification
-router.get('/api/athletes/:id/olympic-status', async (req, res) => {
+router.get("/api/athletes/:id/olympic-status", async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Multi-source data aggregation
-    const [performanceData, rankingData, qualificationData] = await Promise.all([
-      getPerformanceMetrics(id),
-      getWorldRankings(id),
-      getQualificationProgress(id)
-    ]);
-    
+    const [performanceData, rankingData, qualificationData] = await Promise.all(
+      [
+        getPerformanceMetrics(id),
+        getWorldRankings(id),
+        getQualificationProgress(id),
+      ],
+    );
+
     // AI-powered probability calculation
     const qualificationProbability = await calculateOlympicProbability({
       performance: performanceData,
@@ -161,6 +164,7 @@ router.get('/api/athletes/:id/olympic-status', async (req, res) => {
 ### **API Architecture Features**
 
 #### **Authentication & Security**
+
 - **JWT-based authentication** with refresh token rotation
 - **Rate limiting** (5-10 requests per 5 minutes for algorithm-intensive operations)
 - **Input validation** with Joi schema validation
@@ -168,6 +172,7 @@ router.get('/api/athletes/:id/olympic-status', async (req, res) => {
 - **CORS configuration** for cross-origin security
 
 #### **Performance Optimization**
+
 - **Caching Layer**: Redis for session management and frequently accessed data
 - **Connection Pooling**: PostgreSQL connection optimization
 - **Query Optimization**: Indexed queries with Drizzle ORM
@@ -195,6 +200,7 @@ app.use("/api/wearables", wearablesRoutes); // Device integration
 ### **PostgreSQL Schema (26 Migrations)**
 
 #### **Core Tables Structure**
+
 ```sql
 -- Olympic qualification tracking
 CREATE TABLE olympic_qualification_progress (
@@ -245,6 +251,7 @@ CREATE TABLE performance_predictions (
 ```
 
 #### **Advanced Database Features**
+
 - **Performance Indexes**: Optimized queries for real-time features
 - **Triggers**: Automatic data validation and cleanup
 - **Stored Procedures**: Complex calculations for Olympic qualification
@@ -252,6 +259,7 @@ CREATE TABLE performance_predictions (
 - **Time-series Data**: Performance metrics with temporal analysis
 
 ### **Database Performance Optimization**
+
 - **Connection Pooling**: pgBouncer for connection management
 - **Query Optimization**: Explain plans and index strategies
 - **Partitioning**: Time-based partitioning for performance data
@@ -266,7 +274,7 @@ CREATE TABLE performance_predictions (
 interface RecommendationEngine {
   // 120+ peer-reviewed studies integration
   studyDatabase: StudyReference[];
-  
+
   // AI coaching algorithms
   generateTrainingRecommendation(
     athleteProfile: AthleteProfile,
@@ -291,14 +299,16 @@ interface RecommendationEngine {
 ### **Algorithm Services Implementation**
 
 #### **Evidence-Based Coaching**
+
 - **Research Integration**: 120+ peer-reviewed studies database
 - **Personalization**: Individual athlete profiling and adaptation
 - **Contextual Awareness**: Environmental and situational factors
 - **Continuous Learning**: Algorithm improvement based on outcomes
 
 #### **Performance Prediction Models**
+
 - **Statistical Models**: Regression analysis for performance trends
-- **Machine Learning**: Neural networks for complex pattern recognition  
+- **Machine Learning**: Neural networks for complex pattern recognition
 - **Ensemble Methods**: Multiple model combination for accuracy
 - **Confidence Intervals**: Uncertainty quantification for predictions
 
@@ -356,6 +366,7 @@ class RealTimeManager {
 ```
 
 ### **Event-Driven Architecture**
+
 - **Message Queues**: RabbitMQ for asynchronous processing
 - **Event Sourcing**: Complete audit trail for data changes
 - **CQRS Pattern**: Separate read/write models for performance
@@ -366,6 +377,7 @@ class RealTimeManager {
 ### **Third-Party Integrations**
 
 #### **Wearables Integration**
+
 ```typescript
 interface WearablesIntegration {
   // Multi-device support
@@ -382,12 +394,14 @@ interface WearablesIntegration {
 ```
 
 #### **Olympic Data Integration**
+
 - **IFAF API**: Official competition data and rankings
 - **Tournament Systems**: Live bracket and scoring updates
 - **Qualification Tracking**: Real-time Olympic pathway monitoring
 - **World Rankings**: International athlete ranking systems
 
 #### **Nutrition Database Integration**
+
 - **USDA FoodData Central**: Comprehensive nutritional information
 - **Sports Nutrition Research**: Evidence-based supplementation data
 - **Meal Planning**: AI-powered nutrition optimization
@@ -396,6 +410,7 @@ interface WearablesIntegration {
 ## Security Architecture
 
 ### **Security Implementation**
+
 - **Authentication**: JWT with refresh token rotation
 - **Authorization**: Role-based access control (RBAC)
 - **Data Encryption**: AES-256 for sensitive data at rest
@@ -405,6 +420,7 @@ interface WearablesIntegration {
 - **Audit Logging**: Complete security event tracking
 
 ### **Privacy & Compliance**
+
 - **GDPR Compliance**: EU privacy regulation adherence
 - **CCPA Compliance**: California privacy rights implementation
 - **HIPAA Considerations**: Health data protection measures
@@ -414,6 +430,7 @@ interface WearablesIntegration {
 ## Performance & Scalability
 
 ### **Performance Metrics**
+
 - **API Response Time**: < 100ms for 95th percentile
 - **Database Query Time**: < 50ms for complex joins
 - **Page Load Time**: < 2s for first contentful paint
@@ -421,6 +438,7 @@ interface WearablesIntegration {
 - **Throughput**: 1000+ concurrent users supported
 
 ### **Scalability Strategy**
+
 - **Horizontal Scaling**: Load balancer with multiple app instances
 - **Database Scaling**: Read replicas and connection pooling
 - **Caching Strategy**: Multi-layer caching (CDN, Redis, Application)
@@ -430,6 +448,7 @@ interface WearablesIntegration {
 ## Development & Operations
 
 ### **DevOps Pipeline**
+
 ```yaml
 # CI/CD Pipeline
 stages:
@@ -451,6 +470,7 @@ testing:
 ```
 
 ### **Monitoring & Observability**
+
 - **Application Monitoring**: New Relic / DataDog integration
 - **Error Tracking**: Sentry for error aggregation and alerting
 - **Performance Monitoring**: Real user monitoring (RUM)
@@ -462,28 +482,29 @@ testing:
 
 ### **Frontend Technology Choices**
 
-| Technology   | Rationale                                                        | Alternatives Considered    |
-| ------------ | ---------------------------------------------------------------- | -------------------------- |
-| Angular 21    | Enterprise-grade framework, standalone components, signals       | Vue.js, Svelte      |
-| PrimeNG 21   | Production-ready UI components with comprehensive theming        | Material UI, Ant Design   |
-| TypeScript   | Type safety for complex sports data models                       | JavaScript, Flow           |
-| Angular CLI  | Fast development and optimized builds with ESBuild                | Vite, Webpack              |
-| SCSS + Tokens| Design system with semantic tokens for consistent theming         | Tailwind CSS, Styled Components |
-| Angular Signals | Reactive state management with fine-grained reactivity          | RxJS       |
+| Technology      | Rationale                                                  | Alternatives Considered         |
+| --------------- | ---------------------------------------------------------- | ------------------------------- |
+| Angular 21      | Enterprise-grade framework, standalone components, signals | Vue.js, Svelte                  |
+| PrimeNG 21      | Production-ready UI components with comprehensive theming  | Material UI, Ant Design         |
+| TypeScript      | Type safety for complex sports data models                 | JavaScript, Flow                |
+| Angular CLI     | Fast development and optimized builds with ESBuild         | Vite, Webpack                   |
+| SCSS + Tokens   | Design system with semantic tokens for consistent theming  | Tailwind CSS, Styled Components |
+| Angular Signals | Reactive state management with fine-grained reactivity     | RxJS                            |
 
 ### **Backend Technology Choices**
 
-| Technology  | Rationale                                               | Alternatives Considered     |
-| ----------- | ------------------------------------------------------- | --------------------------- |
-| Node.js     | JavaScript ecosystem consistency, excellent performance | Python Django, Ruby Rails   |
-| Express     | Lightweight, flexible, extensive middleware ecosystem   | Fastify, Koa.js, NestJS     |
-| PostgreSQL  | ACID compliance, JSONB support, excellent performance   | MongoDB, MySQL, CockroachDB |
+| Technology      | Rationale                                               | Alternatives Considered     |
+| --------------- | ------------------------------------------------------- | --------------------------- |
+| Node.js         | JavaScript ecosystem consistency, excellent performance | Python Django, Ruby Rails   |
+| Express         | Lightweight, flexible, extensive middleware ecosystem   | Fastify, Koa.js, NestJS     |
+| PostgreSQL      | ACID compliance, JSONB support, excellent performance   | MongoDB, MySQL, CockroachDB |
 | Supabase Client | Type-safe queries, excellent PostgreSQL integration     | Prisma, TypeORM, Sequelize  |
-| Redis       | High-performance caching and session management         | Memcached, DynamoDB         |
+| Redis           | High-performance caching and session management         | Memcached, DynamoDB         |
 
 ## Future Architecture Considerations
 
 ### **Scalability Roadmap**
+
 1. **Microservices Migration**: Service decomposition for Olympic features
 2. **Event Sourcing Implementation**: Complete audit trail for competitions
 3. **GraphQL API**: More efficient data fetching for complex queries
@@ -491,6 +512,7 @@ testing:
 5. **Global CDN**: International athlete support optimization
 
 ### **Technology Evolution**
+
 - **Edge Computing**: Reduce latency for real-time features
 - **Serverless Functions**: Cost-effective scaling for sporadic workloads
 - **Blockchain Integration**: Verifiable achievement and ranking systems

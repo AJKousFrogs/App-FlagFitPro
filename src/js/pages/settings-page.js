@@ -82,7 +82,11 @@ function loadUserSettings() {
     }
 
     // Load saved preferences
-    const savedSettings = storageService.get("flagfit_settings", {}, { usePrefix: false });
+    const savedSettings = storageService.get(
+      "flagfit_settings",
+      {},
+      { usePrefix: false },
+    );
 
     // Apply saved theme
     if (savedSettings.theme) {
@@ -125,7 +129,11 @@ function loadUserSettings() {
 
   // Load profile data from user_profile (takes precedence)
   try {
-    const profileData = storageService.get("user_profile", {}, { usePrefix: false });
+    const profileData = storageService.get(
+      "user_profile",
+      {},
+      { usePrefix: false },
+    );
     const userData = storageService.get("userData", {}, { usePrefix: false });
 
     // Load position (prefer profileData)
@@ -258,7 +266,7 @@ window.toggleSidebar = function () {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.querySelector(".menu-scrim");
     const toggle = document.getElementById("mobile-menu-toggle");
-    
+
     if (sidebar) {
       const isOpen = sidebar.classList.contains("is-open");
       if (isOpen) {
@@ -287,7 +295,7 @@ window.closeMenu = function () {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.querySelector(".menu-scrim");
     const toggle = document.getElementById("mobile-menu-toggle");
-    
+
     if (sidebar) {
       sidebar.classList.remove("is-open");
       overlay?.classList.remove("is-visible");
@@ -307,16 +315,16 @@ async function loadNotificationPreferences() {
   try {
     const { apiClient, API_ENDPOINTS } = await import("../../api-config.js");
     const prefsResponse = await apiClient.get(
-      API_ENDPOINTS.dashboard.notificationsPreferences
+      API_ENDPOINTS.dashboard.notificationsPreferences,
     );
-    
+
     if (prefsResponse && prefsResponse.success && prefsResponse.data) {
       const preferences = prefsResponse.data;
-      
+
       // Update toggle switches based on preferences
       Object.entries(preferences).forEach(([type, prefs]) => {
         const toggle = document.querySelector(
-          `[data-preference-key="${type}"]`
+          `[data-preference-key="${type}"]`,
         );
         if (toggle) {
           // Active = not muted
@@ -338,7 +346,7 @@ window.toggleNotificationPreference = async function (element, type) {
   const isActive = element.classList.contains("active");
   element.classList.toggle("active");
   const muted = !element.classList.contains("active");
-  
+
   try {
     // Import API client if not available
     if (!window.apiClient || !window.API_ENDPOINTS) {
@@ -346,34 +354,34 @@ window.toggleNotificationPreference = async function (element, type) {
       window.apiClient = apiClient;
       window.API_ENDPOINTS = API_ENDPOINTS;
     }
-    
+
     // Get current preferences
     const prefsResponse = await window.apiClient.get(
-      window.API_ENDPOINTS.dashboard.notificationsPreferences
+      window.API_ENDPOINTS.dashboard.notificationsPreferences,
     );
-    
+
     const currentPrefs = prefsResponse?.success ? prefsResponse.data : {};
-    
+
     // Update preference for this type
     const updatedPrefs = {
       ...currentPrefs,
       [type]: {
         muted,
         pushEnabled: currentPrefs[type]?.pushEnabled !== false,
-        inAppEnabled: currentPrefs[type]?.inAppEnabled !== false
-      }
+        inAppEnabled: currentPrefs[type]?.inAppEnabled !== false,
+      },
     };
-    
+
     // Save to backend
     await window.apiClient.post(
       window.API_ENDPOINTS.dashboard.notificationsPreferences,
-      { preferences: updatedPrefs }
+      { preferences: updatedPrefs },
     );
-    
+
     // Show success feedback
     if (window.ErrorHandler) {
       window.ErrorHandler.showSuccess(
-        `${type} notifications ${muted ? 'muted' : 'enabled'}`
+        `${type} notifications ${muted ? "muted" : "enabled"}`,
       );
     }
   } catch (error) {
@@ -381,7 +389,9 @@ window.toggleNotificationPreference = async function (element, type) {
     element.classList.toggle("active");
     logger.warn("Failed to update notification preference:", error);
     if (window.ErrorHandler) {
-      window.ErrorHandler.showError("Failed to update preference. Please try again.");
+      window.ErrorHandler.showError(
+        "Failed to update preference. Please try again.",
+      );
     }
   }
 };
@@ -442,7 +452,11 @@ window.saveSettings = async function (event) {
   };
 
   // Get existing profile data
-  const existingProfile = storageService.get("user_profile", {}, { usePrefix: false });
+  const existingProfile = storageService.get(
+    "user_profile",
+    {},
+    { usePrefix: false },
+  );
   const updatedProfile = { ...existingProfile, ...profileData };
   storageService.set("user_profile", updatedProfile, { usePrefix: false });
 
@@ -464,23 +478,26 @@ window.saveSettings = async function (event) {
   // Show success message
   const button =
     event?.target || document.querySelector('button[onclick*="saveSettings"]');
-  if (!button) {return;}
+  if (!button) {
+    return;
+  }
   // Store original button content safely using temp container pattern
-  const temp = document.createElement('div');
+  const temp = document.createElement("div");
   temp.appendChild(button.cloneNode(true));
   // eslint-disable-next-line no-restricted-syntax -- Safe extraction of existing button HTML for restoration (temp container pattern)
   const originalHTML = temp.innerHTML;
-  
+
   // Create saved state using DOM methods
   button.textContent = "";
   const checkIcon = document.createElement("i");
   checkIcon.setAttribute("data-lucide", "check-circle");
-  checkIcon.style.cssText = "width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);";
+  checkIcon.style.cssText =
+    "width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);";
   const savedText = document.createTextNode(" Saved!");
   button.appendChild(checkIcon);
   button.appendChild(savedText);
   button.style.background = "var(--success)";
-  
+
   // Re-initialize icons
   if (typeof lucide !== "undefined") {
     lucide.createIcons(button);
@@ -546,85 +563,93 @@ function showDeleteAccountModal() {
 
   // Create modal content using DOM methods instead of innerHTML
   const modalContent = document.createElement("div");
-  modalContent.style.cssText = "background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; border: 2px solid var(--error);";
-  
+  modalContent.style.cssText =
+    "background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; border: 2px solid var(--error);";
+
   const heading = document.createElement("h3");
-  heading.style.cssText = "margin-bottom: 1rem; color: var(--error); display: flex; align-items: center; gap: 0.5rem;";
+  heading.style.cssText =
+    "margin-bottom: 1rem; color: var(--error); display: flex; align-items: center; gap: 0.5rem;";
   heading.textContent = "⚠️ Delete Account";
-  
+
   const warningDiv = document.createElement("div");
-  warningDiv.style.cssText = "margin-bottom: 1.5rem; color: var(--dark-text-secondary);";
-  
+  warningDiv.style.cssText =
+    "margin-bottom: 1.5rem; color: var(--dark-text-secondary);";
+
   const warning1 = document.createElement("p");
   const strong1 = document.createElement("strong");
   strong1.textContent = "This action cannot be undone!";
   warning1.appendChild(strong1);
-  
+
   const warning2 = document.createElement("p");
   warning2.textContent = "Deleting your account will permanently remove:";
-  
+
   const warningList = document.createElement("ul");
   warningList.style.cssText = "margin-left: 1rem; margin-top: 0.5rem;";
   const items = [
     "All training data and progress",
     "Workout history and achievements",
     "Team memberships and connections",
-    "Settings and preferences"
+    "Settings and preferences",
   ];
-  items.forEach(itemText => {
+  items.forEach((itemText) => {
     const li = document.createElement("li");
     li.textContent = itemText;
     warningList.appendChild(li);
   });
-  
+
   warningDiv.appendChild(warning1);
   warningDiv.appendChild(warning2);
   warningDiv.appendChild(warningList);
-  
+
   const inputDiv = document.createElement("div");
   inputDiv.style.cssText = "margin-bottom: 1.5rem;";
-  
+
   const label = document.createElement("label");
-  label.style.cssText = "display: block; margin-bottom: 0.5rem; font-weight: var(--font-weight-medium, 500);";
+  label.style.cssText =
+    "display: block; margin-bottom: 0.5rem; font-weight: var(--font-weight-medium, 500);";
   label.textContent = 'Type "DELETE" to confirm:';
-  
+
   const input = document.createElement("input");
   input.type = "text";
   input.id = "deleteConfirmation";
-  input.style.cssText = "width: 100%; padding: 0.75rem; border: 2px solid var(--error); border-radius: 6px; font-family: monospace;";
+  input.style.cssText =
+    "width: 100%; padding: 0.75rem; border: 2px solid var(--error); border-radius: 6px; font-family: monospace;";
   input.placeholder = "Type DELETE here";
   input.autocomplete = "off";
-  input.addEventListener("input", function() {
+  input.addEventListener("input", function () {
     if (typeof window.validateDeleteInput === "function") {
       window.validateDeleteInput(this);
     }
   });
-  
+
   inputDiv.appendChild(label);
   inputDiv.appendChild(input);
-  
+
   const buttonDiv = document.createElement("div");
-  buttonDiv.style.cssText = "display: flex; gap: 1rem; justify-content: flex-end;";
-  
+  buttonDiv.style.cssText =
+    "display: flex; gap: 1rem; justify-content: flex-end;";
+
   const cancelBtn = document.createElement("button");
-  cancelBtn.style.cssText = "padding: 0.75rem 1.5rem; border: 1px solid var(--dark-border); background: var(--dark-text-primary); border-radius: 6px; cursor: pointer;";
+  cancelBtn.style.cssText =
+    "padding: 0.75rem 1.5rem; border: 1px solid var(--dark-border); background: var(--dark-text-primary); border-radius: 6px; cursor: pointer;";
   cancelBtn.textContent = "Cancel";
   cancelBtn.addEventListener("click", () => modal.remove());
-  
+
   const deleteBtn = document.createElement("button");
   deleteBtn.id = "confirmDeleteBtn";
   deleteBtn.disabled = true;
-  deleteBtn.style.cssText = "padding: 0.75rem 1.5rem; background: var(--error); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: not-allowed; opacity: 0.5;";
+  deleteBtn.style.cssText =
+    "padding: 0.75rem 1.5rem; background: var(--error); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: not-allowed; opacity: 0.5;";
   deleteBtn.textContent = "Delete Account";
   deleteBtn.addEventListener("click", () => {
     if (typeof window.confirmAccountDeletion === "function") {
       window.confirmAccountDeletion();
     }
   });
-  
+
   buttonDiv.appendChild(cancelBtn);
   buttonDiv.appendChild(deleteBtn);
-  
+
   modalContent.appendChild(heading);
   modalContent.appendChild(warningDiv);
   modalContent.appendChild(inputDiv);

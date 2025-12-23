@@ -43,7 +43,7 @@ class TrainingApiService {
   /**
    * Fetch training sessions from backend API
    * By default, filters to sessions up to and including today
-   * 
+   *
    * @param {Object} options - Query options
    * @param {string} options.startDate - Optional start date filter
    * @param {string} options.endDate - Optional end date filter
@@ -55,7 +55,11 @@ class TrainingApiService {
   async getTrainingSessions(options = {}) {
     try {
       // Check cache first
-      if (this.cache && this.cacheTimestamp && Date.now() - this.cacheTimestamp < this.cacheTTL) {
+      if (
+        this.cache &&
+        this.cacheTimestamp &&
+        Date.now() - this.cacheTimestamp < this.cacheTTL
+      ) {
         logger.debug("Returning cached training sessions");
         return this.cache;
       }
@@ -67,23 +71,23 @@ class TrainingApiService {
       }
 
       const params = new URLSearchParams();
-      
+
       if (options.startDate) {
         params.append("startDate", options.startDate);
       }
-      
+
       if (options.endDate) {
         params.append("endDate", options.endDate);
       }
-      
+
       if (options.includeUpcoming) {
         params.append("includeUpcoming", "true");
       }
-      
+
       if (options.status) {
         params.append("status", options.status);
       }
-      
+
       if (options.limit) {
         params.append("limit", options.limit.toString());
       }
@@ -109,7 +113,7 @@ class TrainingApiService {
       }
 
       // Transform backend format to frontend format
-      const sessions = (result.data || []).map(session => ({
+      const sessions = (result.data || []).map((session) => ({
         id: session.id,
         date: session.session_date || session.date,
         type: session.session_type || session.type,
@@ -129,7 +133,7 @@ class TrainingApiService {
       return sessions;
     } catch (error) {
       logger.error("Error fetching training sessions from API:", error);
-      
+
       // Fallback to localStorage if API fails
       try {
         const { storageService } = await import("./storage-service-unified.js");
@@ -146,7 +150,7 @@ class TrainingApiService {
   /**
    * Get training statistics from backend API
    * Uses centralized endpoint for consistent calculations
-   * 
+   *
    * @param {Object} options - Query options
    * @param {string} options.startDate - Optional start date filter
    * @param {string} options.endDate - Optional end date filter
@@ -161,11 +165,11 @@ class TrainingApiService {
       }
 
       const params = new URLSearchParams();
-      
+
       if (options.startDate) {
         params.append("startDate", options.startDate);
       }
-      
+
       if (options.endDate) {
         params.append("endDate", options.endDate);
       }

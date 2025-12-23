@@ -1,4 +1,5 @@
 # OAuth Providers Setup Guide
+
 ## FlagFit Pro - Complete OAuth Configuration
 
 This guide will walk you through setting up **Google**, **Facebook**, and **Apple** OAuth authentication for your FlagFit Pro application.
@@ -218,14 +219,17 @@ Login Page → Click OAuth Button → Select Role → Provider Login Page
 ### Troubleshooting
 
 #### Error: "Redirect URI mismatch"
+
 - ✅ Check that you added the correct redirect URI in the provider settings
 - ✅ Make sure the URI exactly matches (no trailing slashes)
 
 #### Error: "App not verified"
+
 - ✅ For Google: Complete OAuth consent screen verification (or add test users)
 - ✅ For Facebook: Make sure app is set to "Live" mode
 
 #### Error: "Invalid client"
+
 - ✅ Check that Client ID/Secret are correctly copied in Supabase
 - ✅ No extra spaces or line breaks
 
@@ -238,6 +242,7 @@ Login Page → Click OAuth Button → Select Role → Provider Login Page
 When deploying to production:
 
 1. **Update redirect URIs** to your production domain:
+
    ```
    https://yourdomain.com/auth/callback
    ```
@@ -263,11 +268,11 @@ VITE_APPLE_SERVICE_ID=your_apple_service_id
 
 ## 📊 Quick Reference
 
-| Provider | Setup Time | Difficulty | Requirements |
-|----------|-----------|------------|--------------|
-| Google   | ~15 mins  | ⭐ Easy    | Google account |
-| Facebook | ~20 mins  | ⭐⭐ Medium | Facebook account |
-| Apple    | ~30 mins  | ⭐⭐⭐ Hard | Apple Developer ($99/year) |
+| Provider | Setup Time | Difficulty  | Requirements               |
+| -------- | ---------- | ----------- | -------------------------- |
+| Google   | ~15 mins   | ⭐ Easy     | Google account             |
+| Facebook | ~20 mins   | ⭐⭐ Medium | Facebook account           |
+| Apple    | ~30 mins   | ⭐⭐⭐ Hard | Apple Developer ($99/year) |
 
 ---
 

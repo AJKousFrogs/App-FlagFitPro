@@ -3,9 +3,11 @@
 ## ✅ Successfully Applied Migrations
 
 ### Migration 039 - Chatbot Role-Aware System
+
 **Status:** ✅ Applied to Supabase database
 
 **Changes:**
+
 - Added `team_type`, `region`, and `country_code` columns to `teams` table
 - Created `chatbot_user_context` table for user personalization
 - Created database functions:
@@ -13,6 +15,7 @@
   - `update_chatbot_query_stats(user_id, topic)` - Updates usage statistics
 
 **Application Code Status:**
+
 - ✅ `netlify/functions/user-context.cjs` - Uses `get_or_create_chatbot_context()` function
 - ✅ `netlify/functions/update-chatbot-stats.cjs` - Uses `update_chatbot_query_stats()` function
 - ✅ `src/js/components/chatbot.js` - Calls update stats API after queries
@@ -20,7 +23,9 @@
 - ✅ `src/js/services/personalization-service.js` - Uses user context data
 
 ### Migration 040 - Knowledge Base Governance
+
 **Status:** ⏸️ Skipped (knowledge_base_entries table doesn't exist yet)
+
 - Will automatically apply when knowledge base table is created
 
 ---
@@ -28,13 +33,17 @@
 ## 📋 Database Schema Updates
 
 ### Teams Table
+
 New columns available:
+
 - `team_type` - VARCHAR(20) - 'domestic' or 'international' (default: 'domestic')
 - `region` - VARCHAR(100) - Geographic region or country
 - `country_code` - VARCHAR(3) - ISO 3166-1 alpha-3 country code (e.g., 'USA', 'CAN', 'GBR')
 
 ### Chatbot User Context Table
+
 New table with columns:
+
 - `user_id` - UUID (references users.id)
 - `user_role` - VARCHAR(20) - 'player', 'coach', or 'admin'
 - `primary_team_id` - UUID (references teams.id)
@@ -50,9 +59,11 @@ New table with columns:
 ## 🔧 API Endpoints
 
 ### GET `/netlify/functions/user-context`
+
 Returns user context for chatbot personalization.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -80,9 +91,11 @@ Returns user context for chatbot personalization.
 ```
 
 ### POST `/netlify/functions/update-chatbot-stats`
+
 Updates chatbot usage statistics.
 
 **Request Body:**
+
 ```json
 {
   "topic": "nutrition|recovery|training|injuries|psychology|general"
@@ -90,6 +103,7 @@ Updates chatbot usage statistics.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -109,14 +123,12 @@ When creating teams, include the new fields:
 
 ```javascript
 // Example: Creating a team via Supabase
-const { data, error } = await supabase
-  .from('teams')
-  .insert({
-    name: 'International Champions',
-    team_type: 'international', // 'domestic' or 'international'
-    region: 'North America',
-    country_code: 'USA' // ISO 3166-1 alpha-3 code
-  });
+const { data, error } = await supabase.from("teams").insert({
+  name: "International Champions",
+  team_type: "international", // 'domestic' or 'international'
+  region: "North America",
+  country_code: "USA", // ISO 3166-1 alpha-3 code
+});
 ```
 
 ### Updating Team Type
@@ -124,31 +136,31 @@ const { data, error } = await supabase
 ```javascript
 // Update team to international
 const { data, error } = await supabase
-  .from('teams')
+  .from("teams")
   .update({
-    team_type: 'international',
-    region: 'Europe',
-    country_code: 'GBR'
+    team_type: "international",
+    region: "Europe",
+    country_code: "GBR",
   })
-  .eq('id', teamId);
+  .eq("id", teamId);
 ```
 
 ### Getting User Context
 
 ```javascript
 // Frontend: Get user context for chatbot
-const response = await fetch('/.netlify/functions/user-context', {
+const response = await fetch("/.netlify/functions/user-context", {
   headers: {
-    'Authorization': `Bearer ${authToken}`,
-    'Content-Type': 'application/json'
-  }
+    Authorization: `Bearer ${authToken}`,
+    "Content-Type": "application/json",
+  },
 });
 
 const result = await response.json();
 const context = result.data;
 
 // Use context in chatbot
-if (context.teamType === 'international') {
+if (context.teamType === "international") {
   // Show international-specific content
 }
 ```
@@ -157,15 +169,15 @@ if (context.teamType === 'international') {
 
 ```javascript
 // After a chatbot query
-await fetch('/.netlify/functions/update-chatbot-stats', {
-  method: 'POST',
+await fetch("/.netlify/functions/update-chatbot-stats", {
+  method: "POST",
   headers: {
-    'Authorization': `Bearer ${authToken}`,
-    'Content-Type': 'application/json'
+    Authorization: `Bearer ${authToken}`,
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    topic: 'nutrition' // or 'recovery', 'training', etc.
-  })
+    topic: "nutrition", // or 'recovery', 'training', etc.
+  }),
 });
 ```
 
@@ -199,11 +211,12 @@ await fetch('/.netlify/functions/update-chatbot-stats', {
 To verify everything is working:
 
 1. **Check Database:**
+
    ```sql
    -- Verify teams table has new columns
-   SELECT column_name, data_type 
-   FROM information_schema.columns 
-   WHERE table_name = 'teams' 
+   SELECT column_name, data_type
+   FROM information_schema.columns
+   WHERE table_name = 'teams'
    AND column_name IN ('team_type', 'region', 'country_code');
 
    -- Verify chatbot_user_context table exists
@@ -247,4 +260,3 @@ To verify everything is working:
 **Last Updated:** 2025-01-08
 **Database:** Supabase (pvziciccwxgftcielknm)
 **Status:** ✅ Migrations Applied, Code Integrated
-

@@ -7,6 +7,7 @@ If you're seeing repeated `TypeError: Failed to fetch` errors in your browser co
 ## 🔍 Root Cause
 
 The errors are caused by:
+
 1. **Missing Resources**: The service worker was trying to cache resources that don't exist
 2. **Poor Error Handling**: The old service worker didn't handle fetch failures gracefully
 3. **Cache Conflicts**: Old cached data conflicting with new service worker
@@ -14,18 +15,21 @@ The errors are caused by:
 ## ✅ Solution Implemented
 
 ### 1. Updated Service Worker (`public/sw.js`)
+
 - **Better Error Handling**: Graceful handling of missing resources
 - **Network-First Strategy**: Prioritizes network requests over cache
 - **Smart Caching**: Only caches resources that actually exist
 - **Fallback Responses**: Returns proper error responses instead of throwing
 
 ### 2. Service Worker Manager (`src/utils/serviceWorkerManager.js`)
+
 - **Auto-Registration**: Automatically registers the service worker
 - **Cleanup**: Unregisters old service workers and clears old caches
 - **Update Management**: Handles service worker updates properly
 - **Debugging**: Provides detailed logging and status information
 
 ### 3. Offline Page (`public/offline.html`)
+
 - **Graceful Degradation**: Shows a proper offline page when network fails
 - **Connection Monitoring**: Automatically detects when connection is restored
 - **User-Friendly**: Clear messaging and retry functionality
@@ -33,6 +37,7 @@ The errors are caused by:
 ## 🛠️ Manual Fix Steps
 
 ### Step 1: Clear Browser Data
+
 1. Open Chrome DevTools (F12)
 2. Go to **Application** tab
 3. In the left sidebar, click **Storage**
@@ -40,12 +45,14 @@ The errors are caused by:
 5. Refresh the page
 
 ### Step 2: Unregister Service Workers
+
 1. In DevTools, go to **Application** tab
 2. Click **Service Workers** in the left sidebar
 3. Click **Unregister** for any existing service workers
 4. Refresh the page
 
 ### Step 3: Clear Cache
+
 1. In DevTools, go to **Application** tab
 2. Click **Storage** in the left sidebar
 3. Expand **Cache Storage**
@@ -58,16 +65,16 @@ Run these commands in your browser console to manually clear everything:
 
 ```javascript
 // Unregister all service workers
-navigator.serviceWorker.getRegistrations().then(registrations => {
-  registrations.forEach(registration => registration.unregister());
-  console.log('Service workers unregistered');
+navigator.serviceWorker.getRegistrations().then((registrations) => {
+  registrations.forEach((registration) => registration.unregister());
+  console.log("Service workers unregistered");
 });
 
 // Clear all caches
-caches.keys().then(cacheNames => {
-  cacheNames.forEach(cacheName => {
+caches.keys().then((cacheNames) => {
+  cacheNames.forEach((cacheName) => {
     caches.delete(cacheName);
-    console.log('Cache deleted:', cacheName);
+    console.log("Cache deleted:", cacheName);
   });
 });
 
@@ -98,6 +105,7 @@ After applying the fix, verify it worked:
 ## 🔍 Debug Information
 
 ### Service Worker Status
+
 Check the service worker status in the browser console:
 
 ```javascript
@@ -106,6 +114,7 @@ console.log(serviceWorkerManager.getInfo());
 ```
 
 ### Expected Output
+
 ```javascript
 {
   supported: true,
@@ -120,42 +129,49 @@ console.log(serviceWorkerManager.getInfo());
 ## 🐛 Common Issues
 
 ### Issue 1: Service Worker Not Registering
+
 **Symptoms**: No service worker in Application tab
 **Solution**: Check browser console for registration errors
 
 ### Issue 2: Cache Not Clearing
+
 **Symptoms**: Old cached data still showing
 **Solution**: Use "Empty Cache and Hard Reload" (right-click refresh button)
 
 ### Issue 3: Offline Page Not Working
+
 **Symptoms**: Blank page when offline
 **Solution**: Verify `public/offline.html` exists and is accessible
 
 ### Issue 4: Development vs Production
+
 **Symptoms**: Works in dev but not in production
 **Solution**: Ensure service worker is served from root path in production
 
 ## 🔧 Development Tips
 
 ### 1. Disable Service Worker During Development
+
 Add this to your browser console to disable service worker temporarily:
 
 ```javascript
 // Disable service worker
-navigator.serviceWorker.getRegistrations().then(registrations => {
-  registrations.forEach(registration => registration.unregister());
+navigator.serviceWorker.getRegistrations().then((registrations) => {
+  registrations.forEach((registration) => registration.unregister());
 });
 ```
 
 ### 2. Enable Service Worker Logging
+
 Add this to see detailed service worker logs:
 
 ```javascript
 // Enable detailed logging
-localStorage.setItem('sw-debug', 'true');
+localStorage.setItem("sw-debug", "true");
 ```
 
 ### 3. Test Offline Functionality
+
 1. Open DevTools
 2. Go to Network tab
 3. Check "Offline" checkbox
@@ -165,10 +181,12 @@ localStorage.setItem('sw-debug', 'true');
 ## 📱 Mobile Testing
 
 ### iOS Safari
+
 - Service workers are supported in iOS 11.3+
 - May need to manually clear website data in Settings
 
 ### Android Chrome
+
 - Service workers work well
 - Use Chrome DevTools remote debugging
 
@@ -205,4 +223,4 @@ To prevent future issues:
 
 **Last Updated**: January 2025  
 **Status**: ✅ Resolved  
-**Version**: 2.0.0 
+**Version**: 2.0.0

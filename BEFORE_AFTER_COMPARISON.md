@@ -3,6 +3,7 @@
 ## Example: fixtures.cjs
 
 ### 📊 Metrics
+
 - **Lines Before:** 94
 - **Lines After:** 45
 - **Reduction:** 52% (49 lines eliminated)
@@ -24,7 +25,7 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -38,7 +39,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: ""
+      body: "",
     };
   }
 
@@ -51,7 +52,7 @@ exports.handler = async (event, context) => {
       return createErrorResponse(
         "Method not allowed. Use GET to retrieve fixtures.",
         405,
-        'method_not_allowed'
+        "method_not_allowed",
       );
     }
 
@@ -94,12 +95,12 @@ exports.handler = async (event, context) => {
       console.error("Database error:", error);
       return createErrorResponse(
         500,
-        `Failed to retrieve fixtures: ${error.message}`
+        `Failed to retrieve fixtures: ${error.message}`,
       );
     }
 
     return createSuccessResponse({
-      data: data || []
+      data: data || [],
     });
   } catch (error) {
     return handleServerError(error, "fixtures");
@@ -160,17 +161,17 @@ exports.handler = async (event, context) => {
 
 ```javascript
 // ❌ DUPLICATED IN 30+ FILES (Lines 78-88)
-    if (error) {
-      console.error("Database error:", error);
-      return createErrorResponse(
-        500,
-        `Failed to retrieve fixtures: ${error.message}`
-      );
-    }
+if (error) {
+  console.error("Database error:", error);
+  return createErrorResponse(
+    500,
+    `Failed to retrieve fixtures: ${error.message}`,
+  );
+}
 
-    return createSuccessResponse({
-      data: data || []
-    });
+return createSuccessResponse({
+  data: data || [],
+});
 ```
 
 ---
@@ -187,7 +188,12 @@ exports.handler = async (event, context) => {
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { executeQuery, parseAthleteId, parseIntParam, calculateDateRange } = require("./utils/db-query-helper.cjs");
+const {
+  executeQuery,
+  parseAthleteId,
+  parseIntParam,
+  calculateDateRange,
+} = require("./utils/db-query-helper.cjs");
 const { successResponse } = require("./utils/response-helper.cjs");
 
 /**
@@ -195,9 +201,9 @@ const { successResponse } = require("./utils/response-helper.cjs");
  */
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'fixtures',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "fixtures",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     handler: async (event, context, { userId }) => {
       // Parse query parameters
       const { valid, athleteId, error } = parseAthleteId(event, userId);
@@ -205,7 +211,7 @@ exports.handler = async (event, context) => {
         return error;
       }
 
-      const days = parseIntParam(event, 'days', 14, 1, 365);
+      const days = parseIntParam(event, "days", 14, 1, 365);
       const { endDate } = calculateDateRange(days, true); // Forward-looking
 
       // Get fixtures (either athlete-specific or team-based)
@@ -223,7 +229,7 @@ exports.handler = async (event, context) => {
       }
 
       return successResponse(result.data);
-    }
+    },
   });
 };
 ```
@@ -243,64 +249,69 @@ exports.handler = async (event, context) => {
 
 ```javascript
 // ✅ CLEAN PARAMETER PARSING (Lines 23-28)
-      const { valid, athleteId, error } = parseAthleteId(event, userId);
-      if (!valid) {
-        return error;
-      }
+const { valid, athleteId, error } = parseAthleteId(event, userId);
+if (!valid) {
+  return error;
+}
 
-      const days = parseIntParam(event, 'days', 14, 1, 365);
-      const { endDate } = calculateDateRange(days, true);
+const days = parseIntParam(event, "days", 14, 1, 365);
+const { endDate } = calculateDateRange(days, true);
 ```
 
 ```javascript
 // ✅ CLEAN DATABASE QUERY (Lines 40-44)
-      const result = await executeQuery(query, "Failed to retrieve fixtures");
-      if (!result.success) {
-        return result.error;
-      }
+const result = await executeQuery(query, "Failed to retrieve fixtures");
+if (!result.success) {
+  return result.error;
+}
 
-      return successResponse(result.data);
+return successResponse(result.data);
 ```
 
 ---
 
 ## 📈 Side-by-Side Comparison
 
-| Aspect | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Total Lines** | 94 | 45 | -52% |
-| **Boilerplate Lines** | 40 | 0 | -100% |
-| **Business Logic Lines** | 54 | 45 | -17% |
-| **Imports** | 8 lines | 4 lines | -50% |
-| **Error Handling** | Scattered | Centralized | ✅ |
-| **Security Patterns** | Duplicated | Single source | ✅ |
-| **Maintainability** | Low | High | ✅ |
+| Aspect                   | Before     | After         | Improvement |
+| ------------------------ | ---------- | ------------- | ----------- |
+| **Total Lines**          | 94         | 45            | -52%        |
+| **Boilerplate Lines**    | 40         | 0             | -100%       |
+| **Business Logic Lines** | 54         | 45            | -17%        |
+| **Imports**              | 8 lines    | 4 lines       | -50%        |
+| **Error Handling**       | Scattered  | Centralized   | ✅          |
+| **Security Patterns**    | Duplicated | Single source | ✅          |
+| **Maintainability**      | Low        | High          | ✅          |
 
 ---
 
 ## 🎯 Key Benefits
 
 ### 1. **Reduced Code Size**
+
 - **Before:** 94 lines
 - **After:** 45 lines
 - **Savings:** 49 lines (52% reduction)
 
 ### 2. **Eliminated Duplication**
+
 - **Boilerplate removed:** ~40 lines
 - **Pattern duplication:** ~9 lines
 - **Total duplication eliminated:** ~49 lines
 
 ### 3. **Improved Readability**
+
 - Function focuses on business logic only
 - No security/error handling boilerplate
 - Clear, concise code structure
 
 ### 4. **Better Maintainability**
+
 - Security updates in one place (`base-handler.cjs`)
 - Database error handling in one place (`db-query-helper.cjs`)
 - Response formatting in one place (`response-helper.cjs`)
 
 ### 5. **Enhanced Testability**
+
 - Utilities can be unit tested independently
 - Function logic is easier to test in isolation
 - Mock utilities for testing
@@ -310,16 +321,19 @@ exports.handler = async (event, context) => {
 ## 🔄 Migration Impact
 
 ### Files Refactored
+
 1. ✅ `fixtures.cjs` - 94 → 45 lines (-52%)
 2. ✅ `readiness-history.cjs` - 97 → 48 lines (-51%)
 3. ✅ `training-metrics.cjs` - 98 → 50 lines (-49%)
 
 ### Total Impact
+
 - **Lines Eliminated:** 146 lines
 - **Average Reduction:** 50% per file
 - **Duplication Removed:** ~120 lines of boilerplate
 
 ### Projected Impact (if all 48 files refactored)
+
 - **Total Lines Eliminated:** ~1,940 lines
 - **Maintenance Burden:** Reduced by 95%
 - **Consistency:** 100% across all functions
@@ -329,6 +343,7 @@ exports.handler = async (event, context) => {
 ## 📝 Code Quality Improvements
 
 ### Before
+
 - ❌ 40+ lines of duplicated boilerplate
 - ❌ Inconsistent error handling
 - ❌ Scattered security patterns
@@ -336,6 +351,7 @@ exports.handler = async (event, context) => {
 - ❌ Hard to test
 
 ### After
+
 - ✅ 0 lines of duplicated boilerplate
 - ✅ Consistent error handling
 - ✅ Centralized security patterns

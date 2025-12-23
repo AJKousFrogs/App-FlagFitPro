@@ -4,23 +4,24 @@
  * Supports both main footer and landing page footer variants
  */
 
-import { BaseComponentLoader } from './base-component-loader.js';
-import { onDOMReady } from '../utils/dom-ready.js';
-import { logger } from '../../logger.js';
+import { BaseComponentLoader } from "./base-component-loader.js";
+import { onDOMReady } from "../utils/dom-ready.js";
+import { logger } from "../../logger.js";
 
 class FooterLoader extends BaseComponentLoader {
   constructor() {
     const footerType = FooterLoader.detectFooterType();
-    const footerFile = footerType === 'landing'
-      ? './src/components/organisms/footer-landing.html'
-      : './src/components/organisms/footer-unified.html';
+    const footerFile =
+      footerType === "landing"
+        ? "./src/components/organisms/footer-landing.html"
+        : "./src/components/organisms/footer-unified.html";
 
     super({
-      containerSelector: '[data-footer-container]',
+      containerSelector: "[data-footer-container]",
       componentPath: footerFile,
-      componentName: 'Footer',
+      componentName: "Footer",
       createContainer: FooterLoader.createContainer,
-      autoInit: false // We'll handle initialization manually
+      autoInit: false, // We'll handle initialization manually
     });
 
     this.footerType = footerType;
@@ -32,20 +33,20 @@ class FooterLoader extends BaseComponentLoader {
    */
   static detectFooterType() {
     const path = window.location.pathname;
-    const page = path.split('/').pop().replace('.html', '') || 'index';
+    const page = path.split("/").pop().replace(".html", "") || "index";
 
     // Landing pages use the enhanced footer
-    const landingPages = ['index', 'login', 'register', 'reset-password'];
+    const landingPages = ["index", "login", "register", "reset-password"];
 
-    return landingPages.includes(page) ? 'landing' : 'main';
+    return landingPages.includes(page) ? "landing" : "main";
   }
 
   /**
    * Create footer container if it doesn't exist
    */
   static createContainer() {
-    const container = document.createElement('div');
-    container.setAttribute('data-footer-container', '');
+    const container = document.createElement("div");
+    container.setAttribute("data-footer-container", "");
     document.body.appendChild(container);
     return container;
   }
@@ -55,7 +56,9 @@ class FooterLoader extends BaseComponentLoader {
    */
   afterLoad() {
     super.afterLoad();
-    logger.info(`[Footer Loader] Footer loaded successfully (${this.footerType})`);
+    logger.info(
+      `[Footer Loader] Footer loaded successfully (${this.footerType})`,
+    );
   }
 }
 

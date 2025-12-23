@@ -1,4 +1,5 @@
 # Compliance & Audit Readiness
+
 ## FlagFit Pro - Security Compliance Documentation
 
 **Version**: 1.0
@@ -30,19 +31,20 @@
 
 **Article 6(1)(b)**: Processing necessary for contract performance
 
-| Data Type | Purpose | Retention | Legal Basis |
-|-----------|---------|-----------|-------------|
-| Email | Authentication, account recovery | Until account deletion | Contract |
-| Name | Personalization, communication | Until account deletion | Contract |
-| Role | Access control, feature enablement | Until account deletion | Contract |
-| Training data | Performance tracking, recommendations | Until account deletion | Contract |
-| OAuth provider | Third-party authentication | Until account deletion | Consent |
+| Data Type      | Purpose                               | Retention              | Legal Basis |
+| -------------- | ------------------------------------- | ---------------------- | ----------- |
+| Email          | Authentication, account recovery      | Until account deletion | Contract    |
+| Name           | Personalization, communication        | Until account deletion | Contract    |
+| Role           | Access control, feature enablement    | Until account deletion | Contract    |
+| Training data  | Performance tracking, recommendations | Until account deletion | Contract    |
+| OAuth provider | Third-party authentication            | Until account deletion | Consent     |
 
 ### Data Minimization (Article 5(1)(c))
 
 **Principle**: Collect only data necessary for stated purposes.
 
 **Implementation**:
+
 ```javascript
 // user_metadata (Supabase Auth)
 {
@@ -59,6 +61,7 @@
 ```
 
 **Audit Assertion**:
+
 > We collect only email, name, and role for authentication and service delivery. No excess personal information is stored in authentication records.
 
 ### Right to Access (Article 15)
@@ -68,6 +71,7 @@
 **Location**: Settings → Privacy → Download My Data
 
 **Code Reference**:
+
 ```javascript
 // src/services/data-export.js
 async function exportUserData(userId) {
@@ -76,7 +80,7 @@ async function exportUserData(userId) {
     training_sessions: await getTrainingSessions(userId),
     performance_metrics: await getPerformanceMetrics(userId),
     exported_at: new Date().toISOString(),
-    format: 'JSON'
+    format: "JSON",
   };
 
   return JSON.stringify(data, null, 2);
@@ -84,6 +88,7 @@ async function exportUserData(userId) {
 ```
 
 **Audit Assertion**:
+
 > Users can export all personal data via self-service portal. Export includes all collected data in machine-readable format (JSON).
 
 ### Right to Erasure (Article 17)
@@ -91,11 +96,13 @@ async function exportUserData(userId) {
 **Implementation**: Account deletion with data cascade
 
 **Flow**:
+
 ```
 User → Settings → Delete Account → Confirmation Dialog → Immediate Deletion
 ```
 
 **Data Cascade**:
+
 ```sql
 -- All related data deleted via CASCADE constraints
 ALTER TABLE training_sessions
@@ -107,11 +114,13 @@ ON DELETE CASCADE;
 **Code Reference**: `supabase/migrations/001_role_enforcement.sql` (lines for cascade rules)
 
 **Audit Assertion**:
+
 > User account deletion triggers immediate deletion of all personal data via database cascade rules. Auth records and related data are permanently removed within 24 hours.
 
 ### Data Breach Notification (Article 33)
 
 **Procedure**:
+
 1. **Detection**: Automated alerts + security monitoring
 2. **Assessment**: Within 1 hour (severity classification)
 3. **Containment**: Within 4 hours (disable affected systems)
@@ -123,11 +132,13 @@ ON DELETE CASCADE;
 ### Consent Management
 
 **OAuth Consent**:
+
 - ✅ Clear explanation of data collection
 - ✅ Granular consent (can choose providers)
 - ✅ Withdrawal mechanism (disconnect OAuth in Settings)
 
 **Email Marketing** (if implemented):
+
 - ✅ Opt-in only (no pre-checked boxes)
 - ✅ Easy unsubscribe link in every email
 - ✅ Separate consent from service emails
@@ -136,19 +147,20 @@ ON DELETE CASCADE;
 
 **Third-Party Processors**:
 
-| Processor | Service | Data Processed | DPA Status |
-|-----------|---------|----------------|------------|
-| Supabase | Auth, Database | Email, name, role, training data | ✅ Signed |
-| Netlify | Hosting, Edge Functions | IP addresses, logs | ✅ Signed |
-| Google | OAuth provider | Email, name | ✅ Via Google ToS |
-| Facebook | OAuth provider | Email, name, profile photo | ✅ Via Facebook ToS |
-| Apple | OAuth provider | Email, name (optional) | ✅ Via Apple ToS |
+| Processor | Service                 | Data Processed                   | DPA Status          |
+| --------- | ----------------------- | -------------------------------- | ------------------- |
+| Supabase  | Auth, Database          | Email, name, role, training data | ✅ Signed           |
+| Netlify   | Hosting, Edge Functions | IP addresses, logs               | ✅ Signed           |
+| Google    | OAuth provider          | Email, name                      | ✅ Via Google ToS   |
+| Facebook  | OAuth provider          | Email, name, profile photo       | ✅ Via Facebook ToS |
+| Apple     | OAuth provider          | Email, name (optional)           | ✅ Via Apple ToS    |
 
 ### Privacy Policy
 
 **Location**: https://yoursite.com/privacy-policy
 
 **Required Disclosures**:
+
 - ✅ Data collected and purpose
 - ✅ Legal basis for processing
 - ✅ Third-party processors
@@ -159,6 +171,7 @@ ON DELETE CASCADE;
 - ✅ Changes to policy notification
 
 **Audit Assertion**:
+
 > Privacy Policy is publicly accessible, written in clear language, and updated to reflect current data practices. Last updated: [Date]
 
 ---
@@ -167,18 +180,18 @@ ON DELETE CASCADE;
 
 ### OWASP Top 10 2021 - Mitigation Status
 
-| Risk | Severity | Status | Mitigation | Evidence |
-|------|----------|--------|------------|----------|
-| **A01: Broken Access Control** | Critical | ✅ Mitigated | RLS policies, role enforcement trigger | `supabase/migrations/001_role_enforcement.sql` |
-| **A02: Cryptographic Failures** | High | ✅ Mitigated | AES-GCM encryption, TLS 1.2+, bcrypt | `src/secure-storage.js` |
-| **A03: Injection** | High | ✅ Mitigated | Parameterized queries, input validation | All Supabase queries use `.eq()`, `.select()` |
-| **A04: Insecure Design** | High | ⚠️ Partial | Role enforcement implemented, penetration test pending | Migration deployed |
-| **A05: Security Misconfiguration** | Medium | ✅ Mitigated | CSP headers, HTTPS enforcement, security headers | `netlify.toml` |
-| **A06: Vulnerable Components** | Medium | 🔄 Ongoing | `npm audit`, Dependabot, quarterly reviews | CI/CD pipeline |
-| **A07: Authentication Failures** | High | ✅ Mitigated | Supabase Auth, rate limiting, MFA-ready | `AUTHENTICATION.md` |
-| **A08: Software & Data Integrity** | Medium | ✅ Mitigated | SRI hashes, signed JWTs, immutable logs | CDN scripts have integrity hashes |
-| **A09: Security Logging** | Low | ✅ Implemented | Audit logs, correlation IDs, non-PII logging | `SESSION_AND_SECURITY.md#audit-logging` |
-| **A10: SSRF** | Low | N/A | No server-side requests to user-controlled URLs | Not applicable |
+| Risk                               | Severity | Status         | Mitigation                                             | Evidence                                       |
+| ---------------------------------- | -------- | -------------- | ------------------------------------------------------ | ---------------------------------------------- |
+| **A01: Broken Access Control**     | Critical | ✅ Mitigated   | RLS policies, role enforcement trigger                 | `supabase/migrations/001_role_enforcement.sql` |
+| **A02: Cryptographic Failures**    | High     | ✅ Mitigated   | AES-GCM encryption, TLS 1.2+, bcrypt                   | `src/secure-storage.js`                        |
+| **A03: Injection**                 | High     | ✅ Mitigated   | Parameterized queries, input validation                | All Supabase queries use `.eq()`, `.select()`  |
+| **A04: Insecure Design**           | High     | ⚠️ Partial     | Role enforcement implemented, penetration test pending | Migration deployed                             |
+| **A05: Security Misconfiguration** | Medium   | ✅ Mitigated   | CSP headers, HTTPS enforcement, security headers       | `netlify.toml`                                 |
+| **A06: Vulnerable Components**     | Medium   | 🔄 Ongoing     | `npm audit`, Dependabot, quarterly reviews             | CI/CD pipeline                                 |
+| **A07: Authentication Failures**   | High     | ✅ Mitigated   | Supabase Auth, rate limiting, MFA-ready                | `AUTHENTICATION.md`                            |
+| **A08: Software & Data Integrity** | Medium   | ✅ Mitigated   | SRI hashes, signed JWTs, immutable logs                | CDN scripts have integrity hashes              |
+| **A09: Security Logging**          | Low      | ✅ Implemented | Audit logs, correlation IDs, non-PII logging           | `SESSION_AND_SECURITY.md#audit-logging`        |
+| **A10: SSRF**                      | Low      | N/A            | No server-side requests to user-controlled URLs        | Not applicable                                 |
 
 ### Critical Findings Addressed
 
@@ -211,29 +224,29 @@ ON DELETE CASCADE;
 
 **Security (CC6)**:
 
-| Control | Description | Implementation | Evidence |
-|---------|-------------|----------------|----------|
-| CC6.1 | Logical access controls | Role-based access, RLS policies | Migration script |
-| CC6.2 | Authentication mechanisms | Supabase Auth, MFA-ready | `AUTHENTICATION.md` |
-| CC6.3 | Authorization | RLS policies, role enforcement | SQL migration |
-| CC6.6 | Encryption at rest | AES-256 (Supabase), AES-GCM (client) | `SESSION_AND_SECURITY.md` |
-| CC6.7 | Encryption in transit | TLS 1.2+, HSTS headers | `netlify.toml` |
-| CC6.8 | Vulnerability management | npm audit, Dependabot, quarterly scans | CI/CD logs |
+| Control | Description               | Implementation                         | Evidence                  |
+| ------- | ------------------------- | -------------------------------------- | ------------------------- |
+| CC6.1   | Logical access controls   | Role-based access, RLS policies        | Migration script          |
+| CC6.2   | Authentication mechanisms | Supabase Auth, MFA-ready               | `AUTHENTICATION.md`       |
+| CC6.3   | Authorization             | RLS policies, role enforcement         | SQL migration             |
+| CC6.6   | Encryption at rest        | AES-256 (Supabase), AES-GCM (client)   | `SESSION_AND_SECURITY.md` |
+| CC6.7   | Encryption in transit     | TLS 1.2+, HSTS headers                 | `netlify.toml`            |
+| CC6.8   | Vulnerability management  | npm audit, Dependabot, quarterly scans | CI/CD logs                |
 
 **Availability (A1)**:
 
-| Control | Description | Implementation | Evidence |
-|---------|-------------|----------------|----------|
-| A1.1 | System monitoring | Uptime monitoring, error tracking | Sentry, Netlify Analytics |
-| A1.2 | Incident response | Documented playbook, on-call rotation | `SESSION_AND_SECURITY.md#incident-response` |
-| A1.3 | Backup and recovery | Automated Supabase backups (daily) | Supabase dashboard |
+| Control | Description         | Implementation                        | Evidence                                    |
+| ------- | ------------------- | ------------------------------------- | ------------------------------------------- |
+| A1.1    | System monitoring   | Uptime monitoring, error tracking     | Sentry, Netlify Analytics                   |
+| A1.2    | Incident response   | Documented playbook, on-call rotation | `SESSION_AND_SECURITY.md#incident-response` |
+| A1.3    | Backup and recovery | Automated Supabase backups (daily)    | Supabase dashboard                          |
 
 **Confidentiality (C1)**:
 
-| Control | Description | Implementation | Evidence |
-|---------|-------------|----------------|----------|
-| C1.1 | Data classification | Sensitive data marked, encrypted | `secure-storage.js` |
-| C1.2 | Access restrictions | RLS policies, authentication required | SQL migration |
+| Control | Description         | Implementation                        | Evidence            |
+| ------- | ------------------- | ------------------------------------- | ------------------- |
+| C1.1    | Data classification | Sensitive data marked, encrypted      | `secure-storage.js` |
+| C1.2    | Access restrictions | RLS policies, authentication required | SQL migration       |
 
 ---
 
@@ -244,6 +257,7 @@ ON DELETE CASCADE;
 ✅ **Assertion 1**: Passwords are never logged or stored in plaintext.
 
 **Evidence**:
+
 - Supabase Auth uses bcrypt hashing
 - Frontend validation never logs passwords
 - Code search confirms no `console.log(password)`
@@ -255,6 +269,7 @@ ON DELETE CASCADE;
 ✅ **Assertion 2**: Tokens are never logged or exposed in URLs.
 
 **Evidence**:
+
 - Tokens only in Authorization header
 - No token query parameters
 - Code search confirms no `console.log(token)`
@@ -266,6 +281,7 @@ ON DELETE CASCADE;
 ✅ **Assertion 3**: Email verification is required for all roles (including admins).
 
 **Evidence**:
+
 - Supabase Auth enforces email verification before `email_confirmed_at` is set
 - Login blocked if `email_verified === false`
 
@@ -276,6 +292,7 @@ ON DELETE CASCADE;
 ✅ **Assertion 4**: Auth errors are sanitized (no stack traces to users).
 
 **Evidence**:
+
 - Try-catch blocks return generic error messages
 - Stack traces logged server-side only
 
@@ -286,6 +303,7 @@ ON DELETE CASCADE;
 ⚠️ **Assertion 5**: Role assignments are validated server-side.
 
 **Evidence**:
+
 - ✅ Database trigger enforces role whitelist (implemented)
 - ⚠️ Pending: Penetration test to verify
 
@@ -300,6 +318,7 @@ ON DELETE CASCADE;
 ### Access Controls
 
 **Implemented**:
+
 - ✅ Authentication required for all protected routes
 - ✅ Role-based access control (RBAC)
 - ✅ Row Level Security (RLS) on all user tables
@@ -311,11 +330,13 @@ ON DELETE CASCADE;
 ### Data Protection
 
 **At Rest**:
+
 - ✅ Database encryption: AES-256 (Supabase)
 - ✅ Client storage encryption: AES-GCM-256 (secure-storage.js)
 - ✅ Backup encryption: Automatic (Supabase)
 
 **In Transit**:
+
 - ✅ TLS 1.2+ enforced
 - ✅ HSTS headers (max-age=31536000)
 - ✅ WSS for WebSocket connections
@@ -325,11 +346,13 @@ ON DELETE CASCADE;
 ### Input Validation
 
 **Client-Side**:
+
 - ✅ Email format validation (RFC 5322)
 - ✅ Password complexity validation
 - ✅ XSS prevention (HTML escaping)
 
 **Server-Side**:
+
 - ✅ Parameterized queries (SQL injection prevention)
 - ✅ Whitelist validation (categories, roles)
 - ✅ Input length limits
@@ -339,11 +362,13 @@ ON DELETE CASCADE;
 ### Rate Limiting
 
 **Supabase Default**:
+
 - Login: 5 attempts / 15 minutes
 - Registration: 3 attempts / hour
 - Password reset: 3 attempts / hour
 
 **Custom (Edge Functions)**:
+
 - General API: 100 requests / minute
 - Auth endpoints: 5 attempts / 15 minutes
 
@@ -365,18 +390,19 @@ Validation            RLS
 
 ### Data Retention Policy
 
-| Data Type | Retention Period | Deletion Method |
-|-----------|------------------|-----------------|
-| User accounts | Until account deletion | Immediate + cascade |
-| Training sessions | Until account deletion | Cascade delete |
-| Performance metrics | Until account deletion | Cascade delete |
-| Audit logs (auth events) | 90 days | Automatic purge |
-| Security incident logs | 1 year | Manual review then delete |
-| Backup data | 30 days | Automatic rotation |
+| Data Type                | Retention Period       | Deletion Method           |
+| ------------------------ | ---------------------- | ------------------------- |
+| User accounts            | Until account deletion | Immediate + cascade       |
+| Training sessions        | Until account deletion | Cascade delete            |
+| Performance metrics      | Until account deletion | Cascade delete            |
+| Audit logs (auth events) | 90 days                | Automatic purge           |
+| Security incident logs   | 1 year                 | Manual review then delete |
+| Backup data              | 30 days                | Automatic rotation        |
 
 ### Secure Deletion
 
 **User-Initiated Deletion**:
+
 ```javascript
 // Immediate deletion of auth record
 await supabase.auth.admin.deleteUser(userId);
@@ -391,6 +417,7 @@ await supabase.auth.admin.deleteUser(userId);
 ```
 
 **Backup Deletion**:
+
 - Automated backup rotation (30 days)
 - Encrypted backups
 - Secure deletion (data overwrite)
@@ -401,21 +428,23 @@ await supabase.auth.admin.deleteUser(userId);
 
 ### Classification Matrix
 
-| Severity | Examples | Response Time | Escalation | Notification |
-|----------|----------|---------------|------------|--------------|
-| **Critical** | Data breach, auth bypass, mass account takeover | Immediate | CEO, Legal, DPO | GDPR: 72h to authority |
-| **High** | SQL injection, CSRF bypass, privilege escalation | 1 hour | CTO, Security Team | Affected users: 72h |
-| **Medium** | XSS vulnerability, rate limit bypass | 4 hours | Security Team | None (unless exploited) |
-| **Low** | Minor config issue, non-security bug | 24 hours | Dev Team | None |
+| Severity     | Examples                                         | Response Time | Escalation         | Notification            |
+| ------------ | ------------------------------------------------ | ------------- | ------------------ | ----------------------- |
+| **Critical** | Data breach, auth bypass, mass account takeover  | Immediate     | CEO, Legal, DPO    | GDPR: 72h to authority  |
+| **High**     | SQL injection, CSRF bypass, privilege escalation | 1 hour        | CTO, Security Team | Affected users: 72h     |
+| **Medium**   | XSS vulnerability, rate limit bypass             | 4 hours       | Security Team      | None (unless exploited) |
+| **Low**      | Minor config issue, non-security bug             | 24 hours      | Dev Team           | None                    |
 
 ### Communication Plan
 
 **Internal**:
+
 1. Security Team → CTO (within 1 hour)
 2. CTO → CEO (if severity ≥ High)
 3. Legal → DPO (if GDPR breach)
 
 **External**:
+
 1. **Supervisory Authority** (if GDPR breach, within 72 hours)
 2. **Affected Users** (if high risk to rights, within 72 hours)
 3. **Public Disclosure** (if required by law or affects many users)
@@ -453,12 +482,12 @@ await supabase.auth.admin.deleteUser(userId);
 
 **Approval Matrix**:
 
-| Change Type | Examples | Approval Required | Testing Required |
-|-------------|----------|-------------------|------------------|
-| Critical Security | Auth flow changes, RLS policies | Security Team + CTO | Full regression + penetration test |
-| High Risk | Payment integration, data migration | Security Team | Integration tests + security scan |
-| Medium Risk | New API endpoint, UI feature | Tech Lead | Unit + integration tests |
-| Low Risk | Copy changes, styling | Developer | Code review |
+| Change Type       | Examples                            | Approval Required   | Testing Required                   |
+| ----------------- | ----------------------------------- | ------------------- | ---------------------------------- |
+| Critical Security | Auth flow changes, RLS policies     | Security Team + CTO | Full regression + penetration test |
+| High Risk         | Payment integration, data migration | Security Team       | Integration tests + security scan  |
+| Medium Risk       | New API endpoint, UI feature        | Tech Lead           | Unit + integration tests           |
+| Low Risk          | Copy changes, styling               | Developer           | Code review                        |
 
 ### Deployment Process
 
@@ -491,6 +520,7 @@ supabase db push --db-url $DATABASE_URL --migrations-path supabase/migrations/pr
 ### Logged Events
 
 **Authentication Events**:
+
 - ✅ Login success/failure
 - ✅ Registration
 - ✅ Logout
@@ -500,11 +530,13 @@ supabase db push --db-url $DATABASE_URL --migrations-path supabase/migrations/pr
 - ✅ Token refresh
 
 **Authorization Events**:
+
 - ✅ Role change (custom audit table)
 - ✅ Permission grant/revoke
 - ✅ Access denied (401/403)
 
 **Security Events**:
+
 - ✅ Rate limit exceeded
 - ✅ CSRF validation failed
 - ✅ Invalid token
@@ -519,11 +551,13 @@ supabase db push --db-url $DATABASE_URL --migrations-path supabase/migrations/pr
 ### Log Access
 
 **Who Can Access**:
+
 - Security Team: All logs
 - Dev Team: Application logs (non-security)
 - Auditors: Read-only access to audit logs
 
 **How to Access**:
+
 - Supabase Dashboard → Logs
 - Custom query: `SELECT * FROM role_change_audit WHERE user_id = ?`
 
@@ -534,6 +568,7 @@ supabase db push --db-url $DATABASE_URL --migrations-path supabase/migrations/pr
 ### Pre-Audit Checklist
 
 **Documentation**:
+
 - [x] AUTHENTICATION.md (auth flows)
 - [x] SESSION_AND_SECURITY.md (security details)
 - [x] ONBOARDING.md (onboarding flows)
@@ -543,6 +578,7 @@ supabase db push --db-url $DATABASE_URL --migrations-path supabase/migrations/pr
 - [ ] Cookie Policy (if using non-essential cookies)
 
 **Technical Implementation**:
+
 - [x] Role enforcement trigger deployed
 - [x] RLS policies enabled on all user tables
 - [x] Encryption at rest and in transit
@@ -554,6 +590,7 @@ supabase db push --db-url $DATABASE_URL --migrations-path supabase/migrations/pr
 - [ ] OWASP ZAP scan (recommended quarterly)
 
 **Operational**:
+
 - [x] Incident response playbook
 - [x] Backup and recovery procedures
 - [ ] Security training for team (recommended)
@@ -561,6 +598,7 @@ supabase db push --db-url $DATABASE_URL --migrations-path supabase/migrations/pr
 - [ ] Security monitoring alerts configured
 
 **GDPR Specific**:
+
 - [ ] Data Protection Officer appointed (if required)
 - [x] Data export functionality (self-service)
 - [x] Account deletion functionality
@@ -594,19 +632,23 @@ supabase db push --db-url $DATABASE_URL --migrations-path supabase/migrations/pr
 ## Audit Contact Information
 
 **Security Team**:
+
 - Email: security@flagfitpro.com
 - On-call: [PagerDuty link]
 
 **Data Protection Officer (DPO)**:
+
 - Email: dpo@flagfitpro.com
 - Phone: [Contact number]
 
 **Compliance Officer**:
+
 - Email: compliance@flagfitpro.com
 
 ---
 
 **Document Maintenance**:
+
 - Review: Quarterly
 - Update: After security incidents or major changes
 - Approval: Security Team + Legal
@@ -617,6 +659,7 @@ supabase db push --db-url $DATABASE_URL --migrations-path supabase/migrations/pr
 ---
 
 **Related Documentation**:
+
 - [AUTHENTICATION.md](./AUTHENTICATION.md)
 - [SESSION_AND_SECURITY.md](./SESSION_AND_SECURITY.md)
 - [ONBOARDING.md](./ONBOARDING.md)

@@ -24,6 +24,7 @@ This guide covers testing procedures for the newly integrated advanced UX/UI com
 ### 1. Performance Metrics API
 
 #### Test: Get Performance Metrics
+
 ```bash
 curl -X GET "http://localhost:8888/.netlify/functions/performance-metrics?athleteId=test-user-123" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -31,6 +32,7 @@ curl -X GET "http://localhost:8888/.netlify/functions/performance-metrics?athlet
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -53,6 +55,7 @@ curl -X GET "http://localhost:8888/.netlify/functions/performance-metrics?athlet
 ```
 
 **Test Cases:**
+
 - [ ] Valid token returns metrics
 - [ ] Invalid token returns 401
 - [ ] Missing token returns 401
@@ -61,6 +64,7 @@ curl -X GET "http://localhost:8888/.netlify/functions/performance-metrics?athlet
 - [ ] Falls back to default metrics if no data
 
 #### Test: Error Handling
+
 ```bash
 # Test without token
 curl -X GET "http://localhost:8888/.netlify/functions/performance-metrics"
@@ -73,6 +77,7 @@ curl -X GET "http://localhost:8888/.netlify/functions/performance-metrics" \
 ### 2. Training Sessions API
 
 #### Test: Create Training Session
+
 ```bash
 curl -X POST "http://localhost:8888/.netlify/functions/training-sessions" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -97,6 +102,7 @@ curl -X POST "http://localhost:8888/.netlify/functions/training-sessions" \
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -117,6 +123,7 @@ curl -X POST "http://localhost:8888/.netlify/functions/training-sessions" \
 ```
 
 **Test Cases:**
+
 - [ ] Valid session data creates session
 - [ ] Missing exercises returns 400
 - [ ] Session stored in database
@@ -124,12 +131,14 @@ curl -X POST "http://localhost:8888/.netlify/functions/training-sessions" \
 - [ ] Status defaults to "planned"
 
 #### Test: Get Training Sessions
+
 ```bash
 curl -X GET "http://localhost:8888/.netlify/functions/training-sessions?status=planned&limit=10" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
 **Test Cases:**
+
 - [ ] Returns user's sessions only
 - [ ] Filters by status correctly
 - [ ] Respects limit parameter
@@ -138,12 +147,14 @@ curl -X GET "http://localhost:8888/.netlify/functions/training-sessions?status=p
 ### 3. Performance Heatmap API
 
 #### Test: Get Heatmap Data
+
 ```bash
 curl -X GET "http://localhost:8888/.netlify/functions/performance-heatmap?timeRange=6months" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -163,6 +174,7 @@ curl -X GET "http://localhost:8888/.netlify/functions/performance-heatmap?timeRa
 ```
 
 **Test Cases:**
+
 - [ ] Returns cells for date range
 - [ ] Supports 3months, 6months, 1year ranges
 - [ ] Calculates intensity correctly
@@ -175,6 +187,7 @@ curl -X GET "http://localhost:8888/.netlify/functions/performance-heatmap?timeRa
 ### 1. Performance Dashboard Component
 
 #### Manual Testing:
+
 1. Navigate to Dashboard page
 2. Verify Performance Dashboard component renders
 3. Check that metrics display correctly
@@ -182,6 +195,7 @@ curl -X GET "http://localhost:8888/.netlify/functions/performance-heatmap?timeRa
 5. Test responsive layout on mobile
 
 #### Test Cases:
+
 - [ ] Component loads without errors
 - [ ] Metrics display with correct values
 - [ ] Trend indicators show correctly
@@ -191,9 +205,10 @@ curl -X GET "http://localhost:8888/.netlify/functions/performance-heatmap?timeRa
 - [ ] Mobile responsive layout
 
 #### Browser Console Checks:
+
 ```javascript
 // Check component is loaded
-document.querySelector('app-performance-dashboard')
+document.querySelector("app-performance-dashboard");
 
 // Check for errors
 // Open DevTools → Console
@@ -202,6 +217,7 @@ document.querySelector('app-performance-dashboard')
 ### 2. Training Builder Component
 
 #### Manual Testing:
+
 1. Navigate to Training page
 2. Find Training Builder component
 3. Test wizard flow:
@@ -212,6 +228,7 @@ document.querySelector('app-performance-dashboard')
 5. Test session generation
 
 #### Test Cases:
+
 - [ ] Component loads correctly
 - [ ] Step 1: Can select multiple goals
 - [ ] Step 1: Cannot proceed without selecting goals
@@ -226,6 +243,7 @@ document.querySelector('app-performance-dashboard')
 - [ ] Can save session
 
 #### Form Validation Tests:
+
 - [ ] Duration must be between 15-120 minutes
 - [ ] Intensity is required
 - [ ] Cannot generate without goals
@@ -233,12 +251,14 @@ document.querySelector('app-performance-dashboard')
 ### 3. Swipe Table Component
 
 #### Manual Testing:
+
 1. Create a page with SwipeTableComponent
 2. Test swipe gestures on mobile device
 3. Test edit/delete actions
 4. Test desktop view (actions always visible)
 
 #### Test Cases:
+
 - [ ] Table renders with data
 - [ ] Swipe left reveals actions (mobile)
 - [ ] Swipe right works (if implemented)
@@ -250,6 +270,7 @@ document.querySelector('app-performance-dashboard')
 ### 4. Training Heatmap Component
 
 #### Manual Testing:
+
 1. Navigate to page with heatmap
 2. Test time range selection
 3. Test intensity/volume toggle
@@ -257,6 +278,7 @@ document.querySelector('app-performance-dashboard')
 5. Test keyboard navigation
 
 #### Test Cases:
+
 - [ ] Heatmap grid renders
 - [ ] Cells display correct colors
 - [ ] Time range dropdown works
@@ -281,6 +303,7 @@ document.querySelector('app-performance-dashboard')
 8. **View heatmap** → New session appears
 
 **Test Checklist:**
+
 - [ ] All steps complete without errors
 - [ ] Data persists in database
 - [ ] UI updates reflect changes
@@ -292,6 +315,7 @@ document.querySelector('app-performance-dashboard')
 ### API Response Times
 
 Test each endpoint and verify:
+
 - [ ] Performance Metrics: < 500ms
 - [ ] Training Sessions (GET): < 300ms
 - [ ] Training Sessions (POST): < 1000ms
@@ -308,12 +332,14 @@ Test each endpoint and verify:
 ## Error Scenario Testing
 
 ### Backend Errors:
+
 - [ ] Database connection failure → Graceful fallback
 - [ ] Invalid JWT token → 401 error
 - [ ] Missing required fields → 400 error
 - [ ] Table doesn't exist → Mock data fallback
 
 ### Frontend Errors:
+
 - [ ] API timeout → Error message displayed
 - [ ] Network error → Retry mechanism
 - [ ] Invalid data → Validation errors
@@ -322,6 +348,7 @@ Test each endpoint and verify:
 ## Browser Compatibility
 
 Test on:
+
 - [ ] Chrome (latest)
 - [ ] Firefox (latest)
 - [ ] Safari (latest)
@@ -340,6 +367,7 @@ Test on:
 ## Automated Testing (Future)
 
 Consider adding:
+
 - Unit tests for components
 - Integration tests for APIs
 - E2E tests with Playwright
@@ -348,9 +376,10 @@ Consider adding:
 ## Test Data Setup
 
 ### Create Test Sessions:
+
 ```sql
 INSERT INTO training_sessions (
-  user_id, session_date, session_type, 
+  user_id, session_date, session_type,
   duration_minutes, intensity_level, status
 ) VALUES (
   'test-user-id', '2024-01-15', 'speed',
@@ -359,6 +388,7 @@ INSERT INTO training_sessions (
 ```
 
 ### Create Test Performance Tests:
+
 ```sql
 INSERT INTO athlete_performance_tests (
   user_id, test_type, test_date, best_result
@@ -370,6 +400,7 @@ INSERT INTO athlete_performance_tests (
 ## Reporting Issues
 
 When reporting issues, include:
+
 1. Test case that failed
 2. Expected vs actual behavior
 3. Browser/device information
@@ -381,4 +412,3 @@ When reporting issues, include:
 
 **Last Updated:** 2024-01-XX  
 **Testing Status:** Ready for QA
-

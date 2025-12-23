@@ -15,11 +15,7 @@
       "deep_breathing",
       "mental_visualization"
     ],
-    "physical_activities": [
-      "gentle_stretching",
-      "slow_walking",
-      "yoga_poses"
-    ],
+    "physical_activities": ["gentle_stretching", "slow_walking", "yoga_poses"],
     "environmental_requirements": null,
     "recovery_metrics": [
       "mental_clarity_rating",

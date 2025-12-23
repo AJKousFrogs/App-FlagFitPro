@@ -1,5 +1,4 @@
 #!/usr/bin/env node
- 
 
 /**
  * Apply Comprehensive Spacing System to All HTML Pages

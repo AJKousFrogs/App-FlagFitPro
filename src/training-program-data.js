@@ -10,8 +10,8 @@ export {
   EXERCISE_LIBRARY,
   PERFORMANCE_TESTS,
   // NUTRITION_GUIDELINES removed - unused export
-  default
-} from './data/training/index.js';
+  default,
+} from "./data/training/index.js";
 
 // Original code below (kept for reference, will be removed in future version)
 /*

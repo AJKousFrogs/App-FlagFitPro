@@ -11,15 +11,22 @@ This document explains how training sessions and data are fetched, filtered, and
 **Endpoint**: `/.netlify/functions/training-sessions`
 
 **GET Request Logic**:
+
 ```javascript
 async function getTrainingSessions(userId, queryParams) {
-  const { status, startDate, endDate, limit = 50, includeUpcoming = false } = queryParams || {};
-  
+  const {
+    status,
+    startDate,
+    endDate,
+    limit = 50,
+    includeUpcoming = false,
+  } = queryParams || {};
+
   let query = supabaseAdmin
     .from("training_sessions")
     .select("*")
     .eq("user_id", userId)
-    .order("session_date", { ascending: false })  // Most recent first
+    .order("session_date", { ascending: false }) // Most recent first
     .limit(parseInt(limit));
 
   // By default, only show sessions up to and including today
@@ -35,14 +42,18 @@ async function getTrainingSessions(userId, queryParams) {
   if (endDate) {
     const endDateInclusive = new Date(endDate);
     endDateInclusive.setHours(23, 59, 59, 999);
-    query = query.lte("session_date", endDateInclusive.toISOString().split("T")[0]);
+    query = query.lte(
+      "session_date",
+      endDateInclusive.toISOString().split("T")[0],
+    );
   }
-  
+
   return sessions || [];
 }
 ```
 
 **Key Points**:
+
 - ✅ Orders by `session_date` descending (newest first)
 - ✅ **Automatic date filtering** - filters to "up to and including today" by default
 - ✅ **Consistent with game stats** - same date filtering pattern
@@ -54,24 +65,25 @@ async function getTrainingSessions(userId, queryParams) {
 ### 2. Frontend: Vanilla JS (`training-api-service.js`)
 
 **Data Loading Flow**:
+
 ```javascript
 async getTrainingSessions(options = {}) {
   // Uses backend API with automatic date filtering
   // By default, filters to sessions up to and including today
   const params = new URLSearchParams();
-  
+
   if (options.startDate) {
     params.append("startDate", options.startDate);
   }
-  
+
   if (options.endDate) {
     params.append("endDate", options.endDate);
   }
-  
+
   if (options.includeUpcoming) {
     params.append("includeUpcoming", "true");
   }
-  
+
   // Backend automatically filters to today unless includeUpcoming is true
   const response = await fetch(`${API_ENDPOINTS.training.sessions}?${params}`);
   return await response.json();
@@ -79,6 +91,7 @@ async getTrainingSessions(options = {}) {
 ```
 
 **Key Points**:
+
 - ✅ **Uses backend API** - single source of truth
 - ✅ **Automatic date filtering** - backend filters to today by default
 - ✅ **Consistent with game stats** - same pattern
@@ -86,6 +99,7 @@ async getTrainingSessions(options = {}) {
 - ✅ Supports date range queries
 
 **Stats Calculation** (`statsService.calculateWeeklyStats`):
+
 ```javascript
 // Filters workouts within the current week
 const weekStart = getISOWeekStart(referenceDate);
@@ -93,13 +107,14 @@ const weekEnd = new Date(weekStart);
 weekEnd.setDate(weekEnd.getDate() + 6);
 weekEnd.setHours(23, 59, 59, 999);
 
-const weekWorkouts = workouts.filter(w => {
+const weekWorkouts = workouts.filter((w) => {
   const workoutDate = new Date(w.date);
   return workoutDate >= weekStart && workoutDate <= weekEnd;
 });
 ```
 
 **Streak Calculation** (`statsService.computeStreak`):
+
 ```javascript
 // Calculates current streak backwards from today
 // Only counts workouts up to and including today
@@ -107,8 +122,9 @@ let currentStreak = 0;
 let expectedDate = new Date(refNormalized); // Today
 
 for (const workoutDate of workoutDates) {
-  const dayDifference = (expectedDate.getTime() - workoutDate.getTime()) / (1000 * 60 * 60 * 24);
-  
+  const dayDifference =
+    (expectedDate.getTime() - workoutDate.getTime()) / (1000 * 60 * 60 * 24);
+
   if (dayDifference === 0) {
     currentStreak++;
     expectedDate.setDate(expectedDate.getDate() - 1);
@@ -125,22 +141,23 @@ for (const workoutDate of workoutDates) {
 ### 3. Angular Service: `training-data.service.ts`
 
 **Get All Sessions**:
+
 ```typescript
 getTrainingSessions(options?: TrainingSessionsOptions): Observable<TrainingSession[]> {
   const params: Record<string, any> = {};
-  
+
   if (options?.startDate) {
     params.startDate = options.startDate;
   }
-  
+
   if (options?.endDate) {
     params.endDate = options.endDate;
   }
-  
+
   if (options?.includeUpcoming) {
     params.includeUpcoming = options.includeUpcoming.toString();
   }
-  
+
   // Uses backend API which automatically filters to today by default
   return this.apiService.get<TrainingSession[]>(
     API_ENDPOINTS.training.sessions,
@@ -150,6 +167,7 @@ getTrainingSessions(options?: TrainingSessionsOptions): Observable<TrainingSessi
 ```
 
 **Key Points**:
+
 - ✅ **Uses backend API** - consistent date filtering
 - ✅ **Automatic date filtering** - backend filters to today by default
 - ✅ Orders by date descending
@@ -157,6 +175,7 @@ getTrainingSessions(options?: TrainingSessionsOptions): Observable<TrainingSessi
 - ✅ Consistent with game stats pattern
 
 **Real-time Subscriptions**:
+
 ```typescript
 subscribeToTrainingSessions(callback: (payload: any) => void) {
   // Subscribes to all changes for user's sessions
@@ -167,13 +186,14 @@ subscribeToTrainingSessions(callback: (payload: any) => void) {
 ### 4. Dashboard Page: `dashboard-page.js`
 
 **Date Picker Logic**:
+
 ```javascript
 setupDatePicker() {
   // Initialize with today's date
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   this.selectedDate = today;
-  
+
   // Load data for selected date
   this.loadDateData();
 }
@@ -185,6 +205,7 @@ loadDateData() {
 ```
 
 **Key Points**:
+
 - ✅ Defaults to today's date
 - ✅ Allows navigation to past/future dates
 - ⚠️ **Shows future sessions** if date is in the future
@@ -193,6 +214,7 @@ loadDateData() {
 ## Data Flow Summary
 
 ### Current Flow (Vanilla JS Pages):
+
 ```
 1. Page Load
    ↓
@@ -204,6 +226,7 @@ loadDateData() {
 ```
 
 ### Current Flow (Angular Pages):
+
 ```
 1. Component Init
    ↓
@@ -215,6 +238,7 @@ loadDateData() {
 ```
 
 ### Current Flow (Backend API):
+
 ```
 1. Frontend calls /training-sessions
    ↓
@@ -228,35 +252,39 @@ loadDateData() {
 ## Current Status
 
 ### ✅ Resolved: Consistent Date Filtering
+
 - Backend filters to "up to and including today" by default
 - Frontend services use backend API with automatic filtering
 - Consistent date handling across all pages
 
 ### ✅ Resolved: Single Source of Truth
+
 - All services use backend API (`/.netlify/functions/training-sessions`)
 - Centralized filtering logic in backend
 - Consistent stats calculations
 
 ### ✅ Resolved: Future Sessions Handling
+
 - Future sessions excluded by default
 - Optional `includeUpcoming` parameter for planned sessions
 - Consistent with game stats filtering pattern
 
 ### ✅ Resolved: Data Consistency
+
 - Single backend endpoint for all training session queries
 - Consistent date filtering across Angular and vanilla JS
 - Stats calculated from same data source
 
 ## Comparison with Game Stats
 
-| Feature | Game Stats | Training Data |
-|---------|-----------|---------------|
-| Date Filtering | ✅ Always filters to "up to and including today" | ✅ Always filters to "up to and including today" |
-| Future Data | ✅ Never shows future games | ✅ Never shows future sessions (by default) |
-| Backend Filtering | ✅ Automatic in backend | ✅ Automatic in backend |
-| Frontend Filtering | ✅ Uses centralized endpoint | ✅ Uses centralized endpoint |
-| Single Source | ✅ Centralized `player-stats.cjs` | ✅ Centralized `training-sessions.cjs` |
-| Consistency | ✅ Same numbers everywhere | ✅ Same numbers everywhere |
+| Feature            | Game Stats                                       | Training Data                                    |
+| ------------------ | ------------------------------------------------ | ------------------------------------------------ |
+| Date Filtering     | ✅ Always filters to "up to and including today" | ✅ Always filters to "up to and including today" |
+| Future Data        | ✅ Never shows future games                      | ✅ Never shows future sessions (by default)      |
+| Backend Filtering  | ✅ Automatic in backend                          | ✅ Automatic in backend                          |
+| Frontend Filtering | ✅ Uses centralized endpoint                     | ✅ Uses centralized endpoint                     |
+| Single Source      | ✅ Centralized `player-stats.cjs`                | ✅ Centralized `training-sessions.cjs`           |
+| Consistency        | ✅ Same numbers everywhere                       | ✅ Same numbers everywhere                       |
 
 ## Implementation Details
 
@@ -265,6 +293,7 @@ loadDateData() {
 **File**: `netlify/functions/training-sessions.cjs`
 
 The backend automatically filters sessions to "up to and including today" by default:
+
 - Uses `includeUpcoming` parameter to optionally include future sessions
 - Filters at database level for performance
 - Consistent with game stats filtering pattern
@@ -272,11 +301,13 @@ The backend automatically filters sessions to "up to and including today" by def
 ### 2. Frontend Services
 
 **Angular**: `angular/src/app/core/services/training-data.service.ts`
+
 - Uses backend API endpoint
 - Automatically inherits date filtering from backend
 - Supports optional `includeUpcoming` parameter
 
 **Vanilla JS**: `src/js/services/training-api-service.js`
+
 - Uses backend API endpoint
 - Automatically inherits date filtering from backend
 - Supports optional `includeUpcoming` parameter
@@ -284,10 +315,12 @@ The backend automatically filters sessions to "up to and including today" by def
 ### 3. Data Formatting
 
 All training data uses centralized formatting utilities:
+
 - **Angular**: `angular/src/app/shared/utils/format.utils.ts`
 - **Vanilla JS**: `src/js/utils/shared.js`
 
 These utilities ensure consistent formatting of:
+
 - Numbers (with thousand separators)
 - Percentages (1 decimal place)
 - Averages (2 decimal places)
@@ -298,11 +331,13 @@ These utilities ensure consistent formatting of:
 ### Example 1: User Opens App on Dec 14, 2025
 
 **Game Stats** (After our fix):
+
 - ✅ Shows all games up to Dec 14, 2025
 - ✅ Future games excluded
 - ✅ Stats consistent across all pages
 
 **Training Data** (Current):
+
 - ⚠️ Shows all training sessions (including future)
 - ⚠️ May include sessions scheduled for Dec 15+
 - ⚠️ Stats may include future data
@@ -310,12 +345,14 @@ These utilities ensure consistent formatting of:
 ### Example 2: User Views Training Page
 
 **What They See**:
+
 - Recent workouts from localStorage
 - Weekly stats calculated from stored workouts
 - Weekly schedule generated from current date
 - **No filtering to "today"**
 
 **What Should Happen** (After fix):
+
 - Only sessions up to and including today
 - Stats calculated from sessions up to today
 - Future sessions only shown if explicitly requested

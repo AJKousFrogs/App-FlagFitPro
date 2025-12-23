@@ -32,28 +32,36 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
-  
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <div class="dashboard-container">
-            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
       <div data-sidebar-container></div>
-        <!-- Top Bar (Loaded Dynamically) -->
-        <div data-topbar-container></div>
+      <!-- Top Bar (Loaded Dynamically) -->
+      <div data-topbar-container></div>
 
       <main class="main-content">
         <!-- Page Header -->
         <div class="page-header">
           <div class="page-title-section">
             <h1 class="text-heading-2xl text-primary">Settings</h1>
-            <p class="text-body-md text-secondary">Manage your account and application preferences</p>
+            <p class="text-body-md text-secondary">
+              Manage your account and application preferences
+            </p>
           </div>
 
           <button class="btn btn-primary" onclick="saveSettings()">
@@ -65,7 +73,10 @@
         <!-- Unsaved Changes Warning -->
         <div id="unsavedChangesWarning" class="unsaved-changes-warning">
           <strong>⚠️ You have unsaved changes</strong>
-          <p>Your changes will be saved automatically, or click "Save Changes" to save now.</p>
+          <p>
+            Your changes will be saved automatically, or click "Save Changes" to
+            save now.
+          </p>
         </div>
 
         <!-- Settings Grid -->
@@ -74,7 +85,9 @@
           <div class="settings-section">
             <div class="section-header">
               <span class="section-icon">👤</span>
-              <h2 class="section-title text-heading-xl text-primary">Profile Settings</h2>
+              <h2 class="section-title text-heading-xl text-primary">
+                Profile Settings
+              </h2>
             </div>
 
             <div class="form-group">
@@ -210,12 +223,16 @@
                   "
                 ></i
               ></span>
-              <h2 class="section-title text-heading-xl text-primary">Notifications</h2>
+              <h2 class="section-title text-heading-xl text-primary">
+                Notifications
+              </h2>
             </div>
 
             <div class="setting-item" data-notification-type="training">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Training Reminders</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Training Reminders
+                </h3>
                 <p>Get notified about upcoming training sessions</p>
               </div>
               <div
@@ -227,7 +244,9 @@
 
             <div class="setting-item" data-notification-type="tournament">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Tournament Updates</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Tournament Updates
+                </h3>
                 <p>Receive updates about tournament schedules and results</p>
               </div>
               <div
@@ -239,11 +258,13 @@
 
             <div class="setting-item" data-notification-type="team">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Team Messages</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Team Messages
+                </h3>
                 <p>Get notified when teammates send messages</p>
               </div>
-              <div 
-                class="toggle-switch" 
+              <div
+                class="toggle-switch"
                 data-preference-key="team"
                 onclick="toggleNotificationPreference(this, 'team')"
               ></div>
@@ -251,7 +272,9 @@
 
             <div class="setting-item" data-notification-type="achievement">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Achievement Notifications</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Achievement Notifications
+                </h3>
                 <p>Get notified when you unlock achievements</p>
               </div>
               <div
@@ -263,7 +286,9 @@
 
             <div class="setting-item" data-notification-type="wellness">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Wellness Reminders</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Wellness Reminders
+                </h3>
                 <p>Daily reminders to log your wellness data</p>
               </div>
               <div
@@ -275,7 +300,9 @@
 
             <div class="setting-item" data-notification-type="game">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Game Updates</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Game Updates
+                </h3>
                 <p>Notifications about game schedules and results</p>
               </div>
               <div
@@ -290,12 +317,16 @@
           <div class="settings-section">
             <div class="section-header">
               <span class="section-icon">🔒</span>
-              <h2 class="section-title text-heading-xl text-primary">Privacy & Security</h2>
+              <h2 class="section-title text-heading-xl text-primary">
+                Privacy & Security
+              </h2>
             </div>
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Profile Visibility</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Profile Visibility
+                </h3>
                 <p>Allow other players to see your profile</p>
               </div>
               <div
@@ -306,7 +337,9 @@
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Training Data Sharing</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Training Data Sharing
+                </h3>
                 <p>Share training data with coaches and teammates</p>
               </div>
               <div
@@ -317,7 +350,9 @@
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Analytics Tracking</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Analytics Tracking
+                </h3>
                 <p>Allow collection of usage data to improve the app</p>
               </div>
               <div class="toggle-switch" onclick="toggleSetting(this)"></div>
@@ -382,7 +417,9 @@
           <div class="settings-section">
             <div class="section-header">
               <span class="section-icon">🎨</span>
-              <h2 class="section-title text-heading-xl text-primary">App Preferences</h2>
+              <h2 class="section-title text-heading-xl text-primary">
+                App Preferences
+              </h2>
             </div>
 
             <div class="form-group">
@@ -416,7 +453,9 @@
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Auto-refresh Data</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Auto-refresh Data
+                </h3>
                 <p>Automatically refresh training and tournament data</p>
               </div>
               <div
@@ -430,12 +469,16 @@
           <div class="settings-section danger-zone">
             <div class="section-header">
               <span class="section-icon">⚠️</span>
-              <h2 class="section-title text-heading-xl text-primary">Danger Zone</h2>
+              <h2 class="section-title text-heading-xl text-primary">
+                Danger Zone
+              </h2>
             </div>
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Export Data</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Export Data
+                </h3>
                 <p>Download all your training data and statistics</p>
               </div>
               <button class="btn btn-secondary" onclick="exportData()">
@@ -445,7 +488,9 @@
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3 class="text-heading-md text-primary font-semibold">Delete Account</h3>
+                <h3 class="text-heading-md text-primary font-semibold">
+                  Delete Account
+                </h3>
                 <p>Permanently delete your account and all associated data</p>
               </div>
               <button class="btn btn-error" onclick="deleteAccount()">
@@ -467,32 +512,35 @@
           await enhancedSettings.init({
             enableRealtime: true,
             enableAutoSave: true,
-            enableValidation: true
+            enableValidation: true,
           });
 
           // Subscribe to settings updates
           enhancedSettings.addEventListener((data) => {
-            console.log('[Settings] Settings updated:', data);
+            console.log("[Settings] Settings updated:", data);
           });
 
           // Override saveSettings to use enhanced component
-          window.saveSettings = async function(event) {
+          window.saveSettings = async function (event) {
             await enhancedSettings.saveSettings(false);
           };
 
-          console.log('[Settings] Enhanced settings initialized');
+          console.log("[Settings] Enhanced settings initialized");
         } catch (error) {
-          console.warn('[Settings] Enhanced component failed, using fallback:', error);
+          console.warn(
+            "[Settings] Enhanced component failed, using fallback:",
+            error,
+          );
         }
       });
     </script>
 
-        <!-- Auto-save Indicator -->
-        <div id="autoSaveIndicator" class="auto-save-indicator">
-          <span id="autoSaveText">Saving...</span>
-        </div>
+    <!-- Auto-save Indicator -->
+    <div id="autoSaveIndicator" class="auto-save-indicator">
+      <span id="autoSaveText">Saving...</span>
+    </div>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

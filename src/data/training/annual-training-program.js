@@ -51,14 +51,14 @@ export const ANNUAL_TRAINING_PROGRAM = {
     "december-week2": "20% BW",
     "december-week3": "30% BW",
     "december-week4": "40% BW",
-    "january": "40% BW (maintained)",
-    "february": "40% BW (maintained)",
-    "march": "40% BW (maintained)",
+    january: "40% BW (maintained)",
+    february: "40% BW (maintained)",
+    march: "40% BW (maintained)",
     "april-june": "40% BW (maintained during training)",
-    "july": "No heavy lifting",
-    "august": "35-40% BW",
-    "september": "40% BW (peak)",
-    "october": "Gradual reduction",
+    july: "No heavy lifting",
+    august: "35-40% BW",
+    september: "40% BW (peak)",
+    october: "Gradual reduction",
   },
 
   months: {
@@ -125,7 +125,7 @@ export const ANNUAL_TRAINING_PROGRAM = {
             plyometrics: {
               duration: 20,
               exercises: [
-                "Box Jumps (18\"): 4×5, Rest: 2 min",
+                'Box Jumps (18"): 4×5, Rest: 2 min',
                 "Broad Jumps: 4×5, Rest: 2 min",
                 "Lateral Bounds: 4×8 each, Rest: 90s",
               ],
@@ -164,8 +164,8 @@ export const ANNUAL_TRAINING_PROGRAM = {
             plyometrics: {
               duration: 20,
               exercises: [
-                "Box Jumps (24\"): 5×4, Rest: 2.5 min",
-                "Depth Jumps (12\"): 4×5, Rest: 2.5 min",
+                'Box Jumps (24"): 5×4, Rest: 2.5 min',
+                'Depth Jumps (12"): 4×5, Rest: 2.5 min',
                 "Broad Jumps: 5×3, Rest: 2 min",
               ],
             },
@@ -214,8 +214,8 @@ export const ANNUAL_TRAINING_PROGRAM = {
       load: "Maintain 40% BW for loaded exercises",
       loadSchedule: {
         "week1-2": "40% BW",
-        "week3": "40% BW (peak efforts)",
-        "week4": "35% BW (slight deload before February)",
+        week3: "40% BW (peak efforts)",
+        week4: "35% BW (slight deload before February)",
       },
       week1: {
         weekNumber: 1,
@@ -231,13 +231,14 @@ export const ANNUAL_TRAINING_PROGRAM = {
               "Nordic Curls: 5×8, Rest: 2.5 min",
               "Hip Thrusts: 4×6 @ 40% BW, Rest: 2 min",
             ],
-            notes: "Barbell Knee Ups: Barbell on shoulders, explosive knee drive",
+            notes:
+              "Barbell Knee Ups: Barbell on shoulders, explosive knee drive",
           },
           explosiveWork: {
             duration: 25,
             exercises: [
-              "Box Jumps (24\"): 6×3, Rest: 3 min",
-              "Depth Jumps (18\"): 5×4, Rest: 3 min",
+              'Box Jumps (24"): 6×3, Rest: 3 min',
+              'Depth Jumps (18"): 5×4, Rest: 3 min',
               "Broad Jump → Pogo Hop: 5 sets, Rest: 2.5 min",
             ],
             notes: "Broad jump then immediately 3 pogo hops",
@@ -400,7 +401,8 @@ export const ANNUAL_TRAINING_PROGRAM = {
               "Band Pin Squats: 4×8 @ 40% BW, Rest: 2 min",
               "Nordic Curls: 5×8, Rest: 2.5 min",
             ],
-            notes: "Band Pin Squats: Bands attached to pins, squat against resistance",
+            notes:
+              "Band Pin Squats: Bands attached to pins, squat against resistance",
           },
           explosivePlyometricCircuit: {
             duration: 30,
@@ -438,7 +440,8 @@ export const ANNUAL_TRAINING_PROGRAM = {
                 name: "Hamstring Tantrums",
                 sets: "4×45s",
                 rest: "90s",
-                notes: "On back, ball under feet, elastic band, rapid leg cycling",
+                notes:
+                  "On back, ball under feet, elastic band, rapid leg cycling",
               },
               {
                 name: "SL DB Swings",
@@ -509,7 +512,8 @@ export const ANNUAL_TRAINING_PROGRAM = {
           explosiveHamstringCircuit: {
             duration: 30,
             mandatory: true,
-            notes: "Same as Tuesday - repeat full circuit. This is the 2nd mandatory hamstring day",
+            notes:
+              "Same as Tuesday - repeat full circuit. This is the 2nd mandatory hamstring day",
           },
           powerWork: {
             duration: 25,
@@ -597,7 +601,8 @@ export const ANNUAL_TRAINING_PROGRAM = {
       week3: {
         weekNumber: 3,
         dateRange: "March 16-22, 2026",
-        notes: "Same structure, sprint capacity continues to build. This is the PEAK capacity week",
+        notes:
+          "Same structure, sprint capacity continues to build. This is the PEAK capacity week",
         saturday: {
           sprintCapacity: {
             week3Target: "4 sets × 8×40m",
@@ -768,8 +773,8 @@ export const ANNUAL_TRAINING_PROGRAM = {
       structure: "Return to full training structure",
       schedule: {
         "week1-2": "Build back strength (35-40% BW)",
-        "week3": "Peak week",
-        "week4": "Taper for Worlds",
+        week3: "Peak week",
+        week4: "Taper for Worlds",
       },
       maintain: [
         "Critical movement drills 3x per week",
@@ -813,10 +818,7 @@ export const ANNUAL_TRAINING_PROGRAM = {
       goal: "Gradual reduction, prepare for November rest",
       weeks1to2: {
         volume: "75% normal training volume",
-        focus: [
-          "Maintain movement quality",
-          "Reduce intensity gradually",
-        ],
+        focus: ["Maintain movement quality", "Reduce intensity gradually"],
       },
       weeks3to4: {
         volume: "50% normal training volume",
@@ -834,8 +836,8 @@ export const ANNUAL_TRAINING_PROGRAM = {
   keyTrainingPrinciples: {
     loadProgression: {
       "week1-2": "20% BW",
-      "week3": "30% BW",
-      "week4": "40% BW",
+      week3: "30% BW",
+      week4: "40% BW",
       maximum: "NEVER exceed 40% BW",
     },
     criticalMovementDrills: {
@@ -856,8 +858,8 @@ export const ANNUAL_TRAINING_PROGRAM = {
     sprintCapacity: {
       month: "March",
       buildProgressively: {
-        "week1": "2 sets × 8×40m",
-        "week2": "3 sets × 8×40m",
+        week1: "2 sets × 8×40m",
+        week2: "3 sets × 8×40m",
         "week3-4": "4 sets × 8×40m",
       },
       simulation: "This simulates tournament demands",

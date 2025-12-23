@@ -32,15 +32,19 @@ Before starting migration, ensure:
 ## 🎯 Migration Strategy
 
 ### Phase 1: Color Variables (43 instances)
+
 Replace all `--dark-*` variables with semantic tokens
 
 ### Phase 2: Hardcoded Colors (16+ instances)
+
 Replace hardcoded hex colors with design tokens
 
 ### Phase 3: Legacy Aliases (50+ instances)
+
 Update old variable names to new semantic names
 
 ### Phase 4: Component Classes (30+ instances)
+
 Update component class names to match new system
 
 ---
@@ -386,18 +390,22 @@ For Angular components, update `styles` arrays:
 
 ```typescript
 // Before
-styles: [`
+styles: [
+  `
   .my-component {
     color: #089949;
   }
-`]
+`,
+];
 
 // After
-styles: [`
+styles: [
+  `
   .my-component {
     color: var(--color-brand-primary);
   }
-`]
+`,
+];
 ```
 
 ### 4. Theme-Specific Overrides
@@ -459,6 +467,7 @@ ng build --prod
 ### 4. Browser Testing
 
 Test in multiple browsers:
+
 - Chrome/Edge ✅
 - Firefox ✅
 - Safari ✅
@@ -468,10 +477,10 @@ Test in multiple browsers:
 
 ```javascript
 // Toggle dark mode
-document.documentElement.setAttribute('data-theme', 'dark');
+document.documentElement.setAttribute("data-theme", "dark");
 // Verify colors switch correctly
 
-document.documentElement.setAttribute('data-theme', 'light');
+document.documentElement.setAttribute("data-theme", "light");
 // Verify colors switch back
 ```
 
@@ -522,14 +531,14 @@ Track your progress:
 
 After complete migration:
 
-| Metric | Before | After |
-|--------|--------|-------|
-| Legacy `--dark-*` variables | 43 | 0 |
-| Hardcoded colors | 16+ | 0 |
-| Duplicate styles | 50+ | 0 |
-| Inconsistent spacing | Many | 0 |
-| Dark mode support | Partial | Full |
-| Accessibility | Unknown | WCAG AA ✅ |
+| Metric                      | Before  | After      |
+| --------------------------- | ------- | ---------- |
+| Legacy `--dark-*` variables | 43      | 0          |
+| Hardcoded colors            | 16+     | 0          |
+| Duplicate styles            | 50+     | 0          |
+| Inconsistent spacing        | Many    | 0          |
+| Dark mode support           | Partial | Full       |
+| Accessibility               | Unknown | WCAG AA ✅ |
 
 ---
 
@@ -538,6 +547,7 @@ After complete migration:
 ### Issue: Colors not rendering
 
 **Solution:**
+
 1. Verify `design-tokens.scss` is imported in main stylesheet
 2. Check browser DevTools for CSS variable values
 3. Ensure no syntax errors in migrated files
@@ -545,6 +555,7 @@ After complete migration:
 ### Issue: Dark mode not working
 
 **Solution:**
+
 1. Verify `[data-theme="dark"]` selector in HTML
 2. Check media query `@media (prefers-color-scheme: dark)` support
 3. Test manual toggle: `document.documentElement.setAttribute('data-theme', 'dark')`
@@ -552,6 +563,7 @@ After complete migration:
 ### Issue: Build errors
 
 **Solution:**
+
 1. Check for syntax errors in migrated CSS
 2. Verify all imports are correct
 3. Check for missing semicolons or brackets
@@ -579,4 +591,3 @@ Once migration is complete, you'll have:
 - ✅ Production-ready codebase
 
 **Congratulations! Your design system migration is complete! 🎉**
-

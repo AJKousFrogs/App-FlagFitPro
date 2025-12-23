@@ -1,5 +1,5 @@
 // Load environment variables from .env.local
-require('dotenv').config({ path: '.env.local' });
+require("dotenv").config({ path: ".env.local" });
 
 const express = require("express");
 const chokidar = require("chokidar");
@@ -18,20 +18,22 @@ const API_PORT = process.env.PORT || 3001;
 console.log("🔥 Starting Flag Football Training App Hot Reload Server...");
 
 // Serve static files with proper MIME types
-app.use(express.static(".", {
-  setHeaders: (res, filePath) => {
-    // Set proper MIME types for module scripts
-    if (filePath.endsWith(".js")) {
-      res.setHeader("Content-Type", "application/javascript");
-    } else if (filePath.endsWith(".mjs")) {
-      res.setHeader("Content-Type", "application/javascript");
-    } else if (filePath.endsWith(".css")) {
-      res.setHeader("Content-Type", "text/css");
-    } else if (filePath.endsWith(".html")) {
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-    }
-  },
-}));
+app.use(
+  express.static(".", {
+    setHeaders: (res, filePath) => {
+      // Set proper MIME types for module scripts
+      if (filePath.endsWith(".js")) {
+        res.setHeader("Content-Type", "application/javascript");
+      } else if (filePath.endsWith(".mjs")) {
+        res.setHeader("Content-Type", "application/javascript");
+      } else if (filePath.endsWith(".css")) {
+        res.setHeader("Content-Type", "text/css");
+      } else if (filePath.endsWith(".html")) {
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+      }
+    },
+  }),
+);
 
 // Serve HTML files
 app.get("/", (req, res) => {
@@ -113,15 +115,16 @@ watcher.on("change", (filePath) => {
 
 // Get Supabase credentials from environment
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseAnonKey =
+  process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
 // Hot reload client script + Supabase config injection
 const hotReloadScript = `
 <script>
 // Inject Supabase credentials for frontend
 window._env = window._env || {};
-window._env.SUPABASE_URL = '${supabaseUrl || ''}';
-window._env.SUPABASE_ANON_KEY = '${supabaseAnonKey || ''}';
+window._env.SUPABASE_URL = '${supabaseUrl || ""}';
+window._env.SUPABASE_ANON_KEY = '${supabaseAnonKey || ""}';
 
 // Also set in localStorage for development
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {

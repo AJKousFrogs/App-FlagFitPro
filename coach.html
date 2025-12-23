@@ -17,7 +17,10 @@
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Inline styles replacement utilities -->
-    <link rel="stylesheet" href="./src/css/utilities/inline-styles-replacement.css" />
+    <link
+      rel="stylesheet"
+      href="./src/css/utilities/inline-styles-replacement.css"
+    />
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
     <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
@@ -29,14 +32,20 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
-  
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <!-- Mobile Menu Toggle -->
@@ -45,24 +54,17 @@
     </button>
 
     <div class="dashboard-container">
-            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
       <div data-sidebar-container></div>
 
-
       <main class="main-content">
-                <!-- Top Bar (Loaded Dynamically) -->
+        <!-- Top Bar (Loaded Dynamically) -->
         <div data-topbar-container></div>
 
         <!-- Page Title Section (Hero) -->
-        <div
-          class="hero-section"
-          class="u-margin-bottom-16"
-        >
+        <div class="hero-section" class="u-margin-bottom-16">
           <div class="hero-card">
-            <h1
-              class="hero-main-title"
-              class="u-margin-bottom-8"
-            >
+            <h1 class="hero-main-title" class="u-margin-bottom-8">
               Team Management Dashboard
             </h1>
             <p class="u-margin-0 text-secondary">
@@ -463,7 +465,7 @@
 
     <script type="module" src="./src/js/pages/coach-page.js"></script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

@@ -20,10 +20,12 @@ app.use(cors());
 // Parse JSON bodies
 app.use(express.json());
 
-app.use(express.urlencoded({
-  extended: true,
-  limit: '10mb'
-}));
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: "10mb",
+  }),
+);
 
 // Serve static files from the root directory
 app.use(
@@ -38,10 +40,10 @@ app.use(
         res.setHeader("Content-Type", "text/html");
       }
     },
-    dotfiles: 'ignore',
+    dotfiles: "ignore",
     etag: true,
     lastModified: true,
-    maxAge: '1h'
+    maxAge: "1h",
   }),
 );
 

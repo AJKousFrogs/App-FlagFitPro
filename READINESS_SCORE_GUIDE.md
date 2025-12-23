@@ -3,6 +3,7 @@
 ## Overview
 
 Evidence-based readiness scoring system that combines:
+
 - **Session-RPE** (RPE × duration) for training load
 - **ACWR** (Acute:Chronic Workload Ratio) from 7-day/28-day rolling averages
 - **Wellness metrics** (fatigue, sleep quality, soreness)
@@ -44,6 +45,7 @@ Outputs a **0-100 readiness score** with actionable suggestions (deload/maintain
 **Endpoint:** `POST /api/calc-readiness`
 
 **Request:**
+
 ```json
 {
   "athleteId": "uuid",
@@ -52,6 +54,7 @@ Outputs a **0-100 readiness score** with actionable suggestions (deload/maintain
 ```
 
 **Response:**
+
 ```json
 {
   "score": 75,
@@ -105,6 +108,7 @@ Returns historical readiness scores for the specified number of days.
 **Location:** `angular/src/app/core/services/readiness.service.ts`
 
 **Methods:**
+
 - `calculateToday(athleteId)`: Calculate readiness for today
 - `calculateForDay(athleteId, day)`: Calculate for specific day
 - `getHistory(athleteId, days)`: Get historical scores
@@ -116,11 +120,13 @@ Returns historical readiness scores for the specified number of days.
 **Location:** `angular/src/app/shared/components/readiness-widget/readiness-widget.component.ts`
 
 **Usage:**
+
 ```typescript
 <app-readiness-widget [athleteId]="'athlete-uuid'"></app-readiness-widget>
 ```
 
 **Features:**
+
 - Large score display (0-100)
 - Color-coded level badge
 - ACWR metrics breakdown
@@ -131,20 +137,24 @@ Returns historical readiness scores for the specified number of days.
 ## Evidence Base
 
 ### Session-RPE
+
 - **Foster et al. (2001)**: Validated method for internal load
 - Formula: RPE (1-10) × Duration (minutes) = Training Load (AU)
 
 ### ACWR
+
 - **Gabbett (2016)**: ACWR > 1.5 linked to higher injury risk
 - **Sweet spot**: 0.8-1.3 range (though recent work questions rigid thresholds)
 - Uses 7-day acute and 28-day chronic rolling averages
 
 ### Wellness Markers
+
 - **Fatigue & Soreness**: Track training load across weekly cycle
 - **Sleep Quality**: Associates with perceived fatigue
 - **Post-Match Recovery**: Worst 1-2 days after, improves by day 3-4
 
 ### Game Proximity
+
 - Post-match fatigue peaks immediately after games
 - Recovery improves over 3-4 days
 - Deload recommended close to game day
@@ -152,6 +162,7 @@ Returns historical readiness scores for the specified number of days.
 ## Setup Instructions
 
 1. **Run Database Migration:**
+
    ```bash
    psql $DATABASE_URL -f database/migrations/033_readiness_score_system.sql
    ```
@@ -168,9 +179,10 @@ Returns historical readiness scores for the specified number of days.
    - Insert into `fixtures` table with `game_start` timestamp
 
 5. **Use in Angular:**
+
    ```typescript
    import { ReadinessWidgetComponent } from './shared/components/readiness-widget/readiness-widget.component';
-   
+
    <app-readiness-widget [athleteId]="currentAthleteId"></app-readiness-widget>
    ```
 
@@ -184,10 +196,10 @@ Returns historical readiness scores for the specified number of days.
 ## Customization
 
 The scoring weights are tunable in `calc-readiness.cjs`:
+
 - Workload: 40%
 - Wellness: 25%
 - Sleep: 20%
 - Proximity: 15%
 
 Adjust thresholds and penalties based on your team's data and preferences.
-

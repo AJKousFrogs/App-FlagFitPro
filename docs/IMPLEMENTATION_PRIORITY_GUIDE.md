@@ -19,6 +19,7 @@ This guide prioritizes the critical fixes and implementations needed to address 
 **Status**: Documented in [API_OWNERSHIP_MAP.md](./API_OWNERSHIP_MAP.md)
 
 **Action Items:**
+
 - ✅ Document which requests hit Supabase directly vs Netlify Functions
 - ⏳ Migrate write operations to Netlify Functions
 - ⏳ Standardize error responses
@@ -33,6 +34,7 @@ This guide prioritizes the critical fixes and implementations needed to address 
 **Status**: Documented in [DATABASE_SCHEMA_CONSTRAINTS.md](./DATABASE_SCHEMA_CONSTRAINTS.md)
 
 **Action Items:**
+
 - ✅ Document required fields, constraints, unique indexes
 - ⏳ Create SQL migration for missing constraints
 - ⏳ Add foreign key constraints
@@ -48,6 +50,7 @@ This guide prioritizes the critical fixes and implementations needed to address 
 **Status**: Documented in [RLS_POLICY_SPECIFICATION.md](./RLS_POLICY_SPECIFICATION.md)
 
 **Action Items:**
+
 - ✅ Document policy intent per table
 - ⏳ Implement missing RLS policies
 - ⏳ Test policies with different user roles
@@ -62,6 +65,7 @@ This guide prioritizes the critical fixes and implementations needed to address 
 **Status**: Documented in [EDGE_CASE_HANDLING.md](./EDGE_CASE_HANDLING.md)
 
 **Action Items:**
+
 - ⏳ Implement baseline requirement check (< 28 days)
 - ⏳ Add minimum denominator threshold (chronic_load < 50)
 - ⏳ Implement safe ACWR calculation function
@@ -71,6 +75,7 @@ This guide prioritizes the critical fixes and implementations needed to address 
 **Priority**: **HIGH** - Core feature correctness
 
 **Implementation:**
+
 ```sql
 -- See EDGE_CASE_HANDLING.md for full implementation
 CREATE OR REPLACE FUNCTION calculate_acwr_safe(...)
@@ -83,6 +88,7 @@ CREATE OR REPLACE FUNCTION calculate_acwr_safe(...)
 **Status**: Documented in [EDGE_CASE_HANDLING.md](./EDGE_CASE_HANDLING.md)
 
 **Action Items:**
+
 - ⏳ Clarify entity separation (training_sessions vs workout_logs)
 - ⏳ Update API endpoints:
   - `POST /api/training/sessions` → Creates planned session
@@ -99,6 +105,7 @@ CREATE OR REPLACE FUNCTION calculate_acwr_safe(...)
 **Status**: Partially documented
 
 **Action Items:**
+
 - ⏳ Add `token_hash` column (hashed, not plain text)
 - ⏳ Add unique constraint on `(team_id, email_normalized)` where `status = 'pending'`
 - ⏳ Implement token hashing in backend
@@ -108,6 +115,7 @@ CREATE OR REPLACE FUNCTION calculate_acwr_safe(...)
 **Priority**: **HIGH** - Security and data integrity
 
 **Implementation:**
+
 ```sql
 -- See DATABASE_SCHEMA_CONSTRAINTS.md for schema
 -- Add token hashing in backend:
@@ -121,6 +129,7 @@ const tokenHash = await bcrypt.hash(token, 10);
 **Status**: Documented in [EDGE_CASE_HANDLING.md](./EDGE_CASE_HANDLING.md)
 
 **Action Items:**
+
 - ⏳ Add `format` column to tournaments table
 - ⏳ Add `bracket_metadata` JSONB column
 - ⏳ Implement bracket generation logic
@@ -137,6 +146,7 @@ const tokenHash = await bcrypt.hash(token, 10);
 **Status**: Documented in [EDGE_CASE_HANDLING.md](./EDGE_CASE_HANDLING.md)
 
 **Action Items:**
+
 - ⏳ Implement 90-day retention policy for raw events
 - ⏳ Create daily aggregation job
 - ⏳ Create weekly aggregation job
@@ -147,6 +157,7 @@ const tokenHash = await bcrypt.hash(token, 10);
 **Priority**: **MEDIUM** - Performance and compliance
 
 **Implementation:**
+
 ```sql
 -- Daily cleanup
 CREATE OR REPLACE FUNCTION cleanup_old_analytics_events()
@@ -162,7 +173,7 @@ CREATE OR REPLACE FUNCTION aggregate_daily_analytics()
 RETURNS void AS $$
 BEGIN
   INSERT INTO analytics_aggregates (user_id, aggregation_type, aggregation_date, metrics)
-  SELECT 
+  SELECT
     user_id,
     'daily',
     DATE(created_at),
@@ -187,6 +198,7 @@ $$ LANGUAGE plpgsql;
 **Status**: Partially documented
 
 **Action Items:**
+
 - ⏳ Create `community_reports` table
 - ⏳ Create `moderation_actions` table
 - ⏳ Implement report reasons and thresholds
@@ -198,6 +210,7 @@ $$ LANGUAGE plpgsql;
 **Priority**: **MEDIUM** - Community safety
 
 **Schema:**
+
 ```sql
 CREATE TABLE community_reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -229,6 +242,7 @@ CREATE TABLE moderation_actions (
 **Status**: Documented in [AI_COACHING_SYSTEM_REVAMP.md](./AI_COACHING_SYSTEM_REVAMP.md)
 
 **Action Items:**
+
 - ⏳ Implement risk classification stage
 - ⏳ Create safety tier system (low/medium/high)
 - ⏳ Build curated knowledge base
@@ -254,6 +268,7 @@ CREATE TABLE moderation_actions (
 5. ⏳ Implement missing RLS policies
 
 **Deliverables:**
+
 - Complete API ownership documentation
 - Database migration with constraints
 - RLS policies implemented and tested
@@ -270,6 +285,7 @@ CREATE TABLE moderation_actions (
 4. ⏳ Add edge case handling
 
 **Deliverables:**
+
 - Working ACWR calculation with baseline checks
 - Clear separation of planned/completed sessions
 - Secure invitation system
@@ -286,6 +302,7 @@ CREATE TABLE moderation_actions (
 4. ⏳ AI coaching system revamp
 
 **Deliverables:**
+
 - Complete tournament system
 - Analytics aggregation jobs
 - Moderation workflow
@@ -296,13 +313,15 @@ CREATE TABLE moderation_actions (
 ## Quick Wins (Can Do Immediately)
 
 1. **Add missing unique constraints** (30 minutes)
+
    ```sql
-   CREATE UNIQUE INDEX idx_team_members_unique 
-   ON team_members(team_id, user_id) 
+   CREATE UNIQUE INDEX idx_team_members_unique
+   ON team_members(team_id, user_id)
    WHERE deleted_at IS NULL;
    ```
 
 2. **Add email normalization** (1 hour)
+
    ```sql
    ALTER TABLE profiles ADD COLUMN email_normalized VARCHAR(255);
    UPDATE profiles SET email_normalized = LOWER(TRIM(email));
@@ -322,12 +341,14 @@ CREATE TABLE moderation_actions (
 ## Testing Checklist
 
 ### Database Constraints
+
 - [ ] Unique constraints prevent duplicates
 - [ ] Foreign keys prevent orphaned records
 - [ ] Check constraints enforce business rules
 - [ ] Soft delete works correctly
 
 ### RLS Policies
+
 - [ ] Users can only access their own data
 - [ ] Team members can access team data
 - [ ] Coaches can access team member data
@@ -335,6 +356,7 @@ CREATE TABLE moderation_actions (
 - [ ] Public resources accessible to all
 
 ### Edge Cases
+
 - [ ] ACWR handles < 28 days baseline
 - [ ] ACWR handles zero chronic load
 - [ ] Invitations handle email mismatches
@@ -342,6 +364,7 @@ CREATE TABLE moderation_actions (
 - [ ] Session editing recalculates load
 
 ### API Ownership
+
 - [ ] Write operations go through Netlify Functions
 - [ ] Read operations can use Supabase direct
 - [ ] Error responses are standardized
@@ -356,4 +379,3 @@ CREATE TABLE moderation_actions (
 - [RLS_POLICY_SPECIFICATION.md](./RLS_POLICY_SPECIFICATION.md) - Security policies
 - [EDGE_CASE_HANDLING.md](./EDGE_CASE_HANDLING.md) - Edge cases
 - [AI_COACHING_SYSTEM_REVAMP.md](./AI_COACHING_SYSTEM_REVAMP.md) - AI system
-

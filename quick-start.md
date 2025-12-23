@@ -28,15 +28,15 @@ Open `src/styles.scss` and add:
 
 ```scss
 // Import design tokens first
-@import './assets/styles/design-tokens.scss';
+@import "./assets/styles/design-tokens.scss";
 
 // Import component styles
-@import './assets/styles/component-styles.scss';
+@import "./assets/styles/component-styles.scss";
 
 // Import PrimeNG theme (if using PrimeNG)
-@import 'primeng/resources/themes/lara-light-green/theme.css';
-@import 'primeng/resources/primeng.css';
-@import 'primeicons/primeicons.css';
+@import "primeng/resources/themes/lara-light-green/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
 ```
 
 ### Step 3: Verify Setup (2 minutes)
@@ -55,29 +55,27 @@ Create a test component to verify tokens work:
 
 ```typescript
 // src/app/test-design-system/test-design-system.component.ts
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-test-design-system',
+  selector: "app-test-design-system",
   standalone: true,
   imports: [CommonModule],
   template: `
     <div class="container" style="padding: var(--space-6);">
-      <h1 style="color: var(--color-brand-primary);">
-        Design System Test
-      </h1>
-      
+      <h1 style="color: var(--color-brand-primary);">Design System Test</h1>
+
       <button class="btn btn-primary">Primary Button</button>
       <button class="btn btn-secondary">Secondary Button</button>
-      
+
       <div class="card card-elevated" style="margin-top: var(--space-6);">
         <div class="card-body">
           <p>Card content here</p>
         </div>
       </div>
     </div>
-  `
+  `,
 })
 export class TestDesignSystemComponent {}
 ```
@@ -142,22 +140,22 @@ sed -i '' 's/--dark-text-primary/--color-text-primary/g' src/app/**/*.component.
 
 ```scss
 --space-0: 0;
---space-1: 4px;    /* 0.25rem */
---space-2: 8px;    /* 0.5rem */
---space-3: 12px;   /* 0.75rem */
---space-4: 16px;   /* 1rem */
---space-6: 24px;   /* 1.5rem */
---space-8: 32px;   /* 2rem */
---space-12: 48px;  /* 3rem */
+--space-1: 4px; /* 0.25rem */
+--space-2: 8px; /* 0.5rem */
+--space-3: 12px; /* 0.75rem */
+--space-4: 16px; /* 1rem */
+--space-6: 24px; /* 1.5rem */
+--space-8: 32px; /* 2rem */
+--space-12: 48px; /* 3rem */
 ```
 
 **Usage:**
 
 ```scss
 .my-component {
-  padding: var(--space-4);        /* 16px */
-  margin-bottom: var(--space-6);  /* 24px */
-  gap: var(--space-2);            /* 8px */
+  padding: var(--space-4); /* 16px */
+  margin-bottom: var(--space-6); /* 24px */
+  gap: var(--space-2); /* 8px */
 }
 ```
 
@@ -246,9 +244,7 @@ sed -i '' 's/--dark-text-primary/--color-text-primary/g' src/app/**/*.component.
 ```html
 <!-- Default Card -->
 <div class="card">
-  <div class="card-body">
-    Content here
-  </div>
+  <div class="card-body">Content here</div>
 </div>
 
 <!-- Elevated Card -->
@@ -256,19 +252,13 @@ sed -i '' 's/--dark-text-primary/--color-text-primary/g' src/app/**/*.component.
   <div class="card-header">
     <h3 class="card-title">Title</h3>
   </div>
-  <div class="card-body">
-    Content here
-  </div>
-  <div class="card-footer">
-    Footer content
-  </div>
+  <div class="card-body">Content here</div>
+  <div class="card-footer">Footer content</div>
 </div>
 
 <!-- Outlined Card -->
 <div class="card card-outlined">
-  <div class="card-body">
-    Content here
-  </div>
+  <div class="card-body">Content here</div>
 </div>
 ```
 
@@ -285,7 +275,8 @@ sed -i '' 's/--dark-text-primary/--color-text-primary/g' src/app/**/*.component.
     id="email"
     type="email"
     class="form-control"
-    placeholder="Enter your email" />
+    placeholder="Enter your email"
+  />
   <div class="form-help">We'll never share your email</div>
 </div>
 ```
@@ -462,12 +453,12 @@ toggleDarkMode() {
 ```scss
 /* BAD */
 .my-component {
-  padding: 15px;  /* Not on 8-point grid */
+  padding: 15px; /* Not on 8-point grid */
 }
 
 /* GOOD */
 .my-component {
-  padding: var(--space-4);  /* 16px - on grid */
+  padding: var(--space-4); /* 16px - on grid */
 }
 ```
 
@@ -498,10 +489,10 @@ ls -la src/assets/styles/design-tokens.scss
 
 ```typescript
 // Check if data-theme attribute is set
-console.log(document.documentElement.getAttribute('data-theme'));
+console.log(document.documentElement.getAttribute("data-theme"));
 
 // Manually set dark mode
-document.documentElement.setAttribute('data-theme', 'dark');
+document.documentElement.setAttribute("data-theme", "dark");
 ```
 
 ### Build errors?
@@ -527,4 +518,3 @@ You now have everything you need to start using the FlagFit Pro design system. R
 - ✅ Use semantic variable names
 
 **Happy coding! 🎉**
-

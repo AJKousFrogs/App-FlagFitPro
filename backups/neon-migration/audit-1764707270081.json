@@ -156,11 +156,7 @@
       "sampleData": {
         "id": 1,
         "study_title": "Hydration Strategies for Team Sports: A Meta-Analysis of Performance Outcomes",
-        "authors": [
-          "Smith, J.",
-          "Johnson, A.",
-          "Williams, B."
-        ],
+        "authors": ["Smith, J.", "Johnson, A.", "Williams, B."],
         "publication_year": 2024,
         "journal": "Sports Medicine",
         "doi": null,
@@ -218,18 +214,11 @@
         "id": 1,
         "user_id": "user_123",
         "session_id": "session_456",
-        "page_sequence": [
-          "/dashboard",
-          "/training",
-          "/goals"
-        ],
+        "page_sequence": ["/dashboard", "/training", "/goals"],
         "session_duration": 1800,
         "total_page_views": 5,
         "bounce_rate": null,
-        "features_used": [
-          "training_timer",
-          "goal_tracker"
-        ],
+        "features_used": ["training_timer", "goal_tracker"],
         "training_sessions_completed": 0,
         "goals_created": 0,
         "conversion_events": null,
@@ -327,10 +316,7 @@
         "step_order": 1,
         "estimated_duration_days": 3,
         "dependencies": [],
-        "required_resources": [
-          "testing_equipment",
-          "qualified_tester"
-        ],
+        "required_resources": ["testing_equipment", "qualified_tester"],
         "success_criteria": [
           "all_tests_completed",
           "baseline_data_recorded",
@@ -424,12 +410,8 @@
         "wind_patterns": null,
         "acclimatization_requirements_days": 0,
         "performance_impact_percentage": "0.00",
-        "health_considerations": [
-          "none"
-        ],
-        "training_recommendations": [
-          "standard_training_protocols"
-        ],
+        "health_considerations": ["none"],
+        "training_recommendations": ["standard_training_protocols"],
         "created_at": "2025-08-17T20:35:03.458Z"
       }
     },
@@ -468,10 +450,7 @@
         "prohibition_reason": null,
         "exceptions": null,
         "detection_window_days": 30,
-        "common_sources": [
-          "anabolic_steroids",
-          "testosterone_boosters"
-        ],
+        "common_sources": ["anabolic_steroids", "testosterone_boosters"],
         "cross_contamination_risk": false,
         "flag_football_relevance": "high",
         "position_specific_risks": null,
@@ -618,9 +597,7 @@
         "last_test_date": null,
         "test_result": null,
         "flag_football_safe": true,
-        "recommended_for_position": [
-          "all_positions"
-        ],
+        "recommended_for_position": ["all_positions"],
         "usage_guidelines": null,
         "compliance_notes": null,
         "risk_mitigation_strategies": null,
@@ -812,11 +789,7 @@
         "supplement_id": 1,
         "study_reference": "Kreider et al. 2017",
         "study_title": "International Society of Sports Nutrition position stand: safety and efficacy of creatine supplementation in exercise, sport, and medicine",
-        "authors": [
-          "Kreider RB",
-          "Kalman DS",
-          "Antonio J"
-        ],
+        "authors": ["Kreider RB", "Kalman DS", "Antonio J"],
         "journal": "Journal of the International Society of Sports Nutrition",
         "publication_year": 2017,
         "doi": null,
@@ -829,12 +802,7 @@
         "dosing_frequency": null,
         "loading_phase_days": null,
         "maintenance_phase_days": null,
-        "outcome_measures": [
-          "strength",
-          "power",
-          "muscle_mass",
-          "recovery"
-        ],
+        "outcome_measures": ["strength", "power", "muscle_mass", "recovery"],
         "primary_outcome": "strength_improvement",
         "effect_size": "0.85",
         "statistical_significance": true,
@@ -954,21 +922,10 @@
         "description": "Basic foam roller for muscle recovery and mobility",
         "price_range_min": "15.00",
         "price_range_max": "40.00",
-        "where_to_buy": [
-          "sports_stores",
-          "online_retailers",
-          "supermarkets"
-        ],
-        "diy_alternatives": [
-          "tennis_ball",
-          "water_bottle",
-          "rolled_towel"
-        ],
+        "where_to_buy": ["sports_stores", "online_retailers", "supermarkets"],
+        "diy_alternatives": ["tennis_ball", "water_bottle", "rolled_towel"],
         "expected_lifespan_months": 24,
-        "maintenance_requirements": [
-          "clean_regularly",
-          "replace_when_worn"
-        ],
+        "maintenance_requirements": ["clean_regularly", "replace_when_worn"],
         "performance_benefit": "Improves muscle recovery and mobility",
         "priority_for_amateur": "essential",
         "created_at": "2025-08-18T20:14:28.722Z"
@@ -1088,11 +1045,7 @@
         "max_spend_euros": "200.00",
         "priority_level": "critical",
         "expected_roi_percentage": "80.00",
-        "diy_alternatives": [
-          "foam_rolling",
-          "stretching",
-          "ice_baths"
-        ],
+        "diy_alternatives": ["foam_rolling", "stretching", "ice_baths"],
         "local_resource_options": [
           "sports_stores",
           "online_retailers",
@@ -1381,10 +1334,7 @@
         "program_name": "Home Strength Foundation",
         "program_type": "strength",
         "skill_level": "beginner",
-        "equipment_required": [
-          "resistance_bands",
-          "bodyweight"
-        ],
+        "equipment_required": ["resistance_bands", "bodyweight"],
         "space_requirements": "small_room",
         "time_per_session_minutes": 45,
         "sessions_per_week": 3,
@@ -1601,10 +1551,7 @@
           "resistance_bands",
           "protein_powder"
         ],
-        "local_resource_needs": [
-          "local_gym_access",
-          "basic_coaching"
-        ],
+        "local_resource_needs": ["local_gym_access", "basic_coaching"],
         "diy_protocols_included": [
           "home_ice_baths",
           "bodyweight_circuits",
@@ -1644,9 +1591,7 @@
         "protocol_name": "Bodyweight Strength Circuit",
         "protocol_type": "training",
         "target_outcome": "Build strength without expensive equipment",
-        "equipment_needed": [
-          "none"
-        ],
+        "equipment_needed": ["none"],
         "time_required_minutes": 45,
         "difficulty_level": "beginner",
         "step_by_step_instructions": [
@@ -1857,11 +1802,7 @@
         "tournament_duration_days": 14,
         "average_temperature_celsius": "22.50",
         "average_humidity_percentage": "65.00",
-        "altitude_variations_meters": [
-          100,
-          300,
-          500
-        ],
+        "altitude_variations_meters": [100, 300, 500],
         "pre_tournament_hydration_protocol": "Begin hydration protocol 7 days before tournament with 20ml/kg/day baseline",
         "daily_hydration_targets_ml_per_kg": "18.00",
         "between_games_hydration_strategy": "150ml every 20 minutes between games, electrolyte replacement for games >2 hours apart",
@@ -2120,14 +2061,8 @@
         "power_improvement_percentage": "12.80",
         "sprint_performance_improvement": "8.50",
         "muscle_mass_gain_kg": "2.500",
-        "side_effects": [
-          "water retention",
-          "minor gastrointestinal issues"
-        ],
-        "contraindications": [
-          "kidney disease",
-          "diabetes"
-        ],
+        "side_effects": ["water retention", "minor gastrointestinal issues"],
+        "contraindications": ["kidney disease", "diabetes"],
         "long_term_safety_data": true,
         "flag_football_relevance_score": 9,
         "position_specific_benefits": [
@@ -2222,16 +2157,10 @@
           "website": "www.usafff.org"
         },
         "coaching_staff": {
-          "assistants": [
-            "John Davis",
-            "Sarah Wilson"
-          ],
+          "assistants": ["John Davis", "Sarah Wilson"],
           "head_coach": "Mike Smith"
         },
-        "play_style": [
-          "possession_based",
-          "high_press"
-        ],
+        "play_style": ["possession_based", "high_press"],
         "formation_preferences": null,
         "key_players": null,
         "home_venue": null,
@@ -3745,20 +3674,10 @@
         "recommended_timing": "any time of day",
         "recommended_dosage": "20mg/kg loading for 7 days, then 3-5g daily",
         "duration_of_use": "long-term safe",
-        "drug_interactions": [
-          "none known"
-        ],
-        "food_interactions": [
-          "none known"
-        ],
-        "side_effects": [
-          "water retention",
-          "minor gastrointestinal issues"
-        ],
-        "contraindications": [
-          "kidney disease",
-          "diabetes"
-        ],
+        "drug_interactions": ["none known"],
+        "food_interactions": ["none known"],
+        "side_effects": ["water retention", "minor gastrointestinal issues"],
+        "contraindications": ["kidney disease", "diabetes"],
         "research_summary": "Extensive research supports creatine monohydrate for strength and power improvements",
         "key_studies": [
           "Kreider et al. (1998) - Medicine and Science in Sports and Exercise",
@@ -3983,34 +3902,16 @@
         "rem_sleep_target_percentage": 25,
         "pre_sleep_routine_duration_minutes": 90,
         "bedroom_temperature_celsius": "18.50",
-        "light_exposure_guidelines": [
-          "dark_environment",
-          "no_blue_light"
-        ],
+        "light_exposure_guidelines": ["dark_environment", "no_blue_light"],
         "electronic_device_cutoff_hours": "2.00",
-        "pre_sleep_nutrition_guidelines": [
-          "light_snack",
-          "avoid_large_meals"
-        ],
-        "sleep_promoting_supplements": [
-          "magnesium",
-          "melatonin"
-        ],
-        "supplements_to_avoid": [
-          "stimulants",
-          "alcohol"
-        ],
+        "pre_sleep_nutrition_guidelines": ["light_snack", "avoid_large_meals"],
+        "sleep_promoting_supplements": ["magnesium", "melatonin"],
+        "supplements_to_avoid": ["stimulants", "alcohol"],
         "caffeine_cutoff_hours": 6,
         "alcohol_recommendations": null,
         "room_darkness_requirements": "complete_darkness",
-        "noise_management": [
-          "white_noise",
-          "earplugs"
-        ],
-        "bedding_recommendations": [
-          "cooling_pillow",
-          "breathable_sheets"
-        ],
+        "noise_management": ["white_noise", "earplugs"],
+        "bedding_recommendations": ["cooling_pillow", "breathable_sheets"],
         "air_quality_factors": null,
         "performance_improvement_with_optimization": "15.50",
         "injury_risk_reduction_percentage": "12.30",
@@ -4018,9 +3919,7 @@
           "improved_focus",
           "better_reaction_time"
         ],
-        "immune_function_benefits": [
-          "enhanced_immune_response"
-        ],
+        "immune_function_benefits": ["enhanced_immune_response"],
         "recommended_tracking_metrics": [
           "sleep_duration",
           "sleep_efficiency",
@@ -4379,10 +4278,7 @@
         "category_type": "acceleration",
         "description": "0-20 yard explosive starts from 3-point stance",
         "elite_method_origin": "usa_power",
-        "equipment_needed": [
-          "cones",
-          "stopwatch"
-        ],
+        "equipment_needed": ["cones", "stopwatch"],
         "difficulty_level": 2,
         "created_at": "2025-08-17T16:48:21.551Z"
       }
@@ -4548,15 +4444,8 @@
         "agility_rating_max": 9,
         "power_rating_min": 7,
         "power_rating_max": 9,
-        "ideal_sports_backgrounds": [
-          "track_field",
-          "soccer",
-          "basketball"
-        ],
-        "secondary_sports_backgrounds": [
-          "rugby_sevens",
-          "tennis"
-        ],
+        "ideal_sports_backgrounds": ["track_field", "soccer", "basketball"],
+        "secondary_sports_backgrounds": ["rugby_sevens", "tennis"],
         "position_suitability": {
           "blitz": 7,
           "center": 7,
@@ -4677,15 +4566,8 @@
           "american_football_strategy",
           "upper_body_strength"
         ],
-        "optimal_positions": [
-          "receiver",
-          "defensive_back",
-          "center"
-        ],
-        "secondary_positions": [
-          "quarterback",
-          "blitz"
-        ],
+        "optimal_positions": ["receiver", "defensive_back", "center"],
+        "secondary_positions": ["quarterback", "blitz"],
         "recommended_training_emphasis": [
           "catching_drills",
           "route_running",
@@ -4730,14 +4612,8 @@
           "deep_protection",
           "zone_coverage"
         ],
-        "scheme_weaknesses": [
-          "run_stopping",
-          "short_quick_passes"
-        ],
-        "ideal_situations": [
-          "known_passing_downs",
-          "deep_ball_protection"
-        ],
+        "scheme_weaknesses": ["run_stopping", "short_quick_passes"],
+        "ideal_situations": ["known_passing_downs", "deep_ball_protection"],
         "player_requirements": {
           "blitz": {
             "power": 8,
@@ -4807,10 +4683,7 @@
         "female_target": "5.80",
         "percentage_of_nfl_elite": "0.75",
         "description": "Beginner flag football players",
-        "training_focus": [
-          "basic_technique",
-          "conditioning"
-        ],
+        "training_focus": ["basic_technique", "conditioning"],
         "created_at": "2025-08-17T17:32:14.640Z"
       }
     },
@@ -4971,9 +4844,7 @@
         "broad_jump": null,
         "bench_press_reps": null,
         "nfl_seasons_played": null,
-        "career_achievements": [
-          "NFL_Record_Holder"
-        ],
+        "career_achievements": ["NFL_Record_Holder"],
         "career_stats": null,
         "success_rating": 8,
         "combine_year": null,
@@ -5163,9 +5034,7 @@
         "recommendation": "Athletes should aim for 7-9 hours of sleep per night for optimal performance and recovery",
         "citation_id": null,
         "citation_title": "Sleep and Athletic Performance: Impacts on Physical Performance, Mental Performance, Injury Risk and Recovery in Athletes",
-        "citation_authors": [
-          "Watson AM"
-        ],
+        "citation_authors": ["Watson AM"],
         "citation_journal": "Sleep Medicine Clinics",
         "citation_year": 2017,
         "citation_doi": null,
@@ -5221,10 +5090,7 @@
         "evidence_level": "high",
         "implementation_duration_weeks": 4,
         "daily_digital_time_limit_hours": "6.00",
-        "screen_free_blocks_hours": [
-          2,
-          1.5
-        ],
+        "screen_free_blocks_hours": [2, 1.5],
         "app_usage_restrictions": null,
         "notification_management": null,
         "digital_detox_periods": null,
@@ -5720,10 +5586,7 @@
         "competency_category": "technical",
         "competency_description": "Ability to execute precise routes with proper timing and spacing",
         "position_specific": true,
-        "applicable_positions": [
-          "receiver",
-          "tight_end"
-        ],
+        "applicable_positions": ["receiver", "tight_end"],
         "competency_levels": {
           "elite": "Exceptional route mastery with deception",
           "advanced": "Precise timing and spacing",
@@ -5735,11 +5598,7 @@
           "coach_observation",
           "timing_measurements"
         ],
-        "development_activities": [
-          "route_drills",
-          "timing_work",
-          "film_study"
-        ],
+        "development_activities": ["route_drills", "timing_work", "film_study"],
         "benchmark_standards": null,
         "evidence_level": "high",
         "created_at": "2025-08-17T20:37:53.415Z"

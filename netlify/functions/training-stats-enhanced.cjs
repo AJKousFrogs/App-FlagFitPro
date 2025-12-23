@@ -9,7 +9,7 @@ const {
   createErrorResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -38,16 +38,17 @@ function calculateSessionLoad(session) {
  * - Acute Load: Sum of last 7 days total load
  * - Chronic Load: Average weekly load over last 28 days
  * - ACWR = Acute / Chronic
- * 
+ *
  * Target: 0.8-1.3 (sweet spot: 1.0-1.2)
  * Risk zones: > 1.5 (high injury risk), < 0.8 (detraining risk)
  */
 function calculateACWR(sessions, referenceDate = new Date()) {
-  const today = referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
+  const today =
+    referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
   const todayStr = today.toISOString().split("T")[0];
-  
+
   // Filter sessions up to and including today
-  const validSessions = sessions.filter(s => {
+  const validSessions = sessions.filter((s) => {
     const sessionDate = s.session_date || s.date;
     return sessionDate && sessionDate <= todayStr;
   });
@@ -59,8 +60,8 @@ function calculateACWR(sessions, referenceDate = new Date()) {
       chronicLoad: 0,
       acuteDays: 0,
       chronicDays: 0,
-      riskZone: 'insufficient_data',
-      message: 'Insufficient data to calculate ACWR (need at least 7 days)'
+      riskZone: "insufficient_data",
+      message: "Insufficient data to calculate ACWR (need at least 7 days)",
     };
   }
 
@@ -69,49 +70,55 @@ function calculateACWR(sessions, referenceDate = new Date()) {
   acuteStartDate.setDate(acuteStartDate.getDate() - 7);
   const acuteStartStr = acuteStartDate.toISOString().split("T")[0];
 
-  const acuteSessions = validSessions.filter(s => {
+  const acuteSessions = validSessions.filter((s) => {
     const sessionDate = s.session_date || s.date;
     return sessionDate >= acuteStartStr && sessionDate <= todayStr;
   });
 
-  const acuteLoad = acuteSessions.reduce((sum, s) => sum + calculateSessionLoad(s), 0);
+  const acuteLoad = acuteSessions.reduce(
+    (sum, s) => sum + calculateSessionLoad(s),
+    0,
+  );
 
   // Calculate chronic load (last 28 days, average weekly load)
   const chronicStartDate = new Date(today);
   chronicStartDate.setDate(chronicStartDate.getDate() - 28);
   const chronicStartStr = chronicStartDate.toISOString().split("T")[0];
 
-  const chronicSessions = validSessions.filter(s => {
+  const chronicSessions = validSessions.filter((s) => {
     const sessionDate = s.session_date || s.date;
     return sessionDate >= chronicStartStr && sessionDate <= todayStr;
   });
 
-  const chronicTotalLoad = chronicSessions.reduce((sum, s) => sum + calculateSessionLoad(s), 0);
+  const chronicTotalLoad = chronicSessions.reduce(
+    (sum, s) => sum + calculateSessionLoad(s),
+    0,
+  );
   const chronicLoad = chronicTotalLoad / 4; // Average weekly load over 4 weeks
 
   // Calculate ACWR
   let acwr = null;
-  let riskZone = 'insufficient_data';
-  let message = '';
+  let riskZone = "insufficient_data";
+  let message = "";
 
   if (chronicLoad > 0) {
     acwr = acuteLoad / chronicLoad;
-    
+
     if (acwr < 0.8) {
-      riskZone = 'detraining';
-      message = 'ACWR below optimal range - risk of detraining';
+      riskZone = "detraining";
+      message = "ACWR below optimal range - risk of detraining";
     } else if (acwr >= 0.8 && acwr <= 1.3) {
-      riskZone = 'optimal';
-      message = 'ACWR in optimal range';
+      riskZone = "optimal";
+      message = "ACWR in optimal range";
     } else if (acwr > 1.3 && acwr <= 1.5) {
-      riskZone = 'elevated';
-      message = 'ACWR elevated - monitor closely';
+      riskZone = "elevated";
+      message = "ACWR elevated - monitor closely";
     } else {
-      riskZone = 'danger';
-      message = 'ACWR in danger zone - high injury risk, reduce load';
+      riskZone = "danger";
+      message = "ACWR in danger zone - high injury risk, reduce load";
     }
   } else {
-    message = 'Insufficient chronic load data (need at least 28 days)';
+    message = "Insufficient chronic load data (need at least 28 days)";
   }
 
   return {
@@ -121,7 +128,7 @@ function calculateACWR(sessions, referenceDate = new Date()) {
     acuteDays: acuteSessions.length,
     chronicDays: chronicSessions.length,
     riskZone,
-    message
+    message,
   };
 }
 
@@ -129,9 +136,10 @@ function calculateACWR(sessions, referenceDate = new Date()) {
  * Calculate weekly volume (total load for current week)
  */
 function calculateWeeklyVolume(sessions, referenceDate = new Date()) {
-  const today = referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
+  const today =
+    referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
   const todayStr = today.toISOString().split("T")[0];
-  
+
   // Get ISO week start (Monday)
   const getISOWeekStart = (date) => {
     const d = new Date(date);
@@ -149,16 +157,28 @@ function calculateWeeklyVolume(sessions, referenceDate = new Date()) {
   const weekStartStr = weekStart.toISOString().split("T")[0];
   const weekEndStr = weekEnd.toISOString().split("T")[0];
 
-  const weekSessions = sessions.filter(s => {
+  const weekSessions = sessions.filter((s) => {
     const sessionDate = s.session_date || s.date;
-    return sessionDate && sessionDate >= weekStartStr && sessionDate <= weekEndStr;
+    return (
+      sessionDate && sessionDate >= weekStartStr && sessionDate <= weekEndStr
+    );
   });
 
-  const totalLoad = weekSessions.reduce((sum, s) => sum + calculateSessionLoad(s), 0);
-  const totalDuration = weekSessions.reduce((sum, s) => sum + (s.duration_minutes || 0), 0);
-  const avgIntensity = weekSessions.length > 0
-    ? weekSessions.reduce((sum, s) => sum + (s.rpe || s.intensity_level || 5), 0) / weekSessions.length
-    : 0;
+  const totalLoad = weekSessions.reduce(
+    (sum, s) => sum + calculateSessionLoad(s),
+    0,
+  );
+  const totalDuration = weekSessions.reduce(
+    (sum, s) => sum + (s.duration_minutes || 0),
+    0,
+  );
+  const avgIntensity =
+    weekSessions.length > 0
+      ? weekSessions.reduce(
+          (sum, s) => sum + (s.rpe || s.intensity_level || 5),
+          0,
+        ) / weekSessions.length
+      : 0;
 
   return {
     totalLoad: Math.round(totalLoad),
@@ -166,7 +186,7 @@ function calculateWeeklyVolume(sessions, referenceDate = new Date()) {
     sessionCount: weekSessions.length,
     avgIntensity: Math.round(avgIntensity * 10) / 10,
     weekStart: weekStartStr,
-    weekEnd: weekEndStr
+    weekEnd: weekEndStr,
   };
 }
 
@@ -203,7 +223,7 @@ async function getTrainingStats(userId, options = {}) {
       throw error;
     }
 
-    const validSessions = (sessions || []).filter(s => {
+    const validSessions = (sessions || []).filter((s) => {
       const sessionDate = s.session_date || s.date;
       return sessionDate && sessionDate <= today;
     });
@@ -216,8 +236,14 @@ async function getTrainingStats(userId, options = {}) {
 
     // Calculate overall stats
     const totalSessions = validSessions.length;
-    const totalDuration = validSessions.reduce((sum, s) => sum + (s.duration_minutes || 0), 0);
-    const totalLoad = validSessions.reduce((sum, s) => sum + calculateSessionLoad(s), 0);
+    const totalDuration = validSessions.reduce(
+      (sum, s) => sum + (s.duration_minutes || 0),
+      0,
+    );
+    const totalLoad = validSessions.reduce(
+      (sum, s) => sum + calculateSessionLoad(s),
+      0,
+    );
     const avgDuration = totalSessions > 0 ? totalDuration / totalSessions : 0;
     const avgLoad = totalSessions > 0 ? totalLoad / totalSessions : 0;
 
@@ -229,7 +255,7 @@ async function getTrainingStats(userId, options = {}) {
       checkDate.setDate(todayDate.getDate() - i);
       const dateStr = checkDate.toISOString().split("T")[0];
 
-      const hasSessionOnDate = validSessions.some(s => {
+      const hasSessionOnDate = validSessions.some((s) => {
         const sessionDate = s.session_date || s.date;
         return sessionDate === dateStr;
       });
@@ -244,13 +270,13 @@ async function getTrainingStats(userId, options = {}) {
 
     // Group by type
     const sessionsByType = {};
-    validSessions.forEach(session => {
-      const type = session.session_type || session.type || 'unknown';
+    validSessions.forEach((session) => {
+      const type = session.session_type || session.type || "unknown";
       if (!sessionsByType[type]) {
         sessionsByType[type] = {
           count: 0,
           totalDuration: 0,
-          totalLoad: 0
+          totalLoad: 0,
         };
       }
       sessionsByType[type].count++;
@@ -285,14 +311,17 @@ async function getTrainingStats(userId, options = {}) {
 
       // Date range
       dateRange: {
-        startDate: validSessions.length > 0 
-          ? (validSessions[validSessions.length - 1].session_date || validSessions[validSessions.length - 1].date)
-          : null,
-        endDate: validSessions.length > 0
-          ? (validSessions[0].session_date || validSessions[0].date)
-          : null,
-        filteredToToday: today
-      }
+        startDate:
+          validSessions.length > 0
+            ? validSessions[validSessions.length - 1].session_date ||
+              validSessions[validSessions.length - 1].date
+            : null,
+        endDate:
+          validSessions.length > 0
+            ? validSessions[0].session_date || validSessions[0].date
+            : null,
+        filteredToToday: today,
+      },
     };
   } catch (error) {
     console.error("Error getting training stats:", error);
@@ -301,7 +330,7 @@ async function getTrainingStats(userId, options = {}) {
 }
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Training-Stats-Enhanced', event);
+  logFunctionCall("Training-Stats-Enhanced", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -334,7 +363,7 @@ exports.handler = async (event, context) => {
       const queryParams = event.queryStringParameters || {};
       const options = {
         startDate: queryParams.startDate,
-        endDate: queryParams.endDate
+        endDate: queryParams.endDate,
       };
 
       const trainingStats = await getTrainingStats(userId, options);
@@ -342,9 +371,9 @@ exports.handler = async (event, context) => {
     }
 
     // Method not allowed
-    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   } catch (error) {
     console.error("Error in training-stats-enhanced function:", error);
-    return handleServerError(error, 'Training-Stats-Enhanced');
+    return handleServerError(error, "Training-Stats-Enhanced");
   }
 };

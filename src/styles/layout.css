@@ -1,6 +1,6 @@
 /* ====== LAYOUT STYLES - FLAGFIT PRO ====== */
 
-@import './tokens.css';
+@import "./tokens.css";
 
 /* ========================================
    APP LAYOUT
@@ -422,15 +422,15 @@
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .training-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .schedule-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .schedule-day {
     min-height: auto;
   }
@@ -440,32 +440,32 @@
   .header-content {
     padding: var(--space-3) var(--space-4);
   }
-  
+
   .page-container {
     padding: var(--space-6) var(--space-4);
   }
-  
+
   .training-categories {
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: var(--space-3);
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3);
   }
-  
+
   .training-item {
     flex-direction: column;
     text-align: center;
     gap: var(--space-3);
   }
-  
+
   .section-header {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .drag-handle {
     order: -1;
   }
@@ -475,15 +475,15 @@
   .header-brand {
     font-size: var(--font-size-lg);
   }
-  
+
   .page-title {
     font-size: var(--font-size-2xl);
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .training-categories {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -499,7 +499,7 @@
   .drag-handle {
     display: none !important;
   }
-  
+
   .dashboard-section,
   .training-item,
   .stat-card {

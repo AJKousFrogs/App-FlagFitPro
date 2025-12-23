@@ -8,7 +8,7 @@ const {
   createSuccessResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
 // Get email transporter
@@ -58,7 +58,11 @@ function getFromEmail() {
 }
 
 function getAppUrl() {
-  return process.env.APP_URL || process.env.URL || "https://webflagfootballfrogs.netlify.app";
+  return (
+    process.env.APP_URL ||
+    process.env.URL ||
+    "https://webflagfootballfrogs.netlify.app"
+  );
 }
 
 // Generate secure invitation token
@@ -67,8 +71,14 @@ function generateInvitationToken() {
 }
 
 // Team invitation email template
-function getTeamInvitationTemplate(inviterName, teamName, invitationUrl, role, coachMessage) {
-  const roleText = role === 'assistant_coach' ? 'Assistant Coach' : 'Player';
+function getTeamInvitationTemplate(
+  inviterName,
+  teamName,
+  invitationUrl,
+  role,
+  coachMessage,
+) {
+  const roleText = role === "assistant_coach" ? "Assistant Coach" : "Player";
 
   return `
 <!DOCTYPE html>
@@ -104,12 +114,16 @@ function getTeamInvitationTemplate(inviterName, teamName, invitationUrl, role, c
                 <p style="margin: 10px 0 0 0;">Role: ${roleText}</p>
             </div>
 
-            ${coachMessage ? `
+            ${
+              coachMessage
+                ? `
             <div class="coach-message">
                 <strong>Message from your coach:</strong>
                 <p style="margin: 10px 0 0 0;">"${coachMessage}"</p>
             </div>
-            ` : ''}
+            `
+                : ""
+            }
 
             <p>Click the button below to accept this invitation and join the team:</p>
             <p style="text-align: center;">
@@ -146,7 +160,7 @@ function getTeamInvitationTemplate(inviterName, teamName, invitationUrl, role, c
 }
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Team-Invite', event);
+  logFunctionCall("Team-Invite", event);
 
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 200, headers: CORS_HEADERS };
@@ -161,13 +175,17 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { teamId, email, role, position, jerseyNumber, coachMessage } = JSON.parse(event.body || "{}");
+    const { teamId, email, role, position, jerseyNumber, coachMessage } =
+      JSON.parse(event.body || "{}");
 
     if (!teamId || !email) {
       return {
         statusCode: 400,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "teamId and email are required" }),
+        body: JSON.stringify({
+          success: false,
+          error: "teamId and email are required",
+        }),
       };
     }
 
@@ -185,26 +203,35 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 401,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Authentication required" }),
+        body: JSON.stringify({
+          success: false,
+          error: "Authentication required",
+        }),
       };
     }
 
     const supabase = getSupabaseClient();
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    const token = authHeader.replace("Bearer ", "");
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
       return {
         statusCode: 401,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Invalid authentication token" }),
+        body: JSON.stringify({
+          success: false,
+          error: "Invalid authentication token",
+        }),
       };
     }
 
     const { data: team, error: teamError } = await supabase
-      .from('teams')
-      .select('id, name, coach_id')
-      .eq('id', teamId)
+      .from("teams")
+      .select("id, name, coach_id")
+      .eq("id", teamId)
       .single();
 
     if (teamError || !team) {
@@ -219,23 +246,29 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 403,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Only the team coach can send invitations" }),
+        body: JSON.stringify({
+          success: false,
+          error: "Only the team coach can send invitations",
+        }),
       };
     }
 
     const { data: existingInvitation } = await supabase
-      .from('team_invitations')
-      .select('id, status')
-      .eq('team_id', teamId)
-      .eq('email', email.toLowerCase())
-      .eq('status', 'pending')
+      .from("team_invitations")
+      .select("id, status")
+      .eq("team_id", teamId)
+      .eq("email", email.toLowerCase())
+      .eq("status", "pending")
       .single();
 
     if (existingInvitation) {
       return {
         statusCode: 400,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "An invitation has already been sent to this email" }),
+        body: JSON.stringify({
+          success: false,
+          error: "An invitation has already been sent to this email",
+        }),
       };
     }
 
@@ -244,13 +277,13 @@ exports.handler = async (event, context) => {
     expiresAt.setDate(expiresAt.getDate() + 7);
 
     const { data: invitation, error: inviteError } = await supabase
-      .from('team_invitations')
+      .from("team_invitations")
       .insert({
         team_id: teamId,
         email: email.toLowerCase(),
         invited_by: user.id,
         token: invToken,
-        role: role || 'player',
+        role: role || "player",
         position: position || null,
         jersey_number: jerseyNumber || null,
         expires_at: expiresAt.toISOString(),
@@ -259,11 +292,14 @@ exports.handler = async (event, context) => {
       .single();
 
     if (inviteError) {
-      console.error('Error creating invitation:', inviteError);
+      console.error("Error creating invitation:", inviteError);
       return {
         statusCode: 500,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Failed to create invitation" }),
+        body: JSON.stringify({
+          success: false,
+          error: "Failed to create invitation",
+        }),
       };
     }
 
@@ -272,7 +308,10 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 503,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Email service not configured" }),
+        body: JSON.stringify({
+          success: false,
+          error: "Email service not configured",
+        }),
       };
     }
 
@@ -283,7 +322,13 @@ exports.handler = async (event, context) => {
       from: { name: "FlagFit Pro", address: getFromEmail() },
       to: email,
       subject: `You've been invited to join ${team.name}!`,
-      html: getTeamInvitationTemplate(inviterName, team.name, invitationUrl, role || 'player', coachMessage),
+      html: getTeamInvitationTemplate(
+        inviterName,
+        team.name,
+        invitationUrl,
+        role || "player",
+        coachMessage,
+      ),
       text: `Hi there,\n\n${inviterName} has invited you to join ${team.name} on FlagFit Pro.\n\nClick here to accept: ${invitationUrl}\n\nThis invitation expires in 7 days.\n\nBest regards,\nThe FlagFit Pro Team`,
     };
 
@@ -299,7 +344,7 @@ exports.handler = async (event, context) => {
         expiresAt: expiresAt.toISOString(),
       },
       200,
-      "Invitation sent successfully"
+      "Invitation sent successfully",
     );
   } catch (error) {
     console.error("Error sending team invitation:", error);

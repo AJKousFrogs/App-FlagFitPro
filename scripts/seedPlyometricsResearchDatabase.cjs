@@ -1,9 +1,12 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+const { Pool } = require("pg");
+require("dotenv").config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
 });
 
 // Yuri Verkhoshansky's original methodology data
@@ -15,14 +18,16 @@ const verkhoshanskyMethodology = [
     publication_year: 1968,
     original_journal: "Theory and Practice of Physical Culture",
     method_name: "shock_method",
-    method_description: "The original shock method developed by Yuri Verkhoshansky involves dropping from a height to create a 'shock' upon landing, which triggers a forced eccentric contraction followed immediately by a concentric contraction. This method was designed to duplicate the forces experienced in landing and takeoff phases of athletic movements.",
-    theoretical_foundation: "Based on the stretch-shortening cycle principle, where the eccentric phase (lengthening) of muscle contraction is immediately followed by a concentric phase (shortening), creating enhanced power output through elastic energy storage and neural potentiation.",
+    method_description:
+      "The original shock method developed by Yuri Verkhoshansky involves dropping from a height to create a 'shock' upon landing, which triggers a forced eccentric contraction followed immediately by a concentric contraction. This method was designed to duplicate the forces experienced in landing and takeoff phases of athletic movements.",
+    theoretical_foundation:
+      "Based on the stretch-shortening cycle principle, where the eccentric phase (lengthening) of muscle contraction is immediately followed by a concentric phase (shortening), creating enhanced power output through elastic energy storage and neural potentiation.",
     physiological_principles: [
       "Stretch-shortening cycle enhancement",
       "Neural potentiation through shock stimulus",
       "Elastic energy storage and utilization",
       "Motor unit recruitment optimization",
-      "Reflex potentiation"
+      "Reflex potentiation",
     ],
     original_protocols: {
       depth_jump_parameters: {
@@ -30,99 +35,102 @@ const verkhoshanskyMethodology = [
         contact_time: "0.1-0.2 seconds",
         rest_periods: "3-5 minutes between sets",
         volume: "3-5 sets of 1-3 repetitions",
-        frequency: "2-3 times per week"
+        frequency: "2-3 times per week",
       },
       progression_system: {
         phase_1: "Basic jumping and landing skills",
         phase_2: "Low-height depth jumps (8-12 inches)",
         phase_3: "Medium-height depth jumps (12-20 inches)",
-        phase_4: "High-height depth jumps (20-30 inches)"
-      }
+        phase_4: "High-height depth jumps (20-30 inches)",
+      },
     },
     exercise_parameters: {
       intensity: "Maximal effort required",
       technique: "Perfect form mandatory",
       surface: "Firm, non-absorbent surface",
-      footwear: "Minimal cushioning for feedback"
+      footwear: "Minimal cushioning for feedback",
     },
     progression_systems: {
       height_progression: "Gradual increase in drop height",
       volume_progression: "Increase sets before increasing height",
-      complexity_progression: "Simple to complex movement patterns"
+      complexity_progression: "Simple to complex movement patterns",
     },
     research_evidence: [
       "Original Soviet Olympic athlete studies (1968-1972)",
       "Comparative studies with traditional training methods",
-      "Long-term athlete development tracking"
+      "Long-term athlete development tracking",
     ],
     experimental_results: {
       performance_improvements: {
         vertical_jump: "15-25% improvement",
         sprint_speed: "8-12% improvement",
-        power_output: "20-30% improvement"
+        power_output: "20-30% improvement",
       },
       neural_adaptations: {
         motor_unit_recruitment: "Enhanced high-threshold motor unit activation",
         firing_rate: "Improved synchronization of motor units",
-        reflex_potentiation: "Enhanced stretch reflex response"
-      }
+        reflex_potentiation: "Enhanced stretch reflex response",
+      },
     },
     validation_studies: [
       "Verkhoshansky & Tatyan (1983) - Long-term effects validation",
       "Adams et al. (1992) - Cross-cultural validation",
-      "Markovic & Mikulic (2010) - Meta-analysis of effectiveness"
+      "Markovic & Mikulic (2010) - Meta-analysis of effectiveness",
     ],
     modern_adaptations: [
       "Reduced drop heights for safety",
       "Increased emphasis on landing technique",
       "Integration with periodization models",
-      "Sport-specific movement patterns"
+      "Sport-specific movement patterns",
     ],
     modifications_for_safety: [
       "Maximum drop height reduced to 20 inches",
       "Emphasis on proper landing mechanics",
       "Progressive overload principles",
-      "Individualized progression rates"
+      "Individualized progression rates",
     ],
     contemporary_applications: [
       "Sport-specific plyometric training",
       "Rehabilitation and injury prevention",
       "Youth athletic development",
-      "Elite performance enhancement"
+      "Elite performance enhancement",
     ],
-    historical_impact: "Revolutionized athletic training methodology by introducing the concept of shock training and the stretch-shortening cycle. His work laid the foundation for modern plyometric training and influenced training methods worldwide.",
-    influence_on_field: "Verkhoshansky's work directly influenced the development of plyometric training in the United States and Europe. His shock method became the foundation for depth jump training and influenced the development of modern plyometric protocols.",
+    historical_impact:
+      "Revolutionized athletic training methodology by introducing the concept of shock training and the stretch-shortening cycle. His work laid the foundation for modern plyometric training and influenced training methods worldwide.",
+    influence_on_field:
+      "Verkhoshansky's work directly influenced the development of plyometric training in the United States and Europe. His shock method became the foundation for depth jump training and influenced the development of modern plyometric protocols.",
     legacy_contributions: [
       "Development of the shock method",
       "Understanding of stretch-shortening cycle",
       "Integration of plyometrics into periodization",
-      "Scientific approach to athletic training"
+      "Scientific approach to athletic training",
     ],
     implementation_notes: [
       "Must be properly progressed from basic jumping skills",
       "Requires excellent landing mechanics",
       "Should be integrated into comprehensive training programs",
-      "Individual response varies significantly"
+      "Individual response varies significantly",
     ],
     common_misconceptions: [
       "Higher drop heights are always better",
       "More volume equals better results",
       "Can be performed without proper preparation",
-      "Suitable for all athletes regardless of experience"
+      "Suitable for all athletes regardless of experience",
     ],
     proper_execution_guidelines: [
       "Start with basic jumping and landing skills",
       "Progress height gradually based on individual response",
       "Maintain perfect form throughout all repetitions",
-      "Allow adequate recovery between sessions"
-    ]
-  }
+      "Allow adequate recovery between sessions",
+    ],
+  },
 ];
 
 // Evidence-based plyometrics research articles
 const plyometricsResearch = [
   {
-    title: "The Effect of Plyometric Training on Jump Performance in Elite Basketball Players",
+    title:
+      "The Effect of Plyometric Training on Jump Performance in Elite Basketball Players",
     authors: ["Markovic, G.", "Mikulic, P."],
     journal: "Journal of Strength and Conditioning Research",
     publication_year: 2010,
@@ -142,42 +150,42 @@ const plyometricsResearch = [
       "12-week plyometric training improved vertical jump by 8.7%",
       "Depth jumps were most effective for power development",
       "Combination of depth jumps and box jumps optimal",
-      "Performance improvements maintained for 4 weeks post-training"
+      "Performance improvements maintained for 4 weeks post-training",
     ],
     performance_improvements: {
       vertical_jump: "8.7% improvement",
       power_output: "12.3% improvement",
-      sprint_speed: "5.2% improvement"
+      sprint_speed: "5.2% improvement",
     },
     training_protocols: [
       "3 sessions per week for 12 weeks",
       "Depth jumps from 20-30 inch boxes",
       "3-5 sets of 3-5 repetitions",
-      "3-5 minutes rest between sets"
+      "3-5 minutes rest between sets",
     ],
     safety_considerations: [
       "Proper landing mechanics essential",
       "Gradual progression in drop height",
       "Adequate recovery between sessions",
-      "Individual response monitoring"
+      "Individual response monitoring",
     ],
     practical_recommendations: [
       "Integrate depth jumps into basketball training",
       "Focus on landing mechanics and form",
       "Progress intensity gradually",
-      "Monitor for signs of overtraining"
+      "Monitor for signs of overtraining",
     ],
     contraindications: [
       "Recent lower extremity injuries",
       "Poor landing mechanics",
       "Insufficient strength base",
-      "High training load"
+      "High training load",
     ],
     progression_guidelines: [
       "Start with basic jumping skills",
       "Progress to low-height depth jumps",
       "Gradually increase drop height",
-      "Monitor performance and recovery"
+      "Monitor performance and recovery",
     ],
     exercise_types: ["depth_jumps", "box_jumps", "vertical_jumps"],
     intensity_levels: ["moderate", "high"],
@@ -186,7 +194,7 @@ const plyometricsResearch = [
     applicable_sports: ["basketball", "volleyball", "track_and_field"],
     position_specific_applications: {
       basketball: ["guards", "forwards", "centers"],
-      volleyball: ["hitters", "blockers", "setters"]
+      volleyball: ["hitters", "blockers", "setters"],
     },
     skill_level_applications: ["intermediate", "advanced", "elite"],
     methodology_score: 0.85,
@@ -194,19 +202,20 @@ const plyometricsResearch = [
     limitations: [
       "Limited to male basketball players",
       "Short follow-up period",
-      "No long-term injury tracking"
+      "No long-term injury tracking",
     ],
     future_research_needs: [
       "Long-term injury risk assessment",
       "Female athlete studies",
-      "Sport-specific adaptations"
+      "Sport-specific adaptations",
     ],
     citation_count: 245,
     impact_factor: 3.2,
-    peer_reviewed: true
+    peer_reviewed: true,
   },
   {
-    title: "Plyometric Training Effects on Athletic Performance: A Meta-Analysis",
+    title:
+      "Plyometric Training Effects on Athletic Performance: A Meta-Analysis",
     authors: ["Sáez-Sáez de Villarreal, E.", "Requena, B.", "Newton, R.U."],
     journal: "Medicine & Science in Sports & Exercise",
     publication_year: 2010,
@@ -226,49 +235,52 @@ const plyometricsResearch = [
       "Plyometric training improves vertical jump by 4.7-8.1%",
       "Sprint performance improves by 1.8-2.8%",
       "Training duration of 7-12 weeks optimal",
-      "Combination with resistance training most effective"
+      "Combination with resistance training most effective",
     ],
     performance_improvements: {
       vertical_jump: "4.7-8.1% improvement",
       sprint_speed: "1.8-2.8% improvement",
-      power_output: "6.2-9.8% improvement"
+      power_output: "6.2-9.8% improvement",
     },
     training_protocols: [
       "2-3 sessions per week",
       "7-12 weeks duration",
       "Combination with resistance training",
-      "Progressive overload principles"
+      "Progressive overload principles",
     ],
     safety_considerations: [
       "Proper progression essential",
       "Adequate recovery periods",
       "Individual response monitoring",
-      "Technique emphasis"
+      "Technique emphasis",
     ],
     practical_recommendations: [
       "Integrate with resistance training",
       "Focus on proper technique",
       "Progress gradually",
-      "Monitor for overtraining"
+      "Monitor for overtraining",
     ],
     contraindications: [
       "Recent injuries",
       "Poor technique",
-      "Insufficient strength base"
+      "Insufficient strength base",
     ],
     progression_guidelines: [
       "Start with basic movements",
       "Progress complexity gradually",
       "Increase intensity systematically",
-      "Monitor performance"
+      "Monitor performance",
     ],
     exercise_types: ["depth_jumps", "box_jumps", "bounds", "hops"],
     intensity_levels: ["low", "moderate", "high"],
-    volume_recommendations: ["2-3 sessions per week", "50-200 contacts per session"],
+    volume_recommendations: [
+      "2-3 sessions per week",
+      "50-200 contacts per session",
+    ],
     rest_periods: ["48-72 hours between sessions", "2-3 minutes between sets"],
     applicable_sports: ["all_sports"],
     position_specific_applications: {
-      general: ["all_positions"]
+      general: ["all_positions"],
     },
     skill_level_applications: ["beginner", "intermediate", "advanced", "elite"],
     methodology_score: 0.92,
@@ -276,19 +288,20 @@ const plyometricsResearch = [
     limitations: [
       "Heterogeneity in training protocols",
       "Limited long-term studies",
-      "Varied outcome measures"
+      "Varied outcome measures",
     ],
     future_research_needs: [
       "Long-term effectiveness studies",
       "Sport-specific protocols",
-      "Injury risk assessment"
+      "Injury risk assessment",
     ],
     citation_count: 567,
     impact_factor: 4.8,
-    peer_reviewed: true
+    peer_reviewed: true,
   },
   {
-    title: "The Effects of Plyometric Training on Sprint Performance: A Systematic Review",
+    title:
+      "The Effects of Plyometric Training on Sprint Performance: A Systematic Review",
     authors: ["Rumpf, M.C.", "Lockie, R.G.", "Cronin, J.B.", "Mohamad, N.I."],
     journal: "Journal of Strength and Conditioning Research",
     publication_year: 2016,
@@ -303,55 +316,61 @@ const plyometricsResearch = [
     study_duration_weeks: 6,
     relates_to_verkhoshansky: true,
     verkhoshansky_method: "shock_method",
-    verkhoshansky_principles: ["stretch_shortening_cycle", "neural_potentiation"],
+    verkhoshansky_principles: [
+      "stretch_shortening_cycle",
+      "neural_potentiation",
+    ],
     key_findings: [
       "Plyometric training improves sprint performance by 2.8-4.2%",
       "Depth jumps most effective for sprint improvement",
       "Training duration of 6-10 weeks optimal",
-      "Combination with sprint training enhances effects"
+      "Combination with sprint training enhances effects",
     ],
     performance_improvements: {
       sprint_speed: "2.8-4.2% improvement",
       acceleration: "3.1-4.8% improvement",
-      power_output: "5.2-7.8% improvement"
+      power_output: "5.2-7.8% improvement",
     },
     training_protocols: [
       "2-3 sessions per week",
       "6-10 weeks duration",
       "Depth jumps and bounds",
-      "Combination with sprint training"
+      "Combination with sprint training",
     ],
     safety_considerations: [
       "Proper landing mechanics",
       "Gradual progression",
       "Adequate recovery",
-      "Individual monitoring"
+      "Individual monitoring",
     ],
     practical_recommendations: [
       "Focus on depth jumps for sprint improvement",
       "Combine with sprint training",
       "Progress gradually",
-      "Monitor performance"
+      "Monitor performance",
     ],
     contraindications: [
       "Lower extremity injuries",
       "Poor landing mechanics",
-      "Insufficient strength"
+      "Insufficient strength",
     ],
     progression_guidelines: [
       "Start with basic jumping",
       "Progress to depth jumps",
       "Increase intensity gradually",
-      "Monitor response"
+      "Monitor response",
     ],
     exercise_types: ["depth_jumps", "bounds", "hops", "sprint_mechanics"],
     intensity_levels: ["moderate", "high"],
-    volume_recommendations: ["2-3 sessions per week", "50-150 contacts per session"],
+    volume_recommendations: [
+      "2-3 sessions per week",
+      "50-150 contacts per session",
+    ],
     rest_periods: ["48-72 hours between sessions", "3-5 minutes between sets"],
     applicable_sports: ["soccer", "football", "track_and_field", "rugby"],
     position_specific_applications: {
       soccer: ["forwards", "midfielders", "defenders"],
-      football: ["running_backs", "receivers", "defensive_backs"]
+      football: ["running_backs", "receivers", "defensive_backs"],
     },
     skill_level_applications: ["intermediate", "advanced", "elite"],
     methodology_score: 0.88,
@@ -359,17 +378,17 @@ const plyometricsResearch = [
     limitations: [
       "Heterogeneity in protocols",
       "Limited long-term studies",
-      "Varied outcome measures"
+      "Varied outcome measures",
     ],
     future_research_needs: [
       "Long-term effectiveness",
       "Sport-specific protocols",
-      "Injury risk assessment"
+      "Injury risk assessment",
     ],
     citation_count: 234,
     impact_factor: 3.2,
-    peer_reviewed: true
-  }
+    peer_reviewed: true,
+  },
 ];
 
 // Plyometrics exercises based on research
@@ -378,61 +397,64 @@ const plyometricsExercises = [
     exercise_name: "Depth Jump",
     exercise_category: "lower_body",
     difficulty_level: "advanced",
-    description: "A plyometric exercise where the athlete drops from a height and immediately jumps upward upon landing, utilizing the stretch-shortening cycle to enhance power output.",
+    description:
+      "A plyometric exercise where the athlete drops from a height and immediately jumps upward upon landing, utilizing the stretch-shortening cycle to enhance power output.",
     instructions: [
       "Stand on a box or platform (12-30 inches high)",
       "Step off the box (don't jump off)",
       "Land softly with both feet simultaneously",
       "Immediately jump upward as high as possible",
-      "Land softly and repeat"
+      "Land softly and repeat",
     ],
     research_based: true,
     intensity_level: "high",
     volume_recommendations: [
       "3-5 sets of 3-5 repetitions",
       "50-100 total contacts per session",
-      "2-3 sessions per week"
+      "2-3 sessions per week",
     ],
-    rest_periods: [
-      "3-5 minutes between sets",
-      "48-72 hours between sessions"
-    ],
+    rest_periods: ["3-5 minutes between sets", "48-72 hours between sessions"],
     progression_guidelines: [
       "Start with basic jumping skills",
       "Begin with low heights (8-12 inches)",
       "Progress height gradually based on performance",
-      "Maintain perfect form throughout"
+      "Maintain perfect form throughout",
     ],
     safety_notes: [
       "Must have excellent landing mechanics",
       "Requires adequate strength base",
       "Monitor for signs of overtraining",
-      "Individual response varies significantly"
+      "Individual response varies significantly",
     ],
     contraindications: [
       "Recent lower extremity injuries",
       "Poor landing mechanics",
       "Insufficient strength base",
-      "High training load"
+      "High training load",
     ],
     proper_form_guidelines: [
       "Land with feet shoulder-width apart",
       "Absorb landing with knees and hips",
       "Maintain upright posture",
-      "Jump immediately upon landing"
+      "Jump immediately upon landing",
     ],
     common_mistakes: [
       "Jumping off the box instead of stepping",
       "Landing with stiff legs",
       "Pausing between landing and jump",
-      "Poor landing mechanics"
+      "Poor landing mechanics",
     ],
-    applicable_sports: ["basketball", "volleyball", "track_and_field", "football"],
+    applicable_sports: [
+      "basketball",
+      "volleyball",
+      "track_and_field",
+      "football",
+    ],
     position_specific: true,
     position_applications: {
       basketball: ["all_positions"],
       volleyball: ["hitters", "blockers"],
-      football: ["running_backs", "receivers"]
+      football: ["running_backs", "receivers"],
     },
     equipment_needed: ["plyometric_box", "firm_surface"],
     space_requirements: "10x10 feet minimum",
@@ -441,62 +463,60 @@ const plyometricsExercises = [
     performance_improvements: {
       vertical_jump: "8-15% improvement",
       power_output: "12-20% improvement",
-      sprint_speed: "3-6% improvement"
+      sprint_speed: "3-6% improvement",
     },
-    injury_risk_rating: "moderate"
+    injury_risk_rating: "moderate",
   },
   {
     exercise_name: "Box Jump",
     exercise_category: "lower_body",
     difficulty_level: "intermediate",
-    description: "A plyometric exercise where the athlete jumps onto a box or platform, focusing on explosive power development and landing mechanics.",
+    description:
+      "A plyometric exercise where the athlete jumps onto a box or platform, focusing on explosive power development and landing mechanics.",
     instructions: [
       "Stand facing a box or platform",
       "Assume athletic stance with feet shoulder-width apart",
       "Swing arms back and bend knees",
       "Jump explosively onto the box",
       "Land softly with both feet",
-      "Step down and repeat"
+      "Step down and repeat",
     ],
     research_based: true,
     intensity_level: "moderate",
     volume_recommendations: [
       "3-5 sets of 5-10 repetitions",
       "50-150 total contacts per session",
-      "2-3 sessions per week"
+      "2-3 sessions per week",
     ],
-    rest_periods: [
-      "2-3 minutes between sets",
-      "48-72 hours between sessions"
-    ],
+    rest_periods: ["2-3 minutes between sets", "48-72 hours between sessions"],
     progression_guidelines: [
       "Start with low box heights",
       "Increase height as technique improves",
       "Focus on landing mechanics",
-      "Progress volume before intensity"
+      "Progress volume before intensity",
     ],
     safety_notes: [
       "Ensure box is stable and secure",
       "Focus on proper landing mechanics",
       "Don't jump higher than comfortable",
-      "Step down, don't jump down"
+      "Step down, don't jump down",
     ],
     contraindications: [
       "Lower extremity injuries",
       "Poor balance or coordination",
-      "Insufficient strength base"
+      "Insufficient strength base",
     ],
     proper_form_guidelines: [
       "Land with both feet simultaneously",
       "Absorb landing with knees and hips",
       "Maintain upright posture",
-      "Step down carefully"
+      "Step down carefully",
     ],
     common_mistakes: [
       "Jumping down from the box",
       "Landing with one foot first",
       "Poor landing mechanics",
-      "Jumping too high for ability"
+      "Jumping too high for ability",
     ],
     applicable_sports: ["basketball", "volleyball", "football", "soccer"],
     position_specific: false,
@@ -507,10 +527,10 @@ const plyometricsExercises = [
     performance_improvements: {
       vertical_jump: "6-12% improvement",
       power_output: "8-15% improvement",
-      coordination: "Improved"
+      coordination: "Improved",
     },
-    injury_risk_rating: "low"
-  }
+    injury_risk_rating: "low",
+  },
 ];
 
 // Plyometrics training programs
@@ -530,82 +550,82 @@ const plyometricsTrainingPrograms = [
       week_1_2: "Low intensity, focus on technique",
       week_3_4: "Moderate intensity, increase volume",
       week_5_6: "Moderate-high intensity",
-      week_7_8: "High intensity, sport-specific"
+      week_7_8: "High intensity, sport-specific",
     },
     volume_progression: {
       week_1_2: "30-50 contacts per session",
       week_3_4: "50-80 contacts per session",
       week_5_6: "80-120 contacts per session",
-      week_7_8: "100-150 contacts per session"
+      week_7_8: "100-150 contacts per session",
     },
     exercise_sequence: {
       session_1: ["jumping_jacks", "ankle_hops", "pogo_jumps", "box_jumps"],
-      session_2: ["lateral_hops", "single_leg_hops", "bounds", "depth_jumps"]
+      session_2: ["lateral_hops", "single_leg_hops", "bounds", "depth_jumps"],
     },
     exercise_substitutions: {
       box_jumps: ["step_ups", "squat_jumps"],
-      depth_jumps: ["drop_jumps", "reactive_jumps"]
+      depth_jumps: ["drop_jumps", "reactive_jumps"],
     },
     modification_guidelines: [
       "Reduce volume if experiencing fatigue",
       "Focus on quality over quantity",
       "Progress only when technique is perfect",
-      "Individualize based on response"
+      "Individualize based on response",
     ],
     performance_metrics: [
       "Vertical jump height",
       "Broad jump distance",
       "30-meter sprint time",
-      "Agility test performance"
+      "Agility test performance",
     ],
     assessment_protocols: [
       "Pre-program baseline testing",
       "Mid-program assessment (week 4)",
       "Post-program testing",
-      "Follow-up testing (4 weeks post)"
+      "Follow-up testing (4 weeks post)",
     ],
     success_criteria: {
       vertical_jump: "5% improvement",
       broad_jump: "8% improvement",
-      sprint_speed: "3% improvement"
+      sprint_speed: "3% improvement",
     },
     safety_guidelines: [
       "Proper warm-up required",
       "Focus on landing mechanics",
       "Adequate recovery between sessions",
-      "Monitor for signs of overtraining"
+      "Monitor for signs of overtraining",
     ],
     monitoring_parameters: [
       "Performance improvements",
       "Fatigue levels",
       "Technique quality",
-      "Recovery indicators"
+      "Recovery indicators",
     ],
     warning_signs: [
       "Decreased performance",
       "Increased fatigue",
       "Poor technique",
-      "Pain or discomfort"
+      "Pain or discomfort",
     ],
     expected_improvements: {
       vertical_jump: "5-10% improvement",
       power_output: "8-15% improvement",
       coordination: "Improved",
-      athletic_performance: "Enhanced"
+      athletic_performance: "Enhanced",
     },
     timeline_expectations: [
       "Week 2-3: Technique improvements",
       "Week 4-5: Performance gains begin",
       "Week 6-8: Significant improvements",
-      "Post-program: Maintained gains"
+      "Post-program: Maintained gains",
     ],
     individual_variability_notes: [
       "Response varies by individual",
       "Some athletes may progress faster",
       "Others may need more time",
-      "Adjust based on individual response"
-    ]
-  }
+      "Adjust based on individual response",
+    ],
+  },
 ];
 
 // Plyometrics guidelines
@@ -613,7 +633,8 @@ const plyometricsGuidelines = [
   {
     guideline_type: "safety",
     title: "Plyometrics Safety Guidelines",
-    description: "Comprehensive safety guidelines for plyometric training based on research evidence and expert consensus.",
+    description:
+      "Comprehensive safety guidelines for plyometric training based on research evidence and expert consensus.",
     evidence_level: "strong",
     supporting_research_ids: [],
     expert_consensus: true,
@@ -624,55 +645,59 @@ const plyometricsGuidelines = [
       "Focus on proper landing mechanics",
       "Allow adequate recovery between sessions",
       "Monitor for signs of overtraining",
-      "Individualize programs based on response"
+      "Individualize programs based on response",
     ],
     contraindications: [
       "Recent lower extremity injuries",
       "Poor landing mechanics",
       "Insufficient strength base",
       "High training load",
-      "Pain or discomfort during training"
+      "Pain or discomfort during training",
     ],
     exceptions: [
       "Modified plyometrics may be appropriate for rehabilitation",
       "Low-intensity plyometrics for beginners",
-      "Sport-specific adaptations for elite athletes"
+      "Sport-specific adaptations for elite athletes",
     ],
-    applicable_populations: ["athletes", "recreational_training", "youth_athletes"],
+    applicable_populations: [
+      "athletes",
+      "recreational_training",
+      "youth_athletes",
+    ],
     applicable_sports: ["all_sports"],
     skill_level_applications: ["beginner", "intermediate", "advanced", "elite"],
     implementation_notes: [
       "Always begin with proper warm-up",
       "Focus on quality over quantity",
       "Progress only when ready",
-      "Monitor individual response"
+      "Monitor individual response",
     ],
     monitoring_guidelines: [
       "Track performance improvements",
       "Monitor fatigue levels",
       "Assess technique quality",
-      "Watch for warning signs"
+      "Watch for warning signs",
     ],
     adjustment_criteria: [
       "Decreased performance",
       "Increased fatigue",
       "Poor technique",
-      "Pain or discomfort"
+      "Pain or discomfort",
     ],
     last_updated: "2024-12-19",
     review_frequency: "annual",
-    next_review_date: "2025-12-19"
-  }
+    next_review_date: "2025-12-19",
+  },
 ];
 
 async function seedPlyometricsResearch() {
   const client = await pool.connect();
-  
+
   try {
-    console.log('Starting plyometrics research database seeding...');
-    
+    console.log("Starting plyometrics research database seeding...");
+
     // Seed Verkhoshansky methodology
-    console.log('Seeding Verkhoshansky methodology...');
+    console.log("Seeding Verkhoshansky methodology...");
     for (const methodology of verkhoshanskyMethodology) {
       const query = `
         INSERT INTO verkhoshansky_methodology (
@@ -686,7 +711,7 @@ async function seedPlyometricsResearch() {
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
         RETURNING id
       `;
-      
+
       const values = [
         methodology.work_title,
         methodology.original_language,
@@ -711,15 +736,17 @@ async function seedPlyometricsResearch() {
         methodology.legacy_contributions,
         methodology.implementation_notes,
         methodology.common_misconceptions,
-        methodology.proper_execution_guidelines
+        methodology.proper_execution_guidelines,
       ];
-      
+
       const result = await client.query(query, values);
-      console.log(`Inserted Verkhoshansky methodology: ${methodology.work_title}`);
+      console.log(
+        `Inserted Verkhoshansky methodology: ${methodology.work_title}`,
+      );
     }
-    
+
     // Seed plyometrics research
-    console.log('Seeding plyometrics research articles...');
+    console.log("Seeding plyometrics research articles...");
     for (const research of plyometricsResearch) {
       const query = `
         INSERT INTO plyometrics_research (
@@ -736,7 +763,7 @@ async function seedPlyometricsResearch() {
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38)
         RETURNING id
       `;
-      
+
       const values = [
         research.title,
         research.authors,
@@ -774,15 +801,15 @@ async function seedPlyometricsResearch() {
         research.future_research_needs,
         research.citation_count,
         research.impact_factor,
-        research.peer_reviewed
+        research.peer_reviewed,
       ];
-      
+
       const result = await client.query(query, values);
       console.log(`Inserted research: ${research.title}`);
     }
-    
+
     // Seed plyometrics exercises
-    console.log('Seeding plyometrics exercises...');
+    console.log("Seeding plyometrics exercises...");
     for (const exercise of plyometricsExercises) {
       const query = `
         INSERT INTO plyometrics_exercises (
@@ -795,7 +822,7 @@ async function seedPlyometricsResearch() {
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
         RETURNING id
       `;
-      
+
       const values = [
         exercise.exercise_name,
         exercise.exercise_category,
@@ -819,15 +846,15 @@ async function seedPlyometricsResearch() {
         exercise.surface_requirements,
         exercise.effectiveness_rating,
         JSON.stringify(exercise.performance_improvements),
-        exercise.injury_risk_rating
+        exercise.injury_risk_rating,
       ];
-      
+
       const result = await client.query(query, values);
       console.log(`Inserted exercise: ${exercise.exercise_name}`);
     }
-    
+
     // Seed training programs
-    console.log('Seeding plyometrics training programs...');
+    console.log("Seeding plyometrics training programs...");
     for (const program of plyometricsTrainingPrograms) {
       const query = `
         INSERT INTO plyometrics_training_programs (
@@ -842,7 +869,7 @@ async function seedPlyometricsResearch() {
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
         RETURNING id
       `;
-      
+
       const values = [
         program.program_name,
         program.program_type,
@@ -867,15 +894,15 @@ async function seedPlyometricsResearch() {
         program.warning_signs,
         JSON.stringify(program.expected_improvements),
         program.timeline_expectations,
-        program.individual_variability_notes
+        program.individual_variability_notes,
       ];
-      
+
       const result = await client.query(query, values);
       console.log(`Inserted training program: ${program.program_name}`);
     }
-    
+
     // Seed guidelines
-    console.log('Seeding plyometrics guidelines...');
+    console.log("Seeding plyometrics guidelines...");
     for (const guideline of plyometricsGuidelines) {
       const query = `
         INSERT INTO plyometrics_guidelines (
@@ -887,7 +914,7 @@ async function seedPlyometricsResearch() {
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
         RETURNING id
       `;
-      
+
       const values = [
         guideline.guideline_type,
         guideline.title,
@@ -906,17 +933,18 @@ async function seedPlyometricsResearch() {
         guideline.adjustment_criteria,
         guideline.last_updated,
         guideline.review_frequency,
-        guideline.next_review_date
+        guideline.next_review_date,
       ];
-      
+
       const result = await client.query(query, values);
       console.log(`Inserted guideline: ${guideline.title}`);
     }
-    
-    console.log('Plyometrics research database seeding completed successfully!');
-    
+
+    console.log(
+      "Plyometrics research database seeding completed successfully!",
+    );
   } catch (error) {
-    console.error('Error seeding plyometrics research database:', error);
+    console.error("Error seeding plyometrics research database:", error);
     throw error;
   } finally {
     client.release();
@@ -927,13 +955,13 @@ async function seedPlyometricsResearch() {
 if (require.main === module) {
   seedPlyometricsResearch()
     .then(() => {
-      console.log('Database seeding completed successfully!');
+      console.log("Database seeding completed successfully!");
       process.exit(0);
     })
     .catch((error) => {
-      console.error('Database seeding failed:', error);
+      console.error("Database seeding failed:", error);
       process.exit(1);
     });
 }
 
-module.exports = { seedPlyometricsResearch }; 
+module.exports = { seedPlyometricsResearch };

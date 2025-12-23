@@ -80,6 +80,7 @@ FlagFit Pro is a comprehensive flag football training platform designed to help 
 ```
 
 **Business Rules:**
+
 - Email verification is **required** before login
 - Password must meet complexity requirements
 - Email addresses are normalized to lowercase
@@ -114,6 +115,7 @@ FlagFit Pro is a comprehensive flag football training platform designed to help 
 ```
 
 **Business Rules:**
+
 - Unverified users cannot log in
 - Failed login attempts are rate-limited
 - Sessions expire after inactivity (configurable)
@@ -146,6 +148,7 @@ FlagFit Pro is a comprehensive flag football training platform designed to help 
 ```
 
 **Business Rules:**
+
 - Reset tokens expire after 1 hour
 - Tokens are single-use
 - Password must meet complexity requirements
@@ -189,6 +192,7 @@ FlagFit Pro is a comprehensive flag football training platform designed to help 
 ```
 
 **Business Rules:**
+
 - Only authenticated users can create teams
 - Coach automatically becomes team member with 'coach' role
 - Team name uniqueness can be enforced (optional)
@@ -250,6 +254,7 @@ FlagFit Pro is a comprehensive flag football training platform designed to help 
 ```
 
 **Business Rules:**
+
 - Only team coaches can send invitations
 - Invitations expire after 7 days
 - One pending invitation per email per team
@@ -261,23 +266,23 @@ FlagFit Pro is a comprehensive flag football training platform designed to help 
 ### Team Member Management
 
 **Roles:**
+
 - `coach`: Full team management access
 - `assistant_coach`: Can manage players but not team settings
 - `player`: Standard team member
 
 **Permissions:**
+
 - **Coaches** can:
   - Update team information
   - Invite/remove members
   - Assign positions and jersey numbers
   - View all team analytics
   - Create training programs for team
-  
 - **Assistant Coaches** can:
   - View team roster
   - View team analytics
   - Create training programs
-  
 - **Players** can:
   - View team roster
   - View their own performance data
@@ -356,6 +361,7 @@ Training Program (Annual/Seasonal)
 ```
 
 **Business Rules:**
+
 - Programs are position-specific
 - Phases must be sequential (no gaps)
 - Weeks within phases must be sequential
@@ -432,6 +438,7 @@ Training Program (Annual/Seasonal)
 ```
 
 **Business Rules:**
+
 - Sessions can be completed ahead of schedule
 - Sessions can be completed late (marked as such)
 - RPE is required for load calculation
@@ -474,6 +481,7 @@ Training Program (Annual/Seasonal)
 ```
 
 **Business Rules:**
+
 - Sessions can be planned in advance
 - Status changes from 'planned' to 'completed' when executed
 - Intensity maps to numeric values for analytics
@@ -512,6 +520,7 @@ Training Program (Annual/Seasonal)
 ```
 
 **Business Rules:**
+
 - Anyone can create tournaments
 - Tournament organizers can manage their tournaments
 - Public tournaments visible to all users
@@ -542,6 +551,7 @@ Training Program (Annual/Seasonal)
 ```
 
 **Business Rules:**
+
 - Only team admins/coaches can register teams
 - Teams cannot register after deadline
 - Teams cannot register if tournament is full
@@ -568,6 +578,7 @@ Training Program (Annual/Seasonal)
 ```
 
 **Business Rules:**
+
 - Only tournament organizers can create/manage matches
 - Match results determine bracket progression
 - Completed matches cannot be edited (unless organizer)
@@ -647,6 +658,7 @@ Training Program (Annual/Seasonal)
 ```
 
 **Business Rules:**
+
 - ACWR requires minimum 28 days of data
 - High ACWR triggers immediate warning
 - Load recommendations based on ACWR thresholds
@@ -655,24 +667,28 @@ Training Program (Annual/Seasonal)
 ### Position-Specific Metrics
 
 **Quarterback (QB):**
+
 - Throwing Volume (total throws per week/month)
 - Throwing Accuracy
 - Completion Percentage
 - Throwing Distance
 
 **Wide Receiver (WR):**
+
 - Route Completion Rate
 - Catch Percentage
 - Yards After Catch
 - Route Running Time
 
 **Defensive Back (DB):**
+
 - Interceptions
 - Pass Breakups
 - Tackles
 - Coverage Success Rate
 
 **Other Positions:**
+
 - Custom metrics via JSONB field
 - Flexible tracking system
 
@@ -740,6 +756,7 @@ Training Program (Annual/Seasonal)
 ```
 
 **Business Rules:**
+
 - Personalization requires user to be logged in
 - Body stats used for dosage calculations
 - Active injuries modify recommendations
@@ -784,6 +801,7 @@ Training Program (Annual/Seasonal)
 ```
 
 **Business Rules:**
+
 - All authenticated users can create posts
 - Posts are public by default
 - Users can edit/delete their own posts
@@ -809,6 +827,7 @@ Training Program (Annual/Seasonal)
 ```
 
 **Business Rules:**
+
 - Leaderboard updates in real-time
 - Multiple leaderboard categories
 - Team vs Individual rankings
@@ -892,7 +911,7 @@ Training Program (Annual/Seasonal)
 1. **Program Assignment**: Programs can be assigned to multiple players
 2. **Session Completion**: Sessions can be completed ahead of or behind schedule
 3. **RPE Requirement**: RPE (1-10) required for load calculation
-4. **ACWR Thresholds**: 
+4. **ACWR Thresholds**:
    - Low: < 0.8
    - Moderate: 0.8 - 1.3
    - High: > 1.3
@@ -1014,7 +1033,3 @@ Training Program (Annual/Seasonal)
   - Tournament management workflows documented
   - Analytics and AI coaching workflows documented
   - Business rules and error handling documented
-
-
-
-

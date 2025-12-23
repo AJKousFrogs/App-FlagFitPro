@@ -25,9 +25,12 @@
 
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
+
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script
@@ -39,9 +42,17 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Universal Form Validator -->
-    <script type="module" src="./src/js/components/universal-form-validator.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/universal-form-validator.js"
+      defer
+    ></script>
     <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/footer-loader.js"
+      defer
+    ></script>
   </head>
   <body class="page-auth">
     <div
@@ -180,8 +191,25 @@
 
         <div class="form-group u-margin-bottom-20 u-text-left">
           <label class="form-label required">I am registering as</label>
-          <div class="role-selector" style="display: flex; gap: 16px; margin-top: 8px;">
-            <label class="role-option" style="flex: 1; padding: 16px; border: 2px solid var(--color-border-primary, #e0e0e0); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+          <div
+            class="role-selector"
+            style="display: flex; gap: 16px; margin-top: 8px"
+          >
+            <label
+              class="role-option"
+              style="
+                flex: 1;
+                padding: 16px;
+                border: 2px solid var(--color-border-primary, #e0e0e0);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+              "
+            >
               <input
                 type="radio"
                 name="role"
@@ -189,27 +217,60 @@
                 id="rolePlayer"
                 checked
                 required
-                style="margin: 0;"
+                style="margin: 0"
                 aria-describedby="role-help"
               />
-              <span style="font-weight: 600; font-size: 1.1em;">🏈 Player</span>
-              <span style="font-size: 0.9em; color: var(--color-text-secondary, #666); text-align: center;">Track performance, join teams, train</span>
+              <span style="font-weight: 600; font-size: 1.1em">🏈 Player</span>
+              <span
+                style="
+                  font-size: 0.9em;
+                  color: var(--color-text-secondary, #666);
+                  text-align: center;
+                "
+                >Track performance, join teams, train</span
+              >
             </label>
-            <label class="role-option" style="flex: 1; padding: 16px; border: 2px solid var(--color-border-primary, #e0e0e0); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <label
+              class="role-option"
+              style="
+                flex: 1;
+                padding: 16px;
+                border: 2px solid var(--color-border-primary, #e0e0e0);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+              "
+            >
               <input
                 type="radio"
                 name="role"
                 value="coach"
                 id="roleCoach"
                 required
-                style="margin: 0;"
+                style="margin: 0"
                 aria-describedby="role-help"
               />
-              <span style="font-weight: 600; font-size: 1.1em;">👔 Coach</span>
-              <span style="font-size: 0.9em; color: var(--color-text-secondary, #666); text-align: center;">Manage teams, create training plans</span>
+              <span style="font-weight: 600; font-size: 1.1em">👔 Coach</span>
+              <span
+                style="
+                  font-size: 0.9em;
+                  color: var(--color-text-secondary, #666);
+                  text-align: center;
+                "
+                >Manage teams, create training plans</span
+              >
             </label>
           </div>
-          <small id="role-help" class="form-help" style="display: block; margin-top: 8px;">Select your role to customize your experience</small>
+          <small
+            id="role-help"
+            class="form-help"
+            style="display: block; margin-top: 8px"
+            >Select your role to customize your experience</small
+          >
         </div>
 
         <button
@@ -266,7 +327,13 @@
       import { authManager } from "./src/auth-manager.js";
       import { profileCompletionManager } from "./src/profile-completion.js";
       import { validateEmail } from "./src/js/utils/shared.js";
-      import { showMessage, hideMessage, clearMessages, showSuccess, showError } from "./src/js/utils/message-utils.js";
+      import {
+        showMessage,
+        hideMessage,
+        clearMessages,
+        showSuccess,
+        showError,
+      } from "./src/js/utils/message-utils.js";
       // OAuth disabled - using email/password only
       // import { OAuthButtons } from "./src/components/oauth-buttons.js";
 
@@ -288,7 +355,9 @@
           const password = document.getElementById("password").value;
           const confirmPassword =
             document.getElementById("confirmPassword").value;
-          const role = document.querySelector('input[name="role"]:checked')?.value || 'player';
+          const role =
+            document.querySelector('input[name="role"]:checked')?.value ||
+            "player";
 
           // Hide any existing messages
           clearMessages("errorMessage", "successMessage");
@@ -300,7 +369,8 @@
 
           // Check password against leaked password database
           try {
-            const { checkPasswordLeakedAuto } = await import('./src/js/utils/password-leak-check.js');
+            const { checkPasswordLeakedAuto } =
+              await import("./src/js/utils/password-leak-check.js");
             const submitButton = this.querySelector('button[type="submit"]');
             const originalText = submitButton.innerHTML;
             submitButton.innerHTML =
@@ -308,16 +378,23 @@
             submitButton.disabled = true;
 
             const leakCheck = await checkPasswordLeakedAuto(password);
-            
+
             if (leakCheck.leaked) {
-              showError("errorMessage", leakCheck.message || "This password has been found in data breaches. Please choose a different password.");
+              showError(
+                "errorMessage",
+                leakCheck.message ||
+                  "This password has been found in data breaches. Please choose a different password.",
+              );
               submitButton.innerHTML = originalText;
               submitButton.disabled = false;
               return;
             }
           } catch (leakCheckError) {
             // Fail open - if leak check fails, continue with registration
-            console.warn("Password leak check failed, continuing with registration:", leakCheckError);
+            console.warn(
+              "Password leak check failed, continuing with registration:",
+              leakCheckError,
+            );
           }
 
           // Show loading state
@@ -336,9 +413,10 @@
 
           if (result.success) {
             // Show success message with email verification instructions
-            showSuccess("successMessage",
+            showSuccess(
+              "successMessage",
               "Account created successfully! Please check your email to verify your account before signing in.",
-              null // Don't auto-hide success messages
+              null, // Don't auto-hide success messages
             );
 
             // Clear the form
@@ -361,49 +439,52 @@
       // Initialize page
       document.addEventListener("DOMContentLoaded", function () {
         // Add role selector styling and interaction
-        const roleOptions = document.querySelectorAll('.role-option');
-        roleOptions.forEach(option => {
+        const roleOptions = document.querySelectorAll(".role-option");
+        roleOptions.forEach((option) => {
           const radio = option.querySelector('input[type="radio"]');
-          
+
           // Update visual state when radio is checked
-          radio.addEventListener('change', () => {
-            roleOptions.forEach(opt => {
+          radio.addEventListener("change", () => {
+            roleOptions.forEach((opt) => {
               const optRadio = opt.querySelector('input[type="radio"]');
               if (optRadio.checked) {
-                opt.style.borderColor = 'var(--color-brand-primary, #007bff)';
-                opt.style.backgroundColor = 'var(--color-brand-primary-light, rgba(0, 123, 255, 0.05))';
+                opt.style.borderColor = "var(--color-brand-primary, #007bff)";
+                opt.style.backgroundColor =
+                  "var(--color-brand-primary-light, rgba(0, 123, 255, 0.05))";
               } else {
-                opt.style.borderColor = 'var(--color-border-primary, #e0e0e0)';
-                opt.style.backgroundColor = 'transparent';
+                opt.style.borderColor = "var(--color-border-primary, #e0e0e0)";
+                opt.style.backgroundColor = "transparent";
               }
             });
           });
 
           // Hover effect
-          option.addEventListener('mouseenter', () => {
+          option.addEventListener("mouseenter", () => {
             if (!radio.checked) {
-              option.style.borderColor = 'var(--color-border-hover, #ccc)';
+              option.style.borderColor = "var(--color-border-hover, #ccc)";
             }
           });
-          option.addEventListener('mouseleave', () => {
+          option.addEventListener("mouseleave", () => {
             if (!radio.checked) {
-              option.style.borderColor = 'var(--color-border-primary, #e0e0e0)';
+              option.style.borderColor = "var(--color-border-primary, #e0e0e0)";
             }
           });
 
           // Click on label should check radio
-          option.addEventListener('click', (e) => {
+          option.addEventListener("click", (e) => {
             if (e.target !== radio) {
               radio.checked = true;
-              radio.dispatchEvent(new Event('change'));
+              radio.dispatchEvent(new Event("change"));
             }
           });
         });
 
         // Set initial selected state
-        const checkedRadio = document.querySelector('input[name="role"]:checked');
+        const checkedRadio = document.querySelector(
+          'input[name="role"]:checked',
+        );
         if (checkedRadio) {
-          checkedRadio.dispatchEvent(new Event('change'));
+          checkedRadio.dispatchEvent(new Event("change"));
         }
 
         // Form validation is handled by UniversalFormValidator (auto-initialized)
@@ -432,7 +513,7 @@
       }
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

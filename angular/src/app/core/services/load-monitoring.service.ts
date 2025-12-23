@@ -12,7 +12,7 @@
  * @version 1.0.0
  */
 
-import { Injectable, signal, computed, Signal } from '@angular/core';
+import { Injectable, signal, computed, Signal } from "@angular/core";
 import {
   LoadMetrics,
   ExternalLoad,
@@ -20,11 +20,11 @@ import {
   WellnessMetrics,
   TrainingSession,
   SessionType,
-  LoadCalculationOptions
-} from '../models/acwr.models';
+  LoadCalculationOptions,
+} from "../models/acwr.models";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class LoadMonitoringService {
   // Current session being tracked
@@ -33,9 +33,9 @@ export class LoadMonitoringService {
   // Load calculation preferences
   private calculationOptions = signal<LoadCalculationOptions>({
     includeWellness: true,
-    externalLoadWeight: 0.5,        // 50/50 split between external/internal
+    externalLoadWeight: 0.5, // 50/50 split between external/internal
     usePlayerLoad: true,
-    normalizeBySeason: false
+    normalizeBySeason: false,
   });
 
   /**
@@ -56,15 +56,15 @@ export class LoadMonitoringService {
     sessionRPE: number,
     duration: number,
     avgHeartRate?: number,
-    maxHeartRate?: number
+    maxHeartRate?: number,
   ): InternalLoad {
     // Validate inputs
     if (sessionRPE < 1 || sessionRPE > 10) {
-      throw new Error('Session RPE must be between 1 and 10');
+      throw new Error("Session RPE must be between 1 and 10");
     }
 
     if (duration <= 0) {
-      throw new Error('Duration must be positive');
+      throw new Error("Duration must be positive");
     }
 
     const workload = sessionRPE * duration;
@@ -74,7 +74,7 @@ export class LoadMonitoringService {
       duration,
       workload,
       avgHeartRate,
-      maxHeartRate
+      maxHeartRate,
     };
   }
 
@@ -125,26 +125,26 @@ export class LoadMonitoringService {
    */
   public calculateWellnessFactor(wellness: WellnessMetrics): number {
     // Calculate composite wellness score (0-10)
-    const wellnessScore = (
-      wellness.sleepQuality +
-      (wellness.sleepDuration >= 7 ? 10 : wellness.sleepDuration * 1.43) +
-      wellness.muscleSoreness +
-      (10 - wellness.stressLevel) +  // Invert stress (lower is better)
-      wellness.energyLevel +
-      wellness.mood
-    ) / 6;
+    const wellnessScore =
+      (wellness.sleepQuality +
+        (wellness.sleepDuration >= 7 ? 10 : wellness.sleepDuration * 1.43) +
+        wellness.muscleSoreness +
+        (10 - wellness.stressLevel) + // Invert stress (lower is better)
+        wellness.energyLevel +
+        wellness.mood) /
+      6;
 
     // Map wellness score to load factor
     // 10 = perfect wellness → 0.80 factor (session feels easier)
     // 5 = poor wellness → 1.15 factor (session feels harder)
     // 1 = very poor wellness → 1.30 factor (session very taxing)
 
-    if (wellnessScore >= 8) return 0.80;
-    if (wellnessScore >= 7) return 0.90;
-    if (wellnessScore >= 6) return 1.00;
-    if (wellnessScore >= 4) return 1.10;
-    if (wellnessScore >= 2) return 1.20;
-    return 1.30;
+    if (wellnessScore >= 8) return 0.8;
+    if (wellnessScore >= 7) return 0.9;
+    if (wellnessScore >= 6) return 1.0;
+    if (wellnessScore >= 4) return 1.1;
+    if (wellnessScore >= 2) return 1.2;
+    return 1.3;
   }
 
   /**
@@ -158,7 +158,7 @@ export class LoadMonitoringService {
   public calculateCombinedLoad(
     internal: InternalLoad,
     external?: ExternalLoad,
-    wellness?: WellnessMetrics
+    wellness?: WellnessMetrics,
   ): LoadMetrics {
     const options = this.calculationOptions();
     let calculatedLoad = 0;
@@ -170,8 +170,8 @@ export class LoadMonitoringService {
 
       // Weighted average
       calculatedLoad =
-        (externalScore * options.externalLoadWeight) +
-        (internalScore * (1 - options.externalLoadWeight));
+        externalScore * options.externalLoadWeight +
+        internalScore * (1 - options.externalLoadWeight);
     } else {
       // Internal load only (sRPE × duration)
       calculatedLoad = internal.workload;
@@ -184,11 +184,11 @@ export class LoadMonitoringService {
     }
 
     return {
-      type: external ? 'combined' : 'internal',
+      type: external ? "combined" : "internal",
       external,
       internal,
       wellness,
-      calculatedLoad: Math.round(calculatedLoad)
+      calculatedLoad: Math.round(calculatedLoad),
     };
   }
 
@@ -209,7 +209,7 @@ export class LoadMonitoringService {
     internal: InternalLoad,
     external?: ExternalLoad,
     wellness?: WellnessMetrics,
-    notes?: string
+    notes?: string,
   ): TrainingSession {
     const metrics = this.calculateCombinedLoad(internal, external, wellness);
 
@@ -221,7 +221,7 @@ export class LoadMonitoringService {
       load: metrics.calculatedLoad,
       notes,
       completed: true,
-      modifiedFromPlan: false
+      modifiedFromPlan: false,
     };
   }
 
@@ -245,10 +245,17 @@ export class LoadMonitoringService {
     sessionType: SessionType,
     rpe: number,
     duration: number,
-    notes?: string
+    notes?: string,
   ): TrainingSession {
     const internal = this.calculateInternalLoad(rpe, duration);
-    return this.createSession(playerId, sessionType, internal, undefined, undefined, notes);
+    return this.createSession(
+      playerId,
+      sessionType,
+      internal,
+      undefined,
+      undefined,
+      notes,
+    );
   }
 
   /**
@@ -272,7 +279,7 @@ export class LoadMonitoringService {
     let totalDuration = 0;
     const sessionTypes: SessionType[] = [];
 
-    sessions.forEach(session => {
+    sessions.forEach((session) => {
       totalLoad += session.load;
       totalDuration += session.metrics.internal.duration;
       sessionTypes.push(session.sessionType);
@@ -285,7 +292,7 @@ export class LoadMonitoringService {
       totalLoad,
       totalDuration,
       sessionTypes: [...new Set(sessionTypes)],
-      breakdown
+      breakdown,
     };
   }
 
@@ -301,19 +308,19 @@ export class LoadMonitoringService {
   public estimatePlannedLoad(
     sessionType: SessionType,
     plannedIntensity: number,
-    duration: number
+    duration: number,
   ): number {
     // Base estimation: intensity × duration
     let baseLoad = plannedIntensity * duration;
 
     // Adjust based on session type
     const typeMultipliers: Record<SessionType, number> = {
-      'game': 1.2,          // Games are typically more intense
-      'sprint': 1.15,       // High-intensity work
-      'technical': 1.0,     // Normal
-      'conditioning': 1.05, // Slightly elevated
-      'strength': 0.95,     // Controlled intensity
-      'recovery': 0.7       // Lower intensity
+      game: 1.2, // Games are typically more intense
+      sprint: 1.15, // High-intensity work
+      technical: 1.0, // Normal
+      conditioning: 1.05, // Slightly elevated
+      strength: 0.95, // Controlled intensity
+      recovery: 0.7, // Lower intensity
     };
 
     baseLoad *= typeMultipliers[sessionType];
@@ -329,7 +336,10 @@ export class LoadMonitoringService {
    * @param duration - Session duration
    * @returns Equivalent RPE and workload
    */
-  public convertPlayerLoadToRPE(playerLoad: number, duration: number): {
+  public convertPlayerLoadToRPE(
+    playerLoad: number,
+    duration: number,
+  ): {
     estimatedRPE: number;
     workload: number;
   } {
@@ -364,7 +374,7 @@ export class LoadMonitoringService {
    */
   public getLoadRecommendation(
     recentSessions: TrainingSession[],
-    targetACWR: number = 1.0
+    targetACWR: number = 1.0,
   ): {
     recommendedLoad: number;
     recommendedRPE: number;
@@ -376,7 +386,7 @@ export class LoadMonitoringService {
         recommendedLoad: 400,
         recommendedRPE: 5,
         recommendedDuration: 80,
-        reasoning: 'No history available. Starting with moderate load.'
+        reasoning: "No history available. Starting with moderate load.",
       };
     }
 
@@ -389,22 +399,25 @@ export class LoadMonitoringService {
 
     // Estimate RPE and duration (assume 90-minute session)
     const recommendedDuration = 90;
-    const recommendedRPE = Math.min(10, Math.round(recommendedLoad / recommendedDuration));
+    const recommendedRPE = Math.min(
+      10,
+      Math.round(recommendedLoad / recommendedDuration),
+    );
 
-    let reasoning = '';
+    let reasoning = "";
     if (targetACWR < 0.9) {
-      reasoning = 'Reducing load to allow recovery and avoid under-training.';
+      reasoning = "Reducing load to allow recovery and avoid under-training.";
     } else if (targetACWR > 1.2) {
-      reasoning = 'Increasing load cautiously to build fitness.';
+      reasoning = "Increasing load cautiously to build fitness.";
     } else {
-      reasoning = 'Maintaining optimal load for injury prevention.';
+      reasoning = "Maintaining optimal load for injury prevention.";
     }
 
     return {
       recommendedLoad,
       recommendedRPE,
       recommendedDuration,
-      reasoning
+      reasoning,
     };
   }
 
@@ -417,24 +430,25 @@ export class LoadMonitoringService {
   } {
     const errors: string[] = [];
 
-    if (!session.playerId) errors.push('Player ID is required');
-    if (!session.sessionType) errors.push('Session type is required');
-    if (!session.metrics?.internal) errors.push('Internal load metrics required');
+    if (!session.playerId) errors.push("Player ID is required");
+    if (!session.sessionType) errors.push("Session type is required");
+    if (!session.metrics?.internal)
+      errors.push("Internal load metrics required");
 
     if (session.metrics?.internal) {
       const rpe = session.metrics.internal.sessionRPE;
       if (rpe < 1 || rpe > 10) {
-        errors.push('Session RPE must be between 1 and 10');
+        errors.push("Session RPE must be between 1 and 10");
       }
 
       if (session.metrics.internal.duration <= 0) {
-        errors.push('Duration must be positive');
+        errors.push("Duration must be positive");
       }
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -442,9 +456,9 @@ export class LoadMonitoringService {
    * Set load calculation preferences
    */
   public setCalculationOptions(options: Partial<LoadCalculationOptions>): void {
-    this.calculationOptions.update(current => ({
+    this.calculationOptions.update((current) => ({
       ...current,
-      ...options
+      ...options,
     }));
   }
 
@@ -460,14 +474,13 @@ export class LoadMonitoringService {
    * Returns 0-100 score indicating player readiness
    */
   public calculateReadinessScore(wellness: WellnessMetrics): number {
-    const score = (
-      (wellness.sleepQuality * 15) +               // 15%
-      (wellness.sleepDuration >= 7 ? 15 : wellness.sleepDuration * 2.14) +  // 15%
-      (wellness.muscleSoreness * 10) +             // 10%
-      ((10 - wellness.stressLevel) * 10) +         // 10%
-      (wellness.energyLevel * 25) +                // 25%
-      (wellness.mood * 25)                         // 25%
-    );
+    const score =
+      wellness.sleepQuality * 15 + // 15%
+      (wellness.sleepDuration >= 7 ? 15 : wellness.sleepDuration * 2.14) + // 15%
+      wellness.muscleSoreness * 10 + // 10%
+      (10 - wellness.stressLevel) * 10 + // 10%
+      wellness.energyLevel * 25 + // 25%
+      wellness.mood * 25; // 25%
 
     return Math.round(Math.min(100, score));
   }

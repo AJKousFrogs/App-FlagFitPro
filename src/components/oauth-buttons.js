@@ -1,14 +1,14 @@
 // OAuth Buttons Component for Social Login
 // Handles Google, Facebook, and Apple authentication with role selection
 
-import { logger } from '../logger.js';
-import { setSafeContent } from '../../js/utils/shared.js';
+import { logger } from "../logger.js";
+import { setSafeContent } from "../../js/utils/shared.js";
 
 export class OAuthButtons {
   constructor(containerSelector, options = {}) {
     this.container = document.querySelector(containerSelector);
     if (!this.container) {
-      logger.error('[OAuth] Container not found:', containerSelector);
+      logger.error("[OAuth] Container not found:", containerSelector);
       return;
     }
 
@@ -20,7 +20,7 @@ export class OAuthButtons {
     this.enabledProviders = options.enabledProviders || {
       google: true,
       facebook: true,
-      apple: false  // Set to false by default (requires Apple Developer Account)
+      apple: false, // Set to false by default (requires Apple Developer Account)
     };
 
     this.render();
@@ -28,7 +28,7 @@ export class OAuthButtons {
 
   render() {
     // Build buttons HTML based on enabled providers
-    let buttonsHTML = '';
+    let buttonsHTML = "";
 
     if (this.enabledProviders.google) {
       buttonsHTML += `
@@ -119,32 +119,34 @@ export class OAuthButtons {
 
   attachEventListeners() {
     // OAuth button clicks
-    this.container.querySelectorAll('.oauth-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    this.container.querySelectorAll(".oauth-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         const provider = e.currentTarget.dataset.provider;
         this.showRoleSelection(provider);
       });
     });
 
     // Role selection modal
-    const modal = document.getElementById('roleSelectionModal');
-    const modalOverlay = document.getElementById('modalOverlay');
-    const cancelBtn = document.getElementById('cancelOAuth');
-    const confirmBtn = document.getElementById('confirmOAuth');
+    const modal = document.getElementById("roleSelectionModal");
+    const modalOverlay = document.getElementById("modalOverlay");
+    const cancelBtn = document.getElementById("cancelOAuth");
+    const confirmBtn = document.getElementById("confirmOAuth");
 
     // Close modal on overlay click
-    modalOverlay?.addEventListener('click', () => {
+    modalOverlay?.addEventListener("click", () => {
       this.hideRoleSelection();
     });
 
     // Close modal on cancel
-    cancelBtn?.addEventListener('click', () => {
+    cancelBtn?.addEventListener("click", () => {
       this.hideRoleSelection();
     });
 
     // Confirm role selection
-    confirmBtn?.addEventListener('click', () => {
-      const selectedRole = document.querySelector('input[name="oauth-role"]:checked')?.value;
+    confirmBtn?.addEventListener("click", () => {
+      const selectedRole = document.querySelector(
+        'input[name="oauth-role"]:checked',
+      )?.value;
       if (selectedRole) {
         this.selectedRole = selectedRole;
         this.hideRoleSelection();
@@ -153,8 +155,8 @@ export class OAuthButtons {
     });
 
     // Close modal on ESC key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.style.display === 'flex') {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.style.display === "flex") {
         this.hideRoleSelection();
       }
     });
@@ -162,9 +164,9 @@ export class OAuthButtons {
 
   showRoleSelection(provider) {
     this.currentProvider = provider;
-    const modal = document.getElementById('roleSelectionModal');
+    const modal = document.getElementById("roleSelectionModal");
     if (modal) {
-      modal.style.display = 'flex';
+      modal.style.display = "flex";
       // Focus first radio button for accessibility
       setTimeout(() => {
         const firstRadio = modal.querySelector('input[type="radio"]');
@@ -174,9 +176,9 @@ export class OAuthButtons {
   }
 
   hideRoleSelection() {
-    const modal = document.getElementById('roleSelectionModal');
+    const modal = document.getElementById("roleSelectionModal");
     if (modal) {
-      modal.style.display = 'none';
+      modal.style.display = "none";
     }
   }
 }

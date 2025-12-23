@@ -1,32 +1,32 @@
 /**
  * Calibration Logging Service
- * 
+ *
  * Logs training recommendations alongside outcomes for real-world calibration.
  * Tracks:
  * - System recommendations (deload/maintain/push)
  * - Subsequent outcomes (injury flags, performance ratings, session quality)
- * 
+ *
  * Over time, this allows fitting simple internal models showing whether
  * thresholds are conservative or aggressive for actual users.
  */
 
-import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { ApiService } from './api.service';
-import { LoggerService } from './logger.service';
+import { Injectable, inject } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { ApiService } from "./api.service";
+import { LoggerService } from "./logger.service";
 
 export interface CalibrationLogEntry {
   athleteId: string;
   timestamp: Date;
-  
+
   // System recommendation
   recommendation: {
-    type: 'deload' | 'maintain' | 'push';
+    type: "deload" | "maintain" | "push";
     readinessScore: number;
     acwr: number;
     rationale: string;
   };
-  
+
   // Context
   context: {
     presetId: string;
@@ -35,33 +35,35 @@ export interface CalibrationLogEntry {
     daysUntilEvent?: number;
     eventImportance?: string;
   };
-  
+
   // Outcomes (filled in later)
   outcomes?: {
     injuryFlagged: boolean;
     injuryDate?: Date;
     injuryType?: string;
     performanceRating?: number; // 1-10 scale
-    sessionQuality?: number;   // 1-10 scale
+    sessionQuality?: number; // 1-10 scale
     subjectiveFeedback?: string;
     recordedAt?: Date;
   };
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class CalibrationLoggingService {
   private apiService = inject(ApiService);
   private logger = inject(LoggerService);
-  
+
   // Local cache of recent logs (for offline support)
   private localLogCache: CalibrationLogEntry[] = [];
 
   /**
    * Log a training recommendation
    */
-  logRecommendation(entry: Omit<CalibrationLogEntry, 'outcomes'>): Observable<void> {
+  logRecommendation(
+    entry: Omit<CalibrationLogEntry, "outcomes">,
+  ): Observable<void> {
     // Add to local cache
     this.localLogCache.push({
       ...entry,
@@ -69,12 +71,18 @@ export class CalibrationLoggingService {
     });
 
     // Send to backend (async, don't block)
-    this.apiService.post('/api/calibration-logs', entry).subscribe({
+    this.apiService.post("/api/calibration-logs", entry).subscribe({
       next: () => {
-        this.logger.info('[CalibrationLogging] Recommendation logged:', entry.recommendation.type);
+        this.logger.info(
+          "[CalibrationLogging] Recommendation logged:",
+          entry.recommendation.type,
+        );
       },
       error: (err) => {
-        this.logger.error('[CalibrationLogging] Failed to log recommendation:', err);
+        this.logger.error(
+          "[CalibrationLogging] Failed to log recommendation:",
+          err,
+        );
         // Keep in local cache for retry
       },
     });
@@ -88,7 +96,7 @@ export class CalibrationLoggingService {
   logOutcome(
     athleteId: string,
     timestamp: Date,
-    outcomes: CalibrationLogEntry['outcomes']
+    outcomes: CalibrationLogEntry["outcomes"],
   ): Observable<void> {
     const entry: Partial<CalibrationLogEntry> = {
       athleteId,
@@ -101,8 +109,10 @@ export class CalibrationLoggingService {
 
     // Update local cache if exists
     const cachedIndex = this.localLogCache.findIndex(
-      e => e.athleteId === athleteId && 
-           Math.abs(e.timestamp.getTime() - timestamp.getTime()) < 24 * 60 * 60 * 1000 // Within 24 hours
+      (e) =>
+        e.athleteId === athleteId &&
+        Math.abs(e.timestamp.getTime() - timestamp.getTime()) <
+          24 * 60 * 60 * 1000, // Within 24 hours
     );
 
     if (cachedIndex >= 0) {
@@ -110,12 +120,12 @@ export class CalibrationLoggingService {
     }
 
     // Send to backend
-    this.apiService.post('/api/calibration-logs/outcome', entry).subscribe({
+    this.apiService.post("/api/calibration-logs/outcome", entry).subscribe({
       next: () => {
-        this.logger.info('[CalibrationLogging] Outcome logged');
+        this.logger.info("[CalibrationLogging] Outcome logged");
       },
       error: (err) => {
-        this.logger.error('[CalibrationLogging] Failed to log outcome:', err);
+        this.logger.error("[CalibrationLogging] Failed to log outcome:", err);
       },
     });
 
@@ -157,10 +167,11 @@ export class CalibrationLoggingService {
       lowReadinessThreshold: number; // Current lowMax threshold
       injuryRateBelowThreshold: number;
       injuryRateAboveThreshold: number;
-      recommendation: 'conservative' | 'optimal' | 'aggressive';
+      recommendation: "conservative" | "optimal" | "aggressive";
     };
   }> {
-    return this.apiService.get(`/api/calibration-logs/preset-stats/${presetId}`);
+    return this.apiService.get(
+      `/api/calibration-logs/preset-stats/${presetId}`,
+    );
   }
 }
-

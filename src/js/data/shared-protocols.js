@@ -85,7 +85,8 @@ export const MORNING_MOBILITY_ROUTINE = {
  */
 export const DAILY_FOAM_ROLLING = {
   title: "Daily Foam Rolling Routine",
-  description: "Complete foam rolling protocol for full body recovery and mobility",
+  description:
+    "Complete foam rolling protocol for full body recovery and mobility",
   duration: "10-15 minutes",
   frequency: "Daily",
   videoId: "jQRsF9wLJ4E", // Generic foam rolling tutorial

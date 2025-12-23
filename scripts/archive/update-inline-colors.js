@@ -1,4 +1,3 @@
- 
 // Script to update inline color styles to dark theme
 import fs from "fs";
 import { fileURLToPath } from "url";

@@ -120,7 +120,7 @@ Status colors provide feedback for user actions and system states:
 --color-status-warning-subtle: rgba(255, 192, 0, 0.05);
 
 /* Error - Red for critical issues */
---color-status-error: #FF003C;
+--color-status-error: #ff003c;
 --color-status-error-light: rgba(255, 0, 60, 0.1);
 --color-status-error-subtle: rgba(255, 0, 60, 0.05);
 
@@ -133,21 +133,23 @@ Status colors provide feedback for user actions and system states:
 #### Text Colors
 
 ```css
---color-text-primary: #1a1a1a;        /* Black - for white backgrounds ONLY */
---color-text-secondary: #4a4a4a;     /* Dark gray - secondary text */
---color-text-muted: #6b7280;         /* Medium gray - muted text */
---color-text-disabled: #d4d4d4;      /* Light gray - disabled text */
---color-text-on-primary: #ffffff;    /* White - for green backgrounds ONLY */
---color-text-on-white: var(--ds-primary-green); /* Green - for white backgrounds */
+--color-text-primary: #1a1a1a; /* Black - for white backgrounds ONLY */
+--color-text-secondary: #4a4a4a; /* Dark gray - secondary text */
+--color-text-muted: #6b7280; /* Medium gray - muted text */
+--color-text-disabled: #d4d4d4; /* Light gray - disabled text */
+--color-text-on-primary: #ffffff; /* White - for green backgrounds ONLY */
+--color-text-on-white: var(
+  --ds-primary-green
+); /* Green - for white backgrounds */
 ```
 
 #### Surface Colors
 
 ```css
---surface-primary: #ffffff;      /* White - main backgrounds */
---surface-secondary: #f8faf9;    /* Off-white - card backgrounds */
---surface-tertiary: #e9ecef;     /* Light gray - subtle backgrounds */
---surface-elevated: #ffffff;     /* White - elevated cards/modals */
+--surface-primary: #ffffff; /* White - main backgrounds */
+--surface-secondary: #f8faf9; /* Off-white - card backgrounds */
+--surface-tertiary: #e9ecef; /* Light gray - subtle backgrounds */
+--surface-elevated: #ffffff; /* White - elevated cards/modals */
 --surface-overlay: rgba(0, 0, 0, 0.5);
 ```
 
@@ -171,7 +173,8 @@ Status colors provide feedback for user actions and system states:
 #### Font Families
 
 ```css
---font-family-sans: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+--font-family-sans:
+  "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
 --font-family-display: "Poppins", sans-serif;
 --font-family-mono: "SF Mono", "Monaco", "Inconsolata", monospace;
 ```
@@ -188,27 +191,30 @@ Status colors provide feedback for user actions and system states:
 #### Font Sizes
 
 **Display Sizes** (Hero sections, landing pages)
+
 ```css
---font-display-2xl: 4.5rem;    /* 72px */
---font-display-xl: 3.75rem;    /* 60px */
+--font-display-2xl: 4.5rem; /* 72px */
+--font-display-xl: 3.75rem; /* 60px */
 ```
 
 **Heading Sizes** (Page titles, section headers)
+
 ```css
---font-heading-2xl: 2.5rem;    /* 40px */
---font-heading-xl: 1.875rem;   /* 30px */
---font-heading-lg: 1.5rem;     /* 24px */
---font-heading-md: 1.25rem;    /* 20px */
---font-heading-sm: 1.125rem;   /* 18px */
---font-heading-xs: 1rem;       /* 16px */
+--font-heading-2xl: 2.5rem; /* 40px */
+--font-heading-xl: 1.875rem; /* 30px */
+--font-heading-lg: 1.5rem; /* 24px */
+--font-heading-md: 1.25rem; /* 20px */
+--font-heading-sm: 1.125rem; /* 18px */
+--font-heading-xs: 1rem; /* 16px */
 ```
 
 **Body Sizes** (Content, paragraphs)
+
 ```css
---font-body-lg: 1.125rem;      /* 18px */
---font-body-md: 1rem;          /* 16px - default */
---font-body-sm: 0.875rem;      /* 14px */
---font-body-xs: 0.75rem;       /* 12px */
+--font-body-lg: 1.125rem; /* 18px */
+--font-body-md: 1rem; /* 16px - default */
+--font-body-sm: 0.875rem; /* 14px */
+--font-body-xs: 0.75rem; /* 12px */
 ```
 
 #### Line Heights
@@ -239,42 +245,43 @@ The design system uses an 8-point grid system for consistent spacing:
 
 ```css
 --space-0: 0;
---space-1: 0.25rem;   /* 4px */
---space-2: 0.5rem;    /* 8px */
---space-3: 0.75rem;   /* 12px */
---space-4: 1rem;      /* 16px */
---space-5: 1.25rem;   /* 20px */
---space-6: 1.5rem;    /* 24px */
---space-8: 2rem;      /* 32px */
---space-10: 2.5rem;   /* 40px */
---space-12: 3rem;     /* 48px */
---space-16: 4rem;     /* 64px */
---space-20: 5rem;     /* 80px */
---space-24: 6rem;     /* 96px */
+--space-1: 0.25rem; /* 4px */
+--space-2: 0.5rem; /* 8px */
+--space-3: 0.75rem; /* 12px */
+--space-4: 1rem; /* 16px */
+--space-5: 1.25rem; /* 20px */
+--space-6: 1.5rem; /* 24px */
+--space-8: 2rem; /* 32px */
+--space-10: 2.5rem; /* 40px */
+--space-12: 3rem; /* 48px */
+--space-16: 4rem; /* 64px */
+--space-20: 5rem; /* 80px */
+--space-24: 6rem; /* 96px */
 ```
 
 **Semantic Spacing Aliases:**
+
 ```css
---space-xs: var(--space-1);    /* 4px */
---space-sm: var(--space-2);    /* 8px */
---space-md: var(--space-4);    /* 16px */
---space-lg: var(--space-6);    /* 24px */
---space-xl: var(--space-8);    /* 32px */
---space-2xl: var(--space-12);  /* 48px */
---space-3xl: var(--space-16);  /* 64px */
+--space-xs: var(--space-1); /* 4px */
+--space-sm: var(--space-2); /* 8px */
+--space-md: var(--space-4); /* 16px */
+--space-lg: var(--space-6); /* 24px */
+--space-xl: var(--space-8); /* 32px */
+--space-2xl: var(--space-12); /* 48px */
+--space-3xl: var(--space-16); /* 64px */
 ```
 
 ### Border Radius
 
 ```css
 --radius-none: 0;
---radius-sm: 0.125rem;    /* 2px */
---radius-md: 0.375rem;    /* 6px */
---radius-lg: 0.5rem;      /* 8px - default for components */
---radius-xl: 0.75rem;     /* 12px */
---radius-2xl: 1rem;       /* 16px */
---radius-3xl: 1.5rem;     /* 24px */
---radius-full: 9999px;     /* Fully rounded */
+--radius-sm: 0.125rem; /* 2px */
+--radius-md: 0.375rem; /* 6px */
+--radius-lg: 0.5rem; /* 8px - default for components */
+--radius-xl: 0.75rem; /* 12px */
+--radius-2xl: 1rem; /* 16px */
+--radius-3xl: 1.5rem; /* 24px */
+--radius-full: 9999px; /* Fully rounded */
 ```
 
 ### Shadows & Elevation
@@ -356,6 +363,7 @@ The design system includes a comprehensive component library organized using ato
 #### Button
 
 **Variants:**
+
 - `btn-primary` - Main actions, primary CTAs
 - `btn-secondary` - Supporting actions
 - `btn-tertiary` - Low emphasis actions, text links
@@ -364,6 +372,7 @@ The design system includes a comprehensive component library organized using ato
 - `btn-error` - Destructive/dangerous actions
 
 **Sizes:**
+
 - `btn-xs` - 28px height (compact spaces)
 - `btn-sm` - 36px height (secondary actions)
 - `btn-md` - 44px height (default)
@@ -371,6 +380,7 @@ The design system includes a comprehensive component library organized using ato
 - `btn-xl` - 60px height (hero sections)
 
 **Usage:**
+
 ```html
 <button class="btn btn-primary btn-md">Click Me</button>
 <button class="btn btn-secondary btn-sm">Cancel</button>
@@ -378,6 +388,7 @@ The design system includes a comprehensive component library organized using ato
 ```
 
 **With Icons:**
+
 ```html
 <button class="btn btn-primary btn-md">
   <i data-lucide="save" style="width: 18px; height: 18px;"></i>
@@ -386,6 +397,7 @@ The design system includes a comprehensive component library organized using ato
 ```
 
 **Accessibility:**
+
 - Focus indicator via `:focus-visible`
 - Minimum touch target: 44px × 44px
 - Semantic `<button>` element
@@ -394,6 +406,7 @@ The design system includes a comprehensive component library organized using ato
 #### Input
 
 **States:**
+
 - Default
 - Focus
 - Error
@@ -401,6 +414,7 @@ The design system includes a comprehensive component library organized using ato
 - Disabled
 
 **Usage:**
+
 ```html
 <input type="text" class="form-input" placeholder="Enter text..." />
 <input type="text" class="form-input error" placeholder="Error state" />
@@ -410,6 +424,7 @@ The design system includes a comprehensive component library organized using ato
 #### Badge
 
 **Variants:**
+
 - `badge-primary` - Primary badge
 - `badge-success` - Success badge
 - `badge-warning` - Warning badge
@@ -417,6 +432,7 @@ The design system includes a comprehensive component library organized using ato
 - `badge-info` - Info badge
 
 **Usage:**
+
 ```html
 <span class="badge badge-primary">New</span>
 <span class="badge badge-success">Active</span>
@@ -425,6 +441,7 @@ The design system includes a comprehensive component library organized using ato
 #### Card
 
 **Structure:**
+
 ```html
 <div class="card">
   <div class="card-header">
@@ -529,21 +546,25 @@ The design system uses visual hierarchy to guide user attention and create clear
 ### Text Hierarchy
 
 **Primary Text** (Highest contrast - main content)
+
 ```css
 color: var(--text-hierarchy-primary); /* #1a1a1a */
 ```
 
 **Secondary Text** (Medium contrast - supporting text)
+
 ```css
 color: var(--text-hierarchy-secondary); /* #4a4a4a */
 ```
 
 **Tertiary Text** (Lower contrast - metadata, hints)
+
 ```css
 color: var(--text-hierarchy-tertiary); /* #6b7280 */
 ```
 
 **Disabled Text** (Lowest contrast - disabled states)
+
 ```css
 color: var(--text-hierarchy-disabled); /* #d4d4d4 */
 ```
@@ -551,26 +572,31 @@ color: var(--text-hierarchy-disabled); /* #d4d4d4 */
 ### Spacing Hierarchy
 
 **Tight Relationship** (8px)
+
 ```css
 gap: var(--hierarchy-spacing-tight);
 ```
 
 **Normal Relationship** (16px)
+
 ```css
 gap: var(--hierarchy-spacing-normal);
 ```
 
 **Relaxed Relationship** (24px)
+
 ```css
 gap: var(--hierarchy-spacing-relaxed);
 ```
 
 **Loose Relationship** (32px)
+
 ```css
 gap: var(--hierarchy-spacing-loose);
 ```
 
 **Section Separation** (48px)
+
 ```css
 margin-bottom: var(--hierarchy-spacing-section);
 ```
@@ -578,17 +604,20 @@ margin-bottom: var(--hierarchy-spacing-section);
 ### Typography Hierarchy
 
 **Display** - Hero sections, landing pages
+
 ```html
 <h1 class="text-display-2xl">Hero Title</h1>
 ```
 
 **Headings** - Page titles, section headers
+
 ```html
 <h2 class="text-heading-xl">Section Title</h2>
 <h3 class="text-heading-lg">Subsection Title</h3>
 ```
 
 **Body** - Content, paragraphs
+
 ```html
 <p class="text-body-md">Regular paragraph text</p>
 <p class="text-body-sm">Smaller supporting text</p>
@@ -603,6 +632,7 @@ The design system is built with accessibility as a core principle, ensuring WCAG
 ### Color Contrast
 
 All color combinations meet WCAG AA standards:
+
 - **Normal text**: 4.5:1 contrast ratio minimum
 - **Large text**: 3:1 contrast ratio minimum
 - **Interactive elements**: 3:1 contrast ratio minimum
@@ -657,19 +687,29 @@ The design system uses a mobile-first approach with responsive breakpoints.
 
 ```css
 /* Small devices (phones) */
-@media (min-width: 640px) { /* --breakpoint-sm */ }
+@media (min-width: 640px) {
+  /* --breakpoint-sm */
+}
 
 /* Medium devices (tablets) */
-@media (min-width: 768px) { /* --breakpoint-md */ }
+@media (min-width: 768px) {
+  /* --breakpoint-md */
+}
 
 /* Large devices (desktops) */
-@media (min-width: 1024px) { /* --breakpoint-lg */ }
+@media (min-width: 1024px) {
+  /* --breakpoint-lg */
+}
 
 /* Extra large devices */
-@media (min-width: 1280px) { /* --breakpoint-xl */ }
+@media (min-width: 1280px) {
+  /* --breakpoint-xl */
+}
 
 /* 2X Extra large devices */
-@media (min-width: 1536px) { /* --breakpoint-2xl */ }
+@media (min-width: 1536px) {
+  /* --breakpoint-2xl */
+}
 ```
 
 ### Mobile Considerations
@@ -701,11 +741,13 @@ The design system uses a mobile-first approach with responsive breakpoints.
 ### When to Use Design Tokens
 
 **✅ DO:**
+
 - Use semantic tokens (`--color-brand-primary`) in components
 - Use spacing tokens (`--space-md`) for consistent spacing
 - Use typography tokens (`--font-heading-lg`) for text
 
 **❌ DON'T:**
+
 - Hardcode colors (`color: #089949`)
 - Use arbitrary spacing values (`margin: 13px`)
 - Mix different token systems
@@ -729,11 +771,13 @@ The design system uses a mobile-first approach with responsive breakpoints.
 ### Component Usage
 
 **✅ DO:**
+
 - Use component classes (`btn`, `card`, `form-input`)
 - Follow component structure
 - Include accessibility attributes
 
 **❌ DON'T:**
+
 - Create custom variants without design system approval
 - Override component styles unnecessarily
 - Skip accessibility attributes
@@ -747,36 +791,36 @@ The design system uses a mobile-first approach with responsive breakpoints.
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <link rel="stylesheet" href="/src/css/design-system-tokens.css">
-  <link rel="stylesheet" href="/src/css/components/button.css">
-</head>
-<body>
-  <button class="btn btn-primary btn-md">Primary Button</button>
-  <button class="btn btn-secondary btn-sm">Secondary Button</button>
-</body>
+  <head>
+    <link rel="stylesheet" href="/src/css/design-system-tokens.css" />
+    <link rel="stylesheet" href="/src/css/components/button.css" />
+  </head>
+  <body>
+    <button class="btn btn-primary btn-md">Primary Button</button>
+    <button class="btn btn-secondary btn-sm">Secondary Button</button>
+  </body>
 </html>
 ```
 
 ### Angular Components
 
 ```typescript
-import { Component } from '@angular/core';
-import { DesignTokens } from '@shared/models/design-tokens';
+import { Component } from "@angular/core";
+import { DesignTokens } from "@shared/models/design-tokens";
 
 @Component({
-  selector: 'app-example',
-  template: `
-    <button class="btn btn-primary btn-md">Click Me</button>
-  `,
-  styles: [`
-    .btn {
-      background-color: var(--color-brand-primary);
-      color: var(--color-text-on-primary);
-      padding: var(--space-sm) var(--space-md);
-      border-radius: var(--radius-md);
-    }
-  `]
+  selector: "app-example",
+  template: ` <button class="btn btn-primary btn-md">Click Me</button> `,
+  styles: [
+    `
+      .btn {
+        background-color: var(--color-brand-primary);
+        color: var(--color-text-on-primary);
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-md);
+      }
+    `,
+  ],
 })
 export class ExampleComponent {
   primaryColor = DesignTokens.colors.brand.primary[700];
@@ -786,14 +830,14 @@ export class ExampleComponent {
 ### SCSS Usage
 
 ```scss
-@import './assets/styles/design-system-tokens.scss';
+@import "./assets/styles/design-system-tokens.scss";
 
 .my-component {
   background-color: var(--color-brand-primary);
   color: var(--color-text-on-primary);
   padding: var(--space-md);
   border-radius: var(--radius-lg);
-  
+
   &:hover {
     background-color: var(--color-brand-primary-hover);
   }
@@ -834,18 +878,20 @@ export class ExampleComponent {
 ### Step-by-Step Migration
 
 1. **Identify Legacy Tokens**
+
    ```bash
    # Search for legacy token usage
    grep -r "color-primary" src/
    ```
 
 2. **Replace with Semantic Tokens**
+
    ```css
    /* Before */
    .component {
      color: var(--color-primary);
    }
-   
+
    /* After */
    .component {
      color: var(--color-brand-primary);
@@ -868,6 +914,7 @@ export class ExampleComponent {
 ### 1. Use Semantic Tokens
 
 **✅ Good:**
+
 ```css
 .button {
   background-color: var(--color-brand-primary);
@@ -876,6 +923,7 @@ export class ExampleComponent {
 ```
 
 **❌ Bad:**
+
 ```css
 .button {
   background-color: #089949;
@@ -886,6 +934,7 @@ export class ExampleComponent {
 ### 2. Follow Spacing Scale
 
 **✅ Good:**
+
 ```css
 .container {
   padding: var(--space-md);
@@ -894,6 +943,7 @@ export class ExampleComponent {
 ```
 
 **❌ Bad:**
+
 ```css
 .container {
   padding: 15px;
@@ -904,6 +954,7 @@ export class ExampleComponent {
 ### 3. Maintain Color Rules
 
 **✅ Good:**
+
 ```css
 .green-button {
   background-color: var(--color-brand-primary);
@@ -912,6 +963,7 @@ export class ExampleComponent {
 ```
 
 **❌ Bad:**
+
 ```css
 .green-button {
   background-color: var(--color-brand-primary);
@@ -922,18 +974,23 @@ export class ExampleComponent {
 ### 4. Use Component Classes
 
 **✅ Good:**
+
 ```html
 <button class="btn btn-primary btn-md">Click Me</button>
 ```
 
 **❌ Bad:**
+
 ```html
-<button style="background: green; color: white; padding: 10px;">Click Me</button>
+<button style="background: green; color: white; padding: 10px;">
+  Click Me
+</button>
 ```
 
 ### 5. Include Accessibility
 
 **✅ Good:**
+
 ```html
 <button class="btn btn-icon" aria-label="Close">
   <i data-lucide="x"></i>
@@ -941,6 +998,7 @@ export class ExampleComponent {
 ```
 
 **❌ Bad:**
+
 ```html
 <button class="btn btn-icon">
   <i data-lucide="x"></i>
@@ -956,6 +1014,7 @@ export class ExampleComponent {
 ### 7. Document Custom Components
 
 If creating custom components:
+
 - Document variants and props
 - Include usage examples
 - Note accessibility considerations
@@ -997,6 +1056,7 @@ If creating custom components:
 ### Contributing
 
 When adding new tokens or components:
+
 1. Follow existing naming conventions
 2. Update this documentation
 3. Add examples
@@ -1007,4 +1067,3 @@ When adding new tokens or components:
 
 **Last Updated:** 2025  
 **Maintained by:** FlagFit Pro Team
-

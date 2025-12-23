@@ -24,15 +24,16 @@ const LOG_REQUESTS = process.env.LOG_REQUESTS !== "false";
 
 // Get Supabase credentials from environment
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseAnonKey =
+  process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
 // Script to inject Supabase credentials
 const envScript = `
 <script>
 // Inject Supabase credentials for frontend
 window._env = window._env || {};
-window._env.SUPABASE_URL = '${supabaseUrl || ''}';
-window._env.SUPABASE_ANON_KEY = '${supabaseAnonKey || ''}';
+window._env.SUPABASE_URL = '${supabaseUrl || ""}';
+window._env.SUPABASE_ANON_KEY = '${supabaseAnonKey || ""}';
 
 // Also set in localStorage for development
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -92,7 +93,9 @@ const cacheControl = {
 
 // Request logging utility
 const logRequest = (req, statusCode, size) => {
-  if (!LOG_REQUESTS) {return;}
+  if (!LOG_REQUESTS) {
+    return;
+  }
   const timestamp = new Date().toISOString();
   const method = req.method.padEnd(7);
   const status = statusCode.toString().padStart(3);
@@ -102,7 +105,9 @@ const logRequest = (req, statusCode, size) => {
 
 // Format bytes utility
 const formatBytes = (bytes) => {
-  if (bytes === 0) {return "0 B";}
+  if (bytes === 0) {
+    return "0 B";
+  }
   const k = 1024;
   const sizes = ["B", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -121,8 +126,12 @@ const acceptsCompression = (req) => {
 // Get compression stream and encoding type
 const getCompressionStream = (req) => {
   const compression = acceptsCompression(req);
-  if (compression.gzip) {return { stream: createGzip(), encoding: "gzip" };}
-  if (compression.deflate) {return { stream: createDeflate(), encoding: "deflate" };}
+  if (compression.gzip) {
+    return { stream: createGzip(), encoding: "gzip" };
+  }
+  if (compression.deflate) {
+    return { stream: createDeflate(), encoding: "deflate" };
+  }
   return null;
 };
 
@@ -220,9 +229,7 @@ const serveFile = async (req, res, filePath, ext) => {
     }
 
     // Handle compression
-    const compression = ENABLE_COMPRESSION
-      ? getCompressionStream(req)
-      : null;
+    const compression = ENABLE_COMPRESSION ? getCompressionStream(req) : null;
     if (compression) {
       headers["Content-Encoding"] = compression.encoding;
       delete headers["Content-Length"]; // Compression changes size
@@ -302,7 +309,10 @@ const serveIndex = async (req, res) => {
 const handleRequest = async (req, res) => {
   try {
     // Parse URL
-    const parsedUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    const parsedUrl = new URL(
+      req.url,
+      `http://${req.headers.host || "localhost"}`,
+    );
     let pathname = parsedUrl.pathname;
 
     // Set CORS headers for all requests
@@ -407,15 +417,21 @@ server.listen(PORT, "0.0.0.0", () => {
   console.log(`🎯 Open: http://localhost:${PORT}/index.html`);
   console.log(`🔗 Also accessible via: http://127.0.0.1:${PORT}/index.html`);
   console.log(`\n⚙️  Configuration:`);
-  console.log(`   - Compression: ${ENABLE_COMPRESSION ? "✅ Enabled" : "❌ Disabled"}`);
+  console.log(
+    `   - Compression: ${ENABLE_COMPRESSION ? "✅ Enabled" : "❌ Disabled"}`,
+  );
   console.log(`   - Caching: ${ENABLE_CACHE ? "✅ Enabled" : "❌ Disabled"}`);
-  console.log(`   - Request Logging: ${LOG_REQUESTS ? "✅ Enabled" : "❌ Disabled"}`);
+  console.log(
+    `   - Request Logging: ${LOG_REQUESTS ? "✅ Enabled" : "❌ Disabled"}`,
+  );
   console.log(`   - API Proxy Port: ${API_PORT}`);
   if (supabaseUrl && supabaseAnonKey) {
     console.log(`\n✅ Supabase credentials loaded`);
   } else {
     console.log(`\n⚠️  Supabase credentials not found`);
-    console.log(`   Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables`);
+    console.log(
+      `   Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables`,
+    );
   }
   console.log("=".repeat(60) + "\n");
 });
@@ -427,7 +443,9 @@ server.on("error", (err) => {
       `\n❌ Port ${PORT} is already in use. Try a different port or kill the existing process.`,
     );
     console.error(`💡 Run: lsof -ti:${PORT} | xargs kill -9`);
-    console.error(`💡 Or set VITE_DEV_PORT environment variable to use a different port\n`);
+    console.error(
+      `💡 Or set VITE_DEV_PORT environment variable to use a different port\n`,
+    );
   } else {
     console.error(`\n❌ Server error:`, err.message);
     console.error(err.stack);

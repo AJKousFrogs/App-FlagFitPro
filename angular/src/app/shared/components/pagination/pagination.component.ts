@@ -23,7 +23,8 @@ import { ButtonModule } from "primeng/button";
     <nav
       class="pagination-container"
       [class.pagination-compact]="variant() === 'compact'"
-      [attr.aria-label]="ariaLabel() || 'Pagination'">
+      [attr.aria-label]="ariaLabel() || 'Pagination'"
+    >
       <!-- Page Info -->
       @if (showPageInfo()) {
         <div class="pagination-info">
@@ -43,7 +44,8 @@ import { ButtonModule } from "primeng/button";
             [disabled]="currentPage() === 1"
             (onClick)="goToPage(1)"
             [attr.aria-label]="'Go to first page'"
-            class="pagination-btn pagination-first">
+            class="pagination-btn pagination-first"
+          >
           </p-button>
         }
 
@@ -54,14 +56,15 @@ import { ButtonModule } from "primeng/button";
           [disabled]="currentPage() === 1"
           (onClick)="goToPage(currentPage() - 1)"
           [attr.aria-label]="'Go to previous page'"
-          class="pagination-btn pagination-prev">
+          class="pagination-btn pagination-prev"
+        >
         </p-button>
 
         <!-- Page Numbers -->
-        @if (variant() !== 'compact') {
+        @if (variant() !== "compact") {
           <div class="pagination-pages">
             @for (page of visiblePages(); track page) {
-              @if (page === 'ellipsis') {
+              @if (page === "ellipsis") {
                 <span class="pagination-ellipsis">...</span>
               } @else {
                 <button
@@ -70,7 +73,8 @@ import { ButtonModule } from "primeng/button";
                   [class.active]="page === currentPage()"
                   (click)="goToPage(page)"
                   [attr.aria-label]="'Go to page ' + page"
-                  [attr.aria-current]="page === currentPage() ? 'page' : null">
+                  [attr.aria-current]="page === currentPage() ? 'page' : null"
+                >
                   {{ page }}
                 </button>
               }
@@ -91,7 +95,8 @@ import { ButtonModule } from "primeng/button";
           [disabled]="currentPage() === totalPages()"
           (onClick)="goToPage(currentPage() + 1)"
           [attr.aria-label]="'Go to next page'"
-          class="pagination-btn pagination-next">
+          class="pagination-btn pagination-next"
+        >
         </p-button>
 
         <!-- Last Page -->
@@ -102,7 +107,8 @@ import { ButtonModule } from "primeng/button";
             [disabled]="currentPage() === totalPages()"
             (onClick)="goToPage(totalPages())"
             [attr.aria-label]="'Go to last page'"
-            class="pagination-btn pagination-last">
+            class="pagination-btn pagination-last"
+          >
           </p-button>
         }
       </div>
@@ -115,7 +121,8 @@ import { ButtonModule } from "primeng/button";
             id="items-per-page-select"
             [value]="itemsPerPage()"
             (change)="onItemsPerPageChange($any($event.target).value)"
-            class="items-per-page-select">
+            class="items-per-page-select"
+          >
             @for (option of itemsPerPageOptions(); track option) {
               <option [value]="option">{{ option }}</option>
             }
@@ -366,4 +373,3 @@ export class PaginationComponent {
     this.itemsPerPageChange.emit(newItemsPerPage);
   }
 }
-

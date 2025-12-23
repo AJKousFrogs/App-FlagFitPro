@@ -9,9 +9,11 @@ This document summarizes the comprehensive upgrade to data display logic across 
 ### 1. Centralized Formatting Utilities
 
 #### Angular Formatting Utilities
+
 **File**: `angular/src/app/shared/utils/format.utils.ts`
 
 Created comprehensive formatting utilities for:
+
 - **Numbers**: `formatNumber()` - Formats numbers with thousand separators and specified decimals
 - **Percentages**: `formatPercentage()` - Formats percentages with 1 decimal place by default
 - **Averages**: `formatAverage()` - Formats averages with 2 decimal places by default
@@ -19,7 +21,7 @@ Created comprehensive formatting utilities for:
 - **Dates**: `formatDate()` - Formats dates in various styles
 - **Date Ranges**: `formatDateRange()` - Formats date ranges
 - **Durations**: `formatDuration()` - Formats time spans
-- **Specialized Stats**: 
+- **Specialized Stats**:
   - `formatCompletionPercentage()` - Completion % (1 decimal)
   - `formatDropRate()` - Drop rate % (1 decimal)
   - `formatYardsPerAttempt()` - Yards per attempt (2 decimals)
@@ -29,9 +31,11 @@ Created comprehensive formatting utilities for:
 All utilities use banker's rounding for consistency and handle null/undefined/zero values gracefully.
 
 #### Vanilla JS Formatting Utilities
+
 **File**: `src/js/utils/shared.js`
 
 Enhanced existing formatting utilities with:
+
 - `roundToDecimals()` - Banker's rounding implementation
 - Enhanced `formatNumber()` - Now supports `showZero` parameter
 - Enhanced `formatPercentage()` - Now supports `asDecimal` and `showZero` parameters
@@ -44,6 +48,7 @@ Enhanced existing formatting utilities with:
 **File**: `angular/src/app/shared/components/stats-grid/stats-grid.component.ts`
 
 **Updates**:
+
 - Added automatic formatting based on `formatType` property
 - Supports `formatType`: `"percentage" | "average" | "whole" | "none"`
 - Supports `decimals` property for custom decimal places
@@ -51,25 +56,26 @@ Enhanced existing formatting utilities with:
 - Maintains backward compatibility with existing implementations
 
 **Usage Example**:
+
 ```typescript
 const stats: StatItem[] = [
   {
     label: "Completion %",
     value: 75.5,
     formatType: "percentage", // Automatically formats to "75.5%"
-    decimals: 1
+    decimals: 1,
   },
   {
     label: "Yards/Attempt",
     value: 12.5,
     formatType: "average", // Automatically formats to "12.50"
-    decimals: 2
+    decimals: 2,
   },
   {
     label: "Total Yards",
     value: 1234,
-    formatType: "whole" // Automatically formats to "1,234"
-  }
+    formatType: "whole", // Automatically formats to "1,234"
+  },
 ];
 ```
 
@@ -78,6 +84,7 @@ const stats: StatItem[] = [
 **File**: `angular/src/app/shared/components/empty-state/empty-state.component.ts`
 
 Created reusable empty state component with:
+
 - Customizable title and message
 - Optional icon with color customization
 - Optional action button with handler
@@ -86,6 +93,7 @@ Created reusable empty state component with:
 - Follows design system guidelines
 
 **Usage Example**:
+
 ```typescript
 <app-empty-state
   title="No Training Sessions"
@@ -103,6 +111,7 @@ Created reusable empty state component with:
 **File**: `angular/src/app/shared/components/loading-state/loading-state.component.ts`
 
 Created reusable loading state component with:
+
 - Customizable message
 - Adjustable spinner size
 - Compact mode for smaller spaces
@@ -110,6 +119,7 @@ Created reusable loading state component with:
 - Follows design system guidelines
 
 **Usage Example**:
+
 ```typescript
 <app-loading-state
   message="Loading training sessions..."
@@ -123,6 +133,7 @@ Created reusable loading state component with:
 **File**: `TRAINING_DATA_DISPLAY_LOGIC.md`
 
 Updated to reflect:
+
 - Current implementation status (all issues resolved)
 - Consistent date filtering across all services
 - Single source of truth (backend API)
@@ -132,26 +143,31 @@ Updated to reflect:
 ## Benefits
 
 ### 1. Consistency
+
 - Same formatting rules across all components
 - Consistent empty states and loading states
 - Unified user experience
 
 ### 2. Maintainability
+
 - Single source of truth for formatting logic
 - Easy to update formatting rules in one place
 - Reduced code duplication
 
 ### 3. Accuracy
+
 - Banker's rounding ensures consistent rounding
 - Proper handling of edge cases (null, undefined, zero)
 - Follows PLAYER_DATA_DISPLAY_LOGIC.md guidelines
 
 ### 4. Developer Experience
+
 - Type-safe utilities in TypeScript
 - Clear function names and documentation
 - Easy to use and understand
 
 ### 5. User Experience
+
 - Consistent number formatting (e.g., "1,234" vs "1234")
 - Consistent percentage display (e.g., "75.0%" vs "75%")
 - Professional empty states and loading indicators
@@ -161,16 +177,18 @@ Updated to reflect:
 ### For Angular Components
 
 1. **Import formatting utilities**:
+
 ```typescript
 import {
   formatNumber,
   formatPercentage,
   formatAverage,
   formatStat,
-} from '@app/shared/utils/format.utils';
+} from "@app/shared/utils/format.utils";
 ```
 
 2. **Use in templates**:
+
 ```typescript
 // Before
 <div>{{ stat.value }}</div>
@@ -183,6 +201,7 @@ import {
 ```
 
 3. **Add empty/loading states**:
+
 ```typescript
 import { EmptyStateComponent } from '@app/shared/components/empty-state';
 import { LoadingStateComponent } from '@app/shared/components/loading-state';
@@ -200,6 +219,7 @@ import { LoadingStateComponent } from '@app/shared/components/loading-state';
 ### For Vanilla JS
 
 1. **Import formatting utilities**:
+
 ```javascript
 import {
   formatNumber,
@@ -208,10 +228,11 @@ import {
   formatStat,
   formatCompletionPercentage,
   formatDropRate,
-} from './utils/shared.js';
+} from "./utils/shared.js";
 ```
 
 2. **Use in code**:
+
 ```javascript
 // Before
 const display = `${stats.completionPercentage}%`;
@@ -226,12 +247,12 @@ const display = formatPercentage(stats.completionPercentage / 100);
 
 Following `PLAYER_DATA_DISPLAY_LOGIC.md`:
 
-| Stat Type | Format | Example | Decimals |
-|-----------|--------|---------|----------|
-| Percentages | `XX.X%` | `75.0%`, `66.7%` | 1 |
-| Averages | `XX.XX` | `12.50`, `8.50` | 2 |
-| Whole Numbers | `X,XXX` | `250`, `1,234` | 0 |
-| Zero Values | Show `0` or `N/A` | `0.0%` or `N/A` | - |
+| Stat Type     | Format            | Example          | Decimals |
+| ------------- | ----------------- | ---------------- | -------- |
+| Percentages   | `XX.X%`           | `75.0%`, `66.7%` | 1        |
+| Averages      | `XX.XX`           | `12.50`, `8.50`  | 2        |
+| Whole Numbers | `X,XXX`           | `250`, `1,234`   | 0        |
+| Zero Values   | Show `0` or `N/A` | `0.0%` or `N/A`  | -        |
 
 ## Testing Checklist
 
@@ -265,4 +286,3 @@ Following `PLAYER_DATA_DISPLAY_LOGIC.md`:
 **Last Updated**: December 2025  
 **Version**: 2.0  
 **Status**: ✅ Complete
-

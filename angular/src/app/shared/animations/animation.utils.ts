@@ -1,11 +1,11 @@
 /**
  * Animation Utility Functions
- * 
+ *
  * Helper functions for working with animations in Angular 21
  */
 
-import { AnimationBuilder, AnimationPlayer } from '@angular/animations';
-import { ElementRef, inject } from '@angular/core';
+import { AnimationBuilder, AnimationPlayer } from "@angular/animations";
+import { ElementRef, inject } from "@angular/core";
 
 /**
  * Animation State Manager
@@ -45,7 +45,7 @@ export class AnimationPlayerManager {
   }
 
   finishAll(): void {
-    this.players.forEach(player => {
+    this.players.forEach((player) => {
       if (player.hasStarted() && !player.hasFinished()) {
         player.finish();
       }
@@ -53,7 +53,7 @@ export class AnimationPlayerManager {
   }
 
   destroyAll(): void {
-    this.players.forEach(player => {
+    this.players.forEach((player) => {
       if (player.hasStarted()) {
         player.destroy();
       }
@@ -97,12 +97,16 @@ export class AnimationHelper {
   /**
    * Create and play a slide animation
    */
-  slide(element: ElementRef, direction: 'up' | 'down' | 'left' | 'right', duration: number = 300): AnimationPlayer {
+  slide(
+    element: ElementRef,
+    direction: "up" | "down" | "left" | "right",
+    duration: number = 300,
+  ): AnimationPlayer {
     const transforms = {
-      up: { from: 'translateY(20px)', to: 'translateY(0)' },
-      down: { from: 'translateY(-20px)', to: 'translateY(0)' },
-      left: { from: 'translateX(-20px)', to: 'translateX(0)' },
-      right: { from: 'translateX(20px)', to: 'translateX(0)' },
+      up: { from: "translateY(20px)", to: "translateY(0)" },
+      down: { from: "translateY(-20px)", to: "translateY(0)" },
+      left: { from: "translateX(-20px)", to: "translateX(0)" },
+      right: { from: "translateX(20px)", to: "translateX(0)" },
     };
 
     const config = transforms[direction];
@@ -118,7 +122,12 @@ export class AnimationHelper {
   /**
    * Create and play a scale animation
    */
-  scale(element: ElementRef, from: number = 0.95, to: number = 1, duration: number = 200): AnimationPlayer {
+  scale(
+    element: ElementRef,
+    from: number = 0.95,
+    to: number = 1,
+    duration: number = 200,
+  ): AnimationPlayer {
     const factory = this.animationBuilder.build([
       style({ transform: `scale(${from})`, opacity: 0 }),
       animate(duration, style({ transform: `scale(${to})`, opacity: 1 })),
@@ -134,16 +143,18 @@ export class AnimationHelper {
  * Respects user's motion preferences
  */
 export function prefersReducedMotion(): boolean {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return false;
   }
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 /**
  * Get animation duration based on reduced motion preference
  */
-export function getAnimationDuration(normalDuration: string, reducedDuration: string = '0ms'): string {
+export function getAnimationDuration(
+  normalDuration: string,
+  reducedDuration: string = "0ms",
+): string {
   return prefersReducedMotion() ? reducedDuration : normalDuration;
 }
-

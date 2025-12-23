@@ -17,16 +17,16 @@ export class OnboardingManager {
   getUserRole() {
     try {
       const user = storageService.get("userData", {}, { usePrefix: false });
-      return user?.role || 'player';
+      return user?.role || "player";
     } catch {
-      return 'player';
+      return "player";
     }
   }
 
   // Get role-specific onboarding steps
   getOnboardingSteps(role) {
-    const isCoach = role === 'coach';
-    
+    const isCoach = role === "coach";
+
     if (isCoach) {
       return [
         {
@@ -131,7 +131,11 @@ export class OnboardingManager {
 
   init() {
     // Check if user has completed onboarding
-    const onboardingCompleted = storageService.get("onboardingCompleted", null, { usePrefix: false });
+    const onboardingCompleted = storageService.get(
+      "onboardingCompleted",
+      null,
+      { usePrefix: false },
+    );
     const isNewUser = !onboardingCompleted && this.isFirstVisit();
 
     if (isNewUser) {
@@ -141,7 +145,9 @@ export class OnboardingManager {
 
   isFirstVisit() {
     // Check if this is the user's first visit to the dashboard
-    const firstVisit = !storageService.get("hasVisitedDashboard", null, { usePrefix: false });
+    const firstVisit = !storageService.get("hasVisitedDashboard", null, {
+      usePrefix: false,
+    });
     if (firstVisit) {
       storageService.set("hasVisitedDashboard", "true", { usePrefix: false });
     }
@@ -160,7 +166,9 @@ export class OnboardingManager {
   showOnboardingModal() {
     // Remove existing modal if present
     const existing = document.getElementById("onboarding-modal");
-    if (existing) {existing.remove();}
+    if (existing) {
+      existing.remove();
+    }
 
     const modal = document.createElement("div");
     modal.id = "onboarding-modal";
@@ -191,14 +199,18 @@ export class OnboardingManager {
           <div class="onboarding-icon">${currentStepData.icon}</div>
           <h2 id="onboarding-title" class="onboarding-title">${currentStepData.title}</h2>
           <p class="onboarding-text">${currentStepData.content}</p>
-          ${currentStepData.action ? `
+          ${
+            currentStepData.action
+              ? `
             <div class="onboarding-action" style="margin-top: 20px;">
               <a href="${currentStepData.action.url}" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
                 ${currentStepData.action.label}
                 <i data-lucide="arrow-right" aria-hidden="true"></i>
               </a>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
         <div class="onboarding-footer">
           <button class="btn btn-secondary onboarding-back" ${this.currentStep === 0 ? "disabled" : ""}>
@@ -286,7 +298,9 @@ export class OnboardingManager {
     }
 
     const handleKeyDown = (e) => {
-      if (e.key !== "Tab") {return;}
+      if (e.key !== "Tab") {
+        return;
+      }
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -352,7 +366,9 @@ export class OnboardingManager {
 
   completeOnboarding() {
     storageService.set("onboardingCompleted", "true", { usePrefix: false });
-    storageService.set("onboardingCompletedDate", new Date().toISOString(), { usePrefix: false });
+    storageService.set("onboardingCompletedDate", new Date().toISOString(), {
+      usePrefix: false,
+    });
     this.isActive = false;
 
     const modal = document.getElementById("onboarding-modal");

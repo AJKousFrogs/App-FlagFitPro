@@ -1,6 +1,5 @@
-
-import UserModel from '../database/models/User.js';
-import { logger } from '../logger.js';
+import UserModel from "../database/models/User.js";
+import { logger } from "../logger.js";
 
 class NutritionService {
   constructor(database) {
@@ -12,7 +11,7 @@ class NutritionService {
     // Ensure userId is a positive integer
     const parsed = parseInt(userId, 10);
     if (isNaN(parsed) || parsed <= 0 || parsed > 2147483647) {
-      throw new Error('Invalid user ID');
+      throw new Error("Invalid user ID");
     }
     return parsed;
   }
@@ -24,18 +23,24 @@ class NutritionService {
       userId = this.validateUserId(userId);
 
       const user = await UserModel.findById(userId);
-      if (!user) {throw new Error('User not found');}
+      if (!user) {
+        throw new Error("User not found");
+      }
 
       // Get user's physical stats and training data
-      const userStats = await this.db.query(`
+      const userStats = await this.db.query(
+        `
         SELECT
           height_cm, weight_kg, body_fat_percentage, position,
           birth_date, gender
         FROM users
         WHERE id = $1
-      `, [userId]);
+      `,
+        [userId],
+      );
 
-      const trainingLoad = await this.db.query(`
+      const trainingLoad = await this.db.query(
+        `
         SELECT 
           AVG(duration_minutes) as avg_duration,
           AVG(intensity_level::numeric) as avg_intensity,
@@ -43,36 +48,45 @@ class NutritionService {
         FROM training_sessions 
         WHERE user_id = $1 
           AND session_date >= CURRENT_DATE - INTERVAL '7 days'
-      `, [userId]);
+      `,
+        [userId],
+      );
 
-      const { height_cm, weight_kg, position, birth_date, gender } = userStats.rows[0];
+      const { height_cm, weight_kg, position, birth_date, gender } =
+        userStats.rows[0];
       const { sessions_per_week } = trainingLoad.rows[0] || {};
 
       // Calculate age
-      const age = Math.floor((Date.now() - new Date(birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+      const age = Math.floor(
+        (Date.now() - new Date(birth_date).getTime()) /
+          (365.25 * 24 * 60 * 60 * 1000),
+      );
 
       // Calculate BMR using Mifflin-St Jeor equation with strategy pattern
       const bmr = this.calculateBMR(weight_kg, height_cm, age, gender);
 
       // Activity factor using data-driven approach
-      const { ActivityLevelCalculator } = require('../utils/RuleEngine');
-      const activityLevel = ActivityLevelCalculator.getActivityLevel(sessions_per_week);
+      const { ActivityLevelCalculator } = require("../utils/RuleEngine");
+      const activityLevel =
+        ActivityLevelCalculator.getActivityLevel(sessions_per_week);
       const activityFactor = activityLevel.multiplier;
 
       // Position-specific adjustments using centralized config
-      const { POSITION_MULTIPLIERS } = require('../config/thresholds');
+      const { POSITION_MULTIPLIERS } = require("../config/thresholds");
       const positionData = POSITION_MULTIPLIERS[position];
       const positionMultiplier = positionData ? positionData.nutrition : 1.0;
-      const dailyCalories = Math.round(bmr * activityFactor * positionMultiplier);
+      const dailyCalories = Math.round(
+        bmr * activityFactor * positionMultiplier,
+      );
 
       // Macronutrient distribution for athletes
       const proteinGrams = Math.round(weight_kg * 1.6); // 1.6g per kg bodyweight
       const proteinCalories = proteinGrams * 4;
-      
+
       const fatPercentage = 0.25; // 25% of calories from fat
       const fatCalories = dailyCalories * fatPercentage;
       const fatGrams = Math.round(fatCalories / 9);
-      
+
       const carbCalories = dailyCalories - proteinCalories - fatCalories;
       const carbGrams = Math.round(carbCalories / 4);
 
@@ -87,22 +101,27 @@ class NutritionService {
         protein_target: proteinGrams,
         carbs_target: carbGrams,
         fat_target: fatGrams,
-        fiber_target: 25 + Math.round(dailyCalories / 1000 * 10), // 35g per 2000 calories
+        fiber_target: 25 + Math.round((dailyCalories / 1000) * 10), // 35g per 2000 calories
         water_target: Math.max(2.5, weight_kg * 0.035), // 35ml per kg bodyweight
         training_day_calorie_bonus: trainingDayBonus,
         training_day_carb_bonus: trainingDayCarbBonus,
-        calculated_by: 'ai_recommendation'
+        calculated_by: "ai_recommendation",
       };
 
       return nutritionTargets;
     } catch (error) {
-      logger.error('Error calculating nutrition targets:', error);
+      logger.error("Error calculating nutrition targets:", error);
       throw error;
     }
   }
 
   // Save nutrition targets for a user
-  static async saveNutritionTargets(userId, teamId, targets, goal = 'peak_performance') {
+  static async saveNutritionTargets(
+    userId,
+    teamId,
+    targets,
+    goal = "peak_performance",
+  ) {
     try {
       // Validate user and team IDs
       userId = this.validateUserId(userId);
@@ -131,16 +150,25 @@ class NutritionService {
       `;
 
       const result = await this.db.query(query, [
-        userId, teamId, targets.daily_calories_target, targets.daily_calories_min,
-        targets.daily_calories_max, targets.protein_target, targets.carbs_target,
-        targets.fat_target, targets.fiber_target, targets.water_target,
-        targets.training_day_calorie_bonus, targets.training_day_carb_bonus,
-        goal, targets.calculated_by
+        userId,
+        teamId,
+        targets.daily_calories_target,
+        targets.daily_calories_min,
+        targets.daily_calories_max,
+        targets.protein_target,
+        targets.carbs_target,
+        targets.fat_target,
+        targets.fiber_target,
+        targets.water_target,
+        targets.training_day_calorie_bonus,
+        targets.training_day_carb_bonus,
+        goal,
+        targets.calculated_by,
       ]);
 
       return result.rows[0];
     } catch (error) {
-      logger.error('Error saving nutrition targets:', error);
+      logger.error("Error saving nutrition targets:", error);
       throw error;
     }
   }
@@ -149,12 +177,24 @@ class NutritionService {
   static async logMeal(mealData) {
     try {
       const {
-        userId, teamId, date, mealType, mealTime, foods, 
-        trainingSessionId, satisfactionRating, energyLevelAfter, notes, loggedVia
+        userId,
+        teamId,
+        date,
+        mealType,
+        mealTime,
+        foods,
+        trainingSessionId,
+        satisfactionRating,
+        energyLevelAfter,
+        notes,
+        loggedVia,
       } = mealData;
 
       // Calculate total nutrition from foods
-      let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
+      let totalCalories = 0,
+        totalProtein = 0,
+        totalCarbs = 0,
+        totalFat = 0;
 
       for (const food of foods) {
         const multiplier = food.quantity / 100; // convert from per 100g
@@ -175,9 +215,20 @@ class NutritionService {
       `;
 
       const mealResult = await this.db.query(mealQuery, [
-        userId, teamId, date, mealType, mealTime, totalCalories.toFixed(2),
-        totalProtein.toFixed(2), totalCarbs.toFixed(2), totalFat.toFixed(2),
-        trainingSessionId, satisfactionRating, energyLevelAfter, notes, loggedVia
+        userId,
+        teamId,
+        date,
+        mealType,
+        mealTime,
+        totalCalories.toFixed(2),
+        totalProtein.toFixed(2),
+        totalCarbs.toFixed(2),
+        totalFat.toFixed(2),
+        trainingSessionId,
+        satisfactionRating,
+        energyLevelAfter,
+        notes,
+        loggedVia,
       ]);
 
       const mealId = mealResult.rows[0].id;
@@ -185,23 +236,29 @@ class NutritionService {
       // Insert individual foods
       for (const food of foods) {
         const multiplier = food.quantity / 100;
-        await this.db.query(`
+        await this.db.query(
+          `
           INSERT INTO user_meal_foods (
             user_meal_id, food_item_id, quantity, serving_description,
             calories, protein, carbs, fat
           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        `, [
-          mealId, food.food_item_id, food.quantity, food.serving_description,
-          (food.calories_per_100g * multiplier).toFixed(2),
-          (food.protein_per_100g * multiplier).toFixed(2),
-          (food.carbs_per_100g * multiplier).toFixed(2),
-          (food.fat_per_100g * multiplier).toFixed(2)
-        ]);
+        `,
+          [
+            mealId,
+            food.food_item_id,
+            food.quantity,
+            food.serving_description,
+            (food.calories_per_100g * multiplier).toFixed(2),
+            (food.protein_per_100g * multiplier).toFixed(2),
+            (food.carbs_per_100g * multiplier).toFixed(2),
+            (food.fat_per_100g * multiplier).toFixed(2),
+          ],
+        );
       }
 
       return mealResult.rows[0];
     } catch (error) {
-      logger.error('Error logging meal:', error);
+      logger.error("Error logging meal:", error);
       throw error;
     }
   }
@@ -234,7 +291,10 @@ class NutritionService {
         WHERE user_id = $1 AND date = $2
       `;
 
-      const hydrationResult = await this.db.query(hydrationQuery, [userId, date]);
+      const hydrationResult = await this.db.query(hydrationQuery, [
+        userId,
+        date,
+      ]);
 
       // Get targets
       const targetsQuery = `
@@ -261,29 +321,51 @@ class NutritionService {
           fat: parseFloat(nutrition.total_fat) || 0,
           meals_logged: parseInt(nutrition.meals_logged) || 0,
           avg_satisfaction: parseFloat(nutrition.avg_satisfaction) || null,
-          avg_energy_level: parseFloat(nutrition.avg_energy_level) || null
+          avg_energy_level: parseFloat(nutrition.avg_energy_level) || null,
         },
         hydration: {
           total_water_ml: parseInt(hydration.total_water_ml) || 0,
-          total_water_liters: (parseInt(hydration.total_water_ml) || 0) / 1000
+          total_water_liters: (parseInt(hydration.total_water_ml) || 0) / 1000,
         },
         targets: targets || null,
-        compliance: targets ? {
-          calories_percentage: (parseFloat(nutrition.total_calories) || 0) / targets.daily_calories_target * 100,
-          protein_percentage: (parseFloat(nutrition.total_protein) || 0) / targets.protein_target * 100,
-          carbs_percentage: (parseFloat(nutrition.total_carbs) || 0) / targets.carbs_target * 100,
-          fat_percentage: (parseFloat(nutrition.total_fat) || 0) / targets.fat_target * 100,
-          water_percentage: ((parseInt(hydration.total_water_ml) || 0) / 1000) / targets.water_target * 100
-        } : null
+        compliance: targets
+          ? {
+              calories_percentage:
+                ((parseFloat(nutrition.total_calories) || 0) /
+                  targets.daily_calories_target) *
+                100,
+              protein_percentage:
+                ((parseFloat(nutrition.total_protein) || 0) /
+                  targets.protein_target) *
+                100,
+              carbs_percentage:
+                ((parseFloat(nutrition.total_carbs) || 0) /
+                  targets.carbs_target) *
+                100,
+              fat_percentage:
+                ((parseFloat(nutrition.total_fat) || 0) / targets.fat_target) *
+                100,
+              water_percentage:
+                ((parseInt(hydration.total_water_ml) || 0) /
+                  1000 /
+                  targets.water_target) *
+                100,
+            }
+          : null,
       };
     } catch (error) {
-      logger.error('Error getting daily nutrition summary:', error);
+      logger.error("Error getting daily nutrition summary:", error);
       throw error;
     }
   }
 
   // Generate meal recommendations based on targets and preferences
-  static async generateMealRecommendations(userId, mealType, targetCalories, dietaryRestrictions = []) {
+  static async generateMealRecommendations(
+    userId,
+    mealType,
+    targetCalories,
+    dietaryRestrictions = [],
+  ) {
     try {
       // Validate userId
       userId = this.validateUserId(userId);
@@ -294,7 +376,7 @@ class NutritionService {
       const position = userResult.rows[0]?.position;
 
       // Build base query for meal templates
-      let restrictionFilter = '';
+      let restrictionFilter = "";
       if (dietaryRestrictions.length > 0) {
         restrictionFilter = `AND NOT tags && $3`;
       }
@@ -322,65 +404,80 @@ class NutritionService {
       `;
 
       const params = [mealType, targetCalories];
-      if (restrictionFilter) {params.push(dietaryRestrictions);}
+      if (restrictionFilter) {
+        params.push(dietaryRestrictions);
+      }
       params.push(position?.toLowerCase());
 
       const result = await this.db.query(query, params);
 
       // Enhance recommendations with timing and context
-      const recommendations = result.rows.map(template => ({
+      const recommendations = result.rows.map((template) => ({
         ...template,
-        recommendation_reason: this.generateRecommendationReason(template, targetCalories, position),
+        recommendation_reason: this.generateRecommendationReason(
+          template,
+          targetCalories,
+          position,
+        ),
         timing_guidance: this.getTimingGuidance(mealType),
-        calorie_match: this.getCalorieMatchRating(template.total_calories, targetCalories)
+        calorie_match: this.getCalorieMatchRating(
+          template.total_calories,
+          targetCalories,
+        ),
       }));
 
       return recommendations;
     } catch (error) {
-      logger.error('Error generating meal recommendations:', error);
+      logger.error("Error generating meal recommendations:", error);
       throw error;
     }
   }
 
   static generateRecommendationReason(template, targetCalories, position) {
     const reasons = [];
-    
-    if (Math.abs(template.total_calories - targetCalories) <= targetCalories * 0.1) {
-      reasons.push('Perfect calorie match');
+
+    if (
+      Math.abs(template.total_calories - targetCalories) <=
+      targetCalories * 0.1
+    ) {
+      reasons.push("Perfect calorie match");
     }
-    
+
     if (template.performance_rating >= 4) {
-      reasons.push('High performance rating');
+      reasons.push("High performance rating");
     }
-    
+
     if (position && template.tags?.includes(position.toLowerCase())) {
       reasons.push(`Optimized for ${position} position`);
     }
-    
+
     if (template.suitable_for_training_day) {
-      reasons.push('Great for training days');
+      reasons.push("Great for training days");
     }
 
-    return reasons.length > 0 ? reasons.join(', ') : 'Good nutritional balance';
+    return reasons.length > 0 ? reasons.join(", ") : "Good nutritional balance";
   }
 
   static getTimingGuidance(mealType) {
     const guidance = {
-      'pre_workout': 'Eat 2-3 hours before training for optimal energy',
-      'post_workout': 'Consume within 30 minutes after training for recovery',
-      'breakfast': 'Start your day with balanced nutrition',
-      'lunch': 'Midday fuel to maintain energy levels',
-      'dinner': 'Recovery-focused evening meal',
-      'snack': 'Quick energy boost between meals'
+      pre_workout: "Eat 2-3 hours before training for optimal energy",
+      post_workout: "Consume within 30 minutes after training for recovery",
+      breakfast: "Start your day with balanced nutrition",
+      lunch: "Midday fuel to maintain energy levels",
+      dinner: "Recovery-focused evening meal",
+      snack: "Quick energy boost between meals",
     };
-    
-    return guidance[mealType] || 'Enjoy as part of your balanced diet';
+
+    return guidance[mealType] || "Enjoy as part of your balanced diet";
   }
 
   static getCalorieMatchRating(templateCalories, targetCalories) {
     // Use CalorieMatchEvaluator with guard clauses
-    const { CalorieMatchEvaluator } = require('../utils/RuleEngine');
-    const evaluation = CalorieMatchEvaluator.evaluate(templateCalories, targetCalories);
+    const { CalorieMatchEvaluator } = require("../utils/RuleEngine");
+    const evaluation = CalorieMatchEvaluator.evaluate(
+      templateCalories,
+      targetCalories,
+    );
     return evaluation.rating;
   }
 
@@ -388,15 +485,19 @@ class NutritionService {
   static calculateBMR(weight_kg, height_cm, age, gender) {
     // Guard clause for invalid inputs
     if (!weight_kg || !height_cm || !age) {
-      throw new Error('Invalid input for BMR calculation');
+      throw new Error("Invalid input for BMR calculation");
     }
 
     // Base calculation
-    const baseCalc = (10 * weight_kg) + (6.25 * height_cm) - (5 * age);
+    const baseCalc = 10 * weight_kg + 6.25 * height_cm - 5 * age;
 
     // Gender-specific adjustment using guard clause pattern
-    if (gender === 'male') {return baseCalc + 5;}
-    if (gender === 'female') {return baseCalc - 161;}
+    if (gender === "male") {
+      return baseCalc + 5;
+    }
+    if (gender === "female") {
+      return baseCalc - 161;
+    }
 
     // Default to male if gender not specified
     return baseCalc + 5;
@@ -417,27 +518,27 @@ class NutritionService {
           OR $1 = ANY(string_to_array(name, ' '))
         )
       `;
-      
+
       const params = [`%${searchTerm}%`];
-      
+
       if (category) {
         query += ` AND category = $${params.length + 1}`;
         params.push(category);
       }
-      
+
       query += ` ORDER BY 
         CASE WHEN name ILIKE $1 THEN 1 ELSE 2 END,
         verification_score DESC,
         name ASC
         LIMIT $${params.length + 1}
       `;
-      
+
       params.push(limit);
 
       const result = await this.db.query(query, params);
       return result.rows;
     } catch (error) {
-      logger.error('Error searching food items:', error);
+      logger.error("Error searching food items:", error);
       throw error;
     }
   }

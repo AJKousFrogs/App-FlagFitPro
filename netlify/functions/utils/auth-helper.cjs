@@ -60,7 +60,10 @@ async function authenticateRequest(event) {
 
   try {
     const supabase = getSupabaseClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
       console.error("[Auth] Supabase auth error:", authError?.message);
@@ -100,12 +103,18 @@ async function authenticateRequest(event) {
  * @param {string} resourceType - Type of resource (for error messages)
  * @returns {object} { authorized: boolean, error?: object }
  */
-function checkResourceOwnership(userId, resourceUserId, resourceType = "resource") {
+function checkResourceOwnership(
+  userId,
+  resourceUserId,
+  resourceType = "resource",
+) {
   if (userId !== resourceUserId) {
     const { handleAuthorizationError } = require("./error-handler.cjs");
     return {
       authorized: false,
-      error: handleAuthorizationError(`You don't have permission to access this ${resourceType}`),
+      error: handleAuthorizationError(
+        `You don't have permission to access this ${resourceType}`,
+      ),
     };
   }
 

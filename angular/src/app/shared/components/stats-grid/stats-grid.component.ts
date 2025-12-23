@@ -34,16 +34,16 @@ export interface StatItem {
   template: `
     <div class="stats-grid">
       @for (stat of stats(); track trackByLabel($index, stat)) {
-        <p-card
-          class="stat-card"
-          >
+        <p-card class="stat-card">
           <div class="stat-content">
             @if (stat.icon) {
               <div
                 class="stat-icon"
-                [style.background]="(stat.color || 'var(--ds-primary-green)') + '20'"
+                [style.background]="
+                  (stat.color || 'var(--ds-primary-green)') + '20'
+                "
                 [style.color]="stat.color || 'var(--ds-primary-green)'"
-                >
+              >
                 <i [class]="'pi ' + stat.icon"></i>
               </div>
             }
@@ -55,7 +55,7 @@ export interface StatItem {
                   <p-tag
                     [value]="stat.trend"
                     [severity]="getTrendSeverity(stat.trendType)"
-                    >
+                  >
                   </p-tag>
                 </div>
               }
@@ -64,7 +64,7 @@ export interface StatItem {
         </p-card>
       }
     </div>
-    `,
+  `,
   styles: [
     `
       .stats-grid {
@@ -136,8 +136,13 @@ export class StatsGridComponent {
     return item.label;
   }
 
-  getTrendSeverity(trendType?: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
-    const severities: Record<string, "success" | "secondary" | "info" | "warn" | "danger" | "contrast"> = {
+  getTrendSeverity(
+    trendType?: string,
+  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+    const severities: Record<
+      string,
+      "success" | "secondary" | "info" | "warn" | "danger" | "contrast"
+    > = {
       positive: "success",
       negative: "danger",
       neutral: "info",

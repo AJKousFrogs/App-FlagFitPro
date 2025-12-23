@@ -18,6 +18,7 @@ To run all migrations and save results:
 ```
 
 Or manually via Supabase Dashboard:
+
 1. Go to https://supabase.com/dashboard
 2. Select project: Flagfootballapp (`pvziciccwxgftcielknm`)
 3. Click **SQL Editor** → **New query**
@@ -27,6 +28,7 @@ Or manually via Supabase Dashboard:
 ## Migration Order
 
 Migrations should be run in numerical order:
+
 1. `001_base_tables.sql`
 2. `025_complete_flag_football_player_system.sql`
 3. ... (continues numerically)
@@ -37,4 +39,3 @@ Migrations should be run in numerical order:
 - All migrations are idempotent (safe to run multiple times)
 - Use `*_supabase.sql` versions for Supabase (uses `auth.users`)
 - Use regular versions for Neon DB (uses `users`)
-

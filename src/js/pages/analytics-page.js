@@ -16,7 +16,7 @@ class AnalyticsPage {
   async init() {
     // Wait for DOM and Chart.js to be ready
     await this.waitForChartJS();
-    
+
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () => {
         this.initializeCharts();
@@ -35,14 +35,16 @@ class AnalyticsPage {
       if (typeof Chart !== "undefined") {
         return true;
       }
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         setTimeout(resolve, delay);
       });
     }
-    
+
     // If Chart.js still not loaded, log error and return false
     if (typeof Chart === "undefined") {
-      logger.error("Chart.js not loaded after waiting. Please ensure Chart.js is loaded before analytics-page.js");
+      logger.error(
+        "Chart.js not loaded after waiting. Please ensure Chart.js is loaded before analytics-page.js",
+      );
       return false;
     }
     return true;
@@ -69,14 +71,14 @@ class AnalyticsPage {
 
       // Initialize charts progressively using requestAnimationFrame for better performance
       const charts = [
-        'PerformanceTrends',
-        'TeamChemistry',
-        'TrainingDistribution',
-        'PositionPerformance',
-        'OlympicProgress',
-        'InjuryRisk',
-        'SpeedDevelopment',
-        'EngagementFunnel'
+        "PerformanceTrends",
+        "TeamChemistry",
+        "TrainingDistribution",
+        "PositionPerformance",
+        "OlympicProgress",
+        "InjuryRisk",
+        "SpeedDevelopment",
+        "EngagementFunnel",
       ];
 
       // Initialize charts one by one in animation frames
@@ -108,7 +110,7 @@ class AnalyticsPage {
       // Load analytics summary for metrics
       const summaryResponse = await apiClient.get(
         API_ENDPOINTS.analytics.summary,
-        { userId: user.id }
+        { userId: user.id },
       );
 
       if (summaryResponse.success && summaryResponse.data) {
@@ -117,21 +119,48 @@ class AnalyticsPage {
       }
 
       // Load individual analytics
-      const [performanceTrends, teamChemistry, trainingDistribution, positionPerformance, speedDevelopment] = await Promise.all([
-        apiClient.get(API_ENDPOINTS.analytics.performanceTrends, { userId: user.id, weeks: 7 }),
-        apiClient.get(API_ENDPOINTS.analytics.teamChemistry, { userId: user.id }),
-        apiClient.get(API_ENDPOINTS.analytics.trainingDistribution, { userId: user.id, period: "30days" }),
-        apiClient.get(API_ENDPOINTS.analytics.positionPerformance, { userId: user.id }),
-        apiClient.get(API_ENDPOINTS.analytics.speedDevelopment, { userId: user.id, weeks: 7 }),
+      const [
+        performanceTrends,
+        teamChemistry,
+        trainingDistribution,
+        positionPerformance,
+        speedDevelopment,
+      ] = await Promise.all([
+        apiClient.get(API_ENDPOINTS.analytics.performanceTrends, {
+          userId: user.id,
+          weeks: 7,
+        }),
+        apiClient.get(API_ENDPOINTS.analytics.teamChemistry, {
+          userId: user.id,
+        }),
+        apiClient.get(API_ENDPOINTS.analytics.trainingDistribution, {
+          userId: user.id,
+          period: "30days",
+        }),
+        apiClient.get(API_ENDPOINTS.analytics.positionPerformance, {
+          userId: user.id,
+        }),
+        apiClient.get(API_ENDPOINTS.analytics.speedDevelopment, {
+          userId: user.id,
+          weeks: 7,
+        }),
       ]);
 
       // Store data for chart initialization
       this.chartData = {
-        performanceTrends: performanceTrends.success ? performanceTrends.data : null,
+        performanceTrends: performanceTrends.success
+          ? performanceTrends.data
+          : null,
         teamChemistry: teamChemistry.success ? teamChemistry.data : null,
-        trainingDistribution: trainingDistribution.success ? trainingDistribution.data : null,
-        positionPerformance: positionPerformance.success ? positionPerformance.data : null,
-        speedDevelopment: speedDevelopment.success ? speedDevelopment.data : null,
+        trainingDistribution: trainingDistribution.success
+          ? trainingDistribution.data
+          : null,
+        positionPerformance: positionPerformance.success
+          ? positionPerformance.data
+          : null,
+        speedDevelopment: speedDevelopment.success
+          ? speedDevelopment.data
+          : null,
       };
     } catch (error) {
       logger.error("Error fetching analytics data:", error);
@@ -141,13 +170,19 @@ class AnalyticsPage {
 
   updateMetricsDisplay() {
     const metricCards = document.querySelectorAll(".metric-card");
-    
+
     // If no data, show "No data" for all metrics
-    if (!this.analyticsData || !this.analyticsData.metrics || this.analyticsData.metrics.length === 0) {
+    if (
+      !this.analyticsData ||
+      !this.analyticsData.metrics ||
+      this.analyticsData.metrics.length === 0
+    ) {
       metricCards.forEach((card) => {
         const valueEl = card.querySelector(".metric-value");
         const trendEl = card.querySelector(".metric-trend");
-        if (valueEl) {valueEl.textContent = "—";}
+        if (valueEl) {
+          valueEl.textContent = "—";
+        }
         if (trendEl) {
           trendEl.textContent = "No data entry yet";
           trendEl.className = "metric-trend";
@@ -166,17 +201,23 @@ class AnalyticsPage {
 
         if (valueEl) {
           // Show 0 or "—" if value is null/undefined/0
-          if (metric.value === null || metric.value === undefined || metric.value === 0) {
+          if (
+            metric.value === null ||
+            metric.value === undefined ||
+            metric.value === 0
+          ) {
             valueEl.textContent = "—";
           } else {
             valueEl.textContent = metric.value;
           }
         }
-        if (labelEl && metric.label) {labelEl.textContent = metric.label;}
+        if (labelEl && metric.label) {
+          labelEl.textContent = metric.label;
+        }
         if (trendEl) {
           if (metric.trend) {
             trendEl.textContent = metric.trend;
-            trendEl.className = `metric-trend trend-${metric.trendType || 'neutral'}`;
+            trendEl.className = `metric-trend trend-${metric.trendType || "neutral"}`;
           } else {
             trendEl.textContent = "No data entry yet";
             trendEl.className = "metric-trend";
@@ -188,10 +229,12 @@ class AnalyticsPage {
 
   initPerformanceTrendsChart() {
     const ctx = document.getElementById("performanceTrendsChart");
-    if (!ctx) {return;}
+    if (!ctx) {
+      return;
+    }
 
     const data = this.chartData?.performanceTrends;
-    
+
     // If no data, show empty chart with message
     if (!data || !data.values || data.values.length === 0) {
       this.showNoDataMessage(ctx.closest(".chart-card"), "Performance Trends");
@@ -226,17 +269,24 @@ class AnalyticsPage {
 
     // Update insights
     if (data.currentScore !== undefined) {
-      const insightValue = document.querySelector("#performanceTrendsChart").closest(".chart-card")?.querySelector(".insight-item .insight-value");
-      if (insightValue) {insightValue.textContent = data.currentScore;}
+      const insightValue = document
+        .querySelector("#performanceTrendsChart")
+        .closest(".chart-card")
+        ?.querySelector(".insight-item .insight-value");
+      if (insightValue) {
+        insightValue.textContent = data.currentScore;
+      }
     }
   }
 
   initTeamChemistryChart() {
     const ctx = document.getElementById("teamChemistryChart");
-    if (!ctx) {return;}
+    if (!ctx) {
+      return;
+    }
 
     const data = this.chartData?.teamChemistry;
-    
+
     // If no data, show empty chart with message
     if (!data || !data.values || data.values.length === 0) {
       this.showNoDataMessage(ctx.closest(".chart-card"), "Team Chemistry");
@@ -268,21 +318,32 @@ class AnalyticsPage {
 
     // Update insights
     if (data.overall !== undefined) {
-      const chartCard = document.querySelector("#teamChemistryChart").closest(".chart-card");
-      const overallValue = chartCard?.querySelector(".insight-item .insight-value");
-      if (overallValue) {overallValue.textContent = data.overall.toFixed(1);}
+      const chartCard = document
+        .querySelector("#teamChemistryChart")
+        .closest(".chart-card");
+      const overallValue = chartCard?.querySelector(
+        ".insight-item .insight-value",
+      );
+      if (overallValue) {
+        overallValue.textContent = data.overall.toFixed(1);
+      }
     }
   }
 
   initTrainingDistributionChart() {
     const ctx = document.getElementById("trainingDistributionChart");
-    if (!ctx) {return;}
+    if (!ctx) {
+      return;
+    }
 
     const data = this.chartData?.trainingDistribution;
-    
+
     // If no data, show empty chart with message
     if (!data || !data.values || data.values.length === 0) {
-      this.showNoDataMessage(ctx.closest(".chart-card"), "Training Distribution");
+      this.showNoDataMessage(
+        ctx.closest(".chart-card"),
+        "Training Distribution",
+      );
       return;
     }
 
@@ -311,26 +372,45 @@ class AnalyticsPage {
 
     // Update insights
     if (data.agilitySessions !== undefined) {
-      const chartCard = document.querySelector("#trainingDistributionChart").closest(".chart-card");
-      const agilityValue = chartCard?.querySelectorAll(".insight-item .insight-value")[0];
-      const speedValue = chartCard?.querySelectorAll(".insight-item .insight-value")[1];
-      const technicalValue = chartCard?.querySelectorAll(".insight-item .insight-value")[2];
-      
-      if (agilityValue) {agilityValue.textContent = data.agilitySessions;}
-      if (speedValue) {speedValue.textContent = data.speedSessions;}
-      if (technicalValue) {technicalValue.textContent = data.technicalSessions;}
+      const chartCard = document
+        .querySelector("#trainingDistributionChart")
+        .closest(".chart-card");
+      const agilityValue = chartCard?.querySelectorAll(
+        ".insight-item .insight-value",
+      )[0];
+      const speedValue = chartCard?.querySelectorAll(
+        ".insight-item .insight-value",
+      )[1];
+      const technicalValue = chartCard?.querySelectorAll(
+        ".insight-item .insight-value",
+      )[2];
+
+      if (agilityValue) {
+        agilityValue.textContent = data.agilitySessions;
+      }
+      if (speedValue) {
+        speedValue.textContent = data.speedSessions;
+      }
+      if (technicalValue) {
+        technicalValue.textContent = data.technicalSessions;
+      }
     }
   }
 
   initPositionPerformanceChart() {
     const ctx = document.getElementById("positionPerformanceChart");
-    if (!ctx) {return;}
+    if (!ctx) {
+      return;
+    }
 
     const data = this.chartData?.positionPerformance;
-    
+
     // If no data, show empty chart with message
     if (!data || !data.values || data.values.length === 0) {
-      this.showNoDataMessage(ctx.closest(".chart-card"), "Position Performance");
+      this.showNoDataMessage(
+        ctx.closest(".chart-card"),
+        "Position Performance",
+      );
       return;
     }
 
@@ -363,28 +443,45 @@ class AnalyticsPage {
 
     // Update insights with top performers
     if (data.topPerformers && data.topPerformers.length > 0) {
-      const chartCard = document.querySelector("#positionPerformanceChart").closest(".chart-card");
-      const insightValues = chartCard?.querySelectorAll(".insight-item .insight-value");
-      const insightLabels = chartCard?.querySelectorAll(".insight-item .insight-label");
-      
+      const chartCard = document
+        .querySelector("#positionPerformanceChart")
+        .closest(".chart-card");
+      const insightValues = chartCard?.querySelectorAll(
+        ".insight-item .insight-value",
+      );
+      const insightLabels = chartCard?.querySelectorAll(
+        ".insight-item .insight-label",
+      );
+
       data.topPerformers.slice(0, 3).forEach((performer, index) => {
-        if (insightValues[index]) {insightValues[index].textContent = performer.score;}
-        if (insightLabels[index]) {insightLabels[index].textContent = performer.name;}
+        if (insightValues[index]) {
+          insightValues[index].textContent = performer.score;
+        }
+        if (insightLabels[index]) {
+          insightLabels[index].textContent = performer.name;
+        }
       });
     }
   }
 
   initOlympicProgressChart() {
     const ctx = document.getElementById("olympicProgressChart");
-    if (!ctx) {return;}
-
-    // Get progress from analytics summary
-    const progressMetric = this.analyticsData?.metrics?.find(m => m.label === "Olympic Qualification");
-    if (!progressMetric || !progressMetric.value) {
-      this.showNoDataMessage(ctx.closest(".chart-card"), "Olympic Qualification");
+    if (!ctx) {
       return;
     }
-    
+
+    // Get progress from analytics summary
+    const progressMetric = this.analyticsData?.metrics?.find(
+      (m) => m.label === "Olympic Qualification",
+    );
+    if (!progressMetric || !progressMetric.value) {
+      this.showNoDataMessage(
+        ctx.closest(".chart-card"),
+        "Olympic Qualification",
+      );
+      return;
+    }
+
     const progress = progressMetric.value;
     const progressValue = parseInt(String(progress).replace("%", "")) || 0;
 
@@ -413,10 +510,12 @@ class AnalyticsPage {
 
   initInjuryRiskChart() {
     const ctx = document.getElementById("injuryRiskChart");
-    if (!ctx) {return;}
+    if (!ctx) {
+      return;
+    }
 
     const data = this.chartData?.injuryRisk;
-    
+
     // If no data, show empty chart with message
     if (!data || !data.values || data.values.length === 0) {
       this.showNoDataMessage(ctx.closest(".chart-card"), "Injury Risk");
@@ -447,12 +546,19 @@ class AnalyticsPage {
 
   initSpeedDevelopmentChart() {
     const ctx = document.getElementById("speedDevelopmentChart");
-    if (!ctx) {return;}
+    if (!ctx) {
+      return;
+    }
 
     const data = this.chartData?.speedDevelopment;
-    
+
     // If no data, show empty chart with message
-    if (!data || !data.datasets || data.datasets.length === 0 || !data.datasets.some(ds => ds.data && ds.data.length > 0)) {
+    if (
+      !data ||
+      !data.datasets ||
+      data.datasets.length === 0 ||
+      !data.datasets.some((ds) => ds.data && ds.data.length > 0)
+    ) {
       this.showNoDataMessage(ctx.closest(".chart-card"), "Speed Development");
       return;
     }
@@ -463,7 +569,9 @@ class AnalyticsPage {
         labels: data.labels,
         datasets: data.datasets.map((ds) => ({
           ...ds,
-          borderColor: ds.label.includes("40") ? "var(--primary-500)" : "var(--primary-500)",
+          borderColor: ds.label.includes("40")
+            ? "var(--primary-500)"
+            : "var(--primary-500)",
           tension: 0.4,
         })),
       },
@@ -478,23 +586,39 @@ class AnalyticsPage {
 
     // Update insights
     if (data.best40Yard !== undefined) {
-      const chartCard = document.querySelector("#speedDevelopmentChart").closest(".chart-card");
-      const best40Value = chartCard?.querySelectorAll(".insight-item .insight-value")[0];
-      const best10Value = chartCard?.querySelectorAll(".insight-item .insight-value")[1];
-      const improvementValue = chartCard?.querySelectorAll(".insight-item .insight-value")[2];
-      
-      if (best40Value) {best40Value.textContent = `${data.best40Yard}s`;}
-      if (best10Value) {best10Value.textContent = `${data.best10Yard}s`;}
-      if (improvementValue) {improvementValue.textContent = `-${data.improvement}s`;}
+      const chartCard = document
+        .querySelector("#speedDevelopmentChart")
+        .closest(".chart-card");
+      const best40Value = chartCard?.querySelectorAll(
+        ".insight-item .insight-value",
+      )[0];
+      const best10Value = chartCard?.querySelectorAll(
+        ".insight-item .insight-value",
+      )[1];
+      const improvementValue = chartCard?.querySelectorAll(
+        ".insight-item .insight-value",
+      )[2];
+
+      if (best40Value) {
+        best40Value.textContent = `${data.best40Yard}s`;
+      }
+      if (best10Value) {
+        best10Value.textContent = `${data.best10Yard}s`;
+      }
+      if (improvementValue) {
+        improvementValue.textContent = `-${data.improvement}s`;
+      }
     }
   }
 
   initEngagementFunnelChart() {
     const ctx = document.getElementById("engagementFunnelChart");
-    if (!ctx) {return;}
+    if (!ctx) {
+      return;
+    }
 
     const data = this.chartData?.engagementFunnel;
-    
+
     // If no data, show empty chart with message
     if (!data || !data.values || data.values.length === 0) {
       this.showNoDataMessage(ctx.closest(".chart-card"), "Engagement Funnel");
@@ -534,13 +658,15 @@ class AnalyticsPage {
    * Show empty state message for charts when no data is available
    */
   showNoDataMessage(chartCard, chartName) {
-    if (!chartCard) {return;}
-    
+    if (!chartCard) {
+      return;
+    }
+
     const canvas = chartCard.querySelector("canvas");
     if (canvas) {
       canvas.style.display = "none";
     }
-    
+
     // Check if message already exists
     let noDataMsg = chartCard.querySelector(".no-data-message");
     if (!noDataMsg) {
@@ -558,17 +684,19 @@ class AnalyticsPage {
       `;
       // Create no data message using DOM methods instead of innerHTML
       const iconDiv = document.createElement("div");
-      iconDiv.style.cssText = "font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;";
+      iconDiv.style.cssText =
+        "font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;";
       iconDiv.textContent = "📊";
-      
+
       const titleDiv = document.createElement("div");
-      titleDiv.style.cssText = "font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-secondary);";
+      titleDiv.style.cssText =
+        "font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-secondary);";
       titleDiv.textContent = "No Data Available";
-      
+
       const messageDiv = document.createElement("div");
       messageDiv.style.cssText = "font-size: 0.875rem;";
       messageDiv.textContent = `No ${chartName} data has been entered yet.`;
-      
+
       noDataMsg.appendChild(iconDiv);
       noDataMsg.appendChild(titleDiv);
       noDataMsg.appendChild(messageDiv);
@@ -582,13 +710,14 @@ class AnalyticsPage {
   showEmptyState() {
     // Update metrics to show "No data"
     this.updateMetricsDisplay();
-    
+
     // Show empty messages for all charts
     const chartCards = document.querySelectorAll(".chart-card");
     chartCards.forEach((card) => {
       const canvas = card.querySelector("canvas");
       if (canvas && !canvas.closest(".no-data-message")) {
-        const chartName = card.querySelector(".chart-title")?.textContent || "Chart";
+        const chartName =
+          card.querySelector(".chart-title")?.textContent || "Chart";
         this.showNoDataMessage(card, chartName);
       }
     });
@@ -601,32 +730,47 @@ if (document.getElementById("performanceTrendsChart")) {
 }
 
 // Make functions globally available for onclick handlers
-window.toggleSidebar = function() {
+window.toggleSidebar = function () {
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("sidebar-overlay");
   const toggleBtn = document.getElementById("mobile-menu-toggle");
 
-  if (!sidebar) {return;}
+  if (!sidebar) {
+    return;
+  }
 
-  const isOpen = sidebar.classList.contains("open") || sidebar.classList.contains("mobile-open");
+  const isOpen =
+    sidebar.classList.contains("open") ||
+    sidebar.classList.contains("mobile-open");
 
   if (isOpen) {
     sidebar.classList.remove("open", "mobile-open");
-    if (overlay) {overlay.classList.remove("active");}
+    if (overlay) {
+      overlay.classList.remove("active");
+    }
     document.body.classList.remove("sidebar-open", "menu-open");
-    if (toggleBtn) {toggleBtn.setAttribute("aria-expanded", "false");}
-    if (toggleBtn) {toggleBtn.focus();}
+    if (toggleBtn) {
+      toggleBtn.setAttribute("aria-expanded", "false");
+    }
+    if (toggleBtn) {
+      toggleBtn.focus();
+    }
   } else {
     sidebar.classList.add("open", "mobile-open");
-    if (overlay) {overlay.classList.add("active");}
+    if (overlay) {
+      overlay.classList.add("active");
+    }
     document.body.classList.add("sidebar-open", "menu-open");
-    if (toggleBtn) {toggleBtn.setAttribute("aria-expanded", "true");}
+    if (toggleBtn) {
+      toggleBtn.setAttribute("aria-expanded", "true");
+    }
     const firstNavItem = sidebar.querySelector(".nav-item");
-    if (firstNavItem) {firstNavItem.focus();}
+    if (firstNavItem) {
+      firstNavItem.focus();
+    }
   }
 };
 
-window.closeMenu = function() {
+window.closeMenu = function () {
   window.toggleSidebar();
 };
-

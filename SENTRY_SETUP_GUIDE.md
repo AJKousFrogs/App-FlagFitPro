@@ -64,6 +64,7 @@ All uncaught errors and unhandled promise rejections are automatically reported 
 ### ✅ User Context
 
 When users log in, their information is attached to error reports:
+
 - User ID
 - Email
 - Name
@@ -72,12 +73,14 @@ When users log in, their information is attached to error reports:
 ### ✅ Performance Monitoring
 
 Track page load times and API performance:
+
 - 10% sample rate in production
 - Full tracking in staging
 
 ### ✅ Sensitive Data Filtering
 
 Automatically removes:
+
 - Authorization headers
 - Cookies
 - localStorage data
@@ -86,6 +89,7 @@ Automatically removes:
 ### ✅ Smart Error Filtering
 
 Ignores common noise:
+
 - Browser extension errors
 - Network errors (handled separately)
 - Ad blocker errors
@@ -110,7 +114,7 @@ The unified error handler automatically reports to Sentry:
 
 ```javascript
 // Errors are automatically reported
-throw new Error('Something went wrong');
+throw new Error("Something went wrong");
 // ✅ Reported to Sentry with full context
 ```
 
@@ -119,29 +123,29 @@ throw new Error('Something went wrong');
 You can also manually report errors:
 
 ```javascript
-import { sentryService } from './js/services/sentry-service.js';
+import { sentryService } from "./js/services/sentry-service.js";
 
 // Capture exception
 try {
   riskyOperation();
 } catch (error) {
   sentryService.captureException(error, {
-    component: 'UserProfile',
-    action: 'updateProfile'
+    component: "UserProfile",
+    action: "updateProfile",
   });
 }
 
 // Capture message
-sentryService.captureMessage('User completed onboarding', 'info', {
+sentryService.captureMessage("User completed onboarding", "info", {
   userId: user.id,
-  step: 'final'
+  step: "final",
 });
 
 // Add breadcrumb (for debugging context)
 sentryService.addBreadcrumb({
-  category: 'navigation',
-  message: 'User navigated to settings',
-  level: 'info'
+  category: "navigation",
+  message: "User navigated to settings",
+  level: "info",
 });
 ```
 
@@ -154,6 +158,7 @@ sentryService.addBreadcrumb({
 Sentry only runs in production/staging by default. To test locally:
 
 1. Temporarily change environment check:
+
    ```javascript
    // In src/js/services/sentry-service.js
    if (config.ENV !== 'production') {
@@ -163,8 +168,9 @@ Sentry only runs in production/staging by default. To test locally:
 2. Add test DSN to `.env.local`
 
 3. Trigger a test error:
+
    ```javascript
-   throw new Error('Sentry test error');
+   throw new Error("Sentry test error");
    ```
 
 4. Check Sentry dashboard for the error
@@ -185,6 +191,7 @@ After deploying to Netlify:
 ### Issues
 
 View all errors with:
+
 - Error message and stack trace
 - User information
 - Browser and device info
@@ -193,6 +200,7 @@ View all errors with:
 ### Performance
 
 Track:
+
 - Page load times
 - API response times
 - Database query performance
@@ -201,6 +209,7 @@ Track:
 ### Releases
 
 Track which version of your code caused errors:
+
 - Set `APP_VERSION` environment variable
 - Sentry will group errors by release
 - See when issues were introduced
@@ -224,17 +233,18 @@ When manually reporting errors:
 
 ```javascript
 sentryService.captureException(error, {
-  component: 'PaymentProcessor',
-  action: 'submitPayment',
-  paymentMethod: 'credit_card',
+  component: "PaymentProcessor",
+  action: "submitPayment",
+  paymentMethod: "credit_card",
   amount: 99.99,
-  userId: user.id
+  userId: user.id,
 });
 ```
 
 ### 3. Set Up Alerts
 
 In Sentry Dashboard:
+
 1. Go to **Alerts**
 2. Create rules for:
    - New errors
@@ -295,6 +305,7 @@ Set up alerts in Sentry for:
 ### Data Scrubbing
 
 Sentry automatically scrubs:
+
 - Passwords
 - Credit card numbers
 - Social security numbers
@@ -304,6 +315,7 @@ Sentry automatically scrubs:
 To be GDPR compliant:
 
 1. **User Consent**
+
    ```javascript
    if (userConsentedToTracking) {
      sentryService.init();
@@ -323,12 +335,14 @@ To be GDPR compliant:
 ## 12. Cost & Limits
 
 ### Free Tier Includes:
+
 - 5,000 errors/month
 - 10,000 performance units/month
 - 1 user
 - 30 days data retention
 
 ### Paid Plans:
+
 - **Team:** $26/month
   - 50,000 errors
   - 100,000 performance units
@@ -346,6 +360,7 @@ To be GDPR compliant:
 ### Sentry Not Initializing
 
 **Check:**
+
 1. `VITE_SENTRY_DSN` is set
 2. Running in production/staging environment
 3. Check browser console for Sentry logs
@@ -353,6 +368,7 @@ To be GDPR compliant:
 ### Errors Not Appearing
 
 **Verify:**
+
 1. DSN is correct
 2. Errors are being thrown
 3. Check Sentry rate limits
@@ -361,6 +377,7 @@ To be GDPR compliant:
 ### Too Many Errors
 
 **Solutions:**
+
 1. Filter out noisy errors in `ignoreErrors` config
 2. Lower sample rate
 3. Fix underlying issues causing errors
@@ -386,6 +403,7 @@ To be GDPR compliant:
 ✅ **Production-ready** with smart filtering
 
 **Next Steps:**
+
 1. Create Sentry account
 2. Get your DSN
 3. Add to Netlify environment variables

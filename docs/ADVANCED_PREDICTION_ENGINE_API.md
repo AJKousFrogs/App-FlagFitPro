@@ -11,6 +11,7 @@
 - **Research Integration**: Evidence-based recommendations from 156 studies
 
 ## 📍 **File Location**
+
 ```
 /src/services/AdvancedPredictionEngine.js (466 lines)
 ```
@@ -18,6 +19,7 @@
 ## 🏗️ **Architecture**
 
 ### **Machine Learning Parameters**
+
 ```javascript
 ML_PARAMETERS: {
   SEQUENCE_LENGTH: 28,          // 4 weeks of daily data
@@ -42,6 +44,7 @@ ML_PARAMETERS: {
 ```
 
 ### **Prediction Models**
+
 - **Performance Model**: Short/long-term athletic performance
 - **Injury Risk Model**: Predictive injury prevention
 - **Skill Development Model**: Skill acquisition and transfer
@@ -56,17 +59,20 @@ ML_PARAMETERS: {
 Generates comprehensive performance predictions using multi-modal data and research context.
 
 ```javascript
-const predictions = await predictionEngine.generateAdvancedPerformancePredictions(
-  'user123', 
-  'comprehensive'
-);
+const predictions =
+  await predictionEngine.generateAdvancedPerformancePredictions(
+    "user123",
+    "comprehensive",
+  );
 ```
 
 **Parameters**:
+
 - `userId` (string) - User identifier
 - `predictionType` (string) - 'comprehensive', 'focused', 'short-term', 'long-term'
 
 **Returns**: Comprehensive prediction object with:
+
 ```javascript
 {
   userId: 'user123',
@@ -97,12 +103,13 @@ Generates flag football-specific performance predictions optimized for the sport
 
 ```javascript
 const flagFootballMetrics = await predictionEngine.predictFlagFootballMetrics(
-  userData, 
-  researchContext
+  userData,
+  researchContext,
 );
 ```
 
 **Returns**: Flag football-optimized predictions:
+
 ```javascript
 {
   metrics: {
@@ -146,14 +153,16 @@ const flagFootballMetrics = await predictionEngine.predictFlagFootballMetrics(
 Predicts sprint performance for flag football-specific distances (10-25 yards).
 
 ```javascript
-const sprintPrediction = await predictionEngine.predictSprintPerformance(userData);
+const sprintPrediction =
+  await predictionEngine.predictSprintPerformance(userData);
 ```
 
 **Returns**: Sprint-specific predictions:
+
 ```javascript
 {
   predicted10Yard: 1.65,           // seconds
-  predicted25Yard: 3.12,           // seconds  
+  predicted25Yard: 3.12,           // seconds
   improvementPotential: 0.08,      // 8% improvement potential
   confidence: 0.91,                // 91% confidence
   timeline: '6-8 weeks',           // Time to reach prediction
@@ -170,12 +179,13 @@ const routeSkills = await predictionEngine.predictRouteRunningSkill(userData);
 ```
 
 **Returns**: Route running skill progression:
+
 ```javascript
 {
   currentSkillLevel: 0.76,
   predictedProgression: {
     weeks4: 0.82,                  // Short-term improvement
-    weeks8: 0.89,                  // Medium-term development  
+    weeks8: 0.89,                  // Medium-term development
     weeks16: 0.94                  // Long-term mastery
   },
   skillTransferRate: 0.89,         // 89% skill transfer rate
@@ -203,6 +213,7 @@ const periodization = await predictionEngine.generateAIPeriodization(
 ```
 
 **Returns**: AI-optimized training plan:
+
 ```javascript
 {
   userId: 'user123',
@@ -214,7 +225,7 @@ const periodization = await predictionEngine.generateAIPeriodization(
       focus: ['aerobic_base', 'movement_quality', 'skill_foundation']
     },
     development: {
-      duration: 8,              // weeks  
+      duration: 8,              // weeks
       focus: ['strength_power', 'speed_development', 'skill_refinement']
     },
     competition: {
@@ -266,12 +277,14 @@ FLAG_FOOTBALL_SPECIFICS: {
 ## ⚡ **Performance Metrics**
 
 ### **Model Performance**
+
 - **Training Speed**: <30 seconds for full prediction generation
 - **Memory Usage**: Optimized with shared database connection
 - **Prediction Latency**: <500ms for real-time insights
 - **Confidence Intervals**: 95% confidence bounds on all predictions
 
 ### **Research Validation**
+
 - **Cross-validation**: 5-fold validation on training data
 - **External Validation**: Tested on independent athlete cohorts
 - **Longitudinal Accuracy**: 87.4% accuracy over 16-week periods
@@ -331,12 +344,13 @@ const la28Readiness = predictions.predictions.la28Specific;
 ## 🔍 **Model Validation & Testing**
 
 ### **Validation Methods**
+
 ```javascript
 // Built-in validation methods
 const validation = {
   crossValidation: await engine.performCrossValidation(userData),
   temporalValidation: await engine.validateTemporalConsistency(predictions),
-  confidenceCalibration: await engine.calibrateConfidenceScores(predictions)
+  confidenceCalibration: await engine.calibrateConfidenceScores(predictions),
 };
 ```
 
@@ -381,12 +395,14 @@ try {
 ## 📈 **Future Enhancements**
 
 ### **Planned Features**
+
 - **Real-time GPS Integration**: Live performance tracking during training
 - **Wearable Device Support**: Heart rate, sleep, and recovery data integration
 - **Computer Vision**: Movement analysis from video footage
 - **Advanced Biomarkers**: Integration with blood and saliva testing
 
 ### **Research Roadmap**
+
 - **2025 Q2**: Integration of additional 50+ studies
 - **2025 Q3**: Enhanced transformer architecture with attention mechanisms
 - **2025 Q4**: Multi-sport transfer learning capabilities

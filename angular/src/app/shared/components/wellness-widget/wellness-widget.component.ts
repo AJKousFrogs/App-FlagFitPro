@@ -42,7 +42,7 @@ interface WellnessMetric {
           ></p-button>
         </div>
       </ng-template>
-    
+
       <div class="wellness-content">
         <!-- Overall Score -->
         <div class="score-section">
@@ -51,7 +51,7 @@ interface WellnessMetric {
             <span class="score-label">{{ statusLabel() }}</span>
           </div>
         </div>
-    
+
         <!-- Progress Bar -->
         <div class="progress-section">
           <p-progressBar
@@ -61,15 +61,16 @@ interface WellnessMetric {
             [styleClass]="'wellness-progress'"
           ></p-progressBar>
         </div>
-    
+
         <!-- Key Metrics -->
         @if (metrics().length > 0) {
           <div class="metrics-grid">
             @for (metric of metrics(); track trackByLabel($index, metric)) {
-              <div
-                class="metric-item"
-                >
-                <i [class]="'pi ' + metric.icon" [style.color]="metric.color"></i>
+              <div class="metric-item">
+                <i
+                  [class]="'pi ' + metric.icon"
+                  [style.color]="metric.color"
+                ></i>
                 <div class="metric-info">
                   <span class="metric-label">{{ metric.label }}</span>
                   <span class="metric-value">{{ metric.value }}</span>
@@ -78,7 +79,7 @@ interface WellnessMetric {
             }
           </div>
         }
-    
+
         <!-- No Data Message -->
         @if (metrics().length === 0) {
           <div class="no-data">
@@ -94,7 +95,7 @@ interface WellnessMetric {
         }
       </div>
     </p-card>
-    `,
+  `,
   styles: [
     `
       .wellness-widget {
@@ -263,12 +264,11 @@ export class WellnessWidgetComponent {
   statusLabel = signal<string>("N/A");
   statusColor = signal<string>("var(--ds-primary-green)");
   metrics = signal<WellnessMetric[]>([]);
-  
+
   constructor() {
     // Angular 21: Initialize in constructor instead of OnInit
     this.loadWellnessData();
   }
-
 
   loadWellnessData(): void {
     this.wellnessService.getWellnessData("7d").subscribe({

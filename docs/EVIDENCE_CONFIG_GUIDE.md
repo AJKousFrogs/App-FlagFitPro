@@ -96,15 +96,18 @@ Each preset includes:
 ### Science (Research-Based)
 
 **ACWR Thresholds**:
+
 - Range 0.8-1.3 comes from large-scale team-sport research on injury risk (Gabbett 2016)
 - These are population-level findings from multiple studies
 - Thresholds are starting points based on common athlete monitoring scales
 
 **Readiness Weightings**:
+
 - Weightings optimized for team-sport contexts (McLellan 2011, Saw 2016)
 - Sleep weightings based on strong evidence (Halson 2014, Fullagar 2015)
 
 **Tapering Protocols**:
+
 - Taper duration (7-14 days) from meta-analysis (Bosquet 2007)
 - Volume reduction (40-60%) based on systematic reviews
 - Intensity floor (80-90%) prevents detraining (Mujika 2003)
@@ -112,16 +115,19 @@ Each preset includes:
 ### Coach Override
 
 **ACWR Thresholds**:
+
 - Coaches can override thresholds if they have their own philosophy
 - Team-specific data may show different optimal ranges
 - Individual athletes may have different tolerance levels
 
 **Readiness Cut-Points**:
+
 - Cut-points require team-specific calibration
 - Weightings can be adjusted based on team philosophy
 - Individual athlete needs should be considered
 
 **Tapering Protocols**:
+
 - Taper duration and volume reductions can be adjusted
 - Based on athlete response, team philosophy, or individual needs
 - Intensity floor can be modified but research suggests maintaining intensity
@@ -133,6 +139,7 @@ Each preset includes:
 ### Purpose
 
 Log training recommendations alongside outcomes to:
+
 - Track whether thresholds are conservative or aggressive
 - Fit simple internal models showing effectiveness
 - Enable individualization over time
@@ -140,6 +147,7 @@ Log training recommendations alongside outcomes to:
 ### Logged Data
 
 **Recommendations**:
+
 - Type: deload/maintain/push
 - Readiness score
 - ACWR value
@@ -147,6 +155,7 @@ Log training recommendations alongside outcomes to:
 - Context (preset, phase, event proximity)
 
 **Outcomes** (filled in later):
+
 - Injury flagged (yes/no, date, type)
 - Performance rating (1-10 scale)
 - Session quality (1-10 scale)
@@ -157,30 +166,26 @@ Log training recommendations alongside outcomes to:
 ```typescript
 // Log recommendation
 calibrationLoggingService.logRecommendation({
-  athleteId: 'athlete-123',
+  athleteId: "athlete-123",
   timestamp: new Date(),
   recommendation: {
-    type: 'deload',
+    type: "deload",
     readinessScore: 45,
     acwr: 1.6,
-    rationale: 'ACWR exceeds danger threshold',
+    rationale: "ACWR exceeds danger threshold",
   },
   context: {
-    presetId: 'adult_flag_competitive_v1',
-    presetVersion: '1.0',
+    presetId: "adult_flag_competitive_v1",
+    presetVersion: "1.0",
   },
 });
 
 // Log outcome
-calibrationLoggingService.logOutcome(
-  'athlete-123',
-  timestamp,
-  {
-    injuryFlagged: false,
-    performanceRating: 7,
-    sessionQuality: 8,
-  }
-);
+calibrationLoggingService.logOutcome("athlete-123", timestamp, {
+  injuryFlagged: false,
+  performanceRating: 7,
+  sessionQuality: 8,
+});
 ```
 
 ---
@@ -190,6 +195,7 @@ calibrationLoggingService.logOutcome(
 ### Evidence Preset Indicator
 
 Component displays:
+
 - Active preset name and version
 - Population assumptions
 - Link to evidence details
@@ -197,6 +203,7 @@ Component displays:
 ### Evidence Details Dialog
 
 Shows:
+
 - **Science Notes**: What comes from research
 - **Coach Override**: What coaches can adjust
 - **Citations**: Supporting research with DOIs
@@ -205,6 +212,7 @@ Shows:
 ### Tooltips
 
 Throughout the UI, tooltips explain:
+
 - "This range (0.8-1.3) comes from large-scale team-sport research on injury risk (Gabbett 2016); coaches can override it if they have their own philosophy."
 - "Sleep targets (<8 hours consistently linked to worse cognitive and performance outcomes)"
 - "Taper duration (7-14 days) from meta-analysis (Bosquet 2007)"
@@ -216,22 +224,25 @@ Throughout the UI, tooltips explain:
 ### Preset Versions
 
 Presets are versioned (e.g., `v1.0`, `v1.1`, `v2.0`):
+
 - **Major version** (v1 → v2): Significant changes based on new research
 - **Minor version** (v1.0 → v1.1): Minor adjustments or bug fixes
 
 ### Changelog
 
 Each preset includes a changelog:
+
 ```typescript
 changelog: [
   "v1.0 (2026-01-01): Initial release with evidence-based configurations",
   "v1.1 (2026-03-15): Adjusted readiness cut-points based on team calibration data",
-]
+];
 ```
 
 ### Updating Presets
 
 When new research emerges:
+
 1. Create new preset version (e.g., `v1.1`)
 2. Update values based on new evidence
 3. Add citation to research database
@@ -245,18 +256,22 @@ When new research emerges:
 ### Calibration Logging Endpoints
 
 **POST `/api/calibration-logs`**
+
 - Log training recommendation
 - Returns: success/failure
 
 **POST `/api/calibration-logs/outcome`**
+
 - Log outcome for previous recommendation
 - Returns: success/failure
 
 **GET `/api/calibration-logs/stats/:athleteId`**
+
 - Get calibration statistics for athlete
 - Returns: recommendation counts, injury rates, performance ratings
 
 **GET `/api/calibration-logs/preset-stats/:presetId`**
+
 - Get calibration statistics for preset
 - Returns: threshold effectiveness, recommendation (conservative/optimal/aggressive)
 
@@ -310,4 +325,3 @@ When new research emerges:
 **Version**: 1.0  
 **Last Updated**: January 2026  
 **Status**: ✅ Implemented
-

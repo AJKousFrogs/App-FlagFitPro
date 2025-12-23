@@ -36,11 +36,13 @@ supabase db push --file database/migrations/046_fix_acwr_baseline_checks.sql
 ## Method 3: Direct psql Connection
 
 Get the connection string from Supabase Dashboard:
+
 1. Go to **Settings** → **Database**
 2. Find **Connection string** → **URI**
 3. Use the format: `postgresql://postgres.[PROJECT-REF]:[PASSWORD]@[HOST]:5432/postgres`
 
 Then run:
+
 ```bash
 psql "postgresql://postgres.pvziciccwxgftcielknm:[SERVICE_KEY]@[HOST]:5432/postgres" \
   -f database/migrations/046_fix_acwr_baseline_checks.sql
@@ -54,20 +56,20 @@ After running, verify the functions were created:
 
 ```sql
 -- Check functions
-SELECT proname FROM pg_proc 
+SELECT proname FROM pg_proc
 WHERE proname LIKE '%acwr%' OR proname LIKE '%baseline%'
 ORDER BY proname;
 
 -- Check tables
-SELECT table_name FROM information_schema.tables 
-WHERE table_schema = 'public' 
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = 'public'
 AND table_name IN ('load_monitoring', 'load_daily', 'load_metrics', 'workout_logs')
 ORDER BY table_name;
 
 -- Check baseline_days column
-SELECT column_name, data_type 
-FROM information_schema.columns 
-WHERE table_name = 'load_monitoring' 
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'load_monitoring'
 AND column_name = 'baseline_days';
 ```
 
@@ -87,4 +89,3 @@ The migration was already run on Neon DB, but since you're using Supabase as you
 4. Added `load_monitoring` table creation if it doesn't exist
 
 The migration will work correctly on Supabase.
-

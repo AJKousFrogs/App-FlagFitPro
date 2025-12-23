@@ -444,7 +444,9 @@ describe("Performance and Load Testing", () => {
           });
 
           // Stop if error rate becomes too high
-          if (result.summary.errorRate > 15) {break;}
+          if (result.summary.errorRate > 15) {
+            break;
+          }
         } catch (error) {
           results.push({
             userCount,
@@ -503,7 +505,9 @@ describe("Performance and Load Testing", () => {
         },
 
         analyze() {
-          if (this.measurements.length === 0) {return { stable: true, peakUsage: 0 };}
+          if (this.measurements.length === 0) {
+            return { stable: true, peakUsage: 0 };
+          }
 
           const usages = this.measurements.map((m) => m.used);
           const maxUsage = Math.max(...usages);

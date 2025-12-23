@@ -181,8 +181,8 @@ Pre-built classes for card components:
 
 ```html
 <p class="text-body-md">
-  Your team has completed 
-  <span class="text-emphasis-strong">85%</span> 
+  Your team has completed
+  <span class="text-emphasis-strong">85%</span>
   of scheduled training sessions.
 </p>
 ```
@@ -191,24 +191,16 @@ Pre-built classes for card components:
 
 ```html
 <!-- Lead paragraph -->
-<p class="lead">
-  This is a lead paragraph that stands out.
-</p>
+<p class="lead">This is a lead paragraph that stands out.</p>
 
 <!-- Standard paragraph -->
-<p>
-  This is standard body text.
-</p>
+<p>This is standard body text.</p>
 
 <!-- Small text -->
-<p class="small">
-  This is smaller supporting text.
-</p>
+<p class="small">This is smaller supporting text.</p>
 
 <!-- Muted text -->
-<p class="muted">
-  This is muted, less important text.
-</p>
+<p class="muted">This is muted, less important text.</p>
 ```
 
 ## Heading Styles
@@ -216,12 +208,18 @@ Pre-built classes for card components:
 All heading elements (`h1` through `h6`) are automatically styled with proper hierarchy:
 
 ```html
-<h1>Page Title</h1>        <!-- 40px, bold, tight spacing -->
-<h2>Section Title</h2>      <!-- 30px, semibold -->
-<h3>Subsection</h3>        <!-- 24px, semibold -->
-<h4>Card Title</h4>        <!-- 20px, semibold -->
-<h5>Small Heading</h5>     <!-- 18px, semibold -->
-<h6>Label Heading</h6>     <!-- 14px, semibold, uppercase -->
+<h1>Page Title</h1>
+<!-- 40px, bold, tight spacing -->
+<h2>Section Title</h2>
+<!-- 30px, semibold -->
+<h3>Subsection</h3>
+<!-- 24px, semibold -->
+<h4>Card Title</h4>
+<!-- 20px, semibold -->
+<h5>Small Heading</h5>
+<!-- 18px, semibold -->
+<h6>Label Heading</h6>
+<!-- 14px, semibold, uppercase -->
 ```
 
 ## Responsive Behavior
@@ -312,7 +310,9 @@ If you're updating existing code to use the new visual hierarchy system:
 ### Before (Old System)
 
 ```html
-<div style="font-size: 24px; font-weight: 600; color: #1a1a1a; margin-bottom: 16px;">
+<div
+  style="font-size: 24px; font-weight: 600; color: #1a1a1a; margin-bottom: 16px;"
+>
   Section Title
 </div>
 <p style="font-size: 16px; color: #4a4a4a; margin-bottom: 24px;">
@@ -348,4 +348,3 @@ Or with utility classes:
 
 **Last Updated**: December 2025  
 **Version**: 1.0
-

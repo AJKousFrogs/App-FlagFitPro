@@ -12,6 +12,7 @@ Your data is now using Supabase PostgreSQL.
 Your Netlify Functions need the new Supabase credentials.
 
 ### Go to Netlify Dashboard:
+
 1. Visit: https://app.netlify.com/sites/YOUR_SITE_NAME/configuration/env
 2. Update these 3 variables:
 
@@ -22,6 +23,7 @@ SUPABASE_SERVICE_KEY=sb_secret_ZbZdfro3oCkX1wAiyYg__g_SUrhZI1R
 ```
 
 ### Important:
+
 - Click **"Deploy new build"** after updating
 - This will redeploy your site with new credentials
 
@@ -39,6 +41,7 @@ npm start
 ```
 
 ### Test These Features:
+
 - [ ] **Login** - Can users log in?
 - [ ] **Register** - Can new users sign up?
 - [ ] **Dashboard** - Does it load user data?
@@ -47,6 +50,7 @@ npm start
 - [ ] **Performance Tracking** - Can you add/view metrics?
 
 ### Check Browser Console:
+
 - Look for any errors related to database connections
 - All API calls should now go to Supabase
 
@@ -57,18 +61,22 @@ npm start
 Your app currently has login/register pages but they may not be using Supabase Auth yet.
 
 ### Current Status:
+
 Your Netlify Functions use:
+
 - `supabaseAdmin` (service key) - for backend operations
 - `supabase` (anon key) - for regular operations
 
 ### What You Need:
 
 **Option A: Use Supabase Auth (Recommended)**
+
 - Supabase handles authentication automatically
 - Provides JWT tokens
 - Integrates with RLS policies
 
 **Option B: Custom Auth (Current Setup?)**
+
 - You manage users table manually
 - Need to create your own JWT tokens
 - More work but more control
@@ -81,33 +89,34 @@ Your Netlify Functions use:
    - Configure email templates
 
 2. **Update Your Frontend:**
+
    ```javascript
    // In your login.html or login.js
-   import { createClient } from '@supabase/supabase-js'
+   import { createClient } from "@supabase/supabase-js";
 
    const supabase = createClient(
-     'https://pvziciccwxgftcielknm.supabase.co',
-     'sb_publishable_4mRqHbz4cFVXzpDi8nJc3A_rknKjryk'
-   )
+     "https://pvziciccwxgftcielknm.supabase.co",
+     "sb_publishable_4mRqHbz4cFVXzpDi8nJc3A_rknKjryk",
+   );
 
    // Login
    const { data, error } = await supabase.auth.signInWithPassword({
-     email: 'user@example.com',
-     password: 'password'
-   })
+     email: "user@example.com",
+     password: "password",
+   });
 
    // Register
    const { data, error } = await supabase.auth.signUp({
-     email: 'user@example.com',
-     password: 'password'
-   })
+     email: "user@example.com",
+     password: "password",
+   });
    ```
 
 3. **Update Your Backend (Netlify Functions):**
    ```javascript
    // In your functions, verify the user token:
-   const token = event.headers.authorization?.replace('Bearer ', '')
-   const { data: user, error } = await supabase.auth.getUser(token)
+   const token = event.headers.authorization?.replace("Bearer ", "");
+   const { data: user, error } = await supabase.auth.getUser(token);
    ```
 
 ---
@@ -162,6 +171,7 @@ CREATE POLICY "Users can manage own wearables" ON wearables_data FOR ALL
 ### After Local Testing Works:
 
 1. **Commit Your Changes:**
+
    ```bash
    git add .
    git commit -m "Migrate to Supabase, update environment config"
@@ -182,11 +192,13 @@ CREATE POLICY "Users can manage own wearables" ON wearables_data FOR ALL
 ## 📋 Step 6: Monitor for 30 Days
 
 ### Migration Complete:
+
 - All data is now in Supabase
 - Keep it as a safety net for 30 days
 - Monitor your app for any issues
 
 ### What to Check:
+
 - [ ] All logins working
 - [ ] Data saving correctly
 - [ ] No database errors in logs
@@ -199,6 +211,7 @@ CREATE POLICY "Users can manage own wearables" ON wearables_data FOR ALL
    - Ensure only Supabase environment variables are set
 
 2. **Verify Supabase Environment Variables:**
+
    ```
    SUPABASE_URL
    SUPABASE_SERVICE_KEY
@@ -214,16 +227,19 @@ CREATE POLICY "Users can manage own wearables" ON wearables_data FOR ALL
 ## 🆘 Troubleshooting
 
 ### If Login Doesn't Work:
+
 1. Check browser console for errors
 2. Verify Supabase URL and keys are correct in Netlify
 3. Check that Supabase Auth is enabled
 
 ### If Data Doesn't Load:
+
 1. Check RLS policies are correct
 2. Verify user is authenticated
 3. Check Netlify Function logs
 
 ### If You Get "Row Level Security" Errors:
+
 - The user isn't authenticated properly
 - Or the RLS policy doesn't match the user's auth.uid()
 
@@ -251,6 +267,7 @@ CREATE POLICY "Users can manage own wearables" ON wearables_data FOR ALL
 ---
 
 **Need Help?** Ask me anything! I can help you:
+
 - Set up Supabase Auth
 - Debug connection issues
 - Write custom RLS policies

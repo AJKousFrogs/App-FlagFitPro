@@ -35,8 +35,8 @@ import { AuthService } from "../../core/services/auth.service";
     Select,
     ToastModule,
     MainLayoutComponent,
-    PageHeaderComponent
-],
+    PageHeaderComponent,
+  ],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>

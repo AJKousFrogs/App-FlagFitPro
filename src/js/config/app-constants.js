@@ -88,29 +88,29 @@ export const AUTH = {
 
   // Protected routes (require authentication)
   PROTECTED_ROUTES: [
-    '/dashboard.html',
-    '/profile.html',
-    '/settings.html',
-    '/training.html',
-    '/roster.html',
-    '/analytics.html',
-    '/community.html',
-    '/tournaments.html',
-    '/coach.html',
-    '/games.html',
-    '/wellness.html',
-    '/workout.html',
-    '/performance-tracking.html',
-    '/qb-training-schedule.html',
-    '/chat.html',
+    "/dashboard.html",
+    "/profile.html",
+    "/settings.html",
+    "/training.html",
+    "/roster.html",
+    "/analytics.html",
+    "/community.html",
+    "/tournaments.html",
+    "/coach.html",
+    "/games.html",
+    "/wellness.html",
+    "/workout.html",
+    "/performance-tracking.html",
+    "/qb-training-schedule.html",
+    "/chat.html",
   ],
 
   // Public routes (no authentication required)
   PUBLIC_ROUTES: [
-    '/login.html',
-    '/register.html',
-    '/reset-password.html',
-    '/index.html',
+    "/login.html",
+    "/register.html",
+    "/reset-password.html",
+    "/index.html",
   ],
 };
 
@@ -192,9 +192,9 @@ export const UPLOAD = {
   MAX_DOCUMENT_SIZE: 10 * 1024 * 1024, // 10MB
 
   // Allowed types
-  ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-  ALLOWED_VIDEO_TYPES: ['video/mp4', 'video/webm', 'video/ogg'],
-  ALLOWED_DOCUMENT_TYPES: ['application/pdf', 'application/msword'],
+  ALLOWED_IMAGE_TYPES: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+  ALLOWED_VIDEO_TYPES: ["video/mp4", "video/webm", "video/ogg"],
+  ALLOWED_DOCUMENT_TYPES: ["application/pdf", "application/msword"],
 };
 
 /**
@@ -202,11 +202,11 @@ export const UPLOAD = {
  */
 export const DATETIME = {
   // Formats
-  DATE_FORMAT: 'YYYY-MM-DD',
-  TIME_FORMAT: 'HH:mm',
-  DATETIME_FORMAT: 'YYYY-MM-DD HH:mm:ss',
-  DISPLAY_DATE_FORMAT: 'MMM DD, YYYY',
-  DISPLAY_TIME_FORMAT: 'h:mm A',
+  DATE_FORMAT: "YYYY-MM-DD",
+  TIME_FORMAT: "HH:mm",
+  DATETIME_FORMAT: "YYYY-MM-DD HH:mm:ss",
+  DISPLAY_DATE_FORMAT: "MMM DD, YYYY",
+  DISPLAY_TIME_FORMAT: "h:mm A",
 
   // Ranges
   SCHEDULE_LOOKAHEAD_DAYS: 30,
@@ -250,25 +250,25 @@ export const FEATURES = {
  * Error Messages
  */
 export const ERROR_MESSAGES = {
-  NETWORK_ERROR: 'Network error. Please check your connection and try again.',
-  AUTH_REQUIRED: 'Please log in to continue.',
-  SESSION_EXPIRED: 'Your session has expired. Please log in again.',
-  PERMISSION_DENIED: 'You do not have permission to perform this action.',
-  NOT_FOUND: 'The requested resource was not found.',
-  VALIDATION_ERROR: 'Please check your input and try again.',
-  SERVER_ERROR: 'Server error. Please try again later.',
-  UNKNOWN_ERROR: 'An unexpected error occurred. Please try again.',
+  NETWORK_ERROR: "Network error. Please check your connection and try again.",
+  AUTH_REQUIRED: "Please log in to continue.",
+  SESSION_EXPIRED: "Your session has expired. Please log in again.",
+  PERMISSION_DENIED: "You do not have permission to perform this action.",
+  NOT_FOUND: "The requested resource was not found.",
+  VALIDATION_ERROR: "Please check your input and try again.",
+  SERVER_ERROR: "Server error. Please try again later.",
+  UNKNOWN_ERROR: "An unexpected error occurred. Please try again.",
 };
 
 /**
  * Success Messages
  */
 export const SUCCESS_MESSAGES = {
-  LOGIN_SUCCESS: 'Welcome back!',
-  LOGOUT_SUCCESS: 'You have been logged out.',
-  SAVE_SUCCESS: 'Changes saved successfully.',
-  DELETE_SUCCESS: 'Deleted successfully.',
-  UPLOAD_SUCCESS: 'Upload completed successfully.',
+  LOGIN_SUCCESS: "Welcome back!",
+  LOGOUT_SUCCESS: "You have been logged out.",
+  SAVE_SUCCESS: "Changes saved successfully.",
+  DELETE_SUCCESS: "Deleted successfully.",
+  UPLOAD_SUCCESS: "Upload completed successfully.",
 };
 
 /**
@@ -293,16 +293,16 @@ export const VALIDATION = {
  * Centralized to avoid typos and conflicts
  */
 export const STORAGE_KEYS = {
-  AUTH_TOKEN: 'authToken',
-  USER_DATA: 'userData',
-  WELLNESS_HISTORY: 'wellnessHistory',
-  WORKOUT_HISTORY: 'workoutHistory',
-  PREFERENCES: 'userPreferences',
-  THEME: 'themePreference',
-  LANGUAGE: 'languagePreference',
-  NOTIFICATIONS: 'notificationHistory',
-  CACHE_PREFIX: 'cache_',
-  CSRF_TOKEN: '__csrf_token',
+  AUTH_TOKEN: "authToken",
+  USER_DATA: "userData",
+  WELLNESS_HISTORY: "wellnessHistory",
+  WORKOUT_HISTORY: "workoutHistory",
+  PREFERENCES: "userPreferences",
+  THEME: "themePreference",
+  LANGUAGE: "languagePreference",
+  NOTIFICATIONS: "notificationHistory",
+  CACHE_PREFIX: "cache_",
+  CSRF_TOKEN: "__csrf_token",
 };
 
 /**
@@ -316,8 +316,10 @@ export function isMobile() {
  * Helper function to check if running on tablet
  */
 export function isTablet() {
-  return window.innerWidth >= UI.BREAKPOINT_MOBILE &&
-         window.innerWidth < UI.BREAKPOINT_DESKTOP;
+  return (
+    window.innerWidth >= UI.BREAKPOINT_MOBILE &&
+    window.innerWidth < UI.BREAKPOINT_DESKTOP
+  );
 }
 
 /**
@@ -349,4 +351,4 @@ export default {
 };
 
 // eslint-disable-next-line no-console
-console.log('[App Constants] Application constants loaded');
+console.log("[App Constants] Application constants loaded");

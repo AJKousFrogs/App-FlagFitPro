@@ -55,6 +55,7 @@ Visual hierarchy classes have been successfully applied throughout the FlagFit P
 ## Classes Applied
 
 ### Typography Classes
+
 - `text-display-xl` - Hero titles
 - `text-heading-2xl` - Page titles
 - `text-heading-xl` - Section titles
@@ -66,12 +67,14 @@ Visual hierarchy classes have been successfully applied throughout the FlagFit P
 - `text-body-xs` - Captions
 
 ### Color Hierarchy Classes
+
 - `text-primary` - Main content (highest contrast)
 - `text-secondary` - Supporting text (medium contrast)
 - `text-tertiary` - Metadata, hints (lower contrast)
 - `text-muted` - Alias for tertiary
 
 ### Semantic Classes
+
 - `section-title` - Section headings
 - `section-description` - Section descriptions
 - `card-title` - Card headings
@@ -80,19 +83,23 @@ Visual hierarchy classes have been successfully applied throughout the FlagFit P
 - `card-text-muted` - Card muted text
 
 ### Emphasis Classes
+
 - `text-emphasis` - Semibold + primary color
 - `text-emphasis-strong` - Bold + primary color
 
 ### Spacing Classes
+
 - `space-relaxed` - 24px bottom margin
 - `space-normal` - 16px bottom margin
 - `space-tight` - 8px bottom margin
 
 ### Line Height Classes
+
 - `leading-tight` - 1.2 line height
 - `leading-relaxed` - 1.625 line height
 
 ### Letter Spacing Classes
+
 - `tracking-tight` - -0.02em letter spacing
 
 ## Benefits
@@ -129,17 +136,20 @@ Visual hierarchy classes have been successfully applied throughout the FlagFit P
 When adding new content, follow these patterns:
 
 ### Page Title
+
 ```html
 <h1 class="text-heading-2xl text-primary">Page Title</h1>
 ```
 
 ### Section Heading
+
 ```html
 <h2 class="section-title">Section Title</h2>
 <p class="section-description">Section description text.</p>
 ```
 
 ### Card Content
+
 ```html
 <div class="card">
   <h3 class="card-title">Card Title</h3>
@@ -149,6 +159,7 @@ When adding new content, follow these patterns:
 ```
 
 ### Body Text with Emphasis
+
 ```html
 <p class="text-body-md">
   Regular text with <span class="text-emphasis">important</span> content.
@@ -179,4 +190,3 @@ When adding new content, follow these patterns:
 
 **Last Updated**: December 2025  
 **Version**: 1.0
-

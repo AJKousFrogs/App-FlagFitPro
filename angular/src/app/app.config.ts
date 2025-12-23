@@ -1,5 +1,15 @@
-import { ApplicationConfig, provideZonelessChangeDetection, isDevMode } from "@angular/core";
-import { provideRouter, withComponentInputBinding, withViewTransitions, withPreloading, withDebugTracing } from "@angular/router";
+import {
+  ApplicationConfig,
+  provideZonelessChangeDetection,
+  isDevMode,
+} from "@angular/core";
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withViewTransitions,
+  withPreloading,
+  withDebugTracing,
+} from "@angular/router";
 // Removed provideAnimations() - PrimeNG v21 uses CSS animations (80+ KB bundle savings)
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { MessageService } from "primeng/api";
@@ -21,7 +31,7 @@ export const appConfig: ApplicationConfig = {
     // - Automatic change detection on signal updates and DOM events
     // Note: zone.js is available as optional peer dependency for third-party libraries if needed
     provideZonelessChangeDetection(),
-    
+
     // Angular 21: Enhanced routing with component input binding, view transitions, and smart preloading
     // Router event inspector: Enable debug tracing in development for router event inspection
     provideRouter(
@@ -29,7 +39,7 @@ export const appConfig: ApplicationConfig = {
       withComponentInputBinding(), // Enables route params as component inputs
       withViewTransitions(), // Enables smooth page transitions
       withPreloading(AuthAwarePreloadStrategy), // Custom preloading strategy for authenticated routes
-      ...(isDevMode() ? [withDebugTracing()] : []) // Router event inspector - only in development
+      ...(isDevMode() ? [withDebugTracing()] : []), // Router event inspector - only in development
     ),
     // Note: No provideAnimations() - PrimeNG v21 migrated to native CSS animations
     // Benefits: 80+ KB bundle savings, hardware acceleration, 60+ FPS

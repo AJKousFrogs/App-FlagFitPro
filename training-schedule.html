@@ -30,18 +30,29 @@
 
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
+
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
 
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/footer-loader.js"
+      defer
+    ></script>
 
     <style>
       body {
-        background: linear-gradient(135deg, var(--color-brand-primary, #667eea) 0%, var(--color-brand-secondary, #764ba2) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--color-brand-primary, #667eea) 0%,
+          var(--color-brand-secondary, #764ba2) 100%
+        );
         min-height: 100vh;
         display: flex;
         align-items: center;
@@ -66,7 +77,8 @@
       }
 
       @keyframes pulse {
-        0%, 100% {
+        0%,
+        100% {
           transform: scale(1);
         }
         50% {
@@ -95,31 +107,39 @@
   <body class="page-auth">
     <div class="redirect-container card card-elevated">
       <div class="redirect-icon" aria-hidden="true">📅</div>
-      <h1 class="u-text-primary u-font-weight-700 u-margin-bottom-12">Redirecting to Training Schedule</h1>
+      <h1 class="u-text-primary u-font-weight-700 u-margin-bottom-12">
+        Redirecting to Training Schedule
+      </h1>
       <p class="u-text-secondary u-text-body-md u-margin-bottom-24">
         Taking you to your personalized training schedule...
       </p>
       <div class="redirect-spinner" role="status" aria-label="Loading"></div>
       <p class="u-text-body-sm u-text-tertiary u-margin-top-16">
         If you're not redirected automatically,
-        <a href="/training.html#schedule" class="u-text-brand u-font-weight-600" id="manualLink">click here</a>.
+        <a
+          href="/training.html#schedule"
+          class="u-text-brand u-font-weight-600"
+          id="manualLink"
+          >click here</a
+        >.
       </p>
     </div>
 
     <script>
       // Preserve URL parameters and hash when redirecting
       const urlParams = new URLSearchParams(window.location.search);
-      const hash = window.location.hash || '#schedule';
+      const hash = window.location.hash || "#schedule";
       const params = urlParams.toString();
-      const redirectUrl = '/training.html' + (params ? '?' + params : '') + hash;
-      
+      const redirectUrl =
+        "/training.html" + (params ? "?" + params : "") + hash;
+
       // Redirect after a short delay for better UX
       setTimeout(() => {
         window.location.replace(redirectUrl);
       }, 500);
 
       // Make manual link work immediately
-      document.getElementById('manualLink').href = redirectUrl;
+      document.getElementById("manualLink").href = redirectUrl;
     </script>
 
     <!-- Footer (Loaded Dynamically) -->

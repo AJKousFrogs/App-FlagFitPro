@@ -21,12 +21,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
   selector: "app-performance-monitor",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    ButtonModule,
-    ProgressBarModule,
-    MessageModule,
-  ],
+  imports: [CommonModule, ButtonModule, ProgressBarModule, MessageModule],
   template: `
     @if (showMonitor()) {
       <div class="performance-monitor">
@@ -43,7 +38,10 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
         </div>
 
         <div class="performance-metrics">
-          @for (metric of performanceMetrics(); track trackByLabel($index, metric)) {
+          @for (
+            metric of performanceMetrics();
+            track trackByLabel($index, metric)
+          ) {
             <div
               class="metric"
               [class.warning]="metric.status === 'warning'"
@@ -113,7 +111,9 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         padding: var(--space-4);
         z-index: 1001;
-        transition: transform 0.3s ease, opacity 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          opacity 0.3s ease;
         max-height: calc(100vh - 2rem);
         overflow-y: auto;
       }
@@ -251,12 +251,8 @@ export class PerformanceMonitorComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
 
   showMonitor = signal(false);
-  performanceMetrics = computed(() =>
-    this.performanceMonitorService.metrics(),
-  );
-  hasIssues = computed(() =>
-    this.performanceMonitorService.hasIssues(),
-  );
+  performanceMetrics = computed(() => this.performanceMonitorService.metrics());
+  hasIssues = computed(() => this.performanceMonitorService.hasIssues());
 
   ngOnInit(): void {
     // Initialize message service in performance monitor service
@@ -320,4 +316,3 @@ export class PerformanceMonitorComponent implements OnInit, OnDestroy {
     return metric.label;
   }
 }
-

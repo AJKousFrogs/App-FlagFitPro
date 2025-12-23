@@ -1,6 +1,12 @@
 import { Injectable } from "@angular/core";
 
-export type HapticFeedbackType = "light" | "medium" | "heavy" | "success" | "warning" | "error";
+export type HapticFeedbackType =
+  | "light"
+  | "medium"
+  | "heavy"
+  | "success"
+  | "warning"
+  | "error";
 
 @Injectable({
   providedIn: "root",
@@ -36,4 +42,3 @@ export class HapticFeedbackService {
     }
   }
 }
-

@@ -10,7 +10,7 @@ import { CommonModule, DatePipe } from "@angular/common";
 import { ChartModule } from "primeng/chart";
 import { ButtonModule } from "primeng/button";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
-import { LoggerService } from '../../../core/services/logger.service';
+import { LoggerService } from "../../../core/services/logger.service";
 
 export interface AccessibleDataPoint {
   date: Date | string;
@@ -43,7 +43,10 @@ export interface AccessibleDataPoint {
       <!-- Screen Reader Data Table -->
       <table class="sr-only" aria-label="Performance data table">
         <caption>
-          {{ chartTitle() }} - Detailed performance metrics over time
+          {{
+            chartTitle()
+          }}
+          - Detailed performance metrics over time
         </caption>
         <thead>
           <tr>
@@ -56,7 +59,7 @@ export interface AccessibleDataPoint {
         <tbody>
           @for (dataPoint of accessibleData(); track $index) {
             <tr>
-              <th scope="row">{{ dataPoint.date | date : "short" }}</th>
+              <th scope="row">{{ dataPoint.date | date: "short" }}</th>
               <td>{{ dataPoint.speed }}</td>
               <td>{{ dataPoint.accuracy }}</td>
               <td>{{ dataPoint.trendDescription }}</td>
@@ -238,8 +241,7 @@ export class AccessiblePerformanceChartComponent {
     return data.datasets[0].data.map((value: any, index: number) => {
       const date = data.labels?.[index] || new Date();
       const speed = typeof value === "object" ? value.speed || value : value;
-      const accuracy =
-        typeof value === "object" ? value.accuracy || 0 : 100;
+      const accuracy = typeof value === "object" ? value.accuracy || 0 : 100;
       return {
         date,
         speed,
@@ -259,7 +261,8 @@ export class AccessiblePerformanceChartComponent {
   });
 
   // Initialize speechSynthesis at field declaration
-  private speechSynthesis: SpeechSynthesis = typeof window !== "undefined" ? window.speechSynthesis : null as any;
+  private speechSynthesis: SpeechSynthesis =
+    typeof window !== "undefined" ? window.speechSynthesis : (null as any);
 
   @HostListener("keydown", ["$event"])
   handleKeydown(event: KeyboardEvent): void {
@@ -365,7 +368,8 @@ export class AccessiblePerformanceChartComponent {
     }
 
     const data = chartData.datasets[0].data;
-    const first = typeof data[0] === "object" ? data[0].speed || data[0] : data[0];
+    const first =
+      typeof data[0] === "object" ? data[0].speed || data[0] : data[0];
     const last =
       typeof data[data.length - 1] === "object"
         ? data[data.length - 1].speed || data[data.length - 1]
@@ -440,4 +444,3 @@ export class AccessiblePerformanceChartComponent {
     return "No significant change";
   }
 }
-

@@ -1,13 +1,13 @@
 /**
  * Angular 21 Form Field Component
- * 
+ *
  * Reusable form field component using signals
  * Works with both reactive forms and signal-based forms
  */
 
-import { Component, input, signal, computed, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { Component, input, signal, computed, forwardRef } from "@angular/core";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 export interface FormFieldConfig {
   label: string;
@@ -23,7 +23,7 @@ export interface FormFieldConfig {
 }
 
 @Component({
-  selector: 'app-form-field',
+  selector: "app-form-field",
   standalone: true,
   imports: [CommonModule],
   providers: [
@@ -35,14 +35,15 @@ export interface FormFieldConfig {
   ],
   template: `
     <div class="form-field" [class.has-error]="hasError()">
-      <label 
-        [for]="fieldId()" 
+      <label
+        [for]="fieldId()"
         [class.required]="config().required"
-        [attr.aria-label]="config().ariaLabel || config().label">
+        [attr.aria-label]="config().ariaLabel || config().label"
+      >
         {{ config().label }}
       </label>
-      
-      @if (config().type === 'textarea') {
+
+      @if (config().type === "textarea") {
         <textarea
           [id]="fieldId()"
           [placeholder]="config().placeholder || ''"
@@ -76,116 +77,120 @@ export interface FormFieldConfig {
       }
 
       @if (config().hint && !hasError()) {
-        <small 
-          [id]="fieldId() + '-hint'" 
+        <small
+          [id]="fieldId() + '-hint'"
           class="hint"
-          [attr.aria-live]="'polite'">
+          [attr.aria-live]="'polite'"
+        >
           {{ config().hint }}
         </small>
       }
 
       @if (hasError()) {
-        <small 
-          [id]="fieldId() + '-error'" 
-          class="error-message" 
+        <small
+          [id]="fieldId() + '-error'"
+          class="error-message"
           role="alert"
-          [attr.aria-live]="'polite'">
+          [attr.aria-live]="'polite'"
+        >
           {{ errorMessage() }}
         </small>
       }
     </div>
   `,
-  styles: [`
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
+  styles: [
+    `
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
 
-    label {
-      font-weight: 600;
-      color: var(--p-text-color);
-      font-size: 0.875rem;
-    }
+      label {
+        font-weight: 600;
+        color: var(--p-text-color);
+        font-size: 0.875rem;
+      }
 
-    label.required::after {
-      content: " *";
-      color: var(--p-error-color);
-    }
+      label.required::after {
+        content: " *";
+        color: var(--p-error-color);
+      }
 
-    input,
-    textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid var(--p-surface-border);
-      border-radius: var(--p-border-radius);
-      font-size: 1rem;
-      transition: border-color 0.2s;
-    }
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--p-surface-border);
+        border-radius: var(--p-border-radius);
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
 
-    input:focus,
-    textarea:focus {
-      outline: none;
-      border-color: var(--p-primary-color);
-    }
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--p-primary-color);
+      }
 
-    input.error,
-    textarea.error {
-      border-color: var(--p-error-color);
-    }
+      input.error,
+      textarea.error {
+        border-color: var(--p-error-color);
+      }
 
-    input:disabled,
-    textarea:disabled {
-      background-color: var(--p-surface-100);
-      cursor: not-allowed;
-    }
+      input:disabled,
+      textarea:disabled {
+        background-color: var(--p-surface-100);
+        cursor: not-allowed;
+      }
 
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
 
-    .hint {
-      color: var(--p-text-color-secondary);
-      font-size: 0.75rem;
-    }
+      .hint {
+        color: var(--p-text-color-secondary);
+        font-size: 0.75rem;
+      }
 
-    .error-message {
-      color: var(--p-error-color);
-      font-size: 0.75rem;
-    }
+      .error-message {
+        color: var(--p-error-color);
+        font-size: 0.75rem;
+      }
 
-    .form-field.has-error input,
-    .form-field.has-error textarea {
-      border-color: var(--p-error-color);
-    }
+      .form-field.has-error input,
+      .form-field.has-error textarea {
+        border-color: var(--p-error-color);
+      }
 
-    input:focus-visible,
-    textarea:focus-visible {
-      outline: 2px solid var(--p-primary-color);
-      outline-offset: 2px;
-    }
+      input:focus-visible,
+      textarea:focus-visible {
+        outline: 2px solid var(--p-primary-color);
+        outline-offset: 2px;
+      }
 
-    input[aria-invalid="true"],
-    textarea[aria-invalid="true"] {
-      border-color: var(--p-error-color);
-    }
+      input[aria-invalid="true"],
+      textarea[aria-invalid="true"] {
+        border-color: var(--p-error-color);
+      }
 
-    input:disabled,
-    textarea:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-  `],
+      input:disabled,
+      textarea:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    `,
+  ],
 })
 export class FormFieldComponent implements ControlValueAccessor {
   // Angular 21: Use input() signal instead of @Input()
-  config = input<FormFieldConfig>({ label: '' });
-  fieldId = input<string>('');
-  
+  config = input<FormFieldConfig>({ label: "" });
+  fieldId = input<string>("");
+
   // Value remains as signal for ControlValueAccessor compatibility
-  value = signal<string>('');
+  value = signal<string>("");
   disabled = signal<boolean>(false);
   touched = signal<boolean>(false);
 
@@ -197,24 +202,24 @@ export class FormFieldComponent implements ControlValueAccessor {
   });
 
   errorMessage = computed(() => {
-    return this.config().error || '';
+    return this.config().error || "";
   });
 
   // Accessibility: Get aria-describedby value
   getAriaDescribedBy(): string | null {
     const ids: string[] = [];
-    
+
     if (this.config().ariaDescribedBy) {
       ids.push(this.config().ariaDescribedBy);
     }
-    
+
     if (this.hasError()) {
-      ids.push(this.fieldId() + '-error');
+      ids.push(this.fieldId() + "-error");
     } else if (this.config().hint) {
-      ids.push(this.fieldId() + '-hint');
+      ids.push(this.fieldId() + "-hint");
     }
-    
-    return ids.length > 0 ? ids.join(' ') : null;
+
+    return ids.length > 0 ? ids.join(" ") : null;
   }
 
   onInput(value: string): void {
@@ -229,7 +234,7 @@ export class FormFieldComponent implements ControlValueAccessor {
 
   // ControlValueAccessor implementation
   writeValue(value: string): void {
-    this.value.set(value || '');
+    this.value.set(value || "");
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -244,4 +249,3 @@ export class FormFieldComponent implements ControlValueAccessor {
     this.disabled.set(isDisabled);
   }
 }
-

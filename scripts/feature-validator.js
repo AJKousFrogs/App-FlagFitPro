@@ -1,13 +1,12 @@
 #!/usr/bin/env node
- 
 
 // Feature Validation Framework
 // Validates all Olympic-level claims and performance metrics
 
 import fs from "fs/promises";
 import path from "path";
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -410,12 +409,12 @@ class FeatureValidator {
       // Check if JWT validation exists in error handler
       const errorHandlerPath = "./netlify/functions/utils/error-handler.cjs";
       const content = await fs.readFile(errorHandlerPath, "utf8");
-      
-      const hasJWTValidation = 
-        content.includes("validateJWT") || 
+
+      const hasJWTValidation =
+        content.includes("validateJWT") ||
         content.includes("jsonwebtoken") ||
         content.includes("jwt.verify");
-      
+
       return hasJWTValidation;
     } catch {
       return false;
@@ -428,19 +427,22 @@ class FeatureValidator {
       const authFiles = [
         "./netlify/functions/auth-login.cjs",
         "./netlify/functions/auth-me.cjs",
-        "./src/auth-manager.js"
+        "./src/auth-manager.js",
       ];
-      
+
       let hasDemoRestriction = false;
       let foundDemoCode = false;
-      
+
       for (const file of authFiles) {
         try {
           const content = await fs.readFile(file, "utf8");
           if (content.includes("demo-token") || content.includes("demoToken")) {
             foundDemoCode = true;
             // Check if it's restricted to development
-            if (content.includes("NODE_ENV") && content.includes("development")) {
+            if (
+              content.includes("NODE_ENV") &&
+              content.includes("development")
+            ) {
               hasDemoRestriction = true;
             }
           }
@@ -448,7 +450,7 @@ class FeatureValidator {
           // File doesn't exist
         }
       }
-      
+
       // If no demo code found, that's also secure
       return !foundDemoCode || hasDemoRestriction;
     } catch {
@@ -461,14 +463,18 @@ class FeatureValidator {
       // Check for RBAC implementation
       const files = [
         "./netlify/functions/utils/error-handler.cjs",
-        "./src/js/utils/unified-error-handler.js"
+        "./src/js/utils/unified-error-handler.js",
       ];
-      
+
       let hasRBAC = false;
       for (const file of files) {
         try {
           const content = await fs.readFile(file, "utf8");
-          if (content.includes("role") || content.includes("permission") || content.includes("authorization")) {
+          if (
+            content.includes("role") ||
+            content.includes("permission") ||
+            content.includes("authorization")
+          ) {
             hasRBAC = true;
             break;
           }
@@ -476,7 +482,7 @@ class FeatureValidator {
           // File doesn't exist
         }
       }
-      
+
       return hasRBAC;
     } catch {
       return false;
@@ -488,7 +494,11 @@ class FeatureValidator {
     const authManagerPath = "./src/auth-manager.js";
     try {
       const content = await fs.readFile(authManagerPath, "utf8");
-      return content.includes("session") || content.includes("token") || content.includes("localStorage");
+      return (
+        content.includes("session") ||
+        content.includes("token") ||
+        content.includes("localStorage")
+      );
     } catch {
       return false;
     }
@@ -498,30 +508,31 @@ class FeatureValidator {
     try {
       // Check for connection pooling configuration
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
-      
+      const supabaseKey =
+        process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+
       if (!supabaseUrl || !supabaseKey) {
         return {
           implemented: false,
           memoryReduction: 0,
         };
       }
-      
+
       // Supabase client uses connection pooling by default
       const supabase = createClient(supabaseUrl, supabaseKey);
-      
+
       // Test multiple queries to verify pooling
       const startTime = Date.now();
       const queries = [];
       for (let i = 0; i < 5; i++) {
-        queries.push(supabase.from('users').select('id').limit(1));
+        queries.push(supabase.from("users").select("id").limit(1));
       }
       await Promise.all(queries);
       const totalTime = Date.now() - startTime;
-      
+
       // If queries complete quickly, pooling is likely working
       const implemented = totalTime < 2000; // Should be fast with pooling
-      
+
       return {
         implemented,
         memoryReduction: implemented ? 90 : 0, // Estimate based on Supabase defaults
@@ -538,27 +549,29 @@ class FeatureValidator {
   async testQueryPerformance() {
     try {
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
-      
+      const supabaseKey =
+        process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+
       if (!supabaseUrl || !supabaseKey) {
         return {
           averageQueryTime: 0,
           score: 0,
         };
       }
-      
+
       const supabase = createClient(supabaseUrl, supabaseKey);
       const queryTimes = [];
-      
+
       // Run multiple queries and measure performance
       for (let i = 0; i < 3; i++) {
         const startTime = Date.now();
-        await supabase.from('users').select('id').limit(1);
+        await supabase.from("users").select("id").limit(1);
         queryTimes.push(Date.now() - startTime);
       }
-      
-      const averageQueryTime = queryTimes.reduce((a, b) => a + b, 0) / queryTimes.length;
-      
+
+      const averageQueryTime =
+        queryTimes.reduce((a, b) => a + b, 0) / queryTimes.length;
+
       // Score based on query time
       let score = 25;
       if (averageQueryTime < 200) {
@@ -566,7 +579,7 @@ class FeatureValidator {
       } else if (averageQueryTime > 1000) {
         score = 10;
       }
-      
+
       return {
         averageQueryTime: Math.round(averageQueryTime),
         score,
@@ -595,21 +608,22 @@ class FeatureValidator {
   async testSchemaIntegrity() {
     try {
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
-      
+      const supabaseKey =
+        process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+
       if (!supabaseUrl || !supabaseKey) {
         return false;
       }
-      
+
       const supabase = createClient(supabaseUrl, supabaseKey);
-      
+
       // Check critical tables exist
-      const criticalTables = ['users', 'teams', 'training_sessions'];
+      const criticalTables = ["users", "teams", "training_sessions"];
       let tablesFound = 0;
-      
+
       for (const table of criticalTables) {
         try {
-          const { error } = await supabase.from(table).select('id').limit(1);
+          const { error } = await supabase.from(table).select("id").limit(1);
           if (!error) {
             tablesFound++;
           }
@@ -617,7 +631,7 @@ class FeatureValidator {
           // Table doesn't exist
         }
       }
-      
+
       return tablesFound === criticalTables.length;
     } catch {
       return false;
@@ -671,21 +685,27 @@ class FeatureValidator {
       const htmlFiles = ["./index.html", "./dashboard.html"];
       let hasOptimizations = 0;
       let totalFiles = 0;
-      
+
       for (const file of htmlFiles) {
         try {
           const content = await fs.readFile(file, "utf8");
           totalFiles++;
-          
+
           // Check for performance optimizations
-          if (content.includes("defer") || content.includes("async")) {hasOptimizations++;}
-          if (content.includes("preload") || content.includes("prefetch")) {hasOptimizations++;}
-          if (content.includes("min.css") || content.includes("min.js")) {hasOptimizations++;}
+          if (content.includes("defer") || content.includes("async")) {
+            hasOptimizations++;
+          }
+          if (content.includes("preload") || content.includes("prefetch")) {
+            hasOptimizations++;
+          }
+          if (content.includes("min.css") || content.includes("min.js")) {
+            hasOptimizations++;
+          }
         } catch {
           // File doesn't exist
         }
       }
-      
+
       // Estimate load time based on optimizations
       const baseTime = 3000;
       const optimizationBonus = hasOptimizations * 200;
@@ -700,11 +720,11 @@ class FeatureValidator {
       // Check for build output or estimate from source
       const distDir = "./dist";
       let totalSize = 0;
-      
+
       try {
         const files = await fs.readdir(distDir);
         for (const file of files) {
-          if (file.endsWith('.js') || file.endsWith('.css')) {
+          if (file.endsWith(".js") || file.endsWith(".css")) {
             const filePath = path.join(distDir, file);
             const stats = await fs.stat(filePath);
             totalSize += stats.size;
@@ -746,26 +766,35 @@ class FeatureValidator {
       // Check for memory-efficient patterns in code
       const jsFiles = [
         "./src/js/utils/unified-error-handler.js",
-        "./src/js/main.js"
+        "./src/js/main.js",
       ];
-      
+
       let hasMemoryOptimizations = 0;
       let totalFiles = 0;
-      
+
       for (const file of jsFiles) {
         try {
           const content = await fs.readFile(file, "utf8");
           totalFiles++;
-          
+
           // Check for memory-efficient patterns
-          if (content.includes("WeakMap") || content.includes("WeakSet")) {hasMemoryOptimizations++;}
-          if (content.includes("removeEventListener")) {hasMemoryOptimizations++;}
-          if (content.includes("clearInterval") || content.includes("clearTimeout")) {hasMemoryOptimizations++;}
+          if (content.includes("WeakMap") || content.includes("WeakSet")) {
+            hasMemoryOptimizations++;
+          }
+          if (content.includes("removeEventListener")) {
+            hasMemoryOptimizations++;
+          }
+          if (
+            content.includes("clearInterval") ||
+            content.includes("clearTimeout")
+          ) {
+            hasMemoryOptimizations++;
+          }
         } catch {
           // File doesn't exist
         }
       }
-      
+
       return {
         efficient: hasMemoryOptimizations >= totalFiles * 0.5,
         usage: "Estimated based on code patterns",
@@ -793,8 +822,8 @@ class FeatureValidator {
       for (const file of researchFiles) {
         try {
           const content = await fs.readFile(file, "utf8");
-          
-          if (file.endsWith('.json')) {
+
+          if (file.endsWith(".json")) {
             // Try to parse and count studies
             try {
               const data = JSON.parse(content);
@@ -810,7 +839,9 @@ class FeatureValidator {
             }
           } else {
             // Markdown file - count study references
-            const studyMatches = content.match(/study|research|paper|publication/gi);
+            const studyMatches = content.match(
+              /study|research|paper|publication/gi,
+            );
             count += studyMatches ? Math.floor(studyMatches.length / 3) : 0;
           }
         } catch {
@@ -821,19 +852,24 @@ class FeatureValidator {
       // Also check database for research data
       try {
         const supabaseUrl = process.env.SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
-        
+        const supabaseKey =
+          process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+
         if (supabaseUrl && supabaseKey) {
           const supabase = createClient(supabaseUrl, supabaseKey);
           // Check for research-related tables
-          const researchTables = ['research_studies', 'research_articles', 'evidence_base'];
-          
+          const researchTables = [
+            "research_studies",
+            "research_articles",
+            "evidence_base",
+          ];
+
           for (const table of researchTables) {
             try {
               const { count: tableCount } = await supabase
                 .from(table)
-                .select('*', { count: 'exact', head: true });
-              
+                .select("*", { count: "exact", head: true });
+
               if (tableCount) {
                 count += tableCount;
               }

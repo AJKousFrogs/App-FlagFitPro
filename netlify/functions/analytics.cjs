@@ -9,7 +9,7 @@ const {
   createErrorResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -21,7 +21,7 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
     // Get training sessions for the specified weeks
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - weeks * 7);
-    
+
     // Ensure we only get data up to and including today
     const todayEndOfDay = new Date();
     todayEndOfDay.setHours(23, 59, 59, 999);
@@ -34,7 +34,9 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
       .lte("completed_at", todayEndOfDay.toISOString())
       .order("completed_at", { ascending: true });
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     // Group by week and calculate average performance
     const weeklyData = {};
@@ -55,7 +57,8 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
 
     weeksList.forEach((weekKey) => {
       const weekData = weeklyData[weekKey];
-      const avg = weekData.scores.reduce((a, b) => a + b, 0) / weekData.scores.length;
+      const avg =
+        weekData.scores.reduce((a, b) => a + b, 0) / weekData.scores.length;
       labels.push(weekKey);
       values.push(Math.round(avg));
     });
@@ -72,7 +75,12 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
       });
       result.push({
         label: weekKey,
-        value: index >= 0 ? values[index] : values.length > 0 ? values[values.length - 1] : 70,
+        value:
+          index >= 0
+            ? values[index]
+            : values.length > 0
+              ? values[values.length - 1]
+              : 70,
       });
     }
 
@@ -80,14 +88,30 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
       labels: result.map((r) => r.label),
       values: result.map((r) => r.value),
       currentScore: values.length > 0 ? values[values.length - 1] : 70,
-      improvement: values.length > 1 ? values[values.length - 1] - values[0] : 0,
-      weeklyTrend: values.length > 1 ? ((values[values.length - 1] - values[values.length - 2]) / values[values.length - 2] * 100).toFixed(1) : "0",
+      improvement:
+        values.length > 1 ? values[values.length - 1] - values[0] : 0,
+      weeklyTrend:
+        values.length > 1
+          ? (
+              ((values[values.length - 1] - values[values.length - 2]) /
+                values[values.length - 2]) *
+              100
+            ).toFixed(1)
+          : "0",
     };
   } catch (error) {
     console.error("Error getting performance trends:", error);
     // Return fallback data
     return {
-      labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7"],
+      labels: [
+        "Week 1",
+        "Week 2",
+        "Week 3",
+        "Week 4",
+        "Week 5",
+        "Week 6",
+        "Week 7",
+      ],
       values: [78, 82, 85, 79, 88, 91, 87],
       currentScore: 87,
       improvement: 9,
@@ -118,7 +142,9 @@ const getTeamChemistry = async (userId) => {
       .select("user_id")
       .eq("team_id", teamId);
 
-    if (membersError) {throw membersError;}
+    if (membersError) {
+      throw membersError;
+    }
 
     // Calculate chemistry metrics based on training sessions together
     // Always filters data up to and including today
@@ -126,7 +152,7 @@ const getTeamChemistry = async (userId) => {
     const todayEndOfDay = new Date();
     todayEndOfDay.setHours(23, 59, 59, 999);
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    
+
     const { data: teamSessions, error: sessionsError } = await supabaseAdmin
       .from("training_sessions")
       .select("user_id, completed_at, score")
@@ -134,26 +160,44 @@ const getTeamChemistry = async (userId) => {
       .gte("completed_at", thirtyDaysAgo.toISOString())
       .lte("completed_at", todayEndOfDay.toISOString());
 
-    if (sessionsError) {throw sessionsError;}
+    if (sessionsError) {
+      throw sessionsError;
+    }
 
     // Calculate metrics (simplified - in real app, would use more sophisticated algorithms)
     const totalSessions = teamSessions.length;
-    const avgScore = teamSessions.length > 0
-      ? teamSessions.reduce((sum, s) => sum + (s.score || 70), 0) / teamSessions.length
-      : 70;
+    const avgScore =
+      teamSessions.length > 0
+        ? teamSessions.reduce((sum, s) => sum + (s.score || 70), 0) /
+          teamSessions.length
+        : 70;
 
     // Normalize to 0-10 scale
-    const communication = Math.min(10, (avgScore / 10) + 2);
-    const coordination = Math.min(10, (avgScore / 10) + 1.5);
-    const trust = Math.min(10, (avgScore / 10) + 2.5);
-    const cohesion = Math.min(10, (avgScore / 10) + 2);
-    const leadership = Math.min(10, (avgScore / 10) + 1);
-    const adaptability = Math.min(10, (avgScore / 10) + 1.5);
+    const communication = Math.min(10, avgScore / 10 + 2);
+    const coordination = Math.min(10, avgScore / 10 + 1.5);
+    const trust = Math.min(10, avgScore / 10 + 2.5);
+    const cohesion = Math.min(10, avgScore / 10 + 2);
+    const leadership = Math.min(10, avgScore / 10 + 1);
+    const adaptability = Math.min(10, avgScore / 10 + 1.5);
 
-    const overall = (communication + coordination + trust + cohesion + leadership + adaptability) / 6;
+    const overall =
+      (communication +
+        coordination +
+        trust +
+        cohesion +
+        leadership +
+        adaptability) /
+      6;
 
     return {
-      labels: ["Communication", "Coordination", "Trust", "Cohesion", "Leadership", "Adaptability"],
+      labels: [
+        "Communication",
+        "Coordination",
+        "Trust",
+        "Cohesion",
+        "Leadership",
+        "Adaptability",
+      ],
       values: [
         parseFloat(communication.toFixed(1)),
         parseFloat(coordination.toFixed(1)),
@@ -179,7 +223,7 @@ const getTrainingDistribution = async (userId, period = "30days") => {
     const days = period === "30days" ? 30 : period === "90days" ? 90 : 7;
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
-    
+
     // Ensure we only get data up to and including today
     const todayEndOfDay = new Date();
     todayEndOfDay.setHours(23, 59, 59, 999);
@@ -191,7 +235,9 @@ const getTrainingDistribution = async (userId, period = "30days") => {
       .gte("completed_at", startDate.toISOString())
       .lte("completed_at", todayEndOfDay.toISOString());
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     // Count by workout type
     const distribution = {};
@@ -215,7 +261,8 @@ const getTrainingDistribution = async (userId, period = "30days") => {
       total: sessions.length,
       agilitySessions: distribution["Agility"] || distribution["agility"] || 0,
       speedSessions: distribution["Speed"] || distribution["speed"] || 0,
-      technicalSessions: distribution["Technical"] || distribution["technique"] || 0,
+      technicalSessions:
+        distribution["Technical"] || distribution["technique"] || 0,
     };
   } catch (error) {
     console.error("Error getting training distribution:", error);
@@ -242,17 +289,21 @@ const getPositionPerformance = async (userId) => {
     // Get team members with their positions
     const { data: members, error: membersError } = await supabaseAdmin
       .from("team_members")
-      .select(`
+      .select(
+        `
         user_id,
         users:user_id (
           id,
           name,
           position
         )
-      `)
+      `,
+      )
       .eq("team_id", teamId);
 
-    if (membersError) {throw membersError;}
+    if (membersError) {
+      throw membersError;
+    }
 
     // Get performance scores for each member
     // Always filters data up to and including today
@@ -260,7 +311,7 @@ const getPositionPerformance = async (userId) => {
     const todayEndOfDay = new Date();
     todayEndOfDay.setHours(23, 59, 59, 999);
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    
+
     const { data: sessions, error: sessionsError } = await supabaseAdmin
       .from("training_sessions")
       .select("user_id, score")
@@ -268,7 +319,9 @@ const getPositionPerformance = async (userId) => {
       .gte("completed_at", thirtyDaysAgo.toISOString())
       .lte("completed_at", todayEndOfDay.toISOString());
 
-    if (sessionsError) {throw sessionsError;}
+    if (sessionsError) {
+      throw sessionsError;
+    }
 
     // Calculate average score per user
     const userScores = {};
@@ -284,7 +337,9 @@ const getPositionPerformance = async (userId) => {
     const positionData = {};
     members.forEach((member) => {
       const user = member.users;
-      if (!user) {return;}
+      if (!user) {
+        return;
+      }
       const position = user.position || "Other";
       const avgScore = userScores[user.id]
         ? userScores[user.id].total / userScores[user.id].count
@@ -300,7 +355,7 @@ const getPositionPerformance = async (userId) => {
     // Calculate averages per position
     const labels = Object.keys(positionData);
     const values = labels.map((pos) =>
-      Math.round(positionData[pos].total / positionData[pos].count)
+      Math.round(positionData[pos].total / positionData[pos].count),
     );
 
     if (labels.length === 0) {
@@ -314,7 +369,9 @@ const getPositionPerformance = async (userId) => {
         .map((m) => ({
           name: m.users?.name || "Unknown",
           score: userScores[m.user_id]
-            ? Math.round(userScores[m.user_id].total / userScores[m.user_id].count)
+            ? Math.round(
+                userScores[m.user_id].total / userScores[m.user_id].count,
+              )
             : 70,
         }))
         .sort((a, b) => b.score - a.score)
@@ -333,7 +390,7 @@ const getSpeedDevelopment = async (userId, weeks = 7) => {
     // Get performance tests for speed-related metrics
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - weeks * 7);
-    
+
     // Ensure we only get data up to and including today
     const todayEndOfDay = new Date();
     todayEndOfDay.setHours(23, 59, 59, 999);
@@ -347,7 +404,9 @@ const getSpeedDevelopment = async (userId, weeks = 7) => {
       .lte("completed_at", todayEndOfDay.toISOString())
       .order("completed_at", { ascending: true });
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     // Group by week
     const weeklyData = { "40YardDash": {}, "10YardSplit": {} };
@@ -375,19 +434,34 @@ const getSpeedDevelopment = async (userId, weeks = 7) => {
 
       dash40Data.push(
         dash40Values.length > 0
-          ? parseFloat((dash40Values.reduce((a, b) => a + b, 0) / dash40Values.length).toFixed(2))
-          : i > 0 ? dash40Data[i - 1] : 5.0
+          ? parseFloat(
+              (
+                dash40Values.reduce((a, b) => a + b, 0) / dash40Values.length
+              ).toFixed(2),
+            )
+          : i > 0
+            ? dash40Data[i - 1]
+            : 5.0,
       );
       dash10Data.push(
         dash10Values.length > 0
-          ? parseFloat((dash10Values.reduce((a, b) => a + b, 0) / dash10Values.length).toFixed(2))
-          : i > 0 ? dash10Data[i - 1] : 1.8
+          ? parseFloat(
+              (
+                dash10Values.reduce((a, b) => a + b, 0) / dash10Values.length
+              ).toFixed(2),
+            )
+          : i > 0
+            ? dash10Data[i - 1]
+            : 1.8,
       );
     }
 
     const best40Yard = Math.min(...dash40Data.filter((v) => v > 0));
     const best10Yard = Math.min(...dash10Data.filter((v) => v > 0));
-    const improvement = dash40Data.length > 1 ? dash40Data[0] - dash40Data[dash40Data.length - 1] : 0;
+    const improvement =
+      dash40Data.length > 1
+        ? dash40Data[0] - dash40Data[dash40Data.length - 1]
+        : 0;
 
     return {
       labels,
@@ -458,7 +532,9 @@ const getAnalyticsSummary = async (userId) => {
 
 // Helper functions
 function getWeekNumber(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
@@ -468,7 +544,9 @@ function getWeekNumber(date) {
 function parseWeekKey(weekKey) {
   // Parse "2024-W15" format
   const match = weekKey.match(/(\d{4})-W(\d+)/);
-  if (!match) {return null;}
+  if (!match) {
+    return null;
+  }
   const year = parseInt(match[1]);
   const week = parseInt(match[2]);
   const date = new Date(year, 0, 1 + (week - 1) * 7);
@@ -478,7 +556,14 @@ function parseWeekKey(weekKey) {
 // Fallback data functions
 function getFallbackTeamChemistry() {
   return {
-    labels: ["Communication", "Coordination", "Trust", "Cohesion", "Leadership", "Adaptability"],
+    labels: [
+      "Communication",
+      "Coordination",
+      "Trust",
+      "Cohesion",
+      "Leadership",
+      "Adaptability",
+    ],
     values: [8.4, 9.1, 7.5, 8.8, 9.2, 8.0],
     overall: 8.4,
     trustLevel: 9.1,
@@ -511,10 +596,21 @@ function getFallbackPositionPerformance() {
 
 function getFallbackSpeedDevelopment() {
   return {
-    labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7"],
+    labels: [
+      "Week 1",
+      "Week 2",
+      "Week 3",
+      "Week 4",
+      "Week 5",
+      "Week 6",
+      "Week 7",
+    ],
     datasets: [
       { label: "40-Yard Dash", data: [5.2, 5.1, 4.9, 4.8, 4.7, 4.52, 4.46] },
-      { label: "10-Yard Split", data: [1.8, 1.75, 1.7, 1.68, 1.65, 1.62, 1.54] },
+      {
+        label: "10-Yard Split",
+        data: [1.8, 1.75, 1.7, 1.68, 1.65, 1.62, 1.54],
+      },
     ],
     best40Yard: "4.46",
     best10Yard: "1.54",
@@ -564,7 +660,7 @@ function getFallbackAnalyticsSummary() {
 
 // Main handler
 exports.handler = async (event, context) => {
-  logFunctionCall('Analytics', event);
+  logFunctionCall("Analytics", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -576,7 +672,7 @@ exports.handler = async (event, context) => {
 
   // Only allow GET requests
   if (event.httpMethod !== "GET") {
-    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 
   try {
@@ -613,26 +709,65 @@ exports.handler = async (event, context) => {
     let data;
     let cacheKey;
 
-    if (path.includes("/performance-trends") || path.endsWith("/performance-trends")) {
+    if (
+      path.includes("/performance-trends") ||
+      path.endsWith("/performance-trends")
+    ) {
       cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:performance-trends:${weeks}`;
-      data = await getOrFetch(cacheKey, async () => await getPerformanceTrends(userId, weeks), CACHE_TTL.ANALYTICS);
-    } else if (path.includes("/team-chemistry") || path.endsWith("/team-chemistry")) {
+      data = await getOrFetch(
+        cacheKey,
+        async () => await getPerformanceTrends(userId, weeks),
+        CACHE_TTL.ANALYTICS,
+      );
+    } else if (
+      path.includes("/team-chemistry") ||
+      path.endsWith("/team-chemistry")
+    ) {
       cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:team-chemistry`;
-      data = await getOrFetch(cacheKey, async () => await getTeamChemistry(userId), CACHE_TTL.ANALYTICS);
-    } else if (path.includes("/training-distribution") || path.endsWith("/training-distribution")) {
+      data = await getOrFetch(
+        cacheKey,
+        async () => await getTeamChemistry(userId),
+        CACHE_TTL.ANALYTICS,
+      );
+    } else if (
+      path.includes("/training-distribution") ||
+      path.endsWith("/training-distribution")
+    ) {
       cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:training-distribution:${period}`;
-      data = await getOrFetch(cacheKey, async () => await getTrainingDistribution(userId, period), CACHE_TTL.ANALYTICS);
-    } else if (path.includes("/position-performance") || path.endsWith("/position-performance")) {
+      data = await getOrFetch(
+        cacheKey,
+        async () => await getTrainingDistribution(userId, period),
+        CACHE_TTL.ANALYTICS,
+      );
+    } else if (
+      path.includes("/position-performance") ||
+      path.endsWith("/position-performance")
+    ) {
       cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:position-performance`;
-      data = await getOrFetch(cacheKey, async () => await getPositionPerformance(userId), CACHE_TTL.ANALYTICS);
-    } else if (path.includes("/speed-development") || path.endsWith("/speed-development")) {
+      data = await getOrFetch(
+        cacheKey,
+        async () => await getPositionPerformance(userId),
+        CACHE_TTL.ANALYTICS,
+      );
+    } else if (
+      path.includes("/speed-development") ||
+      path.endsWith("/speed-development")
+    ) {
       cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:speed-development:${weeks}`;
-      data = await getOrFetch(cacheKey, async () => await getSpeedDevelopment(userId, weeks), CACHE_TTL.ANALYTICS);
+      data = await getOrFetch(
+        cacheKey,
+        async () => await getSpeedDevelopment(userId, weeks),
+        CACHE_TTL.ANALYTICS,
+      );
     } else if (path.includes("/summary") || path.endsWith("/summary")) {
       cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:summary`;
-      data = await getOrFetch(cacheKey, async () => await getAnalyticsSummary(userId), CACHE_TTL.ANALYTICS);
+      data = await getOrFetch(
+        cacheKey,
+        async () => await getAnalyticsSummary(userId),
+        CACHE_TTL.ANALYTICS,
+      );
     } else {
-      return createErrorResponse("Endpoint not found", 404, 'not_found');
+      return createErrorResponse("Endpoint not found", 404, "not_found");
     }
 
     return createSuccessResponse(data);
@@ -644,7 +779,6 @@ exports.handler = async (event, context) => {
       name: error.name,
       code: error.code,
     });
-    return handleServerError(error, 'Analytics');
+    return handleServerError(error, "Analytics");
   }
 };
-

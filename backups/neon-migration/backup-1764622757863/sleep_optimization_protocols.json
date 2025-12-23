@@ -8,34 +8,16 @@
     "rem_sleep_target_percentage": 25,
     "pre_sleep_routine_duration_minutes": 90,
     "bedroom_temperature_celsius": "18.50",
-    "light_exposure_guidelines": [
-      "dark_environment",
-      "no_blue_light"
-    ],
+    "light_exposure_guidelines": ["dark_environment", "no_blue_light"],
     "electronic_device_cutoff_hours": "2.00",
-    "pre_sleep_nutrition_guidelines": [
-      "light_snack",
-      "avoid_large_meals"
-    ],
-    "sleep_promoting_supplements": [
-      "magnesium",
-      "melatonin"
-    ],
-    "supplements_to_avoid": [
-      "stimulants",
-      "alcohol"
-    ],
+    "pre_sleep_nutrition_guidelines": ["light_snack", "avoid_large_meals"],
+    "sleep_promoting_supplements": ["magnesium", "melatonin"],
+    "supplements_to_avoid": ["stimulants", "alcohol"],
     "caffeine_cutoff_hours": 6,
     "alcohol_recommendations": null,
     "room_darkness_requirements": "complete_darkness",
-    "noise_management": [
-      "white_noise",
-      "earplugs"
-    ],
-    "bedding_recommendations": [
-      "cooling_pillow",
-      "breathable_sheets"
-    ],
+    "noise_management": ["white_noise", "earplugs"],
+    "bedding_recommendations": ["cooling_pillow", "breathable_sheets"],
     "air_quality_factors": null,
     "performance_improvement_with_optimization": "15.50",
     "injury_risk_reduction_percentage": "12.30",
@@ -43,9 +25,7 @@
       "improved_focus",
       "better_reaction_time"
     ],
-    "immune_function_benefits": [
-      "enhanced_immune_response"
-    ],
+    "immune_function_benefits": ["enhanced_immune_response"],
     "recommended_tracking_metrics": [
       "sleep_duration",
       "sleep_efficiency",
@@ -75,35 +55,18 @@
       "regular_meal_times",
       "protein_rich_dinner"
     ],
-    "sleep_promoting_supplements": [
-      "valerian_root",
-      "chamomile"
-    ],
-    "supplements_to_avoid": [
-      "caffeine",
-      "nicotine"
-    ],
+    "sleep_promoting_supplements": ["valerian_root", "chamomile"],
+    "supplements_to_avoid": ["caffeine", "nicotine"],
     "caffeine_cutoff_hours": 8,
     "alcohol_recommendations": null,
     "room_darkness_requirements": "controlled_darkness",
-    "noise_management": [
-      "sound_machine",
-      "quiet_environment"
-    ],
-    "bedding_recommendations": [
-      "ergonomic_pillow",
-      "temperature_regulating"
-    ],
+    "noise_management": ["sound_machine", "quiet_environment"],
+    "bedding_recommendations": ["ergonomic_pillow", "temperature_regulating"],
     "air_quality_factors": null,
     "performance_improvement_with_optimization": "18.20",
     "injury_risk_reduction_percentage": "15.70",
-    "cognitive_performance_benefits": [
-      "enhanced_alertness",
-      "improved_memory"
-    ],
-    "immune_function_benefits": [
-      "better_stress_response"
-    ],
+    "cognitive_performance_benefits": ["enhanced_alertness", "improved_memory"],
+    "immune_function_benefits": ["better_stress_response"],
     "recommended_tracking_metrics": [
       "sleep_consistency",
       "wake_time_regularity",
@@ -124,44 +87,24 @@
     "rem_sleep_target_percentage": 26,
     "pre_sleep_routine_duration_minutes": 45,
     "bedroom_temperature_celsius": "17.00",
-    "light_exposure_guidelines": [
-      "minimal_light",
-      "red_light_only"
-    ],
+    "light_exposure_guidelines": ["minimal_light", "red_light_only"],
     "electronic_device_cutoff_hours": "2.50",
     "pre_sleep_nutrition_guidelines": [
       "recovery_nutrition",
       "electrolyte_balance"
     ],
-    "sleep_promoting_supplements": [
-      "protein_powder",
-      "bcaa"
-    ],
-    "supplements_to_avoid": [
-      "heavy_meals",
-      "excessive_fluids"
-    ],
+    "sleep_promoting_supplements": ["protein_powder", "bcaa"],
+    "supplements_to_avoid": ["heavy_meals", "excessive_fluids"],
     "caffeine_cutoff_hours": 7,
     "alcohol_recommendations": null,
     "room_darkness_requirements": "blackout_curtains",
-    "noise_management": [
-      "silence",
-      "minimal_disturbance"
-    ],
-    "bedding_recommendations": [
-      "compression_sheets",
-      "cooling_blanket"
-    ],
+    "noise_management": ["silence", "minimal_disturbance"],
+    "bedding_recommendations": ["compression_sheets", "cooling_blanket"],
     "air_quality_factors": null,
     "performance_improvement_with_optimization": "20.10",
     "injury_risk_reduction_percentage": "18.90",
-    "cognitive_performance_benefits": [
-      "faster_recovery",
-      "reduced_fatigue"
-    ],
-    "immune_function_benefits": [
-      "accelerated_healing"
-    ],
+    "cognitive_performance_benefits": ["faster_recovery", "reduced_fatigue"],
+    "immune_function_benefits": ["accelerated_healing"],
     "recommended_tracking_metrics": [
       "recovery_rate",
       "muscle_soreness",

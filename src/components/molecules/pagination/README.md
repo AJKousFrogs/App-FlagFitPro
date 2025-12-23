@@ -8,7 +8,8 @@ A reusable pagination component for navigating through paginated data.
 <nav class="pagination-container" aria-label="Pagination">
   <div class="pagination-info">
     <span class="pagination-text">
-      Showing <span class="start-item">1</span> - <span class="end-item">10</span> of <span class="total-items">100</span>
+      Showing <span class="start-item">1</span> -
+      <span class="end-item">10</span> of <span class="total-items">100</span>
     </span>
   </div>
 
@@ -44,4 +45,3 @@ A reusable pagination component for navigating through paginated data.
 - `.pagination-page.active` - Active page
 - `.pagination-ellipsis` - Ellipsis separator
 - `.pagination-items-per-page` - Items per page selector
-

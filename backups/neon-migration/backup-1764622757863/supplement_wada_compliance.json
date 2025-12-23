@@ -12,9 +12,7 @@
     "last_test_date": null,
     "test_result": null,
     "flag_football_safe": true,
-    "recommended_for_position": [
-      "all_positions"
-    ],
+    "recommended_for_position": ["all_positions"],
     "usage_guidelines": null,
     "compliance_notes": null,
     "risk_mitigation_strategies": null,
@@ -34,9 +32,7 @@
     "last_test_date": null,
     "test_result": null,
     "flag_football_safe": true,
-    "recommended_for_position": [
-      "all_positions"
-    ],
+    "recommended_for_position": ["all_positions"],
     "usage_guidelines": null,
     "compliance_notes": null,
     "risk_mitigation_strategies": null,
@@ -56,11 +52,7 @@
     "last_test_date": null,
     "test_result": null,
     "flag_football_safe": true,
-    "recommended_for_position": [
-      "receiver",
-      "defensive_back",
-      "lineman"
-    ],
+    "recommended_for_position": ["receiver", "defensive_back", "lineman"],
     "usage_guidelines": null,
     "compliance_notes": null,
     "risk_mitigation_strategies": null,
@@ -80,11 +72,7 @@
     "last_test_date": null,
     "test_result": null,
     "flag_football_safe": true,
-    "recommended_for_position": [
-      "quarterback",
-      "receiver",
-      "defensive_back"
-    ],
+    "recommended_for_position": ["quarterback", "receiver", "defensive_back"],
     "usage_guidelines": null,
     "compliance_notes": null,
     "risk_mitigation_strategies": null,
@@ -104,9 +92,7 @@
     "last_test_date": null,
     "test_result": null,
     "flag_football_safe": false,
-    "recommended_for_position": [
-      "none"
-    ],
+    "recommended_for_position": ["none"],
     "usage_guidelines": null,
     "compliance_notes": null,
     "risk_mitigation_strategies": null,

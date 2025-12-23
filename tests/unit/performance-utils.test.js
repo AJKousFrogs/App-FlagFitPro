@@ -465,7 +465,9 @@ describe("Performance Utils - Comprehensive Tests", () => {
         .mockImplementation((snapshots) => {
           const growthRate =
             snapshots.slice(-3).reduce((acc, snapshot, index) => {
-              if (index === 0) {return acc;}
+              if (index === 0) {
+                return acc;
+              }
               return (
                 acc +
                 (snapshot.used -

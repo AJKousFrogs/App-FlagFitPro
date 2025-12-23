@@ -34,16 +34,22 @@
     <!-- Sidebar Utilities -->
     <script src="./src/js/utils/sidebar-utils.js" defer></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
     <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
     <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
-  
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <div class="dashboard-container">
@@ -70,9 +76,24 @@
               </button>
             </div>
             <div class="profile-info">
-              <h1 class="profile-name text-heading-2xl text-primary" id="profileName">Loading...</h1>
-              <p class="profile-role text-body-md text-secondary" id="profileRole">Player</p>
-              <p class="profile-email text-body-sm text-tertiary" id="profileEmail">Loading...</p>
+              <h1
+                class="profile-name text-heading-2xl text-primary"
+                id="profileName"
+              >
+                Loading...
+              </h1>
+              <p
+                class="profile-role text-body-md text-secondary"
+                id="profileRole"
+              >
+                Player
+              </p>
+              <p
+                class="profile-email text-body-sm text-tertiary"
+                id="profileEmail"
+              >
+                Loading...
+              </p>
             </div>
             <div class="profile-actions">
               <button
@@ -129,7 +150,9 @@
           <!-- Profile Details -->
           <div class="profile-details">
             <div class="detail-section">
-              <h2 class="section-title text-heading-xl text-primary">Personal Information</h2>
+              <h2 class="section-title text-heading-xl text-primary">
+                Personal Information
+              </h2>
               <div class="detail-grid">
                 <div class="detail-item">
                   <label>Position</label>
@@ -151,7 +174,9 @@
             </div>
 
             <div class="detail-section">
-              <h2 class="section-title text-heading-xl text-primary">Physical Stats</h2>
+              <h2 class="section-title text-heading-xl text-primary">
+                Physical Stats
+              </h2>
               <div class="detail-grid">
                 <div class="detail-item">
                   <label>Height</label>
@@ -170,7 +195,9 @@
 
             <div class="detail-section">
               <h2 class="section-title text-heading-xl text-primary">Bio</h2>
-              <p class="profile-bio text-body-md text-primary" id="profileBio">No bio available.</p>
+              <p class="profile-bio text-body-md text-primary" id="profileBio">
+                No bio available.
+              </p>
             </div>
           </div>
         </div>
@@ -431,7 +458,7 @@
       document.addEventListener("DOMContentLoaded", initProfilePage);
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

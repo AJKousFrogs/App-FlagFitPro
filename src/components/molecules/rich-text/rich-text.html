@@ -13,27 +13,63 @@
   <label class="form-label">Rich Text Editor</label>
   <div class="rich-text-editor" id="rich-text-editor-1">
     <div class="rich-text-toolbar" role="toolbar" aria-label="Text formatting">
-      <button type="button" class="toolbar-btn" data-command="bold" aria-label="Bold">
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="bold"
+        aria-label="Bold"
+      >
         <i data-lucide="bold" style="width: 18px; height: 18px"></i>
       </button>
-      <button type="button" class="toolbar-btn" data-command="italic" aria-label="Italic">
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="italic"
+        aria-label="Italic"
+      >
         <i data-lucide="italic" style="width: 18px; height: 18px"></i>
       </button>
-      <button type="button" class="toolbar-btn" data-command="underline" aria-label="Underline">
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="underline"
+        aria-label="Underline"
+      >
         <i data-lucide="underline" style="width: 18px; height: 18px"></i>
       </button>
       <div class="toolbar-separator"></div>
-      <button type="button" class="toolbar-btn" data-command="insertUnorderedList" aria-label="Bullet list">
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="insertUnorderedList"
+        aria-label="Bullet list"
+      >
         <i data-lucide="list" style="width: 18px; height: 18px"></i>
       </button>
-      <button type="button" class="toolbar-btn" data-command="insertOrderedList" aria-label="Numbered list">
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="insertOrderedList"
+        aria-label="Numbered list"
+      >
         <i data-lucide="list-ordered" style="width: 18px; height: 18px"></i>
       </button>
       <div class="toolbar-separator"></div>
-      <button type="button" class="toolbar-btn" data-command="createLink" aria-label="Insert link">
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="createLink"
+        aria-label="Insert link"
+      >
         <i data-lucide="link" style="width: 18px; height: 18px"></i>
       </button>
-      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="h2" aria-label="Heading">
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="formatBlock"
+        data-value="h2"
+        aria-label="Heading"
+      >
         <i data-lucide="heading" style="width: 18px; height: 18px"></i>
       </button>
     </div>
@@ -136,62 +172,63 @@
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     function initRichTextEditor(editorId) {
       const editor = document.getElementById(editorId);
       if (!editor) return;
-      
-      const toolbar = editor.querySelector('.rich-text-toolbar');
-      const content = editor.querySelector('.rich-text-content');
-      
+
+      const toolbar = editor.querySelector(".rich-text-toolbar");
+      const content = editor.querySelector(".rich-text-content");
+
       if (!toolbar || !content) return;
-      
+
       // Toolbar button clicks
-      toolbar.addEventListener('click', (e) => {
-        const btn = e.target.closest('.toolbar-btn');
+      toolbar.addEventListener("click", (e) => {
+        const btn = e.target.closest(".toolbar-btn");
         if (!btn) return;
-        
+
         e.preventDefault();
-        const command = btn.getAttribute('data-command');
-        const value = btn.getAttribute('data-value');
-        
+        const command = btn.getAttribute("data-command");
+        const value = btn.getAttribute("data-value");
+
         document.execCommand(command, false, value || null);
         content.focus();
         updateToolbarState();
       });
-  
+
       // Update toolbar button states
       function updateToolbarState() {
-        toolbar.querySelectorAll('.toolbar-btn').forEach(btn => {
-          const command = btn.getAttribute('data-command');
+        toolbar.querySelectorAll(".toolbar-btn").forEach((btn) => {
+          const command = btn.getAttribute("data-command");
           if (command && document.queryCommandSupported(command)) {
             const isActive = document.queryCommandState(command);
-            btn.classList.toggle('active', isActive);
+            btn.classList.toggle("active", isActive);
           }
         });
       }
-      
+
       // Update on selection change
-      content.addEventListener('mouseup', updateToolbarState);
-      content.addEventListener('keyup', updateToolbarState);
-      
+      content.addEventListener("mouseup", updateToolbarState);
+      content.addEventListener("keyup", updateToolbarState);
+
       // Link creation
-      toolbar.querySelector('[data-command="createLink"]')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        const url = prompt('Enter URL:');
-        if (url) {
-          document.execCommand('createLink', false, url);
-        }
-      });
+      toolbar
+        .querySelector('[data-command="createLink"]')
+        ?.addEventListener("click", (e) => {
+          e.preventDefault();
+          const url = prompt("Enter URL:");
+          if (url) {
+            document.execCommand("createLink", false, url);
+          }
+        });
     }
-    
+
     // Initialize editors
-    initRichTextEditor('rich-text-editor-1');
-    
+    initRichTextEditor("rich-text-editor-1");
+
     // Initialize lucide icons
     if (window.lucide) {
       window.lucide.createIcons();
     }
   });
 </script>
-

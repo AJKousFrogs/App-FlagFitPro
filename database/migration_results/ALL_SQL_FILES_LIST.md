@@ -221,6 +221,7 @@
 ### Method 2: Automated Script
 
 Run the provided script (if connection works):
+
 ```bash
 ./scripts/run-all-migrations-supabase.sh
 ```
@@ -242,7 +243,7 @@ supabase db push --file database/migrations/001_base_tables.sql
 
 1. **Run in Order**: Migrations should be run in numerical order (001, 025, 026, etc.)
 
-2. **Supabase vs Neon**: 
+2. **Supabase vs Neon**:
    - Use `*_supabase.sql` files for Supabase (uses `auth.users`)
    - Regular files may use `users` table (Neon DB format)
 
@@ -270,22 +271,25 @@ supabase db push --file database/migrations/001_base_tables.sql
 ## Next Steps After Running
 
 1. Verify all tables were created:
+
    ```sql
-   SELECT table_name FROM information_schema.tables 
-   WHERE table_schema = 'public' 
+   SELECT table_name FROM information_schema.tables
+   WHERE table_schema = 'public'
    ORDER BY table_name;
    ```
 
 2. Verify RLS is enabled:
+
    ```sql
-   SELECT tablename, rowsecurity 
-   FROM pg_tables 
+   SELECT tablename, rowsecurity
+   FROM pg_tables
    WHERE schemaname = 'public';
    ```
 
 3. Verify functions were created:
+
    ```sql
-   SELECT proname FROM pg_proc 
+   SELECT proname FROM pg_proc
    WHERE proname LIKE '%acwr%' OR proname LIKE '%baseline%';
    ```
 
@@ -299,9 +303,10 @@ supabase db push --file database/migrations/001_base_tables.sql
 ## Results Location
 
 All execution results will be saved to:
+
 - `database/migration_results/`
 
 Each migration generates:
+
 - `*_result.txt` - Execution output
 - `*_errors.txt` - Error messages (if any)
-

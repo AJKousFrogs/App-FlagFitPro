@@ -18,8 +18,9 @@
 ### PrimeNG 21 Component Changes
 
 **Remaining Files to Update:**
+
 - [ ] `src/app/features/game-tracker/game-tracker.component.ts` - DropdownModule → SelectModule
-- [ ] `src/app/features/settings/settings.component.ts` - DropdownModule → SelectModule  
+- [ ] `src/app/features/settings/settings.component.ts` - DropdownModule → SelectModule
 - [ ] `src/app/features/analytics/analytics.component.ts` - DropdownModule → SelectModule
 - [ ] `src/app/shared/components/smart-breadcrumbs/smart-breadcrumbs.component.ts` - DropdownModule → SelectModule
 - [ ] `src/app/shared/components/training-heatmap/training-heatmap.component.ts` - DropdownModule → SelectModule
@@ -29,6 +30,7 @@
 - [ ] `src/app/features/game-tracker/game-tracker.component.html` - p-dropdown → p-select (multiple instances)
 
 **Changes Required:**
+
 1. Replace `DropdownModule` with `SelectModule` in imports
 2. Replace `primeng/dropdown` with `primeng/select` in import paths
 3. Replace `<p-dropdown>` with `<p-select>` in templates
@@ -67,4 +69,3 @@
 
 **Last Updated**: December 2024  
 **Status**: 90% Complete - PrimeNG component updates remaining
-

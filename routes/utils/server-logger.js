@@ -1,7 +1,7 @@
 /**
  * Server-Side Logging Utility for Route Handlers
  * Provides consistent logging with environment-aware levels for Node.js/Express
- * 
+ *
  * @module routes/utils/server-logger
  * @version 1.0.0
  */
@@ -12,8 +12,8 @@
  */
 class ServerLogger {
   constructor() {
-    this.isDevelopment = process.env.NODE_ENV !== 'production';
-    this.logLevel = this.isDevelopment ? 'debug' : 'error';
+    this.isDevelopment = process.env.NODE_ENV !== "production";
+    this.logLevel = this.isDevelopment ? "debug" : "error";
   }
 
   /**
@@ -30,9 +30,11 @@ class ServerLogger {
    * @returns {boolean} Whether the level should be logged
    */
   shouldLog(level) {
-    if (this.logLevel === 'silent') {return false;}
+    if (this.logLevel === "silent") {
+      return false;
+    }
 
-    const levels = ['debug', 'info', 'warn', 'error'];
+    const levels = ["debug", "info", "warn", "error"];
     const currentLevelIndex = levels.indexOf(this.logLevel);
     const messageLevelIndex = levels.indexOf(level);
 
@@ -44,10 +46,12 @@ class ServerLogger {
    * @param {...any} args - Arguments to log
    */
   debug(...args) {
-    if (!this.shouldLog('debug')) {return;}
+    if (!this.shouldLog("debug")) {
+      return;
+    }
     if (this.isDevelopment) {
       // eslint-disable-next-line no-console
-      console.log('🔍 [DEBUG]', ...args);
+      console.log("🔍 [DEBUG]", ...args);
     }
   }
 
@@ -56,10 +60,12 @@ class ServerLogger {
    * @param {...any} args - Arguments to log
    */
   info(...args) {
-    if (!this.shouldLog('info')) {return;}
+    if (!this.shouldLog("info")) {
+      return;
+    }
     if (this.isDevelopment) {
       // eslint-disable-next-line no-console
-      console.log('ℹ️ [INFO]', ...args);
+      console.log("ℹ️ [INFO]", ...args);
     }
   }
 
@@ -68,9 +74,11 @@ class ServerLogger {
    * @param {...any} args - Arguments to log
    */
   warn(...args) {
-    if (!this.shouldLog('warn')) {return;}
+    if (!this.shouldLog("warn")) {
+      return;
+    }
     // eslint-disable-next-line no-console
-    console.warn('⚠️ [WARN]', ...args);
+    console.warn("⚠️ [WARN]", ...args);
   }
 
   /**
@@ -78,10 +86,12 @@ class ServerLogger {
    * @param {...any} args - Arguments to log
    */
   error(...args) {
-    if (!this.shouldLog('error')) {return;}
+    if (!this.shouldLog("error")) {
+      return;
+    }
     // eslint-disable-next-line no-console
-    console.error('❌ [ERROR]', ...args);
-    
+    console.error("❌ [ERROR]", ...args);
+
     // In production, could send to error tracking service
     if (!this.isDevelopment) {
       // Example: Send to error tracking service
@@ -94,10 +104,12 @@ class ServerLogger {
    * @param {...any} args - Arguments to log
    */
   success(...args) {
-    if (!this.shouldLog('info')) {return;}
+    if (!this.shouldLog("info")) {
+      return;
+    }
     if (this.isDevelopment) {
       // eslint-disable-next-line no-console
-      console.log('✅ [SUCCESS]', ...args);
+      console.log("✅ [SUCCESS]", ...args);
     }
   }
 }
@@ -107,4 +119,3 @@ export const serverLogger = new ServerLogger();
 
 // Export class for custom instances
 export default ServerLogger;
-

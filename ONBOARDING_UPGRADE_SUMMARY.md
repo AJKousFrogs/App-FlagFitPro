@@ -11,6 +11,7 @@ The onboarding process has been significantly upgraded to provide a more engagin
 **Before:** Single static page with basic welcome message and skip button
 
 **After:** 5-step interactive onboarding process with:
+
 - Step 1: Welcome & Feature Overview
 - Step 2: Role Confirmation (Player/Coach)
 - Step 3: Profile Completion Integration
@@ -149,4 +150,3 @@ Potential improvements for future iterations:
 - Progress is saved after each step
 - Users can skip optional steps but will be prompted to complete them later
 - Dashboard onboarding tour (from onboarding-manager.js) is separate and runs after onboarding.html completion
-

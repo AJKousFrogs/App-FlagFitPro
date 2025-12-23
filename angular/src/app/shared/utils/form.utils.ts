@@ -1,11 +1,11 @@
 /**
  * Angular 21 Form Utilities
- * 
+ *
  * Utility functions for modern Angular 21 forms with signals
  */
 
-import { signal, computed, Signal } from '@angular/core';
-import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { signal, computed, Signal } from "@angular/core";
+import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 
 /**
  * Form Field State (Signal-based)
@@ -24,7 +24,7 @@ export interface FormFieldState<T = any> {
  */
 export function createFormFieldState<T = any>(
   initialValue: T = null as any,
-  validator?: (value: T) => string | null
+  validator?: (value: T) => string | null,
 ): FormFieldState<T> {
   const value = signal<T>(initialValue);
   const touched = signal(false);
@@ -54,11 +54,11 @@ export function createFormFieldState<T = any>(
  */
 export const FormValidators = {
   required: <T>(value: T | null | undefined): string | null => {
-    if (value === null || value === undefined || value === '') {
-      return 'This field is required';
+    if (value === null || value === undefined || value === "") {
+      return "This field is required";
     }
-    if (typeof value === 'string' && value.trim().length === 0) {
-      return 'This field is required';
+    if (typeof value === "string" && value.trim().length === 0) {
+      return "This field is required";
     }
     return null;
   },
@@ -66,20 +66,25 @@ export const FormValidators = {
   email: (value: string | null | undefined): string | null => {
     if (!value) return null;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value) ? null : 'Please enter a valid email address';
+    return emailRegex.test(value) ? null : "Please enter a valid email address";
   },
 
-  minLength: (min: number) => (value: string | null | undefined): string | null => {
-    if (!value) return null;
-    return value.length >= min ? null : `Minimum length is ${min} characters`;
-  },
+  minLength:
+    (min: number) =>
+    (value: string | null | undefined): string | null => {
+      if (!value) return null;
+      return value.length >= min ? null : `Minimum length is ${min} characters`;
+    },
 
-  maxLength: (max: number) => (value: string | null | undefined): string | null => {
-    if (!value) return null;
-    return value.length <= max ? null : `Maximum length is ${max} characters`;
-  },
+  maxLength:
+    (max: number) =>
+    (value: string | null | undefined): string | null => {
+      if (!value) return null;
+      return value.length <= max ? null : `Maximum length is ${max} characters`;
+    },
 
-  pattern: (pattern: RegExp, message: string = 'Invalid format') => 
+  pattern:
+    (pattern: RegExp, message: string = "Invalid format") =>
     (value: string | null | undefined): string | null => {
       if (!value) return null;
       return pattern.test(value) ? null : message;
@@ -87,13 +92,18 @@ export const FormValidators = {
 
   password: (value: string | null | undefined): string | null => {
     if (!value) return null;
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(value)
       ? null
-      : 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character';
+      : "Password must be at least 8 characters and include uppercase, lowercase, number, and special character";
   },
 
-  match: (otherValue: Signal<string | null | undefined>, message: string = 'Values do not match') =>
+  match:
+    (
+      otherValue: Signal<string | null | undefined>,
+      message: string = "Values do not match",
+    ) =>
     (value: string | null | undefined): string | null => {
       if (!value) return null;
       return value === otherValue() ? null : message;
@@ -122,21 +132,21 @@ export function getFormControlError(control: AbstractControl): string | null {
   if (!control.errors || !control.touched) return null;
 
   const errors = control.errors as ValidationErrors;
-  
-  if (errors['required']) return 'This field is required';
-  if (errors['email']) return 'Please enter a valid email address';
-  if (errors['minlength']) {
-    const min = errors['minlength'].requiredLength;
+
+  if (errors["required"]) return "This field is required";
+  if (errors["email"]) return "Please enter a valid email address";
+  if (errors["minlength"]) {
+    const min = errors["minlength"].requiredLength;
     return `Minimum length is ${min} characters`;
   }
-  if (errors['maxlength']) {
-    const max = errors['maxlength'].requiredLength;
+  if (errors["maxlength"]) {
+    const max = errors["maxlength"].requiredLength;
     return `Maximum length is ${max} characters`;
   }
-  if (errors['pattern']) return 'Invalid format';
-  if (errors['password']) return 'Password does not meet requirements';
-  
-  return errors['message'] || 'Invalid value';
+  if (errors["pattern"]) return "Invalid format";
+  if (errors["password"]) return "Password does not meet requirements";
+
+  return errors["message"] || "Invalid value";
 }
 
 /**
@@ -150,7 +160,7 @@ export function isFormControlInvalid(control: AbstractControl): boolean {
  * Mark all form controls as touched
  */
 export function markFormGroupTouched(formGroup: FormGroup): void {
-  Object.keys(formGroup.controls).forEach(key => {
+  Object.keys(formGroup.controls).forEach((key) => {
     const control = formGroup.get(key);
     control?.markAsTouched();
   });
@@ -189,7 +199,7 @@ export interface SignalFormFieldState {
  */
 export function createSignalFormField(
   valueSignal: () => string,
-  validator?: (value: string) => string | null
+  validator?: (value: string) => string | null,
 ): SignalFormFieldState {
   const touched = signal<boolean>(false);
   const dirty = signal<boolean>(false);
@@ -220,7 +230,7 @@ export function createSignalFormField(
  */
 export interface FormFieldConfig {
   label: string;
-  type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'number';
+  type?: "text" | "email" | "password" | "tel" | "url" | "number";
   placeholder?: string;
   required?: boolean;
   autocomplete?: string;
@@ -232,16 +242,15 @@ export interface FormFieldConfig {
  * Create form field configuration with defaults
  */
 export function createFormFieldConfig(
-  config: FormFieldConfig
+  config: FormFieldConfig,
 ): Required<FormFieldConfig> {
   return {
     label: config.label,
-    type: config.type || 'text',
-    placeholder: config.placeholder || '',
+    type: config.type || "text",
+    placeholder: config.placeholder || "",
     required: config.required ?? false,
-    autocomplete: config.autocomplete || 'off',
-    hint: config.hint || '',
+    autocomplete: config.autocomplete || "off",
+    hint: config.hint || "",
     validators: config.validators || [],
   };
 }
-

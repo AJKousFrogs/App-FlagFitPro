@@ -13,24 +13,28 @@ FlagFit Pro is a comprehensive training platform that combines modern web techno
 ## ✨ Latest Features (2024)
 
 ### 🎨 Complete Wireframe Integration
+
 - **Black & White Design System**: Professional wireframe-based UI with Poppins typography
 - **Four Core Pages**: Dashboard, Training, Community, Tournaments with wireframe layouts
 - **Interactive Navigation**: Active state handling and responsive design
 - **ChatWidget**: AI coach chat with typing indicators and quick actions
 
 ### 🤖 AI Coaching System
+
 - **Interactive Chat**: Real-time AI coaching with contextual responses
 - **Training Recommendations**: Personalized workout suggestions
 - **Performance Insights**: AI-powered analytics and progress tracking
 - **Quick Actions**: Training tips, nutrition advice, recovery guidance
 
 ### 🏆 Olympic Preparation
+
 - **LA28 Qualification Path**: Structured progression tracking
 - **Tournament Management**: Competition tracking and results
 - **Performance Analytics**: Advanced metrics and visualizations
 - **Team Management**: Ljubljana Frogs team integration
 
 ### 🛠️ Technical Excellence
+
 - **FilterManager**: Advanced interactive filtering system
 - **Accessibility**: ARIA compliance, keyboard navigation, screen reader support
 - **Performance**: Optimized loading states and smooth animations
@@ -50,6 +54,7 @@ FlagFit Pro is a comprehensive training platform that combines modern web techno
 - **Build**: Angular CLI with ESBuild
 
 **Backend & Infrastructure**:
+
 - **Backend**: Node.js + Express
 - **Database**: Supabase PostgreSQL
 - **Authentication**: JWT with Angular Guards & Interceptors
@@ -57,6 +62,7 @@ FlagFit Pro is a comprehensive training platform that combines modern web techno
 - **Real-Time**: Supabase Realtime subscriptions
 
 **Legacy Files**:
+
 - The root directory contains legacy vanilla HTML/CSS/JS files from the original implementation
 - These are maintained for reference but **Angular 21 + PrimeNG 21 is the primary development stack**
 
@@ -110,6 +116,7 @@ The Angular application will be available at `http://localhost:4200`
 ## ✨ Key Features
 
 ### 🏆 Performance Analytics
+
 - AI-Powered Predictions with advanced ML models
 - Evidence-Based Research integration
 - Flag Football Specific metrics and analytics
@@ -117,18 +124,21 @@ The Angular application will be available at `http://localhost:4200`
 - Interactive Visualizations with PrimeNG Charts
 
 ### 🥗 Nutrition Intelligence
+
 - USDA Database Integration
 - Precision Hydration tracking
 - Evidence-Based Supplements recommendations
 - Personalized Strategies with biomarker integration
 
 ### 🤝 Team Chemistry
+
 - Relationship Analytics
 - Communication Metrics
 - Network Visualization
 - Performance Impact correlation
 
 ### 📊 Advanced Analytics Dashboard
+
 - Real-Time Streaming data
 - Predictive Insights with confidence intervals
 - Flag Football Optimization
@@ -138,30 +148,35 @@ The Angular application will be available at `http://localhost:4200`
 ### 🎯 Core Functionality
 
 #### 🏈 Dashboard
+
 - **Performance Overview**: Training metrics and progress charts
 - **Today's Training**: Recommended exercises and schedules
 - **Team Updates**: Ljubljana Frogs team communications
 - **Interactive Cards**: Hover effects and responsive layout
 
 #### 🏃‍♂️ Training
+
 - **Personalized Workouts**: AI-recommended training sessions
 - **Skill Categories**: Speed & Agility, Route Running, Defensive Drills
 - **Progress Tracking**: Duration and difficulty monitoring
 - **Customization**: Personalized training adjustments
 
 #### 🤝 Community
+
 - **Discussion Forums**: Player interaction and knowledge sharing
 - **Team Leaderboard**: Performance rankings and achievements
 - **Social Features**: Player connections and team chemistry
 - **Real-time Updates**: Live discussions and notifications
 
 #### 🏆 Tournaments
+
 - **LA28 Olympic Path**: Qualification tracking and requirements
 - **Upcoming Events**: Tournament schedules and registration
 - **Results History**: Competition performance tracking
 - **Achievement System**: Awards and milestone recognition
 
 #### 💬 AI Coach Chat
+
 - **Contextual Responses**: Intelligent coaching suggestions
 - **Quick Actions**: Training tips, nutrition, recovery advice
 - **Interactive Interface**: Typing indicators and smooth animations
@@ -177,17 +192,20 @@ The application uses a comprehensive design system built on:
 - **Accessibility**: WCAG 2.1 AA compliant
 
 ### Typography
+
 - **Primary Font**: Poppins (300, 400, 500, 600, 700, 800)
 - **Hierarchy**: h1 (2.5rem), h2 (1.875rem), h3 (1.5rem)
 - **Color Scheme**: Black (#1a1a1a) on White (#ffffff)
 
 ### Components
+
 - **Buttons**: Primary (black) and Secondary (white) with hover effects
 - **Cards**: Wireframe-style with borders and responsive layout
 - **Navigation**: Sticky header with active state indicators
 - **Chat**: Floating widget with smooth animations
 
 ### Responsive Design
+
 - **Desktop**: Full wireframe layout with grid systems
 - **Tablet**: Adapted layouts with touch optimization
 - **Mobile**: Stacked layouts with mobile-first approach
@@ -205,6 +223,7 @@ All API connections are integrated through Angular services:
 ### API Configuration
 
 The API service auto-detects the environment:
+
 - **Development**: Uses mock API or localhost:3001
 - **Netlify**: Uses Netlify Functions
 - **Production**: Auto-detects based on hostname
@@ -248,12 +267,14 @@ ng generate service core/services/my-service
 ## 🚀 Deployment
 
 ### Production Ready
+
 - **Vite Build**: Optimized production builds
 - **Service Worker**: PWA capabilities and offline support
 - **Performance**: Lazy loading and code splitting
 - **Security**: Comprehensive security headers
 
 ### Environment Configuration
+
 ```bash
 # Set up environment variables
 cp .env.example .env
@@ -263,6 +284,7 @@ cp .env.example .env
 ## 🔒 Security & Privacy
 
 ### Security Features
+
 - **Content Security Policy**: XSS and injection protection
 - **Authentication**: JWT token management with Angular Guards
 - **Data Protection**: Secure local storage handling
@@ -271,6 +293,7 @@ cp .env.example .env
 - **Session Management**: Secure session handling
 
 ### Privacy Compliance
+
 - **Data Minimization**: Only necessary data collection
 - **User Control**: Clear data management options
 - **Transparent Processing**: Open source and auditable
@@ -279,12 +302,14 @@ cp .env.example .env
 ## 📱 Accessibility
 
 ### WCAG Compliance
+
 - **Keyboard Navigation**: Full keyboard accessibility
 - **Screen Readers**: ARIA labels and live regions
 - **Focus Management**: Logical tab order and focus indicators
 - **High Contrast**: Accessible color combinations
 
 ### Interactive Features
+
 - **Skip Links**: Quick navigation for assistive technology
 - **Live Regions**: Dynamic content announcements
 - **Button States**: Clear active and disabled states
@@ -293,6 +318,7 @@ cp .env.example .env
 ## 🔐 Authentication
 
 The authentication system includes:
+
 - JWT token management
 - CSRF protection
 - Session management

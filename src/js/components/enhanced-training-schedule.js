@@ -1,6 +1,6 @@
 /**
  * Enhanced Training Schedule Component
- * 
+ *
  * Features:
  * - Real-time schedule updates via Supabase subscriptions
  * - Conflict detection and resolution
@@ -11,10 +11,10 @@
  * - Export/import functionality
  */
 
-import { realtimeManager } from '../services/supabase-client.js';
-import { aiTrainingScheduler } from '../services/aiTrainingScheduler.js';
-import { setSafeContent } from '../utils/shared.js';
-import { logger } from '../../logger.js';
+import { realtimeManager } from "../services/supabase-client.js";
+import { aiTrainingScheduler } from "../services/aiTrainingScheduler.js";
+import { setSafeContent } from "../utils/shared.js";
+import { logger } from "../../logger.js";
 
 class EnhancedTrainingSchedule {
   constructor() {
@@ -22,7 +22,7 @@ class EnhancedTrainingSchedule {
     this.conflicts = [];
     this.realtimeSubscription = null;
     this.currentWeek = new Date();
-    this.viewMode = 'week'; // 'week' | 'month' | 'timeline'
+    this.viewMode = "week"; // 'week' | 'month' | 'timeline'
     this.selectedDate = null;
     this.isLoading = false;
     this.aiRecommendations = [];
@@ -35,7 +35,7 @@ class EnhancedTrainingSchedule {
   async init(containerId, options = {}) {
     this.container = document.getElementById(containerId);
     if (!this.container) {
-      logger.warn('[TrainingSchedule] Container not found:', containerId);
+      logger.warn("[TrainingSchedule] Container not found:", containerId);
       return;
     }
 
@@ -43,7 +43,7 @@ class EnhancedTrainingSchedule {
       enableRealtime: options.enableRealtime !== false,
       enableAI: options.enableAI !== false,
       enableDragDrop: options.enableDragDrop !== false,
-      ...options
+      ...options,
     };
 
     // Load initial schedule
@@ -65,7 +65,7 @@ class EnhancedTrainingSchedule {
     // Setup event listeners
     this.setupEventListeners();
 
-    logger.info('[TrainingSchedule] Enhanced training schedule initialized');
+    logger.info("[TrainingSchedule] Enhanced training schedule initialized");
   }
 
   /**
@@ -77,10 +77,10 @@ class EnhancedTrainingSchedule {
       // Try API first
       if (window.apiClient && window.API_ENDPOINTS) {
         const response = await window.apiClient.get(
-          window.API_ENDPOINTS.training?.schedule || '/api/training/schedule',
+          window.API_ENDPOINTS.training?.schedule || "/api/training/schedule",
           {
-            week: this.getWeekStart(this.currentWeek).toISOString()
-          }
+            week: this.getWeekStart(this.currentWeek).toISOString(),
+          },
         );
 
         if (response && response.success && response.data) {
@@ -92,14 +92,16 @@ class EnhancedTrainingSchedule {
       }
 
       // Fallback to localStorage
-      const stored = window.storageService?.get('trainingSchedule', [], { usePrefix: false });
+      const stored = window.storageService?.get("trainingSchedule", [], {
+        usePrefix: false,
+      });
       if (stored && Array.isArray(stored)) {
         this.schedule = stored;
         this.detectConflicts();
         this.notifyListeners();
       }
     } catch (error) {
-      logger.warn('[TrainingSchedule] Failed to load schedule:', error);
+      logger.warn("[TrainingSchedule] Failed to load schedule:", error);
     } finally {
       this.isLoading = false;
     }
@@ -111,32 +113,40 @@ class EnhancedTrainingSchedule {
   async setupRealtimeSubscription() {
     try {
       // Wait for authManager to initialize if available
-      if (window.authManager && typeof window.authManager.waitForInit === 'function') {
+      if (
+        window.authManager &&
+        typeof window.authManager.waitForInit === "function"
+      ) {
         await window.authManager.waitForInit();
       }
 
       const userId = this.getCurrentUserId();
       if (!userId) {
-        logger.debug('[TrainingSchedule] No user ID for real-time subscription - user may not be authenticated');
+        logger.debug(
+          "[TrainingSchedule] No user ID for real-time subscription - user may not be authenticated",
+        );
         return;
       }
 
       // Subscribe to training sessions
       const subscription = realtimeManager.subscribe(
-        'training_sessions',
+        "training_sessions",
         {
-          event: '*', // INSERT, UPDATE, DELETE
-          filter: `user_id=eq.${userId}`
+          event: "*", // INSERT, UPDATE, DELETE
+          filter: `user_id=eq.${userId}`,
         },
         (payload) => {
           this.handleRealtimeUpdate(payload);
-        }
+        },
       );
 
       this.realtimeSubscription = subscription;
-      logger.info('[TrainingSchedule] Real-time subscription active');
+      logger.info("[TrainingSchedule] Real-time subscription active");
     } catch (error) {
-      logger.error('[TrainingSchedule] Failed to setup real-time subscription:', error);
+      logger.error(
+        "[TrainingSchedule] Failed to setup real-time subscription:",
+        error,
+      );
     }
   }
 
@@ -144,21 +154,23 @@ class EnhancedTrainingSchedule {
    * Handle real-time updates
    */
   handleRealtimeUpdate(payload) {
-    const eventType = payload.eventType || 'INSERT';
+    const eventType = payload.eventType || "INSERT";
     const session = payload.new || payload.old;
 
-    if (!session) {return;}
+    if (!session) {
+      return;
+    }
 
-    logger.debug('[TrainingSchedule] Real-time update:', eventType, session);
+    logger.debug("[TrainingSchedule] Real-time update:", eventType, session);
 
     switch (eventType) {
-      case 'INSERT':
+      case "INSERT":
         this.addSession(session);
         break;
-      case 'UPDATE':
+      case "UPDATE":
         this.updateSession(session);
         break;
-      case 'DELETE':
+      case "DELETE":
         this.removeSession(session.id);
         break;
     }
@@ -174,19 +186,22 @@ class EnhancedTrainingSchedule {
   async loadAIRecommendations() {
     try {
       if (!aiTrainingScheduler) {
-        logger.warn('[TrainingSchedule] AI scheduler not available');
+        logger.warn("[TrainingSchedule] AI scheduler not available");
         return;
       }
 
       const recommendations = await aiTrainingScheduler.getRecommendations({
         currentSchedule: this.schedule,
-        week: this.currentWeek
+        week: this.currentWeek,
       });
 
       this.aiRecommendations = recommendations || [];
       this.notifyListeners();
     } catch (error) {
-      logger.warn('[TrainingSchedule] Failed to load AI recommendations:', error);
+      logger.warn(
+        "[TrainingSchedule] Failed to load AI recommendations:",
+        error,
+      );
     }
   }
 
@@ -198,7 +213,7 @@ class EnhancedTrainingSchedule {
     const sessionsByDate = {};
 
     // Group sessions by date
-    this.schedule.forEach(session => {
+    this.schedule.forEach((session) => {
       const dateKey = new Date(session.date).toDateString();
       if (!sessionsByDate[dateKey]) {
         sessionsByDate[dateKey] = [];
@@ -218,7 +233,7 @@ class EnhancedTrainingSchedule {
                 date: dateKey,
                 sessions: [sessions[i], sessions[j]],
                 type: conflict.type,
-                severity: conflict.severity
+                severity: conflict.severity,
               });
             }
           }
@@ -236,7 +251,9 @@ class EnhancedTrainingSchedule {
     const duration1 = session1.duration || 60;
     const duration2 = session2.duration || 60;
 
-    if (!time1 || !time2) {return null;}
+    if (!time1 || !time2) {
+      return null;
+    }
 
     const end1 = time1 + duration1;
     const end2 = time2 + duration2;
@@ -244,17 +261,18 @@ class EnhancedTrainingSchedule {
     // Check for overlap
     if ((time1 < end2 && end1 > time2) || (time2 < end1 && end2 > time1)) {
       return {
-        type: 'time_overlap',
-        severity: 'high'
+        type: "time_overlap",
+        severity: "high",
       };
     }
 
     // Check for too close together (less than 4 hours apart)
     const gap = Math.abs(time1 - time2);
-    if (gap < 240) { // 4 hours in minutes
+    if (gap < 240) {
+      // 4 hours in minutes
       return {
-        type: 'insufficient_recovery',
-        severity: 'medium'
+        type: "insufficient_recovery",
+        severity: "medium",
       };
     }
 
@@ -265,9 +283,13 @@ class EnhancedTrainingSchedule {
    * Parse time string to minutes
    */
   parseTime(timeStr) {
-    if (!timeStr) {return null;}
+    if (!timeStr) {
+      return null;
+    }
     const match = timeStr.match(/(\d+):(\d+)/);
-    if (!match) {return null;}
+    if (!match) {
+      return null;
+    }
     return parseInt(match[1]) * 60 + parseInt(match[2]);
   }
 
@@ -278,7 +300,7 @@ class EnhancedTrainingSchedule {
     this.schedule.push({
       ...session,
       id: session.id || `temp-${Date.now()}`,
-      date: session.date || new Date().toISOString().split('T')[0]
+      date: session.date || new Date().toISOString().split("T")[0],
     });
 
     this.detectConflicts();
@@ -291,7 +313,7 @@ class EnhancedTrainingSchedule {
    * Update a session
    */
   async updateSession(updatedSession) {
-    const index = this.schedule.findIndex(s => s.id === updatedSession.id);
+    const index = this.schedule.findIndex((s) => s.id === updatedSession.id);
     if (index !== -1) {
       this.schedule[index] = { ...this.schedule[index], ...updatedSession };
       this.detectConflicts();
@@ -305,7 +327,7 @@ class EnhancedTrainingSchedule {
    * Remove a session
    */
   async removeSession(sessionId) {
-    this.schedule = this.schedule.filter(s => s.id !== sessionId);
+    this.schedule = this.schedule.filter((s) => s.id !== sessionId);
     this.detectConflicts();
     await this.saveSchedule();
     this.render();
@@ -320,21 +342,23 @@ class EnhancedTrainingSchedule {
       // Try API first
       if (window.apiClient && window.API_ENDPOINTS) {
         await window.apiClient.post(
-          window.API_ENDPOINTS.training?.schedule || '/api/training/schedule',
+          window.API_ENDPOINTS.training?.schedule || "/api/training/schedule",
           {
             schedule: this.schedule,
-            week: this.getWeekStart(this.currentWeek).toISOString()
-          }
+            week: this.getWeekStart(this.currentWeek).toISOString(),
+          },
         );
         return;
       }
 
       // Fallback to localStorage
       if (window.storageService) {
-        window.storageService.set('trainingSchedule', this.schedule, { usePrefix: false });
+        window.storageService.set("trainingSchedule", this.schedule, {
+          usePrefix: false,
+        });
       }
     } catch (error) {
-      logger.warn('[TrainingSchedule] Failed to save schedule:', error);
+      logger.warn("[TrainingSchedule] Failed to save schedule:", error);
     }
   }
 
@@ -359,12 +383,14 @@ class EnhancedTrainingSchedule {
       }
       // Fallback: try to get from storage
       if (window.storageService) {
-        const userData = window.storageService.get('user', null, { usePrefix: false });
+        const userData = window.storageService.get("user", null, {
+          usePrefix: false,
+        });
         return userData?.id || userData?.user_id || null;
       }
       return null;
     } catch (error) {
-      logger.warn('[TrainingSchedule] Failed to get user ID:', error);
+      logger.warn("[TrainingSchedule] Failed to get user ID:", error);
       return null;
     }
   }
@@ -373,7 +399,9 @@ class EnhancedTrainingSchedule {
    * Render the schedule
    */
   render() {
-    if (!this.container) {return;}
+    if (!this.container) {
+      return;
+    }
 
     if (this.isLoading) {
       // Use setSafeContent to sanitize HTML before insertion
@@ -383,17 +411,17 @@ class EnhancedTrainingSchedule {
     }
 
     switch (this.viewMode) {
-      case 'week':
+      case "week":
         // Use setSafeContent to sanitize HTML before insertion
         const weekHtml = this.renderWeekView();
         setSafeContent(this.container, weekHtml, true, true);
         break;
-      case 'month':
+      case "month":
         // Use setSafeContent to sanitize HTML before insertion
         const monthHtml = this.renderMonthView();
         setSafeContent(this.container, monthHtml, true, true);
         break;
-      case 'timeline':
+      case "timeline":
         // Use setSafeContent to sanitize HTML before insertion
         const timelineHtml = this.renderTimelineView();
         setSafeContent(this.container, timelineHtml, true, true);
@@ -410,14 +438,22 @@ class EnhancedTrainingSchedule {
   renderWeekView() {
     const weekStart = this.getWeekStart(this.currentWeek);
     const days = [];
-    
+
     for (let i = 0; i < 7; i++) {
       const date = new Date(weekStart);
       date.setDate(weekStart.getDate() + i);
       days.push(date);
     }
 
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayNames = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
 
     return `
       <div class="enhanced-schedule enhanced-schedule-week">
@@ -427,7 +463,7 @@ class EnhancedTrainingSchedule {
               <i data-lucide="chevron-left"></i>
             </button>
             <h2 class="schedule-title">
-              ${weekStart.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+              ${weekStart.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
             </h2>
             <button class="btn-nav" onclick="window.enhancedTrainingSchedule?.nextWeek()">
               <i data-lucide="chevron-right"></i>
@@ -436,45 +472,57 @@ class EnhancedTrainingSchedule {
           <div class="schedule-actions">
             <button class="btn-action" onclick="window.enhancedTrainingSchedule?.toggleViewMode()">
               <i data-lucide="calendar"></i>
-              ${this.viewMode === 'week' ? 'Month View' : 'Week View'}
+              ${this.viewMode === "week" ? "Month View" : "Week View"}
             </button>
-            ${this.options.enableAI ? `
+            ${
+              this.options.enableAI
+                ? `
               <button class="btn-action" onclick="window.enhancedTrainingSchedule?.showAIRecommendations()">
                 <i data-lucide="sparkles"></i>
                 AI Recommendations
               </button>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
         </div>
 
-        ${this.conflicts.length > 0 ? this.renderConflicts() : ''}
-        ${this.aiRecommendations.length > 0 ? this.renderAIRecommendations() : ''}
+        ${this.conflicts.length > 0 ? this.renderConflicts() : ""}
+        ${this.aiRecommendations.length > 0 ? this.renderAIRecommendations() : ""}
 
         <div class="schedule-grid">
-          ${days.map((day, index) => {
-            const daySessions = this.schedule.filter(s => {
-              const sessionDate = new Date(s.date);
-              return sessionDate.toDateString() === day.toDateString();
-            });
-            const isToday = day.toDateString() === new Date().toDateString();
-            
-            return `
-              <div class="schedule-day ${isToday ? 'today' : ''}" data-date="${day.toISOString()}">
+          ${days
+            .map((day, index) => {
+              const daySessions = this.schedule.filter((s) => {
+                const sessionDate = new Date(s.date);
+                return sessionDate.toDateString() === day.toDateString();
+              });
+              const isToday = day.toDateString() === new Date().toDateString();
+
+              return `
+              <div class="schedule-day ${isToday ? "today" : ""}" data-date="${day.toISOString()}">
                 <div class="day-header">
                   <div class="day-name">${dayNames[index]}</div>
                   <div class="day-date">${day.getDate()}</div>
                 </div>
                 <div class="day-sessions">
-                  ${daySessions.length === 0 ? `
+                  ${
+                    daySessions.length === 0
+                      ? `
                     <div class="empty-session">
                       <i data-lucide="plus"></i>
                       <span>Add session</span>
                     </div>
-                  ` : daySessions.map(session => this.renderSession(session)).join('')}
+                  `
+                      : daySessions
+                          .map((session) => this.renderSession(session))
+                          .join("")
+                  }
                 </div>
               </div>
             `;
-          }).join('')}
+            })
+            .join("")}
         </div>
       </div>
     `;
@@ -498,8 +546,8 @@ class EnhancedTrainingSchedule {
    * Render a session
    */
   renderSession(session) {
-    const time = session.time || session.startTime || '9:00 AM';
-    const type = session.type || session.sessionType || 'training';
+    const time = session.time || session.startTime || "9:00 AM";
+    const type = session.type || session.sessionType || "training";
     const typeConfig = this.getTypeConfig(type);
 
     return `
@@ -510,9 +558,9 @@ class EnhancedTrainingSchedule {
             <i data-lucide="${typeConfig.icon}" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> ${typeConfig.label}
           </div>
         </div>
-        <div class="session-title">${session.title || session.name || 'Training Session'}</div>
-        ${session.duration ? `<div class="session-duration">${session.duration} min</div>` : ''}
-        ${session.location ? `<div class="session-location"><i data-lucide="map-pin"></i> ${session.location}</div>` : ''}
+        <div class="session-title">${session.title || session.name || "Training Session"}</div>
+        ${session.duration ? `<div class="session-duration">${session.duration} min</div>` : ""}
+        ${session.location ? `<div class="session-location"><i data-lucide="map-pin"></i> ${session.location}</div>` : ""}
         <div class="session-actions">
           <button class="btn-session-action" onclick="window.enhancedTrainingSchedule?.editSession('${session.id}')">
             <i data-lucide="edit"></i>
@@ -533,19 +581,23 @@ class EnhancedTrainingSchedule {
       <div class="schedule-conflicts">
         <div class="conflicts-header">
           <i data-lucide="alert-triangle"></i>
-          <span>${this.conflicts.length} conflict${this.conflicts.length !== 1 ? 's' : ''} detected</span>
+          <span>${this.conflicts.length} conflict${this.conflicts.length !== 1 ? "s" : ""} detected</span>
         </div>
-        ${this.conflicts.map(conflict => `
+        ${this.conflicts
+          .map(
+            (conflict) => `
           <div class="conflict-item severity-${conflict.severity}">
             <div class="conflict-date">${conflict.date}</div>
             <div class="conflict-sessions">
-              ${conflict.sessions.map(s => s.title || s.name).join(' vs ')}
+              ${conflict.sessions.map((s) => s.title || s.name).join(" vs ")}
             </div>
-            <button class="btn-resolve" onclick="window.enhancedTrainingSchedule?.resolveConflict(${JSON.stringify(conflict).replace(/"/g, '&quot;')})">
+            <button class="btn-resolve" onclick="window.enhancedTrainingSchedule?.resolveConflict(${JSON.stringify(conflict).replace(/"/g, "&quot;")})">
               Resolve
             </button>
           </div>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     `;
   }
@@ -560,17 +612,25 @@ class EnhancedTrainingSchedule {
           <i data-lucide="sparkles"></i>
           <span>AI Recommendations</span>
         </div>
-        ${this.aiRecommendations.map(rec => `
+        ${this.aiRecommendations
+          .map(
+            (rec) => `
           <div class="ai-recommendation">
             <div class="recommendation-title">${rec.title}</div>
             <div class="recommendation-description">${rec.description}</div>
-            ${rec.action ? `
-              <button class="btn-apply" onclick="window.enhancedTrainingSchedule?.applyRecommendation(${JSON.stringify(rec).replace(/"/g, '&quot;')})">
+            ${
+              rec.action
+                ? `
+              <button class="btn-apply" onclick="window.enhancedTrainingSchedule?.applyRecommendation(${JSON.stringify(rec).replace(/"/g, "&quot;")})">
                 Apply
               </button>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     `;
   }
@@ -592,11 +652,36 @@ class EnhancedTrainingSchedule {
    */
   getTypeConfig(type) {
     const configs = {
-      training: { icon: 'running', label: 'Training', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.1)' },
-      game: { icon: 'football', label: 'Game', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.1)' },
-      recovery: { icon: 'heart', label: 'Recovery', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.1)' },
-      practice: { icon: 'target', label: 'Practice', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.1)' },
-      tournament: { icon: 'trophy', label: 'Tournament', color: '#8b5cf6', bgColor: 'rgba(139, 92, 246, 0.1)' }
+      training: {
+        icon: "running",
+        label: "Training",
+        color: "#3b82f6",
+        bgColor: "rgba(59, 130, 246, 0.1)",
+      },
+      game: {
+        icon: "football",
+        label: "Game",
+        color: "#ef4444",
+        bgColor: "rgba(239, 68, 68, 0.1)",
+      },
+      recovery: {
+        icon: "heart",
+        label: "Recovery",
+        color: "#10b981",
+        bgColor: "rgba(16, 185, 129, 0.1)",
+      },
+      practice: {
+        icon: "target",
+        label: "Practice",
+        color: "#f59e0b",
+        bgColor: "rgba(245, 158, 11, 0.1)",
+      },
+      tournament: {
+        icon: "trophy",
+        label: "Tournament",
+        color: "#8b5cf6",
+        bgColor: "rgba(139, 92, 246, 0.1)",
+      },
     };
     return configs[type] || configs.training;
   }
@@ -614,7 +699,7 @@ class EnhancedTrainingSchedule {
    */
   initializeInteractivity() {
     // Initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
+    if (typeof lucide !== "undefined") {
       lucide.createIcons(this.container);
     }
 
@@ -629,7 +714,7 @@ class EnhancedTrainingSchedule {
    */
   setupDragAndDrop() {
     // TODO: Implement drag and drop
-    logger.debug('[TrainingSchedule] Drag and drop setup');
+    logger.debug("[TrainingSchedule] Drag and drop setup");
   }
 
   /**
@@ -650,7 +735,7 @@ class EnhancedTrainingSchedule {
   }
 
   toggleViewMode() {
-    this.viewMode = this.viewMode === 'week' ? 'month' : 'week';
+    this.viewMode = this.viewMode === "week" ? "month" : "week";
     this.render();
   }
 
@@ -666,15 +751,15 @@ class EnhancedTrainingSchedule {
    * Notify listeners
    */
   notifyListeners() {
-    this.listeners.forEach(callback => {
+    this.listeners.forEach((callback) => {
       try {
         callback({
           schedule: [...this.schedule],
           conflicts: [...this.conflicts],
-          aiRecommendations: [...this.aiRecommendations]
+          aiRecommendations: [...this.aiRecommendations],
         });
       } catch (error) {
-        logger.error('[TrainingSchedule] Listener error:', error);
+        logger.error("[TrainingSchedule] Listener error:", error);
       }
     });
   }
@@ -694,4 +779,3 @@ class EnhancedTrainingSchedule {
 const enhancedTrainingSchedule = new EnhancedTrainingSchedule();
 
 export default enhancedTrainingSchedule;
-

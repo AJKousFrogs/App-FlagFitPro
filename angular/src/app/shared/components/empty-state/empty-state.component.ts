@@ -5,7 +5,7 @@ import { ButtonModule } from "primeng/button";
 
 /**
  * Empty State Component
- * 
+ *
  * Displays a consistent empty state when no data is available
  * Follows PLAYER_DATA_DISPLAY_LOGIC.md guidelines for empty states
  */

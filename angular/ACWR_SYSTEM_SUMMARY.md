@@ -1,4 +1,5 @@
 # 🏈 ACWR System Implementation Summary
+
 ## Acute:Chronic Workload Ratio for Injury Prevention
 
 ---
@@ -14,6 +15,7 @@ A comprehensive ACWR (Acute:Chronic Workload Ratio) system has been implemented 
 ### 1. Core Services (4 Services)
 
 #### **AcwrService** (`acwr.service.ts`)
+
 - ✅ EWMA-based load calculation
 - ✅ 7-day acute load (fatigue)
 - ✅ 28-day chronic load (fitness)
@@ -25,16 +27,18 @@ A comprehensive ACWR (Acute:Chronic Workload Ratio) system has been implemented 
 - ✅ Next session prediction
 
 **Key Features:**
+
 ```typescript
 // Reactive Signals (Angular 19)
-acuteLoad()        // Signal<number>
-chronicLoad()      // Signal<number>
-acwrRatio()        // Signal<number>
-riskZone()         // Signal<RiskZone>
-weeklyProgression()// Signal<...>
+acuteLoad(); // Signal<number>
+chronicLoad(); // Signal<number>
+acwrRatio(); // Signal<number>
+riskZone(); // Signal<RiskZone>
+weeklyProgression(); // Signal<...>
 ```
 
 #### **LoadMonitoringService** (`load-monitoring.service.ts`)
+
 - ✅ Internal load calculation (sRPE × duration)
 - ✅ External load integration (GPS, distance, sprints)
 - ✅ Multi-metric tracking
@@ -45,6 +49,7 @@ weeklyProgression()// Signal<...>
 - ✅ Readiness score calculation
 
 **Key Features:**
+
 ```typescript
 createQuickSession(playerId, type, rpe, duration)
 calculateCombinedLoad(internal, external?, wellness?)
@@ -53,6 +58,7 @@ aggregateDailySessions(sessions[])
 ```
 
 #### **AcwrAlertsService** (`acwr-alerts.service.ts`)
+
 - ✅ Automatic risk detection
 - ✅ Real-time alerts (critical/warning/info)
 - ✅ Browser notifications
@@ -63,15 +69,17 @@ aggregateDailySessions(sessions[])
 - ✅ Can-train-today checks
 
 **Key Features:**
+
 ```typescript
-getActiveAlerts()
-getAlertsBySeverity('critical')
-canTrainToday()
-getWeeklySummary()
-generateAdjustment(playerId, plannedSession)
+getActiveAlerts();
+getAlertsBySeverity("critical");
+canTrainToday();
+getWeeklySummary();
+generateAdjustment(playerId, plannedSession);
 ```
 
 #### **Data Models** (`acwr.models.ts`)
+
 - ✅ 15+ TypeScript interfaces
 - ✅ Complete type safety
 - ✅ External/Internal load types
@@ -85,6 +93,7 @@ generateAdjustment(playerId, plannedSession)
 ### 2. Dashboard Component
 
 #### **AcwrDashboardComponent** (`acwr-dashboard.component.ts`)
+
 - ✅ Real-time ACWR display
 - ✅ Color-coded risk zones
 - ✅ Load breakdown visualization
@@ -97,6 +106,7 @@ generateAdjustment(playerId, plannedSession)
 - ✅ Standalone component (Angular 19)
 
 **Visual Features:**
+
 - 🎨 Dynamic color coding (red/yellow/green/orange)
 - 📊 Circular ACWR ratio display
 - 📈 Load metrics (acute/chronic)
@@ -108,6 +118,7 @@ generateAdjustment(playerId, plannedSession)
 ### 3. Documentation
 
 #### **Implementation Guide** (`ACWR_IMPLEMENTATION_GUIDE.md`)
+
 - ✅ Complete API reference
 - ✅ Usage examples (5+ scenarios)
 - ✅ Integration steps
@@ -122,6 +133,7 @@ generateAdjustment(playerId, plannedSession)
 ## 🎯 Key Features Delivered
 
 ### Automated ACWR Calculation ✅
+
 - **EWMA Model** with configurable lambda values
 - **7-day acute** load (λ = 0.20)
 - **28-day chronic** load (λ = 0.05)
@@ -131,6 +143,7 @@ generateAdjustment(playerId, plannedSession)
 ### Multi-Metric Tracking ✅
 
 **External Load:**
+
 - Total distance (meters)
 - Sprint count & distance
 - Player load (Catapult/PlayerData)
@@ -139,6 +152,7 @@ generateAdjustment(playerId, plannedSession)
 - Max speed
 
 **Internal Load:**
+
 - Session RPE (1-10 scale)
 - Duration (minutes)
 - Workload (sRPE × duration = AU)
@@ -146,6 +160,7 @@ generateAdjustment(playerId, plannedSession)
 - HR zone distribution
 
 **Wellness Integration:**
+
 - Sleep quality & duration
 - Muscle soreness
 - Stress levels
@@ -155,6 +170,7 @@ generateAdjustment(playerId, plannedSession)
 ### Risk Zones & Alerts ✅
 
 **5 Risk Zones:**
+
 1. **No Data** (Gray) - Insufficient data
 2. **Under-Training** (🟠 Orange) - ACWR < 0.80
 3. **Sweet Spot** (🟢 Green) - 0.80-1.30 (optimal!)
@@ -162,6 +178,7 @@ generateAdjustment(playerId, plannedSession)
 5. **Danger Zone** (🔴 Red) - >1.50 (critical!)
 
 **Alert Types:**
+
 - `high-acwr` - ACWR > 1.30
 - `danger-zone` - ACWR > 1.50
 - `spike-detected` - Weekly increase > 10%
@@ -169,6 +186,7 @@ generateAdjustment(playerId, plannedSession)
 - `consecutive-high-load` - Multiple high days
 
 **Notification Channels:**
+
 - ✅ Browser notifications
 - ✅ In-app alerts
 - ✅ Coach notifications (ready for email/SMS)
@@ -177,6 +195,7 @@ generateAdjustment(playerId, plannedSession)
 ### Smart Training Adjustments ✅
 
 **Automatic Modifications:**
+
 - Reduces load when ACWR > 1.30
 - Skips sprints before Saturday games
 - Adjusts intensity based on risk
@@ -186,21 +205,24 @@ generateAdjustment(playerId, plannedSession)
   - "Add recovery day"
 
 **Pre-Session Checks:**
+
 ```typescript
-shouldSkipSprints(dayOfWeek, gameDay)
-predictNextSessionLoad(intensity)
-canTrainToday() // Returns can/cannot + reason
+shouldSkipSprints(dayOfWeek, gameDay);
+predictNextSessionLoad(intensity);
+canTrainToday(); // Returns can/cannot + reason
 ```
 
 ### Weekly Load Progression ✅
 
 **10% Rule Implementation:**
+
 - Monitors week-over-week changes
 - Alerts when increase > 10%
 - Tracks progression percentage
 - Provides safe/unsafe indication
 
 **Research-Based:**
+
 - 40% of injuries correlate with >10% weekly spikes
 - Automatic warnings prevent overreach
 - Coach override capability
@@ -237,12 +259,13 @@ TOTAL: ~2,640 lines of production-ready code
 ### Quick Start (3 Steps)
 
 **1. Log a Session:**
+
 ```typescript
 const session = loadService.createQuickSession(
-  'player123',
-  'technical',
-  7,    // RPE (1-10)
-  90    // Duration (minutes)
+  "player123",
+  "technical",
+  7, // RPE (1-10)
+  90, // Duration (minutes)
 );
 
 acwrService.addSession(session);
@@ -250,6 +273,7 @@ acwrService.addSession(session);
 ```
 
 **2. Check ACWR:**
+
 ```typescript
 const ratio = acwrService.acwrRatio();
 const risk = acwrService.riskZone();
@@ -259,6 +283,7 @@ console.log(`ACWR: ${ratio} - ${risk.label}`);
 ```
 
 **3. Get Recommendations:**
+
 ```typescript
 const mods = acwrService.getTrainingModification();
 
@@ -288,17 +313,17 @@ Then navigate to `/performance/acwr` to see the full dashboard!
 
 ```typescript
 const external: ExternalLoad = {
-  totalDistance: 8500,      // meters
+  totalDistance: 8500, // meters
   sprintCount: 12,
   sprintDistance: 450,
-  playerLoad: 350
+  playerLoad: 350,
 };
 
 const session = loadService.createSession(
   playerId,
-  'technical',
+  "technical",
   internal,
-  external  // ← GPS/wearable data
+  external, // ← GPS/wearable data
 );
 ```
 
@@ -339,11 +364,13 @@ const teamSummary: TeamACWRSummary = {
 ```typescript
 // Log injury with ACWR at time
 const playerProfile: PlayerACWRProfile = {
-  injuries: [{
-    date: new Date('2024-12-01'),
-    type: 'Hamstring strain',
-    acwrAtInjury: 1.68  // Was in danger zone!
-  }]
+  injuries: [
+    {
+      date: new Date("2024-12-01"),
+      type: "Hamstring strain",
+      acwrAtInjury: 1.68, // Was in danger zone!
+    },
+  ],
 };
 ```
 
@@ -355,14 +382,15 @@ const playerProfile: PlayerACWRProfile = {
 
 **Why EWMA is Better:**
 
-| Feature | Rolling Average | EWMA |
-|---------|----------------|------|
+| Feature                       | Rolling Average | EWMA                           |
+| ----------------------------- | --------------- | ------------------------------ |
 | Sensitivity to recent changes | ❌ Equal weight | ✅ More recent = higher weight |
-| Fitness decay modeling | ❌ No decay | ✅ Exponential decay |
-| 5x weekly training | ❌ Can lag | ✅ Responds quickly |
-| Research validation | ✅ Valid | ✅✅ Preferred |
+| Fitness decay modeling        | ❌ No decay     | ✅ Exponential decay           |
+| 5x weekly training            | ❌ Can lag      | ✅ Responds quickly            |
+| Research validation           | ✅ Valid        | ✅✅ Preferred                 |
 
 **Formula:**
+
 ```
 Rolling Avg: Sum(last 7 days) / 7
 EWMA: λ × today + (1-λ) × yesterday_EWMA
@@ -371,12 +399,14 @@ EWMA: λ × today + (1-λ) × yesterday_EWMA
 ### Research Validation
 
 **Key Studies:**
+
 1. **Gabbett (2016)** - ACWR optimal range 0.8-1.3
 2. **Hulin et al. (2016)** - EWMA > Rolling Average
 3. **Malone et al. (2017)** - Weekly spike rule (10%)
 4. **Murray et al. (2017)** - Team sport validation
 
 **Injury Risk Data:**
+
 - ACWR < 0.80: 2x injury risk (under-prepared)
 - ACWR 0.80-1.30: **Baseline risk** (optimal!)
 - ACWR 1.30-1.50: 2-3x injury risk
@@ -402,24 +432,28 @@ EWMA: λ × today + (1-λ) × yesterday_EWMA
 ## 🎯 Next Steps
 
 ### Phase 1: Testing (This Week)
+
 1. ✅ Load sample data (28 days)
 2. ✅ Test all risk zones
 3. ✅ Verify alert system
 4. ✅ Check calculations manually
 
 ### Phase 2: Integration (Next Week)
+
 1. Connect to player database
 2. Add backend API for persistence
 3. Integrate with training calendar
 4. Add to coach dashboard
 
 ### Phase 3: Deployment (Week 3)
+
 1. Train coaches on system
 2. Roll out to pilot team (5-10 players)
 3. Collect feedback
 4. Refine thresholds
 
 ### Phase 4: Scale (Week 4+)
+
 1. Deploy to all teams
 2. Add team analytics
 3. Historical injury analysis
@@ -430,24 +464,28 @@ EWMA: λ × today + (1-λ) × yesterday_EWMA
 ## 🏆 Expected Outcomes
 
 ### Injury Prevention
+
 - **25-40% reduction** in non-contact injuries
 - **Earlier detection** of overtraining
 - **Data-driven** training decisions
 - **Objective load monitoring**
 
 ### Performance Optimization
+
 - **Optimal load distribution** across week
 - **Peak for game day** (Saturday)
 - **Avoid under-training**
 - **Maximize fitness gains**
 
 ### Coach Benefits
+
 - **Automated monitoring** (saves hours/week)
 - **Objective adjustments** (not guesswork)
 - **Player compliance tracking**
 - **Weekly team reports**
 
 ### Player Benefits
+
 - **Lower injury risk**
 - **Better performance**
 - **Clear training guidance**
@@ -458,16 +496,19 @@ EWMA: λ × today + (1-λ) × yesterday_EWMA
 ## 📞 Support & Resources
 
 **Documentation:**
+
 - `ACWR_IMPLEMENTATION_GUIDE.md` - Full API reference
 - `ACWR_SYSTEM_SUMMARY.md` - This document
 - Inline code documentation
 
 **Example Code:**
+
 - `acwr-dashboard.component.ts` - Dashboard implementation
 - `acwr.service.ts` - Service examples
 - Implementation guide has 5+ usage examples
 
 **Sports Science:**
+
 - [ACWR Research Paper](https://bjsm.bmj.com/content/50/5/273)
 - [EWMA Model Study](https://pubmed.ncbi.nlm.nih.gov/30076845/)
 
@@ -487,6 +528,7 @@ You now have a **production-ready ACWR system** built with:
 ✅ **Comprehensive documentation**
 
 **Total Implementation:**
+
 - **~2,640 lines** of TypeScript code
 - **4 core services**
 - **1 dashboard component**
@@ -497,4 +539,4 @@ You now have a **production-ready ACWR system** built with:
 
 ---
 
-*Built with ❤️ using Angular 19, TypeScript, and sports science research*
+_Built with ❤️ using Angular 19, TypeScript, and sports science research_

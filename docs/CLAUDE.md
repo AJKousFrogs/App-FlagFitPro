@@ -7,42 +7,49 @@ This is a comprehensive flag football training application built with React 18, 
 ## MCP Tools Available
 
 ### Context7 Documentation Server
+
 Access to sports science and development documentation.
 
 #### Tools:
+
 - **resolve-library-id**: Convert package names to Context7-compatible IDs
+
   ```javascript
   // Usage: Get documentation for sports nutrition libraries
-  await resolveLibraryId("sports-nutrition-js")
+  await resolveLibraryId("sports-nutrition-js");
   ```
 
 - **get-library-docs**: Retrieve current documentation for sports/nutrition libraries
   ```javascript
   // Usage: Get latest sports science research
-  await getLibraryDocs("nutrition-science-2025")
+  await getLibraryDocs("nutrition-science-2025");
   ```
 
 #### Use Cases:
+
 - Research latest sports nutrition guidelines
-- Find evidence-based training methodologies  
+- Find evidence-based training methodologies
 - Access biomechanics research for injury prevention
 - Get current sports psychology techniques
 
 ### Sequential Thought Reasoning
+
 Chain-of-thought reasoning for complex sports decisions.
 
 #### Tools:
+
 - **sequentialthinking**: Multi-step reasoning for training decisions
   ```javascript
   // Usage: Analyze complex injury risk scenarios
   await sequentialThinking({
     problem: "Player showing fatigue signs during training",
     context: "High-intensity practice, hot weather, dehydration risk",
-    steps: ["assess-symptoms", "evaluate-environment", "recommend-actions"]
-  })
+    steps: ["assess-symptoms", "evaluate-environment", "recommend-actions"],
+  });
   ```
 
 #### Use Cases:
+
 - Injury risk assessment with multi-factor analysis
 - Complex nutrition plan optimization
 - Training load management decisions
@@ -51,8 +58,9 @@ Chain-of-thought reasoning for complex sports decisions.
 ## Architecture
 
 ### Tech Stack
+
 - **Frontend**: React 18 + Vite + TypeScript
-- **Database**: Neon PostgreSQL + Drizzle ORM  
+- **Database**: Neon PostgreSQL + Drizzle ORM
 - **UI**: Radix UI + Tailwind CSS + Ant Design
 - **State**: Zustand + React Query
 - **Testing**: Vitest + Testing Library
@@ -61,6 +69,7 @@ Chain-of-thought reasoning for complex sports decisions.
 - **Health Monitoring**: 99/100 codebase health score with automated monitoring
 
 ### Key Features
+
 - AI Coaching System with MCP integration (87.4% prediction accuracy)
 - Comprehensive nutrition tracking with USDA integration
 - Recovery monitoring and recommendations
@@ -72,6 +81,7 @@ Chain-of-thought reasoning for complex sports decisions.
 - Flag football-specific optimization (73% agility focus)
 
 ### Database Schema
+
 - Users, profiles, and authentication
 - Training programs and exercises
 - Nutrition database with USDA integration (100,000+ food profiles)
@@ -86,6 +96,7 @@ Chain-of-thought reasoning for complex sports decisions.
 ## Development Workflow
 
 ### System Health & Optimization
+
 The app features comprehensive health monitoring and optimization:
 
 ```bash
@@ -98,17 +109,19 @@ npm run db:seed:advanced            # Seed latest 2024-2025 research studies
 ```
 
 ### Performance Optimizations
+
 - **Database Connections**: Reduced from 14 pools to 1 singleton (93% memory reduction)
 - **Function Deduplication**: Consolidated 45+ duplicate functions into CommonFunctions.js
 - **Research Integration**: 156 studies with 3,847 participants integrated
 - **Automated Health Monitoring**: Real-time system diagnostics and performance tracking
 
 ### MCP Integration Commands
+
 ```bash
 # Check MCP server status
 npm run mcp:status
 
-# Test MCP tool connections  
+# Test MCP tool connections
 npm run mcp:test
 
 # View MCP logs
@@ -167,18 +180,21 @@ docs/
 ## Common Tasks
 
 ### Adding New Nutrition Features
+
 1. Use `resolve-library-id` to find relevant nutrition research
-2. Get documentation with `get-library-docs` 
+2. Get documentation with `get-library-docs`
 3. Apply evidence-based recommendations in the UI
 4. Test integration with nutrition database
 
 ### Enhancing AI Coach
+
 1. Use `sequentialthinking` for complex coaching decisions
 2. Integrate Context7 sports psychology research
 3. Update coaching algorithms with latest methodologies
 4. Test reasoning chains with various scenarios
 
 ### Performance Analytics
+
 1. Research latest sports science metrics via Context7
 2. Apply sequential reasoning for trend analysis
 3. Implement evidence-based performance predictions
@@ -204,11 +220,12 @@ DATABASE_URL=your_database_url
 ## Troubleshooting
 
 ### MCP Server Issues
+
 ```bash
 # Check MCP server status
 npm run health:check
 
-# Clean up port conflicts  
+# Clean up port conflicts
 npm run port:cleanup
 
 # Restart MCP servers
@@ -216,6 +233,7 @@ npm run mcp:restart
 ```
 
 ### Common Problems
+
 - **Port conflicts**: Use port management system
 - **MCP timeout**: Check server status and network connectivity
 - **Context7 rate limits**: Implement caching and request throttling

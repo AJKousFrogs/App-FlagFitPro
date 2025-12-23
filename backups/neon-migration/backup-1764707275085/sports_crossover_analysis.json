@@ -19,15 +19,8 @@
       "american_football_strategy",
       "upper_body_strength"
     ],
-    "optimal_positions": [
-      "receiver",
-      "defensive_back",
-      "center"
-    ],
-    "secondary_positions": [
-      "quarterback",
-      "blitz"
-    ],
+    "optimal_positions": ["receiver", "defensive_back", "center"],
+    "secondary_positions": ["quarterback", "blitz"],
     "recommended_training_emphasis": [
       "catching_drills",
       "route_running",
@@ -64,15 +57,8 @@
       "game_strategy",
       "team_coordination"
     ],
-    "optimal_positions": [
-      "receiver",
-      "blitz",
-      "center"
-    ],
-    "secondary_positions": [
-      "defensive_back",
-      "quarterback"
-    ],
+    "optimal_positions": ["receiver", "blitz", "center"],
+    "secondary_positions": ["defensive_back", "quarterback"],
     "recommended_training_emphasis": [
       "agility_training",
       "catching_drills",
@@ -85,9 +71,7 @@
       "ball_handling_skills"
     ],
     "research_evidence": "Superior speed and power development from sprint training",
-    "professional_examples": [
-      "Multiple NFL players with track backgrounds"
-    ],
+    "professional_examples": ["Multiple NFL players with track backgrounds"],
     "created_at": "2025-08-17T17:09:22.955Z"
   },
   {
@@ -110,15 +94,8 @@
       "route_running_precision",
       "flag_pulling_technique"
     ],
-    "optimal_positions": [
-      "quarterback",
-      "receiver",
-      "defensive_back"
-    ],
-    "secondary_positions": [
-      "center",
-      "blitz"
-    ],
+    "optimal_positions": ["quarterback", "receiver", "defensive_back"],
+    "secondary_positions": ["center", "blitz"],
     "recommended_training_emphasis": [
       "linear_speed_training",
       "route_running_drills",

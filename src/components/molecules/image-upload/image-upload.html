@@ -27,13 +27,18 @@
         <p class="upload-hint">Supported: JPG, PNG, GIF, WebP (Max 5MB)</p>
       </div>
     </div>
-    <div class="image-preview" id="preview-basic" style="display: none;">
+    <div class="image-preview" id="preview-basic" style="display: none">
       <img id="preview-image-basic" src="" alt="Preview" />
       <button type="button" class="remove-image-btn" aria-label="Remove image">
         <i data-lucide="x" style="width: 20px; height: 20px"></i>
       </button>
     </div>
-    <div class="upload-error" id="error-basic" role="alert" style="display: none;"></div>
+    <div
+      class="upload-error"
+      id="error-basic"
+      role="alert"
+      style="display: none"
+    ></div>
   </div>
 </div>
 
@@ -58,7 +63,12 @@
       </div>
     </div>
     <div class="image-preview-grid" id="preview-multiple"></div>
-    <div class="upload-error" id="error-multiple" role="alert" style="display: none;"></div>
+    <div
+      class="upload-error"
+      id="error-multiple"
+      role="alert"
+      style="display: none"
+    ></div>
   </div>
 </div>
 
@@ -180,93 +190,105 @@
 
 <script>
   // Image upload functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    function setupImageUpload(containerId, inputId, previewId, errorId, multiple = false) {
+  document.addEventListener("DOMContentLoaded", function () {
+    function setupImageUpload(
+      containerId,
+      inputId,
+      previewId,
+      errorId,
+      multiple = false,
+    ) {
       const container = document.getElementById(containerId);
       const input = document.getElementById(inputId);
       const preview = document.getElementById(previewId);
       const error = document.getElementById(errorId);
-      const uploadArea = container.querySelector('.image-upload-area');
-      
+      const uploadArea = container.querySelector(".image-upload-area");
+
       if (!container || !input || !preview || !error || !uploadArea) return;
-      
+
       const maxSize = 5 * 1024 * 1024; // 5MB
-      const acceptedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-      
+      const acceptedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+
       // Click to upload
-      uploadArea.addEventListener('click', () => {
+      uploadArea.addEventListener("click", () => {
         input.click();
       });
-      
+
       // Drag and drop
-      uploadArea.addEventListener('dragover', (e) => {
+      uploadArea.addEventListener("dragover", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        uploadArea.classList.add('drag-over');
+        uploadArea.classList.add("drag-over");
       });
-      
-      uploadArea.addEventListener('dragleave', (e) => {
+
+      uploadArea.addEventListener("dragleave", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        uploadArea.classList.remove('drag-over');
+        uploadArea.classList.remove("drag-over");
       });
-      
-      uploadArea.addEventListener('drop', (e) => {
+
+      uploadArea.addEventListener("drop", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        uploadArea.classList.remove('drag-over');
-        
+        uploadArea.classList.remove("drag-over");
+
         const files = e.dataTransfer.files;
         if (files.length > 0) {
           handleFiles(Array.from(files));
         }
       });
-      
+
       // File input change
-      input.addEventListener('change', (e) => {
+      input.addEventListener("change", (e) => {
         const files = e.target.files;
         if (files && files.length > 0) {
           handleFiles(Array.from(files));
         }
       });
-      
+
       function handleFiles(files) {
-        error.style.display = 'none';
-        error.textContent = '';
-        
+        error.style.display = "none";
+        error.textContent = "";
+
         const validFiles = [];
-        
+
         for (const file of files) {
           // Validate file type
           if (!acceptedTypes.includes(file.type)) {
-            error.style.display = 'block';
+            error.style.display = "block";
             error.textContent = `File "${file.name}" is not a supported image format`;
             continue;
           }
-          
+
           // Validate file size
           if (file.size > maxSize) {
-            error.style.display = 'block';
+            error.style.display = "block";
             error.textContent = `File "${file.name}" exceeds maximum size of 5MB`;
             continue;
           }
-          
+
           validFiles.push(file);
         }
-        
+
         if (validFiles.length > 0) {
           displayPreview(validFiles);
         }
       }
-      
+
       function displayPreview(files) {
         if (multiple) {
-          preview.innerHTML = '';
-          files.forEach(file => {
+          preview.innerHTML = "";
+          files.forEach((file) => {
             const reader = new FileReader();
             reader.onload = (e) => {
-              const div = document.createElement('div');
-              div.className = 'image-preview';
+              const div = document.createElement("div");
+              div.className = "image-preview";
               div.innerHTML = `
                 <img src="${e.target.result}" alt="${file.name}" />
                 <button type="button" class="remove-image-btn" aria-label="Remove image">
@@ -274,16 +296,18 @@
                 </button>
               `;
               preview.appendChild(div);
-              
+
               // Initialize lucide icons
               if (window.lucide) {
                 window.lucide.createIcons();
               }
-              
+
               // Remove button
-              div.querySelector('.remove-image-btn').addEventListener('click', () => {
-                div.remove();
-              });
+              div
+                .querySelector(".remove-image-btn")
+                .addEventListener("click", () => {
+                  div.remove();
+                });
             };
             reader.readAsDataURL(file);
           });
@@ -297,28 +321,41 @@
                 <i data-lucide="x" style="width: 20px; height: 20px"></i>
               </button>
             `;
-            preview.style.display = 'block';
-            
+            preview.style.display = "block";
+
             // Initialize lucide icons
             if (window.lucide) {
               window.lucide.createIcons();
             }
-            
+
             // Remove button
-            preview.querySelector('.remove-image-btn').addEventListener('click', () => {
-              preview.style.display = 'none';
-              preview.innerHTML = '';
-              input.value = '';
-            });
+            preview
+              .querySelector(".remove-image-btn")
+              .addEventListener("click", () => {
+                preview.style.display = "none";
+                preview.innerHTML = "";
+                input.value = "";
+              });
           };
           reader.readAsDataURL(file);
         }
       }
     }
-    
+
     // Setup upload areas
-    setupImageUpload('image-upload-basic', 'image-input-basic', 'preview-basic', 'error-basic', false);
-    setupImageUpload('image-upload-multiple', 'image-input-multiple', 'preview-multiple', 'error-multiple', true);
+    setupImageUpload(
+      "image-upload-basic",
+      "image-input-basic",
+      "preview-basic",
+      "error-basic",
+      false,
+    );
+    setupImageUpload(
+      "image-upload-multiple",
+      "image-input-multiple",
+      "preview-multiple",
+      "error-multiple",
+      true,
+    );
   });
 </script>
-

@@ -17,7 +17,6 @@ export interface ValidationResult {
   providedIn: "root",
 })
 export class ValidationService {
-
   /**
    * Physical measurements validation with medical guidelines
    */
@@ -34,13 +33,19 @@ export class ValidationService {
     // Weight validation (kg)
     if (measurements.weight !== undefined) {
       if (measurements.weight < 40) {
-        errors.push("Weight below viable minimum (40kg). Medical evaluation needed.");
+        errors.push(
+          "Weight below viable minimum (40kg). Medical evaluation needed.",
+        );
       }
       if (measurements.weight > 200) {
-        warnings.push("Unusual weight for flag football athlete. Verify measurement.");
+        warnings.push(
+          "Unusual weight for flag football athlete. Verify measurement.",
+        );
       }
       if (measurements.weight < 50) {
-        suggestions.push("Consider increased caloric intake for athletic performance.");
+        suggestions.push(
+          "Consider increased caloric intake for athletic performance.",
+        );
       }
     }
 
@@ -57,13 +62,19 @@ export class ValidationService {
     // Body fat validation (%)
     if (measurements.bodyFat !== undefined) {
       if (measurements.bodyFat < 3) {
-        errors.push("Body fat below minimum viable level (3%). Medical evaluation needed.");
+        errors.push(
+          "Body fat below minimum viable level (3%). Medical evaluation needed.",
+        );
       }
       if (measurements.bodyFat > 50) {
-        warnings.push("Body fat above typical range. Health assessment recommended.");
+        warnings.push(
+          "Body fat above typical range. Health assessment recommended.",
+        );
       }
       if (measurements.bodyFat > 25) {
-        suggestions.push("Target body fat reduction through cardio and nutrition.");
+        suggestions.push(
+          "Target body fat reduction through cardio and nutrition.",
+        );
       }
     }
 
@@ -72,8 +83,13 @@ export class ValidationService {
       if (measurements.muscleMass < 0) {
         errors.push("Muscle mass cannot be negative.");
       }
-      if (measurements.weight && measurements.muscleMass > measurements.weight * 0.8) {
-        errors.push("Muscle mass exceeds possible maximum (cannot exceed 80% of body weight).");
+      if (
+        measurements.weight &&
+        measurements.muscleMass > measurements.weight * 0.8
+      ) {
+        errors.push(
+          "Muscle mass exceeds possible maximum (cannot exceed 80% of body weight).",
+        );
       }
     }
 
@@ -81,7 +97,7 @@ export class ValidationService {
       valid: errors.length === 0,
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -120,28 +136,36 @@ export class ValidationService {
     if (wellness.energy !== undefined) {
       validateScale(wellness.energy, "Energy");
       if (wellness.energy < 5) {
-        suggestions.push("Low energy. Consider recovery day or nutrition adjustment.");
+        suggestions.push(
+          "Low energy. Consider recovery day or nutrition adjustment.",
+        );
       }
     }
 
     if (wellness.stress !== undefined) {
       validateScale(wellness.stress, "Stress");
       if (wellness.stress > 7) {
-        suggestions.push("High stress levels. Incorporate breathing exercises.");
+        suggestions.push(
+          "High stress levels. Incorporate breathing exercises.",
+        );
       }
     }
 
     if (wellness.soreness !== undefined) {
       validateScale(wellness.soreness, "Soreness");
       if (wellness.soreness > 6) {
-        suggestions.push("High soreness. Reduce intensity or add mobility work.");
+        suggestions.push(
+          "High soreness. Reduce intensity or add mobility work.",
+        );
       }
     }
 
     if (wellness.motivation !== undefined) {
       validateScale(wellness.motivation, "Motivation");
       if (wellness.motivation < 4) {
-        warnings.push("Low motivation detected. Consider mental health check-in.");
+        warnings.push(
+          "Low motivation detected. Consider mental health check-in.",
+        );
       }
     }
 
@@ -159,7 +183,9 @@ export class ValidationService {
     // Cross-metric validation
     if (wellness.sleep && wellness.stress && wellness.energy) {
       if (wellness.sleep < 6 && wellness.stress > 7) {
-        warnings.push("Poor sleep combined with high stress. Priority: sleep improvement.");
+        warnings.push(
+          "Poor sleep combined with high stress. Priority: sleep improvement.",
+        );
       }
     }
 
@@ -167,7 +193,7 @@ export class ValidationService {
       valid: errors.length === 0,
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -244,14 +270,19 @@ export class ValidationService {
       valid: errors.length === 0,
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
   /**
    * Validate integer range
    */
-  validateIntegerRange(value: number, min: number, max: number, fieldName: string): ValidationResult {
+  validateIntegerRange(
+    value: number,
+    min: number,
+    max: number,
+    fieldName: string,
+  ): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
     const suggestions: string[] = [];
@@ -271,7 +302,7 @@ export class ValidationService {
       valid: errors.length === 0,
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -282,4 +313,3 @@ export class ValidationService {
     return this.validateIntegerRange(value, 0, 100, fieldName);
   }
 }
-

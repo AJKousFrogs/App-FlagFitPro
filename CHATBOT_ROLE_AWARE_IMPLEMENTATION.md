@@ -3,6 +3,7 @@
 ## ✅ Implementation Complete
 
 The chatbot is now role-aware and provides different responses based on:
+
 - **User Role**: Player (athlete), Coach, or Admin
 - **Team Type**: Domestic or International
 - **User Position**: QB, WR, RB, DB, LB, etc.
@@ -14,22 +15,26 @@ The chatbot is now role-aware and provides different responses based on:
 ### 1. Database Schema (`039_chatbot_role_aware_system.sql`)
 
 **New Tables:**
+
 - `chatbot_user_context` - Stores user context for personalization
   - User role, team type, preferred topics, expertise level
   - Usage statistics (total queries, last query time)
 
 **New Fields on `teams` table:**
+
 - `team_type` - 'domestic' or 'international'
 - `region` - Geographic region
 - `country_code` - ISO country code
 
 **Database Functions:**
+
 - `get_or_create_chatbot_context(user_id)` - Auto-creates/updates context
 - `update_chatbot_query_stats(user_id, topic)` - Tracks usage statistics
 
 ### 2. Role-Aware Response Generator (`src/js/utils/role-aware-response-generator.js`)
 
 **Features:**
+
 - Adjusts responses based on user role
 - Adds team type considerations (international travel, jet lag)
 - Provides position-specific advice
@@ -38,23 +43,27 @@ The chatbot is now role-aware and provides different responses based on:
 **Role-Specific Enhancements:**
 
 **Coaches get:**
+
 - Stat entry and tracking guidance
 - Schedule design and periodization tips
 - Team management protocols
 - Player development strategies
 
 **Athletes get:**
+
 - Self-training protocols
 - Individual performance focus
 - Personal tracking reminders
 - Recovery strategies
 
 **Admins get:**
+
 - System-level information
 - Evidence and governance details
 - Usage statistics
 
 **International Teams get:**
+
 - Jet lag management strategies
 - Travel recovery protocols
 - Competition calendar considerations
@@ -63,11 +72,13 @@ The chatbot is now role-aware and provides different responses based on:
 ### 3. API Endpoints
 
 **`/.netlify/functions/user-context`**
+
 - GET endpoint to fetch user context
 - Returns role, team type, position, preferences
 - Auto-creates context if missing
 
 **`/.netlify/functions/update-chatbot-stats`**
+
 - POST endpoint to update query statistics
 - Tracks preferred topics
 - Updates usage counts
@@ -75,6 +86,7 @@ The chatbot is now role-aware and provides different responses based on:
 ### 4. Chatbot Integration (`src/js/components/chatbot.js`)
 
 **New Features:**
+
 - Loads user context on chatbot open
 - Initializes role-aware generator
 - Applies role-specific adjustments to all responses
@@ -116,6 +128,7 @@ Return Enhanced Response
 ### Example Responses
 
 **Coach asking about training protocol:**
+
 ```
 [Base response about training protocol]
 
@@ -128,16 +141,18 @@ Return Enhanced Response
 ```
 
 **Athlete asking about recovery:**
+
 ```
 [Base response about recovery]
 
-💪 Personal Recovery: Focus on what works best for your body. 
+💪 Personal Recovery: Focus on what works best for your body.
 Track your recovery quality and adjust protocols based on how you feel.
 
 📱 Track This: Log your sessions in the FlagFit app to monitor progress over time.
 ```
 
 **International team asking about recovery:**
+
 ```
 [Base response about recovery]
 
@@ -153,6 +168,7 @@ Track your recovery quality and adjust protocols based on how you feel.
 ```
 
 **QB asking about training:**
+
 ```
 [Base response about training]
 
@@ -174,6 +190,7 @@ psql $DATABASE_URL
 ```
 
 Or using a migration tool:
+
 ```bash
 psql $DATABASE_URL -f database/migrations/039_chatbot_role_aware_system.sql
 ```
@@ -183,6 +200,7 @@ psql $DATABASE_URL -f database/migrations/039_chatbot_role_aware_system.sql
 ## Testing Checklist
 
 ### Role-Aware Testing
+
 - [ ] Coach receives stat entry and schedule design content
 - [ ] Athlete receives self-training protocols
 - [ ] Admin receives system-level information
@@ -190,6 +208,7 @@ psql $DATABASE_URL -f database/migrations/039_chatbot_role_aware_system.sql
 - [ ] Domestic teams get standard protocols
 
 ### Position-Specific Testing
+
 - [ ] QB gets throwing mechanics and core stability advice
 - [ ] WR gets speed and agility focus
 - [ ] RB gets power and balance emphasis
@@ -197,12 +216,14 @@ psql $DATABASE_URL -f database/migrations/039_chatbot_role_aware_system.sql
 - [ ] LB gets strength and tackling focus
 
 ### Context Loading Testing
+
 - [ ] Context loads on chatbot open
 - [ ] Falls back gracefully if auth token missing
 - [ ] Updates context if role/team changes
 - [ ] Handles API errors gracefully
 
 ### Statistics Tracking
+
 - [ ] Query statistics update after each query
 - [ ] Preferred topics tracked correctly
 - [ ] Total queries increment properly
@@ -214,6 +235,7 @@ psql $DATABASE_URL -f database/migrations/039_chatbot_role_aware_system.sql
 ### Environment Variables Required
 
 The API endpoints require:
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `SUPABASE_URL` - Supabase project URL
 - `SUPABASE_ANON_KEY` - Supabase anonymous key
@@ -221,6 +243,7 @@ The API endpoints require:
 ### Default Behavior
 
 If user context cannot be loaded:
+
 - Default role: `player`
 - Default team type: `domestic`
 - No position-specific advice
@@ -231,6 +254,7 @@ If user context cannot be loaded:
 ## Future Enhancements
 
 Potential improvements:
+
 1. **Expertise Level Adjustments** - Tailor response complexity based on expertise level
 2. **Preferred Topics** - Prioritize responses for frequently asked topics
 3. **Team-Specific Protocols** - Custom protocols per team
@@ -243,12 +267,14 @@ Potential improvements:
 ## Files Created/Modified
 
 ### New Files
+
 - `database/migrations/039_chatbot_role_aware_system.sql`
 - `src/js/utils/role-aware-response-generator.js`
 - `netlify/functions/user-context.cjs`
 - `netlify/functions/update-chatbot-stats.cjs`
 
 ### Modified Files
+
 - `src/js/components/chatbot.js` - Added role-aware integration
 
 ---
@@ -256,6 +282,7 @@ Potential improvements:
 ## Support
 
 If you encounter issues:
+
 1. Check browser console for errors
 2. Verify database migration ran successfully
 3. Ensure environment variables are set
@@ -266,4 +293,3 @@ If you encounter issues:
 
 **Status**: ✅ Ready for Testing
 **Last Updated**: 2025-01-XX
-

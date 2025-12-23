@@ -1,36 +1,36 @@
 /**
  * Database Query Helper Utilities
- * 
+ *
  * Provides standardized database query execution with error handling
  * and common query parameter parsing patterns.
- * 
+ *
  * This eliminates ~8-15 lines of boilerplate from each function file.
  */
 
 const {
   createErrorResponse,
-  handleValidationError
+  handleValidationError,
 } = require("./error-handler.cjs");
 
 /**
  * Execute a Supabase query with standardized error handling
- * 
+ *
  * @param {Promise} queryPromise - Promise from Supabase query
  * @param {string} errorMessage - Error message prefix (e.g., "Failed to retrieve fixtures")
  * @returns {Promise<object>} { success: boolean, data?: array, error?: object }
- * 
+ *
  * @example
  * const { executeQuery } = require("./utils/db-query-helper.cjs");
- * 
+ *
  * const result = await executeQuery(
  *   supabaseAdmin.from("fixtures").select("*"),
  *   "Failed to retrieve fixtures"
  * );
- * 
+ *
  * if (!result.success) {
  *   return result.error;
  * }
- * 
+ *
  * return createSuccessResponse({ data: result.data });
  */
 async function executeQuery(queryPromise, errorMessage) {
@@ -44,14 +44,14 @@ async function executeQuery(queryPromise, errorMessage) {
         error: createErrorResponse(
           500,
           `${errorMessage}: ${error.message}`,
-          'database_error'
-        )
+          "database_error",
+        ),
       };
     }
 
     return {
       success: true,
-      data: data || []
+      data: data || [],
     };
   } catch (error) {
     console.error("Query execution error:", error);
@@ -60,8 +60,8 @@ async function executeQuery(queryPromise, errorMessage) {
       error: createErrorResponse(
         500,
         `${errorMessage}: ${error.message}`,
-        'database_error'
-      )
+        "database_error",
+      ),
     };
   }
 }
@@ -69,15 +69,15 @@ async function executeQuery(queryPromise, errorMessage) {
 /**
  * Parse and validate athleteId from query parameters
  * Falls back to authenticated user's ID if not provided
- * 
+ *
  * @param {object} event - Netlify function event
  * @param {string} userId - Authenticated user ID
  * @param {boolean} required - Whether athleteId is required (default: false)
  * @returns {object} { valid: boolean, athleteId?: string, error?: object }
- * 
+ *
  * @example
  * const { parseAthleteId } = require("./utils/db-query-helper.cjs");
- * 
+ *
  * const { valid, athleteId, error } = parseAthleteId(event, userId, true);
  * if (!valid) {
  *   return error;
@@ -90,7 +90,7 @@ function parseAthleteId(event, userId, required = false) {
   if (required && !athleteId) {
     return {
       valid: false,
-      error: handleValidationError("athleteId query parameter is required")
+      error: handleValidationError("athleteId query parameter is required"),
     };
   }
 
@@ -99,22 +99,25 @@ function parseAthleteId(event, userId, required = false) {
 
 /**
  * Parse integer query parameter with default value
- * 
+ *
  * @param {object} event - Netlify function event
  * @param {string} paramName - Parameter name
  * @param {number} defaultValue - Default value if not provided
  * @param {number} min - Minimum allowed value (optional)
  * @param {number} max - Maximum allowed value (optional)
  * @returns {number} Parsed integer value
- * 
+ *
  * @example
  * const { parseIntParam } = require("./utils/db-query-helper.cjs");
- * 
+ *
  * const days = parseIntParam(event, 'days', 7, 1, 365);
  */
 function parseIntParam(event, paramName, defaultValue, min = null, max = null) {
-  const value = parseInt(event.queryStringParameters?.[paramName] || defaultValue, 10);
-  
+  const value = parseInt(
+    event.queryStringParameters?.[paramName] || defaultValue,
+    10,
+  );
+
   if (isNaN(value)) {
     return defaultValue;
   }
@@ -132,20 +135,20 @@ function parseIntParam(event, paramName, defaultValue, min = null, max = null) {
 
 /**
  * Parse date query parameter
- * 
+ *
  * @param {object} event - Netlify function event
  * @param {string} paramName - Parameter name
  * @param {Date} defaultValue - Default Date object if not provided
  * @returns {Date} Parsed date or default
- * 
+ *
  * @example
  * const { parseDateParam } = require("./utils/db-query-helper.cjs");
- * 
+ *
  * const startDate = parseDateParam(event, 'startDate', new Date());
  */
 function parseDateParam(event, paramName, defaultValue) {
   const value = event.queryStringParameters?.[paramName];
-  
+
   if (!value) {
     return defaultValue;
   }
@@ -160,17 +163,17 @@ function parseDateParam(event, paramName, defaultValue) {
 
 /**
  * Calculate date range from days parameter
- * 
+ *
  * @param {number} days - Number of days
  * @param {boolean} forward - If true, calculate forward from today; if false, backward (default: false)
  * @returns {object} { startDate: Date, endDate: Date }
- * 
+ *
  * @example
  * const { calculateDateRange } = require("./utils/db-query-helper.cjs");
- * 
+ *
  * // Get last 7 days
  * const { startDate, endDate } = calculateDateRange(7, false);
- * 
+ *
  * // Get next 14 days
  * const { startDate, endDate } = calculateDateRange(14, true);
  */
@@ -193,5 +196,5 @@ module.exports = {
   parseAthleteId,
   parseIntParam,
   parseDateParam,
-  calculateDateRange
+  calculateDateRange,
 };

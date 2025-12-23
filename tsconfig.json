@@ -13,14 +13,6 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": [
-    "*.ts",
-    "scripts/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "angular",
-    "dist",
-    "**/*.spec.ts"
-  ]
+  "include": ["*.ts", "scripts/**/*.ts"],
+  "exclude": ["node_modules", "angular", "dist", "**/*.spec.ts"]
 }

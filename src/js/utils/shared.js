@@ -9,7 +9,9 @@ import { escapeHtml, sanitizeRichText } from "./sanitize.js";
 // ================================================================
 
 export function getInitials(name) {
-  if (!name) {return "??";}
+  if (!name) {
+    return "??";
+  }
   return name
     .split(" ")
     .map((n) => n[0])
@@ -38,11 +40,7 @@ export function scrollToBottom(containerId, delay = 100) {
  * @returns {void}
  */
 export function initializeLucideIcons(container = document, options = {}) {
-  const {
-    maxAttempts = 50,
-    pollInterval = 100,
-    initialDelay = 100
-  } = options;
+  const { maxAttempts = 50, pollInterval = 100, initialDelay = 100 } = options;
 
   // Check if Lucide is already available
   if (typeof lucide !== "undefined" && lucide.createIcons) {
@@ -61,14 +59,18 @@ export function initializeLucideIcons(container = document, options = {}) {
       lucide.createIcons(container);
     } else if (attempts >= maxAttempts) {
       clearInterval(checkLucide);
-      logger.warn('[Lucide Icons] Lucide library not loaded after maximum attempts');
+      logger.warn(
+        "[Lucide Icons] Lucide library not loaded after maximum attempts",
+      );
     }
   }, pollInterval);
 }
 
 export function createElementWithClass(tag, className, innerHTML = "") {
   const element = document.createElement(tag);
-  if (className) {element.className = className;}
+  if (className) {
+    element.className = className;
+  }
   if (innerHTML) {
     // Use setSafeContent for safety instead of direct innerHTML
     setSafeContent(element, innerHTML, true, true);
@@ -85,26 +87,33 @@ export function createElementWithClass(tag, className, innerHTML = "") {
  * @param {boolean} sanitize - Whether to sanitize HTML content (default: true)
  * @returns {void}
  */
-export function setSafeContent(element, content, isHTML = false, sanitize = true) {
-  if (!element) {return;}
-  
+export function setSafeContent(
+  element,
+  content,
+  isHTML = false,
+  sanitize = true,
+) {
+  if (!element) {
+    return;
+  }
+
   // Clear existing content
-  element.textContent = '';
-  
-  if (isHTML && typeof content === 'string') {
+  element.textContent = "";
+
+  if (isHTML && typeof content === "string") {
     let safeContent = content;
-    
+
     if (sanitize) {
       // Sanitize HTML content - removes dangerous tags and attributes
       // This uses sanitizeRichText which allows only safe tags: b, i, em, strong, br
       safeContent = sanitizeRichText(content);
     }
-    
+
     // Create a temporary container and move nodes
     // This approach is safer than direct innerHTML assignment
-     
+
     // Safe: Using temp container pattern for sanitized content
-    const temp = document.createElement('div');
+    const temp = document.createElement("div");
     // eslint-disable-next-line no-restricted-syntax
     temp.innerHTML = safeContent;
     while (temp.firstChild) {
@@ -114,7 +123,7 @@ export function setSafeContent(element, content, isHTML = false, sanitize = true
     element.appendChild(content);
   } else {
     // Default: use textContent for safety
-    element.textContent = content || '';
+    element.textContent = content || "";
   }
 }
 
@@ -145,9 +154,15 @@ export function getTimeAgo(timestamp) {
   const date = new Date(timestamp);
   const diffInSeconds = Math.floor((now - date) / 1000);
 
-  if (diffInSeconds < 60) {return "Just now";}
-  if (diffInSeconds < 3600) {return `${Math.floor(diffInSeconds / 60)}m ago`;}
-  if (diffInSeconds < 86400) {return `${Math.floor(diffInSeconds / 3600)}h ago`;}
+  if (diffInSeconds < 60) {
+    return "Just now";
+  }
+  if (diffInSeconds < 3600) {
+    return `${Math.floor(diffInSeconds / 60)}m ago`;
+  }
+  if (diffInSeconds < 86400) {
+    return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  }
   return `${Math.floor(diffInSeconds / 86400)}d ago`;
 }
 
@@ -183,7 +198,9 @@ export function validateLength(value, minLength, maxLength, fieldName) {
 
 export function showFieldError(fieldId, message) {
   const field = document.getElementById(fieldId);
-  if (!field) {return;}
+  if (!field) {
+    return;
+  }
 
   clearFieldState(fieldId);
   field.classList.add("error");
@@ -194,7 +211,9 @@ export function showFieldError(fieldId, message) {
 
 export function showFieldSuccess(fieldId) {
   const field = document.getElementById(fieldId);
-  if (!field) {return;}
+  if (!field) {
+    return;
+  }
 
   clearFieldState(fieldId);
   field.classList.add("success");
@@ -202,7 +221,9 @@ export function showFieldSuccess(fieldId) {
 
 export function clearFieldState(fieldId) {
   const field = document.getElementById(fieldId);
-  if (!field) {return;}
+  if (!field) {
+    return;
+  }
 
   field.classList.remove("error", "success");
   const existingError = field.parentNode.querySelector(".field-error");
@@ -213,7 +234,9 @@ export function clearFieldState(fieldId) {
 
 export function getFormData(formId) {
   const form = document.getElementById(formId);
-  if (!form) {return null;}
+  if (!form) {
+    return null;
+  }
 
   const formData = new FormData(form);
   const data = {};
@@ -264,7 +287,9 @@ export function kebabCase(str) {
 }
 
 export function truncate(str, length = 50, suffix = "...") {
-  if (str.length <= length) {return str;}
+  if (str.length <= length) {
+    return str;
+  }
   return str.substring(0, length) + suffix;
 }
 
@@ -276,7 +301,7 @@ export function truncate(str, length = 50, suffix = "...") {
 /**
  * Round a number to specified decimal places using banker's rounding
  * Ensures consistent rounding across the application
- * 
+ *
  * @param {number} value - Number to round
  * @param {number} decimals - Number of decimal places
  * @returns {number} Rounded number
@@ -288,22 +313,22 @@ export function roundToDecimals(value, decimals = 0) {
 
   const factor = Math.pow(10, decimals);
   const multiplied = value * factor;
-  
+
   // Banker's rounding: round to nearest even
   const rounded = Math.round(multiplied);
-  
+
   return rounded / factor;
 }
 
 /**
  * Format a number with specified decimal places
  * Uses banker's rounding for consistency
- * 
+ *
  * @param {number|null|undefined} num - Number to format
  * @param {number} decimals - Number of decimal places (default: 0)
  * @param {boolean} showZero - Whether to show "0" or "N/A" for zero values (default: true)
  * @returns {string} Formatted number string with thousand separators
- * 
+ *
  * @example
  * formatNumber(1234.567, 2) // "1,234.57"
  * formatNumber(0, 0, false) // "N/A"
@@ -329,19 +354,24 @@ export function formatNumber(num, decimals = 0, showZero = true) {
 /**
  * Format a percentage value
  * Always shows 1 decimal place by default (per PLAYER_DATA_DISPLAY_LOGIC.md)
- * 
+ *
  * @param {number|null|undefined} num - Percentage as decimal (0-1) or already as percentage (0-100)
  * @param {number} decimals - Number of decimal places (default: 1)
  * @param {boolean} asDecimal - Whether value is already a decimal (0-1) or percentage (0-100) (default: true)
  * @param {boolean} showZero - Whether to show "0.0%" or "N/A" for zero values (default: true)
  * @returns {string} Formatted percentage string
- * 
+ *
  * @example
  * formatPercentage(0.75) // "75.0%"
  * formatPercentage(75, 1, false) // "75.0%"
  * formatPercentage(0, 1, true, false) // "N/A"
  */
-export function formatPercentage(num, decimals = 1, asDecimal = true, showZero = true) {
+export function formatPercentage(
+  num,
+  decimals = 1,
+  asDecimal = true,
+  showZero = true,
+) {
   if (num === null || num === undefined || isNaN(num)) {
     return showZero ? "0.0%" : "N/A";
   }
@@ -359,12 +389,12 @@ export function formatPercentage(num, decimals = 1, asDecimal = true, showZero =
 /**
  * Format an average value (yards per attempt, yards per carry, etc.)
  * Always shows 2 decimal places (per PLAYER_DATA_DISPLAY_LOGIC.md)
- * 
+ *
  * @param {number|null|undefined} value - Average value to format
  * @param {number} decimals - Number of decimal places (default: 2)
  * @param {boolean} showZero - Whether to show "0.00" or "N/A" for zero values (default: true)
  * @returns {string} Formatted average string
- * 
+ *
  * @example
  * formatAverage(12.5) // "12.50"
  * formatAverage(8.456) // "8.46"
@@ -386,14 +416,14 @@ export function formatAverage(value, decimals = 2, showZero = true) {
 /**
  * Format a stat value based on its type
  * Automatically applies correct formatting based on stat type
- * 
+ *
  * @param {number|null|undefined} value - Stat value to format
  * @param {string} statType - Type of stat ('percentage' | 'average' | 'whole')
  * @param {Object} options - Formatting options
  * @param {number} options.decimals - Number of decimal places
  * @param {boolean} options.showZero - Whether to show zero or "N/A"
  * @returns {string} Formatted stat string
- * 
+ *
  * @example
  * formatStat(75.5, 'percentage') // "75.5%"
  * formatStat(12.5, 'average') // "12.50"
@@ -417,11 +447,11 @@ export function formatStat(value, statType, options = {}) {
 /**
  * Format a completion percentage (specialized for player stats)
  * Always uses 1 decimal place per PLAYER_DATA_DISPLAY_LOGIC.md
- * 
+ *
  * @param {number} completions - Number of completions
  * @param {number} attempts - Number of attempts
  * @returns {string} Formatted completion percentage
- * 
+ *
  * @example
  * formatCompletionPercentage(15, 20) // "75.0%"
  * formatCompletionPercentage(0, 0) // "0.0%"
@@ -438,11 +468,11 @@ export function formatCompletionPercentage(completions, attempts) {
 /**
  * Format a drop rate (specialized for player stats)
  * Always uses 1 decimal place per PLAYER_DATA_DISPLAY_LOGIC.md
- * 
+ *
  * @param {number} drops - Number of drops
  * @param {number} targets - Number of targets
  * @returns {string} Formatted drop rate percentage
- * 
+ *
  * @example
  * formatDropRate(2, 15) // "13.3%"
  * formatDropRate(0, 0) // "0.0%"
@@ -459,11 +489,11 @@ export function formatDropRate(drops, targets) {
 /**
  * Format yards per attempt (specialized for player stats)
  * Always uses 2 decimal places per PLAYER_DATA_DISPLAY_LOGIC.md
- * 
+ *
  * @param {number} yards - Total yards
  * @param {number} attempts - Number of attempts
  * @returns {string} Formatted yards per attempt
- * 
+ *
  * @example
  * formatYardsPerAttempt(250, 20) // "12.50"
  * formatYardsPerAttempt(0, 0) // "0.00"
@@ -480,11 +510,11 @@ export function formatYardsPerAttempt(yards, attempts) {
 /**
  * Format yards per carry (specialized for player stats)
  * Always uses 2 decimal places per PLAYER_DATA_DISPLAY_LOGIC.md
- * 
+ *
  * @param {number} yards - Total rushing yards
  * @param {number} carries - Number of carries
  * @returns {string} Formatted yards per carry
- * 
+ *
  * @example
  * formatYardsPerCarry(85, 10) // "8.50"
  * formatYardsPerCarry(0, 0) // "0.00"
@@ -501,11 +531,11 @@ export function formatYardsPerCarry(yards, carries) {
 /**
  * Format flag pull success rate (specialized for player stats)
  * Always uses 1 decimal place per PLAYER_DATA_DISPLAY_LOGIC.md
- * 
+ *
  * @param {number} pulls - Number of successful flag pulls
  * @param {number} attempts - Number of flag pull attempts
  * @returns {string} Formatted success rate percentage
- * 
+ *
  * @example
  * formatFlagPullSuccessRate(8, 12) // "66.7%"
  * formatFlagPullSuccessRate(0, 0) // "0.0%"
@@ -557,7 +587,9 @@ export function throttle(func, limit) {
 // ================================================================
 
 export function showLoading(element, text = "Loading...") {
-  if (!element) {return;}
+  if (!element) {
+    return;
+  }
   // Use setSafeContent with sanitization for safety
   const loadingHTML = `<span aria-hidden="true">⏳</span> ${escapeHtml(text)}`;
   setSafeContent(element, loadingHTML, true, true);
@@ -565,7 +597,9 @@ export function showLoading(element, text = "Loading...") {
 }
 
 export function hideLoading(element, originalText) {
-  if (!element) {return;}
+  if (!element) {
+    return;
+  }
   // Use setSafeContent - originalText should be plain text or sanitized HTML
   setSafeContent(element, originalText, true, true);
   element.disabled = false;
@@ -573,42 +607,42 @@ export function hideLoading(element, originalText) {
 
 export function createModal(title, content, actions = []) {
   const modal = createElementWithClass("div", "modal");
-  
+
   // Create modal structure using DOM methods instead of innerHTML
   const overlay = document.createElement("div");
   overlay.className = "modal-overlay";
   overlay.addEventListener("click", () => closeModal());
-  
+
   const modalContent = document.createElement("div");
   modalContent.className = "modal-content";
-  
+
   const modalHeader = document.createElement("div");
   modalHeader.className = "modal-header";
-  
+
   const titleEl = document.createElement("h2");
   titleEl.textContent = title;
-  
+
   const closeBtn = document.createElement("button");
   closeBtn.className = "modal-close";
   closeBtn.setAttribute("aria-label", "Close");
   closeBtn.addEventListener("click", () => closeModal());
-  
+
   const closeIcon = document.createElement("i");
   closeIcon.setAttribute("data-lucide", "x");
   closeIcon.className = "icon-18";
   closeBtn.appendChild(closeIcon);
-  
+
   modalHeader.appendChild(titleEl);
   modalHeader.appendChild(closeBtn);
-  
+
   const modalBody = document.createElement("div");
   modalBody.className = "modal-body";
   // Use setSafeContent for content to prevent XSS
   setSafeContent(modalBody, content, true, true);
-  
+
   const modalActions = document.createElement("div");
   modalActions.className = "modal-actions";
-  
+
   // Create action buttons safely using DOM methods
   actions.forEach((action) => {
     const actionBtn = document.createElement("button");
@@ -619,11 +653,11 @@ export function createModal(title, content, actions = []) {
     }
     modalActions.appendChild(actionBtn);
   });
-  
+
   modalContent.appendChild(modalHeader);
   modalContent.appendChild(modalBody);
   modalContent.appendChild(modalActions);
-  
+
   overlay.appendChild(modalContent);
   modal.appendChild(overlay);
 

@@ -1,6 +1,6 @@
 /**
  * Enhanced Settings Component
- * 
+ *
  * Features:
  * - Real-time settings sync via Supabase
  * - Auto-save with debouncing
@@ -11,9 +11,9 @@
  * - Export/import settings
  */
 
-import { realtimeManager } from '../services/supabase-client.js';
-import { storageService } from '../services/storage-service-unified.js';
-import { logger } from '../../logger.js';
+import { realtimeManager } from "../services/supabase-client.js";
+import { storageService } from "../services/storage-service-unified.js";
+import { logger } from "../../logger.js";
 
 class EnhancedSettings {
   constructor() {
@@ -22,7 +22,7 @@ class EnhancedSettings {
       notifications: {},
       privacy: {},
       preferences: {},
-      security: {}
+      security: {},
     };
     this.originalSettings = {};
     this.hasUnsavedChanges = false;
@@ -36,21 +36,22 @@ class EnhancedSettings {
         required: true,
         minLength: 2,
         maxLength: 50,
-        pattern: /^[a-zA-Z0-9\s\-_]+$/
+        pattern: /^[a-zA-Z0-9\s\-_]+$/,
       },
       email: {
         required: true,
-        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
       },
       password: {
         minLength: 8,
-        pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+        pattern:
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
       },
       jerseyNumber: {
         min: 0,
         max: 99,
-        type: 'number'
-      }
+        type: "number",
+      },
     };
   }
 
@@ -62,16 +63,18 @@ class EnhancedSettings {
       enableRealtime: options.enableRealtime !== false,
       enableAutoSave: options.enableAutoSave !== false,
       enableValidation: options.enableValidation !== false,
-      ...options
+      ...options,
     };
 
     // Try to get current user ID - wait for auth if needed
     this.currentUserId = await this.getCurrentUserIdAsync();
-    
+
     // Continue initialization even without user ID (for guest mode or when auth is loading)
     // The component can still work with localStorage-only settings
     if (!this.currentUserId) {
-      logger.warn('[Settings] No user ID found - continuing with local settings only');
+      logger.warn(
+        "[Settings] No user ID found - continuing with local settings only",
+      );
     }
 
     // Load initial settings
@@ -95,7 +98,10 @@ class EnhancedSettings {
     // Setup change tracking
     this.setupChangeTracking();
 
-    logger.info('[Settings] Enhanced settings initialized', this.currentUserId ? `(User: ${this.currentUserId})` : '(Local mode)');
+    logger.info(
+      "[Settings] Enhanced settings initialized",
+      this.currentUserId ? `(User: ${this.currentUserId})` : "(Local mode)",
+    );
   }
 
   /**
@@ -115,8 +121,15 @@ class EnhancedSettings {
       if (window.supabase) {
         try {
           const { createClient } = window.supabase;
-          if (createClient && window._env?.SUPABASE_URL && window._env?.SUPABASE_ANON_KEY) {
-            const supabase = createClient(window._env.SUPABASE_URL, window._env.SUPABASE_ANON_KEY);
+          if (
+            createClient &&
+            window._env?.SUPABASE_URL &&
+            window._env?.SUPABASE_ANON_KEY
+          ) {
+            const supabase = createClient(
+              window._env.SUPABASE_URL,
+              window._env.SUPABASE_ANON_KEY,
+            );
             // Note: getSession() is async, but we can't await here
             // This is handled in getCurrentUserIdAsync()
           }
@@ -126,7 +139,7 @@ class EnhancedSettings {
       }
 
       // Try localStorage
-      const userData = localStorage.getItem('user');
+      const userData = localStorage.getItem("user");
       if (userData) {
         try {
           const user = JSON.parse(userData);
@@ -137,9 +150,9 @@ class EnhancedSettings {
       }
 
       // Try flagfit_auth storage
-      const flagfitAuth = localStorage.getItem('flagfit_auth');
-      const flagfitUser = localStorage.getItem('flagfit_user');
-      if (flagfitAuth === 'true' && flagfitUser) {
+      const flagfitAuth = localStorage.getItem("flagfit_auth");
+      const flagfitUser = localStorage.getItem("flagfit_user");
+      if (flagfitAuth === "true" && flagfitUser) {
         try {
           const user = JSON.parse(flagfitUser);
           return user?.id || user?.user_id;
@@ -150,7 +163,7 @@ class EnhancedSettings {
 
       return null;
     } catch (error) {
-      logger.warn('[Settings] Failed to get user ID:', error);
+      logger.warn("[Settings] Failed to get user ID:", error);
       return null;
     }
   }
@@ -169,21 +182,24 @@ class EnhancedSettings {
     if (!window.authManager) {
       const maxWait = 3000;
       const startTime = Date.now();
-      
-      while (!window.authManager && (Date.now() - startTime) < maxWait) {
-        await new Promise(resolve => {
+
+      while (!window.authManager && Date.now() - startTime < maxWait) {
+        await new Promise((resolve) => {
           setTimeout(() => {
             resolve();
           }, 100);
         });
       }
-      
+
       if (window.authManager) {
         // Wait for authManager to finish initializing
-        if (window.authManager.waitForInit && typeof window.authManager.waitForInit === 'function') {
+        if (
+          window.authManager.waitForInit &&
+          typeof window.authManager.waitForInit === "function"
+        ) {
           await window.authManager.waitForInit(2000);
         }
-        
+
         const user = window.authManager.getCurrentUser();
         if (user) {
           return user?.id || user?.user_id;
@@ -193,11 +209,20 @@ class EnhancedSettings {
 
     // Try Supabase client directly
     try {
-      if (window.supabase && window._env?.SUPABASE_URL && window._env?.SUPABASE_ANON_KEY) {
+      if (
+        window.supabase &&
+        window._env?.SUPABASE_URL &&
+        window._env?.SUPABASE_ANON_KEY
+      ) {
         const { createClient } = window.supabase;
         if (createClient) {
-          const supabase = createClient(window._env.SUPABASE_URL, window._env.SUPABASE_ANON_KEY);
-          const { data: { session } } = await supabase.auth.getSession();
+          const supabase = createClient(
+            window._env.SUPABASE_URL,
+            window._env.SUPABASE_ANON_KEY,
+          );
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
           if (session?.user?.id) {
             return session.user.id;
           }
@@ -205,22 +230,24 @@ class EnhancedSettings {
       }
     } catch (error) {
       // Supabase not available or error
-      logger.debug('[Settings] Supabase auth check failed:', error);
+      logger.debug("[Settings] Supabase auth check failed:", error);
     }
 
     // Try importing supabase-client if available
     try {
-      const { getSupabase } = await import('../services/supabase-client.js');
+      const { getSupabase } = await import("../services/supabase-client.js");
       const supabase = getSupabase();
       if (supabase) {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         if (session?.user?.id) {
           return session.user.id;
         }
       }
     } catch (error) {
       // Module not available
-      logger.debug('[Settings] Supabase client import failed:', error);
+      logger.debug("[Settings] Supabase client import failed:", error);
     }
 
     return null;
@@ -232,8 +259,8 @@ class EnhancedSettings {
   async loadSettings() {
     try {
       // Try API first
-      const response = await this.apiCall('/api/user/settings', {
-        method: 'GET'
+      const response = await this.apiCall("/api/user/settings", {
+        method: "GET",
       });
 
       if (response && response.success && response.data) {
@@ -244,12 +271,19 @@ class EnhancedSettings {
         return;
       }
     } catch (error) {
-      logger.warn('[Settings] Failed to load from API, using localStorage:', error);
+      logger.warn(
+        "[Settings] Failed to load from API, using localStorage:",
+        error,
+      );
     }
 
     // Fallback to localStorage
-    const savedSettings = storageService.get('flagfit_settings', {}, { usePrefix: false });
-    
+    const savedSettings = storageService.get(
+      "flagfit_settings",
+      {},
+      { usePrefix: false },
+    );
+
     // Try to get user data from various sources
     let user = {};
     if (window.authManager?.getCurrentUser) {
@@ -257,11 +291,11 @@ class EnhancedSettings {
     } else {
       // Try localStorage fallbacks
       try {
-        const userData = localStorage.getItem('user');
+        const userData = localStorage.getItem("user");
         if (userData) {
           user = JSON.parse(userData);
         } else {
-          const flagfitUser = localStorage.getItem('flagfit_user');
+          const flagfitUser = localStorage.getItem("flagfit_user");
           if (flagfitUser) {
             user = JSON.parse(flagfitUser);
           }
@@ -274,12 +308,12 @@ class EnhancedSettings {
     // Merge saved settings with defaults
     this.settings = {
       profile: {
-        displayName: user.name || savedSettings.displayName || '',
-        email: user.email || savedSettings.email || '',
-        position: savedSettings.position || '',
+        displayName: user.name || savedSettings.displayName || "",
+        email: user.email || savedSettings.email || "",
+        position: savedSettings.position || "",
         jerseyNumber: savedSettings.jerseyNumber || null,
-        experienceLevel: savedSettings.experienceLevel || '',
-        team: savedSettings.team || ''
+        experienceLevel: savedSettings.experienceLevel || "",
+        team: savedSettings.team || "",
       },
       notifications: savedSettings.notifications || {
         training: true,
@@ -287,23 +321,25 @@ class EnhancedSettings {
         team: false,
         achievement: true,
         wellness: true,
-        game: true
+        game: true,
       },
       privacy: savedSettings.privacy || {
         profileVisible: true,
         dataSharing: true,
-        analytics: false
+        analytics: false,
       },
       preferences: {
-        theme: savedSettings.theme || 'auto',
-        language: savedSettings.language || 'en',
-        timezone: savedSettings.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-        autoRefresh: true
+        theme: savedSettings.theme || "auto",
+        language: savedSettings.language || "en",
+        timezone:
+          savedSettings.timezone ||
+          Intl.DateTimeFormat().resolvedOptions().timeZone,
+        autoRefresh: true,
       },
       security: {
         twoFactorEnabled: false,
-        sessionTimeout: 30 // minutes
-      }
+        sessionTimeout: 30, // minutes
+      },
     };
 
     this.originalSettings = JSON.parse(JSON.stringify(this.settings));
@@ -316,34 +352,34 @@ class EnhancedSettings {
    */
   populateForm() {
     // Profile settings
-    const displayNameField = document.getElementById('displayName');
+    const displayNameField = document.getElementById("displayName");
     if (displayNameField) {
-      displayNameField.value = this.settings.profile.displayName || '';
+      displayNameField.value = this.settings.profile.displayName || "";
     }
 
-    const emailField = document.getElementById('email');
+    const emailField = document.getElementById("email");
     if (emailField) {
-      emailField.value = this.settings.profile.email || '';
+      emailField.value = this.settings.profile.email || "";
     }
 
-    const positionField = document.getElementById('position');
+    const positionField = document.getElementById("position");
     if (positionField) {
-      positionField.value = this.settings.profile.position || '';
+      positionField.value = this.settings.profile.position || "";
     }
 
-    const jerseyNumberField = document.getElementById('jerseyNumber');
+    const jerseyNumberField = document.getElementById("jerseyNumber");
     if (jerseyNumberField) {
-      jerseyNumberField.value = this.settings.profile.jerseyNumber || '';
+      jerseyNumberField.value = this.settings.profile.jerseyNumber || "";
     }
 
-    const experienceLevelField = document.getElementById('experienceLevel');
+    const experienceLevelField = document.getElementById("experienceLevel");
     if (experienceLevelField) {
-      experienceLevelField.value = this.settings.profile.experienceLevel || '';
+      experienceLevelField.value = this.settings.profile.experienceLevel || "";
     }
 
-    const teamField = document.getElementById('team');
+    const teamField = document.getElementById("team");
     if (teamField) {
-      teamField.value = this.settings.profile.team || '';
+      teamField.value = this.settings.profile.team || "";
     }
 
     // Notification settings
@@ -353,19 +389,19 @@ class EnhancedSettings {
     this.updatePrivacyToggles();
 
     // Preferences
-    const themeField = document.getElementById('theme');
+    const themeField = document.getElementById("theme");
     if (themeField) {
-      themeField.value = this.settings.preferences.theme || 'auto';
+      themeField.value = this.settings.preferences.theme || "auto";
     }
 
-    const languageField = document.getElementById('language');
+    const languageField = document.getElementById("language");
     if (languageField) {
-      languageField.value = this.settings.preferences.language || 'en';
+      languageField.value = this.settings.preferences.language || "en";
     }
 
-    const timezoneField = document.getElementById('timezone');
+    const timezoneField = document.getElementById("timezone");
     if (timezoneField) {
-      timezoneField.value = this.settings.preferences.timezone || '';
+      timezoneField.value = this.settings.preferences.timezone || "";
     }
   }
 
@@ -373,16 +409,23 @@ class EnhancedSettings {
    * Update notification toggle switches
    */
   updateNotificationToggles() {
-    const notificationTypes = ['training', 'tournament', 'team', 'achievement', 'wellness', 'game'];
-    
-    notificationTypes.forEach(type => {
+    const notificationTypes = [
+      "training",
+      "tournament",
+      "team",
+      "achievement",
+      "wellness",
+      "game",
+    ];
+
+    notificationTypes.forEach((type) => {
       const toggle = document.querySelector(`[data-preference-key="${type}"]`);
       if (toggle) {
         const isActive = this.settings.notifications[type] !== false;
         if (isActive) {
-          toggle.classList.add('active');
+          toggle.classList.add("active");
         } else {
-          toggle.classList.remove('active');
+          toggle.classList.remove("active");
         }
       }
     });
@@ -392,33 +435,43 @@ class EnhancedSettings {
    * Update privacy toggle switches
    */
   updatePrivacyToggles() {
-    const privacySection = document.querySelector('.settings-section:nth-child(3)');
-    if (!privacySection) {return;}
+    const privacySection = document.querySelector(
+      ".settings-section:nth-child(3)",
+    );
+    if (!privacySection) {
+      return;
+    }
 
-    const profileVisibleToggle = privacySection.querySelector('.setting-item:nth-child(1) .toggle-switch');
+    const profileVisibleToggle = privacySection.querySelector(
+      ".setting-item:nth-child(1) .toggle-switch",
+    );
     if (profileVisibleToggle) {
       if (this.settings.privacy.profileVisible) {
-        profileVisibleToggle.classList.add('active');
+        profileVisibleToggle.classList.add("active");
       } else {
-        profileVisibleToggle.classList.remove('active');
+        profileVisibleToggle.classList.remove("active");
       }
     }
 
-    const dataSharingToggle = privacySection.querySelector('.setting-item:nth-child(2) .toggle-switch');
+    const dataSharingToggle = privacySection.querySelector(
+      ".setting-item:nth-child(2) .toggle-switch",
+    );
     if (dataSharingToggle) {
       if (this.settings.privacy.dataSharing) {
-        dataSharingToggle.classList.add('active');
+        dataSharingToggle.classList.add("active");
       } else {
-        dataSharingToggle.classList.remove('active');
+        dataSharingToggle.classList.remove("active");
       }
     }
 
-    const analyticsToggle = privacySection.querySelector('.setting-item:nth-child(3) .toggle-switch');
+    const analyticsToggle = privacySection.querySelector(
+      ".setting-item:nth-child(3) .toggle-switch",
+    );
     if (analyticsToggle) {
       if (this.settings.privacy.analytics) {
-        analyticsToggle.classList.add('active');
+        analyticsToggle.classList.add("active");
       } else {
-        analyticsToggle.classList.remove('active');
+        analyticsToggle.classList.remove("active");
       }
     }
   }
@@ -428,23 +481,25 @@ class EnhancedSettings {
    */
   async setupRealtimeSubscription() {
     try {
-      if (!this.currentUserId) {return;}
+      if (!this.currentUserId) {
+        return;
+      }
 
       // Subscribe to user settings updates
       this.realtimeSubscription = realtimeManager.subscribe(
-        'user_settings',
+        "user_settings",
         {
-          event: '*',
-          filter: `user_id=eq.${this.currentUserId}`
+          event: "*",
+          filter: `user_id=eq.${this.currentUserId}`,
         },
         (payload) => {
           this.handleRealtimeUpdate(payload);
-        }
+        },
       );
 
-      logger.info('[Settings] Real-time subscription active');
+      logger.info("[Settings] Real-time subscription active");
     } catch (error) {
-      logger.warn('[Settings] Failed to setup real-time subscription:', error);
+      logger.warn("[Settings] Failed to setup real-time subscription:", error);
     }
   }
 
@@ -452,12 +507,14 @@ class EnhancedSettings {
    * Handle real-time settings updates
    */
   handleRealtimeUpdate(payload) {
-    const eventType = payload.eventType || 'UPDATE';
+    const eventType = payload.eventType || "UPDATE";
     const settings = payload.new || payload.old;
 
-    if (!settings || settings.user_id !== this.currentUserId) {return;}
+    if (!settings || settings.user_id !== this.currentUserId) {
+      return;
+    }
 
-    logger.debug('[Settings] Real-time update:', eventType, settings);
+    logger.debug("[Settings] Real-time update:", eventType, settings);
 
     // Merge updated settings
     if (settings.settings) {
@@ -472,17 +529,19 @@ class EnhancedSettings {
    */
   setupAutoSave() {
     // Auto-save on input changes
-    const inputs = document.querySelectorAll('.form-input, .form-select, .select-input');
-    inputs.forEach(input => {
-      input.addEventListener('input', () => {
+    const inputs = document.querySelectorAll(
+      ".form-input, .form-select, .select-input",
+    );
+    inputs.forEach((input) => {
+      input.addEventListener("input", () => {
         this.scheduleAutoSave();
       });
     });
 
     // Auto-save on toggle changes
-    const toggles = document.querySelectorAll('.toggle-switch');
-    toggles.forEach(toggle => {
-      toggle.addEventListener('click', () => {
+    const toggles = document.querySelectorAll(".toggle-switch");
+    toggles.forEach((toggle) => {
+      toggle.addEventListener("click", () => {
         this.scheduleAutoSave();
       });
     });
@@ -501,17 +560,17 @@ class EnhancedSettings {
     this.showUnsavedChangesWarning(true);
 
     this.autoSaveTimeout = setTimeout(() => {
-      this.showAutoSaveIndicator('saving');
-      this.saveSettings(true).then(success => {
+      this.showAutoSaveIndicator("saving");
+      this.saveSettings(true).then((success) => {
         if (success) {
-          this.showAutoSaveIndicator('saved');
+          this.showAutoSaveIndicator("saved");
           setTimeout(() => {
-            this.showAutoSaveIndicator('hidden');
+            this.showAutoSaveIndicator("hidden");
           }, 2000);
         } else {
-          this.showAutoSaveIndicator('error');
+          this.showAutoSaveIndicator("error");
           setTimeout(() => {
-            this.showAutoSaveIndicator('hidden');
+            this.showAutoSaveIndicator("hidden");
           }, 3000);
         }
       });
@@ -522,12 +581,12 @@ class EnhancedSettings {
    * Show/hide unsaved changes warning
    */
   showUnsavedChangesWarning(show) {
-    const warning = document.getElementById('unsavedChangesWarning');
+    const warning = document.getElementById("unsavedChangesWarning");
     if (warning) {
       if (show) {
-        warning.classList.add('show');
+        warning.classList.add("show");
       } else {
-        warning.classList.remove('show');
+        warning.classList.remove("show");
       }
     }
   }
@@ -536,27 +595,29 @@ class EnhancedSettings {
    * Show auto-save indicator
    */
   showAutoSaveIndicator(state) {
-    const indicator = document.getElementById('autoSaveIndicator');
-    const text = document.getElementById('autoSaveText');
-    
-    if (!indicator || !text) {return;}
+    const indicator = document.getElementById("autoSaveIndicator");
+    const text = document.getElementById("autoSaveText");
 
-    indicator.classList.remove('show', 'saving', 'saved', 'error');
-    
+    if (!indicator || !text) {
+      return;
+    }
+
+    indicator.classList.remove("show", "saving", "saved", "error");
+
     switch (state) {
-      case 'saving':
-        indicator.classList.add('show', 'saving');
-        text.textContent = 'Saving...';
+      case "saving":
+        indicator.classList.add("show", "saving");
+        text.textContent = "Saving...";
         break;
-      case 'saved':
-        indicator.classList.add('show', 'saved');
-        text.textContent = 'Saved';
+      case "saved":
+        indicator.classList.add("show", "saved");
+        text.textContent = "Saved";
         break;
-      case 'error':
-        indicator.classList.add('show', 'error');
-        text.textContent = 'Save failed';
+      case "error":
+        indicator.classList.add("show", "error");
+        text.textContent = "Save failed";
         break;
-      case 'hidden':
+      case "hidden":
       default:
         // Hide indicator
         break;
@@ -567,15 +628,19 @@ class EnhancedSettings {
    * Update save button state
    */
   updateSaveButton() {
-    const saveButton = document.querySelector('button[onclick*="saveSettings"]');
-    if (!saveButton) {return;}
+    const saveButton = document.querySelector(
+      'button[onclick*="saveSettings"]',
+    );
+    if (!saveButton) {
+      return;
+    }
 
     if (this.hasUnsavedChanges) {
-      saveButton.classList.add('has-changes');
-      saveButton.textContent = '💾 Save Changes';
+      saveButton.classList.add("has-changes");
+      saveButton.textContent = "💾 Save Changes";
     } else {
-      saveButton.classList.remove('has-changes');
-      saveButton.textContent = '💾 Saved';
+      saveButton.classList.remove("has-changes");
+      saveButton.textContent = "💾 Saved";
     }
   }
 
@@ -584,34 +649,34 @@ class EnhancedSettings {
    */
   setupValidation() {
     // Display name validation
-    const displayNameField = document.getElementById('displayName');
+    const displayNameField = document.getElementById("displayName");
     if (displayNameField) {
-      displayNameField.addEventListener('input', (e) => {
-        this.validateField('displayName', e.target.value);
+      displayNameField.addEventListener("input", (e) => {
+        this.validateField("displayName", e.target.value);
       });
     }
 
     // Email validation
-    const emailField = document.getElementById('email');
+    const emailField = document.getElementById("email");
     if (emailField) {
-      emailField.addEventListener('input', (e) => {
-        this.validateField('email', e.target.value);
+      emailField.addEventListener("input", (e) => {
+        this.validateField("email", e.target.value);
       });
     }
 
     // Password validation
-    const newPasswordField = document.getElementById('newPassword');
+    const newPasswordField = document.getElementById("newPassword");
     if (newPasswordField) {
-      newPasswordField.addEventListener('input', (e) => {
-        this.validateField('password', e.target.value, 'newPassword');
+      newPasswordField.addEventListener("input", (e) => {
+        this.validateField("password", e.target.value, "newPassword");
       });
     }
 
     // Jersey number validation
-    const jerseyNumberField = document.getElementById('jerseyNumber');
+    const jerseyNumberField = document.getElementById("jerseyNumber");
     if (jerseyNumberField) {
-      jerseyNumberField.addEventListener('input', (e) => {
-        this.validateField('jerseyNumber', e.target.value);
+      jerseyNumberField.addEventListener("input", (e) => {
+        this.validateField("jerseyNumber", e.target.value);
       });
     }
   }
@@ -621,18 +686,22 @@ class EnhancedSettings {
    */
   validateField(fieldName, value, elementId = null) {
     const element = document.getElementById(elementId || fieldName);
-    if (!element) {return true;}
+    if (!element) {
+      return true;
+    }
 
     const rule = this.validationRules[fieldName];
-    if (!rule) {return true;}
+    if (!rule) {
+      return true;
+    }
 
     let isValid = true;
-    let errorMessage = '';
+    let errorMessage = "";
 
     // Required check
-    if (rule.required && (!value || value.trim() === '')) {
+    if (rule.required && (!value || value.trim() === "")) {
       isValid = false;
-      errorMessage = 'This field is required';
+      errorMessage = "This field is required";
     }
 
     // Min length check
@@ -650,21 +719,22 @@ class EnhancedSettings {
     // Pattern check
     if (isValid && rule.pattern && !rule.pattern.test(value)) {
       isValid = false;
-      if (fieldName === 'email') {
-        errorMessage = 'Please enter a valid email address';
-      } else if (fieldName === 'password') {
-        errorMessage = 'Password must contain uppercase, lowercase, number, and special character';
+      if (fieldName === "email") {
+        errorMessage = "Please enter a valid email address";
+      } else if (fieldName === "password") {
+        errorMessage =
+          "Password must contain uppercase, lowercase, number, and special character";
       } else {
-        errorMessage = 'Invalid format';
+        errorMessage = "Invalid format";
       }
     }
 
     // Number range check
-    if (isValid && rule.type === 'number') {
+    if (isValid && rule.type === "number") {
       const numValue = parseInt(value);
       if (isNaN(numValue)) {
         isValid = false;
-        errorMessage = 'Must be a number';
+        errorMessage = "Must be a number";
       } else if (rule.min !== undefined && numValue < rule.min) {
         isValid = false;
         errorMessage = `Must be at least ${rule.min}`;
@@ -687,21 +757,27 @@ class EnhancedSettings {
     const errorElement = document.getElementById(`${element.id}-error`);
     const successElement = document.getElementById(`${element.id}-success`);
 
-    element.setAttribute('aria-invalid', !isValid);
+    element.setAttribute("aria-invalid", !isValid);
 
     if (isValid) {
-      element.classList.remove('invalid');
-      element.classList.add('valid');
-      if (errorElement) {errorElement.style.display = 'none';}
-      if (successElement) {successElement.style.display = 'block';}
+      element.classList.remove("invalid");
+      element.classList.add("valid");
+      if (errorElement) {
+        errorElement.style.display = "none";
+      }
+      if (successElement) {
+        successElement.style.display = "block";
+      }
     } else {
-      element.classList.remove('valid');
-      element.classList.add('invalid');
+      element.classList.remove("valid");
+      element.classList.add("invalid");
       if (errorElement) {
         errorElement.textContent = errorMessage;
-        errorElement.style.display = 'block';
+        errorElement.style.display = "block";
       }
-      if (successElement) {successElement.style.display = 'none';}
+      if (successElement) {
+        successElement.style.display = "none";
+      }
     }
   }
 
@@ -710,19 +786,20 @@ class EnhancedSettings {
    */
   setupChangeTracking() {
     // Track changes to detect unsaved modifications
-    const inputs = document.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-      input.addEventListener('change', () => {
+    const inputs = document.querySelectorAll("input, select, textarea");
+    inputs.forEach((input) => {
+      input.addEventListener("change", () => {
         this.hasUnsavedChanges = true;
         this.updateSaveButton();
       });
     });
 
     // Warn before leaving with unsaved changes
-    window.addEventListener('beforeunload', (e) => {
+    window.addEventListener("beforeunload", (e) => {
       if (this.hasUnsavedChanges) {
         e.preventDefault();
-        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        e.returnValue =
+          "You have unsaved changes. Are you sure you want to leave?";
         return e.returnValue;
       }
     });
@@ -734,36 +811,72 @@ class EnhancedSettings {
   collectSettings() {
     return {
       profile: {
-        displayName: document.getElementById('displayName')?.value || '',
-        email: document.getElementById('email')?.value || '',
-        position: document.getElementById('position')?.value || '',
-        jerseyNumber: parseInt(document.getElementById('jerseyNumber')?.value) || null,
-        experienceLevel: document.getElementById('experienceLevel')?.value || '',
-        team: document.getElementById('team')?.value || ''
+        displayName: document.getElementById("displayName")?.value || "",
+        email: document.getElementById("email")?.value || "",
+        position: document.getElementById("position")?.value || "",
+        jerseyNumber:
+          parseInt(document.getElementById("jerseyNumber")?.value) || null,
+        experienceLevel:
+          document.getElementById("experienceLevel")?.value || "",
+        team: document.getElementById("team")?.value || "",
       },
       notifications: {
-        training: document.querySelector('[data-preference-key="training"]')?.classList.contains('active') !== false,
-        tournament: document.querySelector('[data-preference-key="tournament"]')?.classList.contains('active') !== false,
-        team: document.querySelector('[data-preference-key="team"]')?.classList.contains('active') !== false,
-        achievement: document.querySelector('[data-preference-key="achievement"]')?.classList.contains('active') !== false,
-        wellness: document.querySelector('[data-preference-key="wellness"]')?.classList.contains('active') !== false,
-        game: document.querySelector('[data-preference-key="game"]')?.classList.contains('active') !== false
+        training:
+          document
+            .querySelector('[data-preference-key="training"]')
+            ?.classList.contains("active") !== false,
+        tournament:
+          document
+            .querySelector('[data-preference-key="tournament"]')
+            ?.classList.contains("active") !== false,
+        team:
+          document
+            .querySelector('[data-preference-key="team"]')
+            ?.classList.contains("active") !== false,
+        achievement:
+          document
+            .querySelector('[data-preference-key="achievement"]')
+            ?.classList.contains("active") !== false,
+        wellness:
+          document
+            .querySelector('[data-preference-key="wellness"]')
+            ?.classList.contains("active") !== false,
+        game:
+          document
+            .querySelector('[data-preference-key="game"]')
+            ?.classList.contains("active") !== false,
       },
       privacy: {
-        profileVisible: document.querySelector('.settings-section:nth-child(3) .setting-item:nth-child(1) .toggle-switch')?.classList.contains('active') !== false,
-        dataSharing: document.querySelector('.settings-section:nth-child(3) .setting-item:nth-child(2) .toggle-switch')?.classList.contains('active') !== false,
-        analytics: document.querySelector('.settings-section:nth-child(3) .setting-item:nth-child(3) .toggle-switch')?.classList.contains('active') !== false
+        profileVisible:
+          document
+            .querySelector(
+              ".settings-section:nth-child(3) .setting-item:nth-child(1) .toggle-switch",
+            )
+            ?.classList.contains("active") !== false,
+        dataSharing:
+          document
+            .querySelector(
+              ".settings-section:nth-child(3) .setting-item:nth-child(2) .toggle-switch",
+            )
+            ?.classList.contains("active") !== false,
+        analytics:
+          document
+            .querySelector(
+              ".settings-section:nth-child(3) .setting-item:nth-child(3) .toggle-switch",
+            )
+            ?.classList.contains("active") !== false,
       },
       preferences: {
-        theme: document.getElementById('theme')?.value || 'auto',
-        language: document.getElementById('language')?.value || 'en',
-        timezone: document.getElementById('timezone')?.value || '',
-        autoRefresh: true
+        theme: document.getElementById("theme")?.value || "auto",
+        language: document.getElementById("language")?.value || "en",
+        timezone: document.getElementById("timezone")?.value || "",
+        autoRefresh: true,
       },
       security: {
-        currentPassword: document.getElementById('currentPassword')?.value || '',
-        newPassword: document.getElementById('newPassword')?.value || ''
-      }
+        currentPassword:
+          document.getElementById("currentPassword")?.value || "",
+        newPassword: document.getElementById("newPassword")?.value || "",
+      },
     };
   }
 
@@ -779,10 +892,10 @@ class EnhancedSettings {
     let firstInvalidField = null;
 
     // Validate display name
-    if (!this.validateField('displayName', newSettings.profile.displayName)) {
-      const displayNameField = document.getElementById('displayName');
+    if (!this.validateField("displayName", newSettings.profile.displayName)) {
+      const displayNameField = document.getElementById("displayName");
       if (displayNameField) {
-        validationErrors.push('Display Name');
+        validationErrors.push("Display Name");
         if (!firstInvalidField) {
           firstInvalidField = displayNameField;
         }
@@ -790,10 +903,10 @@ class EnhancedSettings {
     }
 
     // Validate email
-    if (!this.validateField('email', newSettings.profile.email)) {
-      const emailField = document.getElementById('email');
+    if (!this.validateField("email", newSettings.profile.email)) {
+      const emailField = document.getElementById("email");
       if (emailField) {
-        validationErrors.push('Email');
+        validationErrors.push("Email");
         if (!firstInvalidField) {
           firstInvalidField = emailField;
         }
@@ -802,10 +915,16 @@ class EnhancedSettings {
 
     // Validate password if provided
     if (newSettings.security.newPassword) {
-      if (!this.validateField('password', newSettings.security.newPassword, 'newPassword')) {
-        const passwordField = document.getElementById('newPassword');
+      if (
+        !this.validateField(
+          "password",
+          newSettings.security.newPassword,
+          "newPassword",
+        )
+      ) {
+        const passwordField = document.getElementById("newPassword");
         if (passwordField) {
-          validationErrors.push('New Password');
+          validationErrors.push("New Password");
           if (!firstInvalidField) {
             firstInvalidField = passwordField;
           }
@@ -815,28 +934,34 @@ class EnhancedSettings {
 
     // If there are validation errors, show them and focus the first invalid field
     if (validationErrors.length > 0) {
-      const errorMessage = validationErrors.length === 1
-        ? `Please fix the ${validationErrors[0]} field before saving`
-        : `Please fix the following fields before saving: ${validationErrors.join(', ')}`;
-      
+      const errorMessage =
+        validationErrors.length === 1
+          ? `Please fix the ${validationErrors[0]} field before saving`
+          : `Please fix the following fields before saving: ${validationErrors.join(", ")}`;
+
       this.showError(errorMessage);
-      
+
       // Scroll to and focus the first invalid field
       if (firstInvalidField) {
-        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstInvalidField.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
         firstInvalidField.focus();
-        
+
         // Highlight the field briefly
-        firstInvalidField.classList.add('invalid');
+        firstInvalidField.classList.add("invalid");
         setTimeout(() => {
           // Keep the invalid class but ensure error is visible
-          const errorElement = document.getElementById(`${firstInvalidField.id}-error`);
+          const errorElement = document.getElementById(
+            `${firstInvalidField.id}-error`,
+          );
           if (errorElement) {
-            errorElement.style.display = 'block';
+            errorElement.style.display = "block";
           }
         }, 100);
       }
-      
+
       return false;
     }
 
@@ -845,14 +970,53 @@ class EnhancedSettings {
 
     try {
       // Save to API
-      const response = await this.apiCall('/api/user/settings', {
-        method: 'PUT',
-        body: this.settings
+      const response = await this.apiCall("/api/user/settings", {
+        method: "PUT",
+        body: this.settings,
       });
 
       if (response && response.success) {
         // Save to localStorage as backup
-        storageService.set('flagfit_settings', {
+        storageService.set(
+          "flagfit_settings",
+          {
+            displayName: this.settings.profile.displayName,
+            email: this.settings.profile.email,
+            position: this.settings.profile.position,
+            jerseyNumber: this.settings.profile.jerseyNumber,
+            experienceLevel: this.settings.profile.experienceLevel,
+            team: this.settings.profile.team,
+            theme: this.settings.preferences.theme,
+            language: this.settings.preferences.language,
+            timezone: this.settings.preferences.timezone,
+            notifications: this.settings.notifications,
+            privacy: this.settings.privacy,
+          },
+          { usePrefix: false },
+        );
+
+        // Update original settings
+        this.originalSettings = JSON.parse(JSON.stringify(this.settings));
+        this.hasUnsavedChanges = false;
+        this.updateSaveButton();
+        this.showUnsavedChangesWarning(false);
+
+        if (!isAutoSave) {
+          this.showSuccess("Settings saved successfully!");
+        }
+
+        this.notifyListeners();
+        return true;
+      } else {
+        throw new Error("Failed to save settings");
+      }
+    } catch (error) {
+      logger.error("[Settings] Failed to save settings:", error);
+
+      // Save to localStorage as fallback
+      storageService.set(
+        "flagfit_settings",
+        {
           displayName: this.settings.profile.displayName,
           email: this.settings.profile.email,
           position: this.settings.profile.position,
@@ -863,44 +1027,13 @@ class EnhancedSettings {
           language: this.settings.preferences.language,
           timezone: this.settings.preferences.timezone,
           notifications: this.settings.notifications,
-          privacy: this.settings.privacy
-        }, { usePrefix: false });
-
-        // Update original settings
-        this.originalSettings = JSON.parse(JSON.stringify(this.settings));
-        this.hasUnsavedChanges = false;
-        this.updateSaveButton();
-        this.showUnsavedChangesWarning(false);
-
-        if (!isAutoSave) {
-          this.showSuccess('Settings saved successfully!');
-        }
-
-        this.notifyListeners();
-        return true;
-      } else {
-        throw new Error('Failed to save settings');
-      }
-    } catch (error) {
-      logger.error('[Settings] Failed to save settings:', error);
-      
-      // Save to localStorage as fallback
-      storageService.set('flagfit_settings', {
-        displayName: this.settings.profile.displayName,
-        email: this.settings.profile.email,
-        position: this.settings.profile.position,
-        jerseyNumber: this.settings.profile.jerseyNumber,
-        experienceLevel: this.settings.profile.experienceLevel,
-        team: this.settings.profile.team,
-        theme: this.settings.preferences.theme,
-        language: this.settings.preferences.language,
-        timezone: this.settings.preferences.timezone,
-        notifications: this.settings.notifications,
-        privacy: this.settings.privacy
-      }, { usePrefix: false });
+          privacy: this.settings.privacy,
+        },
+        { usePrefix: false },
+      );
 
       if (!isAutoSave) {
-        this.showError('Failed to save settings. Changes saved locally.');
+        this.showError("Failed to save settings. Changes saved locally.");
       }
       return false;
     }
@@ -912,26 +1045,26 @@ class EnhancedSettings {
   async apiCall(endpoint, options = {}) {
     try {
       if (window.apiClient) {
-        const { method = 'GET', body } = options;
-        
-        if (method === 'GET') {
+        const { method = "GET", body } = options;
+
+        if (method === "GET") {
           return await window.apiClient.get(endpoint);
-        } else if (method === 'PUT' || method === 'POST') {
+        } else if (method === "PUT" || method === "POST") {
           return await window.apiClient[method.toLowerCase()](endpoint, body);
         }
       }
 
       // Fallback to fetch
       let url = endpoint;
-      if (!url.startsWith('http')) {
+      if (!url.startsWith("http")) {
         url = new URL(endpoint, window.location.origin).toString();
       }
 
       const fetchOptions = {
-        method: options.method || 'GET',
+        method: options.method || "GET",
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       };
 
       if (options.body) {
@@ -942,19 +1075,21 @@ class EnhancedSettings {
       if (window.authManager) {
         const user = window.authManager.getCurrentUser();
         if (user && user.access_token) {
-          fetchOptions.headers['Authorization'] = `Bearer ${user.access_token}`;
+          fetchOptions.headers["Authorization"] = `Bearer ${user.access_token}`;
         }
       }
 
       const response = await fetch(url, fetchOptions);
-      
+
       if (!response.ok) {
-        throw new Error(`API call failed: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `API call failed: ${response.status} ${response.statusText}`,
+        );
       }
-      
+
       return await response.json();
     } catch (error) {
-      logger.error('[Settings] API call failed:', error);
+      logger.error("[Settings] API call failed:", error);
       throw error;
     }
   }
@@ -966,7 +1101,7 @@ class EnhancedSettings {
     if (window.authManager) {
       window.authManager.showSuccess(message);
     } else {
-      logger.info('[Settings]', message);
+      logger.info("[Settings]", message);
     }
   }
 
@@ -974,11 +1109,14 @@ class EnhancedSettings {
    * Show error message
    */
   showError(message) {
-    if (window.authManager && typeof window.authManager.showError === 'function') {
+    if (
+      window.authManager &&
+      typeof window.authManager.showError === "function"
+    ) {
       window.authManager.showError(message);
     } else {
-      logger.error('[Settings]', message);
-      
+      logger.error("[Settings]", message);
+
       // Show a visible error notification if authManager is not available
       this.showErrorNotification(message);
     }
@@ -989,43 +1127,43 @@ class EnhancedSettings {
    */
   showErrorNotification(message) {
     // Remove any existing error notification
-    const existing = document.getElementById('settings-error-notification');
+    const existing = document.getElementById("settings-error-notification");
     if (existing) {
       existing.remove();
     }
 
     // Create error notification element using DOM methods instead of innerHTML
-    const notification = document.createElement('div');
-    notification.id = 'settings-error-notification';
-    notification.className = 'settings-error-notification';
-    notification.setAttribute('role', 'alert');
-    
-    const content = document.createElement('div');
-    content.className = 'settings-error-content';
-    
-    const icon = document.createElement('span');
-    icon.className = 'settings-error-icon';
-    icon.textContent = '⚠️';
-    
-    const messageEl = document.createElement('span');
-    messageEl.className = 'settings-error-message';
+    const notification = document.createElement("div");
+    notification.id = "settings-error-notification";
+    notification.className = "settings-error-notification";
+    notification.setAttribute("role", "alert");
+
+    const content = document.createElement("div");
+    content.className = "settings-error-content";
+
+    const icon = document.createElement("span");
+    icon.className = "settings-error-icon";
+    icon.textContent = "⚠️";
+
+    const messageEl = document.createElement("span");
+    messageEl.className = "settings-error-message";
     messageEl.textContent = message; // Safe: message should be escaped by caller
-    
-    const closeButton = document.createElement('button');
-    closeButton.className = 'settings-error-close';
-    closeButton.setAttribute('aria-label', 'Close');
-    closeButton.textContent = '×';
-    closeButton.addEventListener('click', () => notification.remove());
-    
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "settings-error-close";
+    closeButton.setAttribute("aria-label", "Close");
+    closeButton.textContent = "×";
+    closeButton.addEventListener("click", () => notification.remove());
+
     content.appendChild(icon);
     content.appendChild(messageEl);
     content.appendChild(closeButton);
     notification.appendChild(content);
 
     // Add styles if not already present
-    if (!document.getElementById('settings-error-notification-styles')) {
-      const style = document.createElement('style');
-      style.id = 'settings-error-notification-styles';
+    if (!document.getElementById("settings-error-notification-styles")) {
+      const style = document.createElement("style");
+      style.id = "settings-error-notification-styles";
       style.textContent = `
         .settings-error-notification {
           position: fixed;
@@ -1090,7 +1228,7 @@ class EnhancedSettings {
     // Auto-dismiss after 5 seconds
     setTimeout(() => {
       if (notification.parentNode) {
-        notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+        notification.style.animation = "slideInRight 0.3s ease-out reverse";
         setTimeout(() => notification.remove(), 300);
       }
     }, 5000);
@@ -1114,14 +1252,14 @@ class EnhancedSettings {
    * Notify all listeners
    */
   notifyListeners() {
-    this.listeners.forEach(callback => {
+    this.listeners.forEach((callback) => {
       try {
         callback({
           settings: this.settings,
-          hasUnsavedChanges: this.hasUnsavedChanges
+          hasUnsavedChanges: this.hasUnsavedChanges,
         });
       } catch (error) {
-        logger.error('[Settings] Listener error:', error);
+        logger.error("[Settings] Listener error:", error);
       }
     });
   }
@@ -1141,10 +1279,9 @@ class EnhancedSettings {
     }
 
     this.listeners.clear();
-    logger.info('[Settings] Enhanced settings destroyed');
+    logger.info("[Settings] Enhanced settings destroyed");
   }
 }
 
 // Export singleton instance
 export const enhancedSettings = new EnhancedSettings();
-

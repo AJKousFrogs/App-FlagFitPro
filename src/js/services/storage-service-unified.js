@@ -94,7 +94,9 @@ class UnifiedStorageService {
   get(key, defaultValue = null, options = {}) {
     const { usePrefix = true } = options;
 
-    if (!this.isAvailable) {return defaultValue;}
+    if (!this.isAvailable) {
+      return defaultValue;
+    }
 
     try {
       const storageKey = usePrefix ? this.getPrefixedKey(key) : key;
@@ -116,7 +118,9 @@ class UnifiedStorageService {
   remove(key, options = {}) {
     const { usePrefix = true } = options;
 
-    if (!this.isAvailable) {return false;}
+    if (!this.isAvailable) {
+      return false;
+    }
 
     try {
       const storageKey = usePrefix ? this.getPrefixedKey(key) : key;
@@ -137,7 +141,9 @@ class UnifiedStorageService {
   has(key, options = {}) {
     const { usePrefix = true } = options;
 
-    if (!this.isAvailable) {return false;}
+    if (!this.isAvailable) {
+      return false;
+    }
 
     const storageKey = usePrefix ? this.getPrefixedKey(key) : key;
     return localStorage.getItem(storageKey) !== null;
@@ -148,7 +154,9 @@ class UnifiedStorageService {
    * @param {boolean} clearAll - If true, clears ALL localStorage (use with caution)
    */
   clear(clearAll = false) {
-    if (!this.isAvailable) {return;}
+    if (!this.isAvailable) {
+      return;
+    }
 
     try {
       if (clearAll) {
@@ -172,7 +180,9 @@ class UnifiedStorageService {
    * @returns {string[]}
    */
   keys(onlyPrefixed = true) {
-    if (!this.isAvailable) {return [];}
+    if (!this.isAvailable) {
+      return [];
+    }
 
     try {
       const allKeys = Object.keys(localStorage);
@@ -324,7 +334,9 @@ class UnifiedStorageService {
    * @returns {number}
    */
   getSize() {
-    if (!this.isAvailable) {return 0;}
+    if (!this.isAvailable) {
+      return 0;
+    }
 
     let size = 0;
     try {
@@ -345,8 +357,12 @@ class UnifiedStorageService {
    */
   getSizeFormatted() {
     const bytes = this.getSize();
-    if (bytes < 1024) {return bytes + " B";}
-    if (bytes < 1024 * 1024) {return (bytes / 1024).toFixed(2) + " KB";}
+    if (bytes < 1024) {
+      return bytes + " B";
+    }
+    if (bytes < 1024 * 1024) {
+      return (bytes / 1024).toFixed(2) + " KB";
+    }
     return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   }
 }

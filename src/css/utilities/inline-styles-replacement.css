@@ -359,7 +359,11 @@
    ================================================================ */
 
 .bg-gradient-primary-card {
-  background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-primary) 0%,
+    var(--color-brand-secondary) 100%
+  ) !important;
 }
 
 .bg-surface-secondary {
@@ -595,7 +599,11 @@
 .ai-scheduler-highlight {
   margin-bottom: var(--space-4);
   padding: var(--space-4);
-  background: linear-gradient(135deg, var(--color-brand-primary) 0%, #067a3c 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-primary) 0%,
+    #067a3c 100%
+  );
   border-radius: var(--radius-lg);
   color: white;
 }
@@ -628,7 +636,11 @@
 
 /* Tournament Card Styles */
 .tournament-card-header-gradient {
-  background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-primary) 0%,
+    var(--color-brand-secondary) 100%
+  );
   color: white;
 }
 
@@ -825,8 +837,12 @@
 
 /* Animation */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* ================================================================
@@ -1150,4 +1166,3 @@
 .u-gap-16 {
   gap: 16px !important;
 }
-

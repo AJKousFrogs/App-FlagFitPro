@@ -60,22 +60,21 @@
       <div id="search-status" class="sr-only" aria-live="polite"></div>
 
       <!-- Enhanced Search Results -->
-      <div
-        id="search-results"
-        class="search-results"
-        role="listbox"
-        hidden
-      >
+      <div id="search-results" class="search-results" role="listbox" hidden>
         <div class="search-results-header">
           <span class="search-results-title">Search Results</span>
-          <button class="search-results-close" aria-label="Close search results">
+          <button
+            class="search-results-close"
+            aria-label="Close search results"
+          >
             <i data-lucide="x" class="icon-16"></i>
           </button>
         </div>
         <div class="search-results-content" id="search-results-content"></div>
         <div class="search-results-footer">
           <span class="search-results-hint">
-            <kbd>↑</kbd><kbd>↓</kbd> Navigate • <kbd>Enter</kbd> Select • <kbd>Esc</kbd> Close
+            <kbd>↑</kbd><kbd>↓</kbd> Navigate • <kbd>Enter</kbd> Select •
+            <kbd>Esc</kbd> Close
           </span>
         </div>
       </div>
@@ -97,19 +96,15 @@
         <span id="notification-badge" class="notification-badge" hidden>0</span>
         <span class="notification-pulse" aria-hidden="true"></span>
       </button>
-      <span
-        id="notification-live"
-        class="sr-only"
-        aria-live="polite"
-      ></span>
+      <span id="notification-live" class="sr-only" aria-live="polite"></span>
     </div>
 
     <!-- Settings Button -->
-    <button 
-      class="header-icon" 
-      type="button" 
+    <button
+      class="header-icon"
+      type="button"
       aria-label="Settings"
-      onclick="window.location.href='/settings.html'"
+      onclick="window.location.href = '/settings.html'"
       title="Settings"
     >
       <i data-lucide="settings" class="icon-18"></i>
@@ -159,11 +154,19 @@
         <li class="user-menu-header" role="none">
           <div class="user-menu-header-content">
             <div class="user-menu-header-avatar">
-              <span class="user-menu-header-initials" id="user-menu-header-initials">JD</span>
+              <span
+                class="user-menu-header-initials"
+                id="user-menu-header-initials"
+                >JD</span
+              >
             </div>
             <div class="user-menu-header-info">
-              <div class="user-menu-header-name" id="user-menu-header-name">User Name</div>
-              <div class="user-menu-header-email" id="user-menu-header-email">user@example.com</div>
+              <div class="user-menu-header-name" id="user-menu-header-name">
+                User Name
+              </div>
+              <div class="user-menu-header-email" id="user-menu-header-email">
+                user@example.com
+              </div>
             </div>
           </div>
         </li>
@@ -190,7 +193,16 @@
         <li role="menuitem">
           <button
             class="user-menu-item user-menu-item-danger"
-            onclick="event.preventDefault(); if(window.authManager) { window.authManager.logout(); } else if(window.handleLogout) { window.handleLogout(); } else { window.location.href='/login.html'; }"
+            onclick="
+              event.preventDefault();
+              if (window.authManager) {
+                window.authManager.logout();
+              } else if (window.handleLogout) {
+                window.handleLogout();
+              } else {
+                window.location.href = '/login.html';
+              }
+            "
           >
             <i data-lucide="log-out" class="icon-18"></i>
             <span>Sign Out</span>

@@ -17,12 +17,15 @@ The following packages were successfully installed:
 ### Workaround Options
 
 1. **Use Firebase SDK directly** (recommended for now):
+
    ```bash
    npm install firebase
    ```
+
    Then use Firebase SDK directly without Angular Fire wrapper.
 
 2. **Wait for Angular Fire update**: Check for updates:
+
    ```bash
    npm view @angular/fire versions
    ```
@@ -34,6 +37,7 @@ The following packages were successfully installed:
 ## 📦 Installed Packages
 
 All Angular 21 core packages are installed and compatible:
+
 - ✅ @angular/core@^21.0.3
 - ✅ @angular/common@^21.0.3
 - ✅ @angular/router@^21.0.3
@@ -60,14 +64,16 @@ Two YouTube player components are available:
 ## 🚀 Next Steps
 
 1. **Test the application**:
+
    ```bash
    cd angular
    npm start
    ```
 
 2. **Use YouTube Player**:
+
    ```typescript
-   import { YoutubePlayerOfficialComponent } from '@app/shared/components/youtube-player/youtube-player-official.component';
+   import { YoutubePlayerOfficialComponent } from "@app/shared/components/youtube-player/youtube-player-official.component";
    ```
 
 3. **For Firebase** (when needed):
@@ -81,4 +87,3 @@ Two YouTube player components are available:
 - All other dependencies installed successfully
 - No vulnerabilities found
 - Application is ready to use with Angular 21 features
-

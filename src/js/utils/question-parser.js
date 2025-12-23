@@ -301,15 +301,33 @@ export class QuestionParser {
   classifyQuestion(question) {
     const lower = question.toLowerCase();
 
-    if (lower.startsWith("what")) {return "definition";}
-    if (lower.startsWith("how")) {return "method";}
-    if (lower.startsWith("why")) {return "explanation";}
-    if (lower.startsWith("when")) {return "timing";}
-    if (lower.startsWith("where")) {return "location";}
-    if (lower.startsWith("who")) {return "person";}
-    if (lower.startsWith("which")) {return "choice";}
-    if (lower.startsWith("should")) {return "advice";}
-    if (lower.startsWith("can") || lower.startsWith("could")) {return "capability";}
+    if (lower.startsWith("what")) {
+      return "definition";
+    }
+    if (lower.startsWith("how")) {
+      return "method";
+    }
+    if (lower.startsWith("why")) {
+      return "explanation";
+    }
+    if (lower.startsWith("when")) {
+      return "timing";
+    }
+    if (lower.startsWith("where")) {
+      return "location";
+    }
+    if (lower.startsWith("who")) {
+      return "person";
+    }
+    if (lower.startsWith("which")) {
+      return "choice";
+    }
+    if (lower.startsWith("should")) {
+      return "advice";
+    }
+    if (lower.startsWith("can") || lower.startsWith("could")) {
+      return "capability";
+    }
 
     return "general";
   }

@@ -19,20 +19,20 @@ Signals provide fine-grained reactivity for state management, reducing unnecessa
 #### Example Pattern
 
 ```typescript
-import { signal, computed } from '@angular/core';
+import { signal, computed } from "@angular/core";
 
 export class MyComponent {
   // State signals
   count = signal(0);
-  name = signal('');
-  
+  name = signal("");
+
   // Computed signals
   doubleCount = computed(() => this.count() * 2);
   isValid = computed(() => this.name().length > 0);
-  
+
   // Update signals
   increment() {
-    this.count.update(n => n + 1);
+    this.count.update((n) => n + 1);
   }
 }
 ```
@@ -42,32 +42,33 @@ export class MyComponent {
 To migrate from RxJS Observables to Signals:
 
 1. **Replace BehaviorSubject with signal**:
+
    ```typescript
    // Before
    private data$ = new BehaviorSubject<Data[]>([]);
    data$ = this.data$.asObservable();
-   
+
    // After
    data = signal<Data[]>([]);
    ```
 
 2. **Use computed for derived state**:
+
    ```typescript
    // Before
    filteredData$ = this.data$.pipe(
-     map(data => data.filter(item => item.active))
+     map((data) => data.filter((item) => item.active)),
    );
-   
+
    // After
-   filteredData = computed(() => 
-     this.data().filter(item => item.active)
-   );
+   filteredData = computed(() => this.data().filter((item) => item.active));
    ```
 
 3. **Use toSignal for RxJS interop**:
+
    ```typescript
-   import { toSignal } from '@angular/core/rxjs-interop';
-   
+   import { toSignal } from "@angular/core/rxjs-interop";
+
    // Convert Observable to Signal
    data = toSignal(this.apiService.getData(), { initialValue: [] });
    ```
@@ -96,6 +97,7 @@ All components are standalone - no NgModules required.
 **Status**: ✅ Enabled
 
 Zoneless change detection eliminates Zone.js dependency, resulting in:
+
 - Smaller bundle size
 - Faster change detection
 - Better performance
@@ -105,7 +107,7 @@ Zoneless change detection eliminates Zone.js dependency, resulting in:
 
 ```typescript
 // app.config.ts
-import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { provideExperimentalZonelessChangeDetection } from "@angular/core";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -127,6 +129,7 @@ export const appConfig: ApplicationConfig = {
 **Status**: ✅ Configured
 
 Angular 21 SSR provides:
+
 - Non-destructive hydration
 - Improved FCP and TTI metrics
 - Simplified setup with `@angular/ssr`
@@ -207,20 +210,24 @@ The `@angular-devkit/build-angular:application` builder uses esbuild automatical
 ### Signals
 
 1. **Use signals for component state**:
+
    ```typescript
    count = signal(0); // ✅ Good
    private count = 0; // ❌ Avoid (not reactive)
    ```
 
 2. **Use computed for derived state**:
+
    ```typescript
-   total = computed(() => this.items().reduce((sum, item) => sum + item.price, 0));
+   total = computed(() =>
+     this.items().reduce((sum, item) => sum + item.price, 0),
+   );
    ```
 
 3. **Use effect for side effects**:
    ```typescript
    effect(() => {
-     console.log('Count changed:', this.count());
+     console.log("Count changed:", this.count());
    });
    ```
 
@@ -234,12 +241,13 @@ The `@angular-devkit/build-angular:application` builder uses esbuild automatical
 ### SSR
 
 1. **Use `isPlatformBrowser()` for browser-only code**:
+
    ```typescript
    import { isPlatformBrowser } from '@angular/common';
    import { PLATFORM_ID, inject } from '@angular/core';
-   
+
    private platformId = inject(PLATFORM_ID);
-   
+
    if (isPlatformBrowser(this.platformId)) {
      // Browser-only code
    }
@@ -247,9 +255,10 @@ The `@angular-devkit/build-angular:application` builder uses esbuild automatical
 
 2. **Avoid direct DOM access in constructors**
 3. **Use `afterNextRender()` for DOM access**:
+
    ```typescript
    import { afterNextRender } from '@angular/core';
-   
+
    constructor() {
      afterNextRender(() => {
        // DOM access here
@@ -271,4 +280,3 @@ The `@angular-devkit/build-angular:application` builder uses esbuild automatical
 3. Add SSR route prerendering for static pages
 4. Optimize bundle sizes with esbuild analysis
 5. Update tests to work with zoneless change detection
-

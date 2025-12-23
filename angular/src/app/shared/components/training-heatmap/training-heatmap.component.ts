@@ -3,15 +3,15 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { Select } from 'primeng/dropdown';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { TagModule } from 'primeng/tag';
-import { DialogModule } from 'primeng/dialog';
-import { TooltipModule } from 'primeng/tooltip';
+} from "@angular/core";
+import { CommonModule, DatePipe } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { Select } from "primeng/dropdown";
+import { ToggleButtonModule } from "primeng/togglebutton";
+import { TagModule } from "primeng/tag";
+import { DialogModule } from "primeng/dialog";
+import { TooltipModule } from "primeng/tooltip";
 
 interface HeatmapCell {
   date: Date;
@@ -24,7 +24,7 @@ interface HeatmapCell {
 }
 
 @Component({
-  selector: 'app-training-heatmap',
+  selector: "app-training-heatmap",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -88,10 +88,7 @@ interface HeatmapCell {
           <span class="legend-label">Less</span>
           <div class="legend-gradient">
             @for (step of legendSteps; track trackByStep($index, step)) {
-              <div
-                class="gradient-step"
-                [class]="step.class"
-              ></div>
+              <div class="gradient-step" [class]="step.class"></div>
             }
           </div>
           <span class="legend-label">More</span>
@@ -108,7 +105,7 @@ interface HeatmapCell {
       >
         @if (selectedCell) {
           <div class="detail-content">
-            <h4>{{ selectedCell.date | date : 'fullDate' }}</h4>
+            <h4>{{ selectedCell.date | date: "fullDate" }}</h4>
             <div class="detail-metrics">
               <div class="metric">
                 <span class="label">Training Load:</span>
@@ -341,35 +338,34 @@ interface HeatmapCell {
   ],
 })
 export class TrainingHeatmapComponent {
-  selectedTimeRange = '6months';
+  selectedTimeRange = "6months";
   showIntensity = true;
   showDetailModal = false;
   selectedCell: HeatmapCell | null = null;
-  
+
   constructor() {
     // Angular 21: Initialize in constructor instead of OnInit
     this.updateHeatmap();
   }
 
   timeRangeOptions = [
-    { label: 'Last 3 Months', value: '3months' },
-    { label: 'Last 6 Months', value: '6months' },
-    { label: 'Last Year', value: '1year' },
+    { label: "Last 3 Months", value: "3months" },
+    { label: "Last 6 Months", value: "6months" },
+    { label: "Last Year", value: "1year" },
   ];
 
   legendSteps = [
-    { class: 'intensity-0' },
-    { class: 'intensity-1' },
-    { class: 'intensity-2' },
-    { class: 'intensity-3' },
-    { class: 'intensity-4' },
-    { class: 'intensity-5' },
-    { class: 'intensity-6' },
-    { class: 'intensity-7' },
+    { class: "intensity-0" },
+    { class: "intensity-1" },
+    { class: "intensity-2" },
+    { class: "intensity-3" },
+    { class: "intensity-4" },
+    { class: "intensity-5" },
+    { class: "intensity-6" },
+    { class: "intensity-7" },
   ];
 
   heatmapData = signal<HeatmapCell[]>([]);
-
 
   updateHeatmap() {
     // Generate heatmap data based on selected time range
@@ -381,9 +377,9 @@ export class TrainingHeatmapComponent {
     const data: HeatmapCell[] = [];
     const startDate = new Date();
     const monthsBack =
-      this.selectedTimeRange === '3months'
+      this.selectedTimeRange === "3months"
         ? 3
-        : this.selectedTimeRange === '6months'
+        : this.selectedTimeRange === "6months"
           ? 6
           : 12;
     startDate.setMonth(startDate.getMonth() - monthsBack);
@@ -424,19 +420,19 @@ export class TrainingHeatmapComponent {
   }
 
   getIntensityClass(value: number): string {
-    if (value === 0) return 'intensity-0';
+    if (value === 0) return "intensity-0";
     const intensity = Math.min(7, Math.floor(value / 10));
     return `intensity-${intensity}`;
   }
 
   getTooltipText(cell: HeatmapCell): string {
-    const metric = this.showIntensity ? 'Intensity' : 'Volume';
-    return `${cell.date.toLocaleDateString()}\n${metric}: ${cell.value}${this.showIntensity ? '/70' : ' min'}`;
+    const metric = this.showIntensity ? "Intensity" : "Volume";
+    return `${cell.date.toLocaleDateString()}\n${metric}: ${cell.value}${this.showIntensity ? "/70" : " min"}`;
   }
 
   getAriaLabel(cell: HeatmapCell): string {
-    const metric = this.showIntensity ? 'Intensity' : 'Volume';
-    return `Training ${metric} on ${cell.date.toLocaleDateString()}: ${cell.value}${this.showIntensity ? '/70' : ' minutes'}`;
+    const metric = this.showIntensity ? "Intensity" : "Volume";
+    return `Training ${metric} on ${cell.date.toLocaleDateString()}: ${cell.value}${this.showIntensity ? "/70" : " minutes"}`;
   }
 
   onCellClick(cell: HeatmapCell) {
@@ -456,4 +452,3 @@ export class TrainingHeatmapComponent {
     return index;
   }
 }
-

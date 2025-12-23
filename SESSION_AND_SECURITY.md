@@ -1,4 +1,5 @@
 # Session Management & Security
+
 ## FlagFit Pro - Security Implementation Guide
 
 **Version**: 2.0
@@ -52,12 +53,13 @@
 
 **localStorage vs sessionStorage**:
 
-| Setting | Storage | Access Token Expiry | Refresh Token Expiry | Use Case |
-|---------|---------|---------------------|----------------------|----------|
-| Remember Me = true | localStorage | 1 hour | 60 days | User wants persistent login |
-| Remember Me = false | sessionStorage | 1 hour | 24 hours | Shared/public device |
+| Setting             | Storage        | Access Token Expiry | Refresh Token Expiry | Use Case                    |
+| ------------------- | -------------- | ------------------- | -------------------- | --------------------------- |
+| Remember Me = true  | localStorage   | 1 hour              | 60 days              | User wants persistent login |
+| Remember Me = false | sessionStorage | 1 hour              | 24 hours             | Shared/public device        |
 
 **Implementation**:
+
 ```javascript
 // src/js/services/supabase-client.js
 const storage = rememberMe ? localStorage : sessionStorage;
@@ -68,7 +70,7 @@ const supabase = createClient(url, key, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-  }
+  },
 });
 ```
 
@@ -77,6 +79,7 @@ const supabase = createClient(url, key, {
 **Default Behavior**: Persistent sessions (no timeout)
 
 **Optional Timeout** (disabled by default):
+
 ```javascript
 // src/js/config/app-constants.js
 export const AUTH = {
@@ -98,27 +101,34 @@ export const AUTH = {
 ```
 
 **Enable Session Timeout**:
+
 ```javascript
 // In .env.local or environment configuration
-VITE_ENABLE_SESSION_TIMEOUT=true
+VITE_ENABLE_SESSION_TIMEOUT = true;
 ```
 
 ### Activity Tracking
 
 **Tracked Events** (if timeout enabled):
+
 ```javascript
 const activityEvents = [
-  'mousedown',   // Click
-  'keypress',    // Keyboard input
-  'touchstart',  // Mobile touch
+  "mousedown", // Click
+  "keypress", // Keyboard input
+  "touchstart", // Mobile touch
 ];
 ```
 
 **Debounced Handler**:
+
 ```javascript
 // src/auth-manager.js (lines 978-982)
 const activityHandler = debounce(() => {
-  if (this.token && this.user && Date.now() - lastActivity > AUTH.ACTIVITY_RESET_THRESHOLD) {
+  if (
+    this.token &&
+    this.user &&
+    Date.now() - lastActivity > AUTH.ACTIVITY_RESET_THRESHOLD
+  ) {
     resetSessionTimer();
   }
 }, AUTH.ACTIVITY_DEBOUNCE_TIME);
@@ -127,29 +137,31 @@ const activityHandler = debounce(() => {
 ### Multi-Session Management
 
 **Current Implementation**:
+
 - ✅ Multiple concurrent sessions allowed
 - ✅ Independent session management per device
 - ⚠️ Logout scope: **current session only** (default)
 
 **Single Session Logout**:
+
 ```javascript
 // Default behavior - logout current session only
 await supabase.auth.signOut();
 ```
 
 **Global Logout (All Sessions)**:
+
 ```javascript
 // Logout from all devices
-await supabase.auth.signOut({ scope: 'global' });
+await supabase.auth.signOut({ scope: "global" });
 ```
 
 **UI Implementation**:
+
 ```html
 <!-- In settings.html -->
 <div class="logout-options">
-  <button onclick="authManager.logout()">
-    Log out from this device
-  </button>
+  <button onclick="authManager.logout()">Log out from this device</button>
   <button onclick="authManager.logoutAllDevices()">
     Log out from all devices
   </button>
@@ -176,12 +188,14 @@ async logoutAllDevices() {
 ### Token Expiration
 
 **Access Token**:
+
 - **Issued**: On login/registration
 - **Expires**: 1 hour
 - **Refresh**: Automatic (10 minutes before expiry)
 - **Storage**: Encrypted in localStorage/sessionStorage
 
 **Refresh Token**:
+
 - **Issued**: On login/registration
 - **Expires**: 60 days (Remember Me) or 24 hours (Session Only)
 - **Usage**: To obtain new access tokens
@@ -190,17 +204,19 @@ async logoutAllDevices() {
 ### Automatic Token Refresh
 
 **Supabase Client** (Primary):
+
 ```javascript
 // Automatic refresh 10 minutes before expiry
 const supabase = createClient(url, key, {
   auth: {
     autoRefreshToken: true, // ← Handles refresh automatically
     persistSession: true,
-  }
+  },
 });
 ```
 
 **AuthManager Fallback**:
+
 ```javascript
 // src/auth-manager.js (lines 884-917)
 setupTokenRefresh() {
@@ -224,6 +240,7 @@ setupTokenRefresh() {
 ### Token Validation
 
 **Client-Side Validation**:
+
 ```javascript
 // src/auth-manager.js (lines 285-335)
 async validateStoredToken(timeoutMs = 3000) {
@@ -265,6 +282,7 @@ async validateStoredToken(timeoutMs = 3000) {
 ```
 
 **Server-Side Validation** (RLS):
+
 ```sql
 -- Supabase automatically validates JWT signature and expiry
 -- in Row Level Security policies
@@ -279,6 +297,7 @@ USING (auth.uid() = id);
 ### Token Rotation
 
 **Refresh Token Rotation**:
+
 ```
 User Login
   ↓
@@ -302,6 +321,7 @@ Invalidate refresh_token_1 (one-time use)
 ### CSRF Token Management
 
 **Token Generation**:
+
 ```javascript
 // src/js/security/csrf-protection.js
 class CSRFProtection {
@@ -309,12 +329,14 @@ class CSRFProtection {
     // Use crypto.randomBytes for cryptographically secure token
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+      "",
+    );
   }
 
   rotateToken() {
     const token = this.generateToken();
-    sessionStorage.setItem('csrf_token', token);
+    sessionStorage.setItem("csrf_token", token);
     document.cookie = `csrf_token=${token}; Path=/; Secure; SameSite=Strict`;
     return token;
   }
@@ -324,28 +346,30 @@ class CSRFProtection {
 **Token Validation**:
 
 **Frontend** (Include in requests):
+
 ```javascript
 // src/api-config.js
 const headers = {
-  'Content-Type': 'application/json',
-  'X-CSRF-Token': csrfProtection.getToken(),
+  "Content-Type": "application/json",
+  "X-CSRF-Token": csrfProtection.getToken(),
 };
 ```
 
 **Backend** (Edge Function):
+
 ```javascript
 // netlify/functions/utils/csrf-validator.cjs
 function validateCSRF(event) {
   // Skip CSRF for GET, HEAD, OPTIONS
-  if (['GET', 'HEAD', 'OPTIONS'].includes(event.httpMethod)) {
+  if (["GET", "HEAD", "OPTIONS"].includes(event.httpMethod)) {
     return { valid: true };
   }
 
-  const csrfToken = event.headers['x-csrf-token'];
-  const cookie = event.headers['cookie'];
+  const csrfToken = event.headers["x-csrf-token"];
+  const cookie = event.headers["cookie"];
 
   if (!cookie) {
-    return { valid: false, error: 'No session cookie' };
+    return { valid: false, error: "No session cookie" };
   }
 
   // Extract CSRF token from cookie
@@ -353,12 +377,12 @@ function validateCSRF(event) {
   const cookieToken = cookieMatch ? cookieMatch[1] : null;
 
   if (!csrfToken || !cookieToken) {
-    return { valid: false, error: 'Missing CSRF token' };
+    return { valid: false, error: "Missing CSRF token" };
   }
 
   // Constant-time comparison to prevent timing attacks
   if (csrfToken !== cookieToken) {
-    return { valid: false, error: 'CSRF token mismatch' };
+    return { valid: false, error: "CSRF token mismatch" };
   }
 
   return { valid: true };
@@ -366,6 +390,7 @@ function validateCSRF(event) {
 ```
 
 **CSRF Token Lifecycle**:
+
 1. **Rotation on Login**: New token generated (line 1029)
 2. **Validation on Requests**: All POST/PUT/DELETE require valid token
 3. **Clear on Logout**: Token removed from storage (line 678)
@@ -373,6 +398,7 @@ function validateCSRF(event) {
 ### Double Submit Cookie Pattern
 
 **Implementation**:
+
 ```
 1. Generate CSRF token on login
 2. Store in sessionStorage (accessible to JavaScript)
@@ -382,6 +408,7 @@ function validateCSRF(event) {
 ```
 
 **Security Properties**:
+
 - ✅ Prevents CSRF (attacker can't read sessionStorage)
 - ✅ Prevents XSS token theft (cookie is HttpOnly)
 - ✅ Constant-time comparison (prevents timing attacks)
@@ -392,16 +419,17 @@ function validateCSRF(event) {
 
 ### Supabase Default Limits
 
-| Operation | Limit | Window | Lockout |
-|-----------|-------|--------|---------|
-| Login attempts | 5 | 15 minutes | Until window expires |
-| Registration | 3 | 1 hour | Until window expires |
-| Password reset | 3 | 1 hour | Until window expires |
-| Email verification | 5 | 1 hour | Until window expires |
+| Operation          | Limit | Window     | Lockout              |
+| ------------------ | ----- | ---------- | -------------------- |
+| Login attempts     | 5     | 15 minutes | Until window expires |
+| Registration       | 3     | 1 hour     | Until window expires |
+| Password reset     | 3     | 1 hour     | Until window expires |
+| Email verification | 5     | 1 hour     | Until window expires |
 
 ### Custom Rate Limiting (Edge Functions)
 
 **Implementation**:
+
 ```javascript
 // netlify/functions/utils/rate-limiter.cjs
 class RateLimiter {
@@ -416,7 +444,7 @@ class RateLimiter {
     if (!record || now > record.resetTime) {
       this.requests.set(identifier, {
         count: 1,
-        resetTime: now + windowMs
+        resetTime: now + windowMs,
       });
       return { allowed: true, remaining: maxRequests - 1 };
     }
@@ -428,7 +456,7 @@ class RateLimiter {
       return {
         allowed: false,
         remaining: 0,
-        retryAfter: Math.ceil((record.resetTime - now) / 1000)
+        retryAfter: Math.ceil((record.resetTime - now) / 1000),
       };
     }
 
@@ -438,12 +466,13 @@ class RateLimiter {
 ```
 
 **Usage in Auth Endpoints**:
+
 ```javascript
 // netlify/functions/auth-login.cjs
-const { limiter } = require('./utils/rate-limiter.cjs');
+const { limiter } = require("./utils/rate-limiter.cjs");
 
 exports.handler = async (event) => {
-  const ip = event.headers['x-forwarded-for'] || 'unknown';
+  const ip = event.headers["x-forwarded-for"] || "unknown";
 
   // Check rate limit: 5 attempts per 15 minutes
   const limit = limiter.check(ip, 5, 900000);
@@ -452,14 +481,14 @@ exports.handler = async (event) => {
     return {
       statusCode: 429,
       headers: {
-        'Retry-After': limit.retryAfter,
-        'X-RateLimit-Limit': '5',
-        'X-RateLimit-Remaining': '0',
+        "Retry-After": limit.retryAfter,
+        "X-RateLimit-Limit": "5",
+        "X-RateLimit-Remaining": "0",
       },
       body: JSON.stringify({
-        error: 'Too many login attempts',
-        retryAfter: limit.retryAfter
-      })
+        error: "Too many login attempts",
+        retryAfter: limit.retryAfter,
+      }),
     };
   }
 
@@ -489,6 +518,7 @@ Retry-After: 900
 ### Encryption Implementation
 
 **AES-GCM Encryption**:
+
 ```javascript
 // src/secure-storage.js
 class SecureStorage {
@@ -501,15 +531,15 @@ class SecureStorage {
 
     // Encrypt data
     const encrypted = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv },
+      { name: "AES-GCM", iv },
       key,
-      new TextEncoder().encode(JSON.stringify(data))
+      new TextEncoder().encode(JSON.stringify(data)),
     );
 
     // Return IV + encrypted data
     return {
       iv: Array.from(iv),
-      data: Array.from(new Uint8Array(encrypted))
+      data: Array.from(new Uint8Array(encrypted)),
     };
   }
 
@@ -517,9 +547,9 @@ class SecureStorage {
     const key = await this.getEncryptionKey();
 
     const decrypted = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: new Uint8Array(encryptedData.iv) },
+      { name: "AES-GCM", iv: new Uint8Array(encryptedData.iv) },
       key,
-      new Uint8Array(encryptedData.data)
+      new Uint8Array(encryptedData.data),
     );
 
     return JSON.parse(new TextDecoder().decode(decrypted));
@@ -528,27 +558,27 @@ class SecureStorage {
   async getEncryptionKey() {
     // Derive key from device fingerprint + salt
     const fingerprint = await this.getDeviceFingerprint();
-    const salt = new TextEncoder().encode('flagfit-pro-v1');
+    const salt = new TextEncoder().encode("flagfit-pro-v1");
 
     const keyMaterial = await crypto.subtle.importKey(
-      'raw',
+      "raw",
       new TextEncoder().encode(fingerprint),
-      'PBKDF2',
+      "PBKDF2",
       false,
-      ['deriveKey']
+      ["deriveKey"],
     );
 
     return crypto.subtle.deriveKey(
       {
-        name: 'PBKDF2',
+        name: "PBKDF2",
         salt,
         iterations: 100000,
-        hash: 'SHA-256'
+        hash: "SHA-256",
       },
       keyMaterial,
-      { name: 'AES-GCM', length: 256 },
+      { name: "AES-GCM", length: 256 },
       false,
-      ['encrypt', 'decrypt']
+      ["encrypt", "decrypt"],
     );
   }
 }
@@ -557,16 +587,19 @@ class SecureStorage {
 ### Storage Locations
 
 **Sensitive Data** (Encrypted):
+
 - ✅ Authentication tokens
 - ✅ User metadata
 - ✅ CSRF tokens
 
 **Non-Sensitive Data** (Plain):
+
 - UI preferences
 - Theme settings
 - Language selection
 
 **Never Store**:
+
 - ❌ Passwords (plain or hashed)
 - ❌ Credit card numbers
 - ❌ Social Security Numbers
@@ -575,6 +608,7 @@ class SecureStorage {
 ### Storage Cleanup
 
 **On Logout**:
+
 ```javascript
 // src/auth-manager.js (lines 670-680)
 clearAuth() {
@@ -587,6 +621,7 @@ clearAuth() {
 ```
 
 **On Account Deletion**:
+
 ```javascript
 async deleteAccount() {
   // Delete user account from Supabase
@@ -613,6 +648,7 @@ async deleteAccount() {
 ### Content Security Policy (CSP)
 
 **Implementation** (netlify.toml):
+
 ```toml
 [[headers]]
   for = "/*.html"
@@ -631,6 +667,7 @@ async deleteAccount() {
 ```
 
 **CSP Directives Explained**:
+
 - `default-src 'self'`: Only load resources from same origin
 - `script-src`: Allow scripts from CDNs (Chart.js, etc.)
 - `style-src`: Allow Google Fonts and inline styles
@@ -679,6 +716,7 @@ async deleteAccount() {
 ### Frontend Validation
 
 **Email Validation**:
+
 ```javascript
 // RFC 5322 compliant
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -689,27 +727,30 @@ function validateEmail(email) {
 ```
 
 **Password Validation**:
+
 ```javascript
 function validatePassword(password) {
   const errors = [];
 
   if (password.length < 8) {
-    errors.push('Minimum 8 characters required');
+    errors.push("Minimum 8 characters required");
   }
 
   if (password.length > 128) {
-    errors.push('Maximum 128 characters allowed');
+    errors.push("Maximum 128 characters allowed");
   }
 
   const complexity = [
     /[A-Z]/.test(password), // Uppercase
     /[a-z]/.test(password), // Lowercase
-    /\d/.test(password),    // Number
-    /[@$!%*?&#]/.test(password) // Special
+    /\d/.test(password), // Number
+    /[@$!%*?&#]/.test(password), // Special
   ].filter(Boolean).length;
 
   if (complexity < 3) {
-    errors.push('Must contain 3 of: uppercase, lowercase, numbers, special characters');
+    errors.push(
+      "Must contain 3 of: uppercase, lowercase, numbers, special characters",
+    );
   }
 
   return { valid: errors.length === 0, errors };
@@ -717,25 +758,24 @@ function validatePassword(password) {
 ```
 
 **SQL Injection Prevention**:
+
 ```javascript
 // NEVER construct raw SQL queries
 // ❌ WRONG
 const query = `SELECT * FROM users WHERE email = '${email}'`;
 
 // ✅ CORRECT - Use Supabase parameterized queries
-const { data } = await supabase
-  .from('users')
-  .select('*')
-  .eq('email', email); // Automatically escaped
+const { data } = await supabase.from("users").select("*").eq("email", email); // Automatically escaped
 ```
 
 ### XSS Prevention
 
 **HTML Escaping**:
+
 ```javascript
 // src/js/utils/html-escape.js
 function escapeHTML(str) {
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   div.textContent = str; // textContent auto-escapes
   return div.innerHTML;
 }
@@ -747,26 +787,28 @@ element.innerHTML = escapeHTML(userInput);
 ```
 
 **DOMPurify** (for rich text):
+
 ```javascript
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 
 const dirty = userInput;
 const clean = DOMPurify.sanitize(dirty, {
-  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a'],
-  ALLOWED_ATTR: ['href']
+  ALLOWED_TAGS: ["b", "i", "em", "strong", "a"],
+  ALLOWED_ATTR: ["href"],
 });
 ```
 
 ### Server-Side Validation
 
 **Whitelist Approach**:
+
 ```javascript
 // netlify/functions/knowledge-search.cjs
-const ALLOWED_CATEGORIES = ['training', 'nutrition', 'recovery', 'technique'];
+const ALLOWED_CATEGORIES = ["training", "nutrition", "recovery", "technique"];
 
 function validateCategory(category) {
   if (!ALLOWED_CATEGORIES.includes(category)) {
-    throw new Error('Invalid category');
+    throw new Error("Invalid category");
   }
   return category;
 }
@@ -779,11 +821,13 @@ function validateCategory(category) {
 ### Data at Rest
 
 **Client-Side** (secureStorage):
+
 - AES-GCM-256 encryption
 - Device-specific key derivation
 - Per-item IV (no IV reuse)
 
 **Server-Side** (Supabase):
+
 - AES-256 encryption for database at rest
 - Encrypted backups
 - Encrypted WAL logs
@@ -791,11 +835,13 @@ function validateCategory(category) {
 ### Data in Transit
 
 **HTTPS/TLS**:
+
 - TLS 1.2+ enforced
 - Perfect Forward Secrecy (PFS)
 - HSTS headers
 
 **WebSocket Security**:
+
 ```javascript
 // Supabase Realtime uses WSS (WebSocket Secure)
 wss://pvziciccwxgftcielknm.supabase.co/realtime/v1/websocket
@@ -804,6 +850,7 @@ wss://pvziciccwxgftcielknm.supabase.co/realtime/v1/websocket
 ### Password Hashing
 
 **Supabase (bcrypt)**:
+
 - Algorithm: bcrypt
 - Salt rounds: 10
 - Unique salt per password
@@ -816,23 +863,25 @@ wss://pvziciccwxgftcielknm.supabase.co/realtime/v1/websocket
 ### Security Event Logging
 
 **Logged Events**:
+
 ```javascript
 const SECURITY_EVENTS = {
-  LOGIN_SUCCESS: 'login_success',
-  LOGIN_FAILED: 'login_failed',
-  LOGOUT: 'logout',
-  REGISTRATION: 'registration',
-  PASSWORD_CHANGE: 'password_change',
-  ROLE_CHANGE: 'role_change',
-  EMAIL_VERIFIED: 'email_verified',
-  TOKEN_REFRESH: 'token_refresh',
-  RATE_LIMIT_EXCEEDED: 'rate_limit_exceeded',
-  CSRF_VALIDATION_FAILED: 'csrf_validation_failed',
-  INVALID_TOKEN: 'invalid_token',
+  LOGIN_SUCCESS: "login_success",
+  LOGIN_FAILED: "login_failed",
+  LOGOUT: "logout",
+  REGISTRATION: "registration",
+  PASSWORD_CHANGE: "password_change",
+  ROLE_CHANGE: "role_change",
+  EMAIL_VERIFIED: "email_verified",
+  TOKEN_REFRESH: "token_refresh",
+  RATE_LIMIT_EXCEEDED: "rate_limit_exceeded",
+  CSRF_VALIDATION_FAILED: "csrf_validation_failed",
+  INVALID_TOKEN: "invalid_token",
 };
 ```
 
 **Log Format**:
+
 ```json
 {
   "timestamp": "2024-12-21T10:00:00.000Z",
@@ -850,30 +899,31 @@ const SECURITY_EVENTS = {
 ```
 
 **Non-PII Logging**:
+
 ```javascript
 // ✅ CORRECT
-logger.info('[Auth] Login attempt', {
-  result: 'failed',
-  reason: 'invalid_credentials',
+logger.info("[Auth] Login attempt", {
+  result: "failed",
+  reason: "invalid_credentials",
   ip: hashedIP,
-  correlation_id: correlationId
+  correlation_id: correlationId,
 });
 
 // ❌ WRONG - Never log passwords or tokens
-logger.error('[Auth] Login failed', {
+logger.error("[Auth] Login failed", {
   password: password, // ← NEVER
-  token: token        // ← NEVER
+  token: token, // ← NEVER
 });
 ```
 
 ### Audit Trail Retention
 
-| Event Type | Retention | Storage |
-|------------|-----------|---------|
-| Authentication events | 90 days | Supabase logs |
-| Security incidents | 1 year | External SIEM |
-| Access logs | 30 days | Netlify logs |
-| Error logs | 7 days | Client + Server |
+| Event Type            | Retention | Storage         |
+| --------------------- | --------- | --------------- |
+| Authentication events | 90 days   | Supabase logs   |
+| Security incidents    | 1 year    | External SIEM   |
+| Access logs           | 30 days   | Netlify logs    |
+| Error logs            | 7 days    | Client + Server |
 
 ---
 
@@ -881,18 +931,18 @@ logger.error('[Auth] Login failed', {
 
 ### OWASP Top 10 2021 Coverage
 
-| Risk | Status | Mitigation |
-|------|--------|------------|
-| A01: Broken Access Control | ✅ Mitigated | RLS policies, role enforcement |
-| A02: Cryptographic Failures | ✅ Mitigated | AES-GCM, TLS 1.2+, bcrypt |
-| A03: Injection | ✅ Mitigated | Parameterized queries, input validation |
-| A04: Insecure Design | ⚠️ Partial | Need role enforcement trigger (see TODO) |
-| A05: Security Misconfiguration | ✅ Mitigated | CSP, security headers, HTTPS |
-| A06: Vulnerable Components | 🔄 Ongoing | npm audit, dependency updates |
-| A07: Authentication Failures | ✅ Mitigated | Supabase Auth, rate limiting, MFA-ready |
-| A08: Software & Data Integrity | ✅ Mitigated | SRI hashes, signed tokens |
-| A09: Security Logging | ✅ Implemented | Audit logs, correlation IDs |
-| A10: SSRF | N/A | No server-side requests to user-controlled URLs |
+| Risk                           | Status         | Mitigation                                      |
+| ------------------------------ | -------------- | ----------------------------------------------- |
+| A01: Broken Access Control     | ✅ Mitigated   | RLS policies, role enforcement                  |
+| A02: Cryptographic Failures    | ✅ Mitigated   | AES-GCM, TLS 1.2+, bcrypt                       |
+| A03: Injection                 | ✅ Mitigated   | Parameterized queries, input validation         |
+| A04: Insecure Design           | ⚠️ Partial     | Need role enforcement trigger (see TODO)        |
+| A05: Security Misconfiguration | ✅ Mitigated   | CSP, security headers, HTTPS                    |
+| A06: Vulnerable Components     | 🔄 Ongoing     | npm audit, dependency updates                   |
+| A07: Authentication Failures   | ✅ Mitigated   | Supabase Auth, rate limiting, MFA-ready         |
+| A08: Software & Data Integrity | ✅ Mitigated   | SRI hashes, signed tokens                       |
+| A09: Security Logging          | ✅ Implemented | Audit logs, correlation IDs                     |
+| A10: SSRF                      | N/A            | No server-side requests to user-controlled URLs |
 
 ### TODO: Address Insecure Design (A04)
 
@@ -905,6 +955,7 @@ logger.error('[Auth] Login failed', {
 ### Data Minimization
 
 **Collected Data**:
+
 - ✅ Email (required for authentication)
 - ✅ Name (user-provided)
 - ✅ Role (player/coach)
@@ -914,6 +965,7 @@ logger.error('[Auth] Login failed', {
 - ❌ No payment info
 
 **Data Storage**:
+
 ```javascript
 // user_metadata (stored in Supabase)
 {
@@ -928,30 +980,32 @@ logger.error('[Auth] Login failed', {
 ### Right to Erasure
 
 **Account Deletion Flow**:
+
 ```javascript
 // Backend: Supabase Edge Function or admin API
 async function deleteUserAccount(userId) {
   // 1. Anonymize user data (if required for legal/business reasons)
   await supabase
-    .from('user_profiles')
+    .from("user_profiles")
     .update({
       email: `deleted_${userId}@example.com`,
-      name: 'Deleted User',
-      deleted_at: new Date().toISOString()
+      name: "Deleted User",
+      deleted_at: new Date().toISOString(),
     })
-    .eq('id', userId);
+    .eq("id", userId);
 
   // 2. Delete auth record (cascades to related tables)
   await supabase.auth.admin.deleteUser(userId);
 
   // 3. Log deletion event
-  await logSecurityEvent('account_deleted', { user_id: userId });
+  await logSecurityEvent("account_deleted", { user_id: userId });
 
   return { success: true };
 }
 ```
 
 **Data Cascade Rules**:
+
 ```sql
 -- Define cascade rules in database schema
 ALTER TABLE user_training_sessions
@@ -964,29 +1018,30 @@ ON DELETE CASCADE; -- Delete training sessions when user deleted
 ### Right to Access
 
 **Data Export**:
+
 ```javascript
 async function exportUserData(userId) {
   const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .eq('id', userId)
+    .from("user_profiles")
+    .select("*")
+    .eq("id", userId)
     .single();
 
   const { data: sessions } = await supabase
-    .from('training_sessions')
-    .select('*')
-    .eq('user_id', userId);
+    .from("training_sessions")
+    .select("*")
+    .eq("user_id", userId);
 
   const { data: analytics } = await supabase
-    .from('user_analytics')
-    .select('*')
-    .eq('user_id', userId);
+    .from("user_analytics")
+    .select("*")
+    .eq("user_id", userId);
 
   return {
     profile,
     training_sessions: sessions,
     analytics: analytics,
-    exported_at: new Date().toISOString()
+    exported_at: new Date().toISOString(),
   };
 }
 ```
@@ -994,6 +1049,7 @@ async function exportUserData(userId) {
 ### Session Management for GDPR
 
 **Multi-Device Sessions**:
+
 - Document in Privacy Policy: "You can log out from all devices at any time"
 - Implement `logoutAllDevices()` method
 - Provide session management UI in Settings
@@ -1005,27 +1061,29 @@ async function exportUserData(userId) {
 ### Real-Time Alerts
 
 **Alert Triggers**:
+
 ```javascript
 const ALERT_THRESHOLDS = {
   FAILED_LOGINS: {
     count: 10,
     window: 5 * 60 * 1000, // 5 minutes
-    severity: 'high'
+    severity: "high",
   },
   CSRF_FAILURES: {
     count: 5,
     window: 60 * 1000, // 1 minute
-    severity: 'critical'
+    severity: "critical",
   },
   RATE_LIMIT_EXCEEDED: {
     count: 100,
     window: 60 * 60 * 1000, // 1 hour
-    severity: 'medium'
-  }
+    severity: "medium",
+  },
 };
 ```
 
 **Alert Destinations**:
+
 - Slack webhook
 - Email (security team)
 - PagerDuty (critical)
@@ -1034,6 +1092,7 @@ const ALERT_THRESHOLDS = {
 ### Monitoring Dashboards
 
 **Metrics to Track**:
+
 - Login success rate
 - Failed login attempts (per IP, per user)
 - Token refresh failures
@@ -1043,6 +1102,7 @@ const ALERT_THRESHOLDS = {
 - Concurrent sessions per user
 
 **Tools**:
+
 - Supabase Dashboard (built-in analytics)
 - Netlify Analytics
 - Custom Grafana dashboard (optional)
@@ -1053,41 +1113,47 @@ const ALERT_THRESHOLDS = {
 
 ### Security Incident Classification
 
-| Severity | Examples | Response Time | Escalation |
-|----------|----------|---------------|------------|
-| Critical | Data breach, Auth bypass | Immediate | CEO, Legal |
-| High | Mass account takeover, SQL injection | 1 hour | CTO, Security Team |
-| Medium | XSS vulnerability, CSRF bypass | 4 hours | Security Team |
-| Low | Minor config issue | 24 hours | Dev Team |
+| Severity | Examples                             | Response Time | Escalation         |
+| -------- | ------------------------------------ | ------------- | ------------------ |
+| Critical | Data breach, Auth bypass             | Immediate     | CEO, Legal         |
+| High     | Mass account takeover, SQL injection | 1 hour        | CTO, Security Team |
+| Medium   | XSS vulnerability, CSRF bypass       | 4 hours       | Security Team      |
+| Low      | Minor config issue                   | 24 hours      | Dev Team           |
 
 ### Incident Response Playbook
 
 **Step 1: Detection**
+
 - Automated alert triggers
 - User report
 - Security audit finding
 
 **Step 2: Assessment**
+
 - Severity classification
 - Impact analysis
 - Affected users count
 
 **Step 3: Containment**
+
 - Disable affected feature
 - Revoke compromised tokens
 - Block malicious IPs
 
 **Step 4: Eradication**
+
 - Deploy security patch
 - Update security rules
 - Rotate secrets
 
 **Step 5: Recovery**
+
 - Enable feature
 - Monitor for recurrence
 - Notify affected users
 
 **Step 6: Post-Mortem**
+
 - Root cause analysis
 - Documentation update
 - Process improvements
@@ -1095,11 +1161,13 @@ const ALERT_THRESHOLDS = {
 ### Communication Plan
 
 **Internal**:
+
 1. Security Team → CTO (immediate)
 2. CTO → CEO (if critical)
 3. Engineering Team → All hands (if needed)
 
 **External**:
+
 1. Affected users → Email notification
 2. Public disclosure → If required by law (GDPR, etc.)
 3. Security community → If vulnerability in open-source component
@@ -1109,11 +1177,13 @@ const ALERT_THRESHOLDS = {
 ## Document Maintenance
 
 **Change Control**:
+
 - All changes require Security Team approval
 - Breaking changes require CTO approval
 - Document version increment on significant changes
 
 **Review Schedule**:
+
 - Quarterly security review
 - After any security incident
 - Before major feature releases
@@ -1124,6 +1194,7 @@ const ALERT_THRESHOLDS = {
 ---
 
 **Related Documentation**:
+
 - [AUTHENTICATION.md](./AUTHENTICATION.md) - Core authentication flows
 - [ONBOARDING.md](./ONBOARDING.md) - User onboarding
 - [SECURITY_IMPLEMENTATION_GUIDE.md](./SECURITY_IMPLEMENTATION_GUIDE.md) - Detailed fixes

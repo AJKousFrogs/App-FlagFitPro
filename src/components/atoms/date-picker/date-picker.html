@@ -45,7 +45,9 @@
 
 <!-- Date Picker with Min/Max -->
 <div class="form-group">
-  <label for="date-constrained" class="form-label">Date Range (Today - Next Year)</label>
+  <label for="date-constrained" class="form-label"
+    >Date Range (Today - Next Year)</label
+  >
   <div class="date-picker-wrapper">
     <input
       type="date"
@@ -60,7 +62,9 @@
       <i data-lucide="calendar" style="width: 20px; height: 20px"></i>
     </button>
   </div>
-  <small id="date-constrained-help" class="form-help">Select date between today and next year</small>
+  <small id="date-constrained-help" class="form-help"
+    >Select date between today and next year</small
+  >
 </div>
 
 <!-- Date Picker with Error -->
@@ -79,7 +83,9 @@
       <i data-lucide="calendar" style="width: 20px; height: 20px"></i>
     </button>
   </div>
-  <div class="form-error" id="date-error-msg" role="alert">Please select a valid date</div>
+  <div class="form-error" id="date-error-msg" role="alert">
+    Please select a valid date
+  </div>
 </div>
 
 <!-- Disabled Date Picker -->
@@ -93,7 +99,12 @@
       class="form-input date-picker"
       disabled
     />
-    <button type="button" class="date-picker-icon" disabled aria-label="Open calendar">
+    <button
+      type="button"
+      class="date-picker-icon"
+      disabled
+      aria-label="Open calendar"
+    >
       <i data-lucide="calendar" style="width: 20px; height: 20px"></i>
     </button>
   </div>
@@ -114,9 +125,27 @@
     </button>
   </div>
   <div class="date-picker-quick-actions">
-    <button type="button" class="btn btn-tertiary btn-sm" onclick="setQuickDate('date-quick', 'today')">Today</button>
-    <button type="button" class="btn btn-tertiary btn-sm" onclick="setQuickDate('date-quick', 'tomorrow')">Tomorrow</button>
-    <button type="button" class="btn btn-tertiary btn-sm" onclick="setQuickDate('date-quick', 'nextWeek')">Next Week</button>
+    <button
+      type="button"
+      class="btn btn-tertiary btn-sm"
+      onclick="setQuickDate('date-quick', 'today')"
+    >
+      Today
+    </button>
+    <button
+      type="button"
+      class="btn btn-tertiary btn-sm"
+      onclick="setQuickDate('date-quick', 'tomorrow')"
+    >
+      Tomorrow
+    </button>
+    <button
+      type="button"
+      class="btn btn-tertiary btn-sm"
+      onclick="setQuickDate('date-quick', 'nextWeek')"
+    >
+      Next Week
+    </button>
   </div>
 </div>
 
@@ -181,33 +210,32 @@
   function setQuickDate(inputId, type) {
     const input = document.getElementById(inputId);
     if (!input) return;
-    
+
     const today = new Date();
     let date = new Date();
-    
-    switch(type) {
-      case 'today':
+
+    switch (type) {
+      case "today":
         date = new Date(today);
         break;
-      case 'tomorrow':
+      case "tomorrow":
         date = new Date(today);
         date.setDate(date.getDate() + 1);
         break;
-      case 'nextWeek':
+      case "nextWeek":
         date = new Date(today);
         date.setDate(date.getDate() + 7);
         break;
     }
-    
-    input.value = date.toISOString().split('T')[0];
-    input.dispatchEvent(new Event('change'));
+
+    input.value = date.toISOString().split("T")[0];
+    input.dispatchEvent(new Event("change"));
   }
-  
+
   // Initialize lucide icons
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener("DOMContentLoaded", () => {
     if (window.lucide) {
       window.lucide.createIcons();
     }
   });
 </script>
-

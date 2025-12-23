@@ -2,16 +2,16 @@
  * Training Statistics Calculation Service
  * Centralized service for calculating training statistics (ACWR, REP, volume, intensity)
  * Used by Analytics, Performance, and Game Tracker components
- * 
+ *
  * This service ensures consistent calculations across all views
  */
 
-import { Injectable, inject } from '@angular/core';
-import { Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { TrainingDataService, TrainingSession } from './training-data.service';
-import { ApiService, API_ENDPOINTS } from './api.service';
-import { LoggerService } from './logger.service';
+import { Injectable, inject } from "@angular/core";
+import { Observable, from } from "rxjs";
+import { map } from "rxjs/operators";
+import { TrainingDataService, TrainingSession } from "./training-data.service";
+import { ApiService, API_ENDPOINTS } from "./api.service";
+import { LoggerService } from "./logger.service";
 
 export interface ACWRData {
   acwr: number | null;
@@ -19,7 +19,12 @@ export interface ACWRData {
   chronicLoad: number;
   acuteDays: number;
   chronicDays: number;
-  riskZone: 'insufficient_data' | 'detraining' | 'optimal' | 'elevated' | 'danger';
+  riskZone:
+    | "insufficient_data"
+    | "detraining"
+    | "optimal"
+    | "elevated"
+    | "danger";
   message: string;
 }
 
@@ -55,11 +60,14 @@ export interface TrainingStatsData {
   weeklyAvgIntensity: number;
 
   // Breakdown by type
-  sessionsByType: Record<string, {
-    count: number;
-    totalDuration: number;
-    totalLoad: number;
-  }>;
+  sessionsByType: Record<
+    string,
+    {
+      count: number;
+      totalDuration: number;
+      totalLoad: number;
+    }
+  >;
 
   // Date range
   dateRange: {
@@ -70,7 +78,7 @@ export interface TrainingStatsData {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class TrainingStatsCalculationService {
   private apiService = inject(ApiService);
@@ -81,41 +89,47 @@ export class TrainingStatsCalculationService {
    * Get comprehensive training statistics
    * Uses backend API for consistent calculations
    */
-  getTrainingStats(options?: { startDate?: string; endDate?: string }): Observable<TrainingStatsData> {
+  getTrainingStats(options?: {
+    startDate?: string;
+    endDate?: string;
+  }): Observable<TrainingStatsData> {
     const params: Record<string, any> = {};
-    
+
     if (options?.startDate) {
-      params['startDate'] = options.startDate;
-    }
-    
-    if (options?.endDate) {
-      params['endDate'] = options.endDate;
+      params["startDate"] = options.startDate;
     }
 
-    return this.apiService.get<TrainingStatsData>(
-      API_ENDPOINTS.training.statsEnhanced,
-      params
-    ).pipe(
-      map((response) => {
-        if (response.error || !response.data) {
-          this.logger.error('Error fetching training stats:', response.error);
-          return this.getEmptyStats();
-        }
-        return response.data;
-      })
-    );
+    if (options?.endDate) {
+      params["endDate"] = options.endDate;
+    }
+
+    return this.apiService
+      .get<TrainingStatsData>(API_ENDPOINTS.training.statsEnhanced, params)
+      .pipe(
+        map((response) => {
+          if (response.error || !response.data) {
+            this.logger.error("Error fetching training stats:", response.error);
+            return this.getEmptyStats();
+          }
+          return response.data;
+        }),
+      );
   }
 
   /**
    * Calculate ACWR from sessions array
    * Can be used client-side if needed, but prefer backend calculation
    */
-  calculateACWR(sessions: TrainingSession[], referenceDate: Date = new Date()): ACWRData {
-    const today = referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
-    const todayStr = today.toISOString().split('T')[0];
+  calculateACWR(
+    sessions: TrainingSession[],
+    referenceDate: Date = new Date(),
+  ): ACWRData {
+    const today =
+      referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
+    const todayStr = today.toISOString().split("T")[0];
 
     // Filter sessions up to and including today
-    const validSessions = sessions.filter(s => {
+    const validSessions = sessions.filter((s) => {
       const sessionDate = s.session_date || s.date;
       return sessionDate && sessionDate <= todayStr;
     });
@@ -127,8 +141,8 @@ export class TrainingStatsCalculationService {
         chronicLoad: 0,
         acuteDays: 0,
         chronicDays: 0,
-        riskZone: 'insufficient_data',
-        message: 'Insufficient data to calculate ACWR (need at least 7 days)'
+        riskZone: "insufficient_data",
+        message: "Insufficient data to calculate ACWR (need at least 7 days)",
       };
     }
 
@@ -142,51 +156,61 @@ export class TrainingStatsCalculationService {
     // Acute load (last 7 days)
     const acuteStartDate = new Date(today);
     acuteStartDate.setDate(acuteStartDate.getDate() - 7);
-    const acuteStartStr = acuteStartDate.toISOString().split('T')[0];
+    const acuteStartStr = acuteStartDate.toISOString().split("T")[0];
 
-    const acuteSessions = validSessions.filter(s => {
+    const acuteSessions = validSessions.filter((s) => {
       const sessionDate = s.session_date || s.date;
-      return sessionDate && sessionDate >= acuteStartStr && sessionDate <= todayStr;
+      return (
+        sessionDate && sessionDate >= acuteStartStr && sessionDate <= todayStr
+      );
     });
 
-    const acuteLoad = acuteSessions.reduce((sum, s) => sum + calculateLoad(s), 0);
+    const acuteLoad = acuteSessions.reduce(
+      (sum, s) => sum + calculateLoad(s),
+      0,
+    );
 
     // Chronic load (last 28 days, average weekly load)
     const chronicStartDate = new Date(today);
     chronicStartDate.setDate(chronicStartDate.getDate() - 28);
-    const chronicStartStr = chronicStartDate.toISOString().split('T')[0];
+    const chronicStartStr = chronicStartDate.toISOString().split("T")[0];
 
-    const chronicSessions = validSessions.filter(s => {
+    const chronicSessions = validSessions.filter((s) => {
       const sessionDate = s.session_date || s.date;
-      return sessionDate && sessionDate >= chronicStartStr && sessionDate <= todayStr;
+      return (
+        sessionDate && sessionDate >= chronicStartStr && sessionDate <= todayStr
+      );
     });
 
-    const chronicTotalLoad = chronicSessions.reduce((sum, s) => sum + calculateLoad(s), 0);
+    const chronicTotalLoad = chronicSessions.reduce(
+      (sum, s) => sum + calculateLoad(s),
+      0,
+    );
     const chronicLoad = chronicTotalLoad / 4; // Average weekly load over 4 weeks
 
     // Calculate ACWR
     let acwr: number | null = null;
-    let riskZone: ACWRData['riskZone'] = 'insufficient_data';
-    let message = '';
+    let riskZone: ACWRData["riskZone"] = "insufficient_data";
+    let message = "";
 
     if (chronicLoad > 0) {
       acwr = acuteLoad / chronicLoad;
-      
+
       if (acwr < 0.8) {
-        riskZone = 'detraining';
-        message = 'ACWR below optimal range - risk of detraining';
+        riskZone = "detraining";
+        message = "ACWR below optimal range - risk of detraining";
       } else if (acwr >= 0.8 && acwr <= 1.3) {
-        riskZone = 'optimal';
-        message = 'ACWR in optimal range';
+        riskZone = "optimal";
+        message = "ACWR in optimal range";
       } else if (acwr > 1.3 && acwr <= 1.5) {
-        riskZone = 'elevated';
-        message = 'ACWR elevated - monitor closely';
+        riskZone = "elevated";
+        message = "ACWR elevated - monitor closely";
       } else {
-        riskZone = 'danger';
-        message = 'ACWR in danger zone - high injury risk, reduce load';
+        riskZone = "danger";
+        message = "ACWR in danger zone - high injury risk, reduce load";
       }
     } else {
-      message = 'Insufficient chronic load data (need at least 28 days)';
+      message = "Insufficient chronic load data (need at least 28 days)";
     }
 
     return {
@@ -196,16 +220,20 @@ export class TrainingStatsCalculationService {
       acuteDays: acuteSessions.length,
       chronicDays: chronicSessions.length,
       riskZone,
-      message
+      message,
     };
   }
 
   /**
    * Calculate weekly volume
    */
-  calculateWeeklyVolume(sessions: TrainingSession[], referenceDate: Date = new Date()): WeeklyVolumeData {
-    const today = referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
-    const todayStr = today.toISOString().split('T')[0];
+  calculateWeeklyVolume(
+    sessions: TrainingSession[],
+    referenceDate: Date = new Date(),
+  ): WeeklyVolumeData {
+    const today =
+      referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
+    const todayStr = today.toISOString().split("T")[0];
 
     // Get ISO week start (Monday)
     const getISOWeekStart = (date: Date): Date => {
@@ -221,12 +249,14 @@ export class TrainingStatsCalculationService {
     weekEnd.setDate(weekEnd.getDate() + 6);
     weekEnd.setHours(23, 59, 59, 999);
 
-    const weekStartStr = weekStart.toISOString().split('T')[0];
-    const weekEndStr = weekEnd.toISOString().split('T')[0];
+    const weekStartStr = weekStart.toISOString().split("T")[0];
+    const weekEndStr = weekEnd.toISOString().split("T")[0];
 
-    const weekSessions = sessions.filter(s => {
+    const weekSessions = sessions.filter((s) => {
       const sessionDate = s.session_date || s.date;
-      return sessionDate && sessionDate >= weekStartStr && sessionDate <= weekEndStr;
+      return (
+        sessionDate && sessionDate >= weekStartStr && sessionDate <= weekEndStr
+      );
     });
 
     const calculateLoad = (session: TrainingSession): number => {
@@ -235,11 +265,21 @@ export class TrainingStatsCalculationService {
       return duration * rpe;
     };
 
-    const totalLoad = weekSessions.reduce((sum, s) => sum + calculateLoad(s), 0);
-    const totalDuration = weekSessions.reduce((sum, s) => sum + (s.duration_minutes || s.duration || 0), 0);
-    const avgIntensity = weekSessions.length > 0
-      ? weekSessions.reduce((sum, s) => sum + (s.rpe || s.intensity_level || 5), 0) / weekSessions.length
-      : 0;
+    const totalLoad = weekSessions.reduce(
+      (sum, s) => sum + calculateLoad(s),
+      0,
+    );
+    const totalDuration = weekSessions.reduce(
+      (sum, s) => sum + (s.duration_minutes || s.duration || 0),
+      0,
+    );
+    const avgIntensity =
+      weekSessions.length > 0
+        ? weekSessions.reduce(
+            (sum, s) => sum + (s.rpe || s.intensity_level || 5),
+            0,
+          ) / weekSessions.length
+        : 0;
 
     return {
       totalLoad: Math.round(totalLoad),
@@ -247,19 +287,23 @@ export class TrainingStatsCalculationService {
       sessionCount: weekSessions.length,
       avgIntensity: Math.round(avgIntensity * 10) / 10,
       weekStart: weekStartStr,
-      weekEnd: weekEndStr
+      weekEnd: weekEndStr,
     };
   }
 
   /**
    * Calculate current streak (consecutive days with training)
    */
-  calculateStreak(sessions: TrainingSession[], referenceDate: Date = new Date()): number {
-    const today = referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
-    const todayStr = today.toISOString().split('T')[0];
+  calculateStreak(
+    sessions: TrainingSession[],
+    referenceDate: Date = new Date(),
+  ): number {
+    const today =
+      referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
+    const todayStr = today.toISOString().split("T")[0];
 
     // Filter sessions up to and including today
-    const validSessions = sessions.filter(s => {
+    const validSessions = sessions.filter((s) => {
       const sessionDate = s.session_date || s.date;
       return sessionDate && sessionDate <= todayStr;
     });
@@ -270,9 +314,9 @@ export class TrainingStatsCalculationService {
     for (let i = 0; i < 30; i++) {
       const checkDate = new Date(todayDate);
       checkDate.setDate(todayDate.getDate() - i);
-      const dateStr = checkDate.toISOString().split('T')[0];
+      const dateStr = checkDate.toISOString().split("T")[0];
 
-      const hasSessionOnDate = validSessions.some(s => {
+      const hasSessionOnDate = validSessions.some((s) => {
         const sessionDate = s.session_date || s.date;
         return sessionDate === dateStr;
       });
@@ -302,8 +346,8 @@ export class TrainingStatsCalculationService {
       acwr: null,
       acuteLoad: 0,
       chronicLoad: 0,
-      acwrRiskZone: 'insufficient_data',
-      acwrMessage: 'Insufficient data',
+      acwrRiskZone: "insufficient_data",
+      acwrMessage: "Insufficient data",
       weeklyVolume: 0,
       weeklyDuration: 0,
       weeklySessions: 0,
@@ -312,8 +356,8 @@ export class TrainingStatsCalculationService {
       dateRange: {
         startDate: null,
         endDate: null,
-        filteredToToday: new Date().toISOString().split('T')[0]
-      }
+        filteredToToday: new Date().toISOString().split("T")[0],
+      },
     };
   }
 }

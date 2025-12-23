@@ -24,10 +24,7 @@
       "resistance_bands",
       "protein_powder"
     ],
-    "local_resource_needs": [
-      "local_gym_access",
-      "basic_coaching"
-    ],
+    "local_resource_needs": ["local_gym_access", "basic_coaching"],
     "diy_protocols_included": [
       "home_ice_baths",
       "bodyweight_circuits",
@@ -68,10 +65,7 @@
       "heart_rate_monitor",
       "mobility_tools"
     ],
-    "local_resource_needs": [
-      "personal_coach",
-      "local_physio"
-    ],
+    "local_resource_needs": ["personal_coach", "local_physio"],
     "diy_protocols_included": [
       "advanced_home_protocols",
       "structured_training"
@@ -110,15 +104,8 @@
       "advanced_tools",
       "measurement_devices"
     ],
-    "local_resource_needs": [
-      "elite_coach",
-      "sports_physio",
-      "nutritionist"
-    ],
-    "diy_protocols_included": [
-      "custom_protocols",
-      "advanced_training"
-    ],
+    "local_resource_needs": ["elite_coach", "sports_physio", "nutritionist"],
+    "diy_protocols_included": ["custom_protocols", "advanced_training"],
     "cost_breakdown": {
       "health": 200,
       "training": 500,

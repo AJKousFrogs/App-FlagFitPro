@@ -10,7 +10,7 @@
   <div class="sidebar-header">
     <div
       class="sidebar-logo"
-      onclick="window.location.href='/dashboard.html'"
+      onclick="window.location.href = '/dashboard.html'"
       title="FlagFit Pro"
       aria-label="Go to dashboard"
       tabindex="0"
@@ -201,7 +201,7 @@
         <span class="nav-item-label">Settings</span>
       </a>
     </nav>
-    
+
     <!-- User Profile Card -->
     <div class="sidebar-user-card">
       <div class="sidebar-user-avatar">
@@ -225,14 +225,15 @@
 </div>
 
 <!-- Sidebar Overlay for Mobile -->
-<div
-  class="sidebar-overlay"
-  id="sidebar-overlay"
-  aria-hidden="true"
-></div>
+<div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
 
 <!-- User Menu Dropdown -->
-<div class="sidebar-user-menu" id="sidebar-user-menu" role="menu" aria-hidden="true">
+<div
+  class="sidebar-user-menu"
+  id="sidebar-user-menu"
+  role="menu"
+  aria-hidden="true"
+>
   <a href="/profile.html" class="sidebar-user-menu-item" role="menuitem">
     <i data-lucide="user" class="icon-18"></i>
     <span>Profile</span>
@@ -242,7 +243,11 @@
     <span>Settings</span>
   </a>
   <div class="sidebar-user-menu-divider"></div>
-  <button class="sidebar-user-menu-item sidebar-user-menu-item-danger" role="menuitem" onclick="handleLogout()">
+  <button
+    class="sidebar-user-menu-item sidebar-user-menu-item-danger"
+    role="menuitem"
+    onclick="handleLogout()"
+  >
     <i data-lucide="log-out" class="icon-18"></i>
     <span>Sign Out</span>
   </button>

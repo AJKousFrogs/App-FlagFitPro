@@ -1,14 +1,14 @@
 /**
  * Game Tracker Prefetch Resolver
- * 
+ *
  * Prefetches game tracker data (film/analytics) when route is activated
  * Heavy page optimization
  */
 
-import { inject } from '@angular/core';
-import { ResolveFn } from '@angular/router';
-import { ApiService, API_ENDPOINTS } from '../services/api.service';
-import { LoggerService } from '../services/logger.service';
+import { inject } from "@angular/core";
+import { ResolveFn } from "@angular/router";
+import { ApiService, API_ENDPOINTS } from "../services/api.service";
+import { LoggerService } from "../services/logger.service";
 
 export const gameTrackerPrefetchResolver: ResolveFn<void> = (route, state) => {
   const apiService = inject(ApiService);
@@ -22,10 +22,9 @@ export const gameTrackerPrefetchResolver: ResolveFn<void> = (route, state) => {
     },
     error: (err) => {
       // Silently fail - component will handle error state
-      logger.warn('Game tracker prefetch failed:', err);
-    }
+      logger.warn("Game tracker prefetch failed:", err);
+    },
   });
 
   return undefined;
 };
-

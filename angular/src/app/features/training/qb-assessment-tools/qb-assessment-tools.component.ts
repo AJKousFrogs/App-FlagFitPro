@@ -15,12 +15,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   selector: "app-qb-assessment-tools",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CardModule,
-    ButtonModule,
-    MainLayoutComponent,
-    PageHeaderComponent
-  ],
+  imports: [CardModule, ButtonModule, MainLayoutComponent, PageHeaderComponent],
   template: `
     <app-main-layout>
       <div class="qb-assessment-tools-page">
@@ -35,7 +30,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <ng-template pTemplate="header">
               <h3>Throwing Accuracy Test</h3>
             </ng-template>
-            <p>Assess your throwing accuracy across different distances and scenarios.</p>
+            <p>
+              Assess your throwing accuracy across different distances and
+              scenarios.
+            </p>
             <p-button
               label="Start Assessment"
               icon="pi pi-play"
@@ -98,4 +96,3 @@ export class QbAssessmentToolsComponent implements OnInit {
     // Load assessment tools
   }
 }
-

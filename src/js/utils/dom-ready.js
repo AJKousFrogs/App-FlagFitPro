@@ -10,8 +10,8 @@
  * @returns {void}
  */
 export function onDOMReady(callback) {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', callback);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", callback);
   } else {
     // DOM already loaded, execute immediately
     callback();
@@ -40,11 +40,10 @@ export function whenDOMReady(callback) {
  * @returns {boolean}
  */
 export function isDOMReady() {
-  return document.readyState !== 'loading';
+  return document.readyState !== "loading";
 }
 
 // Make onDOMReady globally available for backward compatibility
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.onDOMReady = onDOMReady;
 }
-

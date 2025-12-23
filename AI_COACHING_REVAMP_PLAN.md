@@ -1,4 +1,5 @@
 # AI Coaching System Revamp Plan
+
 **Safety-First, Context-Aware Architecture**  
 **Last Updated:** 2025-01-22
 
@@ -20,6 +21,7 @@ The current AI coaching system operates with **partial context** due to missing 
 ### 1.1 What the API Audit Reveals
 
 **Existing Functions (Not Fully Wired):**
+
 - ✅ `user-context.cjs` - Exists but not in API config
 - ✅ `update-chatbot-stats.cjs` - Exists but not in API config
 - ✅ `load-management.cjs` - Exists but not in API config
@@ -27,6 +29,7 @@ The current AI coaching system operates with **partial context** due to missing 
 - ✅ `recovery.cjs` - Exists but not in API config
 
 **Missing Critical Endpoints:**
+
 - ❌ `/api/wellness/checkin` - Cannot log wellness data
 - ❌ `/api/supplements/log` - Cannot log supplement usage
 - ❌ `/api/user/context` - No unified context endpoint
@@ -34,6 +37,7 @@ The current AI coaching system operates with **partial context** due to missing 
 - ❌ `/api/ai/feedback` - No feedback loop
 
 **Impact:**
+
 - AI cannot access wellness check-ins → generic recovery advice
 - AI cannot access supplements logs → cannot provide safe supplement guidance
 - AI cannot access injury history → may recommend unsafe activities
@@ -46,16 +50,19 @@ The current AI coaching system operates with **partial context** due to missing 
 ### 2.1 Risk Tiers
 
 **Tier 1: Training Technique (Safe)**
+
 - ✅ Can provide direct advice
 - Examples: "Focus on proper throwing mechanics", "Increase sprint volume gradually"
 - No medical implications
 
 **Tier 2: Injury Prevention & Recovery (Moderate Risk)**
+
 - ⚠️ Requires context (injury history, current load, wellness)
 - Examples: "Reduce training volume if soreness > 7/10", "Focus on mobility work"
 - Must include disclaimers: "If pain persists, consult healthcare provider"
 
 **Tier 3: Supplements/Medical Dosing (High Risk)**
+
 - 🚨 **NEVER provide dosing advice**
 - Examples: "Consider iron supplementation" (NOT "Take 65mg iron daily")
 - Must always: Educate → Advise labs/clinician → Log intent for follow-up
@@ -63,14 +70,17 @@ The current AI coaching system operates with **partial context** due to missing 
 ### 2.2 Safety Rules
 
 **Rule 1: No Medical Diagnosis**
+
 - AI cannot diagnose injuries or medical conditions
 - Must redirect to healthcare provider
 
 **Rule 2: No Supplement Dosing**
+
 - AI cannot recommend specific dosages
 - Can only: educate about supplements, suggest consulting clinician, log user intent
 
 **Rule 3: Context Required for Tier 2/3**
+
 - Cannot provide Tier 2/3 advice without:
   - Recent wellness check-ins (last 7 days)
   - Injury history
@@ -78,6 +88,7 @@ The current AI coaching system operates with **partial context** due to missing 
   - Body metrics (if available)
 
 **Rule 4: Conservative Defaults**
+
 - If context unavailable → default to conservative recommendations
 - Example: "Unable to assess readiness without recent wellness data. Defaulting to light activity."
 
@@ -90,6 +101,7 @@ The current AI coaching system operates with **partial context** due to missing 
 **Endpoint:** `GET /api/user/context`
 
 **Returns:**
+
 ```json
 {
   "userId": "uuid",
@@ -148,6 +160,7 @@ The current AI coaching system operates with **partial context** due to missing 
 ```
 
 **Implementation:**
+
 - Create `user-context.cjs` function
 - Aggregates data from: users, injuries, training_sessions, wellness_checkins, supplements_logs
 - Caches for 5 minutes (user context changes slowly)
@@ -157,18 +170,20 @@ The current AI coaching system operates with **partial context** due to missing 
 **Endpoint:** `POST /api/wellness/checkin`
 
 **Request:**
+
 ```json
 {
-  "readiness": 7.5,  // 1-10
-  "sleep": 7,       // Hours
-  "energy": 6,      // 1-10
-  "mood": 8,        // 1-10
-  "soreness": 4,    // 1-10
+  "readiness": 7.5, // 1-10
+  "sleep": 7, // Hours
+  "energy": 6, // 1-10
+  "mood": 8, // 1-10
+  "soreness": 4, // 1-10
   "notes": "Feeling good, slight tightness in hamstring"
 }
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -181,6 +196,7 @@ The current AI coaching system operates with **partial context** due to missing 
 ```
 
 **Implementation:**
+
 - Create `wellness.cjs` function
 - Stores in `wellness_checkins` table
 - Updates user's last wellness timestamp
@@ -191,16 +207,18 @@ The current AI coaching system operates with **partial context** due to missing 
 **Endpoint:** `POST /api/supplements/log`
 
 **Request:**
+
 ```json
 {
   "supplement": "iron",
-  "dose": null,  // User logs dose, but AI never recommends
+  "dose": null, // User logs dose, but AI never recommends
   "takenAt": "2025-01-22T08:00:00Z",
   "notes": "As recommended by doctor"
 }
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -212,6 +230,7 @@ The current AI coaching system operates with **partial context** due to missing 
 ```
 
 **Implementation:**
+
 - Create `supplements.cjs` function
 - Stores in `supplements_logs` table
 - **Important:** AI can READ logs but never WRITE dosing recommendations
@@ -225,6 +244,7 @@ The current AI coaching system operates with **partial context** due to missing 
 **Endpoint:** `POST /api/ai/chat`
 
 **Request:**
+
 ```json
 {
   "message": "Should I train today?",
@@ -237,6 +257,7 @@ The current AI coaching system operates with **partial context** due to missing 
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -287,25 +308,29 @@ The current AI coaching system operates with **partial context** due to missing 
 ### 4.3 Risk Tier Classification
 
 **Tier 1 Keywords:**
+
 - "technique", "form", "mechanics", "drills", "practice"
 - "sprint", "agility", "strength", "conditioning"
 
 **Tier 2 Keywords:**
+
 - "sore", "pain", "injury", "recovery", "rest", "readiness"
 - "load", "volume", "intensity", "fatigue"
 
 **Tier 3 Keywords:**
+
 - "supplement", "vitamin", "iron", "dose", "mg", "medical"
 - "diagnosis", "treatment", "medicine"
 
 **Classification Logic:**
+
 ```javascript
 function classifyRiskTier(message) {
   const lowerMessage = message.toLowerCase();
-  
-  if (tier3Keywords.some(kw => lowerMessage.includes(kw))) {
+
+  if (tier3Keywords.some((kw) => lowerMessage.includes(kw))) {
     return 3;
-  } else if (tier2Keywords.some(kw => lowerMessage.includes(kw))) {
+  } else if (tier2Keywords.some((kw) => lowerMessage.includes(kw))) {
     return 2;
   } else {
     return 1;
@@ -354,6 +379,7 @@ AI Response: "Based on your readiness score of 7.5 and recent ankle sprain recov
 ```
 
 **If context unavailable:**
+
 ```
 AI Response: "I need your recent wellness data to provide a safe recommendation. Please complete a wellness check-in first, or default to light activity today."
 ```
@@ -380,6 +406,7 @@ I've logged your interest in iron supplementation. Would you like me to remind y
 ```
 
 **Response includes:**
+
 - Education about the supplement
 - Clear disclaimer about dosing
 - Recommendation to consult healthcare provider
@@ -394,6 +421,7 @@ I've logged your interest in iron supplementation. Would you like me to remind y
 **Endpoint:** `POST /api/ai/feedback`
 
 **Request:**
+
 ```json
 {
   "chatId": "uuid",  // Reference to chat message
@@ -404,6 +432,7 @@ I've logged your interest in iron supplementation. Would you like me to remind y
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -417,11 +446,13 @@ I've logged your interest in iron supplementation. Would you like me to remind y
 ### 6.2 Feedback Usage
 
 **For AI Improvement:**
+
 - Track which recommendations are rated positively
 - Identify patterns in negative feedback
 - Adjust response generation based on feedback
 
 **For Coach Visibility:**
+
 - Coaches can see AI interaction history
 - Identify users who need follow-up
 - Track supplement questions for medical review
@@ -433,6 +464,7 @@ I've logged your interest in iron supplementation. Would you like me to remind y
 ### Phase 1: Context Infrastructure (Week 1)
 
 **Tasks:**
+
 1. ✅ Create `user-context.cjs` function
    - Aggregates: users, injuries, training_sessions, wellness_checkins, supplements_logs
    - Returns unified context object
@@ -449,19 +481,20 @@ I've logged your interest in iron supplementation. Would you like me to remind y
    - Read-only for AI (no dosing recommendations)
 
 4. ✅ Add redirects to `netlify.toml`:
+
    ```toml
    [[redirects]]
      from = "/api/user/context"
      to = "/.netlify/functions/user-context"
      status = 200
      force = true
-   
+
    [[redirects]]
      from = "/api/wellness/*"
      to = "/.netlify/functions/wellness"
      status = 200
      force = true
-   
+
    [[redirects]]
      from = "/api/supplements/*"
      to = "/.netlify/functions/supplements"
@@ -483,6 +516,7 @@ I've logged your interest in iron supplementation. Would you like me to remind y
    ```
 
 **Acceptance Criteria:**
+
 - User context endpoint returns complete data
 - Wellness check-ins can be logged
 - Supplements can be logged (without AI dosing)
@@ -490,6 +524,7 @@ I've logged your interest in iron supplementation. Would you like me to remind y
 ### Phase 2: AI Chat Endpoint (Week 2)
 
 **Tasks:**
+
 1. ✅ Create `ai/chat.cjs` function
    - Receives chat message
    - Fetches user context
@@ -516,6 +551,7 @@ I've logged your interest in iron supplementation. Would you like me to remind y
    ```
 
 **Acceptance Criteria:**
+
 - AI chat endpoint responds with contextualized answers
 - Risk tier classification works correctly
 - Safety rules prevent unsafe advice
@@ -523,6 +559,7 @@ I've logged your interest in iron supplementation. Would you like me to remind y
 ### Phase 3: Feedback Loop (Week 3)
 
 **Tasks:**
+
 1. ✅ Create `ai/feedback.cjs` function
    - Receives feedback on AI responses
    - Stores in `ai_feedback` table
@@ -543,6 +580,7 @@ I've logged your interest in iron supplementation. Would you like me to remind y
    ```
 
 **Acceptance Criteria:**
+
 - Users can provide feedback on AI responses
 - Feedback is stored and linked to chat messages
 - Coaches can view feedback for their team members
@@ -554,6 +592,7 @@ I've logged your interest in iron supplementation. Would you like me to remind y
 ### 8.1 Required Tables
 
 **`wellness_checkins`** (if not exists):
+
 ```sql
 CREATE TABLE wellness_checkins (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -572,6 +611,7 @@ CREATE INDEX idx_wellness_checkins_created_at ON wellness_checkins(created_at DE
 ```
 
 **`supplements_logs`** (if not exists):
+
 ```sql
 CREATE TABLE supplements_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -588,6 +628,7 @@ CREATE INDEX idx_supplements_logs_taken_at ON supplements_logs(taken_at DESC);
 ```
 
 **`ai_feedback`** (if not exists):
+
 ```sql
 CREATE TABLE ai_feedback (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -608,6 +649,7 @@ CREATE INDEX idx_ai_feedback_chat_id ON ai_feedback(chat_id);
 ## 9. Safety Checklist
 
 ### Before Launch:
+
 - [ ] Risk tier classification tested
 - [ ] Tier 3 responses never include dosing
 - [ ] Context required for Tier 2/3 responses
@@ -617,6 +659,7 @@ CREATE INDEX idx_ai_feedback_chat_id ON ai_feedback(chat_id);
 - [ ] Medical disclaimer displayed in UI
 
 ### Ongoing Monitoring:
+
 - [ ] Track feedback ratings
 - [ ] Monitor for unsafe recommendations
 - [ ] Review supplement questions for medical follow-up
@@ -627,6 +670,7 @@ CREATE INDEX idx_ai_feedback_chat_id ON ai_feedback(chat_id);
 ## 10. Example AI Interactions
 
 ### Example 1: Safe Training Advice (Tier 1)
+
 ```
 User: "How can I improve my sprint speed?"
 
@@ -640,6 +684,7 @@ Start with 3x20m sprints, rest 2 minutes between sets."
 ```
 
 ### Example 2: Context-Aware Recovery (Tier 2)
+
 ```
 User: "Should I train today?"
 
@@ -659,6 +704,7 @@ AI Response: "Your readiness is moderate (6/10) and ACWR is elevated (1.15). I r
 ```
 
 ### Example 3: Supplement Education (Tier 3)
+
 ```
 User: "Should I take iron supplements?"
 
@@ -680,4 +726,3 @@ I've logged your interest. Would you like me to remind you to discuss this with 
 
 **Document Status:** ✅ Ready for Implementation  
 **Priority:** 🔴 Critical (Required for safe AI coaching)
-

@@ -8,10 +8,7 @@
     "female_target": "5.80",
     "percentage_of_nfl_elite": "0.75",
     "description": "Beginner flag football players",
-    "training_focus": [
-      "basic_technique",
-      "conditioning"
-    ],
+    "training_focus": ["basic_technique", "conditioning"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -23,10 +20,7 @@
     "female_target": "1.95",
     "percentage_of_nfl_elite": "0.75",
     "description": "Learning acceleration",
-    "training_focus": [
-      "start_technique",
-      "leg_strength"
-    ],
+    "training_focus": ["start_technique", "leg_strength"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -38,10 +32,7 @@
     "female_target": "8.20",
     "percentage_of_nfl_elite": "0.75",
     "description": "Basic agility",
-    "training_focus": [
-      "footwork",
-      "change_of_direction"
-    ],
+    "training_focus": ["footwork", "change_of_direction"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -53,10 +44,7 @@
     "female_target": "18.00",
     "percentage_of_nfl_elite": "0.75",
     "description": "Basic jumping ability",
-    "training_focus": [
-      "leg_power",
-      "technique"
-    ],
+    "training_focus": ["leg_power", "technique"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -68,10 +56,7 @@
     "female_target": "5.30",
     "percentage_of_nfl_elite": "0.88",
     "description": "Organized league players",
-    "training_focus": [
-      "speed_technique",
-      "power_training"
-    ],
+    "training_focus": ["speed_technique", "power_training"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -83,10 +68,7 @@
     "female_target": "1.85",
     "percentage_of_nfl_elite": "0.88",
     "description": "Good acceleration",
-    "training_focus": [
-      "explosive_starts",
-      "reaction_time"
-    ],
+    "training_focus": ["explosive_starts", "reaction_time"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -98,10 +80,7 @@
     "female_target": "7.60",
     "percentage_of_nfl_elite": "0.88",
     "description": "Solid agility",
-    "training_focus": [
-      "cutting_technique",
-      "body_control"
-    ],
+    "training_focus": ["cutting_technique", "body_control"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -113,10 +92,7 @@
     "female_target": "21.00",
     "percentage_of_nfl_elite": "0.88",
     "description": "Good jumping power",
-    "training_focus": [
-      "plyometrics",
-      "jump_technique"
-    ],
+    "training_focus": ["plyometrics", "jump_technique"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -128,10 +104,7 @@
     "female_target": "5.00",
     "percentage_of_nfl_elite": "0.97",
     "description": "Top flag football players",
-    "training_focus": [
-      "elite_technique",
-      "sport_specific"
-    ],
+    "training_focus": ["elite_technique", "sport_specific"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -143,10 +116,7 @@
     "female_target": "1.75",
     "percentage_of_nfl_elite": "0.97",
     "description": "Elite acceleration",
-    "training_focus": [
-      "max_power",
-      "biomechanics"
-    ],
+    "training_focus": ["max_power", "biomechanics"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -158,10 +128,7 @@
     "female_target": "7.20",
     "percentage_of_nfl_elite": "0.97",
     "description": "Elite agility",
-    "training_focus": [
-      "advanced_cutting",
-      "proprioception"
-    ],
+    "training_focus": ["advanced_cutting", "proprioception"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -173,10 +140,7 @@
     "female_target": "24.00",
     "percentage_of_nfl_elite": "0.97",
     "description": "Elite jumping",
-    "training_focus": [
-      "max_power_development",
-      "sport_application"
-    ],
+    "training_focus": ["max_power_development", "sport_application"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -188,10 +152,7 @@
     "female_target": "4.80",
     "percentage_of_nfl_elite": "1.05",
     "description": "Semi-professional level",
-    "training_focus": [
-      "professional_training",
-      "genetic_optimization"
-    ],
+    "training_focus": ["professional_training", "genetic_optimization"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -203,10 +164,7 @@
     "female_target": "1.70",
     "percentage_of_nfl_elite": "1.05",
     "description": "Semi-pro acceleration",
-    "training_focus": [
-      "elite_power",
-      "technical_mastery"
-    ],
+    "training_focus": ["elite_power", "technical_mastery"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -218,10 +176,7 @@
     "female_target": "7.00",
     "percentage_of_nfl_elite": "1.05",
     "description": "Semi-pro agility",
-    "training_focus": [
-      "elite_agility",
-      "movement_mastery"
-    ],
+    "training_focus": ["elite_agility", "movement_mastery"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -233,10 +188,7 @@
     "female_target": "27.00",
     "percentage_of_nfl_elite": "1.05",
     "description": "Semi-pro power",
-    "training_focus": [
-      "maximal_power",
-      "genetic_potential"
-    ],
+    "training_focus": ["maximal_power", "genetic_potential"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -248,10 +200,7 @@
     "female_target": "4.60",
     "percentage_of_nfl_elite": "1.20",
     "description": "NFL combine elite level",
-    "training_focus": [
-      "genetic_gifts",
-      "professional_development"
-    ],
+    "training_focus": ["genetic_gifts", "professional_development"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -263,10 +212,7 @@
     "female_target": "1.65",
     "percentage_of_nfl_elite": "1.20",
     "description": "NFL elite burst",
-    "training_focus": [
-      "world_class_power",
-      "elite_genetics"
-    ],
+    "training_focus": ["world_class_power", "elite_genetics"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -278,10 +224,7 @@
     "female_target": "6.80",
     "percentage_of_nfl_elite": "1.20",
     "description": "NFL elite agility",
-    "training_focus": [
-      "world_class_agility",
-      "elite_training"
-    ],
+    "training_focus": ["world_class_agility", "elite_training"],
     "created_at": "2025-08-17T17:32:14.640Z"
   },
   {
@@ -293,10 +236,7 @@
     "female_target": "30.00",
     "percentage_of_nfl_elite": "1.20",
     "description": "NFL elite power",
-    "training_focus": [
-      "elite_genetics",
-      "world_class_training"
-    ],
+    "training_focus": ["elite_genetics", "world_class_training"],
     "created_at": "2025-08-17T17:32:14.640Z"
   }
 ]

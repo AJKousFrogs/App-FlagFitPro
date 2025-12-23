@@ -54,7 +54,8 @@ const configs = {
     API_BASE_URL: getEnvVar("API_BASE_URL", ""), // Use Netlify Functions or configured API
     DATABASE_URL: "http://localhost:5432",
     ENABLE_MOCK_AUTH: false, // Use real authentication
-    ALLOW_UNAUTHENTICATED_DEV: getEnvVar("ALLOW_UNAUTHENTICATED_DEV", "false") === "true", // MUST be explicitly enabled
+    ALLOW_UNAUTHENTICATED_DEV:
+      getEnvVar("ALLOW_UNAUTHENTICATED_DEV", "false") === "true", // MUST be explicitly enabled
     ENABLE_DEBUG_LOGS: true,
     ENABLE_ANALYTICS: false,
     YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),

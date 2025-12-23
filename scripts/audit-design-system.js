@@ -1,4 +1,3 @@
- 
 // Comprehensive Design System Audit Script
 // Checks all HTML files for design system consistency
 

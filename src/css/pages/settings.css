@@ -310,7 +310,7 @@
     font-size: var(--text-base);
   }
 
-    .form-input,
+  .form-input,
   .form-select,
   .select-input {
     font-size: var(--text-base); /* Ensure 16px on mobile */
@@ -396,7 +396,7 @@
 }
 
 .btn.has-changes::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -409,7 +409,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -418,7 +419,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.2;
   }
   50% {
@@ -429,7 +431,9 @@
 /* Settings section animations */
 .settings-section {
   animation: fadeInUp 0.4s ease-out;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .settings-section:hover {
@@ -472,7 +476,9 @@
 
 /* Setting item hover effects */
 .setting-item {
-  transition: background-color 0.2s ease, padding 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    padding 0.2s ease;
 }
 
 .setting-item:hover {

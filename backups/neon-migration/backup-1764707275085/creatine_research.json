@@ -10,21 +10,11 @@
     "power_improvement_percentage": "12.80",
     "sprint_performance_improvement": "8.50",
     "muscle_mass_gain_kg": "2.500",
-    "side_effects": [
-      "water retention",
-      "minor gastrointestinal issues"
-    ],
-    "contraindications": [
-      "kidney disease",
-      "diabetes"
-    ],
+    "side_effects": ["water retention", "minor gastrointestinal issues"],
+    "contraindications": ["kidney disease", "diabetes"],
     "long_term_safety_data": true,
     "flag_football_relevance_score": 9,
-    "position_specific_benefits": [
-      "quarterback",
-      "running_back",
-      "linebacker"
-    ],
+    "position_specific_benefits": ["quarterback", "running_back", "linebacker"],
     "study_duration_weeks": 12,
     "population_size": 150,
     "control_group_used": true,
@@ -41,18 +31,11 @@
     "power_improvement_percentage": "16.20",
     "sprint_performance_improvement": "6.80",
     "muscle_mass_gain_kg": "3.200",
-    "side_effects": [
-      "water retention"
-    ],
-    "contraindications": [
-      "kidney disease"
-    ],
+    "side_effects": ["water retention"],
+    "contraindications": ["kidney disease"],
     "long_term_safety_data": true,
     "flag_football_relevance_score": 9,
-    "position_specific_benefits": [
-      "defensive_end",
-      "safety"
-    ],
+    "position_specific_benefits": ["defensive_end", "safety"],
     "study_duration_weeks": 8,
     "population_size": 100,
     "control_group_used": true,

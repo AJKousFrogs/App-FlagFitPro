@@ -39,7 +39,9 @@ export class ContextService {
     map((event) => (event as NavigationEnd).url),
   );
 
-  currentRoute = toSignal(this.currentRoute$, { initialValue: this.router.url });
+  currentRoute = toSignal(this.currentRoute$, {
+    initialValue: this.router.url,
+  });
 
   // Route to page metadata mapping
   private routeMetadata: Record<
@@ -386,4 +388,3 @@ export class ContextService {
     // Implement reminder logic
   }
 }
-

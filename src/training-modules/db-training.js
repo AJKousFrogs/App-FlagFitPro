@@ -528,7 +528,9 @@ export class DBTrainingModule extends ComponentWithCleanup {
 
     if (blownCoverage > 2) {
       recommendations.push("Focus on zone discipline and communication");
-      recommendations.push("Practice coverage assignments and responsibilities");
+      recommendations.push(
+        "Practice coverage assignments and responsibilities",
+      );
     }
 
     return recommendations.length > 0
@@ -592,7 +594,8 @@ export class DBTrainingModule extends ComponentWithCleanup {
     const coverageSwitches = stats.coverage_switches_executed || 0.7;
     const helpCalls = stats.help_calls_made || 0.65;
 
-    const score = callAccuracy * 0.4 + coverageSwitches * 0.35 + helpCalls * 0.25;
+    const score =
+      callAccuracy * 0.4 + coverageSwitches * 0.35 + helpCalls * 0.25;
 
     return {
       score: Math.min(1, score),
@@ -674,7 +677,9 @@ export class DBTrainingModule extends ComponentWithCleanup {
    */
   selectDrillsByCategory(category, analysis) {
     const scenario = this.trainingScenarios.get(category);
-    if (!scenario) {return [];}
+    if (!scenario) {
+      return [];
+    }
 
     const drills = [];
     scenario.scenarios.forEach((scenarioItem) => {
@@ -682,9 +687,12 @@ export class DBTrainingModule extends ComponentWithCleanup {
     });
 
     // Filter drills based on weaknesses
-    if (category === "flagPull" && analysis.metrics.flagPullAccuracy.score < 0.7) {
-      return drills.filter((drill) =>
-        drill.includes("pursuit") || drill.includes("pull"),
+    if (
+      category === "flagPull" &&
+      analysis.metrics.flagPullAccuracy.score < 0.7
+    ) {
+      return drills.filter(
+        (drill) => drill.includes("pursuit") || drill.includes("pull"),
       );
     }
 
@@ -786,7 +794,9 @@ export class DBTrainingModule extends ComponentWithCleanup {
           ],
         },
       ],
-      competitiveScenarios: this.generateCompetitiveScenarios({ id: "default" }),
+      competitiveScenarios: this.generateCompetitiveScenarios({
+        id: "default",
+      }),
     };
   }
 

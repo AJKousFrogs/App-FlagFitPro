@@ -1,17 +1,17 @@
 /**
  * Trends Service
- * 
+ *
  * Calculates and retrieves trend data for dashboards:
  * - Change of direction sessions (last 4 weeks)
  * - Sprint volume trends
  * - Game-to-game performance metrics
  */
 
-import { Injectable, inject } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { ApiService } from './api.service';
-import { LoggerService } from './logger.service';
+import { Injectable, inject } from "@angular/core";
+import { Observable, throwError } from "rxjs";
+import { catchError, map } from "rxjs/operators";
+import { ApiService } from "./api.service";
+import { LoggerService } from "./logger.service";
 
 export interface ChangeOfDirectionTrend {
   current: number;
@@ -40,11 +40,11 @@ export interface GamePerformanceTrend {
     };
   }>;
   averagePerformance: number;
-  trend: 'improving' | 'declining' | 'stable';
+  trend: "improving" | "declining" | "stable";
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class TrendsService {
   private apiService = inject(ApiService);
@@ -53,58 +53,69 @@ export class TrendsService {
   /**
    * Get change of direction sessions trend (last 4 weeks)
    */
-  getChangeOfDirectionTrend(athleteId: string): Observable<ChangeOfDirectionTrend> {
-    return this.apiService.get<ChangeOfDirectionTrend>(
-      '/api/trends/change-of-direction',
-      { athleteId, weeks: 4 }
-    ).pipe(
-      map(res => {
-        // Handle ApiResponse format
-        return res.data || ({} as ChangeOfDirectionTrend);
-      }),
-      catchError(error => {
-        this.logger.error('Error fetching change of direction trend:', error);
-        return throwError(() => error);
+  getChangeOfDirectionTrend(
+    athleteId: string,
+  ): Observable<ChangeOfDirectionTrend> {
+    return this.apiService
+      .get<ChangeOfDirectionTrend>("/api/trends/change-of-direction", {
+        athleteId,
+        weeks: 4,
       })
-    );
+      .pipe(
+        map((res) => {
+          // Handle ApiResponse format
+          return res.data || ({} as ChangeOfDirectionTrend);
+        }),
+        catchError((error) => {
+          this.logger.error("Error fetching change of direction trend:", error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
    * Get sprint volume trend (last 4 weeks)
    */
   getSprintVolumeTrend(athleteId: string): Observable<SprintVolumeTrend> {
-    return this.apiService.get<SprintVolumeTrend>(
-      '/api/trends/sprint-volume',
-      { athleteId, weeks: 4 }
-    ).pipe(
-      map(res => {
-        // Handle ApiResponse format
-        return res.data || ({} as SprintVolumeTrend);
-      }),
-      catchError(error => {
-        this.logger.error('Error fetching sprint volume trend:', error);
-        return throwError(() => error);
+    return this.apiService
+      .get<SprintVolumeTrend>("/api/trends/sprint-volume", {
+        athleteId,
+        weeks: 4,
       })
-    );
+      .pipe(
+        map((res) => {
+          // Handle ApiResponse format
+          return res.data || ({} as SprintVolumeTrend);
+        }),
+        catchError((error) => {
+          this.logger.error("Error fetching sprint volume trend:", error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
    * Get game-to-game performance metrics
    */
-  getGamePerformanceTrend(athleteId: string, games: number = 5): Observable<GamePerformanceTrend> {
-    return this.apiService.get<GamePerformanceTrend>(
-      '/api/trends/game-performance',
-      { athleteId, games }
-    ).pipe(
-      map(res => {
-        // Handle ApiResponse format
-        return res.data || ({} as GamePerformanceTrend);
-      }),
-      catchError(error => {
-        this.logger.error('Error fetching game performance trend:', error);
-        return throwError(() => error);
+  getGamePerformanceTrend(
+    athleteId: string,
+    games: number = 5,
+  ): Observable<GamePerformanceTrend> {
+    return this.apiService
+      .get<GamePerformanceTrend>("/api/trends/game-performance", {
+        athleteId,
+        games,
       })
-    );
+      .pipe(
+        map((res) => {
+          // Handle ApiResponse format
+          return res.data || ({} as GamePerformanceTrend);
+        }),
+        catchError((error) => {
+          this.logger.error("Error fetching game performance trend:", error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
@@ -115,4 +126,3 @@ export class TrendsService {
     return ((current - previous) / previous) * 100;
   }
 }
-

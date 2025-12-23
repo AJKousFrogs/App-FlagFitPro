@@ -9,7 +9,7 @@ const {
   createErrorResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -53,7 +53,9 @@ const getPlayerAggregatedStats = async (playerId, options = {}) => {
 
     const { data: games, error: gamesError } = await gamesQuery;
 
-    if (gamesError) {throw gamesError;}
+    if (gamesError) {
+      throw gamesError;
+    }
 
     if (!games || games.length === 0) {
       return getEmptyStats();
@@ -68,7 +70,9 @@ const getPlayerAggregatedStats = async (playerId, options = {}) => {
       .in("game_id", gameIds)
       .eq("primary_player_id", playerId);
 
-    if (primaryError) {throw primaryError;}
+    if (primaryError) {
+      throw primaryError;
+    }
 
     const { data: secondaryPlays, error: secondaryError } = await supabaseAdmin
       .from("game_events")
@@ -76,12 +80,14 @@ const getPlayerAggregatedStats = async (playerId, options = {}) => {
       .in("game_id", gameIds)
       .contains("secondary_player_ids", [playerId]);
 
-    if (secondaryError) {throw secondaryError;}
+    if (secondaryError) {
+      throw secondaryError;
+    }
 
     // Combine and deduplicate plays
     const allPlays = [...(primaryPlays || []), ...(secondaryPlays || [])];
     const uniquePlays = Array.from(
-      new Map(allPlays.map((p) => [p.id, p])).values()
+      new Map(allPlays.map((p) => [p.id, p])).values(),
     );
 
     // Aggregate statistics from all plays
@@ -238,12 +244,12 @@ function aggregateStatsFromPlays(plays, games) {
     // Completion percentage: (completions / attempts) * 100, rounded to 1 decimal
     const completionPct = (stats.completions / stats.passAttempts) * 100;
     stats.completionPercentage = Number(
-      (Math.round(completionPct * 10) / 10).toFixed(1)
+      (Math.round(completionPct * 10) / 10).toFixed(1),
     );
-    
+
     // Average yards per attempt: passing yards / attempts, rounded to 2 decimals
     stats.avgYardsPerAttempt = Number(
-      (stats.passingYards / stats.passAttempts).toFixed(2)
+      (stats.passingYards / stats.passAttempts).toFixed(2),
     );
   } else {
     stats.completionPercentage = 0;
@@ -253,14 +259,12 @@ function aggregateStatsFromPlays(plays, games) {
   if (stats.targets > 0) {
     // Drop rate: (drops / targets) * 100, rounded to 1 decimal
     const dropRatePct = (stats.drops / stats.targets) * 100;
-    stats.dropRate = Number(
-      (Math.round(dropRatePct * 10) / 10).toFixed(1)
-    );
-    
+    stats.dropRate = Number((Math.round(dropRatePct * 10) / 10).toFixed(1));
+
     // Average yards per reception: receiving yards / receptions, rounded to 2 decimals
     if (stats.receptions > 0) {
       stats.avgYardsPerReception = Number(
-        (stats.receivingYards / stats.receptions).toFixed(2)
+        (stats.receivingYards / stats.receptions).toFixed(2),
       );
     } else {
       stats.avgYardsPerReception = 0;
@@ -273,7 +277,7 @@ function aggregateStatsFromPlays(plays, games) {
   if (stats.rushingAttempts > 0) {
     // Yards per carry: rushing yards / attempts, rounded to 2 decimals
     stats.yardsPerCarry = Number(
-      (stats.rushingYards / stats.rushingAttempts).toFixed(2)
+      (stats.rushingYards / stats.rushingAttempts).toFixed(2),
     );
   } else {
     stats.yardsPerCarry = 0;
@@ -283,7 +287,7 @@ function aggregateStatsFromPlays(plays, games) {
     // Flag pull success rate: (successes / attempts) * 100, rounded to 1 decimal
     const successRatePct = (stats.flagPulls / stats.flagPullAttempts) * 100;
     stats.flagPullSuccessRate = Number(
-      (Math.round(successRatePct * 10) / 10).toFixed(1)
+      (Math.round(successRatePct * 10) / 10).toFixed(1),
     );
   } else {
     stats.flagPullSuccessRate = 0;
@@ -339,7 +343,9 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
       .lte("game_date", endDateInclusive.toISOString())
       .order("game_date", { ascending: false });
 
-    if (gamesError) {throw gamesError;}
+    if (gamesError) {
+      throw gamesError;
+    }
 
     if (!games || games.length === 0) {
       return getEmptyStats();
@@ -353,7 +359,9 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
       .in("game_id", gameIds)
       .eq("primary_player_id", playerId);
 
-    if (primaryError) {throw primaryError;}
+    if (primaryError) {
+      throw primaryError;
+    }
 
     const { data: secondaryPlays, error: secondaryError } = await supabaseAdmin
       .from("game_events")
@@ -361,11 +369,13 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
       .in("game_id", gameIds)
       .contains("secondary_player_ids", [playerId]);
 
-    if (secondaryError) {throw secondaryError;}
+    if (secondaryError) {
+      throw secondaryError;
+    }
 
     const allPlays = [...(primaryPlays || []), ...(secondaryPlays || [])];
     const uniquePlays = Array.from(
-      new Map(allPlays.map((p) => [p.id, p])).values()
+      new Map(allPlays.map((p) => [p.id, p])).values(),
     );
 
     return aggregateStatsFromPlays(uniquePlays, games);
@@ -414,11 +424,11 @@ exports.handler = async (event, context) => {
     const path = event.path.replace("/.netlify/functions/player-stats", "");
 
     // Get player ID (defaults to authenticated user)
-    const { valid, athleteId, error: athleteError } = parseAthleteId(
-      event,
-      userId,
-      false
-    );
+    const {
+      valid,
+      athleteId,
+      error: athleteError,
+    } = parseAthleteId(event, userId, false);
     if (!valid) {
       return athleteError;
     }
@@ -426,14 +436,23 @@ exports.handler = async (event, context) => {
     const playerId = queryParams.playerId || athleteId;
 
     if (!playerId) {
-      return createErrorResponse("Player ID is required", 400, "validation_error");
+      return createErrorResponse(
+        "Player ID is required",
+        400,
+        "validation_error",
+      );
     }
 
     let result;
 
     // Route handling
     // Support both /player-stats/aggregated and /player-stats (default)
-    if (path.includes("/aggregated") || path.endsWith("/aggregated") || path === "" || path === "/") {
+    if (
+      path.includes("/aggregated") ||
+      path.endsWith("/aggregated") ||
+      path === "" ||
+      path === "/"
+    ) {
       // Get aggregated stats up to and including today
       const season = queryParams.season;
       const teamId = queryParams.teamId;
@@ -451,7 +470,7 @@ exports.handler = async (event, context) => {
         return createErrorResponse(
           "Invalid date format. Use ISO 8601 format (YYYY-MM-DD)",
           400,
-          "validation_error"
+          "validation_error",
         );
       }
 

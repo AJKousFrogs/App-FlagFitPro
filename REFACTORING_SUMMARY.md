@@ -14,6 +14,7 @@ This document summarizes two major refactoring efforts completed in the codebase
 ### 1. Created Utility Modules
 
 #### ✅ `netlify/functions/utils/base-handler.cjs`
+
 - **Purpose:** Eliminates ~40 lines of boilerplate from each function
 - **Features:**
   - CORS preflight handling
@@ -25,6 +26,7 @@ This document summarizes two major refactoring efforts completed in the codebase
 - **Lines:** 95 lines (reusable across 48+ files)
 
 #### ✅ `netlify/functions/utils/db-query-helper.cjs`
+
 - **Purpose:** Standardized database query execution
 - **Features:**
   - `executeQuery()` - Query execution with error handling
@@ -35,6 +37,7 @@ This document summarizes two major refactoring efforts completed in the codebase
 - **Lines:** 180 lines (reusable across 30+ files)
 
 #### ✅ `netlify/functions/utils/response-helper.cjs`
+
 - **Purpose:** Standardized response formatting
 - **Features:**
   - `successResponse()` - Standard success response with data array
@@ -46,18 +49,21 @@ This document summarizes two major refactoring efforts completed in the codebase
 ### 2. Refactored High-Similarity Files
 
 #### ✅ `netlify/functions/fixtures.cjs`
+
 - **Before:** 94 lines
 - **After:** 45 lines
 - **Reduction:** 52% (49 lines eliminated)
 - **Status:** ✅ Refactored and replaced
 
 #### ✅ `netlify/functions/readiness-history.cjs`
+
 - **Before:** 97 lines
 - **After:** 48 lines
 - **Reduction:** 51% (49 lines eliminated)
 - **Status:** ✅ Refactored and replaced
 
 #### ✅ `netlify/functions/training-metrics.cjs`
+
 - **Before:** 98 lines
 - **After:** 50 lines
 - **Reduction:** 49% (48 lines eliminated)
@@ -66,12 +72,14 @@ This document summarizes two major refactoring efforts completed in the codebase
 ### 3. Created Documentation
 
 #### ✅ `CJS_DUPLICATION_ANALYSIS.md`
+
 - Detailed analysis of code duplication
 - Side-by-side comparisons
 - Impact analysis
 - Recommendations
 
 #### ✅ `REFACTORING_MIGRATION_GUIDE.md`
+
 - Step-by-step migration instructions
 - Before/after examples
 - Common patterns
@@ -80,11 +88,13 @@ This document summarizes two major refactoring efforts completed in the codebase
 ## 📊 Impact Metrics
 
 ### Code Reduction
+
 - **3 files refactored:** 146 lines eliminated
 - **Average reduction per file:** ~49 lines (50% reduction)
 - **Projected total reduction:** ~1,940 lines (if all 48 files are refactored)
 
 ### Maintainability Improvements
+
 - ✅ Single source of truth for security patterns
 - ✅ Consistent error handling across all functions
 - ✅ Easier to test (utilities can be unit tested)
@@ -93,6 +103,7 @@ This document summarizes two major refactoring efforts completed in the codebase
 ## 🔄 Next Steps
 
 ### Phase 1: Test Refactored Files (Priority: High)
+
 - [ ] Test `fixtures.cjs` endpoint
 - [ ] Test `readiness-history.cjs` endpoint
 - [ ] Test `training-metrics.cjs` endpoint
@@ -100,15 +111,18 @@ This document summarizes two major refactoring efforts completed in the codebase
 - [ ] Verify database queries execute properly
 
 ### Phase 2: Refactor Remaining High-Similarity Files (Priority: Medium)
+
 - [ ] `netlify/functions/compute-acwr.cjs` (80% similar to training-metrics)
 - [ ] `netlify/functions/notifications-create.cjs` (80% similar to notifications-preferences)
 - [ ] `netlify/functions/notifications-preferences.cjs` (80% similar to notifications-create)
 
 ### Phase 3: Refactor All Other GET Endpoints (Priority: Low)
+
 - [ ] All other GET endpoints following similar patterns
 - [ ] Estimated: 20+ files
 
 ### Phase 4: Refactor POST/PUT Endpoints (Priority: Low)
+
 - [ ] POST endpoints with body validation
 - [ ] PUT endpoints with update logic
 - [ ] Estimated: 15+ files
@@ -164,6 +178,7 @@ Before deploying refactored files, verify:
 ## 📚 Usage Examples
 
 ### Simple GET Endpoint
+
 ```javascript
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
@@ -172,46 +187,59 @@ const { successResponse } = require("./utils/response-helper.cjs");
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'my-function',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "my-function",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     handler: async (event, context, { userId }) => {
       const { valid, athleteId, error } = parseAthleteId(event, userId);
       if (!valid) return error;
 
-      const query = supabaseAdmin.from("table").select("*").eq("athlete_id", athleteId);
+      const query = supabaseAdmin
+        .from("table")
+        .select("*")
+        .eq("athlete_id", athleteId);
       const result = await executeQuery(query, "Failed to retrieve data");
       if (!result.success) return result.error;
 
       return successResponse(result.data);
-    }
+    },
   });
 };
 ```
 
 ### POST Endpoint with Body Validation
+
 ```javascript
 const { baseHandler } = require("./utils/base-handler.cjs");
 const { executeQuery } = require("./utils/db-query-helper.cjs");
-const { successObjectResponse, errorResponse } = require("./utils/response-helper.cjs");
+const {
+  successObjectResponse,
+  errorResponse,
+} = require("./utils/response-helper.cjs");
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'my-function',
-    allowedMethods: ['POST'],
-    rateLimitType: 'CREATE',
+    functionName: "my-function",
+    allowedMethods: ["POST"],
+    rateLimitType: "CREATE",
     handler: async (event, context, { userId }) => {
       const body = JSON.parse(event.body || "{}");
       if (!body.requiredField) {
-        return errorResponse("requiredField is required", 400, 'validation_error');
+        return errorResponse(
+          "requiredField is required",
+          400,
+          "validation_error",
+        );
       }
 
-      const query = supabaseAdmin.from("table").insert({ ...body, user_id: userId });
+      const query = supabaseAdmin
+        .from("table")
+        .insert({ ...body, user_id: userId });
       const result = await executeQuery(query, "Failed to create record");
       if (!result.success) return result.error;
 
       return successObjectResponse(result.data[0], "Record created");
-    }
+    },
   });
 };
 ```
@@ -227,6 +255,7 @@ exports.handler = async (event, context) => {
 ## 🚀 Future Potential
 
 If all 48 files are refactored:
+
 - **Total lines eliminated:** ~1,940 lines
 - **Maintenance burden:** Reduced by 95%
 - **Consistency:** 100% across all functions
@@ -237,6 +266,7 @@ If all 48 files are refactored:
 # Part 2: Control Flow Refactoring Summary
 
 ## 🎯 Objective
+
 Upgrade control flow by extracting complex if-chains into polymorphic objects, strategies, and guard clauses. Make business rules data-driven rather than hardcoded.
 
 ---
@@ -244,9 +274,11 @@ Upgrade control flow by extracting complex if-chains into polymorphic objects, s
 ## ✅ What Was Accomplished
 
 ### 1. **Created Centralized Configuration System**
+
 **File:** `src/config/thresholds.js`
 
 **What it contains:**
+
 - Color schemes for all UI classifications
 - Weather impact rules (temperature, wind, humidity, precipitation)
 - Training rules for muscle groups (hamstring, quadriceps, core)
@@ -257,6 +289,7 @@ Upgrade control flow by extracting complex if-chains into polymorphic objects, s
 - All threshold definitions
 
 **Benefits:**
+
 - ✅ Single source of truth for business rules
 - ✅ Non-developers can update thresholds
 - ✅ No code changes needed for rule adjustments
@@ -265,9 +298,11 @@ Upgrade control flow by extracting complex if-chains into polymorphic objects, s
 ---
 
 ### 2. **Built Data-Driven Rule Engine**
+
 **File:** `src/utils/RuleEngine.js`
 
 **Components:**
+
 - `RuleEvaluator` - Base evaluator using functional approach
 - `WeatherImpactCalculator` - Strategy pattern for weather conditions
 - `TrainingRecommendationEngine` - Rule-based training prescriptions
@@ -277,6 +312,7 @@ Upgrade control flow by extracting complex if-chains into polymorphic objects, s
 - `LookupHelper` - Map-based lookups to replace switch statements
 
 **Benefits:**
+
 - ✅ Eliminates complex if-else chains
 - ✅ Testable in isolation
 - ✅ Reusable across components
@@ -291,17 +327,20 @@ Upgrade control flow by extracting complex if-chains into polymorphic objects, s
 #### Example 1: Weather Impact Calculation
 
 **BEFORE (Complex if-chains):**
+
 ```javascript
 const calculatePerformanceImpact = (weather) => {
-  const impact = { /* ... */ };
+  const impact = {
+    /* ... */
+  };
 
   if (weather.temp > 85) {
     impact.endurance -= 15;
-    impact.injuryRisk = 'High';
-    impact.recommendations.push('Extra hydration...');
+    impact.injuryRisk = "High";
+    impact.recommendations.push("Extra hydration...");
   } else if (weather.temp < 40) {
     impact.running -= 10;
-    impact.recommendations.push('Warm up...');
+    impact.recommendations.push("Warm up...");
   }
 
   if (weather.windSpeed > 15) {
@@ -318,6 +357,7 @@ const calculatePerformanceImpact = (weather) => {
 ```
 
 **AFTER (Strategy Pattern):**
+
 ```javascript
 const calculatePerformanceImpact = (weather) => {
   // Guard clause
@@ -334,6 +374,7 @@ const calculatePerformanceImpact = (weather) => {
 ```
 
 **Result:**
+
 - 50+ lines → 8 lines
 - Complex nested logic → Simple, clean code
 - Business rules in config, not code
@@ -343,50 +384,57 @@ const calculatePerformanceImpact = (weather) => {
 #### Example 2: Training Recommendations
 
 **BEFORE (Hardcoded conditionals):**
+
 ```javascript
 if (hamstringStrength < 60) {
   return {
-    exercises: ['Nordic Hamstring Curls', 'Romanian Deadlifts'],
-    frequency: '4x per week',
+    exercises: ["Nordic Hamstring Curls", "Romanian Deadlifts"],
+    frequency: "4x per week",
     sets: 3,
     reps: 8,
-    injuryRisk: 'High'
+    injuryRisk: "High",
   };
 } else if (hamstringStrength >= 60 && hamstringStrength < 75) {
   return {
-    exercises: ['Single-leg Romanian Deadlifts'],
-    frequency: '3x per week',
+    exercises: ["Single-leg Romanian Deadlifts"],
+    frequency: "3x per week",
     // ...
   };
 } // More if-else chains...
 ```
 
 **AFTER (Data-driven rule engine):**
+
 ```javascript
-const plan = TrainingRecommendationEngine.getRecommendations('hamstring', hamstringStrength);
+const plan = TrainingRecommendationEngine.getRecommendations(
+  "hamstring",
+  hamstringStrength,
+);
 // Returns: { severity, recommendations, frequency, injuryRisk }
 ```
 
 **Configuration (thresholds.js):**
+
 ```javascript
 hamstring: {
   thresholds: [
     {
       condition: (strength) => strength < 60,
-      severity: 'high',
+      severity: "high",
       recommendations: [
-        { exercise: 'Nordic Hamstring Curls', sets: 3, reps: 8 },
-        { exercise: 'Romanian Deadlifts', sets: 3, reps: 10 }
+        { exercise: "Nordic Hamstring Curls", sets: 3, reps: 8 },
+        { exercise: "Romanian Deadlifts", sets: 3, reps: 10 },
       ],
-      frequency: '4x per week',
-      injuryRisk: 'High - Immediate attention required'
-    }
+      frequency: "4x per week",
+      injuryRisk: "High - Immediate attention required",
+    },
     // More thresholds...
-  ]
+  ];
 }
 ```
 
 **Result:**
+
 - Business rules separated from code
 - Coaches can update thresholds
 - Testable and maintainable
@@ -396,21 +444,23 @@ hamstring: {
 #### Example 3: Risk Level Classification
 
 **BEFORE (Multiple if-else chains):**
+
 ```javascript
 const getRiskColor = (risk) => {
-  if (risk <= 25) return '#10b981';
-  if (risk <= 50) return '#f59e0b';
-  return '#ef4444';
+  if (risk <= 25) return "#10b981";
+  if (risk <= 50) return "#f59e0b";
+  return "#ef4444";
 };
 
 const getRiskLevel = (risk) => {
-  if (risk <= 25) return 'Low';
-  if (risk <= 50) return 'Moderate';
-  return 'High';
+  if (risk <= 25) return "Low";
+  if (risk <= 50) return "Moderate";
+  return "High";
 };
 ```
 
 **AFTER (Classifier with guard clauses):**
+
 ```javascript
 const getRiskColor = (risk) => {
   return Classifier.getRiskLevel(risk).color;
@@ -422,6 +472,7 @@ const getRiskLevel = (risk) => {
 ```
 
 **Result:**
+
 - DRY principle (Don't Repeat Yourself)
 - Consistent classification across app
 - Easy to add new risk levels
@@ -431,37 +482,51 @@ const getRiskLevel = (risk) => {
 #### Example 4: Switch Statement Elimination
 
 **BEFORE (Switch statements):**
+
 ```javascript
 const getTrendIcon = (trend) => {
-  switch(trend) {
-    case 'increasing': return '📈';
-    case 'decreasing': return '📉';
-    default: return '➡️';
+  switch (trend) {
+    case "increasing":
+      return "📈";
+    case "decreasing":
+      return "📉";
+    default:
+      return "➡️";
   }
 };
 
 const getSeverityColor = (severity) => {
-  switch(severity) {
-    case 'high': return '#ef4444';
-    case 'medium': return '#f59e0b';
-    case 'low': return '#3b82f6';
-    default: return '#6b7280';
+  switch (severity) {
+    case "high":
+      return "#ef4444";
+    case "medium":
+      return "#f59e0b";
+    case "low":
+      return "#3b82f6";
+    default:
+      return "#6b7280";
   }
 };
 ```
 
 **AFTER (Lookup maps):**
+
 ```javascript
 const getTrendIcon = (trend) => {
   return LookupHelper.get(TREND_ICONS, trend, TREND_ICONS.default);
 };
 
 const getSeverityColor = (severity) => {
-  return LookupHelper.get(COLOR_SCHEMES.severity, severity, COLOR_SCHEMES.severity.default);
+  return LookupHelper.get(
+    COLOR_SCHEMES.severity,
+    severity,
+    COLOR_SCHEMES.severity.default,
+  );
 };
 ```
 
 **Result:**
+
 - Faster execution (O(1) vs O(n))
 - Easier to extend
 - No switch statement maintenance
@@ -471,16 +536,18 @@ const getSeverityColor = (severity) => {
 #### Example 5: BMR Calculation with Guard Clauses
 
 **BEFORE (Nested if-else):**
+
 ```javascript
 let bmr;
-if (gender === 'male') {
-  bmr = (10 * weight_kg) + (6.25 * height_cm) - (5 * age) + 5;
+if (gender === "male") {
+  bmr = 10 * weight_kg + 6.25 * height_cm - 5 * age + 5;
 } else {
-  bmr = (10 * weight_kg) + (6.25 * height_cm) - (5 * age) - 161;
+  bmr = 10 * weight_kg + 6.25 * height_cm - 5 * age - 161;
 }
 ```
 
 **AFTER (Guard clause pattern):**
+
 ```javascript
 static calculateBMR(weight_kg, height_cm, age, gender) {
   // Guard clause for validation
@@ -499,6 +566,7 @@ static calculateBMR(weight_kg, height_cm, age, gender) {
 ```
 
 **Result:**
+
 - Flatter code structure
 - Early validation
 - Clear default behavior
@@ -508,10 +576,12 @@ static calculateBMR(weight_kg, height_cm, age, gender) {
 ## 🗂️ Files Modified
 
 ### Configuration Layer
+
 1. ✅ `src/config/thresholds.js` (NEW)
    - All business rules and thresholds
 
 ### Engine Layer
+
 2. ✅ `src/utils/RuleEngine.js` (NEW)
    - All evaluation logic
    - Strategy patterns
@@ -519,6 +589,7 @@ static calculateBMR(weight_kg, height_cm, age, gender) {
    - Lookup helpers
 
 ### Component Layer
+
 3. ✅ `src/components/WeatherSystem.jsx`
    - Removed 50+ lines of if-chains
    - Uses WeatherImpactCalculator
@@ -534,6 +605,7 @@ static calculateBMR(weight_kg, height_cm, age, gender) {
    - Replaced 2 switch statements with lookups
 
 ### Service Layer
+
 7. ✅ `src/services/NutritionService.js`
    - Replaced if-else chains with ActivityLevelCalculator
    - Added guard clauses for BMR calculation
@@ -541,6 +613,7 @@ static calculateBMR(weight_kg, height_cm, age, gender) {
    - Position multipliers from config
 
 ### Examples
+
 8. ✅ `src/examples/TrainingRecommendationExample.jsx` (NEW)
    - Shows before/after comparison
    - Live demonstration of rule engine
@@ -549,38 +622,43 @@ static calculateBMR(weight_kg, height_cm, age, gender) {
 
 ## 📊 Impact Metrics
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **If-else chains** | 25+ | 0 | ✅ 100% eliminated |
-| **Switch statements** | 8 | 0 | ✅ 100% eliminated |
-| **Hardcoded thresholds** | 40+ | 0 | ✅ 100% eliminated |
-| **Lines of conditional code** | ~500 | ~50 | ✅ 90% reduction |
-| **Cyclomatic complexity** | High | Low | ✅ Significantly reduced |
-| **Test coverage** | Hard | Easy | ✅ Isolated, testable units |
+| Metric                        | Before | After | Improvement                 |
+| ----------------------------- | ------ | ----- | --------------------------- |
+| **If-else chains**            | 25+    | 0     | ✅ 100% eliminated          |
+| **Switch statements**         | 8      | 0     | ✅ 100% eliminated          |
+| **Hardcoded thresholds**      | 40+    | 0     | ✅ 100% eliminated          |
+| **Lines of conditional code** | ~500   | ~50   | ✅ 90% reduction            |
+| **Cyclomatic complexity**     | High   | Low   | ✅ Significantly reduced    |
+| **Test coverage**             | Hard   | Easy  | ✅ Isolated, testable units |
 
 ---
 
 ## 🎯 Design Patterns Applied
 
 ### 1. **Strategy Pattern**
+
 - `WeatherImpactCalculator` - Different strategies for each weather condition
 - `BMRCalculator` - Gender-specific calculation strategies
 
 ### 2. **Guard Clauses**
+
 - Early validation in all calculators
 - Early returns to flatten code structure
 - Null/undefined checks at function entry
 
 ### 3. **Polymorphic Objects**
+
 - `Classifier` - Unified interface for all classifications
 - `RuleEvaluator` - Polymorphic rule evaluation
 
 ### 4. **Data-Driven Configuration**
+
 - All thresholds externalized
 - Rule definitions as data structures
 - Separation of rules from logic
 
 ### 5. **Lookup Maps**
+
 - O(1) lookups instead of O(n) conditionals
 - Object/Map-based dispatch
 - Functional default handling
@@ -590,18 +668,21 @@ static calculateBMR(weight_kg, height_cm, age, gender) {
 ## 🚀 Benefits for Team Collaboration
 
 ### For Developers:
+
 - ✅ Clean, maintainable code
 - ✅ Easy to test
 - ✅ Less cognitive load
 - ✅ Fewer bugs
 
 ### For Coaches/Domain Experts:
+
 - ✅ Can update thresholds without coding
 - ✅ Rules are readable
 - ✅ Version control for rule changes
 - ✅ No deployment needed for threshold updates
 
 ### For QA:
+
 - ✅ Testable in isolation
 - ✅ Predictable behavior
 - ✅ Easy to verify rules
@@ -612,23 +693,25 @@ static calculateBMR(weight_kg, height_cm, age, gender) {
 ## 📚 How to Use the New System
 
 ### Getting Training Recommendations:
+
 ```javascript
-import { TrainingRecommendationEngine } from '../utils/RuleEngine';
+import { TrainingRecommendationEngine } from "../utils/RuleEngine";
 
 // Single muscle group
-const plan = TrainingRecommendationEngine.getRecommendations('hamstring', 55);
+const plan = TrainingRecommendationEngine.getRecommendations("hamstring", 55);
 
 // Comprehensive plan
 const fullPlan = TrainingRecommendationEngine.getComprehensivePlan({
   hamstring: 55,
   quadriceps: 70,
-  core: 65
+  core: 65,
 });
 ```
 
 ### Using Classifiers:
+
 ```javascript
-import { Classifier } from '../utils/RuleEngine';
+import { Classifier } from "../utils/RuleEngine";
 
 // Risk classification
 const risk = Classifier.getRiskLevel(42);
@@ -640,12 +723,13 @@ const completion = Classifier.getCompletionLevel(850, 1000);
 ```
 
 ### Using Lookups:
+
 ```javascript
-import { LookupHelper } from '../utils/RuleEngine';
-import { COLOR_SCHEMES } from '../config/thresholds';
+import { LookupHelper } from "../utils/RuleEngine";
+import { COLOR_SCHEMES } from "../config/thresholds";
 
 // Get color with fallback
-const color = LookupHelper.get(COLOR_SCHEMES.status, 'excellent', '#9E9E9E');
+const color = LookupHelper.get(COLOR_SCHEMES.status, "excellent", "#9E9E9E");
 
 // Get with computed default
 const icon = LookupHelper.getOrCompute(RANK_ICONS, rank, (r) => `#${r}`);

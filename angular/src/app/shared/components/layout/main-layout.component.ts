@@ -15,8 +15,8 @@ import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumb
     SidebarComponent,
     HeaderComponent,
     QuickActionsFABComponent,
-    SmartBreadcrumbsComponent
-],
+    SmartBreadcrumbsComponent,
+  ],
   template: `
     <div class="dashboard-container">
       <app-sidebar #sidebar></app-sidebar>

@@ -4,11 +4,7 @@
     "supplement_id": 1,
     "study_reference": "Kreider et al. 2017",
     "study_title": "International Society of Sports Nutrition position stand: safety and efficacy of creatine supplementation in exercise, sport, and medicine",
-    "authors": [
-      "Kreider RB",
-      "Kalman DS",
-      "Antonio J"
-    ],
+    "authors": ["Kreider RB", "Kalman DS", "Antonio J"],
     "journal": "Journal of the International Society of Sports Nutrition",
     "publication_year": 2017,
     "doi": null,
@@ -21,12 +17,7 @@
     "dosing_frequency": null,
     "loading_phase_days": null,
     "maintenance_phase_days": null,
-    "outcome_measures": [
-      "strength",
-      "power",
-      "muscle_mass",
-      "recovery"
-    ],
+    "outcome_measures": ["strength", "power", "muscle_mass", "recovery"],
     "primary_outcome": "strength_improvement",
     "effect_size": "0.85",
     "statistical_significance": true,
@@ -50,11 +41,7 @@
     "supplement_id": 2,
     "study_reference": "Saunders et al. 2017",
     "study_title": "Beta-alanine supplementation to improve exercise capacity and performance: a systematic review and meta-analysis",
-    "authors": [
-      "Saunders B",
-      "Elliott-Sale K",
-      "Artioli GG"
-    ],
+    "authors": ["Saunders B", "Elliott-Sale K", "Artioli GG"],
     "journal": "British Journal of Sports Medicine",
     "publication_year": 2017,
     "doi": null,
@@ -67,11 +54,7 @@
     "dosing_frequency": null,
     "loading_phase_days": null,
     "maintenance_phase_days": null,
-    "outcome_measures": [
-      "endurance",
-      "anaerobic_capacity",
-      "muscle_carnosine"
-    ],
+    "outcome_measures": ["endurance", "anaerobic_capacity", "muscle_carnosine"],
     "primary_outcome": "endurance_improvement",
     "effect_size": "0.72",
     "statistical_significance": true,
@@ -95,11 +78,7 @@
     "supplement_id": 3,
     "study_reference": "Grgic et al. 2019",
     "study_title": "Wake up and smell the coffee: caffeine supplementation and exercise performance-an umbrella review of 21 published meta-analyses",
-    "authors": [
-      "Grgic J",
-      "Trexler ET",
-      "Lazinic B"
-    ],
+    "authors": ["Grgic J", "Trexler ET", "Lazinic B"],
     "journal": "British Journal of Sports Medicine",
     "publication_year": 2019,
     "doi": null,
@@ -141,11 +120,7 @@
     "supplement_id": 1,
     "study_reference": "Kreider et al. 2017",
     "study_title": "International Society of Sports Nutrition position stand: safety and efficacy of creatine supplementation in exercise, sport, and medicine",
-    "authors": [
-      "Kreider RB",
-      "Kalman DS",
-      "Antonio J"
-    ],
+    "authors": ["Kreider RB", "Kalman DS", "Antonio J"],
     "journal": "Journal of the International Society of Sports Nutrition",
     "publication_year": 2017,
     "doi": null,
@@ -158,12 +133,7 @@
     "dosing_frequency": null,
     "loading_phase_days": null,
     "maintenance_phase_days": null,
-    "outcome_measures": [
-      "strength",
-      "power",
-      "muscle_mass",
-      "recovery"
-    ],
+    "outcome_measures": ["strength", "power", "muscle_mass", "recovery"],
     "primary_outcome": "strength_improvement",
     "effect_size": "0.85",
     "statistical_significance": true,
@@ -187,11 +157,7 @@
     "supplement_id": 2,
     "study_reference": "Saunders et al. 2017",
     "study_title": "Beta-alanine supplementation to improve exercise capacity and performance: a systematic review and meta-analysis",
-    "authors": [
-      "Saunders B",
-      "Elliott-Sale K",
-      "Artioli GG"
-    ],
+    "authors": ["Saunders B", "Elliott-Sale K", "Artioli GG"],
     "journal": "British Journal of Sports Medicine",
     "publication_year": 2017,
     "doi": null,
@@ -204,11 +170,7 @@
     "dosing_frequency": null,
     "loading_phase_days": null,
     "maintenance_phase_days": null,
-    "outcome_measures": [
-      "endurance",
-      "anaerobic_capacity",
-      "muscle_carnosine"
-    ],
+    "outcome_measures": ["endurance", "anaerobic_capacity", "muscle_carnosine"],
     "primary_outcome": "endurance_improvement",
     "effect_size": "0.72",
     "statistical_significance": true,
@@ -232,11 +194,7 @@
     "supplement_id": 3,
     "study_reference": "Grgic et al. 2019",
     "study_title": "Wake up and smell the coffee: caffeine supplementation and exercise performance-an umbrella review of 21 published meta-analyses",
-    "authors": [
-      "Grgic J",
-      "Trexler ET",
-      "Lazinic B"
-    ],
+    "authors": ["Grgic J", "Trexler ET", "Lazinic B"],
     "journal": "British Journal of Sports Medicine",
     "publication_year": 2019,
     "doi": null,

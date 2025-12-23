@@ -9,7 +9,7 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -21,18 +21,18 @@ const { applyRateLimit } = require("./utils/rate-limiter.cjs");
  * - Wellness Index (fatigue, soreness, mood, stress): 30%
  * - Sleep quality/duration: 20%
  * - Game proximity: 15%
- * 
+ *
  * Evidence Base:
  * - Strong links between sleep and readiness (Halson 2014, Fullagar et al. 2015)
  * - Wellness scores predict perceived performance (Saw et al. 2016)
  * - Team-sport contexts show stronger associations with self-reported wellness (McLellan et al. 2011)
  * - Simple sleep metrics can proxy broader wellness when resources are limited (Saw et al. 2016)
- * 
+ *
  * Cut-Points (Starting Points - Require Team Calibration):
  * - < 55: Low readiness → Deload
  * - 55-75: Moderate readiness → Maintain
  * - > 75: High readiness → Push
- * 
+ *
  * These thresholds are starting points. Teams should calibrate using their own
  * injury/performance history over time for optimal accuracy.
  */
@@ -41,7 +41,9 @@ const { applyRateLimit } = require("./utils/rate-limiter.cjs");
  * Convert 1-10 scale to 1-5 scale (standard athlete monitoring scale)
  */
 function scaleTo1to5(value) {
-  if (value === null || value === undefined) {return null;}
+  if (value === null || value === undefined) {
+    return null;
+  }
   // Map 1-10 to 1-5: 1-2→1, 3-4→2, 5-6→3, 7-8→4, 9-10→5
   return Math.ceil(value / 2);
 }
@@ -61,21 +63,21 @@ function calculateWellnessIndex(wellness) {
 
   // Required fields (fatigue, sleepQuality, soreness)
   const requiredFields = [
-    { value: fatigue, weight: 0.4, name: 'fatigue' },
-    { value: sleepQuality, weight: 0.35, name: 'sleepQuality' },
-    { value: soreness, weight: 0.25, name: 'soreness' }
+    { value: fatigue, weight: 0.4, name: "fatigue" },
+    { value: sleepQuality, weight: 0.35, name: "sleepQuality" },
+    { value: soreness, weight: 0.25, name: "soreness" },
   ];
 
   // Optional fields (mood, stress, energy)
   const optionalFields = [
-    { value: mood, weight: 0.4, name: 'mood' },
-    { value: stress, weight: 0.35, name: 'stress' },
-    { value: energy, weight: 0.25, name: 'energy' }
+    { value: mood, weight: 0.4, name: "mood" },
+    { value: stress, weight: 0.35, name: "stress" },
+    { value: energy, weight: 0.25, name: "energy" },
   ];
 
   // Calculate completeness
-  const requiredCount = requiredFields.filter(f => f.value !== null).length;
-  const optionalCount = optionalFields.filter(f => f.value !== null).length;
+  const requiredCount = requiredFields.filter((f) => f.value !== null).length;
+  const optionalCount = optionalFields.filter((f) => f.value !== null).length;
   const totalFields = requiredFields.length + optionalFields.length;
   const availableFields = requiredCount + optionalCount;
   const completeness = (availableFields / totalFields) * 100;
@@ -84,16 +86,16 @@ function calculateWellnessIndex(wellness) {
   // Invert fatigue and soreness (higher = worse), keep sleepQuality as-is (higher = better)
   let requiredSubscore = 0;
   let requiredWeightSum = 0;
-  
-  requiredFields.forEach(field => {
+
+  requiredFields.forEach((field) => {
     if (field.value !== null) {
       let normalizedValue;
-      if (field.name === 'fatigue' || field.name === 'soreness') {
+      if (field.name === "fatigue" || field.name === "soreness") {
         // Invert: 1 (best) → 100, 5 (worst) → 20
-        normalizedValue = 100 - ((field.value - 1) * 20);
+        normalizedValue = 100 - (field.value - 1) * 20;
       } else {
         // Sleep quality: 1 (worst) → 20, 5 (best) → 100
-        normalizedValue = 20 + ((field.value - 1) * 20);
+        normalizedValue = 20 + (field.value - 1) * 20;
       }
       requiredSubscore += normalizedValue * field.weight;
       requiredWeightSum += field.weight;
@@ -103,16 +105,16 @@ function calculateWellnessIndex(wellness) {
   // Add optional fields if available
   let optionalSubscore = 0;
   let optionalWeightSum = 0;
-  
-  optionalFields.forEach(field => {
+
+  optionalFields.forEach((field) => {
     if (field.value !== null) {
       let normalizedValue;
-      if (field.name === 'stress') {
+      if (field.name === "stress") {
         // Invert stress: 1 (no stress) → 100, 5 (very stressed) → 20
-        normalizedValue = 100 - ((field.value - 1) * 20);
+        normalizedValue = 100 - (field.value - 1) * 20;
       } else {
         // Mood and energy: 1 (worst) → 20, 5 (best) → 100
-        normalizedValue = 20 + ((field.value - 1) * 20);
+        normalizedValue = 20 + (field.value - 1) * 20;
       }
       optionalSubscore += normalizedValue * field.weight;
       optionalWeightSum += field.weight;
@@ -126,7 +128,7 @@ function calculateWellnessIndex(wellness) {
     // Blend required (60%) and optional (40%)
     const requiredScore = requiredSubscore / requiredWeightSum;
     const optionalScore = optionalSubscore / optionalWeightSum;
-    subscore = (requiredScore * 0.6) + (optionalScore * 0.4);
+    subscore = requiredScore * 0.6 + optionalScore * 0.4;
   } else {
     // Use required fields only
     subscore = requiredSubscore / requiredWeightSum;
@@ -140,7 +142,7 @@ function calculateWellnessIndex(wellness) {
     stress: stress || null,
     energy: energy || null,
     subscore: Math.round(subscore),
-    completeness: Math.round(completeness)
+    completeness: Math.round(completeness),
   };
 }
 
@@ -149,9 +151,9 @@ function calculateWellnessIndex(wellness) {
  */
 function determineDataMode(wellnessIndex, threshold = 60) {
   if (wellnessIndex.completeness >= threshold) {
-    return 'full';
+    return "full";
   }
-  return 'reduced'; // Use sleep-proxy mode
+  return "reduced"; // Use sleep-proxy mode
 }
 exports.handler = async (event, context) => {
   // CORS preflight
@@ -159,7 +161,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: ""
+      body: "",
     };
   }
 
@@ -172,7 +174,7 @@ exports.handler = async (event, context) => {
       return createErrorResponse(
         "Method not allowed. Use POST to calculate readiness.",
         405,
-        'method_not_allowed'
+        "method_not_allowed",
       );
     }
 
@@ -234,7 +236,10 @@ exports.handler = async (event, context) => {
         .lte("date", dayStr);
 
       if (altErr) {
-        return createErrorResponse(500, `Failed to fetch sessions: ${sessErr.message}`);
+        return createErrorResponse(
+          500,
+          `Failed to fetch sessions: ${sessErr.message}`,
+        );
       }
       sessions = altSessions;
     }
@@ -257,11 +262,16 @@ exports.handler = async (event, context) => {
       const sessionDate = s.session_date || s.date;
       const duration = s.duration_minutes;
       // Use rpe if available, otherwise use intensity_level as fallback
-      const rpe = s.rpe !== null && s.rpe !== undefined ? s.rpe : (s.intensity_level || 0);
-      
-      if (!duration || !sessionDate) {continue;}
-      if (rpe === 0 || rpe === null) {continue;} // Skip if no RPE/intensity data
-      
+      const rpe =
+        s.rpe !== null && s.rpe !== undefined ? s.rpe : s.intensity_level || 0;
+
+      if (!duration || !sessionDate) {
+        continue;
+      }
+      if (rpe === 0 || rpe === null) {
+        continue;
+      } // Skip if no RPE/intensity data
+
       const load = duration * rpe; // session-RPE
       const key = sessionDate;
       loadsByDay.set(key, (loadsByDay.get(key) || 0) + load);
@@ -297,13 +307,13 @@ exports.handler = async (event, context) => {
     if (wellErr || !wellness) {
       return createErrorResponse(
         400,
-        "Missing wellness log for this day. Please log wellness data first."
+        "Missing wellness log for this day. Please log wellness data first.",
       );
     }
 
     // Calculate wellness index (1-5 scale, modeled on common athlete monitoring scales)
     const wellnessIndex = calculateWellnessIndex(wellness);
-    
+
     // Determine data mode (full vs reduced)
     const dataMode = determineDataMode(wellnessIndex, 60); // 60% completeness threshold
 
@@ -320,7 +330,8 @@ exports.handler = async (event, context) => {
     let gameProximityHours = 999;
     if (nextGame?.game_start) {
       const gameDate = new Date(nextGame.game_start);
-      gameProximityHours = (gameDate.getTime() - targetDate.getTime()) / (1000 * 60 * 60);
+      gameProximityHours =
+        (gameDate.getTime() - targetDate.getTime()) / (1000 * 60 * 60);
     }
 
     // 4) Evidence-informed scoring with team-sport optimized weightings
@@ -328,7 +339,15 @@ exports.handler = async (event, context) => {
     // Workload score (ACWR-based)
     // Literature flags >1.5 as high risk, ~0.8-1.3 safer range (Gabbett 2016)
     let workloadScore = 100;
-    if (acwr > 1.8) {workloadScore -= 40;} else if (acwr > 1.5) {workloadScore -= 30;} else if (acwr > 1.3) {workloadScore -= 15;} else if (acwr < 0.7) {workloadScore -= 10;}
+    if (acwr > 1.8) {
+      workloadScore -= 40;
+    } else if (acwr > 1.5) {
+      workloadScore -= 30;
+    } else if (acwr > 1.3) {
+      workloadScore -= 15;
+    } else if (acwr < 0.7) {
+      workloadScore -= 10;
+    }
 
     // Wellness Index score (using calculated subscore)
     // Modeled on common athlete monitoring scales (1-5 ratings)
@@ -339,31 +358,46 @@ exports.handler = async (event, context) => {
     // Strong evidence base: sleep duration/quality strongly linked to readiness
     // (Halson 2014, Fullagar et al. 2015)
     let sleepScore = 100;
-    if (wellness.sleep_quality <= 4) {sleepScore -= 25;} else if (wellness.sleep_quality <= 6) {sleepScore -= 15;}
-    if (wellness.sleep_hours !== null && wellness.sleep_hours < 6) {sleepScore -= 10;} else if (wellness.sleep_hours !== null && wellness.sleep_hours < 7) {sleepScore -= 5;}
+    if (wellness.sleep_quality <= 4) {
+      sleepScore -= 25;
+    } else if (wellness.sleep_quality <= 6) {
+      sleepScore -= 15;
+    }
+    if (wellness.sleep_hours !== null && wellness.sleep_hours < 6) {
+      sleepScore -= 10;
+    } else if (wellness.sleep_hours !== null && wellness.sleep_hours < 7) {
+      sleepScore -= 5;
+    }
 
     // Game proximity score
     // Post-match metrics worst 1-2 days after, improve by day 3-4
     let proximityScore = 100;
-    if (gameProximityHours <= 24) {proximityScore -= 25;} else if (gameProximityHours <= 48) {proximityScore -= 15;} else if (gameProximityHours <= 72) {proximityScore -= 5;}
+    if (gameProximityHours <= 24) {
+      proximityScore -= 25;
+    } else if (gameProximityHours <= 48) {
+      proximityScore -= 15;
+    } else if (gameProximityHours <= 72) {
+      proximityScore -= 5;
+    }
 
     // Team-sport optimized weightings (evidence-based adjustments)
     // Increased wellness/sleep influence based on team-sport research
-    let workloadWeight = 0.35;  // Reduced from 0.40
-    let wellnessWeight = 0.30;  // Increased from 0.25
-    let sleepWeight = 0.20;     // Maintained (strong evidence)
+    let workloadWeight = 0.35; // Reduced from 0.40
+    let wellnessWeight = 0.3; // Increased from 0.25
+    let sleepWeight = 0.2; // Maintained (strong evidence)
     let proximityWeight = 0.15; // Maintained
 
     // Reduced data mode: Increase sleep weight when wellness completeness is low
     // Sleep can proxy broader wellness when resources are limited (Saw et al. 2016)
-    if (dataMode === 'reduced') {
+    if (dataMode === "reduced") {
       const sleepMultiplier = 1.5; // Increase sleep weight by 50%
       const additionalSleepWeight = sleepWeight * (sleepMultiplier - 1);
-      
+
       // Redistribute weights proportionally
-      const totalOtherWeights = workloadWeight + wellnessWeight + proximityWeight;
-      const reductionFactor = 1 - (additionalSleepWeight / totalOtherWeights);
-      
+      const totalOtherWeights =
+        workloadWeight + wellnessWeight + proximityWeight;
+      const reductionFactor = 1 - additionalSleepWeight / totalOtherWeights;
+
       workloadWeight *= reductionFactor;
       wellnessWeight *= reductionFactor;
       proximityWeight *= reductionFactor;
@@ -382,7 +416,7 @@ exports.handler = async (event, context) => {
     // Evidence-based cut-points (starting points - require team calibration)
     // These thresholds are based on common athlete monitoring scales
     // Teams should calibrate using their own injury/performance history over time
-    const LOW_MAX = 55;      // Below this = Low readiness → Deload
+    const LOW_MAX = 55; // Below this = Low readiness → Deload
     const MODERATE_MAX = 75; // Below this = Moderate → Maintain, Above = High → Push
 
     let level, suggestion;
@@ -400,32 +434,39 @@ exports.handler = async (event, context) => {
     // Store readiness score
     const { error: upsertErr } = await supabaseAdmin
       .from("readiness_scores")
-      .upsert({
-        athlete_id: athleteId,
-        day: dayStr,
-        score,
-        level,
-        suggestion,
-        acwr: Math.round(acwr * 100) / 100,
-        acute_load: Math.round(acuteLoad * 100) / 100,
-        chronic_load: Math.round(chronicLoad * 100) / 100,
-        workload_score: workloadScore,
-        wellness_score: wellnessScore,
-        sleep_score: sleepScore,
-        proximity_score: proximityScore
-      }, {
-        onConflict: "athlete_id,day"
-      });
+      .upsert(
+        {
+          athlete_id: athleteId,
+          day: dayStr,
+          score,
+          level,
+          suggestion,
+          acwr: Math.round(acwr * 100) / 100,
+          acute_load: Math.round(acuteLoad * 100) / 100,
+          chronic_load: Math.round(chronicLoad * 100) / 100,
+          workload_score: workloadScore,
+          wellness_score: wellnessScore,
+          sleep_score: sleepScore,
+          proximity_score: proximityScore,
+        },
+        {
+          onConflict: "athlete_id,day",
+        },
+      );
 
     if (upsertErr) {
       console.error("Error upserting readiness score:", upsertErr);
-      return createErrorResponse(500, `Failed to save readiness score: ${upsertErr.message}`);
+      return createErrorResponse(
+        500,
+        `Failed to save readiness score: ${upsertErr.message}`,
+      );
     }
 
     // Calibration note for teams
-    const calibrationNote = `Readiness thresholds (Low: <${LOW_MAX}, Moderate: ${LOW_MAX}-${MODERATE_MAX}, High: >${MODERATE_MAX}) ` +
-                            `are evidence-based starting points. Teams should calibrate these thresholds using their own ` +
-                            `injury and performance history over time for optimal accuracy.`;
+    const calibrationNote =
+      `Readiness thresholds (Low: <${LOW_MAX}, Moderate: ${LOW_MAX}-${MODERATE_MAX}, High: >${MODERATE_MAX}) ` +
+      `are evidence-based starting points. Teams should calibrate these thresholds using their own ` +
+      `injury and performance history over time for optimal accuracy.`;
 
     return createSuccessResponse({
       score,
@@ -440,7 +481,7 @@ exports.handler = async (event, context) => {
         workload: workloadScore,
         wellness: wellnessScore,
         sleep: sleepScore,
-        proximity: proximityScore
+        proximity: proximityScore,
       },
       calibrationNote,
       // Include actual weightings used (for transparency)
@@ -448,11 +489,10 @@ exports.handler = async (event, context) => {
         workload: workloadWeight,
         wellness: wellnessWeight,
         sleep: sleepWeight,
-        proximity: proximityWeight
-      }
+        proximity: proximityWeight,
+      },
     });
   } catch (error) {
     return handleServerError(error, "calc-readiness");
   }
 };
-

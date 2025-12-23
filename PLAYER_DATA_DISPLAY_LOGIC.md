@@ -22,24 +22,28 @@ This document provides comprehensive guidelines for displaying player data consi
 ## Core Principles
 
 ### 1. Single Source of Truth
+
 - **All player statistics** originate from the database (`game_events` table)
 - **Centralized backend endpoint**: `/.netlify/functions/player-stats`
 - **No client-side aggregation** for production data
 - **Database views** provide pre-aggregated stats for performance
 
 ### 2. Date Consistency
+
 - **Always filter to "up to and including today"** by default
 - **Never show future games** in statistics
 - **Use consistent date boundaries**: `23:59:59.999` for end-of-day
 - **Timezone handling**: All dates stored and compared in UTC
 
 ### 3. Calculation Consistency
+
 - **Same formulas** used across backend, frontend, and database
 - **Rounding rules** standardized (percentages: 1 decimal, averages: 2 decimals)
 - **Division by zero** handled gracefully (returns 0, not NaN or Infinity)
 - **Banker's rounding** for percentages
 
 ### 4. Display Consistency
+
 - **Same numbers** shown across all pages (Analytics, Performance, Game Tracker, Roster)
 - **Consistent formatting** (decimals, units, labels)
 - **Unified empty states** when no data exists
@@ -52,13 +56,16 @@ This document provides comprehensive guidelines for displaying player data consi
 ### Backend Layer
 
 #### Centralized API Endpoint
+
 **File**: `netlify/functions/player-stats.cjs`
 
 **Endpoints**:
+
 - `GET /aggregated` - Get all stats up to and including today
 - `GET /date-range?startDate=X&endDate=Y` - Get stats for specific date range
 
 **Query Parameters**:
+
 - `playerId` (required) - Player identifier
 - `season` (optional) - Filter by season (e.g., "2025")
 - `teamId` (optional) - Filter by team
@@ -66,6 +73,7 @@ This document provides comprehensive guidelines for displaying player data consi
 - `endDate` (optional) - ISO 8601 format (YYYY-MM-DD)
 
 **Response Structure**:
+
 ```javascript
 {
   gamesPlayed: number,
@@ -96,11 +104,13 @@ This document provides comprehensive guidelines for displaying player data consi
 #### Database Layer
 
 **View**: `player_stats_aggregated`
+
 - Materialized view of all player stats up to today
 - Automatically filters by date: `game_date <= CURRENT_DATE`
 - Updated via database triggers or scheduled refresh
 
 **Function**: `get_player_aggregated_stats(player_id, season, team_id)`
+
 - SQL function for consistent aggregation
 - Returns same structure as API endpoint
 - Used for direct database queries
@@ -108,23 +118,28 @@ This document provides comprehensive guidelines for displaying player data consi
 ### Frontend Layer
 
 #### Service: `GameStatsService`
+
 **File**: `src/js/services/gameStatsService.js`
 
 **Methods**:
+
 - `getPlayerStats(playerId, options)` - Get aggregated stats (uses backend by default)
 - `getPlayerStatsByDateRange(playerId, startDate, endDate)` - Get stats for date range
 - `getPlayerGameStats(playerId, gameId)` - Get stats for specific game
 - `getAllGames(options)` - Get all games (filtered to today by default)
 
 **Fallback Strategy**:
+
 1. Try backend API first
 2. Fall back to localStorage if backend unavailable
 3. Fall back to local calculation if no stored data
 
 #### Service: `PlayerStatisticsService` (Angular)
+
 **File**: `angular/src/app/core/services/player-statistics.service.ts`
 
 **Methods**:
+
 - `getPlayerGameStats(playerId, gameId)` - Observable for game-specific stats
 - `getPlayerStats(playerId)` - Observable for aggregated stats
 - `aggregateGameStats(games)` - Aggregates stats from multiple games
@@ -153,17 +168,19 @@ todayEndOfDay.setHours(23, 59, 59, 999);
    - Future games/events are never included in statistics
 
 2. **Date Range Queries**: When querying specific ranges
+
    ```javascript
    // Start date: beginning of day (00:00:00.000)
-   const startDate = new Date('2025-12-01');
+   const startDate = new Date("2025-12-01");
    startDate.setHours(0, 0, 0, 0);
-   
+
    // End date: end of day (23:59:59.999)
-   const endDate = new Date('2025-12-14');
+   const endDate = new Date("2025-12-14");
    endDate.setHours(23, 59, 59, 999);
    ```
 
 3. **Game Date Validation**: Before returning stats for a game
+
    ```javascript
    // Verify game is not in the future
    const { data: game } = await supabaseAdmin
@@ -172,7 +189,7 @@ todayEndOfDay.setHours(23, 59, 59, 999);
      .eq("game_id", gameId)
      .lte("game_date", todayEndOfDay.toISOString())
      .single();
-   
+
    if (!game) {
      throw new Error("Game not found or is in the future");
    }
@@ -186,6 +203,7 @@ todayEndOfDay.setHours(23, 59, 59, 999);
 ### Date Filtering Examples
 
 **Example 1: Get All Stats (Default)**
+
 ```javascript
 // Backend automatically filters to today
 GET /.netlify/functions/player-stats/aggregated?playerId=PLAYER_ID
@@ -196,6 +214,7 @@ const stats = await gameStatsService.getPlayerStats(playerId);
 ```
 
 **Example 2: Get Stats for Date Range**
+
 ```javascript
 // Backend with date range
 GET /.netlify/functions/player-stats/date-range?playerId=PLAYER_ID&startDate=2025-12-01&endDate=2025-12-14
@@ -209,6 +228,7 @@ const stats = await gameStatsService.getPlayerStatsByDateRange(
 ```
 
 **Example 3: Get Games List**
+
 ```javascript
 // Backend filters to today by default
 const games = await gameStatsService.getAllGames();
@@ -224,17 +244,21 @@ All calculations use consistent formulas across backend, frontend, and database.
 ### Passing Statistics
 
 #### Completion Percentage
+
 ```
 completion_percentage = (completions / pass_attempts) * 100
 ```
+
 - **Rounding**: 1 decimal place using banker's rounding
 - **Division by zero**: Returns 0 if `pass_attempts === 0`
 - **Example**: `(15 / 20) * 100 = 75.0%`
 
 #### Average Yards Per Attempt
+
 ```
 avg_yards_per_attempt = passing_yards / pass_attempts
 ```
+
 - **Rounding**: 2 decimal places
 - **Division by zero**: Returns 0 if `pass_attempts === 0`
 - **Example**: `250 / 20 = 12.50 yards`
@@ -242,17 +266,21 @@ avg_yards_per_attempt = passing_yards / pass_attempts
 ### Receiving Statistics
 
 #### Drop Rate
+
 ```
 drop_rate = (drops / targets) * 100
 ```
+
 - **Rounding**: 1 decimal place
 - **Division by zero**: Returns 0 if `targets === 0`
 - **Example**: `(2 / 15) * 100 = 13.3%`
 
 #### Average Yards Per Reception
+
 ```
 avg_yards_per_reception = receiving_yards / receptions
 ```
+
 - **Rounding**: 2 decimal places
 - **Division by zero**: Returns 0 if `receptions === 0`
 - **Example**: `180 / 12 = 15.00 yards`
@@ -260,9 +288,11 @@ avg_yards_per_reception = receiving_yards / receptions
 ### Rushing Statistics
 
 #### Yards Per Carry
+
 ```
 yards_per_carry = rushing_yards / rushing_attempts
 ```
+
 - **Rounding**: 2 decimal places
 - **Division by zero**: Returns 0 if `rushing_attempts === 0`
 - **Example**: `85 / 10 = 8.50 yards`
@@ -270,9 +300,11 @@ yards_per_carry = rushing_yards / rushing_attempts
 ### Defensive Statistics
 
 #### Flag Pull Success Rate
+
 ```
 flag_pull_success_rate = (flag_pulls / flag_pull_attempts) * 100
 ```
+
 - **Rounding**: 1 decimal place
 - **Division by zero**: Returns 0 if `flag_pull_attempts === 0`
 - **Example**: `(8 / 12) * 100 = 66.7%`
@@ -280,11 +312,12 @@ flag_pull_success_rate = (flag_pulls / flag_pull_attempts) * 100
 ### Implementation Examples
 
 #### Backend (JavaScript)
+
 ```javascript
 if (stats.passAttempts > 0) {
   const completionPct = (stats.completions / stats.passAttempts) * 100;
   stats.completionPercentage = Number(
-    (Math.round(completionPct * 10) / 10).toFixed(1)
+    (Math.round(completionPct * 10) / 10).toFixed(1),
   );
 } else {
   stats.completionPercentage = 0;
@@ -292,15 +325,17 @@ if (stats.passAttempts > 0) {
 ```
 
 #### Database (SQL)
+
 ```sql
-CASE 
-  WHEN pass_attempts > 0 THEN 
+CASE
+  WHEN pass_attempts > 0 THEN
     ROUND((completions::numeric / pass_attempts::numeric) * 100, 1)
   ELSE 0
 END as completion_percentage
 ```
 
 #### Frontend (JavaScript)
+
 ```javascript
 function calculateCompletionPercentage(completions, attempts) {
   if (attempts === 0) return 0;
@@ -316,16 +351,19 @@ function calculateCompletionPercentage(completions, attempts) {
 ### Number Formatting
 
 #### Percentages
+
 - **Format**: `XX.X%` (1 decimal place)
 - **Examples**: `75.0%`, `66.7%`, `0.0%`
 - **Zero handling**: Show `0.0%` instead of `-` or empty
 
 #### Averages (Yards Per Attempt, Yards Per Carry, etc.)
+
 - **Format**: `XX.XX` (2 decimal places)
 - **Examples**: `12.50`, `8.50`, `0.00`
 - **Zero handling**: Show `0.00` instead of `-` or empty
 
 #### Whole Numbers (Yards, Attempts, etc.)
+
 - **Format**: Integer with thousand separators for large numbers
 - **Examples**: `250`, `1,234`, `0`
 - **Zero handling**: Show `0` instead of `-` or empty
@@ -333,6 +371,7 @@ function calculateCompletionPercentage(completions, attempts) {
 ### Stat Labels
 
 #### Standard Labels
+
 - **Completion %**: "Completion %" or "Comp %"
 - **Avg Yds/Att**: "Avg Yds/Att" or "Yards/Attempt"
 - **Drop Rate**: "Drop Rate" or "Drops %"
@@ -340,6 +379,7 @@ function calculateCompletionPercentage(completions, attempts) {
 - **Flag Pull %**: "Flag Pull %" or "Success Rate"
 
 #### Position-Specific Labels
+
 - **Quarterback**: Emphasize passing stats (Completion %, Avg Yds/Att)
 - **Receiver**: Emphasize receiving stats (Receptions, Drop Rate, Avg Yds/Rec)
 - **Running Back**: Emphasize rushing stats (Yards/Carry, Rushing Yards)
@@ -348,20 +388,21 @@ function calculateCompletionPercentage(completions, attempts) {
 ### Empty State Display
 
 #### No Data Available
+
 ```javascript
 // Display "N/A" or "0" based on stat type
-const displayValue = stats.passAttempts > 0 
-  ? `${stats.completionPercentage}%` 
-  : "N/A";
+const displayValue =
+  stats.passAttempts > 0 ? `${stats.completionPercentage}%` : "N/A";
 ```
 
 #### No Games Played
+
 ```javascript
 // Show empty stats structure with zeros
 if (stats.gamesPlayed === 0) {
   return {
     message: "No games played yet",
-    stats: getEmptyStats() // All zeros
+    stats: getEmptyStats(), // All zeros
   };
 }
 ```
@@ -369,16 +410,18 @@ if (stats.gamesPlayed === 0) {
 ### Loading States
 
 #### Standard Loading Indicator
+
 ```javascript
 if (loading) {
   return {
     display: "Loading...",
-    showSpinner: true
+    showSpinner: true,
   };
 }
 ```
 
 #### Skeleton Loading
+
 ```javascript
 // Show skeleton placeholders while loading
 <div class="stat-skeleton">
@@ -396,6 +439,7 @@ if (loading) {
 **Location**: `src/js/pages/coach-page.js`, `roster.html`
 
 **Display Rules**:
+
 1. **Primary Stat**: Based on position
    - Quarterback: Completion %
    - Receiver: Receptions or Drop Rate
@@ -415,7 +459,7 @@ if (loading) {
      if (stats.completionPercentage !== undefined) {
        return {
          value: `${stats.completionPercentage}%`,
-         label: "Completion %"
+         label: "Completion %",
        };
      }
      // ... other position-specific logic
@@ -427,8 +471,9 @@ if (loading) {
 **Location**: `angular/src/app/shared/components/stats-grid/stats-grid.component.ts`
 
 **Display Rules**:
+
 1. **Grid Layout**: 2 columns on mobile, 3-4 columns on desktop
-2. **Stat Order**: 
+2. **Stat Order**:
    - Passing stats first (if applicable)
    - Receiving stats second (if applicable)
    - Rushing stats third (if applicable)
@@ -449,6 +494,7 @@ if (loading) {
 **Location**: `angular/src/app/shared/components/progressive-stats/progressive-stats.component.ts`
 
 **Display Rules**:
+
 1. **Trend Indicators**: Show up/down arrows for changes
 2. **Comparison Period**: Compare current period vs previous period
 3. **Color Coding**:
@@ -461,6 +507,7 @@ if (loading) {
 **Location**: `roster.html`, `angular/src/app/features/roster/roster.component.ts`
 
 **Display Rules**:
+
 1. **Group by Position**: Display players grouped by position
 2. **Show Key Stats**: Display 2-3 most relevant stats per position
 3. **Starter Badge**: Highlight primary players
@@ -471,6 +518,7 @@ if (loading) {
 **Location**: `angular/src/app/features/analytics/analytics.component.ts`
 
 **Display Rules**:
+
 1. **Date Range Selection**: Allow users to select custom date ranges
 2. **Aggregation**: Show totals, averages, and trends
 3. **Charts**: Display visualizations for key metrics
@@ -481,6 +529,7 @@ if (loading) {
 **Location**: `angular/src/app/features/performance-tracking/performance-tracking.component.ts`
 
 **Display Rules**:
+
 1. **Game-by-Game View**: Show stats for each game individually
 2. **Progressive Totals**: Show running totals as games progress
 3. **Highlights**: Highlight best/worst performances
@@ -500,6 +549,7 @@ All pages displaying player stats must show identical numbers:
 ### Validation Rules
 
 #### Rule 1: Same Data Source
+
 ```javascript
 // ✅ CORRECT: Use centralized endpoint
 const stats = await gameStatsService.getPlayerStats(playerId);
@@ -509,6 +559,7 @@ const stats = calculateStatsLocally(games);
 ```
 
 #### Rule 2: Same Date Filter
+
 ```javascript
 // ✅ CORRECT: Filter to today
 const todayEndOfDay = new Date();
@@ -520,6 +571,7 @@ todayEndOfDay.setHours(23, 59, 59, 999);
 ```
 
 #### Rule 3: Same Calculation Formula
+
 ```javascript
 // ✅ CORRECT: Use standardized formula
 const completionPct = (completions / attempts) * 100;
@@ -537,11 +589,15 @@ async function testConsistency(playerId) {
   const analyticsStats = await getAnalyticsStats(playerId);
   const performanceStats = await getPerformanceStats(playerId);
   const rosterStats = await getRosterStats(playerId);
-  
-  assert.equal(analyticsStats.completionPercentage, 
-               performanceStats.completionPercentage);
-  assert.equal(analyticsStats.completionPercentage, 
-               rosterStats.completionPercentage);
+
+  assert.equal(
+    analyticsStats.completionPercentage,
+    performanceStats.completionPercentage,
+  );
+  assert.equal(
+    analyticsStats.completionPercentage,
+    rosterStats.completionPercentage,
+  );
   // ... test all stats
 }
 ```
@@ -553,6 +609,7 @@ async function testConsistency(playerId) {
 ### Error Scenarios
 
 #### 1. Backend Unavailable
+
 ```javascript
 try {
   const stats = await gameStatsService.getPlayerStats(playerId);
@@ -564,24 +621,26 @@ try {
 ```
 
 #### 2. No Games Played
+
 ```javascript
 if (stats.gamesPlayed === 0) {
   return {
     ...getEmptyStats(),
-    message: "No games played yet"
+    message: "No games played yet",
   };
 }
 ```
 
 #### 3. Division by Zero
+
 ```javascript
 // Always check before division
-const completionPercentage = stats.passAttempts > 0
-  ? (stats.completions / stats.passAttempts) * 100
-  : 0;
+const completionPercentage =
+  stats.passAttempts > 0 ? (stats.completions / stats.passAttempts) * 100 : 0;
 ```
 
 #### 4. Invalid Date Range
+
 ```javascript
 if (startDate > endDate) {
   throw new Error("Start date must be before end date");
@@ -595,6 +654,7 @@ if (endDate > new Date()) {
 ```
 
 #### 5. Missing Player Data
+
 ```javascript
 if (!playerId || !playerId.trim()) {
   throw new Error("Player ID is required");
@@ -610,19 +670,18 @@ if (!player) {
 ### Edge Cases
 
 #### Case 1: Player Played in Multiple Positions
+
 ```javascript
 // Aggregate all plays regardless of position
-const allPlays = [
-  ...primaryPlays,
-  ...secondaryPlays
-];
+const allPlays = [...primaryPlays, ...secondaryPlays];
 // Deduplicate by play ID
 const uniquePlays = Array.from(
-  new Map(allPlays.map(p => [p.id, p])).values()
+  new Map(allPlays.map((p) => [p.id, p])).values(),
 );
 ```
 
 #### Case 2: Game Date Changed After Stats Recorded
+
 ```javascript
 // Always re-validate game date when fetching stats
 const game = await getGame(gameId);
@@ -633,23 +692,25 @@ if (game.game_date > todayEndOfDay) {
 ```
 
 #### Case 3: Partial Game Data
+
 ```javascript
 // Handle games where player only played part of the game
 if (stats.totalPlays === 0 && stats.gamesPlayed > 0) {
   // Player was present but had no plays
   return {
     ...stats,
-    note: "Player was present but had no recorded plays"
+    note: "Player was present but had no recorded plays",
   };
 }
 ```
 
 #### Case 4: Negative Values (Data Corruption)
+
 ```javascript
 // Validate stats are non-negative
 function validateStats(stats) {
-  Object.keys(stats).forEach(key => {
-    if (typeof stats[key] === 'number' && stats[key] < 0) {
+  Object.keys(stats).forEach((key) => {
+    if (typeof stats[key] === "number" && stats[key] < 0) {
       console.warn(`Negative value detected for ${key}, setting to 0`);
       stats[key] = 0;
     }
@@ -711,7 +772,7 @@ const avg = value.toFixed(3); // Wrong: 3 decimals instead of 2
 if (stats.gamesPlayed === 0) {
   return {
     ...getEmptyStats(),
-    message: "No games played yet"
+    message: "No games played yet",
   };
 }
 
@@ -726,14 +787,14 @@ if (stats.gamesPlayed === 0) {
 ```javascript
 // ✅ DO: Validate before processing
 function getPlayerStats(playerId, options = {}) {
-  if (!playerId || typeof playerId !== 'string') {
+  if (!playerId || typeof playerId !== "string") {
     throw new Error("Invalid player ID");
   }
-  
+
   if (options.season && !/^\d{4}$/.test(options.season)) {
     throw new Error("Invalid season format (expected YYYY)");
   }
-  
+
   // ... rest of function
 }
 
@@ -758,7 +819,7 @@ const stats = await fetchStats(playerId);
 cache.set(cacheKey, { data: stats, timestamp: Date.now() }, { ttl: 300 });
 
 // ❌ DON'T: Cache indefinitely
-const stats = cache.get(cacheKey) || await fetchStats(playerId);
+const stats = cache.get(cacheKey) || (await fetchStats(playerId));
 cache.set(cacheKey, stats); // Wrong: never expires
 ```
 
@@ -769,7 +830,7 @@ cache.set(cacheKey, stats); // Wrong: never expires
 console.log(`Fetching stats for player ${playerId}`, {
   season: options.season,
   teamId: options.teamId,
-  timestamp: new Date().toISOString()
+  timestamp: new Date().toISOString(),
 });
 
 // ❌ DON'T: Log sensitive data
@@ -817,20 +878,20 @@ When updating display logic, ensure:
 #### Unit Tests
 
 ```javascript
-describe('Player Stats Calculations', () => {
-  test('completion percentage calculation', () => {
+describe("Player Stats Calculations", () => {
+  test("completion percentage calculation", () => {
     const stats = {
       completions: 15,
-      passAttempts: 20
+      passAttempts: 20,
     };
     const result = calculateCompletionPercentage(stats);
     expect(result).toBe(75.0);
   });
-  
-  test('division by zero returns 0', () => {
+
+  test("division by zero returns 0", () => {
     const stats = {
       completions: 0,
-      passAttempts: 0
+      passAttempts: 0,
     };
     const result = calculateCompletionPercentage(stats);
     expect(result).toBe(0);
@@ -841,11 +902,13 @@ describe('Player Stats Calculations', () => {
 #### Integration Tests
 
 ```javascript
-describe('Player Stats API', () => {
-  test('returns stats filtered to today', async () => {
-    const response = await fetch('/.netlify/functions/player-stats/aggregated?playerId=TEST_PLAYER');
+describe("Player Stats API", () => {
+  test("returns stats filtered to today", async () => {
+    const response = await fetch(
+      "/.netlify/functions/player-stats/aggregated?playerId=TEST_PLAYER",
+    );
     const stats = await response.json();
-    
+
     // Verify no future games included
     expect(stats.gamesPlayed).toBeGreaterThanOrEqual(0);
     // Verify calculations are correct
@@ -857,18 +920,20 @@ describe('Player Stats API', () => {
 #### Consistency Tests
 
 ```javascript
-describe('Cross-Page Consistency', () => {
-  test('all pages show same stats', async () => {
-    const playerId = 'TEST_PLAYER';
-    
+describe("Cross-Page Consistency", () => {
+  test("all pages show same stats", async () => {
+    const playerId = "TEST_PLAYER";
+
     const analyticsStats = await getAnalyticsStats(playerId);
     const performanceStats = await getPerformanceStats(playerId);
     const rosterStats = await getRosterStats(playerId);
-    
-    expect(analyticsStats.completionPercentage)
-      .toBe(performanceStats.completionPercentage);
-    expect(analyticsStats.completionPercentage)
-      .toBe(rosterStats.completionPercentage);
+
+    expect(analyticsStats.completionPercentage).toBe(
+      performanceStats.completionPercentage,
+    );
+    expect(analyticsStats.completionPercentage).toBe(
+      rosterStats.completionPercentage,
+    );
   });
 });
 ```

@@ -8,7 +8,7 @@ const {
   createErrorResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -55,7 +55,9 @@ async function calculateACWR(userId, date) {
       .lte("session_date", todayEndOfDay.toISOString().split("T")[0])
       .in("status", ["completed", "in_progress"]);
 
-    if (acuteError && acuteError.code !== "42P01") {throw acuteError;}
+    if (acuteError && acuteError.code !== "42P01") {
+      throw acuteError;
+    }
 
     // Get chronic loads (last 28 days)
     const { data: chronicSessions, error: chronicError } = await supabaseAdmin
@@ -66,7 +68,9 @@ async function calculateACWR(userId, date) {
       .lte("session_date", todayEndOfDay.toISOString().split("T")[0])
       .in("status", ["completed", "in_progress"]);
 
-    if (chronicError && chronicError.code !== "42P01") {throw chronicError;}
+    if (chronicError && chronicError.code !== "42P01") {
+      throw chronicError;
+    }
 
     // Calculate loads (duration × intensity × RPE)
     const calculateLoad = (session) => {
@@ -85,7 +89,8 @@ async function calculateACWR(userId, date) {
         : 0;
     const chronicAverage =
       chronicLoads.length > 0
-        ? chronicLoads.reduce((sum, load) => sum + load, 0) / chronicLoads.length
+        ? chronicLoads.reduce((sum, load) => sum + load, 0) /
+          chronicLoads.length
         : 0;
 
     if (chronicAverage === 0) {
@@ -140,7 +145,8 @@ async function determinePeriodizationPhase(userId, date) {
     // Get active training program for user
     const { data: programs, error: programError } = await supabaseAdmin
       .from("training_programs")
-      .select(`
+      .select(
+        `
         id,
         start_date,
         end_date,
@@ -152,13 +158,16 @@ async function determinePeriodizationPhase(userId, date) {
           phase_order,
           focus_areas
         )
-      `)
+      `,
+      )
       .eq("is_active", true)
       .lte("start_date", date.toISOString().split("T")[0])
       .gte("end_date", date.toISOString().split("T")[0])
       .limit(1);
 
-    if (programError && programError.code !== "42P01") {throw programError;}
+    if (programError && programError.code !== "42P01") {
+      throw programError;
+    }
 
     if (programs && programs.length > 0 && programs[0].training_phases) {
       const phases = programs[0].training_phases;
@@ -226,7 +235,9 @@ async function getUpcomingGames(userId, date, daysAhead = 14) {
       .eq("user_id", userId)
       .limit(1);
 
-    if (teamError) {throw teamError;}
+    if (teamError) {
+      throw teamError;
+    }
 
     const teamId =
       teamMemberships && teamMemberships.length > 0
@@ -240,13 +251,17 @@ async function getUpcomingGames(userId, date, daysAhead = 14) {
     // Get games (domestic and international)
     const { data: games, error: gamesError } = await supabaseAdmin
       .from("games")
-      .select("game_id, game_date, opponent_team_name, tournament_name, game_type")
+      .select(
+        "game_id, game_date, opponent_team_name, tournament_name, game_type",
+      )
       .eq("team_id", teamId)
       .gte("game_date", date.toISOString().split("T")[0])
       .lte("game_date", endDate.toISOString().split("T")[0])
       .order("game_date", { ascending: true });
 
-    if (gamesError && gamesError.code !== "42P01") {throw gamesError;}
+    if (gamesError && gamesError.code !== "42P01") {
+      throw gamesError;
+    }
 
     // Separate domestic and international
     const domestic = [];
@@ -305,7 +320,9 @@ async function getTodaySessions(userId, date) {
       .eq("session_date", dateStr)
       .order("session_time", { ascending: true });
 
-    if (error && error.code !== "42P01") {throw error;}
+    if (error && error.code !== "42P01") {
+      throw error;
+    }
 
     return sessions || [];
   } catch (error) {
@@ -323,7 +340,7 @@ async function getTrainingHistory(userId, daysBack = 30) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayStr = today.toISOString().split("T")[0];
-    
+
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - daysBack);
     startDate.setHours(0, 0, 0, 0);
@@ -340,7 +357,9 @@ async function getTrainingHistory(userId, daysBack = 30) {
       .order("session_date", { ascending: false })
       .order("session_time", { ascending: true });
 
-    if (error && error.code !== "42P01") {throw error;}
+    if (error && error.code !== "42P01") {
+      throw error;
+    }
 
     return sessions || [];
   } catch (error) {
@@ -359,21 +378,26 @@ async function generateTrainingPlan(userId, date = new Date()) {
     today.setHours(0, 0, 0, 0);
 
     // Get all required data
-    const [acwr, phase, upcomingGames, todaySessions, history] = await Promise.all([
-      calculateACWR(userId, today),
-      determinePeriodizationPhase(userId, today),
-      getUpcomingGames(userId, today, 14),
-      getTodaySessions(userId, today),
-      getTrainingHistory(userId, 30),
-    ]);
+    const [acwr, phase, upcomingGames, todaySessions, history] =
+      await Promise.all([
+        calculateACWR(userId, today),
+        determinePeriodizationPhase(userId, today),
+        getUpcomingGames(userId, today, 14),
+        getTodaySessions(userId, today),
+        getTrainingHistory(userId, 30),
+      ]);
 
     // Determine if there's a game today
     const gameToday =
       upcomingGames.domestic.find(
-        (g) => g.date.toISOString().split("T")[0] === today.toISOString().split("T")[0]
+        (g) =>
+          g.date.toISOString().split("T")[0] ===
+          today.toISOString().split("T")[0],
       ) ||
       upcomingGames.international.find(
-        (g) => g.date.toISOString().split("T")[0] === today.toISOString().split("T")[0]
+        (g) =>
+          g.date.toISOString().split("T")[0] ===
+          today.toISOString().split("T")[0],
       );
 
     // Determine next game
@@ -496,7 +520,7 @@ function generateSessionsForDay({
 
   const daysToNextGame = Math.min(
     daysToNextDomestic || 999,
-    daysToNextInternational || 999
+    daysToNextInternational || 999,
   );
 
   // ACWR-based load adjustment
@@ -531,7 +555,8 @@ function generateSessionsForDay({
     gameProximityMultiplier = 0.8; // Moderate taper
   }
 
-  const finalMultiplier = loadMultiplier * phaseMultiplier * gameProximityMultiplier;
+  const finalMultiplier =
+    loadMultiplier * phaseMultiplier * gameProximityMultiplier;
 
   // Morning session: Mobility/Recovery
   sessions.push({
@@ -575,7 +600,12 @@ function generateSessionsForDay({
           : "Field Work & Skill Development",
       duration: Math.round(60 * finalMultiplier),
       content: generateSessionContent(sessionType, phase, finalMultiplier),
-      intensity: finalMultiplier >= 0.8 ? "high" : finalMultiplier >= 0.6 ? "medium" : "low",
+      intensity:
+        finalMultiplier >= 0.8
+          ? "high"
+          : finalMultiplier >= 0.6
+            ? "medium"
+            : "low",
       rpe: Math.round(5 + finalMultiplier * 3),
     });
   }
@@ -689,26 +719,31 @@ function buildExplanation({
   // ACWR explanation
   if (acwr.riskZone === "critical" || acwr.riskZone === "danger") {
     parts.push(
-      `ACWR is ${acwr.acwr} (${acwr.riskZone} zone) - load reduced significantly to prevent injury risk.`
+      `ACWR is ${acwr.acwr} (${acwr.riskZone} zone) - load reduced significantly to prevent injury risk.`,
     );
   } else if (acwr.riskZone === "caution") {
     parts.push(
-      `ACWR is ${acwr.acwr} (${acwr.riskZone} zone) - moderate load reduction applied.`
+      `ACWR is ${acwr.acwr} (${acwr.riskZone} zone) - moderate load reduction applied.`,
     );
   } else if (acwr.riskZone === "safe") {
-    parts.push(`ACWR is ${acwr.acwr} (${acwr.riskZone} zone) - optimal training load.`);
+    parts.push(
+      `ACWR is ${acwr.acwr} (${acwr.riskZone} zone) - optimal training load.`,
+    );
   }
 
   // Phase explanation
   parts.push(
-    `Current phase: ${phase.phase.replace(/_/g, " ")} - ${getPhaseFocus(phase.phase)}.`
+    `Current phase: ${phase.phase.replace(/_/g, " ")} - ${getPhaseFocus(phase.phase)}.`,
   );
 
   // Game proximity explanation
   if (daysToNextGame <= 3) {
-    const gameType = priorityGame === "domestic" ? "domestic game" : "international tournament";
+    const gameType =
+      priorityGame === "domestic"
+        ? "domestic game"
+        : "international tournament";
     parts.push(
-      `${daysToNextGame} day${daysToNextGame > 1 ? "s" : ""} until next ${gameType} - taper applied.`
+      `${daysToNextGame} day${daysToNextGame > 1 ? "s" : ""} until next ${gameType} - taper applied.`,
     );
   }
 
@@ -751,10 +786,10 @@ function generateTomorrowGuidance({
   // Check if game tomorrow
   const gameTomorrow =
     upcomingGames.domestic.find(
-      (g) => g.date.toISOString().split("T")[0] === tomorrowDate
+      (g) => g.date.toISOString().split("T")[0] === tomorrowDate,
     ) ||
     upcomingGames.international.find(
-      (g) => g.date.toISOString().split("T")[0] === tomorrowDate
+      (g) => g.date.toISOString().split("T")[0] === tomorrowDate,
     );
 
   if (gameTomorrow) {
@@ -775,7 +810,7 @@ function generateTomorrowGuidance({
       : 999,
     nextInternational
       ? Math.ceil((nextInternational.date - tomorrow) / (1000 * 60 * 60 * 24))
-      : 999
+      : 999,
   );
 
   if (daysToNext === 1) {
@@ -871,7 +906,7 @@ exports.handler = async (event, context) => {
         return createErrorResponse(
           "Invalid date format. Use ISO 8601 format (YYYY-MM-DD)",
           400,
-          "validation_error"
+          "validation_error",
         );
       }
     }

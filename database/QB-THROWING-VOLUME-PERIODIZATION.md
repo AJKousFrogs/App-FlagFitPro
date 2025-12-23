@@ -12,15 +12,15 @@
 
 ### Phase-by-Phase Breakdown
 
-| Phase | Months | Weekly Volume Range | Weekly Increase | Goal |
-|-------|--------|---------------------|-----------------|------|
-| **Pre-Season Prep** | November | 50-80 throws | +10 throws | Return to throwing safely |
-| **Foundation** | December | 80-120 throws | +10-15 throws | Build base capacity |
-| **Power (Month 1)** | January | 120-160 throws | +10 throws | Gradual strengthening |
-| **Power (Month 2)** | February | 160-240 throws | +20 throws | Accelerated build |
-| **Explosive** | March | 240-320 throws | +20 throws | Final push to peak |
-| **Tournament** | April Week 2 | **320 throws** | **0 (MAINTAIN)** | 🎯 Season starts |
-| **Tournament** | April-June | **320 throws** | **0 (MAINTAIN)** | Entire season |
+| Phase               | Months       | Weekly Volume Range | Weekly Increase  | Goal                      |
+| ------------------- | ------------ | ------------------- | ---------------- | ------------------------- |
+| **Pre-Season Prep** | November     | 50-80 throws        | +10 throws       | Return to throwing safely |
+| **Foundation**      | December     | 80-120 throws       | +10-15 throws    | Build base capacity       |
+| **Power (Month 1)** | January      | 120-160 throws      | +10 throws       | Gradual strengthening     |
+| **Power (Month 2)** | February     | 160-240 throws      | +20 throws       | Accelerated build         |
+| **Explosive**       | March        | 240-320 throws      | +20 throws       | Final push to peak        |
+| **Tournament**      | April Week 2 | **320 throws**      | **0 (MAINTAIN)** | 🎯 Season starts          |
+| **Tournament**      | April-June   | **320 throws**      | **0 (MAINTAIN)** | Entire season             |
 
 ---
 
@@ -74,27 +74,32 @@ Week | Month    | Throws | Increase | Cumulative | Phase           | Notes
 ## Key Principles Applied
 
 ### ✅ 1. Gradual Build Over 5 Months
+
 - **Total build time**: 22 weeks (November → April Week 2)
 - **Total increase**: 50 → 320 throws = +270 throws
 - **Average weekly increase**: ~12 throws/week
 - **Maximum weekly jump**: 20 throws (only in Feb-March when base is established)
 
 ### ✅ 2. No Sudden Jumps in January
+
 - **January Week 1**: 120 throws
 - **January Week 2**: 130 throws (+10, NOT +50!)
 - **January Week 3**: 140 throws (+10)
 - **January Week 4**: 155 throws (+15)
 
 ### ✅ 3. Peak Volume by Season Start
+
 - **April Week 2**: 320 throws achieved
 - **Why Week 2?**: Week 1 includes small taper (315) before full season volume
 
 ### ✅ 4. MAINTAIN Through Entire Season
+
 - **April-June (12 weeks)**: CONSTANT 320 throws/week
 - **No increases during season**: Body already at peak capacity
 - **Focus**: Recovery, game performance, ACWR monitoring
 
 ### ✅ 5. RPE Monitoring Critical
+
 - **Why?**: Small weekly increases (10-20 throws) may seem safe, but cumulative fatigue builds
 - **Track RPE every session**: If RPE stays high (8-9+) for multiple weeks, reduce volume
 - **ACWR Sweet Spot**: Keep ratio between 0.8-1.3 to minimize injury risk
@@ -104,15 +109,18 @@ Week | Month    | Throws | Increase | Cumulative | Phase           | Notes
 ## Comparison: Original vs. Corrected
 
 ### ❌ ORIGINAL (INCORRECT)
+
 ```
 December Week 1: 100 throws
 December Week 2: 150 throws (+50!) ⚠️ TOO FAST
 December Week 3: 200 throws (+50!) ⚠️ TOO FAST
 December Week 4: 320 throws (+120!) ⚠️ DANGEROUS
 ```
+
 **Problem**: 220 throw increase in 4 weeks = HIGH INJURY RISK
 
 ### ✅ CORRECTED (PROPER PERIODIZATION)
+
 ```
 December Week 1: 80 throws
 December Week 2: 95 throws (+15) ✓
@@ -124,6 +132,7 @@ December Week 4: 120 throws (+10) ✓
 April Week 2: 320 throws (PEAK)
 April Week 3+: 320 throws (MAINTAIN)
 ```
+
 **Result**: 270 throw increase over 22 weeks = SAFE, SUSTAINABLE
 
 ---
@@ -160,19 +169,20 @@ Throws
 
 ### Expected ACWR Values
 
-| Month | Week | Throws | Acute Load | Chronic Load | ACWR | Risk Level |
-|-------|------|--------|------------|--------------|------|------------|
+| Month | Week | Throws | Acute Load | Chronic Load | ACWR | Risk Level  |
+| ----- | ---- | ------ | ---------- | ------------ | ---- | ----------- |
 | Nov   | 4    | 80     | ~400       | ~300         | 1.33 | Moderate ⚠️ |
-| Dec   | 4    | 120    | ~500       | ~420         | 1.19 | Optimal ✅ |
-| Jan   | 4    | 155    | ~650       | ~550         | 1.18 | Optimal ✅ |
-| Feb   | 4    | 230    | ~1000      | ~850         | 1.18 | Optimal ✅ |
-| Mar   | 4    | 310    | ~1350      | ~1150        | 1.17 | Optimal ✅ |
-| Apr   | 2    | 320    | ~1400      | ~1250        | 1.12 | Optimal ✅ |
+| Dec   | 4    | 120    | ~500       | ~420         | 1.19 | Optimal ✅  |
+| Jan   | 4    | 155    | ~650       | ~550         | 1.18 | Optimal ✅  |
+| Feb   | 4    | 230    | ~1000      | ~850         | 1.18 | Optimal ✅  |
+| Mar   | 4    | 310    | ~1350      | ~1150        | 1.17 | Optimal ✅  |
+| Apr   | 2    | 320    | ~1400      | ~1250        | 1.12 | Optimal ✅  |
 
 **Note**: Acute Load = Daily Load (RPE × Duration) averaged over 7 days
 **Note**: Chronic Load = Daily Load averaged over 28 days
 
 ### Warning Signs (Reduce Volume If):
+
 - ACWR > 1.5 for multiple weeks
 - RPE consistently 9+ despite adequate rest
 - Arm soreness lasting >48 hours
@@ -183,11 +193,13 @@ Throws
 ## Implementation in Database
 
 ### Corrected Files
+
 1. **`seed-qb-annual-program-corrected.sql`**: Complete 5-month progression
 2. **Training weeks**: 32 weeks created (Nov-Jun) with proper volume multipliers
 3. **Exercises**: Throwing volume sessions from 50 → 320 throws
 
 ### Volume Multiplier Logic
+
 ```sql
 volume_multiplier = (throws_per_week / 100)
 
@@ -198,6 +210,7 @@ Examples:
 ```
 
 ### Session-Specific Throwing Volume
+
 ```sql
 -- Example: Week 2 of April (Season Start - PEAK)
 INSERT INTO session_exercises (
@@ -218,12 +231,14 @@ INSERT INTO session_exercises (
 ### Month-by-Month Focus
 
 **November (Return to Throwing)**
+
 - Start: 50 throws
 - End: 80 throws
 - Focus: Mechanics over velocity
 - RPE Target: 4-6 (moderate)
 
 **December (Foundation)**
+
 - Start: 80 throws
 - End: 120 throws
 - Focus: Building arm strength
@@ -231,6 +246,7 @@ INSERT INTO session_exercises (
 - Strength: Progress from 20% to 40% BW
 
 **January (Power Build)**
+
 - Start: 120 throws
 - End: 155 throws
 - Focus: Explosive movements
@@ -238,6 +254,7 @@ INSERT INTO session_exercises (
 - Weekly increase: 10 throws MAX
 
 **February (Accelerated Build)**
+
 - Start: 170 throws
 - End: 230 throws
 - Focus: Volume capacity
@@ -245,6 +262,7 @@ INSERT INTO session_exercises (
 - Weekly increase: 20 throws OK (base established)
 
 **March (Final Push)**
+
 - Start: 250 throws
 - End: 310 throws
 - Focus: Game simulation
@@ -252,11 +270,13 @@ INSERT INTO session_exercises (
 - Weekly increase: 20 throws
 
 **April Week 1 (Taper)**
+
 - Volume: 315 throws (slight reduction)
 - Focus: Freshness for season
 - RPE Target: 6-7 (controlled)
 
 **April Week 2 → June (Season)**
+
 - Volume: **320 throws EVERY WEEK**
 - Focus: Performance + recovery
 - RPE Target: 7-9 (game intensity)
@@ -293,6 +313,7 @@ INSERT INTO session_exercises (
 ## Database Queries for Monitoring
 
 ### Check Current Week's Target Volume
+
 ```sql
 SELECT
   tw.week_number,
@@ -309,6 +330,7 @@ WHERE tw.start_date <= CURRENT_DATE
 ```
 
 ### Check Player's Actual Throwing Volume This Week
+
 ```sql
 SELECT
   SUM(psm.metric_value) AS actual_throws_this_week
@@ -320,6 +342,7 @@ WHERE psm.player_id = 'player-uuid'
 ```
 
 ### Compare Target vs. Actual
+
 ```sql
 WITH target AS (
   SELECT (tw.volume_multiplier * 100) AS target_throws

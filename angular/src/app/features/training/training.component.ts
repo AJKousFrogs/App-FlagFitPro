@@ -15,7 +15,10 @@ import { MessageService } from "primeng/api";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { TrainingBuilderComponent } from "../../shared/components/training-builder/training-builder.component";
-import { SwipeGestureDirective, SwipeEvent } from "../../shared/directives/swipe-gesture.directive";
+import {
+  SwipeGestureDirective,
+  SwipeEvent,
+} from "../../shared/directives/swipe-gesture.directive";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
@@ -55,8 +58,8 @@ interface Workout {
     MainLayoutComponent,
     StatsGridComponent,
     TrainingBuilderComponent,
-    SwipeGestureDirective
-],
+    SwipeGestureDirective,
+  ],
   template: `
     <p-toast></p-toast>
     <app-main-layout>
@@ -66,7 +69,7 @@ interface Workout {
         appSwipeGesture
         [enablePullToRefresh]="true"
         (pullToRefresh)="refreshTrainingData()"
-        >
+      >
         <!-- Hero Section -->
         <div class="hero-section">
           <p-card class="hero-card">
@@ -78,13 +81,13 @@ interface Workout {
             <div class="hero-note">Your Weekly Performance Snapshot</div>
           </p-card>
         </div>
-    
+
         <!-- Smart Training Session Builder -->
         <app-training-builder></app-training-builder>
-    
+
         <!-- Training Stats Grid -->
         <app-stats-grid [stats]="trainingStats()"></app-stats-grid>
-    
+
         <!-- Weekly Schedule -->
         <p-card class="schedule-card">
           <ng-template pTemplate="header">
@@ -103,17 +106,14 @@ interface Workout {
           </ng-template>
           <div class="weekly-schedule-grid">
             @for (day of weeklySchedule(); track trackByDayName($index, day)) {
-              <div
-                class="schedule-day"
-                >
+              <div class="schedule-day">
                 <div class="day-name">{{ day.name }}</div>
                 <div class="day-sessions">
                   @for (
-                    session of day.sessions; track trackBySessionTime($index,
-                    session)) {
-                    <div
-                      class="session-item"
-                      >
+                    session of day.sessions;
+                    track trackBySessionTime($index, session)
+                  ) {
+                    <div class="session-item">
                       <div class="session-time">{{ session.time }}</div>
                       <div class="session-title">{{ session.title }}</div>
                     </div>
@@ -123,7 +123,7 @@ interface Workout {
             }
           </div>
         </p-card>
-    
+
         <!-- Training Grid -->
         <div class="training-grid">
           <!-- Workouts Section -->
@@ -135,16 +135,25 @@ interface Workout {
               </h2>
             </ng-template>
             <div class="workouts-list">
-              @for (workout of workouts(); track trackByWorkoutTitle($index, workout)) {
+              @for (
+                workout of workouts();
+                track trackByWorkoutTitle($index, workout)
+              ) {
                 <div
                   class="workout-card"
                   [style.border-color]="workout.iconBg"
-                  [class.swiping-right]="swipingWorkoutId() === workout.title && swipeDirection() === 'right'"
-                  [class.swiping-left]="swipingWorkoutId() === workout.title && swipeDirection() === 'left'"
+                  [class.swiping-right]="
+                    swipingWorkoutId() === workout.title &&
+                    swipeDirection() === 'right'
+                  "
+                  [class.swiping-left]="
+                    swipingWorkoutId() === workout.title &&
+                    swipeDirection() === 'left'
+                  "
                   appSwipeGesture
                   (swipeRight)="onSwipeRight($event, workout)"
                   (swipeLeft)="onSwipeLeft($event, workout)"
-                  >
+                >
                   <div class="workout-icon" [style.background]="workout.iconBg">
                     <i [class]="workout.icon"></i>
                   </div>
@@ -165,7 +174,7 @@ interface Workout {
               }
             </div>
           </p-card>
-    
+
           <!-- Progress & Achievements -->
           <p-card class="progress-section">
             <ng-template pTemplate="header">
@@ -176,11 +185,10 @@ interface Workout {
             </ng-template>
             <div class="achievements-list">
               @for (
-                achievement of achievements(); track trackByAchievementTitle($index,
-                achievement)) {
-                <div
-                  class="achievement-item"
-                  >
+                achievement of achievements();
+                track trackByAchievementTitle($index, achievement)
+              ) {
+                <div class="achievement-item">
                   <div class="achievement-icon">{{ achievement.icon }}</div>
                   <div class="achievement-content">
                     <div class="achievement-title">{{ achievement.title }}</div>
@@ -193,7 +201,7 @@ interface Workout {
         </div>
       </div>
     </app-main-layout>
-    `,
+  `,
   styles: [
     `
       .training-page {
@@ -620,7 +628,8 @@ export class TrainingComponent implements OnInit {
         intensity: "Medium intensity",
         location: "Gym access",
         icon: "💪",
-        iconBg: "linear-gradient(135deg, var(--color-brand-primary-light), var(--ds-primary-green))",
+        iconBg:
+          "linear-gradient(135deg, var(--color-brand-primary-light), var(--ds-primary-green))",
       },
       {
         type: "agility",
@@ -645,9 +654,9 @@ export class TrainingComponent implements OnInit {
   openScheduleBuilder(): void {
     // Training builder is now integrated directly in the template
     // Scroll to builder if needed
-    const builderElement = document.querySelector('app-training-builder');
+    const builderElement = document.querySelector("app-training-builder");
     if (builderElement) {
-      builderElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      builderElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 
@@ -667,7 +676,7 @@ export class TrainingComponent implements OnInit {
   onSwipeRight(event: SwipeEvent, workout: Workout): void {
     this.swipingWorkoutId.set(workout.title);
     this.swipeDirection.set("right");
-    
+
     setTimeout(() => {
       this.markWorkoutComplete(workout);
       this.swipingWorkoutId.set(null);
@@ -678,7 +687,7 @@ export class TrainingComponent implements OnInit {
   onSwipeLeft(event: SwipeEvent, workout: Workout): void {
     this.swipingWorkoutId.set(workout.title);
     this.swipeDirection.set("left");
-    
+
     setTimeout(() => {
       this.postponeWorkout(workout);
       this.swipingWorkoutId.set(null);
@@ -707,7 +716,7 @@ export class TrainingComponent implements OnInit {
   refreshTrainingData(): void {
     this.isRefreshing.set(true);
     this.loadTrainingData();
-    
+
     setTimeout(() => {
       this.isRefreshing.set(false);
       this.messageService.add({

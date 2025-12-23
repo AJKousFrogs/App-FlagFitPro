@@ -32,25 +32,25 @@ npm install primeng primeicons @angular/animations
 
 ```scss
 // styles.scss
-@import './assets/styles/design-tokens.scss';
-@import './assets/styles/component-styles.scss';
-@import 'primeng/resources/themes/lara-light-green/theme.css';
-@import 'primeng/resources/primeng.css';
-@import 'primeicons/primeicons.css';
+@import "./assets/styles/design-tokens.scss";
+@import "./assets/styles/component-styles.scss";
+@import "primeng/resources/themes/lara-light-green/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
 ```
 
 ### Configure PrimeNG Theme
 
 ```typescript
 // app.config.ts
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { ApplicationConfig } from '@angular/core';
+import { provideAnimations } from "@angular/platform-browser/animations";
+import { ApplicationConfig } from "@angular/core";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(),
     // ... other providers
-  ]
+  ],
 };
 ```
 
@@ -62,27 +62,26 @@ export const appConfig: ApplicationConfig = {
 
 ```typescript
 // button-primary.component.ts
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-button-primary',
+  selector: "app-button-primary",
   standalone: true,
   imports: [CommonModule],
   template: `
-    <button 
-      class="btn btn-primary"
-      [disabled]="disabled"
-      (click)="onClick()">
+    <button class="btn btn-primary" [disabled]="disabled" (click)="onClick()">
       <span *ngIf="loading" class="spinner spinner-sm"></span>
       <ng-content></ng-content>
     </button>
   `,
-  styles: [`
-    :host {
-      display: inline-block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: inline-block;
+      }
+    `,
+  ],
 })
 export class ButtonPrimaryComponent {
   @Input() disabled = false;
@@ -101,37 +100,46 @@ export class ButtonPrimaryComponent {
 
 ```typescript
 // button.component.ts
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-button',
+  selector: "app-button",
   standalone: true,
   imports: [CommonModule],
   template: `
-    <button 
+    <button
       [class]="buttonClass"
       [disabled]="disabled"
       [type]="type"
-      (click)="onClick()">
+      (click)="onClick()"
+    >
       <ng-content></ng-content>
     </button>
   `,
-  styles: [`
-    :host {
-      display: inline-block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: inline-block;
+      }
+    `,
+  ],
 })
 export class ButtonComponent {
-  @Input() variant: 'primary' | 'secondary' | 'outlined' | 'text' | 'danger' | 'success' = 'primary';
-  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  @Input() variant:
+    | "primary"
+    | "secondary"
+    | "outlined"
+    | "text"
+    | "danger"
+    | "success" = "primary";
+  @Input() size: "sm" | "md" | "lg" = "md";
   @Input() disabled = false;
-  @Input() type: 'button' | 'submit' | 'reset' = 'button';
+  @Input() type: "button" | "submit" | "reset" = "button";
   @Output() clicked = new EventEmitter<void>();
 
   get buttonClass(): string {
-    const sizeClass = this.size !== 'md' ? `btn-${this.size}` : '';
+    const sizeClass = this.size !== "md" ? `btn-${this.size}` : "";
     return `btn btn-${this.variant} ${sizeClass}`.trim();
   }
 
@@ -162,11 +170,11 @@ export class ButtonComponent {
 
 ```typescript
 // card.component.ts
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-card',
+  selector: "app-card",
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -183,16 +191,23 @@ import { CommonModule } from '@angular/common';
       </div>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class CardComponent {
   @Input() title?: string;
   @Input() subtitle?: string;
-  @Input() variant: 'default' | 'elevated' | 'outlined' | 'interactive' | 'gradient' = 'default';
+  @Input() variant:
+    | "default"
+    | "elevated"
+    | "outlined"
+    | "interactive"
+    | "gradient" = "default";
   @Input() hasFooter = false;
 
   get cardClass(): string {
@@ -216,29 +231,32 @@ export class CardComponent {
 
 ```typescript
 // card-interactive.component.ts
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-card-interactive',
+  selector: "app-card-interactive",
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div 
+    <div
       class="card card-interactive"
       [class.selected]="selected"
-      (click)="onClick()">
+      (click)="onClick()"
+    >
       <div class="card-body">
         <ng-content></ng-content>
       </div>
     </div>
   `,
-  styles: [`
-    .card.selected {
-      border-color: var(--color-brand-primary);
-      box-shadow: var(--shadow-focus);
-    }
-  `]
+  styles: [
+    `
+      .card.selected {
+        border-color: var(--color-brand-primary);
+        box-shadow: var(--shadow-focus);
+      }
+    `,
+  ],
 })
 export class CardInteractiveComponent {
   @Input() selected = false;
@@ -258,20 +276,24 @@ export class CardInteractiveComponent {
 
 ```typescript
 // input.component.ts
-import { Component, Input, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { Component, Input, forwardRef } from "@angular/core";
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule,
+} from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-input',
+  selector: "app-input",
   standalone: true,
   imports: [CommonModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => InputComponent),
-      multi: true
-    }
+      multi: true,
+    },
   ],
   template: `
     <div class="form-group">
@@ -286,21 +308,24 @@ import { CommonModule } from '@angular/common';
         [(ngModel)]="value"
         (blur)="onBlur()"
         (input)="onChange($event)"
-        class="form-control" />
+        class="form-control"
+      />
       <div *ngIf="helpText" class="form-help">{{ helpText }}</div>
       <div *ngIf="errorMessage" class="form-error">{{ errorMessage }}</div>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class InputComponent implements ControlValueAccessor {
   @Input() id = `input-${Math.random().toString(36).substr(2, 9)}`;
   @Input() label?: string;
-  @Input() type: string = 'text';
+  @Input() type: string = "text";
   @Input() placeholder?: string;
   @Input() helpText?: string;
   @Input() errorMessage?: string;
@@ -308,7 +333,7 @@ export class InputComponent implements ControlValueAccessor {
   @Input() invalid = false;
   @Input() valid = false;
 
-  value: string = '';
+  value: string = "";
   private onChangeFn = (value: string) => {};
   private onTouchedFn = () => {};
 
@@ -323,7 +348,7 @@ export class InputComponent implements ControlValueAccessor {
   }
 
   writeValue(value: string): void {
-    this.value = value || '';
+    this.value = value || "";
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -349,7 +374,8 @@ export class InputComponent implements ControlValueAccessor {
   placeholder="Enter your email"
   [(ngModel)]="email"
   [invalid]="emailInvalid"
-  errorMessage="Please enter a valid email">
+  errorMessage="Please enter a valid email"
+>
 </app-input>
 ```
 
@@ -357,9 +383,13 @@ export class InputComponent implements ControlValueAccessor {
 
 ```typescript
 // select.component.ts
-import { Component, Input, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { Component, Input, forwardRef } from "@angular/core";
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule,
+} from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 interface SelectOption {
   label: string;
@@ -368,15 +398,15 @@ interface SelectOption {
 }
 
 @Component({
-  selector: 'app-select',
+  selector: "app-select",
   standalone: true,
   imports: [CommonModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => SelectComponent),
-      multi: true
-    }
+      multi: true,
+    },
   ],
   template: `
     <div class="form-group">
@@ -388,28 +418,32 @@ interface SelectOption {
         [(ngModel)]="value"
         (change)="onChange($event)"
         (blur)="onBlur()"
-        class="form-control">
+        class="form-control"
+      >
         <option [value]="null" disabled>{{ placeholder }}</option>
-        <option 
+        <option
           *ngFor="let option of options"
           [value]="option.value"
-          [disabled]="option.disabled">
+          [disabled]="option.disabled"
+        >
           {{ option.label }}
         </option>
       </select>
       <div *ngIf="errorMessage" class="form-error">{{ errorMessage }}</div>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class SelectComponent implements ControlValueAccessor {
   @Input() id = `select-${Math.random().toString(36).substr(2, 9)}`;
   @Input() label?: string;
-  @Input() placeholder = 'Select an option';
+  @Input() placeholder = "Select an option";
   @Input() options: SelectOption[] = [];
   @Input() errorMessage?: string;
   @Input() disabled = false;
@@ -452,9 +486,9 @@ export class SelectComponent implements ControlValueAccessor {
 ```typescript
 // component.ts
 positions = [
-  { label: 'Quarterback', value: 'qb' },
-  { label: 'Wide Receiver', value: 'wr' },
-  { label: 'Running Back', value: 'rb' }
+  { label: "Quarterback", value: "qb" },
+  { label: "Wide Receiver", value: "wr" },
+  { label: "Running Back", value: "rb" },
 ];
 ```
 
@@ -463,7 +497,8 @@ positions = [
   label="Position"
   placeholder="Select position"
   [options]="positions"
-  [(ngModel)]="selectedPosition">
+  [(ngModel)]="selectedPosition"
+>
 </app-select>
 ```
 
@@ -475,9 +510,9 @@ positions = [
 
 ```typescript
 // header.component.ts
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
 
 interface NavItem {
   label: string;
@@ -486,39 +521,40 @@ interface NavItem {
 }
 
 @Component({
-  selector: 'app-header',
+  selector: "app-header",
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
     <header class="header">
       <div class="header-container">
-        <a routerLink="/" class="header-logo">
-          FlagFit Pro
-        </a>
+        <a routerLink="/" class="header-logo"> FlagFit Pro </a>
         <nav class="header-nav">
-          <a 
+          <a
             *ngFor="let item of navItems"
             [routerLink]="item.route"
             routerLinkActive="active"
-            class="header-nav-link">
+            class="header-nav-link"
+          >
             {{ item.label }}
           </a>
         </nav>
       </div>
     </header>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class HeaderComponent {
   navItems: NavItem[] = [
-    { label: 'Dashboard', route: '/dashboard' },
-    { label: 'Training', route: '/training' },
-    { label: 'Analytics', route: '/analytics' },
-    { label: 'Roster', route: '/roster' }
+    { label: "Dashboard", route: "/dashboard" },
+    { label: "Training", route: "/training" },
+    { label: "Analytics", route: "/analytics" },
+    { label: "Roster", route: "/roster" },
   ];
 }
 ```
@@ -527,9 +563,9 @@ export class HeaderComponent {
 
 ```typescript
 // sidebar.component.ts
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Component, Input } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
 
 interface SidebarItem {
   label: string;
@@ -538,7 +574,7 @@ interface SidebarItem {
 }
 
 @Component({
-  selector: 'app-sidebar',
+  selector: "app-sidebar",
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
@@ -551,18 +587,21 @@ interface SidebarItem {
           *ngFor="let item of items"
           [routerLink]="item.route"
           routerLinkActive="active"
-          class="sidebar-nav-item">
+          class="sidebar-nav-item"
+        >
           <i [class]="item.icon" class="sidebar-nav-icon"></i>
           <span>{{ item.label }}</span>
         </a>
       </nav>
     </aside>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class SidebarComponent {
   @Input() items: SidebarItem[] = [];
@@ -577,8 +616,8 @@ export class SidebarComponent {
 
 ```typescript
 // table.component.ts
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 interface TableColumn {
   key: string;
@@ -587,20 +626,29 @@ interface TableColumn {
 }
 
 @Component({
-  selector: 'app-table',
+  selector: "app-table",
   standalone: true,
   imports: [CommonModule],
   template: `
     <div class="table-container">
-      <table class="table" [class.table-striped]="striped" [class.table-bordered]="bordered">
+      <table
+        class="table"
+        [class.table-striped]="striped"
+        [class.table-bordered]="bordered"
+      >
         <thead>
           <tr>
             <th
               *ngFor="let column of columns"
               [class.sortable]="column.sortable"
-              [class.sort-asc]="sortColumn === column.key && sortDirection === 'asc'"
-              [class.sort-desc]="sortColumn === column.key && sortDirection === 'desc'"
-              (click)="onSort(column)">
+              [class.sort-asc]="
+                sortColumn === column.key && sortDirection === 'asc'
+              "
+              [class.sort-desc]="
+                sortColumn === column.key && sortDirection === 'desc'
+              "
+              (click)="onSort(column)"
+            >
               {{ column.label }}
             </th>
           </tr>
@@ -615,11 +663,13 @@ interface TableColumn {
       </table>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class TableComponent {
   @Input() columns: TableColumn[] = [];
@@ -628,7 +678,7 @@ export class TableComponent {
   @Input() bordered = false;
 
   sortColumn: string | null = null;
-  sortDirection: 'asc' | 'desc' = 'asc';
+  sortDirection: "asc" | "desc" = "asc";
 
   get sortedData(): any[] {
     if (!this.sortColumn) {
@@ -640,10 +690,10 @@ export class TableComponent {
       const bVal = b[this.sortColumn!];
 
       if (aVal < bVal) {
-        return this.sortDirection === 'asc' ? -1 : 1;
+        return this.sortDirection === "asc" ? -1 : 1;
       }
       if (aVal > bVal) {
-        return this.sortDirection === 'asc' ? 1 : -1;
+        return this.sortDirection === "asc" ? 1 : -1;
       }
       return 0;
     });
@@ -655,10 +705,10 @@ export class TableComponent {
     }
 
     if (this.sortColumn === column.key) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
     } else {
       this.sortColumn = column.key;
-      this.sortDirection = 'asc';
+      this.sortDirection = "asc";
     }
   }
 }
@@ -668,23 +718,19 @@ export class TableComponent {
 
 ```typescript
 columns = [
-  { key: 'name', label: 'Player Name', sortable: true },
-  { key: 'position', label: 'Position', sortable: true },
-  { key: 'stats', label: 'Stats', sortable: false }
+  { key: "name", label: "Player Name", sortable: true },
+  { key: "position", label: "Position", sortable: true },
+  { key: "stats", label: "Stats", sortable: false },
 ];
 
 players = [
-  { name: 'John Doe', position: 'QB', stats: '85%' },
-  { name: 'Jane Smith', position: 'WR', stats: '92%' }
+  { name: "John Doe", position: "QB", stats: "85%" },
+  { name: "Jane Smith", position: "WR", stats: "92%" },
 ];
 ```
 
 ```html
-<app-table
-  [columns]="columns"
-  [data]="players"
-  [striped]="true">
-</app-table>
+<app-table [columns]="columns" [data]="players" [striped]="true"> </app-table>
 ```
 
 ---
@@ -695,11 +741,11 @@ players = [
 
 ```typescript
 // alert.component.ts
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-alert',
+  selector: "app-alert",
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -715,14 +761,16 @@ import { CommonModule } from '@angular/common';
       </button>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class AlertComponent {
-  @Input() type: 'success' | 'warning' | 'error' | 'info' = 'info';
+  @Input() type: "success" | "warning" | "error" | "info" = "info";
   @Input() title?: string;
   @Input() dismissible = false;
   show = true;
@@ -757,32 +805,31 @@ export class AlertComponent {
 
 ```typescript
 // primeng-button.component.ts
-import { Component } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
+import { Component } from "@angular/core";
+import { ButtonModule } from "primeng/button";
 
 @Component({
-  selector: 'app-primeng-button',
+  selector: "app-primeng-button",
   standalone: true,
   imports: [ButtonModule],
   template: `
-    <p-button 
-      label="Save"
-      icon="pi pi-check"
-      styleClass="btn btn-primary">
+    <p-button label="Save" icon="pi pi-check" styleClass="btn btn-primary">
     </p-button>
   `,
-  styles: [`
-    :host ::ng-deep .p-button {
-      background-color: var(--color-brand-primary);
-      border-color: var(--color-brand-primary);
-      color: var(--color-text-on-primary);
-    }
-    
-    :host ::ng-deep .p-button:hover {
-      background-color: var(--color-brand-primary-hover);
-      border-color: var(--color-brand-primary-hover);
-    }
-  `]
+  styles: [
+    `
+      :host ::ng-deep .p-button {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-on-primary);
+      }
+
+      :host ::ng-deep .p-button:hover {
+        background-color: var(--color-brand-primary-hover);
+        border-color: var(--color-brand-primary-hover);
+      }
+    `,
+  ],
 })
 export class PrimeNGButtonComponent {}
 ```
@@ -791,33 +838,36 @@ export class PrimeNGButtonComponent {}
 
 ```typescript
 // primeng-card.component.ts
-import { Component } from '@angular/core';
-import { CardModule } from 'primeng/card';
+import { Component } from "@angular/core";
+import { CardModule } from "primeng/card";
 
 @Component({
-  selector: 'app-primeng-card',
+  selector: "app-primeng-card",
   standalone: true,
   imports: [CardModule],
   template: `
-    <p-card 
+    <p-card
       header="Player Stats"
       subheader="Season 2024"
-      styleClass="card card-elevated">
+      styleClass="card card-elevated"
+    >
       <p>Content goes here</p>
     </p-card>
   `,
-  styles: [`
-    :host ::ng-deep .p-card {
-      background-color: var(--surface-primary);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-md);
-    }
-    
-    :host ::ng-deep .p-card-header {
-      background-color: var(--surface-secondary);
-      border-bottom: 1px solid var(--color-border-primary);
-    }
-  `]
+  styles: [
+    `
+      :host ::ng-deep .p-card {
+        background-color: var(--surface-primary);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+      }
+
+      :host ::ng-deep .p-card-header {
+        background-color: var(--surface-secondary);
+        border-bottom: 1px solid var(--color-border-primary);
+      }
+    `,
+  ],
 })
 export class PrimeNGCardComponent {}
 ```
@@ -828,57 +878,55 @@ export class PrimeNGCardComponent {}
 
 ```typescript
 // player-dashboard.component.ts
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CardComponent } from './card.component';
-import { ButtonComponent } from './button.component';
-import { TableComponent } from './table.component';
-import { AlertComponent } from './alert.component';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { CardComponent } from "./card.component";
+import { ButtonComponent } from "./button.component";
+import { TableComponent } from "./table.component";
+import { AlertComponent } from "./alert.component";
 
 @Component({
-  selector: 'app-player-dashboard',
+  selector: "app-player-dashboard",
   standalone: true,
   imports: [
     CommonModule,
     CardComponent,
     ButtonComponent,
     TableComponent,
-    AlertComponent
+    AlertComponent,
   ],
   template: `
     <div class="container">
       <h1>Player Dashboard</h1>
-      
-      <app-alert 
+
+      <app-alert
         *ngIf="showSuccess"
         type="success"
         title="Success!"
         [dismissible]="true"
-        (dismiss)="showSuccess = false">
+        (dismiss)="showSuccess = false"
+      >
         Player data updated successfully.
       </app-alert>
-      
+
       <div class="grid grid-cols-3">
         <app-card title="Total Players" variant="elevated">
           <h2 class="text-3xl font-bold">{{ totalPlayers }}</h2>
         </app-card>
-        
+
         <app-card title="Active Training" variant="elevated">
           <h2 class="text-3xl font-bold">{{ activeTraining }}</h2>
         </app-card>
-        
+
         <app-card title="Upcoming Games" variant="elevated">
           <h2 class="text-3xl font-bold">{{ upcomingGames }}</h2>
         </app-card>
       </div>
-      
+
       <app-card title="Recent Players" variant="outlined">
-        <app-table
-          [columns]="columns"
-          [data]="players"
-          [striped]="true">
+        <app-table [columns]="columns" [data]="players" [striped]="true">
         </app-table>
-        
+
         <div footer>
           <app-button variant="primary" (clicked)="loadMore()">
             Load More
@@ -887,30 +935,32 @@ import { AlertComponent } from './alert.component';
       </app-card>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-      padding: var(--space-6);
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+        padding: var(--space-6);
+      }
+    `,
+  ],
 })
 export class PlayerDashboardComponent {
   showSuccess = false;
   totalPlayers = 24;
   activeTraining = 8;
   upcomingGames = 3;
-  
+
   columns = [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'position', label: 'Position', sortable: true },
-    { key: 'stats', label: 'Stats', sortable: false }
+    { key: "name", label: "Name", sortable: true },
+    { key: "position", label: "Position", sortable: true },
+    { key: "stats", label: "Stats", sortable: false },
   ];
-  
+
   players = [
-    { name: 'John Doe', position: 'QB', stats: '85%' },
-    { name: 'Jane Smith', position: 'WR', stats: '92%' }
+    { name: "John Doe", position: "QB", stats: "85%" },
+    { name: "Jane Smith", position: "WR", stats: "92%" },
   ];
-  
+
   loadMore() {
     // Load more players
     this.showSuccess = true;
@@ -933,4 +983,3 @@ export class PlayerDashboardComponent {
 ## 🎉 Complete!
 
 You now have a complete Angular 19 + PrimeNG component library integrated with the FlagFit Pro design system!
-

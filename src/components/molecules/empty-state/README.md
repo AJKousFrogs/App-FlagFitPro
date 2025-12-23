@@ -18,6 +18,7 @@ A standardized empty state component for displaying when there's no data.
 ## Variants
 
 ### With Icon
+
 ```html
 <div class="empty-state-container">
   <div class="empty-state-icon">
@@ -29,6 +30,7 @@ A standardized empty state component for displaying when there's no data.
 ```
 
 ### Minimal
+
 ```html
 <div class="empty-state-container empty-state-minimal">
   <h3 class="empty-state-title">No data</h3>
@@ -43,4 +45,3 @@ A standardized empty state component for displaying when there's no data.
 - `.empty-state-title` - Title text
 - `.empty-state-message` - Message text
 - `.empty-state-minimal` - Minimal variant
-

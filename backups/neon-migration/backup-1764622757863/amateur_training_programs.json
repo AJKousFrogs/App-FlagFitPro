@@ -4,21 +4,12 @@
     "program_name": "Home Strength Foundation",
     "program_type": "strength",
     "skill_level": "beginner",
-    "equipment_required": [
-      "resistance_bands",
-      "bodyweight"
-    ],
+    "equipment_required": ["resistance_bands", "bodyweight"],
     "space_requirements": "small_room",
     "time_per_session_minutes": 45,
     "sessions_per_week": 3,
     "program_duration_weeks": 8,
-    "exercises": [
-      "push_ups",
-      "squats",
-      "planks",
-      "lunges",
-      "glute_bridges"
-    ],
+    "exercises": ["push_ups", "squats", "planks", "lunges", "glute_bridges"],
     "progression_plan": [
       "Week 1-2: Learn proper form",
       "Week 3-4: Increase repetitions",
@@ -43,9 +34,7 @@
     "program_name": "Park Cardio Circuit",
     "program_type": "cardio",
     "skill_level": "intermediate",
-    "equipment_required": [
-      "none"
-    ],
+    "equipment_required": ["none"],
     "space_requirements": "public_park",
     "time_per_session_minutes": 60,
     "sessions_per_week": 2,
@@ -79,10 +68,7 @@
     "program_name": "Flag Football Skills",
     "program_type": "skill",
     "skill_level": "beginner",
-    "equipment_required": [
-      "football",
-      "cones"
-    ],
+    "equipment_required": ["football", "cones"],
     "space_requirements": "backyard_park",
     "time_per_session_minutes": 90,
     "sessions_per_week": 2,

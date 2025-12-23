@@ -1,5 +1,4 @@
 #!/usr/bin/env node
- 
 
 /**
  * Build script for FlagFit Pro
@@ -9,7 +8,15 @@
  */
 
 import { execSync } from "child_process";
-import { existsSync, mkdirSync, readdirSync, statSync, copyFileSync, readFileSync, writeFileSync } from "fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+  copyFileSync,
+  readFileSync,
+  writeFileSync,
+} from "fs";
 import { join, dirname, extname } from "path";
 import { fileURLToPath } from "url";
 
@@ -23,7 +30,9 @@ const watch = args.includes("--watch");
 const analyze = args.includes("--analyze");
 const isProduction = process.env.NODE_ENV === "production" || !watch;
 
-console.log(`🏗️  Building FlagFit Pro${isProduction ? " for production" : ""}...\n`);
+console.log(
+  `🏗️  Building FlagFit Pro${isProduction ? " for production" : ""}...\n`,
+);
 
 // Generate env.js with Supabase credentials
 try {
@@ -38,7 +47,10 @@ try {
 // Inject environment variables into HTML files
 try {
   console.log("📝 Injecting environment variables into HTML files...");
-  execSync("node scripts/inject-env-into-html.js", { stdio: "inherit", cwd: rootDir });
+  execSync("node scripts/inject-env-into-html.js", {
+    stdio: "inherit",
+    cwd: rootDir,
+  });
   console.log("✅ Environment variables injected into HTML files\n");
 } catch (error) {
   console.error("❌ Failed to inject env into HTML:", error.message);
@@ -46,7 +58,12 @@ try {
 }
 
 // Create dist directory structure
-const distDirs = [distDir, join(distDir, "css"), join(distDir, "js"), join(distDir, "assets")];
+const distDirs = [
+  distDir,
+  join(distDir, "css"),
+  join(distDir, "js"),
+  join(distDir, "assets"),
+];
 distDirs.forEach((dir) => {
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
@@ -60,7 +77,7 @@ async function buildCSS() {
     const postcssCmd = watch
       ? "postcss src/**/*.css --dir dist/css --map --watch"
       : "postcss src/**/*.css --dir dist/css --map";
-    
+
     if (!watch) {
       execSync(postcssCmd, { stdio: "inherit", cwd: rootDir });
       console.log("✅ CSS build completed\n");
@@ -80,7 +97,7 @@ async function buildJS() {
     const buildJsCmd = watch
       ? `node scripts/build-js.js --watch${analyze ? " --analyze" : ""}`
       : `node scripts/build-js.js${analyze ? " --analyze" : ""}`;
-    
+
     execSync(buildJsCmd, { stdio: "inherit", cwd: rootDir });
     if (!watch) {
       console.log("✅ JavaScript build completed\n");
@@ -101,7 +118,7 @@ function copyAssets() {
         entries.forEach((entry) => {
           const srcPath = join(src, entry.name);
           const destPath = join(dest, entry.name);
-          
+
           if (entry.isDirectory()) {
             if (!existsSync(destPath)) {
               mkdirSync(destPath, { recursive: true });
@@ -112,7 +129,7 @@ function copyAssets() {
           }
         });
       };
-      
+
       copyRecursive(assetsDir, join(distDir, "assets"));
       console.log("✅ Assets copied\n");
     }
@@ -126,20 +143,20 @@ function copyHTML() {
   console.log("📄 Copying HTML files...");
   try {
     const htmlFiles = readdirSync(rootDir).filter(
-      (file) => extname(file) === ".html" && !file.startsWith(".")
+      (file) => extname(file) === ".html" && !file.startsWith("."),
     );
-    
+
     htmlFiles.forEach((file) => {
       copyFileSync(join(rootDir, file), join(distDir, file));
     });
-    
+
     // Also copy env.js to dist if it exists
     const envJsPath = join(rootDir, "env.js");
     if (existsSync(envJsPath)) {
       copyFileSync(envJsPath, join(distDir, "env.js"));
       console.log("✅ Copied env.js to dist\n");
     }
-    
+
     if (htmlFiles.length > 0) {
       console.log(`✅ Copied ${htmlFiles.length} HTML file(s)\n`);
     }
@@ -156,7 +173,7 @@ async function main() {
       await buildJS();
       copyAssets();
       copyHTML();
-      
+
       console.log("✨ Build completed successfully!");
       console.log(`📦 Output directory: ${distDir}`);
     } else {

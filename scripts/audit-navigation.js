@@ -1,5 +1,5 @@
 #!/usr/bin/env node
- 
+
 /**
  * Navigation Audit Script
  * Checks all HTML files for sidebar navigation consistency

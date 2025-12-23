@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState, useEffect, useRef } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 const SearchSystem = () => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [recentSearches, setRecentSearches] = useState([]);
   const [quickActions, setQuickActions] = useState([]);
@@ -23,19 +23,19 @@ const SearchSystem = () => {
     if (!user?.token) return;
 
     try {
-      const response = await fetch('/api/search/recent', {
+      const response = await fetch("/api/search/recent", {
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setRecentSearches(data.recentSearches);
       }
     } catch (error) {
-      console.error('Error fetching recent searches:', error);
+      console.error("Error fetching recent searches:", error);
     }
   };
 
@@ -43,19 +43,19 @@ const SearchSystem = () => {
     if (!user?.token) return;
 
     try {
-      const response = await fetch('/api/search/quick-actions', {
+      const response = await fetch("/api/search/quick-actions", {
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setQuickActions(data.quickActions);
       }
     } catch (error) {
-      console.error('Error fetching quick actions:', error);
+      console.error("Error fetching quick actions:", error);
     }
   };
 
@@ -70,24 +70,24 @@ const SearchSystem = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch('/api/search', {
-        method: 'POST',
+      const response = await fetch("/api/search", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: searchQuery })
+        body: JSON.stringify({ query: searchQuery }),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setResults(data.results);
-        
+
         // Save to recent searches
         saveRecentSearch(searchQuery);
       }
     } catch (error) {
-      console.error('Error performing search:', error);
+      console.error("Error performing search:", error);
     } finally {
       setIsLoading(false);
     }
@@ -98,16 +98,16 @@ const SearchSystem = () => {
     if (!user?.token) return;
 
     try {
-      await fetch('/api/search/recent', {
-        method: 'POST',
+      await fetch("/api/search/recent", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: searchQuery })
+        body: JSON.stringify({ query: searchQuery }),
       });
     } catch (error) {
-      console.error('Error saving recent search:', error);
+      console.error("Error saving recent search:", error);
     }
   };
 
@@ -116,15 +116,15 @@ const SearchSystem = () => {
     if (!user?.token) return;
 
     try {
-      const response = await fetch('/api/search/quick-action', {
-        method: 'POST',
+      const response = await fetch("/api/search/quick-action", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ action: action.id })
+        body: JSON.stringify({ action: action.id }),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         if (data.redirectUrl) {
@@ -132,7 +132,7 @@ const SearchSystem = () => {
         }
       }
     } catch (error) {
-      console.error('Error executing quick action:', error);
+      console.error("Error executing quick action:", error);
     }
   };
 
@@ -141,7 +141,7 @@ const SearchSystem = () => {
     const value = e.target.value;
     setQuery(value);
     setIsOpen(true);
-    
+
     // Debounce search
     clearTimeout(searchRef.current);
     searchRef.current = setTimeout(() => {
@@ -172,10 +172,10 @@ const SearchSystem = () => {
           🔍
         </button>
       </form>
-      
+
       {isOpen && (
         <div className="search-dropdown">
-          {query === '' ? (
+          {query === "" ? (
             // Show recent searches and quick actions when search is empty
             <div className="search-suggestions">
               <div className="recent-searches">
@@ -193,7 +193,7 @@ const SearchSystem = () => {
                   </button>
                 ))}
               </div>
-              
+
               <div className="quick-actions">
                 <h4>Quick Actions:</h4>
                 {quickActions.map((action) => (
@@ -227,7 +227,9 @@ const SearchSystem = () => {
                     <div className="result-icon">{result.icon}</div>
                     <div className="result-content">
                       <div className="result-title">{result.title}</div>
-                      <div className="result-description">{result.description}</div>
+                      <div className="result-description">
+                        {result.description}
+                      </div>
                     </div>
                   </button>
                 ))
@@ -240,4 +242,4 @@ const SearchSystem = () => {
   );
 };
 
-export default SearchSystem; 
+export default SearchSystem;

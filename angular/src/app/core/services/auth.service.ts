@@ -44,7 +44,7 @@ export class AuthService {
   constructor() {
     // Load stored auth state immediately
     this.loadStoredAuth();
-    
+
     // Use effect() to reactively watch Supabase auth state changes (signals)
     // This is zoneless-compatible and more efficient than subscriptions
     effect(() => {
@@ -85,7 +85,7 @@ export class AuthService {
     this.isLoading.set(true);
 
     return from(
-      this.supabaseService.signIn(credentials.email, credentials.password)
+      this.supabaseService.signIn(credentials.email, credentials.password),
     ).pipe(
       map((response) => {
         if (response.error) {
@@ -103,7 +103,7 @@ export class AuthService {
         this.isLoading.set(false);
         return throwError(() => error);
       }),
-      tap(() => this.isLoading.set(false))
+      tap(() => this.isLoading.set(false)),
     );
   }
 
@@ -113,7 +113,7 @@ export class AuthService {
     const { email, password, ...metadata } = data;
 
     return from(
-      this.supabaseService.signUp(data.email, data.password, metadata)
+      this.supabaseService.signUp(data.email, data.password, metadata),
     ).pipe(
       map((response) => {
         if (response.error) {
@@ -132,7 +132,7 @@ export class AuthService {
         this.isLoading.set(false);
         return throwError(() => error);
       }),
-      tap(() => this.isLoading.set(false))
+      tap(() => this.isLoading.set(false)),
     );
   }
 
@@ -147,7 +147,7 @@ export class AuthService {
         this.clearAuth();
         this.router.navigate(["/login"]);
         return throwError(() => error);
-      })
+      }),
     );
   }
 

@@ -1,21 +1,25 @@
-const { Pool } = require('pg');
+const { Pool } = require("pg");
 
 class CompetitionProtocolsSeeder {
   constructor() {
     this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL || process.env.VITE_DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+      connectionString:
+        process.env.DATABASE_URL || process.env.VITE_DATABASE_URL,
+      ssl:
+        process.env.NODE_ENV === "production"
+          ? { rejectUnauthorized: false }
+          : false,
     });
   }
 
   async seedEuropeanChampionshipProtocols() {
-    console.log('🏆 Seeding European Championship protocols...');
-    
+    console.log("🏆 Seeding European Championship protocols...");
+
     const protocols = [
       {
         championship_year: 2024,
-        location: 'Germany',
-        climate_zone: 'temperate',
+        location: "Germany",
+        climate_zone: "temperate",
         typical_temperature_celsius: 22.5,
         typical_humidity_percentage: 65.0,
         games_per_day: 3,
@@ -33,14 +37,19 @@ class CompetitionProtocolsSeeder {
         calcium_mg_per_liter: 300.0,
         urine_color_target: 3,
         body_weight_loss_limit_kg: 1.5,
-        cognitive_test_recommendations: ['reaction_time', 'decision_making', 'memory_recall'],
-        evidence_strength: 'high',
-        flag_football_specific_notes: 'European climate requires moderate hydration adjustments'
+        cognitive_test_recommendations: [
+          "reaction_time",
+          "decision_making",
+          "memory_recall",
+        ],
+        evidence_strength: "high",
+        flag_football_specific_notes:
+          "European climate requires moderate hydration adjustments",
       },
       {
         championship_year: 2025,
-        location: 'Netherlands',
-        climate_zone: 'temperate',
+        location: "Netherlands",
+        climate_zone: "temperate",
         typical_temperature_celsius: 20.0,
         typical_humidity_percentage: 70.0,
         games_per_day: 4,
@@ -58,10 +67,16 @@ class CompetitionProtocolsSeeder {
         calcium_mg_per_liter: 320.0,
         urine_color_target: 2,
         body_weight_loss_limit_kg: 1.2,
-        cognitive_test_recommendations: ['reaction_time', 'decision_making', 'memory_recall', 'spatial_awareness'],
-        evidence_strength: 'high',
-        flag_football_specific_notes: 'Higher humidity requires increased electrolyte replacement'
-      }
+        cognitive_test_recommendations: [
+          "reaction_time",
+          "decision_making",
+          "memory_recall",
+          "spatial_awareness",
+        ],
+        evidence_strength: "high",
+        flag_football_specific_notes:
+          "Higher humidity requires increased electrolyte replacement",
+      },
     ];
 
     for (const protocol of protocols) {
@@ -104,37 +119,54 @@ class CompetitionProtocolsSeeder {
             flag_football_specific_notes = EXCLUDED.flag_football_specific_notes
           RETURNING *
         `;
-        
+
         const values = [
-          protocol.championship_year, protocol.location, protocol.climate_zone,
-          protocol.typical_temperature_celsius, protocol.typical_humidity_percentage,
-          protocol.games_per_day, protocol.game_duration_minutes,
-          protocol.total_playing_time_minutes, protocol.time_between_games_minutes,
-          protocol.pre_game_hydration_ml_per_kg, protocol.pre_game_timing_hours,
-          protocol.during_game_hydration_ml_per_15min, protocol.between_games_hydration_ml_per_kg,
-          protocol.post_game_hydration_ml_per_kg, protocol.sodium_mg_per_liter,
-          protocol.potassium_mg_per_liter, protocol.magnesium_mg_per_liter,
-          protocol.calcium_mg_per_liter, protocol.urine_color_target,
-          protocol.body_weight_loss_limit_kg, protocol.cognitive_test_recommendations,
-          protocol.evidence_strength, protocol.flag_football_specific_notes
+          protocol.championship_year,
+          protocol.location,
+          protocol.climate_zone,
+          protocol.typical_temperature_celsius,
+          protocol.typical_humidity_percentage,
+          protocol.games_per_day,
+          protocol.game_duration_minutes,
+          protocol.total_playing_time_minutes,
+          protocol.time_between_games_minutes,
+          protocol.pre_game_hydration_ml_per_kg,
+          protocol.pre_game_timing_hours,
+          protocol.during_game_hydration_ml_per_15min,
+          protocol.between_games_hydration_ml_per_kg,
+          protocol.post_game_hydration_ml_per_kg,
+          protocol.sodium_mg_per_liter,
+          protocol.potassium_mg_per_liter,
+          protocol.magnesium_mg_per_liter,
+          protocol.calcium_mg_per_liter,
+          protocol.urine_color_target,
+          protocol.body_weight_loss_limit_kg,
+          protocol.cognitive_test_recommendations,
+          protocol.evidence_strength,
+          protocol.flag_football_specific_notes,
         ];
-        
+
         const result = await this.pool.query(query, values);
-        console.log(`✅ Seeded European Championship ${protocol.championship_year} protocol`);
+        console.log(
+          `✅ Seeded European Championship ${protocol.championship_year} protocol`,
+        );
       } catch (error) {
-        console.error(`❌ Error seeding European Championship ${protocol.championship_year}:`, error.message);
+        console.error(
+          `❌ Error seeding European Championship ${protocol.championship_year}:`,
+          error.message,
+        );
       }
     }
   }
 
   async seedWorldChampionshipProtocols() {
-    console.log('🌍 Seeding World Championship protocols...');
-    
+    console.log("🌍 Seeding World Championship protocols...");
+
     const protocols = [
       {
         championship_year: 2024,
-        location: 'USA',
-        climate_zone: 'mixed',
+        location: "USA",
+        climate_zone: "mixed",
         typical_temperature_celsius: 25.0,
         typical_humidity_percentage: 60.0,
         games_per_day: 4,
@@ -152,14 +184,21 @@ class CompetitionProtocolsSeeder {
         calcium_mg_per_liter: 350.0,
         urine_color_target: 2,
         body_weight_loss_limit_kg: 1.0,
-        cognitive_test_recommendations: ['reaction_time', 'decision_making', 'memory_recall', 'spatial_awareness', 'pattern_recognition'],
-        evidence_strength: 'very_high',
-        flag_football_specific_notes: 'World Championship intensity requires maximum hydration preparation'
+        cognitive_test_recommendations: [
+          "reaction_time",
+          "decision_making",
+          "memory_recall",
+          "spatial_awareness",
+          "pattern_recognition",
+        ],
+        evidence_strength: "very_high",
+        flag_football_specific_notes:
+          "World Championship intensity requires maximum hydration preparation",
       },
       {
         championship_year: 2026,
-        location: 'Canada',
-        climate_zone: 'temperate',
+        location: "Canada",
+        climate_zone: "temperate",
         typical_temperature_celsius: 18.0,
         typical_humidity_percentage: 55.0,
         games_per_day: 4,
@@ -177,10 +216,16 @@ class CompetitionProtocolsSeeder {
         calcium_mg_per_liter: 330.0,
         urine_color_target: 2,
         body_weight_loss_limit_kg: 1.1,
-        cognitive_test_recommendations: ['reaction_time', 'decision_making', 'memory_recall', 'spatial_awareness'],
-        evidence_strength: 'very_high',
-        flag_football_specific_notes: 'Canadian climate allows for optimal performance conditions'
-      }
+        cognitive_test_recommendations: [
+          "reaction_time",
+          "decision_making",
+          "memory_recall",
+          "spatial_awareness",
+        ],
+        evidence_strength: "very_high",
+        flag_football_specific_notes:
+          "Canadian climate allows for optimal performance conditions",
+      },
     ];
 
     for (const protocol of protocols) {
@@ -223,37 +268,54 @@ class CompetitionProtocolsSeeder {
             flag_football_specific_notes = EXCLUDED.flag_football_specific_notes
           RETURNING *
         `;
-        
+
         const values = [
-          protocol.championship_year, protocol.location, protocol.climate_zone,
-          protocol.typical_temperature_celsius, protocol.typical_humidity_percentage,
-          protocol.games_per_day, protocol.game_duration_minutes,
-          protocol.total_playing_time_minutes, protocol.time_between_games_minutes,
-          protocol.pre_game_hydration_ml_per_kg, protocol.pre_game_timing_hours,
-          protocol.during_game_hydration_ml_per_15min, protocol.between_games_hydration_ml_per_kg,
-          protocol.post_game_hydration_ml_per_kg, protocol.sodium_mg_per_liter,
-          protocol.potassium_mg_per_liter, protocol.magnesium_mg_per_liter,
-          protocol.calcium_mg_per_liter, protocol.urine_color_target,
-          protocol.body_weight_loss_limit_kg, protocol.cognitive_test_recommendations,
-          protocol.evidence_strength, protocol.flag_football_specific_notes
+          protocol.championship_year,
+          protocol.location,
+          protocol.climate_zone,
+          protocol.typical_temperature_celsius,
+          protocol.typical_humidity_percentage,
+          protocol.games_per_day,
+          protocol.game_duration_minutes,
+          protocol.total_playing_time_minutes,
+          protocol.time_between_games_minutes,
+          protocol.pre_game_hydration_ml_per_kg,
+          protocol.pre_game_timing_hours,
+          protocol.during_game_hydration_ml_per_15min,
+          protocol.between_games_hydration_ml_per_kg,
+          protocol.post_game_hydration_ml_per_kg,
+          protocol.sodium_mg_per_liter,
+          protocol.potassium_mg_per_liter,
+          protocol.magnesium_mg_per_liter,
+          protocol.calcium_mg_per_liter,
+          protocol.urine_color_target,
+          protocol.body_weight_loss_limit_kg,
+          protocol.cognitive_test_recommendations,
+          protocol.evidence_strength,
+          protocol.flag_football_specific_notes,
         ];
-        
+
         const result = await this.pool.query(query, values);
-        console.log(`✅ Seeded World Championship ${protocol.championship_year} protocol`);
+        console.log(
+          `✅ Seeded World Championship ${protocol.championship_year} protocol`,
+        );
       } catch (error) {
-        console.error(`❌ Error seeding World Championship ${protocol.championship_year}:`, error.message);
+        console.error(
+          `❌ Error seeding World Championship ${protocol.championship_year}:`,
+          error.message,
+        );
       }
     }
   }
 
   async seedOlympicGamesProtocols() {
-    console.log('🥇 Seeding Olympic Games protocols...');
-    
+    console.log("🥇 Seeding Olympic Games protocols...");
+
     const protocols = [
       {
         olympic_year: 2028,
-        location: 'Los Angeles, USA',
-        climate_zone: 'mediterranean',
+        location: "Los Angeles, USA",
+        climate_zone: "mediterranean",
         typical_temperature_celsius: 28.0,
         typical_humidity_percentage: 45.0,
         games_per_day: 4,
@@ -271,10 +333,18 @@ class CompetitionProtocolsSeeder {
         calcium_mg_per_liter: 380.0,
         urine_color_target: 1,
         body_weight_loss_limit_kg: 0.8,
-        cognitive_test_recommendations: ['reaction_time', 'decision_making', 'memory_recall', 'spatial_awareness', 'pattern_recognition', 'stress_tolerance'],
-        evidence_strength: 'highest',
-        flag_football_specific_notes: 'Olympic level requires maximum hydration and recovery protocols'
-      }
+        cognitive_test_recommendations: [
+          "reaction_time",
+          "decision_making",
+          "memory_recall",
+          "spatial_awareness",
+          "pattern_recognition",
+          "stress_tolerance",
+        ],
+        evidence_strength: "highest",
+        flag_football_specific_notes:
+          "Olympic level requires maximum hydration and recovery protocols",
+      },
     ];
 
     for (const protocol of protocols) {
@@ -317,45 +387,61 @@ class CompetitionProtocolsSeeder {
             flag_football_specific_notes = EXCLUDED.flag_football_specific_notes
           RETURNING *
         `;
-        
+
         const values = [
-          protocol.olympic_year, protocol.location, protocol.climate_zone,
-          protocol.typical_temperature_celsius, protocol.typical_humidity_percentage,
-          protocol.games_per_day, protocol.game_duration_minutes,
-          protocol.total_playing_time_minutes, protocol.time_between_games_minutes,
-          protocol.pre_game_hydration_ml_per_kg, protocol.pre_game_timing_hours,
-          protocol.during_game_hydration_ml_per_15min, protocol.between_games_hydration_ml_per_kg,
-          protocol.post_game_hydration_ml_per_kg, protocol.sodium_mg_per_liter,
-          protocol.potassium_mg_per_liter, protocol.magnesium_mg_per_liter,
-          protocol.calcium_mg_per_liter, protocol.urine_color_target,
-          protocol.body_weight_loss_limit_kg, protocol.cognitive_test_recommendations,
-          protocol.evidence_strength, protocol.flag_football_specific_notes
+          protocol.olympic_year,
+          protocol.location,
+          protocol.climate_zone,
+          protocol.typical_temperature_celsius,
+          protocol.typical_humidity_percentage,
+          protocol.games_per_day,
+          protocol.game_duration_minutes,
+          protocol.total_playing_time_minutes,
+          protocol.time_between_games_minutes,
+          protocol.pre_game_hydration_ml_per_kg,
+          protocol.pre_game_timing_hours,
+          protocol.during_game_hydration_ml_per_15min,
+          protocol.between_games_hydration_ml_per_kg,
+          protocol.post_game_hydration_ml_per_kg,
+          protocol.sodium_mg_per_liter,
+          protocol.potassium_mg_per_liter,
+          protocol.magnesium_mg_per_liter,
+          protocol.calcium_mg_per_liter,
+          protocol.urine_color_target,
+          protocol.body_weight_loss_limit_kg,
+          protocol.cognitive_test_recommendations,
+          protocol.evidence_strength,
+          protocol.flag_football_specific_notes,
         ];
-        
+
         const result = await this.pool.query(query, values);
-        console.log(`✅ Seeded Olympic Games ${protocol.olympic_year} protocol`);
+        console.log(
+          `✅ Seeded Olympic Games ${protocol.olympic_year} protocol`,
+        );
       } catch (error) {
-        console.error(`❌ Error seeding Olympic Games ${protocol.olympic_year}:`, error.message);
+        console.error(
+          `❌ Error seeding Olympic Games ${protocol.olympic_year}:`,
+          error.message,
+        );
       }
     }
   }
 
   async runAllSeeders() {
-    console.log('🚀 Starting Competition Protocols seeding...\n');
-    
+    console.log("🚀 Starting Competition Protocols seeding...\n");
+
     try {
       await this.seedEuropeanChampionshipProtocols();
       await this.seedWorldChampionshipProtocols();
       await this.seedOlympicGamesProtocols();
-      
-      console.log('\n🎉 Competition Protocols seeding completed successfully!');
-      console.log('\n📊 Seeded protocols:');
-      console.log('   ✅ European Championships: 2 protocols');
-      console.log('   ✅ World Championships: 2 protocols');
-      console.log('   ✅ Olympic Games: 1 protocol');
-      
+
+      console.log("\n🎉 Competition Protocols seeding completed successfully!");
+      console.log("\n📊 Seeded protocols:");
+      console.log("   ✅ European Championships: 2 protocols");
+      console.log("   ✅ World Championships: 2 protocols");
+      console.log("   ✅ Olympic Games: 1 protocol");
     } catch (error) {
-      console.error('❌ Seeding failed:', error.message);
+      console.error("❌ Seeding failed:", error.message);
     } finally {
       await this.pool.end();
     }

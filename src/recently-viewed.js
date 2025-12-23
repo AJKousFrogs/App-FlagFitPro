@@ -8,7 +8,9 @@ export class RecentlyViewed {
   constructor() {
     this.storageKey = "recentlyViewed";
     this.maxItems = 10;
-    this.mode = storageService.get("recentlyViewedMode", "recent", { usePrefix: false }); // 'recent' or 'quick-access'
+    this.mode = storageService.get("recentlyViewedMode", "recent", {
+      usePrefix: false,
+    }); // 'recent' or 'quick-access'
     this.activeTab = "all"; // 'all', 'players', 'teams', 'stats', 'reports'
     this.init();
   }
@@ -46,10 +48,18 @@ export class RecentlyViewed {
   }
 
   categorizePage(url) {
-    if (url.includes("roster") || url.includes("player")) {return "players";}
-    if (url.includes("team") || url.includes("roster")) {return "teams";}
-    if (url.includes("analytics") || url.includes("stats")) {return "stats";}
-    if (url.includes("report") || url.includes("assessment")) {return "reports";}
+    if (url.includes("roster") || url.includes("player")) {
+      return "players";
+    }
+    if (url.includes("team") || url.includes("roster")) {
+      return "teams";
+    }
+    if (url.includes("analytics") || url.includes("stats")) {
+      return "stats";
+    }
+    if (url.includes("report") || url.includes("assessment")) {
+      return "reports";
+    }
     return "other";
   }
 
@@ -65,7 +75,9 @@ export class RecentlyViewed {
     const dashboard = document.querySelector(
       ".dashboard-content, .main-content",
     );
-    if (!dashboard) {return;}
+    if (!dashboard) {
+      return;
+    }
 
     // Remove existing widget if present
     const existingWidget = dashboard.querySelector(".recently-viewed-widget");
@@ -158,7 +170,9 @@ export class RecentlyViewed {
     if (modeToggle) {
       modeToggle.addEventListener("click", () => {
         this.mode = this.mode === "recent" ? "quick-access" : "recent";
-        storageService.set("recentlyViewedMode", this.mode, { usePrefix: false });
+        storageService.set("recentlyViewedMode", this.mode, {
+          usePrefix: false,
+        });
         this.addRecentlyViewedWidget();
       });
     }
@@ -262,11 +276,21 @@ export class RecentlyViewed {
     const hours = Math.floor(seconds / 3600);
     const days = Math.floor(seconds / 86400);
 
-    if (seconds < 60) {return "Just now";}
-    if (minutes < 60) {return `${minutes} min ago`;}
-    if (hours < 24) {return hours === 1 ? "1 hour ago" : `${hours} hours ago`;}
-    if (days === 1) {return "Yesterday";}
-    if (days < 7) {return `${days} days ago`;}
+    if (seconds < 60) {
+      return "Just now";
+    }
+    if (minutes < 60) {
+      return `${minutes} min ago`;
+    }
+    if (hours < 24) {
+      return hours === 1 ? "1 hour ago" : `${hours} hours ago`;
+    }
+    if (days === 1) {
+      return "Yesterday";
+    }
+    if (days < 7) {
+      return `${days} days ago`;
+    }
     if (days < 30) {
       const weeks = Math.floor(days / 7);
       return weeks === 1 ? "1 week ago" : `${weeks} weeks ago`;

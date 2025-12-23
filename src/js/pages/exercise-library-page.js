@@ -59,7 +59,9 @@ export class ExerciseLibraryPage {
 
   setupSearchAndFilter() {
     const searchInput = document.getElementById("exerciseSearch");
-    if (!searchInput) {return;}
+    if (!searchInput) {
+      return;
+    }
 
     // Debounce search input (300ms delay)
     const debouncedSearch = debounce((e) => {
@@ -80,7 +82,9 @@ export class ExerciseLibraryPage {
     if (filterContainer) {
       const handleFilterClick = (e) => {
         const tab = e.target.closest(".filter-tab");
-        if (!tab) {return;}
+        if (!tab) {
+          return;
+        }
 
         // Remove active class from all tabs
         filterContainer.querySelectorAll(".filter-tab").forEach((t) => {
@@ -109,7 +113,9 @@ export class ExerciseLibraryPage {
 
   setupPagination() {
     const exerciseGrid = document.getElementById("exerciseGrid");
-    if (!exerciseGrid) {return;}
+    if (!exerciseGrid) {
+      return;
+    }
 
     // Create pagination container if it doesn't exist
     let paginationContainer = document.getElementById("exercisePagination");
@@ -128,7 +134,9 @@ export class ExerciseLibraryPage {
 
   updatePaginationControls() {
     const paginationContainer = document.getElementById("exercisePagination");
-    if (!paginationContainer) {return;}
+    if (!paginationContainer) {
+      return;
+    }
 
     const totalPages = Math.ceil(
       this.filteredExercises.length / this.itemsPerPage,
@@ -143,45 +151,52 @@ export class ExerciseLibraryPage {
     const nextDisabled = this.currentPage >= totalPages - 1;
 
     paginationContainer.textContent = "";
-    
+
     const info = document.createElement("div");
     info.className = "pagination-info";
     const start = this.currentPage * this.itemsPerPage + 1;
-    const end = Math.min((this.currentPage + 1) * this.itemsPerPage, this.filteredExercises.length);
+    const end = Math.min(
+      (this.currentPage + 1) * this.itemsPerPage,
+      this.filteredExercises.length,
+    );
     info.textContent = `Showing ${start}-${end} of ${this.filteredExercises.length} exercises`;
-    
+
     const controls = document.createElement("div");
     controls.className = "pagination-controls";
-    
+
     const prevBtn = document.createElement("button");
     prevBtn.className = "pagination-btn";
-    if (prevDisabled) {prevBtn.disabled = true;}
+    if (prevDisabled) {
+      prevBtn.disabled = true;
+    }
     prevBtn.setAttribute("data-action", "prev");
     prevBtn.setAttribute("aria-label", "Previous page");
     const prevIcon = document.createElement("i");
     prevIcon.setAttribute("data-lucide", "chevron-left");
     prevBtn.appendChild(prevIcon);
-    
+
     const pageInfo = document.createElement("span");
     pageInfo.className = "pagination-page-info";
     pageInfo.textContent = `Page ${this.currentPage + 1} of ${totalPages}`;
-    
+
     const nextBtn = document.createElement("button");
     nextBtn.className = "pagination-btn";
-    if (nextDisabled) {nextBtn.disabled = true;}
+    if (nextDisabled) {
+      nextBtn.disabled = true;
+    }
     nextBtn.setAttribute("data-action", "next");
     nextBtn.setAttribute("aria-label", "Next page");
     const nextIcon = document.createElement("i");
     nextIcon.setAttribute("data-lucide", "chevron-right");
     nextBtn.appendChild(nextIcon);
-    
+
     controls.appendChild(prevBtn);
     controls.appendChild(pageInfo);
     controls.appendChild(nextBtn);
-    
+
     paginationContainer.appendChild(info);
     paginationContainer.appendChild(controls);
-    
+
     if (typeof lucide !== "undefined") {
       lucide.createIcons(paginationContainer);
     }
@@ -189,10 +204,14 @@ export class ExerciseLibraryPage {
     // Add event listeners for pagination buttons
     const handlePaginationClick = (e) => {
       const btn = e.target.closest("[data-action]");
-      if (!btn || btn.hasAttribute("disabled")) {return;}
+      if (!btn || btn.hasAttribute("disabled")) {
+        return;
+      }
 
       const exerciseGrid = document.getElementById("exerciseGrid");
-      if (!exerciseGrid) {return;}
+      if (!exerciseGrid) {
+        return;
+      }
 
       const action = btn.dataset.action;
       if (action === "prev" && this.currentPage > 0) {
@@ -244,7 +263,9 @@ export class ExerciseLibraryPage {
 
   displayExercises() {
     const exerciseGrid = document.getElementById("exerciseGrid");
-    if (!exerciseGrid) {return;}
+    if (!exerciseGrid) {
+      return;
+    }
 
     const library = window.COMPLETE_EXERCISE_LIBRARY || {};
     if (!library || Object.keys(library).length === 0) {
@@ -297,10 +318,10 @@ export class ExerciseLibraryPage {
     // getExerciseIcon returns HTML string, use setSafeContent for safety
     const iconHtml = this.getExerciseIcon(exercise.category);
     setSafeContent(videoDiv, iconHtml, true, true);
-    
+
     const content = document.createElement("div");
     content.className = "exercise-content";
-    
+
     const header = document.createElement("div");
     header.className = "exercise-header";
     const category = document.createElement("div");
@@ -311,32 +332,33 @@ export class ExerciseLibraryPage {
     title.textContent = name;
     header.appendChild(category);
     header.appendChild(title);
-    
+
     const muscleTags = document.createElement("div");
     muscleTags.className = "muscle-tags";
-    (exercise.primaryMuscles || []).forEach(muscle => {
+    (exercise.primaryMuscles || []).forEach((muscle) => {
       const tag = document.createElement("span");
       tag.className = "muscle-tag primary";
       tag.textContent = muscle;
       muscleTags.appendChild(tag);
     });
-    (exercise.secondaryMuscles || []).forEach(muscle => {
+    (exercise.secondaryMuscles || []).forEach((muscle) => {
       const tag = document.createElement("span");
       tag.className = "muscle-tag";
       tag.textContent = muscle;
       muscleTags.appendChild(tag);
     });
-    
+
     const description = document.createElement("p");
     description.className = "exercise-description";
     description.textContent = exercise.setup || "";
-    
+
     const meta = document.createElement("div");
     meta.className = "exercise-meta";
     const difficulty = document.createElement("span");
     const difficultyLevel = exercise.difficulty || "intermediate";
     difficulty.className = `difficulty-badge difficulty-${difficultyLevel}`;
-    difficulty.textContent = difficultyLevel.charAt(0).toUpperCase() + difficultyLevel.slice(1);
+    difficulty.textContent =
+      difficultyLevel.charAt(0).toUpperCase() + difficultyLevel.slice(1);
     const equipmentList = document.createElement("div");
     equipmentList.className = "equipment-list";
     const equipment = (exercise.equipment || []).slice(0, 2).join(", ");
@@ -344,12 +366,12 @@ export class ExerciseLibraryPage {
     equipmentList.textContent = equipment + equipmentMore;
     meta.appendChild(difficulty);
     meta.appendChild(equipmentList);
-    
+
     content.appendChild(header);
     content.appendChild(muscleTags);
     content.appendChild(description);
     content.appendChild(meta);
-    
+
     card.appendChild(videoDiv);
     card.appendChild(content);
 
@@ -357,7 +379,8 @@ export class ExerciseLibraryPage {
   }
 
   getExerciseIcon(category) {
-    const iconStyle = 'width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);';
+    const iconStyle =
+      "width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);";
     const icons = {
       "Posterior Chain": '<i data-lucide="leg" style="' + iconStyle + '"></i>',
       Plyometric: '<i data-lucide="zap" style="' + iconStyle + '"></i>',
@@ -367,12 +390,17 @@ export class ExerciseLibraryPage {
       Recovery: '<i data-lucide="heart" style="' + iconStyle + '"></i>',
       Agility: '<i data-lucide="activity" style="' + iconStyle + '"></i>',
     };
-    return icons[category] || '<i data-lucide="dumbbell" style="' + iconStyle + '"></i>';
+    return (
+      icons[category] ||
+      '<i data-lucide="dumbbell" style="' + iconStyle + '"></i>'
+    );
   }
 
   updateStats() {
     const library = window.COMPLETE_EXERCISE_LIBRARY || {};
-    if (!library || Object.keys(library).length === 0) {return;}
+    if (!library || Object.keys(library).length === 0) {
+      return;
+    }
 
     const exercises = Object.entries(library);
     const categories = [...new Set(exercises.map(([_, ex]) => ex.category))];
@@ -390,21 +418,33 @@ export class ExerciseLibraryPage {
     const progressionsCountEl = document.getElementById("progressionsCount");
     const safetyNotesCountEl = document.getElementById("safetyNotesCount");
 
-    if (totalExercisesEl) {totalExercisesEl.textContent = exercises.length;}
-    if (categoriesCountEl) {categoriesCountEl.textContent = categories.length;}
-    if (progressionsCountEl) {progressionsCountEl.textContent = totalProgressions;}
-    if (safetyNotesCountEl) {safetyNotesCountEl.textContent = totalSafetyNotes;}
+    if (totalExercisesEl) {
+      totalExercisesEl.textContent = exercises.length;
+    }
+    if (categoriesCountEl) {
+      categoriesCountEl.textContent = categories.length;
+    }
+    if (progressionsCountEl) {
+      progressionsCountEl.textContent = totalProgressions;
+    }
+    if (safetyNotesCountEl) {
+      safetyNotesCountEl.textContent = totalSafetyNotes;
+    }
   }
 
   showLoading() {
     const exerciseGrid = document.getElementById("exerciseGrid");
-    if (!exerciseGrid) {return;}
+    if (!exerciseGrid) {
+      return;
+    }
     exerciseGrid.textContent = "";
     const loadingDiv = document.createElement("div");
-    loadingDiv.style.cssText = "grid-column: 1 / -1; text-align: center; padding: var(--space-12);";
+    loadingDiv.style.cssText =
+      "grid-column: 1 / -1; text-align: center; padding: var(--space-12);";
     const icon = document.createElement("i");
     icon.setAttribute("data-lucide", "loader-2");
-    icon.style.cssText = "width: 48px; height: 48px; display: inline-block; margin-bottom: var(--space-4); color: var(--icon-color-primary);";
+    icon.style.cssText =
+      "width: 48px; height: 48px; display: inline-block; margin-bottom: var(--space-4); color: var(--icon-color-primary);";
     icon.classList.add("icon-spin");
     const h3 = document.createElement("h3");
     h3.textContent = "Loading exercises...";
@@ -418,15 +458,19 @@ export class ExerciseLibraryPage {
 
   showNoResults() {
     const exerciseGrid = document.getElementById("exerciseGrid");
-    if (!exerciseGrid) {return;}
+    if (!exerciseGrid) {
+      return;
+    }
     exerciseGrid.textContent = "";
     const noResultsDiv = document.createElement("div");
-    noResultsDiv.style.cssText = "grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-text-secondary);";
+    noResultsDiv.style.cssText =
+      "grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-text-secondary);";
     const iconDiv = document.createElement("div");
     iconDiv.style.cssText = "font-size: 3rem; margin-bottom: var(--space-4);";
     const icon = document.createElement("i");
     icon.setAttribute("data-lucide", "search");
-    icon.style.cssText = "width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);";
+    icon.style.cssText =
+      "width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);";
     iconDiv.appendChild(icon);
     const h3 = document.createElement("h3");
     h3.textContent = "No exercises found";
@@ -443,13 +487,17 @@ export class ExerciseLibraryPage {
 
   showError(message) {
     const exerciseGrid = document.getElementById("exerciseGrid");
-    if (!exerciseGrid) {return;}
+    if (!exerciseGrid) {
+      return;
+    }
     exerciseGrid.textContent = "";
     const errorDiv = document.createElement("div");
-    errorDiv.style.cssText = "grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-error);";
+    errorDiv.style.cssText =
+      "grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-error);";
     const icon = document.createElement("i");
     icon.setAttribute("data-lucide", "x-circle");
-    icon.style.cssText = "width: 48px; height: 48px; display: inline-block; margin-bottom: var(--space-4); color: var(--color-error);";
+    icon.style.cssText =
+      "width: 48px; height: 48px; display: inline-block; margin-bottom: var(--space-4); color: var(--color-error);";
     const h3 = document.createElement("h3");
     h3.textContent = message;
     const p = document.createElement("p");
@@ -466,14 +514,18 @@ export class ExerciseLibraryPage {
   openExerciseModal(name) {
     const library = window.COMPLETE_EXERCISE_LIBRARY || {};
     const exercise = library[name];
-    if (!exercise) {return;}
+    if (!exercise) {
+      return;
+    }
 
     const modal = document.getElementById("exerciseModal");
     const modalTitle = document.getElementById("modalExerciseTitle");
     const modalCategory = document.getElementById("modalExerciseCategory");
     const modalBody = document.getElementById("modalBody");
 
-    if (!modal || !modalTitle || !modalCategory || !modalBody) {return;}
+    if (!modal || !modalTitle || !modalCategory || !modalBody) {
+      return;
+    }
 
     modalTitle.textContent = name;
     // SECURITY: Sanitize exercise category to prevent XSS
@@ -568,7 +620,9 @@ export class ExerciseLibraryPage {
   }
 
   escapeHtml(text) {
-    if (!text) {return "";}
+    if (!text) {
+      return "";
+    }
     const div = document.createElement("div");
     div.textContent = text;
     // Safe: Using textContent then reading innerHTML for escaping purposes only

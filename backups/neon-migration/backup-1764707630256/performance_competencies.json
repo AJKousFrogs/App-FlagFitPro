@@ -5,10 +5,7 @@
     "competency_category": "technical",
     "competency_description": "Ability to execute precise routes with proper timing and spacing",
     "position_specific": true,
-    "applicable_positions": [
-      "receiver",
-      "tight_end"
-    ],
+    "applicable_positions": ["receiver", "tight_end"],
     "competency_levels": {
       "elite": "Exceptional route mastery with deception",
       "advanced": "Precise timing and spacing",
@@ -20,11 +17,7 @@
       "coach_observation",
       "timing_measurements"
     ],
-    "development_activities": [
-      "route_drills",
-      "timing_work",
-      "film_study"
-    ],
+    "development_activities": ["route_drills", "timing_work", "film_study"],
     "benchmark_standards": null,
     "evidence_level": "high",
     "created_at": "2025-08-17T20:37:53.415Z"
@@ -35,10 +28,7 @@
     "competency_category": "technical",
     "competency_description": "Effective pass rushing with proper hand placement and leverage",
     "position_specific": true,
-    "applicable_positions": [
-      "defensive_end",
-      "linebacker"
-    ],
+    "applicable_positions": ["defensive_end", "linebacker"],
     "competency_levels": {
       "elite": "Elite pass rush dominance",
       "advanced": "Counter move effectiveness",
@@ -65,11 +55,7 @@
     "competency_category": "cognitive",
     "competency_description": "Quick and accurate decision making under pressure",
     "position_specific": false,
-    "applicable_positions": [
-      "quarterback",
-      "safety",
-      "linebacker"
-    ],
+    "applicable_positions": ["quarterback", "safety", "linebacker"],
     "competency_levels": {
       "elite": "Exceptional decision speed and accuracy",
       "advanced": "Fast accurate decisions",
@@ -96,9 +82,7 @@
     "competency_category": "social",
     "competency_description": "Ability to work effectively with teammates and build cohesion",
     "position_specific": false,
-    "applicable_positions": [
-      "all"
-    ],
+    "applicable_positions": ["all"],
     "competency_levels": {
       "elite": "Exceptional team building",
       "advanced": "Strong leadership",
@@ -125,10 +109,7 @@
     "competency_category": "technical",
     "competency_description": "Ability to execute precise routes with proper timing and spacing",
     "position_specific": true,
-    "applicable_positions": [
-      "receiver",
-      "tight_end"
-    ],
+    "applicable_positions": ["receiver", "tight_end"],
     "competency_levels": {
       "elite": "Exceptional route mastery with deception",
       "advanced": "Precise timing and spacing",
@@ -140,11 +121,7 @@
       "coach_observation",
       "timing_measurements"
     ],
-    "development_activities": [
-      "route_drills",
-      "timing_work",
-      "film_study"
-    ],
+    "development_activities": ["route_drills", "timing_work", "film_study"],
     "benchmark_standards": null,
     "evidence_level": "high",
     "created_at": "2025-08-17T20:38:15.164Z"
@@ -155,10 +132,7 @@
     "competency_category": "technical",
     "competency_description": "Effective pass rushing with proper hand placement and leverage",
     "position_specific": true,
-    "applicable_positions": [
-      "defensive_end",
-      "linebacker"
-    ],
+    "applicable_positions": ["defensive_end", "linebacker"],
     "competency_levels": {
       "elite": "Elite pass rush dominance",
       "advanced": "Counter move effectiveness",
@@ -185,11 +159,7 @@
     "competency_category": "cognitive",
     "competency_description": "Quick and accurate decision making under pressure",
     "position_specific": false,
-    "applicable_positions": [
-      "quarterback",
-      "safety",
-      "linebacker"
-    ],
+    "applicable_positions": ["quarterback", "safety", "linebacker"],
     "competency_levels": {
       "elite": "Exceptional decision speed and accuracy",
       "advanced": "Fast accurate decisions",
@@ -216,9 +186,7 @@
     "competency_category": "social",
     "competency_description": "Ability to work effectively with teammates and build cohesion",
     "position_specific": false,
-    "applicable_positions": [
-      "all"
-    ],
+    "applicable_positions": ["all"],
     "competency_levels": {
       "elite": "Exceptional team building",
       "advanced": "Strong leadership",

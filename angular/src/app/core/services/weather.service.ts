@@ -49,11 +49,36 @@ export class WeatherService {
    */
   private generateMockWeather(): WeatherData {
     const conditions = [
-      { condition: "Sunny", temp: 72, suitable: true, suitability: "excellent" as const },
-      { condition: "Partly Cloudy", temp: 68, suitable: true, suitability: "good" as const },
-      { condition: "Cloudy", temp: 65, suitable: true, suitability: "good" as const },
-      { condition: "Light Rain", temp: 60, suitable: false, suitability: "fair" as const },
-      { condition: "Rainy", temp: 55, suitable: false, suitability: "poor" as const },
+      {
+        condition: "Sunny",
+        temp: 72,
+        suitable: true,
+        suitability: "excellent" as const,
+      },
+      {
+        condition: "Partly Cloudy",
+        temp: 68,
+        suitable: true,
+        suitability: "good" as const,
+      },
+      {
+        condition: "Cloudy",
+        temp: 65,
+        suitable: true,
+        suitability: "good" as const,
+      },
+      {
+        condition: "Light Rain",
+        temp: 60,
+        suitable: false,
+        suitability: "fair" as const,
+      },
+      {
+        condition: "Rainy",
+        temp: 55,
+        suitable: false,
+        suitability: "poor" as const,
+      },
     ];
 
     const randomCondition =
@@ -90,4 +115,3 @@ export class WeatherService {
     }
   }
 }
-

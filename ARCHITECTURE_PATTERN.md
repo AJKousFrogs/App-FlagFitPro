@@ -27,7 +27,7 @@ This document describes the architecture pattern for separating data services fr
 **Purpose**: Pure data fetching - no state management
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class DashboardDataService {
   private apiService = inject(ApiService);
 
@@ -39,6 +39,7 @@ export class DashboardDataService {
 ```
 
 **Characteristics**:
+
 - ✅ Return Observables
 - ✅ No signals or state
 - ✅ Pure functions
@@ -63,18 +64,16 @@ export class DashboardViewModel extends BaseViewModel {
 
   // Data fetching (RxJS)
   loadDashboard() {
-    this.subscribe(
-      this.dashboardDataService.getDashboard(),
-      {
-        next: (data) => this.stats.set(data.stats),
-        error: (err) => this.handleError(err)
-      }
-    );
+    this.subscribe(this.dashboardDataService.getDashboard(), {
+      next: (data) => this.stats.set(data.stats),
+      error: (err) => this.handleError(err),
+    });
   }
 }
 ```
 
 **Characteristics**:
+
 - ✅ Use Signals for state
 - ✅ Subscribe to Data Services
 - ✅ Handle loading/error states
@@ -102,11 +101,12 @@ export class DashboardComponent {
 ```
 
 **Template**:
+
 ```html
 @if (loading()) {
-  <p>Loading...</p>
+<p>Loading...</p>
 } @else {
-  <div>Total Sessions: {{ totalSessions() }}</div>
+<div>Total Sessions: {{ totalSessions() }}</div>
 }
 ```
 
@@ -147,15 +147,12 @@ export class DashboardViewModel extends BaseViewModel {
   }
 
   loadDashboard() {
-    this.subscribe(
-      this.dashboardDataService.getDashboard(),
-      {
-        next: (data) => {
-          this.stats.set(data.stats);
-          this.recentActivity.set(data.recentActivity);
-        }
-      }
-    );
+    this.subscribe(this.dashboardDataService.getDashboard(), {
+      next: (data) => {
+        this.stats.set(data.stats);
+        this.recentActivity.set(data.recentActivity);
+      },
+    });
   }
 }
 ```
@@ -172,13 +169,13 @@ export class AnalyticsViewModel extends ReactiveViewModel {
   // Real-time stream
   readonly performanceTrends$ = this.createStream(
     interval(5000).pipe(
-      switchMap(() => this.analyticsDataService.getPerformanceTrends())
-    )
+      switchMap(() => this.analyticsDataService.getPerformanceTrends()),
+    ),
   );
 
   override initialize(enableRealTime: boolean = false) {
     this.loadAllAnalytics();
-    
+
     if (enableRealTime) {
       this.startRealTimeUpdates();
     }
@@ -187,7 +184,7 @@ export class AnalyticsViewModel extends ReactiveViewModel {
   startRealTimeUpdates() {
     this.subscribe(this.performanceTrends$, {
       next: (data) => this.performanceTrends.set(data),
-      showLoading: false
+      showLoading: false,
     });
   }
 }
@@ -212,10 +209,10 @@ export class AnalyticsViewModel extends ReactiveViewModel {
 ```typescript
 export const analyticsPrefetchResolver: ResolveFn<void> = () => {
   const analyticsDataService = inject(AnalyticsDataService);
-  
+
   // Prefetch data
   analyticsDataService.getAllAnalytics().subscribe();
-  
+
   return undefined;
 };
 ```
@@ -223,21 +220,25 @@ export const analyticsPrefetchResolver: ResolveFn<void> = () => {
 ## Benefits
 
 ### 1. Separation of Concerns
+
 - Data fetching logic separate from state management
 - Easy to test each layer independently
 - Clear responsibilities
 
 ### 2. Performance
+
 - Lazy loading keeps initial bundle small
 - Route prefetching improves perceived performance
 - Signals are more efficient than Observables for UI state
 
 ### 3. Maintainability
+
 - Clear patterns to follow
 - Easy to add new features
 - Consistent error handling
 
 ### 4. Testing
+
 - Mock data services easily
 - Test view models in isolation
 - Test components with view model mocks
@@ -251,9 +252,9 @@ export const analyticsPrefetchResolver: ResolveFn<void> = () => {
 @Injectable()
 export class DashboardService {
   stats = signal([]); // ❌ State in service
-  
+
   loadDashboard() {
-    this.apiService.get('/dashboard').subscribe(data => {
+    this.apiService.get("/dashboard").subscribe((data) => {
       this.stats.set(data); // ❌ State management in service
     });
   }
@@ -263,7 +264,7 @@ export class DashboardService {
 @Injectable()
 export class DashboardDataService {
   getDashboard(): Observable<DashboardData> {
-    return this.apiService.get('/dashboard'); // ✅ Returns Observable
+    return this.apiService.get("/dashboard"); // ✅ Returns Observable
   }
 }
 ```
@@ -274,16 +275,13 @@ export class DashboardDataService {
 @Injectable()
 export class DashboardViewModel extends BaseViewModel {
   private dashboardDataService = inject(DashboardDataService);
-  
+
   readonly stats = signal<DashboardStats | null>(null); // ✅ State in view model
-  
+
   loadDashboard() {
-    this.subscribe(
-      this.dashboardDataService.getDashboard(),
-      {
-        next: (data) => this.stats.set(data.stats) // ✅ State management in view model
-      }
-    );
+    this.subscribe(this.dashboardDataService.getDashboard(), {
+      next: (data) => this.stats.set(data.stats), // ✅ State management in view model
+    });
   }
 }
 ```
@@ -301,7 +299,7 @@ export class DashboardComponent {
 export class DashboardComponent {
   private viewModel = inject(DashboardViewModel);
   stats = this.viewModel.stats; // ✅
-  
+
   ngOnInit() {
     this.viewModel.initialize();
   }
@@ -370,17 +368,16 @@ export class AnalyticsViewModel extends ReactiveViewModel {
   readonly performanceTrends$ = this.createStream(
     interval(5000).pipe(
       switchMap(() => this.analyticsDataService.getPerformanceTrends()),
-      shareReplay(1)
-    )
+      shareReplay(1),
+    ),
   );
 
   // Convert to signal for template
   readonly liveTrends = toSignal(
-    this.performanceTrends$.pipe(map(data => data)),
-    { initialValue: null }
+    this.performanceTrends$.pipe(map((data) => data)),
+    { initialValue: null },
   );
 }
 ```
 
 This keeps real-time updates reactive but simple - no complex realtime mechanisms needed.
-

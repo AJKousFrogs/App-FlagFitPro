@@ -1,41 +1,45 @@
 # 📡 FlagFit Pro API Documentation
 
 ## Overview
+
 FlagFit Pro uses mock services and localStorage for development. This document outlines the available services and their usage patterns.
 
 ## Authentication Service (`auth.service.js`)
 
 ### Methods
+
 ```javascript
 // Login with email/password
-authService.login(email, password)
+authService.login(email, password);
 
 // Register new user
-authService.register(userData)
+authService.register(userData);
 
 // Get current user
-authService.getCurrentUser()
+authService.getCurrentUser();
 
 // Update user profile
-authService.updateProfile(profileData)
+authService.updateProfile(profileData);
 
 // Logout
-authService.logout()
+authService.logout();
 ```
 
 ### Mock Users
+
 ```javascript
 // Test credentials
-email: "demo@flagfit.com"
-password: "password123"
+email: "demo@flagfit.com";
+password: "password123";
 
-email: "coach@flagfit.com" 
-password: "coach123"
+email: "coach@flagfit.com";
+password: "coach123";
 ```
 
 ## FilterManager (`utils/FilterManager.js`)
 
 ### Usage
+
 ```javascript
 // Initialize FilterManager
 const filterManager = new FilterManager();
@@ -48,6 +52,7 @@ filterManager.handleFilterClick(buttonElement);
 ```
 
 ### Features
+
 - Automatic button state management
 - ARIA accessibility support
 - Keyboard navigation
@@ -56,12 +61,14 @@ filterManager.handleFilterClick(buttonElement);
 ## ChatWidget Component
 
 ### Props
+
 ```javascript
 // No props required - self-contained
 <ChatWidget />
 ```
 
 ### Features
+
 - AI coach responses (mock)
 - Quick action buttons
 - Typing indicators
@@ -71,6 +78,7 @@ filterManager.handleFilterClick(buttonElement);
 ## Data Storage
 
 ### localStorage Keys
+
 ```javascript
 // Authentication
 "authToken" - User authentication token
@@ -88,12 +96,14 @@ filterManager.handleFilterClick(buttonElement);
 ## Component Architecture
 
 ### Page Components
+
 - `DashboardPage` - Main dashboard with performance overview
 - `TrainingPage` - Training programs and customization
 - `CommunityPage` - Social features and leaderboards
 - `TournamentsPage` - Competition tracking and LA28 preparation
 
 ### Utility Components
+
 - `FilterManager` - Interactive button management
 - `ChatWidget` - AI coach interface
 - `Navigation` - App navigation with active states
@@ -101,11 +111,12 @@ filterManager.handleFilterClick(buttonElement);
 ## Error Handling
 
 ### Error Boundaries
+
 ```javascript
 // Global error boundary
 <ErrorBoundary>
   <App />
-</ErrorBoundary>
+</ErrorBoundary>;
 
 // Component-level error handling
 try {
@@ -118,11 +129,13 @@ try {
 ## Performance Features
 
 ### Loading States
+
 - Component-level loading indicators
 - Skeleton screens for data fetching
 - Smooth transitions and animations
 
 ### Accessibility
+
 - WCAG AA compliance
 - Screen reader support
 - Keyboard navigation
@@ -131,12 +144,13 @@ try {
 ## Development API
 
 ### Mock Data Generation
+
 ```javascript
 // Generate mock training data
 const mockTraining = {
   exercises: generateMockExercises(),
   schedule: generateMockSchedule(),
-  progress: generateMockProgress()
+  progress: generateMockProgress(),
 };
 
 // Generate mock user data
@@ -144,19 +158,21 @@ const mockUser = {
   id: generateId(),
   name: "Test User",
   team: "Ljubljana Frogs",
-  position: "Receiver"
+  position: "Receiver",
 };
 ```
 
 ## Integration Points
 
 ### External Services (Future)
+
 - USDA Food Database
 - Weather APIs
 - Sports Analytics APIs
 - OAuth Providers
 
 ### Database Integration (Future)
+
 - PostgreSQL with Drizzle ORM
 - Real-time updates
 - Data synchronization
@@ -164,21 +180,24 @@ const mockUser = {
 ## Testing
 
 ### Unit Tests
+
 ```bash
 npm run test
 ```
 
 ### E2E Tests
+
 ```bash
 npm run test:e2e
 ```
 
 ### API Testing
+
 ```javascript
 // Test authentication service
-describe('AuthService', () => {
-  test('login with valid credentials', async () => {
-    const result = await authService.login('demo@flagfit.com', 'password123');
+describe("AuthService", () => {
+  test("login with valid credentials", async () => {
+    const result = await authService.login("demo@flagfit.com", "password123");
     expect(result.success).toBe(true);
   });
 });

@@ -121,4 +121,3 @@ export class QuickActionsFABComponent {
     this.isExpanded.set(false);
   }
 }
-

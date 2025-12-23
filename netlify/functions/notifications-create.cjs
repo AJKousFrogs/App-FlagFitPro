@@ -8,13 +8,13 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 exports.handler = async (event, context) => {
-  logFunctionCall('NotificationsCreate', event);
+  logFunctionCall("NotificationsCreate", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -52,20 +52,20 @@ exports.handler = async (event, context) => {
       // Check user preferences - don't create if muted
       const preferences = await db.notifications.getUserPreferences(userId);
       const typePrefs = preferences[type];
-      
+
       if (typePrefs && typePrefs.muted) {
         // Still create in DB but don't show push notification
         // This allows users to see muted notifications in history
         const notification = await db.notifications.createNotification(userId, {
           type,
           message,
-          priority: priority || 'medium'
+          priority: priority || "medium",
         });
-        
+
         return createSuccessResponse({
           ...notification,
           muted: true,
-          message: "Notification created but muted per user preferences"
+          message: "Notification created but muted per user preferences",
         });
       }
 
@@ -73,20 +73,27 @@ exports.handler = async (event, context) => {
         const notification = await db.notifications.createNotification(userId, {
           type,
           message,
-          priority: priority || 'medium'
+          priority: priority || "medium",
         });
 
         return createSuccessResponse(notification);
       } catch (dbError) {
         console.error("Database error:", dbError);
-        return createErrorResponse("Failed to create notification", 500, 'database_error');
+        return createErrorResponse(
+          "Failed to create notification",
+          500,
+          "database_error",
+        );
       }
     } else {
-      return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
     }
   } catch (error) {
     console.error("Error in notifications-create function:", error);
-    return handleServerError(error, 'NotificationsCreate');
+    return handleServerError(error, "NotificationsCreate");
   }
 };
-

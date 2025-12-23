@@ -21,8 +21,8 @@
  * ```
  */
 
-import { Directive, OnDestroy, inject } from '@angular/core';
-import { RealtimeService } from '../../core/services/realtime.service';
+import { Directive, OnDestroy, inject } from "@angular/core";
+import { RealtimeService } from "../../core/services/realtime.service";
 
 @Directive()
 export abstract class RealtimeBaseComponent implements OnDestroy {
@@ -40,7 +40,7 @@ export abstract class RealtimeBaseComponent implements OnDestroy {
    * Manually unsubscribe from all subscriptions
    */
   protected unsubscribeAll(): void {
-    this.subscriptions.forEach(unsub => unsub());
+    this.subscriptions.forEach((unsub) => unsub());
     this.subscriptions = [];
   }
 

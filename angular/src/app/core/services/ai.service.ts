@@ -39,10 +39,9 @@ export class AIService {
   ): Observable<TrainingSuggestion[]> {
     // Try API first
     return this.apiService
-      .post<TrainingSuggestion[]>(
-        API_ENDPOINTS.training.suggestions || "/api/training/suggestions",
-        params,
-      )
+      .post<
+        TrainingSuggestion[]
+      >(API_ENDPOINTS.training.suggestions || "/api/training/suggestions", params)
       .pipe(
         map((response) => {
           if (response.success && response.data) {
@@ -213,7 +212,10 @@ export class AIService {
     // Generate response based on intent
     switch (detectedIntent) {
       case "start":
-        if (lowerCommand.includes("training") || lowerCommand.includes("workout")) {
+        if (
+          lowerCommand.includes("training") ||
+          lowerCommand.includes("workout")
+        ) {
           return of({
             message: "Starting your training session. Let's get moving!",
             actions: [
@@ -231,7 +233,8 @@ export class AIService {
 
       case "log":
         return of({
-          message: "I'll help you log your session. What would you like to record?",
+          message:
+            "I'll help you log your session. What would you like to record?",
           actions: [
             {
               label: "Log Session",
@@ -244,7 +247,10 @@ export class AIService {
         });
 
       case "show":
-        if (lowerCommand.includes("stats") || lowerCommand.includes("performance")) {
+        if (
+          lowerCommand.includes("stats") ||
+          lowerCommand.includes("performance")
+        ) {
           return of({
             message: "Here are your performance stats. You're doing great!",
             actions: [
@@ -282,16 +288,16 @@ export class AIService {
       default:
         // Try API for advanced processing
         return this.apiService
-          .post<{ message: string; actions?: any[] }>(
-            "/api/ai/process-command",
-            { command: lowerCommand },
-          )
+          .post<{
+            message: string;
+            actions?: any[];
+          }>("/api/ai/process-command", { command: lowerCommand })
           .pipe(
             map((response): { message: string; actions?: any[] } => {
               if (response.success && response.data) {
                 return {
                   message: response.data.message,
-                  actions: response.data.actions
+                  actions: response.data.actions,
                 };
               }
               return {
@@ -300,14 +306,16 @@ export class AIService {
             }),
             catchError(() => {
               return of({
-                message: "I'm having trouble understanding. Try saying 'help' for assistance.",
+                message:
+                  "I'm having trouble understanding. Try saying 'help' for assistance.",
               });
             }),
           );
     }
 
     return of({
-      message: "I heard you, but I'm not sure what you want me to do. Try saying 'help' for assistance.",
+      message:
+        "I heard you, but I'm not sure what you want me to do. Try saying 'help' for assistance.",
     });
   }
 
@@ -346,7 +354,8 @@ export class AIService {
         insights.push({
           id: "hr-high",
           type: "Performance",
-          message: "Your heart rate is elevated. Consider taking a short break.",
+          message:
+            "Your heart rate is elevated. Consider taking a short break.",
           icon: "pi pi-heart",
           priority: "high",
           actions: [
@@ -359,7 +368,11 @@ export class AIService {
             },
           ],
         });
-      } else if (context.heartRate < 100 && context.timeInSession && context.timeInSession > 10) {
+      } else if (
+        context.heartRate < 100 &&
+        context.timeInSession &&
+        context.timeInSession > 10
+      ) {
         insights.push({
           id: "hr-low",
           type: "Performance",
@@ -375,7 +388,8 @@ export class AIService {
       insights.push({
         id: "duration-long",
         type: "Recovery",
-        message: "You've been training for over an hour. Great work! Consider recovery.",
+        message:
+          "You've been training for over an hour. Great work! Consider recovery.",
         icon: "pi pi-clock",
         priority: "medium",
         actions: [
@@ -395,7 +409,8 @@ export class AIService {
       insights.push({
         id: "fatigue-high",
         type: "Recovery",
-        message: "You're showing signs of fatigue. Rest is important for performance.",
+        message:
+          "You're showing signs of fatigue. Rest is important for performance.",
         icon: "pi pi-exclamation-triangle",
         priority: "high",
       });
@@ -413,7 +428,8 @@ export class AIService {
         insights.push({
           id: "performance-excellent",
           type: "Motivation",
-          message: "Your recent performance has been excellent! Keep up the great work!",
+          message:
+            "Your recent performance has been excellent! Keep up the great work!",
           icon: "pi pi-star",
           priority: "low",
         });
@@ -432,4 +448,3 @@ export class AIService {
     );
   }
 }
-

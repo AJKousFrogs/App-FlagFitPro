@@ -384,9 +384,15 @@ export class MLPerformancePredictor {
    * Get age adjustment factor
    */
   getAgeFactor(age) {
-    if (age < 20) {return 1.05;} // Young athletes with high potential
-    if (age < 25) {return 1.0;} // Peak performance age
-    if (age < 30) {return 0.98;} // Slight decline
+    if (age < 20) {
+      return 1.05;
+    } // Young athletes with high potential
+    if (age < 25) {
+      return 1.0;
+    } // Peak performance age
+    if (age < 30) {
+      return 0.98;
+    } // Slight decline
     return 0.95; // Veteran adjustments
   }
 

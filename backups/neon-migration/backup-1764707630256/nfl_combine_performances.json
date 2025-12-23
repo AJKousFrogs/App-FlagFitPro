@@ -18,9 +18,7 @@
     "broad_jump": null,
     "bench_press_reps": null,
     "nfl_seasons_played": null,
-    "career_achievements": [
-      "NFL_Record_Holder"
-    ],
+    "career_achievements": ["NFL_Record_Holder"],
     "career_stats": null,
     "success_rating": 8,
     "combine_year": null,
@@ -47,11 +45,7 @@
     "broad_jump": null,
     "bench_press_reps": null,
     "nfl_seasons_played": null,
-    "career_achievements": [
-      "Hall_of_Fame",
-      "Super_Bowl",
-      "All_Pro"
-    ],
+    "career_achievements": ["Hall_of_Fame", "Super_Bowl", "All_Pro"],
     "career_stats": null,
     "success_rating": 10,
     "combine_year": null,
@@ -78,10 +72,7 @@
     "broad_jump": null,
     "bench_press_reps": null,
     "nfl_seasons_played": null,
-    "career_achievements": [
-      "Pro_Bowl",
-      "Super_Bowl"
-    ],
+    "career_achievements": ["Pro_Bowl", "Super_Bowl"],
     "career_stats": null,
     "success_rating": 8,
     "combine_year": null,
@@ -108,10 +99,7 @@
     "broad_jump": null,
     "bench_press_reps": null,
     "nfl_seasons_played": null,
-    "career_achievements": [
-      "All_Pro",
-      "Triple_Crown"
-    ],
+    "career_achievements": ["All_Pro", "Triple_Crown"],
     "career_stats": null,
     "success_rating": 9,
     "combine_year": null,
@@ -138,10 +126,7 @@
     "broad_jump": null,
     "bench_press_reps": null,
     "nfl_seasons_played": null,
-    "career_achievements": [
-      "Pro_Bowl",
-      "All_Pro"
-    ],
+    "career_achievements": ["Pro_Bowl", "All_Pro"],
     "career_stats": null,
     "success_rating": 8,
     "combine_year": null,
@@ -168,11 +153,7 @@
     "broad_jump": null,
     "bench_press_reps": null,
     "nfl_seasons_played": null,
-    "career_achievements": [
-      "Hall_of_Fame",
-      "Super_Bowl",
-      "All_Pro"
-    ],
+    "career_achievements": ["Hall_of_Fame", "Super_Bowl", "All_Pro"],
     "career_stats": null,
     "success_rating": 10,
     "combine_year": null,
@@ -199,9 +180,7 @@
     "broad_jump": null,
     "bench_press_reps": null,
     "nfl_seasons_played": null,
-    "career_achievements": [
-      "Pro_Bowl"
-    ],
+    "career_achievements": ["Pro_Bowl"],
     "career_stats": null,
     "success_rating": 7,
     "combine_year": null,

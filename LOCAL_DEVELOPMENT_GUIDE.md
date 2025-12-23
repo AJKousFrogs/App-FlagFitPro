@@ -9,6 +9,7 @@ Run the application locally with real Supabase data and full functionality:
 ```
 
 This script will:
+
 - ✅ Set up all required environment variables
 - ✅ Start the API server on port 3001
 - ✅ Start the frontend dev server on port 4000
@@ -72,6 +73,7 @@ You can also set environment variables manually before starting the server:
 If you prefer to run servers manually:
 
 ### Terminal 1 - API Server
+
 ```bash
 export SUPABASE_URL="https://pvziciccwxgftcielknm.supabase.co"
 export SUPABASE_ANON_KEY="<your-key>"
@@ -81,6 +83,7 @@ node server.js
 ```
 
 ### Terminal 2 - Frontend Dev Server
+
 ```bash
 export SUPABASE_URL="https://pvziciccwxgftcielknm.supabase.co"
 export SUPABASE_ANON_KEY="<your-key>"
@@ -109,8 +112,8 @@ lsof -ti:4000 | xargs kill -9
 4. Verify `window._env` has credentials (open browser console and type `window._env`)
 5. Check `localStorage` for credentials (in development):
    ```javascript
-   localStorage.getItem('SUPABASE_URL')
-   localStorage.getItem('SUPABASE_ANON_KEY')
+   localStorage.getItem("SUPABASE_URL");
+   localStorage.getItem("SUPABASE_ANON_KEY");
    ```
 6. Verify network connectivity to Supabase
 
@@ -120,24 +123,27 @@ lsof -ti:4000 | xargs kill -9
 2. Check for Supabase initialization errors
 3. Verify `localStorage` has Supabase credentials:
    ```javascript
-   localStorage.getItem('SUPABASE_URL')
-   localStorage.getItem('SUPABASE_ANON_KEY')
+   localStorage.getItem("SUPABASE_URL");
+   localStorage.getItem("SUPABASE_ANON_KEY");
    ```
 4. Check Network tab for API requests
 
 ## Development Features
 
 ### Hot Reload
+
 - HTML/CSS/JS changes automatically reload the browser
 - CSS changes reload without full page refresh
 - WebSocket-based for instant updates
 
 ### Bug Detection
+
 - ESLint runs automatically on file save
 - Common bugs detected and reported
 - Auto-fixing enabled for formatting issues
 
 ### API Proxying
+
 - Frontend dev server proxies `/api/*` requests to backend
 - CORS handled automatically
 - Full API functionality available
@@ -176,4 +182,3 @@ pkill -f "node.*dev-server"
 ---
 
 **Happy Coding! 🏈✨**
-

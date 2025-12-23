@@ -43,7 +43,13 @@
     <div class="popover-content">
       <h4 class="popover-title">Click Popover</h4>
       <p class="popover-text">This popover appears on click.</p>
-      <button type="button" class="btn btn-sm btn-primary" onclick="closePopover('popover-2')">Close</button>
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        onclick="closePopover('popover-2')"
+      >
+        Close
+      </button>
     </div>
     <div class="popover-arrow"></div>
   </div>
@@ -52,7 +58,11 @@
 <!-- Popover Positions -->
 <div class="popover-examples">
   <div class="popover-container popover-top">
-    <button type="button" class="btn btn-tertiary btn-sm popover-trigger" id="popover-top">
+    <button
+      type="button"
+      class="btn btn-tertiary btn-sm popover-trigger"
+      id="popover-top"
+    >
       Top
     </button>
     <div class="popover" id="popover-top-content" role="tooltip">
@@ -60,9 +70,13 @@
       <div class="popover-arrow"></div>
     </div>
   </div>
-  
+
   <div class="popover-container popover-right">
-    <button type="button" class="btn btn-tertiary btn-sm popover-trigger" id="popover-right">
+    <button
+      type="button"
+      class="btn btn-tertiary btn-sm popover-trigger"
+      id="popover-right"
+    >
       Right
     </button>
     <div class="popover" id="popover-right-content" role="tooltip">
@@ -70,9 +84,13 @@
       <div class="popover-arrow"></div>
     </div>
   </div>
-  
+
   <div class="popover-container popover-bottom">
-    <button type="button" class="btn btn-tertiary btn-sm popover-trigger" id="popover-bottom">
+    <button
+      type="button"
+      class="btn btn-tertiary btn-sm popover-trigger"
+      id="popover-bottom"
+    >
       Bottom
     </button>
     <div class="popover" id="popover-bottom-content" role="tooltip">
@@ -80,9 +98,13 @@
       <div class="popover-arrow"></div>
     </div>
   </div>
-  
+
   <div class="popover-container popover-left">
-    <button type="button" class="btn btn-tertiary btn-sm popover-trigger" id="popover-left">
+    <button
+      type="button"
+      class="btn btn-tertiary btn-sm popover-trigger"
+      id="popover-left"
+    >
       Left
     </button>
     <div class="popover" id="popover-left-content" role="tooltip">
@@ -107,10 +129,14 @@
     background: var(--p-surface-0, #ffffff);
     border: 1px solid var(--p-surface-border, #dee2e6);
     border-radius: var(--p-border-radius, 0.5rem);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
     opacity: 0;
     transform: scale(0.95);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
   }
 
   .popover.show {
@@ -161,17 +187,19 @@
     left: 50%;
     transform: translateX(-50%);
     border-width: 0.5rem 0.5rem 0;
-    border-color: var(--p-surface-border, #dee2e6) transparent transparent transparent;
+    border-color: var(--p-surface-border, #dee2e6) transparent transparent
+      transparent;
   }
 
   .popover-top .popover-arrow::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 1px;
     left: 50%;
     transform: translateX(-50%);
     border-width: 0.5rem 0.5rem 0;
-    border-color: var(--p-surface-0, #ffffff) transparent transparent transparent;
+    border-color: var(--p-surface-0, #ffffff) transparent transparent
+      transparent;
   }
 
   /* Right position */
@@ -191,7 +219,8 @@
     top: 50%;
     transform: translateY(-50%);
     border-width: 0.5rem 0.5rem 0.5rem 0;
-    border-color: transparent var(--p-surface-border, #dee2e6) transparent transparent;
+    border-color: transparent var(--p-surface-border, #dee2e6) transparent
+      transparent;
   }
 
   /* Bottom position (default) */
@@ -214,7 +243,8 @@
     left: 50%;
     transform: translateX(-50%);
     border-width: 0 0.5rem 0.5rem 0.5rem;
-    border-color: transparent transparent var(--p-surface-border, #dee2e6) transparent;
+    border-color: transparent transparent var(--p-surface-border, #dee2e6)
+      transparent;
   }
 
   /* Left position */
@@ -234,7 +264,8 @@
     top: 50%;
     transform: translateY(-50%);
     border-width: 0.5rem 0 0.5rem 0.5rem;
-    border-color: transparent transparent transparent var(--p-surface-border, #dee2e6);
+    border-color: transparent transparent transparent
+      var(--p-surface-border, #dee2e6);
   }
 
   .popover-examples {
@@ -248,77 +279,78 @@
 
 <script>
   // Popover functionality
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Hover triggers
-    const hoverTriggers = document.querySelectorAll('.popover-trigger');
-    hoverTriggers.forEach(trigger => {
-      const popoverId = trigger.getAttribute('aria-describedby');
+    const hoverTriggers = document.querySelectorAll(".popover-trigger");
+    hoverTriggers.forEach((trigger) => {
+      const popoverId = trigger.getAttribute("aria-describedby");
       const popover = document.getElementById(popoverId);
-      
+
       if (!popover) return;
-      
-      trigger.addEventListener('mouseenter', () => {
-        popover.classList.add('show');
-        popover.setAttribute('aria-hidden', 'false');
-        trigger.setAttribute('aria-expanded', 'true');
+
+      trigger.addEventListener("mouseenter", () => {
+        popover.classList.add("show");
+        popover.setAttribute("aria-hidden", "false");
+        trigger.setAttribute("aria-expanded", "true");
       });
-      
-      trigger.addEventListener('mouseleave', () => {
-        popover.classList.remove('show');
-        popover.setAttribute('aria-hidden', 'true');
-        trigger.setAttribute('aria-expanded', 'false');
+
+      trigger.addEventListener("mouseleave", () => {
+        popover.classList.remove("show");
+        popover.setAttribute("aria-hidden", "true");
+        trigger.setAttribute("aria-expanded", "false");
       });
     });
-    
+
     // Click triggers
-    const clickTriggers = document.querySelectorAll('.popover-trigger-click');
-    clickTriggers.forEach(trigger => {
-      const popoverId = trigger.getAttribute('aria-describedby');
+    const clickTriggers = document.querySelectorAll(".popover-trigger-click");
+    clickTriggers.forEach((trigger) => {
+      const popoverId = trigger.getAttribute("aria-describedby");
       const popover = document.getElementById(popoverId);
-      
+
       if (!popover) return;
-      
-      trigger.addEventListener('click', (e) => {
+
+      trigger.addEventListener("click", (e) => {
         e.stopPropagation();
-        const isOpen = popover.classList.contains('show');
-        
+        const isOpen = popover.classList.contains("show");
+
         // Close all popovers
-        document.querySelectorAll('.popover').forEach(p => p.classList.remove('show'));
-        
+        document
+          .querySelectorAll(".popover")
+          .forEach((p) => p.classList.remove("show"));
+
         if (!isOpen) {
-          popover.classList.add('show');
-          popover.setAttribute('aria-hidden', 'false');
-          trigger.setAttribute('aria-expanded', 'true');
+          popover.classList.add("show");
+          popover.setAttribute("aria-hidden", "false");
+          trigger.setAttribute("aria-expanded", "true");
         } else {
-          trigger.setAttribute('aria-expanded', 'false');
+          trigger.setAttribute("aria-expanded", "false");
         }
       });
     });
-    
+
     // Close on outside click
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.popover-container')) {
-        document.querySelectorAll('.popover').forEach(p => {
-          p.classList.remove('show');
-          p.setAttribute('aria-hidden', 'true');
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".popover-container")) {
+        document.querySelectorAll(".popover").forEach((p) => {
+          p.classList.remove("show");
+          p.setAttribute("aria-hidden", "true");
         });
-        document.querySelectorAll('.popover-trigger-click').forEach(t => {
-          t.setAttribute('aria-expanded', 'false');
+        document.querySelectorAll(".popover-trigger-click").forEach((t) => {
+          t.setAttribute("aria-expanded", "false");
         });
       }
     });
   });
-  
+
   function closePopover(id) {
     const popover = document.getElementById(id);
     if (popover) {
-      popover.classList.remove('show');
-      popover.setAttribute('aria-hidden', 'true');
+      popover.classList.remove("show");
+      popover.setAttribute("aria-hidden", "true");
       const trigger = document.querySelector(`[aria-describedby="${id}"]`);
       if (trigger) {
-        trigger.setAttribute('aria-expanded', 'false');
+        trigger.setAttribute("aria-expanded", "false");
       }
     }
   }
 </script>
-

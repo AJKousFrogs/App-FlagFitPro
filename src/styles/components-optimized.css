@@ -1,6 +1,6 @@
 /* ====== COMPONENT STYLES - FLAGFIT PRO ====== */
 
-@import './tokens.css';
+@import "./tokens.css";
 
 /* ========================================
    BUTTON COMPONENTS
@@ -265,7 +265,7 @@
 }
 
 .nav-link.active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -1px;
   left: 50%;
@@ -368,7 +368,7 @@
 }
 
 .notification-item.unread::before {
-  content: '';
+  content: "";
   position: absolute;
   left: var(--space-2);
   top: 50%;
@@ -680,7 +680,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ========================================
@@ -736,11 +738,11 @@
     flex-wrap: wrap;
     gap: var(--space-2);
   }
-  
+
   .search-system {
     max-width: 200px;
   }
-  
+
   .notification-dropdown,
   .search-dropdown,
   .avatar-dropdown {
@@ -748,20 +750,20 @@
     max-width: 320px;
     right: var(--space-4);
   }
-  
+
   .accessibility-controls {
     grid-template-columns: 1fr;
   }
-  
+
   .card {
     margin: var(--space-2);
   }
-  
+
   .btn {
     width: 100%;
     justify-content: center;
   }
-  
+
   .btn-sm {
     width: auto;
   }

@@ -10,35 +10,30 @@ import { BreadcrumbModule } from "primeng/breadcrumb";
 import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { MenuItem } from "primeng/api";
-import { ContextService, QuickAction } from "../../../core/services/context.service";
+import {
+  ContextService,
+  QuickAction,
+} from "../../../core/services/context.service";
 
 @Component({
   selector: "app-smart-breadcrumbs",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterModule,
-    BreadcrumbModule,
-    Select,
-    TagModule
-],
+  imports: [RouterModule, BreadcrumbModule, Select, TagModule],
   template: `
     <nav class="smart-breadcrumbs" aria-label="Navigation path">
       <div class="breadcrumbs-container">
         <p-breadcrumb
           [model]="breadcrumbItems()"
           styleClass="custom-breadcrumb"
-          >
+        >
           <ng-template pTemplate="item" let-item>
             <div class="breadcrumb-item" [class.current]="item.data?.current">
               @if (item.icon) {
                 <i [class]="item.icon"></i>
               }
               @if (item.routerLink && !item.data?.current) {
-                <a
-                  [routerLink]="item.routerLink"
-                  class="breadcrumb-link"
-                  >
+                <a [routerLink]="item.routerLink" class="breadcrumb-link">
                   {{ item.label }}
                 </a>
               }
@@ -53,13 +48,13 @@ import { ContextService, QuickAction } from "../../../core/services/context.serv
                   [severity]="item.data.badge.severity"
                   size="small"
                   class="breadcrumb-badge"
-                  >
+                >
                 </p-tag>
               }
             </div>
           </ng-template>
         </p-breadcrumb>
-    
+
         <!-- Quick Actions Dropdown -->
         <p-select
           [options]="quickActionsDropdown()"
@@ -69,7 +64,7 @@ import { ContextService, QuickAction } from "../../../core/services/context.serv
           (onChange)="executeQuickAction($event.value)"
           [showClear]="true"
           class="quick-actions-dropdown"
-          >
+        >
           <ng-template let-action pTemplate="item">
             <div class="quick-action-item">
               <i [class]="action.icon"></i>
@@ -79,7 +74,7 @@ import { ContextService, QuickAction } from "../../../core/services/context.serv
         </p-select>
       </div>
     </nav>
-    `,
+  `,
   styles: [
     `
       .smart-breadcrumbs {
@@ -216,4 +211,3 @@ export class SmartBreadcrumbsComponent {
     }
   }
 }
-

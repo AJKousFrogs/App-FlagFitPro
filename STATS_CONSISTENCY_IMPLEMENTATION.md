@@ -24,6 +24,7 @@ This document describes the implementation of a centralized statistics system th
   - `GET /date-range?startDate=X&endDate=Y` - Get stats for specific date range
 
 **Key Features**:
+
 - Always filters games by date: `game_date <= TODAY (23:59:59)`
 - Aggregates stats from `game_events` table
 - Uses consistent calculation formulas
@@ -37,6 +38,7 @@ This document describes the implementation of a centralized statistics system th
 - **Function**: `get_player_aggregated_stats(player_id, season, team_id)` - SQL function for consistent aggregation
 
 **Benefits**:
+
 - Database-level aggregation for performance
 - Automatic date filtering
 - Consistent calculations at the database level
@@ -44,19 +46,23 @@ This document describes the implementation of a centralized statistics system th
 ### 3. Updated Functions
 
 #### `games.cjs`
+
 - `getGames()` now filters by default to show only games up to and including today
 - `getPlayerGameStats()` verifies game is not in the future before returning stats
 
 #### `analytics.cjs`
+
 - All date-based queries now include `.lte("completed_at", todayEndOfDay)`
 - Ensures analytics always reflect data up to and including today
 
 ### 4. Frontend Integration
 
 #### API Configuration
+
 **File**: `src/api-config.js`
 
 Added new endpoints:
+
 ```javascript
 playerStats: {
   aggregated: "/player-stats/aggregated",
@@ -65,6 +71,7 @@ playerStats: {
 ```
 
 #### Game Stats Service
+
 **File**: `src/js/services/gameStatsService.js`
 
 - `getPlayerStats()` now uses centralized backend endpoint by default
@@ -89,7 +96,7 @@ GET /.netlify/functions/player-stats/date-range?playerId=PLAYER_ID&startDate=202
 ### Frontend: Using Game Stats Service
 
 ```javascript
-import { gameStatsService } from './js/services/gameStatsService.js';
+import { gameStatsService } from "./js/services/gameStatsService.js";
 
 // Get all stats (uses backend, filtered to today)
 const stats = await gameStatsService.getPlayerStats(playerId);
@@ -97,12 +104,14 @@ const stats = await gameStatsService.getPlayerStats(playerId);
 // Get stats for date range
 const stats = await gameStatsService.getPlayerStatsByDateRange(
   playerId,
-  new Date('2025-12-01'),
-  new Date('2025-12-14')
+  new Date("2025-12-01"),
+  new Date("2025-12-14"),
 );
 
 // Force local calculation (for backward compatibility)
-const stats = await gameStatsService.getPlayerStats(playerId, { forceLocal: true });
+const stats = await gameStatsService.getPlayerStats(playerId, {
+  forceLocal: true,
+});
 ```
 
 ### Database: Using SQL Function
@@ -123,30 +132,35 @@ SELECT * FROM get_player_aggregated_stats('PLAYER_ID', NULL, 'TEAM_ID');
 All calculations use consistent formulas:
 
 ### Completion Percentage
+
 ```
 completion_percentage = (completions / pass_attempts) * 100
 Rounded to 1 decimal place using banker's rounding
 ```
 
 ### Drop Rate
+
 ```
 drop_rate = (drops / targets) * 100
 Rounded to 1 decimal place
 ```
 
 ### Flag Pull Success Rate
+
 ```
 flag_pull_success_rate = (flag_pulls / flag_pull_attempts) * 100
 Rounded to 1 decimal place
 ```
 
 ### Average Yards Per Attempt
+
 ```
 avg_yards_per_attempt = passing_yards / pass_attempts
 Rounded to 2 decimal places
 ```
 
 ### Yards Per Carry
+
 ```
 yards_per_carry = rushing_yards / rushing_attempts
 Rounded to 2 decimal places
@@ -166,6 +180,7 @@ todayEndOfDay.setHours(23, 59, 59, 999);
 ```
 
 This ensures:
+
 - On Sunday, December 14, 2025, the app shows all data up to and including that date
 - Future games/events are never included in statistics
 - Data is always current and accurate
@@ -173,6 +188,7 @@ This ensures:
 ## Migration Steps
 
 1. **Run Database Migration**:
+
    ```bash
    # Apply the new view and function
    psql -d your_database -f database/migrations/041_player_stats_aggregation_view.sql
@@ -189,17 +205,20 @@ This ensures:
 ## Testing
 
 ### Verify Date Filtering
+
 1. Create a game with date in the future
 2. Verify it doesn't appear in stats until that date arrives
 3. On the game date, verify it's included in stats
 
 ### Verify Consistency
+
 1. Check stats in Analytics page
 2. Check stats in Performance page
 3. Check stats in Game Tracker
 4. All should show identical numbers
 
 ### Verify Calculations
+
 1. Manually calculate stats for a player
 2. Compare with API response
 3. Verify formulas match exactly

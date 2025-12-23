@@ -94,11 +94,7 @@
     "target_participants": 1000,
     "current_participants": 0,
     "event_format": "individual",
-    "prizes_awards": [
-      "player_of_week_badge",
-      "recognition",
-      "small_prize"
-    ],
+    "prizes_awards": ["player_of_week_badge", "recognition", "small_prize"],
     "success_criteria": [
       "performance_improvement",
       "team_contribution",
@@ -150,11 +146,7 @@
     "target_participants": 100,
     "current_participants": 0,
     "event_format": "individual",
-    "prizes_awards": [
-      "most_improved_badge",
-      "major_prize",
-      "recognition"
-    ],
+    "prizes_awards": ["most_improved_badge", "major_prize", "recognition"],
     "success_criteria": [
       "performance_improvement",
       "goal_achievement",
@@ -262,11 +254,7 @@
     "target_participants": 1000,
     "current_participants": 0,
     "event_format": "individual",
-    "prizes_awards": [
-      "player_of_week_badge",
-      "recognition",
-      "small_prize"
-    ],
+    "prizes_awards": ["player_of_week_badge", "recognition", "small_prize"],
     "success_criteria": [
       "performance_improvement",
       "team_contribution",
@@ -318,11 +306,7 @@
     "target_participants": 100,
     "current_participants": 0,
     "event_format": "individual",
-    "prizes_awards": [
-      "most_improved_badge",
-      "major_prize",
-      "recognition"
-    ],
+    "prizes_awards": ["most_improved_badge", "major_prize", "recognition"],
     "success_criteria": [
       "performance_improvement",
       "goal_achievement",

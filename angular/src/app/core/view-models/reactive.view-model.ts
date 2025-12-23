@@ -1,17 +1,17 @@
 /**
  * Reactive ViewModel with RxJS Integration
- * 
+ *
  * Extends BaseViewModel with reactive data streams
  * Perfect for real-time analytics and live data
- * 
+ *
  * ⚠️ IMPORTANT: Use RxJS ONLY for complex async work (API calls, intervals, etc.)
  * Use Signals for UI state management instead of BehaviorSubject
- * 
+ *
  * Usage:
  * ```typescript
  * export class AnalyticsViewModel extends ReactiveViewModel {
  *   private analyticsService = inject(AnalyticsDataService);
- *   
+ *
  *   // Complex async work: Use RxJS Observable
  *   performanceData$ = this.createStream(
  *     interval(5000).pipe(
@@ -19,7 +19,7 @@
  *       shareReplay(1)
  *     )
  *   );
- *   
+ *
  *   // UI State: Convert Observable to Signal using toSignal()
  *   performanceMetrics = toSignal(
  *     this.performanceData$.pipe(
@@ -27,7 +27,7 @@
  *     ),
  *     { initialValue: [] }
  *   );
- *   
+ *
  *   // Or use signals directly for simple state
  *   selectedMetric = signal<string>('speed');
  *   filteredData = computed(() => {
@@ -37,9 +37,9 @@
  * ```
  */
 
-import { Injectable } from '@angular/core';
-import { Observable, shareReplay } from 'rxjs';
-import { BaseViewModel } from './base.view-model';
+import { Injectable } from "@angular/core";
+import { Observable, shareReplay } from "rxjs";
+import { BaseViewModel } from "./base.view-model";
 
 @Injectable()
 export abstract class ReactiveViewModel extends BaseViewModel {
@@ -53,14 +53,14 @@ export abstract class ReactiveViewModel extends BaseViewModel {
    */
   protected createStream<T>(
     source$: Observable<T>,
-    key?: string
+    key?: string,
   ): Observable<T> {
     const shared$ = source$.pipe(shareReplay(1));
-    
+
     if (key) {
       this.streams.set(key, shared$);
     }
-    
+
     return shared$;
   }
 

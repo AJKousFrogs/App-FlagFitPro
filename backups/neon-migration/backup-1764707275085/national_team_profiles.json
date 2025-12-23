@@ -9,16 +9,10 @@
       "website": "www.usafff.org"
     },
     "coaching_staff": {
-      "assistants": [
-        "John Davis",
-        "Sarah Wilson"
-      ],
+      "assistants": ["John Davis", "Sarah Wilson"],
       "head_coach": "Mike Smith"
     },
-    "play_style": [
-      "possession_based",
-      "high_press"
-    ],
+    "play_style": ["possession_based", "high_press"],
     "formation_preferences": null,
     "key_players": null,
     "home_venue": null,
@@ -44,16 +38,10 @@
       "website": "www.flagfootballcanada.ca"
     },
     "coaching_staff": {
-      "assistants": [
-        "Maria Garcia",
-        "Tom Brown"
-      ],
+      "assistants": ["Maria Garcia", "Tom Brown"],
       "head_coach": "David Johnson"
     },
-    "play_style": [
-      "counter_attack",
-      "technical"
-    ],
+    "play_style": ["counter_attack", "technical"],
     "formation_preferences": null,
     "key_players": null,
     "home_venue": null,
@@ -79,16 +67,10 @@
       "website": "www.fmff.mx"
     },
     "coaching_staff": {
-      "assistants": [
-        "Ana Martinez",
-        "Luis Hernandez"
-      ],
+      "assistants": ["Ana Martinez", "Luis Hernandez"],
       "head_coach": "Carlos Rodriguez"
     },
-    "play_style": [
-      "fast_paced",
-      "skill_based"
-    ],
+    "play_style": ["fast_paced", "skill_based"],
     "formation_preferences": null,
     "key_players": null,
     "home_venue": null,

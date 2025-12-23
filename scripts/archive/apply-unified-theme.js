@@ -1,4 +1,3 @@
- 
 // Script to apply unified dark theme design system to all HTML files
 import fs from "fs";
 import { fileURLToPath } from "url";

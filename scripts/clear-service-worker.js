@@ -2,12 +2,12 @@
 
 /**
  * Clear Service Worker and Cache Script
- * 
+ *
  * This script helps clear the service worker and cache for testing purposes.
  * Run this script to reset the service worker state.
  */
 
-console.log('🧹 Clearing Service Worker and Cache...\n');
+console.log("🧹 Clearing Service Worker and Cache...\n");
 
 // Instructions for manual clearing
 const instructions = `
@@ -54,9 +54,9 @@ console.log(instructions);
 console.log(consoleCommands);
 
 // Check if running in browser environment
-if (typeof window !== 'undefined') {
-  console.log('🌐 Running in browser environment...');
-  
+if (typeof window !== "undefined") {
+  console.log("🌐 Running in browser environment...");
+
   // Auto-clear if in browser
   const autoClear = async () => {
     try {
@@ -64,55 +64,56 @@ if (typeof window !== 'undefined') {
       const registrations = await navigator.serviceWorker.getRegistrations();
       for (const registration of registrations) {
         await registration.unregister();
-        console.log('✅ Unregistered service worker:', registration.scope);
+        console.log("✅ Unregistered service worker:", registration.scope);
       }
-      
+
       // Clear caches
-      if ('caches' in window) {
+      if ("caches" in window) {
         const cacheNames = await caches.keys();
         for (const cacheName of cacheNames) {
           await caches.delete(cacheName);
-          console.log('✅ Deleted cache:', cacheName);
+          console.log("✅ Deleted cache:", cacheName);
         }
       }
-      
-      console.log('✅ Service worker and cache cleared successfully!');
-      console.log('🔄 Reloading page...');
-      
+
+      console.log("✅ Service worker and cache cleared successfully!");
+      console.log("🔄 Reloading page...");
+
       // Reload after a short delay
       setTimeout(() => {
         window.location.reload();
       }, 1000);
-      
     } catch (error) {
-      console.error('❌ Error clearing service worker:', error);
+      console.error("❌ Error clearing service worker:", error);
     }
   };
-  
+
   // Run auto-clear
   autoClear();
 } else {
-  console.log('📝 This script is meant to be run in a browser environment.');
-  console.log('💡 Copy the console commands above and run them in your browser console.');
+  console.log("📝 This script is meant to be run in a browser environment.");
+  console.log(
+    "💡 Copy the console commands above and run them in your browser console.",
+  );
 }
 
 // Export for use in other scripts
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     clearServiceWorker: async () => {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         const registrations = await navigator.serviceWorker.getRegistrations();
         for (const registration of registrations) {
           await registration.unregister();
         }
-        
-        if ('caches' in window) {
+
+        if ("caches" in window) {
           const cacheNames = await caches.keys();
           for (const cacheName of cacheNames) {
             await caches.delete(cacheName);
           }
         }
       }
-    }
+    },
   };
-} 
+}

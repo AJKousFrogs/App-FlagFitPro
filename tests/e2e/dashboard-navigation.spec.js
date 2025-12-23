@@ -238,7 +238,7 @@ test.describe("Dashboard Navigation and Core Features", () => {
     // Verify notification center - use correct selectors
     const bell = page.locator("#notification-bell");
     await expect(bell).toBeVisible();
-    
+
     // Open notification panel
     await bell.click();
     const panel = page.locator("#notification-panel");
@@ -246,30 +246,30 @@ test.describe("Dashboard Navigation and Core Features", () => {
 
     // Wait for notifications to load (may be empty, loading, or have items)
     await page.waitForTimeout(1000);
-    
+
     // Check if notifications exist (may be empty)
     const items = page.locator(".notification-item");
     const itemCount = await items.count();
-    
+
     if (itemCount > 0) {
       // Mark notification as read if mark-read button exists
       const markReadBtn = page.locator(".notification-mark-read").first();
-      if (await markReadBtn.count() > 0) {
+      if ((await markReadBtn.count()) > 0) {
         await markReadBtn.click();
         await page.waitForTimeout(500);
-        
+
         // Notification should be marked as read
         await expect(items.first()).toHaveClass(/read/);
       }
 
       // Mark all as read
       const markAllBtn = page.locator(".notification-action-btn");
-      if (await markAllBtn.count() > 0) {
+      if ((await markAllBtn.count()) > 0) {
         await markAllBtn.click();
         await page.waitForTimeout(500);
       }
     }
-    
+
     // Close panel
     await bell.click();
     await expect(panel).not.toHaveClass(/is-open/);

@@ -8,10 +8,7 @@
     "step_order": 1,
     "estimated_duration_days": 3,
     "dependencies": [],
-    "required_resources": [
-      "testing_equipment",
-      "qualified_tester"
-    ],
+    "required_resources": ["testing_equipment", "qualified_tester"],
     "success_criteria": [
       "all_tests_completed",
       "baseline_data_recorded",
@@ -33,13 +30,8 @@
     "step_category": "budget_allocation",
     "step_order": 2,
     "estimated_duration_days": 2,
-    "dependencies": [
-      "Baseline Testing"
-    ],
-    "required_resources": [
-      "financial_resources",
-      "budget_plan"
-    ],
+    "dependencies": ["Baseline Testing"],
+    "required_resources": ["financial_resources", "budget_plan"],
     "success_criteria": [
       "core_tech_purchased",
       "shared_resources_secured",
@@ -61,13 +53,8 @@
     "step_category": "plan_building",
     "step_order": 3,
     "estimated_duration_days": 5,
-    "dependencies": [
-      "Baseline Testing"
-    ],
-    "required_resources": [
-      "nutrition_expertise",
-      "supplement_knowledge"
-    ],
+    "dependencies": ["Baseline Testing"],
+    "required_resources": ["nutrition_expertise", "supplement_knowledge"],
     "success_criteria": [
       "nutrition_templates_created",
       "supplement_checklists_completed",
@@ -89,13 +76,8 @@
     "step_category": "education",
     "step_order": 4,
     "estimated_duration_days": 7,
-    "dependencies": [
-      "Personalized Plan Build"
-    ],
-    "required_resources": [
-      "expert_presenters",
-      "facility_equipment"
-    ],
+    "dependencies": ["Personalized Plan Build"],
+    "required_resources": ["expert_presenters", "facility_equipment"],
     "success_criteria": [
       "clinics_delivered",
       "recordings_created",
@@ -117,13 +99,8 @@
     "step_category": "accountability",
     "step_order": 5,
     "estimated_duration_days": 3,
-    "dependencies": [
-      "Education Blitz"
-    ],
-    "required_resources": [
-      "mentor_coaches",
-      "group_platforms"
-    ],
+    "dependencies": ["Education Blitz"],
+    "required_resources": ["mentor_coaches", "group_platforms"],
     "success_criteria": [
       "groups_formed",
       "check_in_schedule_set",
@@ -145,13 +122,8 @@
     "step_category": "dashboard",
     "step_order": 6,
     "estimated_duration_days": 2,
-    "dependencies": [
-      "Accountability Groups"
-    ],
-    "required_resources": [
-      "dashboard_platform",
-      "data_tracking_tools"
-    ],
+    "dependencies": ["Accountability Groups"],
+    "required_resources": ["dashboard_platform", "data_tracking_tools"],
     "success_criteria": [
       "dashboard_launched",
       "users_trained",

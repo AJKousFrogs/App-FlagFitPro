@@ -7,25 +7,25 @@ import {
   computed,
   ChangeDetectionStrategy,
   inject,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { ChartModule } from 'primeng/chart';
-import { TagModule } from 'primeng/tag';
-import { KnobModule } from 'primeng/knob';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { interval, takeUntil, Subject } from 'rxjs';
-import { ApiService, API_ENDPOINTS } from '../../../core/services/api.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LoggerService } from '../../../core/services/logger.service';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { ChartModule } from "primeng/chart";
+import { TagModule } from "primeng/tag";
+import { KnobModule } from "primeng/knob";
+import { ProgressBarModule } from "primeng/progressbar";
+import { interval, takeUntil, Subject } from "rxjs";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { LoggerService } from "../../../core/services/logger.service";
 
 interface PerformanceMetric {
   id: string;
   label: string;
   value: number;
   unit: string;
-  trend: 'up' | 'down' | 'stable';
+  trend: "up" | "down" | "stable";
   trendValue: number;
   target: number;
   color: string;
@@ -33,7 +33,7 @@ interface PerformanceMetric {
 }
 
 @Component({
-  selector: 'app-performance-dashboard',
+  selector: "app-performance-dashboard",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -49,10 +49,7 @@ interface PerformanceMetric {
     <div class="performance-dashboard">
       <div class="metrics-grid">
         @for (metric of metrics(); track trackByMetricId($index, metric)) {
-          <p-card
-            class="metric-card"
-            [class]="'metric-' + metric.id"
-            >
+          <p-card class="metric-card" [class]="'metric-' + metric.id">
             <div class="metric-header">
               <div class="metric-info">
                 <i [class]="metric.icon" [style.color]="metric.color"></i>
@@ -62,7 +59,7 @@ interface PerformanceMetric {
                 [value]="formatTrend(metric.trend, metric.trendValue)"
                 [severity]="getTrendSeverity(metric.trend)"
                 [icon]="getTrendIcon(metric.trend)"
-                >
+              >
               </p-tag>
             </div>
             <div class="metric-visualization">
@@ -77,7 +74,7 @@ interface PerformanceMetric {
                   [rangeColor]="'#e5e7eb'"
                   [readonly]="true"
                   [showValue]="false"
-                  >
+                >
                 </p-knob>
                 <div class="metric-overlay">
                   <span class="metric-value">{{ metric.value }}</span>
@@ -89,8 +86,8 @@ interface PerformanceMetric {
                 <p-progressBar
                   [value]="(metric.value / metric.target) * 100"
                   [showValue]="false"
-                  [style]="{'--p-progressbar-value-bg': metric.color}"
-                  >
+                  [style]="{ '--p-progressbar-value-bg': metric.color }"
+                >
                 </p-progressBar>
                 <span class="progress-text">
                   {{ metric.value }} / {{ metric.target }} {{ metric.unit }}
@@ -105,24 +102,24 @@ interface PerformanceMetric {
                 [options]="miniChartOptions"
                 [width]="'100%'"
                 [height]="'60px'"
-                >
+              >
               </p-chart>
             </div>
           </p-card>
         }
       </div>
-    
+
       <!-- Performance Summary Chart -->
       <p-card header="Performance Overview" class="performance-summary">
         <p-chart
           type="radar"
           [data]="radarChartData()"
           [options]="radarChartOptions"
-          >
+        >
         </p-chart>
       </p-card>
     </div>
-    `,
+  `,
   styles: [
     `
       .performance-dashboard {
@@ -273,63 +270,63 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
 
   metrics = signal<PerformanceMetric[]>([
     {
-      id: 'speed',
-      label: 'Top Speed',
+      id: "speed",
+      label: "Top Speed",
       value: 18.5,
-      unit: 'mph',
-      trend: 'up',
+      unit: "mph",
+      trend: "up",
       trendValue: 2.1,
       target: 20,
-      color: '#10c96b',
-      icon: 'pi pi-bolt',
+      color: "#10c96b",
+      icon: "pi pi-bolt",
     },
     {
-      id: 'accuracy',
-      label: 'Pass Accuracy',
+      id: "accuracy",
+      label: "Pass Accuracy",
       value: 87.3,
-      unit: '%',
-      trend: 'up',
+      unit: "%",
+      trend: "up",
       trendValue: 5.2,
       target: 90,
-      color: '#f1c40f',
-      icon: 'pi pi-target',
+      color: "#f1c40f",
+      icon: "pi pi-target",
     },
     {
-      id: 'endurance',
-      label: 'Endurance',
+      id: "endurance",
+      label: "Endurance",
       value: 75,
-      unit: 'min',
-      trend: 'stable',
+      unit: "min",
+      trend: "stable",
       trendValue: 0,
       target: 80,
-      color: '#ef4444',
-      icon: 'pi pi-heart',
+      color: "#ef4444",
+      icon: "pi pi-heart",
     },
   ]);
 
   radarChartData = computed(() => ({
-    labels: ['Speed', 'Accuracy', 'Endurance', 'Agility', 'Strength', 'Focus'],
+    labels: ["Speed", "Accuracy", "Endurance", "Agility", "Strength", "Focus"],
     datasets: [
       {
-        label: 'Current',
+        label: "Current",
         data: [
-          this.metrics().find((m) => m.id === 'speed')?.value || 85,
-          this.metrics().find((m) => m.id === 'accuracy')?.value || 87,
-          this.metrics().find((m) => m.id === 'endurance')?.value || 75,
+          this.metrics().find((m) => m.id === "speed")?.value || 85,
+          this.metrics().find((m) => m.id === "accuracy")?.value || 87,
+          this.metrics().find((m) => m.id === "endurance")?.value || 75,
           90,
           78,
           82,
         ],
-        backgroundColor: 'rgba(16, 201, 107, 0.2)',
-        borderColor: '#10c96b',
-        pointBackgroundColor: '#10c96b',
+        backgroundColor: "rgba(16, 201, 107, 0.2)",
+        borderColor: "#10c96b",
+        pointBackgroundColor: "#10c96b",
       },
       {
-        label: 'Target',
+        label: "Target",
         data: [90, 90, 85, 95, 85, 90],
-        backgroundColor: 'rgba(241, 196, 15, 0.2)',
-        borderColor: '#f1c40f',
-        pointBackgroundColor: '#f1c40f',
+        backgroundColor: "rgba(241, 196, 15, 0.2)",
+        borderColor: "#f1c40f",
+        pointBackgroundColor: "#f1c40f",
       },
     ],
   }));
@@ -345,7 +342,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
       },
     },
     plugins: {
-      legend: { position: 'top' as const },
+      legend: { position: "top" as const },
     },
   };
 
@@ -367,7 +364,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadPerformanceMetrics();
-    
+
     if (this.realTimeEnabled()) {
       this.startRealTimeUpdates();
     }
@@ -381,7 +378,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
 
     // Try to load from API
     this.apiService
-      .get('/api/performance/metrics', { athleteId })
+      .get("/api/performance/metrics", { athleteId })
       .pipe(takeUntilDestroyed())
       .subscribe({
         next: (response) => {
@@ -391,7 +388,9 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
         },
         error: () => {
           // Use default mock metrics if API fails
-          this.logger.debug('Performance API not available, using default metrics');
+          this.logger.debug(
+            "Performance API not available, using default metrics",
+          );
         },
       });
   }
@@ -403,13 +402,13 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
           id: m.id || m.metricId,
           label: m.label || m.name,
           value: m.value || m.currentValue,
-          unit: m.unit || '%',
-          trend: m.trend || 'stable',
+          unit: m.unit || "%",
+          trend: m.trend || "stable",
           trendValue: m.trendValue || 0,
           target: m.target || m.goal || 100,
-          color: m.color || '#10c96b',
-          icon: m.icon || 'pi pi-chart-line',
-        }))
+          color: m.color || "#10c96b",
+          icon: m.icon || "pi pi-chart-line",
+        })),
       );
     }
   }
@@ -432,44 +431,43 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
       current.map((metric) => ({
         ...metric,
         value: this.simulateRealTimeValue(metric),
-      }))
+      })),
     );
   }
 
   private simulateRealTimeValue(metric: PerformanceMetric): number {
     const variance = metric.value * 0.05; // 5% variance
     const change = (Math.random() - 0.5) * variance;
-    return Math.max(
-      0,
-      Math.min(metric.target * 1.2, metric.value + change)
-    );
+    return Math.max(0, Math.min(metric.target * 1.2, metric.value + change));
   }
 
   formatTrend(trend: string, value: number): string {
-    if (trend === 'stable') return 'Stable';
-    const sign = trend === 'up' ? '+' : '-';
+    if (trend === "stable") return "Stable";
+    const sign = trend === "up" ? "+" : "-";
     return `${sign}${value.toFixed(1)}%`;
   }
 
-  getTrendSeverity(trend: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  getTrendSeverity(
+    trend: string,
+  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
     switch (trend) {
-      case 'up':
-        return 'success';
-      case 'down':
-        return 'danger';
+      case "up":
+        return "success";
+      case "down":
+        return "danger";
       default:
-        return 'info';
+        return "info";
     }
   }
 
   getTrendIcon(trend: string): string {
     switch (trend) {
-      case 'up':
-        return 'pi pi-arrow-up';
-      case 'down':
-        return 'pi pi-arrow-down';
+      case "up":
+        return "pi pi-arrow-up";
+      case "down":
+        return "pi pi-arrow-down";
       default:
-        return 'pi pi-minus';
+        return "pi pi-minus";
     }
   }
 
@@ -486,7 +484,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
       datasets: [
         {
           data,
-          borderColor: metric?.color || '#10c96b',
+          borderColor: metric?.color || "#10c96b",
           fill: false,
           tension: 0.4,
         },
@@ -498,4 +496,3 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
     return metric.id;
   }
 }
-

@@ -5,26 +5,26 @@
  * Error types for categorization
  */
 const ErrorType = {
-  VALIDATION: 'validation_error',
-  AUTHENTICATION: 'authentication_error',
-  AUTHORIZATION: 'authorization_error',
-  NOT_FOUND: 'not_found',
-  CONFLICT: 'conflict',
-  RATE_LIMIT: 'rate_limit_exceeded',
-  SERVER: 'server_error',
-  DATABASE: 'database_error',
-  NETWORK: 'network_error',
-  UNKNOWN: 'unknown_error'
+  VALIDATION: "validation_error",
+  AUTHENTICATION: "authentication_error",
+  AUTHORIZATION: "authorization_error",
+  NOT_FOUND: "not_found",
+  CONFLICT: "conflict",
+  RATE_LIMIT: "rate_limit_exceeded",
+  SERVER: "server_error",
+  DATABASE: "database_error",
+  NETWORK: "network_error",
+  UNKNOWN: "unknown_error",
 };
 
 /**
  * Standard CORS headers
  */
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Content-Type': 'application/json'
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Content-Type": "application/json",
 };
 
 /**
@@ -35,12 +35,21 @@ const CORS_HEADERS = {
  * @param {object} additionalData - Additional data to include
  * @returns {object} Netlify function response
  */
-function createErrorResponse(error, statusCode = 500, errorType = ErrorType.UNKNOWN, additionalData = {}) {
+function createErrorResponse(
+  error,
+  statusCode = 500,
+  errorType = ErrorType.UNKNOWN,
+  additionalData = {},
+) {
   const errorMessage = error instanceof Error ? error.message : error;
   const timestamp = new Date().toISOString();
 
   // Log the error
-  console.error(`[${errorType}] ${statusCode}:`, errorMessage, error.stack || '');
+  console.error(
+    `[${errorType}] ${statusCode}:`,
+    errorMessage,
+    error.stack || "",
+  );
 
   return {
     statusCode,
@@ -50,8 +59,8 @@ function createErrorResponse(error, statusCode = 500, errorType = ErrorType.UNKN
       error: errorMessage,
       errorType,
       timestamp,
-      ...additionalData
-    })
+      ...additionalData,
+    }),
   };
 }
 
@@ -65,7 +74,7 @@ function createErrorResponse(error, statusCode = 500, errorType = ErrorType.UNKN
 function createSuccessResponse(data, statusCode = 200, message = null) {
   const response = {
     success: true,
-    data
+    data,
   };
 
   if (message) {
@@ -75,7 +84,7 @@ function createSuccessResponse(data, statusCode = 200, message = null) {
   return {
     statusCode,
     headers: CORS_HEADERS,
-    body: JSON.stringify(response)
+    body: JSON.stringify(response),
   };
 }
 
@@ -84,7 +93,7 @@ function createSuccessResponse(data, statusCode = 200, message = null) {
  * @param {string} message - Error message
  * @returns {object} 401 response
  */
-function handleAuthenticationError(message = 'Authentication required') {
+function handleAuthenticationError(message = "Authentication required") {
   return createErrorResponse(message, 401, ErrorType.AUTHENTICATION);
 }
 
@@ -93,7 +102,7 @@ function handleAuthenticationError(message = 'Authentication required') {
  * @param {string} message - Error message
  * @returns {object} 403 response
  */
-function handleAuthorizationError(message = 'Permission denied') {
+function handleAuthorizationError(message = "Permission denied") {
   return createErrorResponse(message, 403, ErrorType.AUTHORIZATION);
 }
 
@@ -103,9 +112,9 @@ function handleAuthorizationError(message = 'Permission denied') {
  * @returns {object} 400 response
  */
 function handleValidationError(errors) {
-  const errorMessage = Array.isArray(errors) ? errors.join(', ') : errors;
+  const errorMessage = Array.isArray(errors) ? errors.join(", ") : errors;
   return createErrorResponse(errorMessage, 400, ErrorType.VALIDATION, {
-    errors: Array.isArray(errors) ? errors : [errors]
+    errors: Array.isArray(errors) ? errors : [errors],
   });
 }
 
@@ -114,7 +123,7 @@ function handleValidationError(errors) {
  * @param {string} resource - Resource that wasn't found
  * @returns {object} 404 response
  */
-function handleNotFoundError(resource = 'Resource') {
+function handleNotFoundError(resource = "Resource") {
   return createErrorResponse(`${resource} not found`, 404, ErrorType.NOT_FOUND);
 }
 
@@ -123,7 +132,7 @@ function handleNotFoundError(resource = 'Resource') {
  * @param {string} message - Error message
  * @returns {object} 409 response
  */
-function handleConflictError(message = 'Resource already exists') {
+function handleConflictError(message = "Resource already exists") {
   return createErrorResponse(message, 409, ErrorType.CONFLICT);
 }
 
@@ -133,12 +142,12 @@ function handleConflictError(message = 'Resource already exists') {
  * @param {string} context - Error context
  * @returns {object} 500 response
  */
-function handleDatabaseError(error, context = 'Database operation') {
+function handleDatabaseError(error, context = "Database operation") {
   console.error(`[Database Error] ${context}:`, error);
   return createErrorResponse(
-    'A database error occurred. Please try again later.',
+    "A database error occurred. Please try again later.",
     500,
-    ErrorType.DATABASE
+    ErrorType.DATABASE,
   );
 }
 
@@ -148,7 +157,7 @@ function handleDatabaseError(error, context = 'Database operation') {
  * @param {string} context - Error context
  * @returns {object} 500 response
  */
-function handleServerError(error, context = 'Operation') {
+function handleServerError(error, context = "Operation") {
   console.error(`[Server Error] ${context}:`, error);
   console.error(`[Server Error] Stack:`, error.stack);
   console.error(`[Server Error] Details:`, {
@@ -158,12 +167,15 @@ function handleServerError(error, context = 'Operation') {
     details: error.details,
     hint: error.hint,
   });
-  
+
   // Check if this is a development environment
-  const isDevelopment = process.env.NETLIFY_DEV === 'true' || process.env.NODE_ENV === 'development';
-  
+  const isDevelopment =
+    process.env.NETLIFY_DEV === "true" ||
+    process.env.NODE_ENV === "development";
+
   // Provide more detailed error messages in development
-  let errorMessage = 'An internal server error occurred. Please try again later.';
+  let errorMessage =
+    "An internal server error occurred. Please try again later.";
   if (isDevelopment) {
     errorMessage = error.message || errorMessage;
     if (error.details) {
@@ -173,17 +185,19 @@ function handleServerError(error, context = 'Operation') {
       errorMessage += ` Hint: ${error.hint}`;
     }
   }
-  
+
   return createErrorResponse(
     errorMessage,
     500,
     ErrorType.SERVER,
-    isDevelopment ? {
-      originalError: error.message,
-      code: error.code,
-      details: error.details,
-      hint: error.hint,
-    } : {}
+    isDevelopment
+      ? {
+          originalError: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+        }
+      : {},
   );
 }
 
@@ -193,7 +207,7 @@ function handleServerError(error, context = 'Operation') {
  * @param {string} context - Context for error logging
  * @returns {function} Wrapped handler
  */
-function withErrorHandling(handler, context = 'Function') {
+function withErrorHandling(handler, context = "Function") {
   return async (event, ...args) => {
     try {
       return await handler(event, ...args);
@@ -201,14 +215,18 @@ function withErrorHandling(handler, context = 'Function') {
       console.error(`[${context}] Unhandled error:`, error);
 
       // Categorize and handle different error types
-      if (error.code === 'PGRST116' || error.message?.includes('not found')) {
+      if (error.code === "PGRST116" || error.message?.includes("not found")) {
         return handleNotFoundError();
-      } else if (error.code?.startsWith('23')) {
+      } else if (error.code?.startsWith("23")) {
         // PostgreSQL constraint violations
         return handleDatabaseError(error, context);
       } else if (error.statusCode) {
         // Error with status code
-        return createErrorResponse(error.message, error.statusCode, ErrorType.UNKNOWN);
+        return createErrorResponse(
+          error.message,
+          error.statusCode,
+          ErrorType.UNKNOWN,
+        );
       }
 
       // Default server error
@@ -223,7 +241,7 @@ function withErrorHandling(handler, context = 'Function') {
  * @param {string} context - Error context
  * @returns {Promise<object>} Response object
  */
-async function tryCatch(operation, context = 'Operation') {
+async function tryCatch(operation, context = "Operation") {
   try {
     const result = await operation();
     return { success: true, data: result };
@@ -231,8 +249,8 @@ async function tryCatch(operation, context = 'Operation') {
     console.error(`[${context}] Error:`, error);
     return {
       success: false,
-      error: error.message || 'Operation failed',
-      errorType: ErrorType.UNKNOWN
+      error: error.message || "Operation failed",
+      errorType: ErrorType.UNKNOWN,
     };
   }
 }
@@ -247,10 +265,10 @@ async function tryCatch(operation, context = 'Operation') {
 function validateJWT(event, jwt, secret) {
   const authHeader = event.headers.authorization || event.headers.Authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return {
       success: false,
-      error: handleAuthenticationError('Authorization token required')
+      error: handleAuthenticationError("Authorization token required"),
     };
   }
 
@@ -258,13 +276,13 @@ function validateJWT(event, jwt, secret) {
 
   try {
     const decoded = jwt.verify(token, secret);
-     
+
     return { success: true, decoded };
   } catch (jwtError) {
-    console.error('[JWT Validation] Error:', jwtError.message);
+    console.error("[JWT Validation] Error:", jwtError.message);
     return {
       success: false,
-      error: handleAuthenticationError('Invalid or expired token')
+      error: handleAuthenticationError("Invalid or expired token"),
     };
   }
 }
@@ -275,7 +293,10 @@ function validateJWT(event, jwt, secret) {
  * @param {object} event - Netlify function event
  */
 function logFunctionCall(functionName, event) {
-  const ip = (event.headers && event.headers['x-forwarded-for']) || (event.headers && event.headers['X-Forwarded-For']) || 'unknown';
+  const ip =
+    (event.headers && event.headers["x-forwarded-for"]) ||
+    (event.headers && event.headers["X-Forwarded-For"]) ||
+    "unknown";
   console.log(`[${functionName}] ${event.httpMethod} request from ${ip}`);
 }
 
@@ -295,5 +316,5 @@ module.exports = {
   withErrorHandling,
   tryCatch,
   validateJWT,
-  logFunctionCall
+  logFunctionCall,
 };

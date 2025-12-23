@@ -12,11 +12,13 @@ For analyzing features and functionalities in FlagFit Pro, use a **two-phase hyb
 ## Phase 1: Comprehensive Overview (Start Here)
 
 ### Purpose
+
 Understand the **entire system architecture**, feature relationships, dependencies, and data flow before diving into individual features.
 
 ### What to Map
 
 #### 1. **Feature Inventory**
+
 Create a master list of all features:
 
 ```typescript
@@ -47,6 +49,7 @@ Features:
 ```
 
 #### 2. **Service Dependencies Map**
+
 Identify which services each feature uses:
 
 ```bash
@@ -64,11 +67,13 @@ core/services/
 ```
 
 #### 3. **Data Flow Analysis**
+
 - Where does data originate? (API endpoints, database)
 - How does data flow between features?
 - What shared state exists?
 
 #### 4. **Component Hierarchy**
+
 - Shared components vs feature-specific components
 - Component reusability patterns
 
@@ -91,6 +96,7 @@ cat src/app/app.routes.ts | grep -E "path:|loadComponent:"
 ## Phase 2: Deep-Dive Feature-by-Feature
 
 ### Purpose
+
 Understand **detailed functionality**, user flows, edge cases, and implementation specifics for each feature.
 
 ### Analysis Template (Use for Each Feature)
@@ -98,12 +104,14 @@ Understand **detailed functionality**, user flows, edge cases, and implementatio
 #### Feature: `[Feature Name]`
 
 **1. Entry Points**
+
 - Route: `/feature-name`
 - Component: `FeatureComponent`
 - Guards: `[authGuard, headerConfigGuard]`
 - Resolvers: `[prefetchResolver]` (if any)
 
 **2. Component Structure**
+
 ```
 features/[feature-name]/
 ├── [feature-name].component.ts    # Main component
@@ -113,11 +121,13 @@ features/[feature-name]/
 ```
 
 **3. Dependencies**
+
 - **Services Used**: List all services imported
 - **Shared Components**: List reusable components
 - **Models/Interfaces**: Data structures used
 
 **4. Functionality Breakdown**
+
 - **Primary Functions**: What does this feature do?
 - **User Actions**: What can users do here?
 - **Data Operations**: CRUD operations performed
@@ -125,27 +135,31 @@ features/[feature-name]/
 - **State Management**: How state is managed (Signals, RxJS, etc.)
 
 **5. User Flows**
+
 ```
 User Flow 1: [Description]
-1. User action → 
-2. Component method → 
-3. Service call → 
-4. API request → 
-5. Response handling → 
+1. User action →
+2. Component method →
+3. Service call →
+4. API request →
+5. Response handling →
 6. UI update
 ```
 
 **6. Edge Cases & Error Handling**
+
 - What happens on API failures?
 - Validation rules
 - Loading states
 - Empty states
 
 **7. Integration Points**
+
 - Which other features does this connect to?
 - Shared data or state?
 
 **8. Legacy Code Mapping**
+
 - Corresponding HTML file: `[feature-name].html`
 - Legacy JS files: `src/js/pages/[feature-name].js`
 - Migration status: ✅ Complete / 🚧 In Progress / ❌ Not Started
@@ -216,6 +230,7 @@ Use this matrix to prioritize feature analysis based on **Impact** and **Depende
 ### 🔴 CRITICAL Priority (Analyze FIRST)
 
 **HIGH IMPACT + HIGH DEPENDENCY:**
+
 1. **Auth Service** → Blocks ALL features
    - Impact: All users affected
    - Dependency: Used by 15+ routes
@@ -236,19 +251,19 @@ Use this matrix to prioritize feature analysis based on **Impact** and **Depende
    - Dependency: Used by Training, Dashboard, Analytics
    - Issues: Calculation accuracy critical
 
-**HIGH IMPACT + LOW DEPENDENCY:**
-5. **Missing PrimeNG Modules** → Blocks 9 components
-   - Impact: Components won't compile
-   - Dependency: Can fix in isolation
-   - Issues: `dropdown`, `tabview`, `calendar`, etc.
+**HIGH IMPACT + LOW DEPENDENCY:** 5. **Missing PrimeNG Modules** → Blocks 9 components
+
+- Impact: Components won't compile
+- Dependency: Can fix in isolation
+- Issues: `dropdown`, `tabview`, `calendar`, etc.
 
 ### 🟡 IMPORTANT Priority (Analyze SECOND)
 
-**HIGH IMPACT + HIGH DEPENDENCY:**
-6. **Training** → Core feature
-   - Impact: Primary training functionality
-   - Dependency: Uses ACWR, Analytics, Performance Data
-   - Issues: Plan persistence, complex logic
+**HIGH IMPACT + HIGH DEPENDENCY:** 6. **Training** → Core feature
+
+- Impact: Primary training functionality
+- Dependency: Uses ACWR, Analytics, Performance Data
+- Issues: Plan persistence, complex logic
 
 7. **Analytics** → Data visualization
    - Impact: Critical for insights
@@ -265,11 +280,7 @@ Use this matrix to prioritize feature analysis based on **Impact** and **Depende
    - Dependency: Uses Analytics, Stats services
    - Issues: Real-time sync, data accuracy
 
-**HIGH IMPACT + LOW DEPENDENCY:**
-10. **Error Handling** → Reliability
-    - Impact: Improves app stability
-    - Dependency: Can fix incrementally
-    - Issues: 18+ backend functions incomplete
+**HIGH IMPACT + LOW DEPENDENCY:** 10. **Error Handling** → Reliability - Impact: Improves app stability - Dependency: Can fix incrementally - Issues: 18+ backend functions incomplete
 
 11. **Security Fixes** → Security hardening
     - Impact: Security vulnerabilities
@@ -278,27 +289,16 @@ Use this matrix to prioritize feature analysis based on **Impact** and **Depende
 
 ### 🟢 NICE-TO-HAVE Priority (Defer)
 
-**LOW IMPACT + HIGH DEPENDENCY:**
-12. **Community** → Social features
-13. **Chat** → Communication
-14. **Tournaments** → Event management
-15. **Roster** → Team management
-16. **Wellness** → Health tracking
-17. **Exercise Library** → Reference data
-18. **Workout** → Session management
-19. **Coach** → Coaching tools
-20. **Profile/Settings** → User management
+**LOW IMPACT + HIGH DEPENDENCY:** 12. **Community** → Social features 13. **Chat** → Communication 14. **Tournaments** → Event management 15. **Roster** → Team management 16. **Wellness** → Health tracking 17. **Exercise Library** → Reference data 18. **Workout** → Session management 19. **Coach** → Coaching tools 20. **Profile/Settings** → User management
 
-**LOW IMPACT + LOW DEPENDENCY:**
-21. **HTML Inconsistencies** → 1094+ inline styles
-22. **Design System** → Font mixing, class naming
-23. **UX Polish** → Loading spinners, time displays
+**LOW IMPACT + LOW DEPENDENCY:** 21. **HTML Inconsistencies** → 1094+ inline styles 22. **Design System** → Font mixing, class naming 23. **UX Polish** → Loading spinners, time displays
 
 ---
 
 ## Analysis Tools & Commands
 
 ### Quick Feature Overview
+
 ```bash
 # See all features at once
 cd angular/src/app/features
@@ -309,6 +309,7 @@ for dir in */; do echo "$dir: $(find "$dir" -name "*.component.ts" | wc -l) comp
 ```
 
 ### Service Usage Analysis
+
 ```bash
 # Find which features use a specific service
 grep -r "AcwrService" angular/src/app/features --include="*.ts"
@@ -318,12 +319,14 @@ grep -r "import.*Service" angular/src/app/features/training --include="*.ts"
 ```
 
 ### API Endpoint Mapping
+
 ```bash
 # Find all API calls in a feature
 grep -r "api\." angular/src/app/features/training --include="*.ts" | grep -o "api\.[a-zA-Z]*" | sort | uniq
 ```
 
 ### Component Dependencies
+
 ```bash
 # See component imports
 grep -r "import.*Component" angular/src/app/features/training --include="*.ts"
@@ -335,51 +338,65 @@ grep -r "import.*Component" angular/src/app/features/training --include="*.ts"
 
 For each feature, create a markdown file:
 
-```markdown
+````markdown
 # Feature: [Feature Name]
 
 ## Overview
+
 [Brief description]
 
 ## Entry Points
+
 - Route: `/feature-name`
 - Component: `FeatureComponent`
 - Guards: `[list]`
 
 ## Dependencies
+
 ### Services
+
 - `ServiceName` - [purpose]
 
 ### Components
+
 - `ComponentName` - [purpose]
 
 ## Functionality
+
 ### Primary Functions
+
 1. [Function 1]
 2. [Function 2]
 
 ### User Flows
+
 [Flow descriptions]
 
 ## API Endpoints
+
 - `GET /api/endpoint` - [purpose]
 - `POST /api/endpoint` - [purpose]
 
 ## Data Models
+
 ```typescript
 interface FeatureData {
   // structure
 }
 ```
+````
 
 ## Integration Points
+
 - Connects to: [other features]
 - Shared state: [description]
 
 ## Legacy Mapping
+
 - HTML: `[file].html`
 - JS: `src/js/pages/[file].js`
 - Status: [migration status]
+
 ```
 
 ---
@@ -515,10 +532,12 @@ interface FeatureData {
 ### Step 3: Assign Priority
 
 ```
-HIGH IMPACT + HIGH DEPENDENCY  → 🔴 CRITICAL (Fix FIRST)
-HIGH IMPACT + LOW DEPENDENCY   → 🔴 CRITICAL (Fix FIRST)
-LOW IMPACT + HIGH DEPENDENCY   → 🟡 IMPORTANT (Fix SECOND)
-LOW IMPACT + LOW DEPENDENCY    → 🟢 NICE-TO-HAVE (Defer)
+
+HIGH IMPACT + HIGH DEPENDENCY → 🔴 CRITICAL (Fix FIRST)
+HIGH IMPACT + LOW DEPENDENCY → 🔴 CRITICAL (Fix FIRST)
+LOW IMPACT + HIGH DEPENDENCY → 🟡 IMPORTANT (Fix SECOND)
+LOW IMPACT + LOW DEPENDENCY → 🟢 NICE-TO-HAVE (Defer)
+
 ```
 
 ### Example: Analyzing "Training" Feature
@@ -601,22 +620,24 @@ Based on the 3D Decision Matrix, here's a phased approach to fixing critical iss
 - Badge count is the only visual signal that notifications exist
 - All three are low-dependency: fixing them doesn't require changes elsewhere
 
-**Total Phase 1 effort**: ~10-15 hours  
+**Total Phase 1 effort**: ~10-15 hours
 **Expected payoff**: Core system reliability restored; users trust the app again
 
 #### Quick Wins Sequence (Do First in Phase 1):
 
 ```
-Hour 1-2:   Fix markNotificationAsRead() to call API
-            ↓ (Quick because notifications.cjs endpoint exists)
 
-Hour 3-4:   Fix markAllAsRead() to call API (or add bulk endpoint)
-            ↓ (Unblock UI layer)
+Hour 1-2: Fix markNotificationAsRead() to call API
+↓ (Quick because notifications.cjs endpoint exists)
 
-Hour 5-6:   Implement getNotificationCount() in top-bar.js
-            ↓ (Connect to API endpoint you just verified works)
+Hour 3-4: Fix markAllAsRead() to call API (or add bulk endpoint)
+↓ (Unblock UI layer)
 
-Result:     Users see notifications persist, badge shows real count
+Hour 5-6: Implement getNotificationCount() in top-bar.js
+↓ (Connect to API endpoint you just verified works)
+
+Result: Users see notifications persist, badge shows real count
+
 ```
 
 **Why this sequencing**: Each step is 1-2 hours, and completing one unblocks the next—you get fast feedback and momentum.
@@ -624,15 +645,17 @@ Result:     Users see notifications persist, badge shows real count
 #### Then Move to ACWR:
 
 ```
-Hour 7-10:  Add EvidenceConfig to acwr.service.ts
-            ↓ (Makes thresholds explicit; no logic changes yet)
+
+Hour 7-10: Add EvidenceConfig to acwr.service.ts
+↓ (Makes thresholds explicit; no logic changes yet)
 
 Hour 11-14: Add minChronicLoad guardrail & data quality flags
-            ↓ (Defensive; catches edge cases)
+↓ (Defensive; catches edge cases)
 
 Hour 15-17: Align readiness.service.ts weighting with literature
 
-Result:     System is still behaving the same, but now defensible
+Result: System is still behaving the same, but now defensible
+
 ```
 
 ---
@@ -653,7 +676,7 @@ Result:     System is still behaving the same, but now defensible
 - ACWR and readiness are used by everything—fixing them unblocks multiple downstream features
 - Training plan persistence is a hidden blocker—users don't see it fail, but coaches will
 
-**Total Phase 2 effort**: ~22-30 hours  
+**Total Phase 2 effort**: ~22-30 hours
 **Expected payoff**: Services become reliable foundations; subsequent features have fewer surprises
 
 ---
@@ -675,7 +698,7 @@ Result:     System is still behaving the same, but now defensible
 - Now you add tests and docs so Phase 1–2 fixes don't regress
 - Users notice UX polish, but it's less critical than "does it work?"
 
-**Total Phase 3 effort**: ~16-22 hours  
+**Total Phase 3 effort**: ~16-22 hours
 **Expected payoff**: System is reliable, tested, and documented
 
 ---
@@ -685,6 +708,7 @@ Result:     System is still behaving the same, but now defensible
 Use this quadrant for your team's next planning meeting:
 
 ```
+
          LOW EFFORT ← → HIGH EFFORT
                 ↑
           HIGH      │  ✅ DO FIRST    │  ⚠️  DO LATER
@@ -693,6 +717,7 @@ Use this quadrant for your team's next planning meeting:
           LOW       │  🟢 DO LAST    │  ❌ DEFER
          IMPACT     │  (Polish)      │  (Low ROI)
                 ↓
+
 ```
 
 **For FlagFit Pro:**
@@ -763,3 +788,4 @@ Would you like me to help you:
 - Create dependency graphs showing relationships?
 - Begin implementing Phase 1 fixes (notifications + ACWR)?
 
+```

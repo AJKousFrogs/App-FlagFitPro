@@ -7,10 +7,7 @@
     "evidence_level": "high",
     "implementation_duration_weeks": 4,
     "daily_digital_time_limit_hours": "6.00",
-    "screen_free_blocks_hours": [
-      2,
-      1.5
-    ],
+    "screen_free_blocks_hours": [2, 1.5],
     "app_usage_restrictions": null,
     "notification_management": null,
     "digital_detox_periods": null,
@@ -44,11 +41,7 @@
     "evidence_level": "high",
     "implementation_duration_weeks": 6,
     "daily_digital_time_limit_hours": "5.00",
-    "screen_free_blocks_hours": [
-      3,
-      2,
-      1
-    ],
+    "screen_free_blocks_hours": [3, 2, 1],
     "app_usage_restrictions": null,
     "notification_management": null,
     "digital_detox_periods": null,
@@ -82,11 +75,7 @@
     "evidence_level": "medium",
     "implementation_duration_weeks": 3,
     "daily_digital_time_limit_hours": "4.00",
-    "screen_free_blocks_hours": [
-      4,
-      3,
-      2
-    ],
+    "screen_free_blocks_hours": [4, 3, 2],
     "app_usage_restrictions": null,
     "notification_management": null,
     "digital_detox_periods": null,
@@ -120,10 +109,7 @@
     "evidence_level": "high",
     "implementation_duration_weeks": 4,
     "daily_digital_time_limit_hours": "6.00",
-    "screen_free_blocks_hours": [
-      2,
-      1.5
-    ],
+    "screen_free_blocks_hours": [2, 1.5],
     "app_usage_restrictions": null,
     "notification_management": null,
     "digital_detox_periods": null,
@@ -157,11 +143,7 @@
     "evidence_level": "high",
     "implementation_duration_weeks": 6,
     "daily_digital_time_limit_hours": "5.00",
-    "screen_free_blocks_hours": [
-      3,
-      2,
-      1
-    ],
+    "screen_free_blocks_hours": [3, 2, 1],
     "app_usage_restrictions": null,
     "notification_management": null,
     "digital_detox_periods": null,
@@ -195,11 +177,7 @@
     "evidence_level": "medium",
     "implementation_duration_weeks": 3,
     "daily_digital_time_limit_hours": "4.00",
-    "screen_free_blocks_hours": [
-      4,
-      3,
-      2
-    ],
+    "screen_free_blocks_hours": [4, 3, 2],
     "app_usage_restrictions": null,
     "notification_management": null,
     "digital_detox_periods": null,

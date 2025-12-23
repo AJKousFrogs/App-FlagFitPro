@@ -62,12 +62,12 @@ FlagFit Pro implements comprehensive security measures to protect user data and 
 
 ### Security Components
 
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| **Sanitization** | `src/js/utils/sanitize.js` | XSS prevention, HTML escaping |
+| Component           | Location                             | Purpose                              |
+| ------------------- | ------------------------------------ | ------------------------------------ |
+| **Sanitization**    | `src/js/utils/sanitize.js`           | XSS prevention, HTML escaping        |
 | **CSRF Protection** | `src/js/security/csrf-protection.js` | CSRF token generation and validation |
-| **Validation** | `src/js/utils/validation.js` | Input validation and sanitization |
-| **Error Handling** | `src/js/utils/error-handling.js` | Secure error handling |
+| **Validation**      | `src/js/utils/validation.js`         | Input validation and sanitization    |
+| **Error Handling**  | `src/js/utils/error-handling.js`     | Secure error handling                |
 
 ---
 
@@ -84,13 +84,14 @@ Cross-Site Scripting (XSS) is prevented through comprehensive input sanitization
 All user-generated content is escaped before insertion into the DOM:
 
 ```javascript
-import { escapeHtml } from './utils/sanitize.js';
+import { escapeHtml } from "./utils/sanitize.js";
 
 // SAFE: Escape user input
 element.innerHTML = escapeHtml(userInput);
 ```
 
 **Escaped Characters:**
+
 - `&` → `&amp;`
 - `<` → `&lt;`
 - `>` → `&gt;`
@@ -103,13 +104,14 @@ element.innerHTML = escapeHtml(userInput);
 URLs are validated to prevent `javascript:`, `data:`, and other dangerous protocols:
 
 ```javascript
-import { sanitizeUrl } from './utils/sanitize.js';
+import { sanitizeUrl } from "./utils/sanitize.js";
 
 // SAFE: Only allows safe protocols (https, mailto, tel, sms)
 link.href = sanitizeUrl(userProvidedUrl);
 ```
 
 **Allowed Protocols:**
+
 - `https://`
 - `http://`
 - `mailto:`
@@ -117,6 +119,7 @@ link.href = sanitizeUrl(userProvidedUrl);
 - `sms:`
 
 **Blocked Protocols:**
+
 - `javascript:`
 - `data:`
 - `vbscript:`
@@ -127,14 +130,18 @@ link.href = sanitizeUrl(userProvidedUrl);
 The safest approach is creating actual DOM elements instead of HTML strings:
 
 ```javascript
-import { createSafeElement } from './utils/sanitize.js';
+import { createSafeElement } from "./utils/sanitize.js";
 
 // SAFE: Creates DOM element with automatic sanitization
-const userCard = createSafeElement('div', {
-  class: 'user-card',
-  id: `user-${userId}`,
-  href: sanitizeUrl(userWebsite) // Auto-sanitized for href/src
-}, userName); // Text content is safely set
+const userCard = createSafeElement(
+  "div",
+  {
+    class: "user-card",
+    id: `user-${userId}`,
+    href: sanitizeUrl(userWebsite), // Auto-sanitized for href/src
+  },
+  userName,
+); // Text content is safely set
 ```
 
 #### 4. Rich Text Sanitization
@@ -142,13 +149,14 @@ const userCard = createSafeElement('div', {
 For limited rich text (bold, italic, links):
 
 ```javascript
-import { sanitizeRichText } from './utils/sanitize.js';
+import { sanitizeRichText } from "./utils/sanitize.js";
 
 // SAFE: Allows only specific safe tags
 element.innerHTML = sanitizeRichText(userContent);
 ```
 
 **Allowed Tags:**
+
 - `<b>`, `<strong>` (bold)
 - `<i>`, `<em>` (italic)
 - `<br>` (line break)
@@ -168,7 +176,7 @@ element.textContent = userName;
 element.innerHTML = escapeHtml(userName);
 
 // ✅ SAFE - Option 3: Create safe element
-const nameElement = createSafeElement('span', { class: 'user-name' }, userName);
+const nameElement = createSafeElement("span", { class: "user-name" }, userName);
 container.appendChild(nameElement);
 ```
 
@@ -207,7 +215,7 @@ Cross-Site Request Forgery (CSRF) protection is implemented using cryptographica
 CSRF tokens are automatically generated on application initialization:
 
 ```javascript
-import csrfProtection from './security/csrf-protection.js';
+import csrfProtection from "./security/csrf-protection.js";
 
 // Token is automatically generated using Web Crypto API
 // 32-byte cryptographically secure random token
@@ -220,14 +228,14 @@ import csrfProtection from './security/csrf-protection.js';
 ```javascript
 // Automatic token addition to fetch requests
 const options = csrfProtection.addTokenToRequest({
-  method: 'POST',
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json'
+    "Content-Type": "application/json",
   },
-  body: JSON.stringify(data)
+  body: JSON.stringify(data),
 });
 
-fetch('/api/endpoint', options);
+fetch("/api/endpoint", options);
 ```
 
 **Form Data:**
@@ -235,12 +243,12 @@ fetch('/api/endpoint', options);
 ```javascript
 // Add to FormData
 const formData = new FormData();
-formData.append('name', userName);
+formData.append("name", userName);
 csrfProtection.addTokenToFormData(formData);
 
-fetch('/api/upload', {
-  method: 'POST',
-  body: formData
+fetch("/api/upload", {
+  method: "POST",
+  body: formData,
 });
 ```
 
@@ -249,9 +257,7 @@ fetch('/api/upload', {
 ```html
 <!-- Add meta tag to page head -->
 <script>
-  document.head.insertAdjacentHTML('beforeend',
-    csrfProtection.getMetaTag()
-  );
+  document.head.insertAdjacentHTML("beforeend", csrfProtection.getMetaTag());
 </script>
 ```
 
@@ -283,12 +289,12 @@ csrfProtection.clearToken();
 ```javascript
 async function saveWellnessData(data) {
   const options = csrfProtection.addTokenToRequest({
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
   });
 
-  const response = await fetch('/api/wellness', options);
+  const response = await fetch("/api/wellness", options);
   return response.json();
 }
 ```
@@ -299,7 +305,7 @@ async function saveWellnessData(data) {
 function makeRequest(method, url, data) {
   let options = {
     method,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { "Content-Type": "application/json" },
   };
 
   // Only add CSRF token for state-changing methods
@@ -320,12 +326,12 @@ function makeRequest(method, url, data) {
 ```javascript
 // Server-side validation example
 function validateCSRFToken(req, res, next) {
-  const token = req.headers['x-csrf-token'];
+  const token = req.headers["x-csrf-token"];
   const sessionToken = req.session.csrfToken;
 
   // Use constant-time comparison
   if (!token || !csrfProtection.validateToken(token, sessionToken)) {
-    return res.status(403).json({ error: 'Invalid CSRF token' });
+    return res.status(403).json({ error: "Invalid CSRF token" });
   }
 
   next();
@@ -354,28 +360,28 @@ All user inputs are validated and sanitized before processing to prevent injecti
 **Note:** For XSS prevention, use `escapeHtml()` from `sanitize.js`. The function below is for format normalization only.
 
 ```javascript
-import { normalizeInput } from './utils/validation.js';
+import { normalizeInput } from "./utils/validation.js";
 
 // Text input
-const cleanText = normalizeInput(userInput, 'text');
+const cleanText = normalizeInput(userInput, "text");
 
 // Email
-const cleanEmail = normalizeInput(userEmail, 'email'); // Lowercase
+const cleanEmail = normalizeInput(userEmail, "email"); // Lowercase
 
 // Number
-const cleanNumber = normalizeInput(userNumber, 'number'); // Only digits and ./-
+const cleanNumber = normalizeInput(userNumber, "number"); // Only digits and ./-
 
 // Phone
-const cleanPhone = normalizeInput(userPhone, 'phone'); // Only digits and ()+-
+const cleanPhone = normalizeInput(userPhone, "phone"); // Only digits and ()+-
 
 // Alphanumeric
-const cleanCode = normalizeInput(userCode, 'alphanumeric'); // Only a-z, A-Z, 0-9
+const cleanCode = normalizeInput(userCode, "alphanumeric"); // Only a-z, A-Z, 0-9
 ```
 
 #### 2. Validation with Sanitization
 
 ```javascript
-import { Validators } from './utils/validation.js';
+import { Validators } from "./utils/validation.js";
 
 // Email validation
 const emailError = Validators.email(userEmail);
@@ -390,7 +396,7 @@ if (passwordError) {
 }
 
 // Length validation
-const nameError = Validators.length(userName, 2, 100, 'Name');
+const nameError = Validators.length(userName, 2, 100, "Name");
 if (nameError) {
   showError(nameError);
 }
@@ -421,22 +427,21 @@ exec(`convert ${userFilename} output.jpg`);
 // Path Traversal vector
 fs.readFile(`./uploads/${userFilename}`);
 
-
 // ✅ SAFE ALTERNATIVES
 
 // Use parameterized queries
-const query = 'SELECT * FROM users WHERE id = $1';
+const query = "SELECT * FROM users WHERE id = $1";
 db.query(query, [userId]);
 
 // Escape or use textContent
 element.textContent = userInput;
 
 // Validate filename
-const safeName = userFilename.replace(/[^a-zA-Z0-9.-]/g, '');
+const safeName = userFilename.replace(/[^a-zA-Z0-9.-]/g, "");
 exec(`convert "${safeName}" output.jpg`);
 
 // Validate path components
-const safePath = path.join('./uploads', path.basename(userFilename));
+const safePath = path.join("./uploads", path.basename(userFilename));
 fs.readFile(safePath);
 ```
 
@@ -451,9 +456,9 @@ fs.readFile(safePath);
 ```javascript
 // From app-constants.js
 export const AUTH = {
-  SESSION_TIMEOUT: 2 * 60 * 60 * 1000,        // 2 hours
-  SESSION_WARNING_TIME: 5 * 60 * 1000,        // 5 min warning
-  TOKEN_REFRESH_THRESHOLD: 5 * 60 * 1000      // 5 min before expiry
+  SESSION_TIMEOUT: 2 * 60 * 60 * 1000, // 2 hours
+  SESSION_WARNING_TIME: 5 * 60 * 1000, // 5 min warning
+  TOKEN_REFRESH_THRESHOLD: 5 * 60 * 1000, // 5 min before expiry
 };
 ```
 
@@ -475,14 +480,14 @@ export const AUTH = {
   PASSWORD_REQUIRE_UPPERCASE: true,
   PASSWORD_REQUIRE_LOWERCASE: true,
   PASSWORD_REQUIRE_NUMBER: true,
-  PASSWORD_REQUIRE_SPECIAL: false
+  PASSWORD_REQUIRE_SPECIAL: false,
 };
 ```
 
 #### Password Validation
 
 ```javascript
-import { Validators } from './utils/validation.js';
+import { Validators } from "./utils/validation.js";
 
 const passwordError = Validators.password(password);
 // Checks for:
@@ -499,7 +504,7 @@ const passwordError = Validators.password(password);
 ```javascript
 export const AUTH = {
   MAX_LOGIN_ATTEMPTS: 5,
-  LOCKOUT_DURATION: 15 * 60 * 1000  // 15 minutes
+  LOCKOUT_DURATION: 15 * 60 * 1000, // 15 minutes
 };
 ```
 
@@ -521,7 +526,7 @@ export const AUTH = {
 
 ```javascript
 // ✅ DO
-import { escapeHtml, sanitizeUrl } from './utils/sanitize.js';
+import { escapeHtml, sanitizeUrl } from "./utils/sanitize.js";
 
 element.innerHTML = escapeHtml(userInput);
 link.href = sanitizeUrl(userUrl);
@@ -538,7 +543,7 @@ link.href = userUrl;
 element.textContent = userInput;
 
 // ✅ DO - Use createSafeElement for HTML
-const el = createSafeElement('div', { class: 'user-card' }, userName);
+const el = createSafeElement("div", { class: "user-card" }, userName);
 
 // ❌ DON'T - Use innerHTML with unsanitized input
 element.innerHTML = userInput;
@@ -549,14 +554,14 @@ element.innerHTML = userInput;
 ```javascript
 // ✅ DO - Add CSRF token to POST/PUT/DELETE
 const options = csrfProtection.addTokenToRequest({
-  method: 'POST',
-  body: JSON.stringify(data)
+  method: "POST",
+  body: JSON.stringify(data),
 });
 
 // ❌ DON'T - Forget CSRF protection
-fetch('/api/data', {
-  method: 'POST',
-  body: JSON.stringify(data)
+fetch("/api/data", {
+  method: "POST",
+  body: JSON.stringify(data),
 });
 ```
 
@@ -564,7 +569,7 @@ fetch('/api/data', {
 
 ```javascript
 // ✅ DO - Validate before processing
-const result = validateForm(formData, 'registrationForm');
+const result = validateForm(formData, "registrationForm");
 if (!result.isValid) {
   displayValidationErrors(result, formElement);
   return;
@@ -616,6 +621,7 @@ catch (error) {
 ### Pre-Deployment Security Audit
 
 #### Input Validation
+
 - [ ] All form inputs validated client-side
 - [ ] All API inputs validated server-side
 - [ ] Email addresses validated with regex
@@ -624,6 +630,7 @@ catch (error) {
 - [ ] File uploads restricted by type and size
 
 #### XSS Prevention
+
 - [ ] All user-generated content escaped
 - [ ] innerHTML usage reviewed and secured
 - [ ] URL sanitization in place
@@ -631,12 +638,14 @@ catch (error) {
 - [ ] No `eval()` or `new Function()` with user data
 
 #### CSRF Protection
+
 - [ ] CSRF tokens generated securely
 - [ ] Tokens included in all state-changing requests
 - [ ] Token rotation after sensitive operations
 - [ ] Token cleanup on logout
 
 #### Authentication & Authorization
+
 - [ ] Password requirements enforced
 - [ ] Session timeout configured
 - [ ] Brute force protection enabled
@@ -644,6 +653,7 @@ catch (error) {
 - [ ] Logout clears all tokens and sessions
 
 #### Data Protection
+
 - [ ] Sensitive data encrypted in transit (HTTPS)
 - [ ] Passwords hashed (never stored plain text)
 - [ ] PII identified and protected
@@ -651,6 +661,7 @@ catch (error) {
 - [ ] Data retention policy enforced
 
 #### Error Handling
+
 - [ ] Generic error messages for users
 - [ ] Detailed errors logged server-side
 - [ ] No stack traces exposed to users
@@ -665,18 +676,21 @@ catch (error) {
 #### Issue: "Invalid CSRF token" Error
 
 **Symptoms:**
+
 - POST/PUT/DELETE requests fail with 403 error
 - Console shows "Invalid CSRF token"
 
 **Solutions:**
 
 1. **Check token generation:**
+
 ```javascript
 // Verify token exists
 console.log(csrfProtection.getToken());
 ```
 
 2. **Verify token in request:**
+
 ```javascript
 // Check headers
 const headers = csrfProtection.getHeaders();
@@ -684,6 +698,7 @@ console.log(headers); // Should show X-CSRF-Token
 ```
 
 3. **Rotate token if stale:**
+
 ```javascript
 csrfProtection.rotateToken();
 ```
@@ -691,19 +706,22 @@ csrfProtection.rotateToken();
 #### Issue: User Input Being Stripped
 
 **Symptoms:**
+
 - User input appears empty after sanitization
 - Special characters removed unexpectedly
 
 **Solutions:**
 
 1. **Check sanitization type:**
+
 ```javascript
 // Wrong type may strip valid characters
-const clean = normalizeInput(input, 'alphanumeric'); // Strips spaces
-const clean = normalizeInput(input, 'text'); // Preserves spaces
+const clean = normalizeInput(input, "alphanumeric"); // Strips spaces
+const clean = normalizeInput(input, "text"); // Preserves spaces
 ```
 
 2. **Use appropriate validator:**
+
 ```javascript
 // For rich text, use sanitizeRichText
 const clean = sanitizeRichText(input); // Allows safe HTML tags
@@ -712,12 +730,14 @@ const clean = sanitizeRichText(input); // Allows safe HTML tags
 #### Issue: Session Timeout Too Aggressive
 
 **Symptoms:**
+
 - Users logged out unexpectedly
 - "Session expired" messages frequent
 
 **Solutions:**
 
 1. **Adjust timeout in constants:**
+
 ```javascript
 // In app-constants.js
 export const AUTH = {
@@ -726,9 +746,10 @@ export const AUTH = {
 ```
 
 2. **Implement activity tracking:**
+
 ```javascript
 // Reset timeout on user activity
-window.addEventListener('click', () => {
+window.addEventListener("click", () => {
   sessionManager.resetTimeout();
 });
 ```
@@ -736,18 +757,21 @@ window.addEventListener('click', () => {
 #### Issue: XSS Still Occurring
 
 **Symptoms:**
+
 - Scripts executing from user input
 - Alert boxes or redirects from user content
 
 **Solutions:**
 
 1. **Audit all innerHTML usage:**
+
 ```bash
 # Search for dangerous patterns
 grep -r "innerHTML.*=" src/
 ```
 
 2. **Replace with safe alternatives:**
+
 ```javascript
 // ❌ UNSAFE
 element.innerHTML = data;
@@ -759,9 +783,12 @@ element.innerHTML = escapeHtml(data);
 ```
 
 3. **Enable Content Security Policy:**
+
 ```html
-<meta http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'">
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self'; script-src 'self'"
+/>
 ```
 
 ---
@@ -769,11 +796,13 @@ element.innerHTML = escapeHtml(data);
 ## Additional Resources
 
 ### Internal Documentation
+
 - [Utilities API Reference](./UTILITIES.md)
 - [Developer Guide](./DEVELOPER_GUIDE.md)
 - [Architecture Documentation](./ARCHITECTURE.md)
 
 ### External Resources
+
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
 - [OWASP CSRF Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)

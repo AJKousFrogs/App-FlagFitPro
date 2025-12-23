@@ -11,38 +11,40 @@
 function validatePasswordComplexity(password) {
   const errors = [];
 
-  if (!password || typeof password !== 'string') {
-    return { valid: false, errors: ['Password is required'] };
+  if (!password || typeof password !== "string") {
+    return { valid: false, errors: ["Password is required"] };
   }
 
   // Minimum length
   if (password.length < 8) {
-    errors.push('Password must be at least 8 characters long');
+    errors.push("Password must be at least 8 characters long");
   }
 
   // Maximum length (prevent DoS)
   if (password.length > 128) {
-    errors.push('Password must be at most 128 characters long');
+    errors.push("Password must be at most 128 characters long");
   }
 
   // Require lowercase letter
   if (!/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
+    errors.push("Password must contain at least one lowercase letter");
   }
 
   // Require uppercase letter
   if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+    errors.push("Password must contain at least one uppercase letter");
   }
 
   // Require digit
   if (!/\d/.test(password)) {
-    errors.push('Password must contain at least one number');
+    errors.push("Password must contain at least one number");
   }
 
   // Require special character
   if (!/[@$!%*?&]/.test(password)) {
-    errors.push('Password must contain at least one special character (@$!%*?&)');
+    errors.push(
+      "Password must contain at least one special character (@$!%*?&)",
+    );
   }
 
   return {
@@ -72,89 +74,127 @@ const VALIDATION_RULES = {
     motivation: { min: 0, max: 10, required: false },
     mood: { min: 0, max: 10, required: false },
     hydration: { min: 0, max: 10, required: false },
-    date: { type: 'date', required: false },
+    date: { type: "date", required: false },
   },
 
   // Supplement data validation
   supplement: {
-    name: { type: 'string', minLength: 1, maxLength: 200, required: true },
-    dosage: { type: 'string', maxLength: 100, required: false },
-    taken: { type: 'boolean', required: false },
-    date: { type: 'date', required: false },
-    timeOfDay: { type: 'string', enum: ['morning', 'afternoon', 'evening', 'pre-workout', 'post-workout'], required: false },
+    name: { type: "string", minLength: 1, maxLength: 200, required: true },
+    dosage: { type: "string", maxLength: 100, required: false },
+    taken: { type: "boolean", required: false },
+    date: { type: "date", required: false },
+    timeOfDay: {
+      type: "string",
+      enum: ["morning", "afternoon", "evening", "pre-workout", "post-workout"],
+      required: false,
+    },
   },
 
   // Injury data validation
   injury: {
-    type: { type: 'string', required: true, minLength: 1, maxLength: 100 },
-    severity: { type: 'integer', min: 1, max: 10, required: true },
-    description: { type: 'string', maxLength: 500, required: false },
-    status: { type: 'string', enum: ['active', 'recovering', 'monitoring', 'recovered'], required: false },
-    startDate: { type: 'date', required: true },
-    recoveryDate: { type: 'date', required: false },
+    type: { type: "string", required: true, minLength: 1, maxLength: 100 },
+    severity: { type: "integer", min: 1, max: 10, required: true },
+    description: { type: "string", maxLength: 500, required: false },
+    status: {
+      type: "string",
+      enum: ["active", "recovering", "monitoring", "recovered"],
+      required: false,
+    },
+    startDate: { type: "date", required: true },
+    recoveryDate: { type: "date", required: false },
   },
 
   // Performance test validation
   performanceTest: {
-    testType: { type: 'string', required: true, minLength: 1, maxLength: 100 },
-    result: { type: 'number', required: true },
-    date: { type: 'date', required: false },
-    conditions: { type: 'object', required: false },
+    testType: { type: "string", required: true, minLength: 1, maxLength: 100 },
+    result: { type: "number", required: true },
+    date: { type: "date", required: false },
+    conditions: { type: "object", required: false },
   },
 
   // Query parameters validation
   queryParams: {
-    timeframe: { type: 'string', enum: ['7d', '1w', '30d', '1m', '3m', '6m', '12m', '1y'], required: false },
-    page: { type: 'integer', min: 1, max: 1000, required: false },
-    limit: { type: 'integer', min: 1, max: 100, required: false },
-    status: { type: 'string', enum: ['active', 'recovering', 'monitoring', 'recovered', 'all'], required: false },
-    testType: { type: 'string', required: false },
-    format: { type: 'string', enum: ['json', 'csv'], required: false },
+    timeframe: {
+      type: "string",
+      enum: ["7d", "1w", "30d", "1m", "3m", "6m", "12m", "1y"],
+      required: false,
+    },
+    page: { type: "integer", min: 1, max: 1000, required: false },
+    limit: { type: "integer", min: 1, max: 100, required: false },
+    status: {
+      type: "string",
+      enum: ["active", "recovering", "monitoring", "recovered", "all"],
+      required: false,
+    },
+    testType: { type: "string", required: false },
+    format: { type: "string", enum: ["json", "csv"], required: false },
   },
 
   // Authentication - Login validation
   login: {
-    email: { type: 'string', required: true, minLength: 3, maxLength: 255 },
-    password: { type: 'string', required: true, minLength: 6, maxLength: 255 },
+    email: { type: "string", required: true, minLength: 3, maxLength: 255 },
+    password: { type: "string", required: true, minLength: 6, maxLength: 255 },
   },
 
   // Authentication - Registration validation
   register: {
-    email: { type: 'string', required: true, minLength: 3, maxLength: 255 },
-    password: { type: 'string', required: true, minLength: 8, maxLength: 128 },
-    name: { type: 'string', required: true, minLength: 1, maxLength: 255 },
-    role: { type: 'string', enum: ['player', 'coach', 'admin'], required: false },
+    email: { type: "string", required: true, minLength: 3, maxLength: 255 },
+    password: { type: "string", required: true, minLength: 8, maxLength: 128 },
+    name: { type: "string", required: true, minLength: 1, maxLength: 255 },
+    role: {
+      type: "string",
+      enum: ["player", "coach", "admin"],
+      required: false,
+    },
   },
 
   // Authentication - Password Reset validation
   resetPassword: {
-    email: { type: 'string', required: false, minLength: 3, maxLength: 255 },
-    token: { type: 'string', required: false, minLength: 10, maxLength: 500 },
-    newPassword: { type: 'string', required: false, minLength: 8, maxLength: 128 },
-    action: { type: 'string', enum: ['request', 'verify', 'reset'], required: false },
+    email: { type: "string", required: false, minLength: 3, maxLength: 255 },
+    token: { type: "string", required: false, minLength: 10, maxLength: 500 },
+    newPassword: {
+      type: "string",
+      required: false,
+      minLength: 8,
+      maxLength: 128,
+    },
+    action: {
+      type: "string",
+      enum: ["request", "verify", "reset"],
+      required: false,
+    },
   },
 
   // Authentication - Resend Verification Email validation
   resendVerification: {
-    email: { type: 'string', required: true, minLength: 3, maxLength: 255 },
+    email: { type: "string", required: true, minLength: 3, maxLength: 255 },
   },
 
   // Games - Create Game validation
   createGame: {
-    teamId: { type: 'string', maxLength: 100, required: false },
-    opponentName: { type: 'string', minLength: 1, maxLength: 100, required: true },
-    gameDate: { type: 'date', required: true },
-    gameTime: { type: 'string', maxLength: 10, required: false },
-    location: { type: 'string', maxLength: 200, required: false },
-    isHomeGame: { type: 'boolean', required: false },
-    weather: { type: 'string', maxLength: 100, required: false },
-    temperature: { type: 'integer', min: -50, max: 150, required: false },
-    fieldConditions: { type: 'string', maxLength: 100, required: false },
-    season: { type: 'string', maxLength: 10, required: false },
-    tournamentName: { type: 'string', maxLength: 200, required: false },
-    gameType: { type: 'string', enum: ['regular_season', 'playoff', 'tournament', 'scrimmage'], required: false },
-    teamScore: { type: 'integer', min: 0, max: 999, required: false },
-    opponentScore: { type: 'integer', min: 0, max: 999, required: false },
+    teamId: { type: "string", maxLength: 100, required: false },
+    opponentName: {
+      type: "string",
+      minLength: 1,
+      maxLength: 100,
+      required: true,
+    },
+    gameDate: { type: "date", required: true },
+    gameTime: { type: "string", maxLength: 10, required: false },
+    location: { type: "string", maxLength: 200, required: false },
+    isHomeGame: { type: "boolean", required: false },
+    weather: { type: "string", maxLength: 100, required: false },
+    temperature: { type: "integer", min: -50, max: 150, required: false },
+    fieldConditions: { type: "string", maxLength: 100, required: false },
+    season: { type: "string", maxLength: 10, required: false },
+    tournamentName: { type: "string", maxLength: 200, required: false },
+    gameType: {
+      type: "string",
+      enum: ["regular_season", "playoff", "tournament", "scrimmage"],
+      required: false,
+    },
+    teamScore: { type: "integer", min: 0, max: 999, required: false },
+    opponentScore: { type: "integer", min: 0, max: 999, required: false },
   },
 };
 
@@ -167,51 +207,61 @@ const VALIDATION_RULES = {
  */
 function validateField(fieldName, value, rules) {
   // Check if required
-  if (rules.required && (value === undefined || value === null || value === '')) {
+  if (
+    rules.required &&
+    (value === undefined || value === null || value === "")
+  ) {
     return `${fieldName} is required`;
   }
 
   // If not required and empty, skip other validations
-  if (!rules.required && (value === undefined || value === null || value === '')) {
+  if (
+    !rules.required &&
+    (value === undefined || value === null || value === "")
+  ) {
     return null;
   }
 
   // Type validation
   if (rules.type) {
     switch (rules.type) {
-      case 'string':
-        if (typeof value !== 'string') {
+      case "string":
+        if (typeof value !== "string") {
           return `${fieldName} must be a string`;
         }
         break;
 
-      case 'number':
-        if (typeof value !== 'number' || isNaN(value)) {
+      case "number":
+        if (typeof value !== "number" || isNaN(value)) {
           return `${fieldName} must be a number`;
         }
         break;
 
-      case 'integer':
+      case "integer":
         if (!Number.isInteger(Number(value))) {
           return `${fieldName} must be an integer`;
         }
         break;
 
-      case 'boolean':
-        if (typeof value !== 'boolean' && value !== 'true' && value !== 'false') {
+      case "boolean":
+        if (
+          typeof value !== "boolean" &&
+          value !== "true" &&
+          value !== "false"
+        ) {
           return `${fieldName} must be a boolean`;
         }
         break;
 
-      case 'date':
+      case "date":
         const date = new Date(value);
         if (isNaN(date.getTime())) {
           return `${fieldName} must be a valid date`;
         }
         break;
 
-      case 'object':
-        if (typeof value !== 'object' || value === null) {
+      case "object":
+        if (typeof value !== "object" || value === null) {
           return `${fieldName} must be an object`;
         }
         break;
@@ -238,7 +288,7 @@ function validateField(fieldName, value, rules) {
 
   // Enum validation
   if (rules.enum && !rules.enum.includes(value)) {
-    return `${fieldName} must be one of: ${rules.enum.join(', ')}`;
+    return `${fieldName} must be one of: ${rules.enum.join(", ")}`;
   }
 
   return null;
@@ -284,7 +334,7 @@ function validate(data, schemaName) {
  * @returns {object} Sanitized data
  */
 function sanitize(data) {
-  if (typeof data !== 'object' || data === null) {
+  if (typeof data !== "object" || data === null) {
     return data;
   }
 
@@ -292,9 +342,9 @@ function sanitize(data) {
 
   for (const [key, value] of Object.entries(data)) {
     // Remove null bytes
-    if (typeof value === 'string') {
-      sanitized[key] = value.replace(/\0/g, '');
-    } else if (typeof value === 'object' && value !== null) {
+    if (typeof value === "string") {
+      sanitized[key] = value.replace(/\0/g, "");
+    } else if (typeof value === "object" && value !== null) {
       sanitized[key] = sanitize(value);
     } else {
       sanitized[key] = value;
@@ -314,13 +364,13 @@ function createValidationErrorResponse(errors, statusCode = 400) {
   return {
     statusCode,
     headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
     },
     body: JSON.stringify({
       success: false,
       errors,
-      message: 'Validation failed',
+      message: "Validation failed",
     }),
   };
 }
@@ -351,8 +401,10 @@ function validateRequestBody(body, schemaName) {
     }
 
     // SECURITY: Additional password complexity validation for auth schemas
-    if (schemaName === 'register' && sanitizedData.password) {
-      const passwordValidation = validatePasswordComplexity(sanitizedData.password);
+    if (schemaName === "register" && sanitizedData.password) {
+      const passwordValidation = validatePasswordComplexity(
+        sanitizedData.password,
+      );
       if (!passwordValidation.valid) {
         return {
           valid: false,
@@ -363,8 +415,10 @@ function validateRequestBody(body, schemaName) {
     }
 
     // SECURITY: Validate new password complexity for password reset
-    if (schemaName === 'resetPassword' && sanitizedData.newPassword) {
-      const passwordValidation = validatePasswordComplexity(sanitizedData.newPassword);
+    if (schemaName === "resetPassword" && sanitizedData.newPassword) {
+      const passwordValidation = validatePasswordComplexity(
+        sanitizedData.newPassword,
+      );
       if (!passwordValidation.valid) {
         return {
           valid: false,
@@ -383,7 +437,7 @@ function validateRequestBody(body, schemaName) {
     return {
       valid: false,
       data: null,
-      response: createValidationErrorResponse(['Invalid JSON in request body']),
+      response: createValidationErrorResponse(["Invalid JSON in request body"]),
     };
   }
 }
@@ -399,7 +453,7 @@ function validateQueryParams(queryParams) {
   }
 
   const sanitized = sanitize(queryParams);
-  const validation = validate(sanitized, 'queryParams');
+  const validation = validate(sanitized, "queryParams");
 
   return {
     valid: validation.valid,

@@ -6,11 +6,11 @@ const {
   createSuccessResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Accept-Invitation', event);
+  logFunctionCall("Accept-Invitation", event);
 
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 200, headers: CORS_HEADERS };
@@ -40,34 +40,46 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 401,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Authentication required" }),
+        body: JSON.stringify({
+          success: false,
+          error: "Authentication required",
+        }),
       };
     }
 
     const supabase = getSupabaseClient();
 
-    const authToken = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(authToken);
+    const authToken = authHeader.replace("Bearer ", "");
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(authToken);
 
     if (authError || !user) {
       return {
         statusCode: 401,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Invalid authentication token" }),
+        body: JSON.stringify({
+          success: false,
+          error: "Invalid authentication token",
+        }),
       };
     }
 
     const { data: invitation, error: inviteError } = await supabase
-      .from('team_invitations')
-      .select('*')
-      .eq('token', token)
+      .from("team_invitations")
+      .select("*")
+      .eq("token", token)
       .single();
 
     if (inviteError || !invitation) {
       return {
         statusCode: 404,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Invalid invitation token" }),
+        body: JSON.stringify({
+          success: false,
+          error: "Invalid invitation token",
+        }),
       };
     }
 
@@ -75,83 +87,100 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 403,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "This invitation was sent to a different email address" }),
+        body: JSON.stringify({
+          success: false,
+          error: "This invitation was sent to a different email address",
+        }),
       };
     }
 
-    if (invitation.status === 'accepted') {
+    if (invitation.status === "accepted") {
       return {
         statusCode: 400,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "This invitation has already been accepted" }),
+        body: JSON.stringify({
+          success: false,
+          error: "This invitation has already been accepted",
+        }),
       };
     }
 
     const now = new Date();
     const expiresAt = new Date(invitation.expires_at);
 
-    if (now > expiresAt || invitation.status === 'expired') {
+    if (now > expiresAt || invitation.status === "expired") {
       return {
         statusCode: 400,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "This invitation has expired" }),
+        body: JSON.stringify({
+          success: false,
+          error: "This invitation has expired",
+        }),
       };
     }
 
     const { data: existingMember } = await supabase
-      .from('team_members')
-      .select('id')
-      .eq('team_id', invitation.team_id)
-      .eq('user_id', user.id)
+      .from("team_members")
+      .select("id")
+      .eq("team_id", invitation.team_id)
+      .eq("user_id", user.id)
       .single();
 
     if (existingMember) {
       await supabase
-        .from('team_invitations')
+        .from("team_invitations")
         .update({
-          status: 'accepted',
-          accepted_at: new Date().toISOString()
+          status: "accepted",
+          accepted_at: new Date().toISOString(),
         })
-        .eq('id', invitation.id);
+        .eq("id", invitation.id);
 
       return {
         statusCode: 400,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "You are already a member of this team" }),
+        body: JSON.stringify({
+          success: false,
+          error: "You are already a member of this team",
+        }),
       };
     }
 
     const { data: teamMember, error: memberError } = await supabase
-      .from('team_members')
+      .from("team_members")
       .insert({
         user_id: user.id,
         team_id: invitation.team_id,
         role: invitation.role,
         position: invitation.position,
         jersey_number: invitation.jersey_number,
-        status: 'active',
+        status: "active",
       })
       .select()
       .single();
 
     if (memberError) {
-      console.error('Error adding team member:', memberError);
+      console.error("Error adding team member:", memberError);
       return {
         statusCode: 500,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Failed to add you to the team" }),
+        body: JSON.stringify({
+          success: false,
+          error: "Failed to add you to the team",
+        }),
       };
     }
 
     await supabase
-      .from('team_invitations')
+      .from("team_invitations")
       .update({
-        status: 'accepted',
-        accepted_at: new Date().toISOString()
+        status: "accepted",
+        accepted_at: new Date().toISOString(),
       })
-      .eq('id', invitation.id);
+      .eq("id", invitation.id);
 
-    console.log(`✅ User ${user.email} accepted invitation to team ${invitation.team_id}`);
+    console.log(
+      `✅ User ${user.email} accepted invitation to team ${invitation.team_id}`,
+    );
 
     return createSuccessResponse(
       {
@@ -160,7 +189,7 @@ exports.handler = async (event, context) => {
         role: invitation.role,
       },
       200,
-      "Successfully joined the team"
+      "Successfully joined the team",
     );
   } catch (error) {
     console.error("Error accepting invitation:", error);

@@ -5,12 +5,16 @@ Generated: $(date)
 ## Update Results
 
 ### Root Package Updates
+
 ✅ **Updated successfully**
+
 - Packages updated: 407 added, 460 removed, 405 changed
 - Total packages audited: 1,641
 
 ### Angular Package Updates
+
 ✅ **Updated successfully - No vulnerabilities found**
+
 - Packages updated: 235 added, 120 removed, 177 changed
 - Total packages audited: 958
 - **Security Status**: ✅ 0 vulnerabilities
@@ -24,6 +28,7 @@ Generated: $(date)
 **Total: 5 vulnerabilities (4 moderate, 1 high)**
 
 #### High Severity (1)
+
 - **jws** <3.2.3
   - **Location**: `node_modules/netlify-cli/node_modules/jws`
   - **Issue**: Improperly Verifies HMAC Signature
@@ -32,10 +37,11 @@ Generated: $(date)
   - **Note**: This is a nested dependency of `netlify-cli`
 
 #### Moderate Severity (4)
+
 - **esbuild** <=0.24.2
   - **Issue**: Enables any website to send requests to development server
   - **Advisory**: [GHSA-67mh-4wv8-2f99](https://github.com/advisories/GHSA-67mh-4wv8-2f99)
-  - **Dependency Chain**: 
+  - **Dependency Chain**:
     - esbuild → vite → vite-node → vitest
   - **Fix Available**: `npm audit fix --force` (will install vitest@4.0.15 - **BREAKING CHANGE**)
   - **Impact**: Development server only (not production)
@@ -45,6 +51,7 @@ Generated: $(date)
 ## Packages That Were Outdated (Before Update)
 
 ### Root Package
+
 - `@playwright/test`: 1.56.1 → 1.57.0 ✅ Updated
 - `@supabase/supabase-js`: 2.58.0 → 2.86.2 ✅ Updated
 - `autoprefixer`: 10.4.21 → 10.4.22 ✅ Updated
@@ -57,6 +64,7 @@ Generated: $(date)
 - `tailwindcss`: 4.1.12 → 4.1.17 ✅ Updated
 
 ### Packages Requiring Major Version Updates (Not Updated)
+
 - `@testing-library/dom`: 9.3.4 → 10.4.1 (major update)
 - `bcryptjs`: 2.4.3 → 3.0.3 (major update)
 - `chokidar`: 3.6.0 → 5.0.0 (major update)
@@ -116,6 +124,7 @@ Before updating to major versions, review breaking changes:
 ## Next Steps
 
 1. **Test the application** after updates:
+
    ```bash
    npm test
    npm run test:unit
@@ -161,5 +170,4 @@ npm audit --audit-level high   # Checked for high/critical vulnerabilities
 
 ---
 
-*Last updated: $(date)*
-
+_Last updated: $(date)_

@@ -25,7 +25,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     DatePicker,
     TagModule,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -41,7 +41,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <h3>Throwing Volume Program</h3>
           </ng-template>
           <div class="program-info">
-            <p>This is a specialized training schedule for quarterbacks focusing on throwing volume periodization.</p>
+            <p>
+              This is a specialized training schedule for quarterbacks focusing
+              on throwing volume periodization.
+            </p>
             <p-button
               label="View Full Program"
               icon="pi pi-book"
@@ -88,4 +91,3 @@ export class QbTrainingScheduleComponent implements OnInit {
     // Load QB training schedule
   }
 }
-

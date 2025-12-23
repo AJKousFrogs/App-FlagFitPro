@@ -17,13 +17,7 @@ import { ToastModule } from "primeng/toast";
   selector: "app-verify-email",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterModule,
-    CardModule,
-    ButtonModule,
-    MessageModule,
-    ToastModule
-  ],
+  imports: [RouterModule, CardModule, ButtonModule, MessageModule, ToastModule],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
@@ -35,14 +29,20 @@ import { ToastModule } from "primeng/toast";
           </div>
           <h1 class="verify-email-title">Verify Your Email</h1>
         </ng-template>
-    
+
         @if (isVerifying()) {
           <div class="verifying-state">
-            <p-message severity="info" [text]="'Verifying your email address...'"></p-message>
+            <p-message
+              severity="info"
+              [text]="'Verifying your email address...'"
+            ></p-message>
           </div>
         } @else if (isVerified()) {
           <div class="verified-state">
-            <p-message severity="success" [text]="'Email verified successfully!'"></p-message>
+            <p-message
+              severity="success"
+              [text]="'Email verified successfully!'"
+            ></p-message>
             <p class="verified-message">
               Your email has been verified. You can now access all features.
             </p>
@@ -55,7 +55,10 @@ import { ToastModule } from "primeng/toast";
           </div>
         } @else if (verificationError()) {
           <div class="error-state">
-            <p-message severity="error" [text]="verificationError()"></p-message>
+            <p-message
+              severity="error"
+              [text]="verificationError()"
+            ></p-message>
             <p-button
               label="Resend Verification Email"
               icon="pi pi-send"
@@ -70,9 +73,13 @@ import { ToastModule } from "primeng/toast";
           </div>
         } @else {
           <div class="pending-state">
-            <p-message severity="warn" [text]="'Please check your email'"></p-message>
+            <p-message
+              severity="warn"
+              [text]="'Please check your email'"
+            ></p-message>
             <p class="pending-message">
-              We've sent a verification link to your email address. Please click the link to verify your account.
+              We've sent a verification link to your email address. Please click
+              the link to verify your account.
             </p>
             <p-button
               label="Resend Verification Email"
@@ -165,7 +172,7 @@ export class VerifyEmailComponent implements OnInit {
 
   ngOnInit(): void {
     // Check for token in query params
-    const token = this.route.snapshot.queryParams['token'];
+    const token = this.route.snapshot.queryParams["token"];
     if (token) {
       this.verifyEmail(token);
     }
@@ -178,26 +185,28 @@ export class VerifyEmailComponent implements OnInit {
     try {
       // TODO: Call API to verify email token
       // const response = await this.apiService.verifyEmail(token);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       this.isVerified.set(true);
       this.isVerifying.set(false);
-      
+
       this.messageService.add({
-        severity: 'success',
-        summary: 'Email Verified',
-        detail: 'Your email has been verified successfully!'
+        severity: "success",
+        summary: "Email Verified",
+        detail: "Your email has been verified successfully!",
       });
 
       // Redirect to dashboard after 2 seconds
       setTimeout(() => {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(["/dashboard"]);
       }, 2000);
     } catch (error: any) {
       this.isVerifying.set(false);
-      this.verificationError.set(error.message || 'Verification failed. Please try again.');
+      this.verificationError.set(
+        error.message || "Verification failed. Please try again.",
+      );
     }
   }
 
@@ -207,24 +216,25 @@ export class VerifyEmailComponent implements OnInit {
     try {
       // TODO: Call API to resend verification email
       // await this.apiService.resendVerificationEmail();
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       this.messageService.add({
-        severity: 'success',
-        summary: 'Email Sent',
-        detail: 'Verification email has been sent. Please check your inbox.'
+        severity: "success",
+        summary: "Email Sent",
+        detail: "Verification email has been sent. Please check your inbox.",
       });
     } catch (error: any) {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.message || 'Failed to send verification email. Please try again.'
+        severity: "error",
+        summary: "Error",
+        detail:
+          error.message ||
+          "Failed to send verification email. Please try again.",
       });
     } finally {
       this.isResending.set(false);
     }
   }
 }
-

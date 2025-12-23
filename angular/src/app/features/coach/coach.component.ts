@@ -38,8 +38,8 @@ interface TeamMember {
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,
-    StatsGridComponent
-],
+    StatsGridComponent,
+  ],
   template: `
     <app-main-layout>
       <div class="coach-page">
@@ -47,17 +47,17 @@ interface TeamMember {
           title="Coach Dashboard"
           subtitle="Manage your team, track performance, and create training sessions"
           icon="pi-users"
-          >
+        >
           <p-button
             label="Create Session"
             icon="pi pi-plus"
             (onClick)="openCreateSession()"
           ></p-button>
         </app-page-header>
-    
+
         <!-- Coach Stats -->
         <app-stats-grid [stats]="stats()"></app-stats-grid>
-    
+
         <!-- Team Performance Chart -->
         <p-card class="chart-card">
           <ng-template pTemplate="header">
@@ -71,7 +71,7 @@ interface TeamMember {
             ></p-chart>
           }
         </p-card>
-    
+
         <!-- Team Members Table -->
         <p-card class="table-card">
           <ng-template pTemplate="header">
@@ -82,7 +82,7 @@ interface TeamMember {
             [paginator]="true"
             [rows]="10"
             [rowsPerPageOptions]="[10, 25, 50]"
-            >
+          >
             <ng-template pTemplate="header">
               <tr>
                 <th>Name</th>
@@ -101,7 +101,7 @@ interface TeamMember {
                   <p-tag
                     [value]="member.performance + '%'"
                     [severity]="getPerformanceSeverity(member.performance)"
-                    >
+                  >
                   </p-tag>
                 </td>
                 <td>{{ member.attendance }}%</td>
@@ -109,7 +109,7 @@ interface TeamMember {
                   <p-tag
                     [value]="member.status"
                     [severity]="getStatusSeverity(member.status)"
-                    >
+                  >
                   </p-tag>
                 </td>
                 <td>
@@ -132,7 +132,7 @@ interface TeamMember {
         </p-card>
       </div>
     </app-main-layout>
-    `,
+  `,
   styles: [
     `
       .coach-page {
@@ -306,7 +306,9 @@ export class CoachComponent implements OnInit {
     // Open create session modal - implementation pending
   }
 
-  getPerformanceSeverity(performance: number): "success" | "info" | "warn" | "danger" {
+  getPerformanceSeverity(
+    performance: number,
+  ): "success" | "info" | "warn" | "danger" {
     if (performance >= 90) return "success";
     if (performance >= 80) return "info";
     if (performance >= 70) return "warn";

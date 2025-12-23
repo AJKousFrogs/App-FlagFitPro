@@ -43,7 +43,7 @@ async function checkPasswordLeaked(password: string): Promise<boolean> {
         headers: {
           "User-Agent": "FlagFit-Pro-Password-Checker",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -60,9 +60,7 @@ async function checkPasswordLeaked(password: string): Promise<boolean> {
       const [hashSuffix, count] = line.split(":");
       if (hashSuffix === suffix) {
         const leakCount = parseInt(count.trim(), 10);
-        console.log(
-          `Password found in ${leakCount} data breaches`
-        );
+        console.log(`Password found in ${leakCount} data breaches`);
         return true; // Password has been leaked
       }
     }
@@ -90,7 +88,7 @@ serve(async (req) => {
         {
           status: 401,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -102,7 +100,7 @@ serve(async (req) => {
         global: {
           headers: { Authorization: authHeader },
         },
-      }
+      },
     );
 
     // Verify user is authenticated
@@ -112,13 +110,10 @@ serve(async (req) => {
     } = await supabaseClient.auth.getUser();
 
     if (authError || !user) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Parse request body
@@ -134,7 +129,7 @@ serve(async (req) => {
             {
               status: 400,
               headers: { ...corsHeaders, "Content-Type": "application/json" },
-            }
+            },
           );
         }
 
@@ -149,21 +144,20 @@ serve(async (req) => {
           {
             status: 200,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
+          },
         );
 
       case "status":
         return new Response(
           JSON.stringify({
             enabled: true,
-            message:
-              "Leaked password protection is enabled and active.",
+            message: "Leaked password protection is enabled and active.",
             provider: "Have I Been Pwned API",
           }),
           {
             status: 200,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
+          },
         );
 
       case "enable":
@@ -176,7 +170,7 @@ serve(async (req) => {
           {
             status: 200,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
+          },
         );
 
       default:
@@ -187,7 +181,7 @@ serve(async (req) => {
           {
             status: 400,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
+          },
         );
     }
   } catch (error) {
@@ -200,8 +194,7 @@ serve(async (req) => {
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   }
 });
-

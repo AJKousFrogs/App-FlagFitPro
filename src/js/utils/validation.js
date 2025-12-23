@@ -3,8 +3,8 @@
  * Comprehensive validation for forms, API data, and user inputs
  */
 
-import { DATA_LIMITS, VALIDATION, WELLNESS } from '../config/app-constants.js';
-import { logger } from '../../logger.js';
+import { DATA_LIMITS, VALIDATION, WELLNESS } from "../config/app-constants.js";
+import { logger } from "../../logger.js";
 
 /**
  * Validation result structure
@@ -55,11 +55,11 @@ export const Validators = {
   /**
    * Check if value is required (not empty)
    */
-  required(value, fieldName = 'This field') {
-    if (value === null || value === undefined || value === '') {
+  required(value, fieldName = "This field") {
+    if (value === null || value === undefined || value === "") {
       return `${fieldName} is required`;
     }
-    if (typeof value === 'string' && value.trim() === '') {
+    if (typeof value === "string" && value.trim() === "") {
       return `${fieldName} cannot be empty`;
     }
     return null;
@@ -69,10 +69,12 @@ export const Validators = {
    * Validate email format
    */
   email(value) {
-    if (!value) {return null;} // Skip if empty (use required separately)
+    if (!value) {
+      return null;
+    } // Skip if empty (use required separately)
 
     if (!VALIDATION.EMAIL_REGEX.test(value)) {
-      return 'Please enter a valid email address';
+      return "Please enter a valid email address";
     }
 
     if (value.length > DATA_LIMITS.MAX_EMAIL_LENGTH) {
@@ -86,38 +88,46 @@ export const Validators = {
    * Validate password strength
    */
   password(value) {
-    if (!value) {return null;}
+    if (!value) {
+      return null;
+    }
 
     const errors = [];
 
     if (value.length < DATA_LIMITS.MIN_PASSWORD_LENGTH) {
-      errors.push(`Password must be at least ${DATA_LIMITS.MIN_PASSWORD_LENGTH} characters`);
+      errors.push(
+        `Password must be at least ${DATA_LIMITS.MIN_PASSWORD_LENGTH} characters`,
+      );
     }
 
     if (value.length > DATA_LIMITS.MAX_PASSWORD_LENGTH) {
-      errors.push(`Password must be less than ${DATA_LIMITS.MAX_PASSWORD_LENGTH} characters`);
+      errors.push(
+        `Password must be less than ${DATA_LIMITS.MAX_PASSWORD_LENGTH} characters`,
+      );
     }
 
     if (!VALIDATION.PASSWORD_REGEX.HAS_UPPERCASE.test(value)) {
-      errors.push('Password must contain at least one uppercase letter');
+      errors.push("Password must contain at least one uppercase letter");
     }
 
     if (!VALIDATION.PASSWORD_REGEX.HAS_LOWERCASE.test(value)) {
-      errors.push('Password must contain at least one lowercase letter');
+      errors.push("Password must contain at least one lowercase letter");
     }
 
     if (!VALIDATION.PASSWORD_REGEX.HAS_NUMBER.test(value)) {
-      errors.push('Password must contain at least one number');
+      errors.push("Password must contain at least one number");
     }
 
-    return errors.length > 0 ? errors.join('. ') : null;
+    return errors.length > 0 ? errors.join(". ") : null;
   },
 
   /**
    * Validate string length
    */
-  length(value, min, max, fieldName = 'Value') {
-    if (!value) {return null;}
+  length(value, min, max, fieldName = "Value") {
+    if (!value) {
+      return null;
+    }
 
     const len = value.length;
 
@@ -135,8 +145,10 @@ export const Validators = {
   /**
    * Validate number range
    */
-  range(value, min, max, fieldName = 'Value') {
-    if (value === null || value === undefined) {return null;}
+  range(value, min, max, fieldName = "Value") {
+    if (value === null || value === undefined) {
+      return null;
+    }
 
     const num = Number(value);
 
@@ -159,10 +171,12 @@ export const Validators = {
    * Validate URL format
    */
   url(value) {
-    if (!value) {return null;}
+    if (!value) {
+      return null;
+    }
 
     if (!VALIDATION.URL_REGEX.test(value)) {
-      return 'Please enter a valid URL starting with http:// or https://';
+      return "Please enter a valid URL starting with http:// or https://";
     }
 
     return null;
@@ -172,10 +186,12 @@ export const Validators = {
    * Validate phone number
    */
   phone(value) {
-    if (!value) {return null;}
+    if (!value) {
+      return null;
+    }
 
     if (!VALIDATION.PHONE_REGEX.test(value)) {
-      return 'Please enter a valid phone number';
+      return "Please enter a valid phone number";
     }
 
     return null;
@@ -185,12 +201,14 @@ export const Validators = {
    * Validate date format (YYYY-MM-DD)
    */
   date(value) {
-    if (!value) {return null;}
+    if (!value) {
+      return null;
+    }
 
     const date = new Date(value);
 
     if (isNaN(date.getTime())) {
-      return 'Please enter a valid date';
+      return "Please enter a valid date";
     }
 
     return null;
@@ -199,13 +217,13 @@ export const Validators = {
   /**
    * Validate that value matches another field
    */
-  matches(value, otherValue, fieldName = 'Fields') {
+  matches(value, otherValue, fieldName = "Fields") {
     if (value !== otherValue) {
       return `${fieldName} do not match`;
     }
 
     return null;
-  }
+  },
 };
 
 /**
@@ -215,12 +233,12 @@ export const DomainValidators = {
   /**
    * Validate wellness rating (1-10)
    */
-  wellnessRating(value, fieldName = 'Rating') {
+  wellnessRating(value, fieldName = "Rating") {
     return Validators.range(
       value,
       WELLNESS.MIN_RATING,
       WELLNESS.MAX_RATING,
-      fieldName
+      fieldName,
     );
   },
 
@@ -232,10 +250,12 @@ export const DomainValidators = {
       value,
       WELLNESS.MIN_SLEEP,
       WELLNESS.MAX_SLEEP,
-      'Sleep hours'
+      "Sleep hours",
     );
 
-    if (error) {return error;}
+    if (error) {
+      return error;
+    }
 
     // Add warning for low sleep
     const num = Number(value);
@@ -250,13 +270,8 @@ export const DomainValidators = {
    * Validate workout duration
    */
   workoutDuration(value) {
-    return Validators.range(
-      value,
-      1,
-      300,
-      'Workout duration'
-    );
-  }
+    return Validators.range(value, 1, 300, "Workout duration");
+  },
 };
 
 /**
@@ -269,12 +284,16 @@ export const FormValidators = {
   loginForm(data) {
     const result = new ValidationResult();
 
-    const emailError = Validators.required(data.email, 'Email') ||
-                      Validators.email(data.email);
-    if (emailError) {result.addError('email', emailError);}
+    const emailError =
+      Validators.required(data.email, "Email") || Validators.email(data.email);
+    if (emailError) {
+      result.addError("email", emailError);
+    }
 
-    const passwordError = Validators.required(data.password, 'Password');
-    if (passwordError) {result.addError('password', passwordError);}
+    const passwordError = Validators.required(data.password, "Password");
+    if (passwordError) {
+      result.addError("password", passwordError);
+    }
 
     return result;
   },
@@ -286,24 +305,35 @@ export const FormValidators = {
     const result = new ValidationResult();
 
     // Name
-    const nameError = Validators.required(data.name, 'Name') ||
-                     Validators.length(data.name, 2, DATA_LIMITS.MAX_NAME_LENGTH, 'Name');
-    if (nameError) {result.addError('name', nameError);}
+    const nameError =
+      Validators.required(data.name, "Name") ||
+      Validators.length(data.name, 2, DATA_LIMITS.MAX_NAME_LENGTH, "Name");
+    if (nameError) {
+      result.addError("name", nameError);
+    }
 
     // Email
-    const emailError = Validators.required(data.email, 'Email') ||
-                      Validators.email(data.email);
-    if (emailError) {result.addError('email', emailError);}
+    const emailError =
+      Validators.required(data.email, "Email") || Validators.email(data.email);
+    if (emailError) {
+      result.addError("email", emailError);
+    }
 
     // Password
-    const passwordError = Validators.required(data.password, 'Password') ||
-                         Validators.password(data.password);
-    if (passwordError) {result.addError('password', passwordError);}
+    const passwordError =
+      Validators.required(data.password, "Password") ||
+      Validators.password(data.password);
+    if (passwordError) {
+      result.addError("password", passwordError);
+    }
 
     // Confirm password
-    const confirmError = Validators.required(data.confirmPassword, 'Confirm password') ||
-                        Validators.matches(data.password, data.confirmPassword, 'Passwords');
-    if (confirmError) {result.addError('confirmPassword', confirmError);}
+    const confirmError =
+      Validators.required(data.confirmPassword, "Confirm password") ||
+      Validators.matches(data.password, data.confirmPassword, "Passwords");
+    if (confirmError) {
+      result.addError("confirmPassword", confirmError);
+    }
 
     return result;
   },
@@ -317,46 +347,76 @@ export const FormValidators = {
     // Sleep
     if (data.sleep !== undefined && data.sleep !== null) {
       const sleepError = DomainValidators.sleepHours(data.sleep);
-      if (sleepError) {result.addError('sleep', sleepError);}
+      if (sleepError) {
+        result.addError("sleep", sleepError);
+      }
 
       // Warning for low sleep
       if (Number(data.sleep) < WELLNESS.LOW_SLEEP_HOURS) {
-        result.addWarning('sleep', `Less than ${WELLNESS.LOW_SLEEP_HOURS} hours of sleep may affect performance`);
+        result.addWarning(
+          "sleep",
+          `Less than ${WELLNESS.LOW_SLEEP_HOURS} hours of sleep may affect performance`,
+        );
       }
     }
 
     // Energy
     if (data.energy !== undefined && data.energy !== null) {
-      const energyError = DomainValidators.wellnessRating(data.energy, 'Energy');
-      if (energyError) {result.addError('energy', energyError);}
+      const energyError = DomainValidators.wellnessRating(
+        data.energy,
+        "Energy",
+      );
+      if (energyError) {
+        result.addError("energy", energyError);
+      }
 
       // Warning for low energy
       if (Number(data.energy) <= WELLNESS.LOW_ENERGY_THRESHOLD) {
-        result.addWarning('energy', 'Low energy detected. Consider rest or light training.');
+        result.addWarning(
+          "energy",
+          "Low energy detected. Consider rest or light training.",
+        );
       }
     }
 
     // Mood
     if (data.mood !== undefined && data.mood !== null) {
-      const moodError = DomainValidators.wellnessRating(data.mood, 'Mood');
-      if (moodError) {result.addError('mood', moodError);}
+      const moodError = DomainValidators.wellnessRating(data.mood, "Mood");
+      if (moodError) {
+        result.addError("mood", moodError);
+      }
     }
 
     // Stress
     if (data.stress !== undefined && data.stress !== null) {
-      const stressError = DomainValidators.wellnessRating(data.stress, 'Stress');
-      if (stressError) {result.addError('stress', stressError);}
+      const stressError = DomainValidators.wellnessRating(
+        data.stress,
+        "Stress",
+      );
+      if (stressError) {
+        result.addError("stress", stressError);
+      }
 
       // Warning for high stress
       if (Number(data.stress) >= WELLNESS.HIGH_STRESS_THRESHOLD) {
-        result.addWarning('stress', 'High stress detected. Consider stress management techniques.');
+        result.addWarning(
+          "stress",
+          "High stress detected. Consider stress management techniques.",
+        );
       }
     }
 
     // Notes
     if (data.notes) {
-      const notesError = Validators.length(data.notes, null, DATA_LIMITS.MAX_NOTES_LENGTH, 'Notes');
-      if (notesError) {result.addError('notes', notesError);}
+      const notesError = Validators.length(
+        data.notes,
+        null,
+        DATA_LIMITS.MAX_NOTES_LENGTH,
+        "Notes",
+      );
+      if (notesError) {
+        result.addError("notes", notesError);
+      }
     }
 
     return result;
@@ -370,26 +430,34 @@ export const FormValidators = {
 
     // Name
     if (data.name !== undefined) {
-      const nameError = Validators.required(data.name, 'Name') ||
-                       Validators.length(data.name, 2, DATA_LIMITS.MAX_NAME_LENGTH, 'Name');
-      if (nameError) {result.addError('name', nameError);}
+      const nameError =
+        Validators.required(data.name, "Name") ||
+        Validators.length(data.name, 2, DATA_LIMITS.MAX_NAME_LENGTH, "Name");
+      if (nameError) {
+        result.addError("name", nameError);
+      }
     }
 
     // Email
     if (data.email !== undefined) {
-      const emailError = Validators.required(data.email, 'Email') ||
-                        Validators.email(data.email);
-      if (emailError) {result.addError('email', emailError);}
+      const emailError =
+        Validators.required(data.email, "Email") ||
+        Validators.email(data.email);
+      if (emailError) {
+        result.addError("email", emailError);
+      }
     }
 
     // Phone (optional)
     if (data.phone) {
       const phoneError = Validators.phone(data.phone);
-      if (phoneError) {result.addError('phone', phoneError);}
+      if (phoneError) {
+        result.addError("phone", phoneError);
+      }
     }
 
     return result;
-  }
+  },
 };
 
 /**
@@ -397,25 +465,25 @@ export const FormValidators = {
  * Note: This is for format normalization (lowercase, strip chars), NOT XSS prevention.
  * For XSS prevention, use escapeHtml() from sanitize.js
  */
-export function normalizeInput(value, type = 'text') {
+export function normalizeInput(value, type = "text") {
   if (value === null || value === undefined) {
-    return '';
+    return "";
   }
 
   let normalized = String(value).trim();
 
   switch (type) {
-    case 'email':
+    case "email":
       normalized = normalized.toLowerCase();
       break;
-    case 'number':
-      normalized = normalized.replace(/[^\d.-]/g, '');
+    case "number":
+      normalized = normalized.replace(/[^\d.-]/g, "");
       break;
-    case 'phone':
-      normalized = normalized.replace(/[^\d\s\-\+\(\)]/g, '');
+    case "phone":
+      normalized = normalized.replace(/[^\d\s\-\+\(\)]/g, "");
       break;
-    case 'alphanumeric':
-      normalized = normalized.replace(/[^a-zA-Z0-9\s]/g, '');
+    case "alphanumeric":
+      normalized = normalized.replace(/[^a-zA-Z0-9\s]/g, "");
       break;
   }
 
@@ -428,7 +496,7 @@ export function normalizeInput(value, type = 'text') {
 export function validateForm(formData, validatorName) {
   if (!FormValidators[validatorName]) {
     logger.error(`[Validation] Unknown validator: ${validatorName}`);
-    return new ValidationResult(false, { form: ['Validation error'] });
+    return new ValidationResult(false, { form: ["Validation error"] });
   }
 
   const result = FormValidators[validatorName](formData);
@@ -437,7 +505,7 @@ export function validateForm(formData, validatorName) {
     validator: validatorName,
     isValid: result.isValid,
     errorCount: Object.keys(result.errors).length,
-    warningCount: Object.keys(result.warnings).length
+    warningCount: Object.keys(result.warnings).length,
   });
 
   return result;
@@ -448,9 +516,11 @@ export function validateForm(formData, validatorName) {
  */
 export function displayValidationErrors(result, formElement) {
   // Clear previous errors
-  formElement.querySelectorAll('.validation-error').forEach(el => el.remove());
-  formElement.querySelectorAll('.input-error').forEach(el => {
-    el.classList.remove('input-error');
+  formElement
+    .querySelectorAll(".validation-error")
+    .forEach((el) => el.remove());
+  formElement.querySelectorAll(".input-error").forEach((el) => {
+    el.classList.remove("input-error");
   });
 
   if (!result.hasErrors()) {
@@ -463,13 +533,14 @@ export function displayValidationErrors(result, formElement) {
 
     if (input) {
       // Add error class to input
-      input.classList.add('input-error');
+      input.classList.add("input-error");
 
       // Create error message element
-      const errorDiv = document.createElement('div');
-      errorDiv.className = 'validation-error';
-      errorDiv.style.cssText = 'color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;';
-      errorDiv.textContent = messages.join('. ');
+      const errorDiv = document.createElement("div");
+      errorDiv.className = "validation-error";
+      errorDiv.style.cssText =
+        "color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;";
+      errorDiv.textContent = messages.join(". ");
 
       // Insert after input
       input.parentNode.insertBefore(errorDiv, input.nextSibling);
@@ -482,10 +553,11 @@ export function displayValidationErrors(result, formElement) {
       const input = formElement.querySelector(`[name="${fieldName}"]`);
 
       if (input) {
-        const warningDiv = document.createElement('div');
-        warningDiv.className = 'validation-warning';
-        warningDiv.style.cssText = 'color: #f59e0b; font-size: 0.875rem; margin-top: 0.25rem;';
-        warningDiv.textContent = messages.join('. ');
+        const warningDiv = document.createElement("div");
+        warningDiv.className = "validation-warning";
+        warningDiv.style.cssText =
+          "color: #f59e0b; font-size: 0.875rem; margin-top: 0.25rem;";
+        warningDiv.textContent = messages.join(". ");
 
         input.parentNode.insertBefore(warningDiv, input.nextSibling);
       }
@@ -493,7 +565,7 @@ export function displayValidationErrors(result, formElement) {
   }
 
   // Focus first error field
-  const firstErrorField = formElement.querySelector('.input-error');
+  const firstErrorField = formElement.querySelector(".input-error");
   if (firstErrorField) {
     firstErrorField.focus();
   }
@@ -507,7 +579,7 @@ export default {
   ValidationResult,
   normalizeInput,
   validateForm,
-  displayValidationErrors
+  displayValidationErrors,
 };
 
-logger.debug('[Validation] Validation utilities loaded');
+logger.debug("[Validation] Validation utilities loaded");

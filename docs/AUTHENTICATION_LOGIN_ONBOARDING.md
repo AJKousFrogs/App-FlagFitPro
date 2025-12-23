@@ -116,12 +116,14 @@ Dashboard Access
 ### Registration Form Requirements
 
 **Email:**
+
 - Must be valid email format
 - Must be unique (not already registered)
 - Normalized to lowercase
 - Required field
 
 **Password:**
+
 - Minimum 8 characters
 - Must contain uppercase letter
 - Must contain lowercase letter
@@ -130,6 +132,7 @@ Dashboard Access
 - Required field
 
 **Name:**
+
 - Full name required
 - Split into first_name and last_name automatically
 - Stored in user metadata
@@ -140,7 +143,7 @@ Dashboard Access
 // Angular Implementation
 async register(userData: RegisterData): Observable<any> {
   const { email, password, ...metadata } = userData;
-  
+
   return from(
     this.supabaseService.signUp(email, password, metadata)
   ).pipe(
@@ -235,7 +238,7 @@ login(credentials: LoginCredentials): Observable<any> {
         }
         throw new Error(response.error.message);
       }
-      
+
       return {
         success: true,
         data: {
@@ -328,11 +331,13 @@ After successful login, the session contains:
 ### Resending Verification Email
 
 Users can request a new verification email if:
+
 - The original email expired
 - The email was not received
 - The verification link was lost
 
 **Process:**
+
 ```
 1. User clicks "Resend verification email"
    ↓
@@ -439,12 +444,14 @@ The onboarding process is a **multi-step guided tour** that helps new users unde
 ### Onboarding Implementation
 
 **Onboarding Manager** (`src/onboarding-manager.js`):
+
 - Manages onboarding state
 - Handles step progression
 - Stores progress locally
 - Role-specific step configuration
 
 **Onboarding Page** (`onboarding.html`):
+
 - Multi-step form interface
 - Progress indicator
 - Step navigation (next/back/skip)
@@ -457,21 +464,21 @@ When onboarding is completed:
 ```javascript
 // Update user metadata
 await supabase.auth.updateUser({
-  data: { 
+  data: {
     onboarding_completed: true,
-    onboarding_completed_at: new Date().toISOString()
-  }
+    onboarding_completed_at: new Date().toISOString(),
+  },
 });
 
 // Store completion flag
-storageService.set('onboardingCompleted', 'true');
-storageService.set('onboardingCompletedDate', new Date().toISOString());
+storageService.set("onboardingCompleted", "true");
+storageService.set("onboardingCompletedDate", new Date().toISOString());
 
 // Clear progress data
-storageService.remove('onboardingProgress');
+storageService.remove("onboardingProgress");
 
 // Redirect to dashboard
-window.location.href = '/dashboard.html';
+window.location.href = "/dashboard.html";
 ```
 
 ### Onboarding Features
@@ -498,11 +505,13 @@ window.location.href = '/dashboard.html';
 ### Token Storage
 
 **Secure Storage** (Preferred):
+
 - Encrypted storage using AES-GCM
 - Tokens stored securely
 - Protected against XSS attacks
 
 **Fallback Storage**:
+
 - localStorage (for development)
 - sessionStorage (for session-only tokens)
 
@@ -522,6 +531,7 @@ secureStorage.removeAuthToken();
 ### Token Refresh
 
 Supabase automatically handles token refresh:
+
 - Access tokens expire after 1 hour
 - Refresh tokens used to get new access tokens
 - Automatic refresh before expiration
@@ -530,10 +540,12 @@ Supabase automatically handles token refresh:
 ### Session Persistence
 
 **Remember Me Option:**
+
 - If checked: Extended session duration
 - If unchecked: Session expires on browser close
 
 **Session Validation:**
+
 - Tokens validated on each API request
 - Expired tokens trigger automatic refresh
 - Invalid tokens trigger logout
@@ -608,14 +620,14 @@ Supabase automatically handles token refresh:
 
 ### Common Authentication Errors
 
-| Error Code | Description | User Message | Solution |
-|------------|-------------|--------------|----------|
-| `invalid_credentials` | Email or password incorrect | "Invalid email or password" | Check credentials |
-| `email_not_confirmed` | Email not verified | "Please verify your email before logging in" | Check email inbox |
-| `too_many_requests` | Rate limit exceeded | "Too many attempts. Please try again later" | Wait 15 minutes |
-| `user_not_found` | Email not registered | "No account found with this email" | Register account |
-| `token_expired` | Session expired | "Session expired. Please log in again" | Re-login |
-| `network_error` | Connection failed | "Unable to connect. Please check your internet" | Check connection |
+| Error Code            | Description                 | User Message                                    | Solution          |
+| --------------------- | --------------------------- | ----------------------------------------------- | ----------------- |
+| `invalid_credentials` | Email or password incorrect | "Invalid email or password"                     | Check credentials |
+| `email_not_confirmed` | Email not verified          | "Please verify your email before logging in"    | Check email inbox |
+| `too_many_requests`   | Rate limit exceeded         | "Too many attempts. Please try again later"     | Wait 15 minutes   |
+| `user_not_found`      | Email not registered        | "No account found with this email"              | Register account  |
+| `token_expired`       | Session expired             | "Session expired. Please log in again"          | Re-login          |
+| `network_error`       | Connection failed           | "Unable to connect. Please check your internet" | Check connection  |
 
 ### Error Response Format
 
@@ -855,6 +867,3 @@ Supabase automatically handles token refresh:
 - [Supabase Auth Documentation](https://supabase.com/docs/guides/auth)
 - [JWT Best Practices](https://datatracker.ietf.org/doc/html/rfc8725)
 - [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
-
-
-

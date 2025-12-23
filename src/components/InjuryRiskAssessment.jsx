@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Classifier, LookupHelper } from '../utils/RuleEngine';
-import { COLOR_SCHEMES, TREND_ICONS } from '../config/thresholds';
+import React, { useState, useEffect } from "react";
+import { Classifier, LookupHelper } from "../utils/RuleEngine";
+import { COLOR_SCHEMES, TREND_ICONS } from "../config/thresholds";
 
 const InjuryRiskAssessment = () => {
   const [riskData, setRiskData] = useState({
@@ -11,9 +11,9 @@ const InjuryRiskAssessment = () => {
     earlyWarnings: [],
     recommendations: [],
     riskTrend: [],
-    injuryProbability: {}
+    injuryProbability: {},
   });
-  
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,77 +24,98 @@ const InjuryRiskAssessment = () => {
         overallRisk: 34, // 0-100 scale (lower is better)
         confidence: 89,
         riskFactors: [
-          { 
-            factor: 'Training Load', 
-            risk: 42, 
-            status: 'moderate',
-            description: 'Above optimal training volume this week',
-            impact: 'high'
+          {
+            factor: "Training Load",
+            risk: 42,
+            status: "moderate",
+            description: "Above optimal training volume this week",
+            impact: "high",
           },
-          { 
-            factor: 'Recovery Quality', 
-            risk: 28, 
-            status: 'low',
-            description: 'Good sleep and wellness metrics',
-            impact: 'medium'
+          {
+            factor: "Recovery Quality",
+            risk: 28,
+            status: "low",
+            description: "Good sleep and wellness metrics",
+            impact: "medium",
           },
-          { 
-            factor: 'Pain Indicators', 
-            risk: 35, 
-            status: 'moderate',
-            description: 'Minor hamstring tightness reported',
-            impact: 'high'
+          {
+            factor: "Pain Indicators",
+            risk: 35,
+            status: "moderate",
+            description: "Minor hamstring tightness reported",
+            impact: "high",
           },
-          { 
-            factor: 'Movement Quality', 
-            risk: 31, 
-            status: 'low',
-            description: 'Range of motion within normal limits',
-            impact: 'medium'
-          }
+          {
+            factor: "Movement Quality",
+            risk: 31,
+            status: "low",
+            description: "Range of motion within normal limits",
+            impact: "medium",
+          },
         ],
         bodyPartRisks: [
-          { bodyPart: 'Hamstring', risk: 45, trend: 'increasing', lastInjury: '8 months ago' },
-          { bodyPart: 'Ankle', risk: 22, trend: 'stable', lastInjury: 'Never' },
-          { bodyPart: 'Knee', risk: 18, trend: 'decreasing', lastInjury: '2 years ago' },
-          { bodyPart: 'Shoulder', risk: 35, trend: 'stable', lastInjury: '1 year ago' },
-          { bodyPart: 'Lower Back', risk: 28, trend: 'decreasing', lastInjury: '6 months ago' }
+          {
+            bodyPart: "Hamstring",
+            risk: 45,
+            trend: "increasing",
+            lastInjury: "8 months ago",
+          },
+          { bodyPart: "Ankle", risk: 22, trend: "stable", lastInjury: "Never" },
+          {
+            bodyPart: "Knee",
+            risk: 18,
+            trend: "decreasing",
+            lastInjury: "2 years ago",
+          },
+          {
+            bodyPart: "Shoulder",
+            risk: 35,
+            trend: "stable",
+            lastInjury: "1 year ago",
+          },
+          {
+            bodyPart: "Lower Back",
+            risk: 28,
+            trend: "decreasing",
+            lastInjury: "6 months ago",
+          },
         ],
         earlyWarnings: [
           {
-            severity: 'medium',
-            type: 'training_load',
-            message: 'Training intensity increased 15% this week - monitor closely',
-            action: 'Consider active recovery session tomorrow'
+            severity: "medium",
+            type: "training_load",
+            message:
+              "Training intensity increased 15% this week - monitor closely",
+            action: "Consider active recovery session tomorrow",
           },
           {
-            severity: 'low', 
-            type: 'muscle_tension',
-            message: 'Hamstring tightness reported 3 days in a row',
-            action: 'Increase stretching and foam rolling frequency'
-          }
+            severity: "low",
+            type: "muscle_tension",
+            message: "Hamstring tightness reported 3 days in a row",
+            action: "Increase stretching and foam rolling frequency",
+          },
         ],
         recommendations: [
-          '🎯 Reduce training intensity by 10-15% for next 3 days',
-          '🧘‍♂️ Add 15-minute daily stretching routine focusing on hamstrings',
-          '💤 Prioritize 8+ hours sleep - current recovery metrics show room for improvement',
-          '🏃‍♂️ Replace one high-intensity session with active recovery this week',
-          '📊 Schedule movement assessment to identify compensation patterns'
+          "🎯 Reduce training intensity by 10-15% for next 3 days",
+          "🧘‍♂️ Add 15-minute daily stretching routine focusing on hamstrings",
+          "💤 Prioritize 8+ hours sleep - current recovery metrics show room for improvement",
+          "🏃‍♂️ Replace one high-intensity session with active recovery this week",
+          "📊 Schedule movement assessment to identify compensation patterns",
         ],
         riskTrend: [
-          { week: 'W1', risk: 25 },
-          { week: 'W2', risk: 28 },
-          { week: 'W3', risk: 32 },
-          { week: 'W4', risk: 34 },
-          { week: 'W5', risk: 31, predicted: true }
+          { week: "W1", risk: 25 },
+          { week: "W2", risk: 28 },
+          { week: "W3", risk: 32 },
+          { week: "W4", risk: 34 },
+          { week: "W5", risk: 31, predicted: true },
         ],
         injuryProbability: {
           next7Days: 8.5,
           next14Days: 15.2,
-          next30Days: 23.8
-        }
+          next30Days: 23.8,
+        },
       };
-      
+
       setRiskData(mockRiskData);
       setLoading(false);
     };
@@ -117,7 +138,11 @@ const InjuryRiskAssessment = () => {
   };
 
   const getSeverityColor = (severity) => {
-    return LookupHelper.get(COLOR_SCHEMES.severity, severity, COLOR_SCHEMES.severity.default);
+    return LookupHelper.get(
+      COLOR_SCHEMES.severity,
+      severity,
+      COLOR_SCHEMES.severity.default,
+    );
   };
 
   if (loading) {
@@ -137,10 +162,10 @@ const InjuryRiskAssessment = () => {
       <div className="stats-card risk-overview">
         <div className="risk-score-main">
           <div className="risk-score-container">
-            <div 
+            <div
               className="risk-score-circle"
-              style={{ 
-                background: `conic-gradient(${getRiskColor(riskData.overallRisk)} ${riskData.overallRisk}%, #f1f5f9 ${riskData.overallRisk}%)`
+              style={{
+                background: `conic-gradient(${getRiskColor(riskData.overallRisk)} ${riskData.overallRisk}%, #f1f5f9 ${riskData.overallRisk}%)`,
               }}
             >
               <div className="risk-score-inner">
@@ -149,10 +174,15 @@ const InjuryRiskAssessment = () => {
               </div>
             </div>
             <div className="risk-interpretation">
-              <div className="risk-level" style={{ color: getRiskColor(riskData.overallRisk) }}>
+              <div
+                className="risk-level"
+                style={{ color: getRiskColor(riskData.overallRisk) }}
+              >
                 {getRiskLevel(riskData.overallRisk)} Risk
               </div>
-              <div className="risk-confidence">{riskData.confidence}% confidence</div>
+              <div className="risk-confidence">
+                {riskData.confidence}% confidence
+              </div>
             </div>
           </div>
         </div>
@@ -166,9 +196,11 @@ const InjuryRiskAssessment = () => {
             {riskData.earlyWarnings.map((warning, index) => (
               <div key={index} className="warning-item">
                 <div className="warning-header">
-                  <div 
+                  <div
                     className="warning-indicator"
-                    style={{ backgroundColor: getSeverityColor(warning.severity) }}
+                    style={{
+                      backgroundColor: getSeverityColor(warning.severity),
+                    }}
                   ></div>
                   <span className="warning-message">{warning.message}</span>
                 </div>
@@ -187,7 +219,7 @@ const InjuryRiskAssessment = () => {
             <div key={index} className="risk-factor-item">
               <div className="factor-header">
                 <span className="factor-name">{factor.factor}</span>
-                <span 
+                <span
                   className="factor-risk"
                   style={{ color: getRiskColor(factor.risk) }}
                 >
@@ -195,11 +227,11 @@ const InjuryRiskAssessment = () => {
                 </span>
               </div>
               <div className="factor-progress">
-                <div 
+                <div
                   className="factor-bar"
-                  style={{ 
+                  style={{
                     width: `${factor.risk}%`,
-                    backgroundColor: getRiskColor(factor.risk)
+                    backgroundColor: getRiskColor(factor.risk),
                   }}
                 ></div>
               </div>
@@ -225,11 +257,11 @@ const InjuryRiskAssessment = () => {
                 </div>
               </div>
               <div className="body-part-progress">
-                <div 
+                <div
                   className="body-part-bar"
-                  style={{ 
+                  style={{
                     width: `${part.risk}%`,
-                    backgroundColor: getRiskColor(part.risk)
+                    backgroundColor: getRiskColor(part.risk),
                   }}
                 ></div>
               </div>
@@ -247,7 +279,12 @@ const InjuryRiskAssessment = () => {
         <div className="probability-grid">
           <div className="probability-item">
             <div className="probability-timeframe">Next 7 Days</div>
-            <div className="probability-value" style={{ color: getRiskColor(riskData.injuryProbability.next7Days * 4) }}>
+            <div
+              className="probability-value"
+              style={{
+                color: getRiskColor(riskData.injuryProbability.next7Days * 4),
+              }}
+            >
               {riskData.injuryProbability.next7Days}%
             </div>
             <div className="probability-level">
@@ -256,7 +293,12 @@ const InjuryRiskAssessment = () => {
           </div>
           <div className="probability-item">
             <div className="probability-timeframe">Next 14 Days</div>
-            <div className="probability-value" style={{ color: getRiskColor(riskData.injuryProbability.next14Days * 2) }}>
+            <div
+              className="probability-value"
+              style={{
+                color: getRiskColor(riskData.injuryProbability.next14Days * 2),
+              }}
+            >
               {riskData.injuryProbability.next14Days}%
             </div>
             <div className="probability-level">
@@ -265,7 +307,12 @@ const InjuryRiskAssessment = () => {
           </div>
           <div className="probability-item">
             <div className="probability-timeframe">Next 30 Days</div>
-            <div className="probability-value" style={{ color: getRiskColor(riskData.injuryProbability.next30Days * 2) }}>
+            <div
+              className="probability-value"
+              style={{
+                color: getRiskColor(riskData.injuryProbability.next30Days * 2),
+              }}
+            >
               {riskData.injuryProbability.next30Days}%
             </div>
             <div className="probability-level">
@@ -282,11 +329,13 @@ const InjuryRiskAssessment = () => {
           {riskData.riskTrend.map((point, index) => (
             <div key={index} className="trend-point">
               <div className="trend-week">{point.week}</div>
-              <div 
-                className={`trend-bar ${point.predicted ? 'predicted' : ''}`}
-                style={{ 
+              <div
+                className={`trend-bar ${point.predicted ? "predicted" : ""}`}
+                style={{
                   height: `${point.risk * 2}px`,
-                  backgroundColor: point.predicted ? '#28a745' : getRiskColor(point.risk)
+                  backgroundColor: point.predicted
+                    ? "#28a745"
+                    : getRiskColor(point.risk),
                 }}
               >
                 <span className="trend-score">{point.risk}</span>
@@ -322,8 +371,12 @@ const InjuryRiskAssessment = () => {
       <div className="stats-card injury-actions">
         <h4>⚡ Take Action</h4>
         <div className="action-buttons">
-          <button className="action-btn primary">Schedule Movement Assessment</button>
-          <button className="action-btn secondary">Log Current Pain Levels</button>
+          <button className="action-btn primary">
+            Schedule Movement Assessment
+          </button>
+          <button className="action-btn secondary">
+            Log Current Pain Levels
+          </button>
           <button className="action-btn secondary">View Injury History</button>
           <button className="action-btn secondary">Export Risk Report</button>
         </div>

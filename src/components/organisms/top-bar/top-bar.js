@@ -53,28 +53,36 @@
 
         // Try to use authManager if available
         let authToken = null;
-        if (window.authManager && typeof window.authManager.getToken === 'function') {
+        if (
+          window.authManager &&
+          typeof window.authManager.getToken === "function"
+        ) {
           try {
             await window.authManager.waitForInit();
             if (window.authManager.isAuthenticated()) {
               authToken = window.authManager.getToken();
             }
           } catch (e) {
-            logger.debug("AuthManager not ready, trying fallback token retrieval");
+            logger.debug(
+              "AuthManager not ready, trying fallback token retrieval",
+            );
           }
         }
 
         // Fallback: try to get token from localStorage or secure storage
         if (!authToken) {
           // Try secure storage if available
-          if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+          if (
+            window.secureStorage &&
+            typeof window.secureStorage.getAuthToken === "function"
+          ) {
             try {
               authToken = await window.secureStorage.getAuthToken();
             } catch (e) {
               logger.debug("Secure storage not available");
             }
           }
-          
+
           // Final fallback: localStorage
           if (!authToken) {
             authToken = localStorage.getItem("authToken");
@@ -90,15 +98,16 @@
         // Fallback: call API directly
         // Try Netlify Functions endpoint first, then fallback to REST API
         const baseUrl = window.location.origin;
-        const isNetlify = baseUrl.includes("netlify.app") || baseUrl.includes("netlify.com");
-        const endpoint = isNetlify 
+        const isNetlify =
+          baseUrl.includes("netlify.app") || baseUrl.includes("netlify.com");
+        const endpoint = isNetlify
           ? `${baseUrl}/.netlify/functions/notifications-count`
           : "/api/dashboard/notifications/count";
-        
+
         const response = await fetch(endpoint, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${authToken}`,
+            Authorization: `Bearer ${authToken}`,
             "Content-Type": "application/json",
           },
         });
@@ -119,7 +128,7 @@
           return data.data.unreadCount || data.data.count || 0;
         } else if (data?.unreadCount !== undefined) {
           return data.unreadCount;
-        } else if (typeof data === 'number') {
+        } else if (typeof data === "number") {
           return data;
         }
         return 0;
@@ -153,7 +162,9 @@
     const listbox = document.getElementById("search-results");
     const status = document.getElementById("search-status");
 
-    if (!input || !listbox || !status) {return;}
+    if (!input || !listbox || !status) {
+      return;
+    }
 
     let idx = -1;
     let items = [];
@@ -170,17 +181,21 @@
 
     // Highlight matches in text
     const highlightText = (text, query, matchedTexts = []) => {
-      if (!text || !query) {return text;}
-      
+      if (!text || !query) {
+        return text;
+      }
+
       // Use matchedTexts if available, otherwise use query
       const termsToHighlight = matchedTexts.length > 0 ? matchedTexts : [query];
       let highlighted = text;
-      
+
       for (const term of termsToHighlight) {
-        if (!term || !term.trim()) {continue;}
+        if (!term || !term.trim()) {
+          continue;
+        }
         // Escape special regex characters
-        const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const regex = new RegExp(`(${escapedTerm})`, 'gi');
+        const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(`(${escapedTerm})`, "gi");
         highlighted = highlighted.replace(regex, (match) => {
           // Check if already inside a highlight tag
           if (highlighted.indexOf(`<mark>${match}</mark>`) !== -1) {
@@ -189,14 +204,14 @@
           return `<mark class="search-highlight">${match}</mark>`;
         });
       }
-      
+
       return highlighted;
     };
 
     // Render search results or history
     const render = (results = [], isHistory = false) => {
       showingHistory = isHistory;
-      
+
       if (isHistory && results.length === 0) {
         listbox.textContent = "";
         listbox.hidden = true;
@@ -210,37 +225,45 @@
 
       // Build results HTML string (highlightText returns HTML with highlighting)
       const resultsHTML = results
-        .map(
-          (r, i) => {
-            if (isHistory) {
-              // Render history item
-              return `<div id="sr-${i}" role="option" class="result-item result-item-history" aria-selected="${i === idx}">
+        .map((r, i) => {
+          if (isHistory) {
+            // Render history item
+            return `<div id="sr-${i}" role="option" class="result-item result-item-history" aria-selected="${i === idx}">
                 <div class="result-label">
                   <span class="history-icon">🕒</span>
                   ${r}
                 </div>
               </div>`;
-            }
-            
-            // Render search result with highlighting
-            const matchedTexts = r.matchedTexts || [input.value.trim()];
-            const highlightedLabel = highlightText(r.label, input.value.trim(), matchedTexts);
-            const highlightedDescription = r.description ? highlightText(r.description, input.value.trim(), matchedTexts) : "";
-            const description = highlightedDescription ? `<div class="result-description">${highlightedDescription}</div>` : "";
-            const category = r.category ? `<div class="result-category">${r.category}</div>` : "";
-            
-            return `<div id="sr-${i}" role="option" class="result-item" aria-selected="${i === idx}">
+          }
+
+          // Render search result with highlighting
+          const matchedTexts = r.matchedTexts || [input.value.trim()];
+          const highlightedLabel = highlightText(
+            r.label,
+            input.value.trim(),
+            matchedTexts,
+          );
+          const highlightedDescription = r.description
+            ? highlightText(r.description, input.value.trim(), matchedTexts)
+            : "";
+          const description = highlightedDescription
+            ? `<div class="result-description">${highlightedDescription}</div>`
+            : "";
+          const category = r.category
+            ? `<div class="result-category">${r.category}</div>`
+            : "";
+
+          return `<div id="sr-${i}" role="option" class="result-item" aria-selected="${i === idx}">
               <div class="result-label">${highlightedLabel}</div>
               ${description}
               ${category}
             </div>`;
-          },
-        )
+        })
         .join("");
 
       // Use temp container pattern to safely insert HTML (highlightText returns HTML)
-       
-      const temp = document.createElement('div');
+
+      const temp = document.createElement("div");
       // eslint-disable-next-line no-restricted-syntax
       temp.innerHTML = resultsHTML;
       while (temp.firstChild) {
@@ -267,7 +290,9 @@
     // Show search history
     const showHistory = () => {
       try {
-        const history = window.getRecentSearches ? window.getRecentSearches() : [];
+        const history = window.getRecentSearches
+          ? window.getRecentSearches()
+          : [];
         if (history.length > 0) {
           items = history;
           idx = -1;
@@ -292,7 +317,9 @@
 
       try {
         // Call global search function (don't save to history yet - will save on selection)
-        const results = await window.performGlobalSearch(query, { saveToHistory: false });
+        const results = await window.performGlobalSearch(query, {
+          saveToHistory: false,
+        });
 
         items = results;
         idx = results.length > 0 ? 0 : -1;
@@ -356,7 +383,7 @@
         case "Enter":
           if (idx >= 0 && items[idx]) {
             const selected = items[idx];
-            
+
             if (showingHistory) {
               // History item selected - use it as search query
               input.value = selected;
@@ -368,9 +395,13 @@
                 window.saveToHistory(input.value.trim());
               } else if (window.performGlobalSearch) {
                 // Trigger search again with history saving enabled
-                window.performGlobalSearch(input.value.trim(), { saveToHistory: true }).catch(() => {});
+                window
+                  .performGlobalSearch(input.value.trim(), {
+                    saveToHistory: true,
+                  })
+                  .catch(() => {});
               }
-              
+
               input.value = selected.label || selected.value || selected;
               listbox.hidden = true;
               input.setAttribute("aria-expanded", "false");
@@ -411,7 +442,7 @@
         const itemIdx = parseInt(item.id.replace("sr-", ""), 10);
         if (items[itemIdx]) {
           const selected = items[itemIdx];
-          
+
           if (showingHistory) {
             // History item clicked - use it as search query
             input.value = selected;
@@ -423,9 +454,13 @@
               window.saveToHistory(input.value.trim());
             } else if (window.performGlobalSearch) {
               // Trigger search again with history saving enabled
-              window.performGlobalSearch(input.value.trim(), { saveToHistory: true }).catch(() => {});
+              window
+                .performGlobalSearch(input.value.trim(), {
+                  saveToHistory: true,
+                })
+                .catch(() => {});
             }
-            
+
             input.value = selected.label || selected.value || selected;
             listbox.hidden = true;
             input.setAttribute("aria-expanded", "false");
@@ -448,7 +483,9 @@
     const badge = document.getElementById("notification-badge");
     const live = document.getElementById("notification-live");
 
-    if (!bell) {return;}
+    if (!bell) {
+      return;
+    }
 
     // Initialize aria attributes
     bell.setAttribute("aria-expanded", "false");
@@ -457,7 +494,9 @@
 
     // Set badge count
     function setBadge(count) {
-      if (!badge || !live) {return;}
+      if (!badge || !live) {
+        return;
+      }
 
       if (count > 0) {
         badge.textContent = String(count);
@@ -484,7 +523,10 @@
         const panel = document.getElementById("notification-panel");
         if (panel && panel.classList.contains("is-open")) {
           // Use dashboardPage method if available
-          if (window.dashboardPage && window.dashboardPage.closeNotificationPanel) {
+          if (
+            window.dashboardPage &&
+            window.dashboardPage.closeNotificationPanel
+          ) {
             window.dashboardPage.closeNotificationPanel();
           } else {
             // Fallback
@@ -528,7 +570,9 @@
     const button = document.getElementById("user-menu-button");
     const menu = document.getElementById("user-menu");
 
-    if (!button || !menu) {return;}
+    if (!button || !menu) {
+      return;
+    }
 
     // Initialize aria attributes
     button.setAttribute("aria-expanded", "false");
@@ -607,7 +651,9 @@
    */
   function initScrollEffects() {
     const topBar = document.querySelector(".top-bar");
-    if (!topBar) {return;}
+    if (!topBar) {
+      return;
+    }
 
     let ticking = false;
 
@@ -646,7 +692,9 @@
    */
   function initScrollToTop() {
     const scrollButton = document.getElementById("scroll-to-top");
-    if (!scrollButton) {return;}
+    if (!scrollButton) {
+      return;
+    }
 
     let ticking = false;
 
@@ -706,24 +754,28 @@
    * Handles theme toggle interactions and syncs with theme-switcher.js
    */
   // Store observer outside function to prevent redeclaration
-  if (typeof window.topBarThemeObserver === 'undefined') {
+  if (typeof window.topBarThemeObserver === "undefined") {
     window.topBarThemeObserver = null;
   }
-  
+
   function initThemeToggle() {
     const themeToggle = document.getElementById("header-theme-toggle");
-    const themeToggleButton = document.getElementById("header-theme-toggle-button");
-    
+    const themeToggleButton = document.getElementById(
+      "header-theme-toggle-button",
+    );
+
     // Handle button version
     if (themeToggleButton) {
       // theme-switcher.js handles the toggle logic and event listeners
       // This function just syncs the visual state when theme changes
       const getCurrentTheme = () => {
-        return document.documentElement.getAttribute("data-theme") || 
-               localStorage.getItem("theme") ||
-               "light";
+        return (
+          document.documentElement.getAttribute("data-theme") ||
+          localStorage.getItem("theme") ||
+          "light"
+        );
       };
-      
+
       const currentTheme = getCurrentTheme();
       updateButtonVisualState(themeToggleButton, currentTheme);
 
@@ -752,23 +804,27 @@
           updateButtonVisualState(themeToggleButton, newTheme);
         }
       });
-      
+
       return;
     }
-    
+
     // Handle checkbox version
-    if (!themeToggle) {return;}
+    if (!themeToggle) {
+      return;
+    }
 
     // theme-switcher.js handles the toggle logic and event listeners
     // This function just syncs the visual state when theme changes
-    
+
     // Initialize toggle state based on current theme
     const getCurrentTheme = () => {
-      return document.documentElement.getAttribute("data-theme") || 
-             localStorage.getItem("theme") ||
-             "light";
+      return (
+        document.documentElement.getAttribute("data-theme") ||
+        localStorage.getItem("theme") ||
+        "light"
+      );
     };
-    
+
     const currentTheme = getCurrentTheme();
     themeToggle.checked = currentTheme === "dark";
     updateToggleVisualState(currentTheme);
@@ -829,8 +885,10 @@
    * Update button visual state (for button version)
    */
   function updateButtonVisualState(button, theme) {
-    if (!button) {return;}
-    
+    if (!button) {
+      return;
+    }
+
     // Update aria-label and title for accessibility
     if (theme === "dark") {
       button.setAttribute("aria-label", "Switch to light theme");
@@ -839,7 +897,7 @@
       button.setAttribute("aria-label", "Switch to dark theme");
       button.setAttribute("title", "Switch to dark theme");
     }
-    
+
     // CSS handles icon visibility via opacity transitions based on data-theme attribute
     // Just ensure the button is visible
     button.style.display = "";

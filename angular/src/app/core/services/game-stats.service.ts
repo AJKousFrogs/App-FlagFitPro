@@ -13,8 +13,8 @@ import { LoggerService } from "./logger.service";
 
 export interface GamePlay {
   id?: string;
-  playType: 'pass' | 'run' | 'flag_pull';
-  outcome?: 'completion' | 'incompletion' | 'interception' | 'drop';
+  playType: "pass" | "run" | "flag_pull";
+  outcome?: "completion" | "incompletion" | "interception" | "drop";
   quarterbackId?: string;
   receiverId?: string;
   ballCarrierId?: string;
@@ -64,9 +64,8 @@ export class GameStatsService {
   async getPlayerStats(
     playerId: string,
     gameId: string,
-    maxRetries = this.MAX_RETRIES
+    maxRetries = this.MAX_RETRIES,
   ): Promise<PlayerStats | null> {
-
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         const { data, error } = await this.supabase
@@ -96,8 +95,13 @@ export class GameStatsService {
           continue;
         }
 
-        this.logger.error(`Failed to fetch player stats after ${maxRetries} attempts:`, error);
-        throw new Error(`Unable to fetch player statistics: ${this.getErrorMessage(error)}`);
+        this.logger.error(
+          `Failed to fetch player stats after ${maxRetries} attempts:`,
+          error,
+        );
+        throw new Error(
+          `Unable to fetch player statistics: ${this.getErrorMessage(error)}`,
+        );
       }
     }
 
@@ -107,8 +111,10 @@ export class GameStatsService {
   /**
    * Get player stats as Observable (RxJS version)
    */
-  getPlayerStatsObservable(playerId: string, gameId: string): Observable<PlayerStats | null> {
-
+  getPlayerStatsObservable(
+    playerId: string,
+    gameId: string,
+  ): Observable<PlayerStats | null> {
     // Convert promise to observable with retry logic
     return new Observable<PlayerStats | null>((subscriber) => {
       this.getPlayerStats(playerId, gameId)
@@ -121,15 +127,12 @@ export class GameStatsService {
         });
     }).pipe(
       retryWhen((errors) =>
-        errors.pipe(
-          delay(this.RETRY_DELAY_MS),
-          take(this.MAX_RETRIES)
-        )
+        errors.pipe(delay(this.RETRY_DELAY_MS), take(this.MAX_RETRIES)),
       ),
       catchError((error) => {
         this.logger.error("Error fetching player stats:", error);
         return of(null);
-      })
+      }),
     );
   }
 
@@ -148,7 +151,7 @@ export class GameStatsService {
       rushingYards: 0,
       flagPullAttempts: 0,
       flagPulls: 0,
-      missedFlagPulls: 0
+      missedFlagPulls: 0,
     };
 
     plays.forEach((play) => {
@@ -179,7 +182,10 @@ export class GameStatsService {
 
         case "run":
           stats.rushingAttempts++;
-          if (play.yardsGained !== undefined && typeof play.yardsGained === "number") {
+          if (
+            play.yardsGained !== undefined &&
+            typeof play.yardsGained === "number"
+          ) {
             stats.rushingYards += play.yardsGained;
           }
           break;
@@ -203,7 +209,7 @@ export class GameStatsService {
    */
   async getMultiplePlayerStats(
     playerIds: string[],
-    gameId: string
+    gameId: string,
   ): Promise<Map<string, PlayerStats | null>> {
     const results = new Map<string, PlayerStats | null>();
 
@@ -215,7 +221,7 @@ export class GameStatsService {
         this.getPlayerStats(playerId, gameId).then((stats) => ({
           playerId,
           stats,
-        }))
+        })),
       );
 
       const batchResults = await Promise.all(batchPromises);
@@ -231,7 +237,7 @@ export class GameStatsService {
    * Delay helper for retry logic
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -244,4 +250,3 @@ export class GameStatsService {
     return "Unknown error";
   }
 }
-

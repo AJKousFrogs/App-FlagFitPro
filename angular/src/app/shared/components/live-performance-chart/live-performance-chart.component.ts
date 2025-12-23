@@ -82,7 +82,9 @@ export interface LiveMetric {
         border: 1px solid var(--p-surface-200);
         border-radius: var(--p-border-radius);
         background: var(--p-surface-card);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
       }
 
       .metric-card:hover {
@@ -230,4 +232,3 @@ export class LivePerformanceChartComponent implements OnInit, OnDestroy {
     return metric.id;
   }
 }
-

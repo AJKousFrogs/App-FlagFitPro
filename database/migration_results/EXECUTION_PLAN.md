@@ -84,15 +84,15 @@ After running migrations, verify:
 
 ```sql
 -- Check tables
-SELECT COUNT(*) as table_count FROM information_schema.tables 
+SELECT COUNT(*) as table_count FROM information_schema.tables
 WHERE table_schema = 'public';
 
 -- Check functions
-SELECT COUNT(*) as function_count FROM pg_proc 
+SELECT COUNT(*) as function_count FROM pg_proc
 WHERE pronamespace = 'public'::regnamespace;
 
 -- Check RLS enabled
-SELECT COUNT(*) as rls_enabled_count FROM pg_tables 
+SELECT COUNT(*) as rls_enabled_count FROM pg_tables
 WHERE schemaname = 'public' AND rowsecurity = true;
 ```
 

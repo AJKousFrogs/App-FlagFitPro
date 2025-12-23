@@ -8,16 +8,19 @@
 ## ✅ Completed Fixes
 
 ### 1. `dashboard-page.js` ✅
+
 - **Fixed**: 10 instances
 - **Methods**: All replaced with DOM manipulation
 - **Added**: Helper functions `setButtonLoading()` and `restoreButton()`
 
 ### 2. `roster.html` - Partial ✅
+
 - **Fixed**: 7 instances
 - **Remaining**: 10 instances (mostly in card creation functions)
 - **Added**: Helper functions `createElement()`, `setButtonLoading()`, `restoreButton()`
 
 **Fixed Instances**:
+
 - ✅ Loading states
 - ✅ Error messages
 - ✅ Empty states
@@ -26,6 +29,7 @@
 - ✅ Stats container rendering
 
 **Remaining Instances** (require refactoring card functions):
+
 - `coachingContainer.innerHTML` - Uses `createStaffCard()` function
 - `container.innerHTML` - Uses `createPlayerCard()` function
 - `tableBody.innerHTML` - Complex table row generation
@@ -37,11 +41,13 @@
 ## 📊 Statistics
 
 ### Fixed
+
 - ✅ 17 `innerHTML` instances fixed across 2 files
 - ✅ 2 helper function sets created
 - ✅ ESLint warnings active for remaining instances
 
 ### Remaining
+
 - ⚠️ ~217 `innerHTML` instances across codebase
 - ⚠️ 10 in `roster.html` (complex card functions)
 - ⚠️ 18 in `wellness.html`
@@ -54,6 +60,7 @@
 ## 🎯 Next Steps
 
 ### High Priority
+
 1. **Continue fixing `roster.html`**
    - Refactor `createStaffCard()` to return DOM elements
    - Refactor `createPlayerCard()` to return DOM elements
@@ -64,6 +71,7 @@
    - Can reuse helper functions
 
 ### Medium Priority
+
 3. **Fix JavaScript modules**
    - `chatbot.js`
    - `exercise-library-page.js`
@@ -80,4 +88,3 @@
 ---
 
 **Last Updated**: After fixing 7 instances in `roster.html`
-

@@ -9,7 +9,7 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -29,7 +29,7 @@ function computeMetrics(raw) {
       total_volume: 0,
       high_speed_distance: 0,
       sprint_count: 0,
-      duration_minutes: 0
+      duration_minutes: 0,
     };
   }
 
@@ -37,7 +37,7 @@ function computeMetrics(raw) {
   let highSpeedDistance = 0;
   let sprintCount = 0;
 
-  raw.forEach(entry => {
+  raw.forEach((entry) => {
     const speed = entry.speed_m_s ?? entry.speed ?? 0;
     const dist = entry.distance_m ?? entry.distance ?? 0;
 
@@ -59,7 +59,7 @@ function computeMetrics(raw) {
     total_volume: Math.round(totalDistance * 100) / 100, // Round to 2 decimals
     high_speed_distance: Math.round(highSpeedDistance * 100) / 100,
     sprint_count: sprintCount,
-    duration_minutes: durationMin
+    duration_minutes: durationMin,
   };
 }
 
@@ -72,7 +72,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: ""
+      body: "",
     };
   }
 
@@ -87,7 +87,7 @@ exports.handler = async (event, context) => {
       return createErrorResponse(
         "Method not allowed. Use POST to import data.",
         405,
-        'method_not_allowed'
+        "method_not_allowed",
       );
     }
 
@@ -144,7 +144,7 @@ exports.handler = async (event, context) => {
         sprint_count: metrics.sprint_count,
         duration_minutes: metrics.duration_minutes,
         data_source: "open_dataset",
-        raw_data: dataset
+        raw_data: dataset,
       })
       .select()
       .single();
@@ -153,17 +153,16 @@ exports.handler = async (event, context) => {
       console.error("Database error:", error);
       return createErrorResponse(
         500,
-        `Failed to insert session: ${error.message}`
+        `Failed to insert session: ${error.message}`,
       );
     }
 
     return createSuccessResponse({
       ok: true,
       metrics,
-      session_id: data.id
+      session_id: data.id,
     });
   } catch (error) {
     return handleServerError(error, "import-open-data");
   }
 };
-

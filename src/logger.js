@@ -22,7 +22,9 @@ class Logger {
 
   // Check if level should be logged
   shouldLog(level) {
-    if (this.logLevel === "silent") {return false;}
+    if (this.logLevel === "silent") {
+      return false;
+    }
 
     const levels = ["debug", "info", "warn", "error"];
     const currentLevelIndex = levels.indexOf(this.logLevel);
@@ -33,7 +35,9 @@ class Logger {
 
   // Debug logging (development only)
   debug(...args) {
-    if (!this.shouldLog("debug")) {return;}
+    if (!this.shouldLog("debug")) {
+      return;
+    }
 
     if (this.isDevelopment) {
       console.log("🔍 [DEBUG]", ...args);
@@ -44,7 +48,9 @@ class Logger {
 
   // Info logging
   info(...args) {
-    if (!this.shouldLog("info")) {return;}
+    if (!this.shouldLog("info")) {
+      return;
+    }
 
     if (this.isDevelopment) {
       console.log("ℹ️ [INFO]", ...args);
@@ -55,7 +61,9 @@ class Logger {
 
   // Warning logging
   warn(...args) {
-    if (!this.shouldLog("warn")) {return;}
+    if (!this.shouldLog("warn")) {
+      return;
+    }
 
     console.warn("⚠️ [WARN]", ...args);
     this.addToHistory("warn", args);
@@ -63,7 +71,9 @@ class Logger {
 
   // Error logging (always logged)
   error(...args) {
-    if (!this.shouldLog("error")) {return;}
+    if (!this.shouldLog("error")) {
+      return;
+    }
 
     console.error("❌ [ERROR]", ...args);
     this.addToHistory("error", args);
@@ -77,7 +87,9 @@ class Logger {
 
   // Success logging (info level)
   success(...args) {
-    if (!this.shouldLog("info")) {return;}
+    if (!this.shouldLog("info")) {
+      return;
+    }
 
     if (this.isDevelopment) {
       console.log("✅ [SUCCESS]", ...args);

@@ -30,8 +30,8 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
     Tabs,
     TabPanel,
     MainLayoutComponent,
-    StatsGridComponent
-],
+    StatsGridComponent,
+  ],
   template: `
     <app-main-layout>
       <div class="profile-page">
@@ -47,7 +47,7 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
                 color: 'var(--color-text-on-primary)',
                 'font-size': '3rem',
               }"
-              >
+            >
             </p-avatar>
             <p-button
               icon="pi pi-camera"
@@ -71,10 +71,10 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
             ></p-button>
           </div>
         </div>
-    
+
         <!-- Profile Stats -->
         <app-stats-grid [stats]="stats()"></app-stats-grid>
-    
+
         <!-- Profile Tabs -->
         <p-tabs>
           <p-tabpanel header="Overview" leftIcon="pi pi-chart-line">
@@ -85,11 +85,10 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
                 </ng-template>
                 <div class="activity-list">
                   @for (
-                    activity of activities(); track trackByActivityTitle($index,
-                    activity)) {
-                    <div
-                      class="activity-item"
-                      >
+                    activity of activities();
+                    track trackByActivityTitle($index, activity)
+                  ) {
+                    <div class="activity-item">
                       <div class="activity-icon">{{ activity.icon }}</div>
                       <div class="activity-content">
                         <div class="activity-title">{{ activity.title }}</div>
@@ -104,11 +103,10 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
           <p-tabpanel header="Achievements" leftIcon="pi pi-trophy">
             <div class="achievements-grid">
               @for (
-                achievement of achievements(); track trackByAchievementTitle($index,
-                achievement)) {
-                <p-card
-                  class="achievement-card"
-                  >
+                achievement of achievements();
+                track trackByAchievementTitle($index, achievement)
+              ) {
+                <p-card class="achievement-card">
                   <div class="achievement-icon">{{ achievement.icon }}</div>
                   <h4 class="achievement-title">{{ achievement.title }}</h4>
                   <p class="achievement-description">
@@ -126,11 +124,10 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
               </ng-template>
               <div class="stats-grid">
                 @for (
-                  stat of performanceStats(); track trackByPerformanceStatLabel($index,
-                  stat)) {
-                  <div
-                    class="performance-stat"
-                    >
+                  stat of performanceStats();
+                  track trackByPerformanceStatLabel($index, stat)
+                ) {
+                  <div class="performance-stat">
                     <div class="stat-label">{{ stat.label }}</div>
                     <div class="stat-value">{{ stat.value }}</div>
                     <p-tag
@@ -145,7 +142,7 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
         </p-tabs>
       </div>
     </app-main-layout>
-    `,
+  `,
   styles: [
     `
       .profile-page {

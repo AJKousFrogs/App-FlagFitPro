@@ -13,7 +13,7 @@ import { Tabs } from "primeng/tabs";
 import { expandCollapse } from "../../animations/app.animations";
 import { StatItem } from "../stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
-import { LoggerService } from '../../../core/services/logger.service';
+import { LoggerService } from "../../../core/services/logger.service";
 
 export interface ProgressiveStatItem extends StatItem {
   id: string;
@@ -49,7 +49,9 @@ export interface ProgressiveStatItem extends StatItem {
                 @if (stat.icon) {
                   <div
                     class="stat-icon"
-                    [style.background]="(stat.color || 'var(--ds-primary-green)') + '20'"
+                    [style.background]="
+                      (stat.color || 'var(--ds-primary-green)') + '20'
+                    "
                     [style.color]="stat.color || 'var(--ds-primary-green)'"
                   >
                     <i [class]="'pi ' + stat.icon"></i>
@@ -79,15 +81,10 @@ export interface ProgressiveStatItem extends StatItem {
 
             <!-- Level 2: Expanded Details (Progressive Disclosure) -->
             @if (expandedStat() === stat.id) {
-              <div
-                class="stat-details"
-                [@expandCollapse]
-              >
+              <div class="stat-details" [@expandCollapse]>
                 <!-- Level 3: Deep Dive Charts -->
                 @if (showDeepDive() === stat.id && hasChartData(stat)) {
-                  <p-tabView
-                    class="stat-tabs"
-                  >
+                  <p-tabView class="stat-tabs">
                     <p-tabpanel header="Trends" leftIcon="pi pi-chart-line">
                       @if (stat.trendData) {
                         <div class="chart-container">
@@ -98,9 +95,7 @@ export interface ProgressiveStatItem extends StatItem {
                           ></p-chart>
                         </div>
                       } @else {
-                        <div class="no-data">
-                          No trend data available
-                        </div>
+                        <div class="no-data">No trend data available</div>
                       }
                     </p-tabpanel>
 
@@ -114,23 +109,30 @@ export interface ProgressiveStatItem extends StatItem {
                           ></p-chart>
                         </div>
                       } @else {
-                        <div class="no-data">
-                          No breakdown data available
-                        </div>
+                        <div class="no-data">No breakdown data available</div>
                       }
                     </p-tabpanel>
 
                     <p-tabpanel header="Benchmarks" leftIcon="pi pi-flag">
                       @if (stat.benchmarkData) {
                         <div class="benchmark-container">
-                          @for (benchmark of stat.benchmarkData; track benchmark.label) {
+                          @for (
+                            benchmark of stat.benchmarkData;
+                            track benchmark.label
+                          ) {
                             <div class="benchmark-item">
-                              <div class="benchmark-label">{{ benchmark.label }}</div>
-                              <div class="benchmark-value">{{ benchmark.value }}</div>
+                              <div class="benchmark-label">
+                                {{ benchmark.label }}
+                              </div>
+                              <div class="benchmark-value">
+                                {{ benchmark.value }}
+                              </div>
                               <div class="benchmark-comparison">
                                 <p-tag
                                   [value]="benchmark.comparison"
-                                  [severity]="getComparisonSeverity(benchmark.comparison)"
+                                  [severity]="
+                                    getComparisonSeverity(benchmark.comparison)
+                                  "
                                   size="small"
                                 >
                                 </p-tag>
@@ -139,9 +141,7 @@ export interface ProgressiveStatItem extends StatItem {
                           }
                         </div>
                       } @else {
-                        <div class="no-data">
-                          No benchmark data available
-                        </div>
+                        <div class="no-data">No benchmark data available</div>
                       }
                     </p-tabpanel>
                   </p-tabView>
@@ -378,11 +378,7 @@ export class ProgressiveStatsComponent {
   }
 
   hasChartData(stat: ProgressiveStatItem): boolean {
-    return !!(
-      stat.trendData ||
-      stat.breakdownData ||
-      stat.benchmarkData
-    );
+    return !!(stat.trendData || stat.breakdownData || stat.benchmarkData);
   }
 
   getTrendSeverity(trendType?: string): string {
@@ -403,4 +399,3 @@ export class ProgressiveStatsComponent {
     return "info";
   }
 }
-

@@ -44,6 +44,7 @@ node scripts/migrate-neon-to-supabase.js --audit
 ```
 
 **What this does:**
+
 - Lists all tables
 - Shows row counts
 - Displays data size
@@ -51,6 +52,7 @@ node scripts/migrate-neon-to-supabase.js --audit
 - Creates audit report in `backups/neon-migration/`
 
 **What to look for:**
+
 - Which tables have the most data
 - If any tables are empty (can skip)
 - Total rows to migrate
@@ -66,12 +68,14 @@ node scripts/migrate-neon-to-supabase.js --backup
 ```
 
 **What this does:**
+
 - Exports every table to JSON format
 - Creates SQL INSERT statements
 - Saves to `backups/neon-migration/backup-[timestamp]/`
 - Generates metadata file
 
 **Result:**
+
 ```
 backups/neon-migration/backup-1733097600000/
 ├── metadata.json
@@ -111,6 +115,7 @@ backups/neon-migration/backup-1733097600000/
    - `wellness_data`
 
 4. **If any table is missing**, the migration script will show you the CREATE TABLE SQL:
+
    ```sql
    CREATE TABLE IF NOT EXISTS table_name (
      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -132,6 +137,7 @@ node scripts/migrate-neon-to-supabase.js --migrate
 ```
 
 **What this does:**
+
 1. Runs audit again
 2. Creates backup (safety!)
 3. Migrates data table by table
@@ -140,6 +146,7 @@ node scripts/migrate-neon-to-supabase.js --migrate
 6. Creates migration report
 
 **Expected output:**
+
 ```
 🔄 NEON → SUPABASE MIGRATION TOOL
 
@@ -177,6 +184,7 @@ node scripts/migrate-neon-to-supabase.js --migrate
 ```
 
 **If errors occur:**
+
 - Script continues with other tables
 - Errors are logged in migration report
 - You can re-run migration for failed tables
@@ -192,12 +200,14 @@ node scripts/migrate-neon-to-supabase.js --verify
 ```
 
 **What this does:**
+
 - Counts rows in Neon
 - Counts rows in Supabase
 - Compares the counts
 - Reports any discrepancies
 
 **Expected output:**
+
 ```
 🔍 VERIFYING MIGRATION
 
@@ -223,6 +233,7 @@ node scripts/migrate-neon-to-supabase.js --verify
 **Test with Supabase ONLY:**
 
 1. **Temporarily disable Neon** in `.env`:
+
    ```bash
    # Comment out Neon
    # DATABASE_URL=postgresql://neondb_owner:npg_...
@@ -234,6 +245,7 @@ node scripts/migrate-neon-to-supabase.js --verify
    ```
 
 2. **Restart your dev server:**
+
    ```bash
    npm run dev
    ```
@@ -274,6 +286,7 @@ node scripts/migrate-neon-to-supabase.js --verify
    - `NODE_ENV`
 
 4. **Trigger a new deploy:**
+
    ```bash
    git commit --allow-empty -m "Switch to Supabase only"
    git push
@@ -306,6 +319,7 @@ VITE_API_BASE_URL=http://localhost:4000
 ```
 
 **Update `.env.example`:**
+
 ```bash
 # Remove Neon references
 # Add comment: "We use Supabase for database"
@@ -337,6 +351,7 @@ node scripts/migrate-neon-to-supabase.js --full
 This runs: audit → backup → migrate → verify
 
 **Use this if:**
+
 - ✅ You've read this entire guide
 - ✅ You have time for the full process
 - ✅ You're comfortable with command-line tools
@@ -348,12 +363,14 @@ This runs: audit → backup → migrate → verify
 If migration fails or data is incorrect:
 
 ### Option 1: Keep Using Neon
+
 1. Re-enable Neon env vars in Netlify
 2. Redeploy
 3. Debug the issue
 4. Try migration again later
 
 ### Option 2: Restore from Backup
+
 ```bash
 # Your backup is in:
 ls backups/neon-migration/backup-[timestamp]/
@@ -363,6 +380,7 @@ ls backups/neon-migration/backup-[timestamp]/
 ```
 
 ### Option 3: Use Migration Script to Retry
+
 ```bash
 # Re-run migration for specific tables
 # (You can modify the script to target specific tables)
@@ -374,6 +392,7 @@ node scripts/migrate-neon-to-supabase.js --migrate
 ## 📊 Understanding the Reports
 
 ### Audit Report
+
 ```json
 {
   "timestamp": "2025-12-01T...",
@@ -391,21 +410,23 @@ node scripts/migrate-neon-to-supabase.js --migrate
 ```
 
 ### Migration Report
+
 ```json
 {
   "timestamp": "2025-12-01T...",
   "tablesProcessed": 11,
   "rowsMigrated": 12543,
-  "errors": []  // Empty = success!
+  "errors": [] // Empty = success!
 }
 ```
 
 ### Verification Report
+
 ```json
 {
   "timestamp": "2025-12-01T...",
   "tablesVerified": 11,
-  "discrepancies": []  // Empty = perfect match!
+  "discrepancies": [] // Empty = perfect match!
 }
 ```
 
@@ -416,6 +437,7 @@ node scripts/migrate-neon-to-supabase.js --migrate
 ### Issue: "Table does not exist in Supabase"
 
 **Solution:**
+
 1. Check the migration report for CREATE TABLE SQL
 2. Copy the SQL statement
 3. Run it in Supabase SQL Editor
@@ -426,11 +448,13 @@ node scripts/migrate-neon-to-supabase.js --migrate
 ### Issue: "Row count mismatch"
 
 **Possible causes:**
+
 1. Data was modified during migration (stop writes first)
 2. Duplicate prevention (upsert may skip duplicates)
 3. Migration was interrupted
 
 **Solution:**
+
 1. Check verification report for details
 2. Query both databases to compare
 3. Re-run migration for that table
@@ -440,6 +464,7 @@ node scripts/migrate-neon-to-supabase.js --migrate
 ### Issue: "Connection timeout"
 
 **Solution:**
+
 1. Check internet connection
 2. Verify Neon database is still active
 3. Check Supabase is not rate-limiting
@@ -487,16 +512,16 @@ If you encounter issues:
 
 ## 📝 Timeline Summary
 
-| Step | Time | Can Skip? |
-|------|------|-----------|
-| 1. Audit | 5 min | No - Essential |
-| 2. Backup | 10 min | No - Essential |
-| 3. Prepare Supabase | 15 min | Maybe (if tables exist) |
-| 4. Migrate | 20-30 min | No - Essential |
-| 5. Verify | 10 min | No - Essential |
-| 6. Test | 15 min | No - Essential |
-| 7. Deploy | 10 min | No - Essential |
-| 8. Clean up | 5 min | Yes - Can do later |
+| Step                | Time      | Can Skip?               |
+| ------------------- | --------- | ----------------------- |
+| 1. Audit            | 5 min     | No - Essential          |
+| 2. Backup           | 10 min    | No - Essential          |
+| 3. Prepare Supabase | 15 min    | Maybe (if tables exist) |
+| 4. Migrate          | 20-30 min | No - Essential          |
+| 5. Verify           | 10 min    | No - Essential          |
+| 6. Test             | 15 min    | No - Essential          |
+| 7. Deploy           | 10 min    | No - Essential          |
+| 8. Clean up         | 5 min     | Yes - Can do later      |
 
 **Total: 90-100 minutes** (including buffer time)
 
@@ -505,6 +530,7 @@ If you encounter issues:
 ## ✅ Final Checklist
 
 Before starting migration:
+
 - [ ] Read entire guide
 - [ ] Have access to all dashboards
 - [ ] Uninterrupted time available
@@ -512,6 +538,7 @@ Before starting migration:
 - [ ] .env file ready
 
 During migration:
+
 - [ ] Audit completed
 - [ ] Backup created
 - [ ] Tables exist in Supabase
@@ -520,6 +547,7 @@ During migration:
 - [ ] Local testing passed
 
 After migration:
+
 - [ ] Netlify env vars updated
 - [ ] Production tested
 - [ ] Function logs checked

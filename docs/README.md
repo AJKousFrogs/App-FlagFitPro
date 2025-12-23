@@ -74,11 +74,11 @@ The Flag Football Training App is a comprehensive training platform that combine
 
 <div align="center">
 
-| Frontend        | Backend | Database        | Analytics             |
-| --------------- | ------- | --------------- | --------------------- |
+| Frontend        | Backend | Database            | Analytics             |
+| --------------- | ------- | ------------------- | --------------------- |
 | Angular 21      | Node.js | Supabase PostgreSQL | AI/ML Models          |
-| PrimeNG 21      | Express | Supabase RLS    | Chart.js              |
-| Angular Signals | Netlify | Supabase Realtime | Sports Analytics APIs |
+| PrimeNG 21      | Express | Supabase RLS        | Chart.js              |
+| Angular Signals | Netlify | Supabase Realtime   | Sports Analytics APIs |
 
 </div>
 
@@ -316,11 +316,11 @@ The app uses Supabase's built-in connection pooling and Row-Level Security (RLS)
 
 ```typescript
 // Angular service using Supabase client
-import { SupabaseService } from './core/services/supabase.service';
+import { SupabaseService } from "./core/services/supabase.service";
 
 // Automatic connection management via Supabase client
 const supabase = inject(SupabaseService);
-const { data } = await supabase.from('users').select('*');
+const { data } = await supabase.from("users").select("*");
 ```
 
 Set up your Supabase credentials in environment variables for production deployment. See `SUPABASE_SETUP_GUIDE.md` for details.
@@ -328,6 +328,7 @@ Set up your Supabase credentials in environment variables for production deploym
 ## 🏥 System Health & Optimization
 
 ### Performance Metrics
+
 - **Health Score**: 99/100 ⭐
 - **Memory Optimization**: 93% reduction through connection pooling
 - **Database Performance**: Optimized with singleton connection manager
@@ -335,12 +336,14 @@ Set up your Supabase credentials in environment variables for production deploym
 - **Real-time Ready**: Streaming analytics pipeline for GPS/wearable integration
 
 ### Optimization Results
+
 - **Database Connections**: Reduced from 14 individual pools to 1 singleton manager
 - **Function Consolidation**: Created `CommonFunctions.js` utility class
 - **Automated Health Monitoring**: Comprehensive system diagnostics
 - **Research Integration**: 2024-2025 sports science studies (156 studies, 3,847 participants)
 
 ### 2025 Research Integration
+
 - **Evidence-Based Training**: Latest flag football research integration
 - **Predictive Analytics**: 87.4% accuracy in performance predictions
 - **Injury Prevention**: 78% prevention rate through AI modeling

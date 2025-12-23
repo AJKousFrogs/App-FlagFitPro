@@ -3,6 +3,7 @@
 ## 🚀 Modern Features at a Glance
 
 ### Signals
+
 ```typescript
 // Create signal
 count = signal(0);
@@ -12,22 +13,24 @@ const value = count();
 
 // Update signal
 count.set(10);
-count.update(n => n + 1);
+count.update((n) => n + 1);
 
 // Computed signal
 double = computed(() => count() * 2);
 
 // Effect (side effects)
-effect(() => console.log('Count:', count()));
+effect(() => console.log("Count:", count()));
 ```
 
 ### Zoneless Change Detection
+
 - ✅ Enabled in `app.config.ts`
 - No Zone.js needed
 - Automatic change detection on signal updates
 - Events trigger change detection automatically
 
 ### Standalone Components
+
 ```typescript
 @Component({
   standalone: true,  // ✅ Always true
@@ -37,6 +40,7 @@ effect(() => console.log('Count:', count()));
 ```
 
 ### SSR Commands
+
 ```bash
 # Build SSR
 npm run build:ssr
@@ -49,6 +53,7 @@ npm run build:prerender
 ```
 
 ### ESBuild
+
 - ✅ Enabled by default
 - No configuration needed
 - Faster builds automatically
@@ -56,6 +61,7 @@ npm run build:prerender
 ## 📋 Migration Patterns
 
 ### RxJS → Signals
+
 ```typescript
 // Before (RxJS)
 private data$ = new BehaviorSubject<Data[]>([]);
@@ -66,14 +72,16 @@ data = signal<Data[]>([]);
 ```
 
 ### Observable → Signal
+
 ```typescript
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from "@angular/core/rxjs-interop";
 
 // Convert Observable to Signal
 data = toSignal(this.apiService.getData(), { initialValue: [] });
 ```
 
 ### OnInit → Constructor/Effect
+
 ```typescript
 // Before
 ngOnInit() {

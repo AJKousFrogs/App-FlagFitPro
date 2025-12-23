@@ -8,13 +8,13 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Notifications', event);
+  logFunctionCall("Notifications", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -67,7 +67,7 @@ exports.handler = async (event, context) => {
       try {
         const notifications = await db.notifications.getUserNotifications(
           userId,
-          { limit, page, onlyUnread, lastOpenedAt }
+          { limit, page, onlyUnread, lastOpenedAt },
         );
         return createSuccessResponse(notifications);
       } catch (dbError) {
@@ -78,22 +78,31 @@ exports.handler = async (event, context) => {
     } else if (event.httpMethod === "PATCH") {
       // Check if this is a last-opened update request
       // Handle both path-based and query-based detection
-      const path = event.path || event.rawPath || '';
-      const isLastOpened = path.includes('/last-opened') || 
-                           event.queryStringParameters?.action === 'last-opened' ||
-                           (event.body && JSON.parse(event.body || '{}').action === 'last-opened');
-      
+      const path = event.path || event.rawPath || "";
+      const isLastOpened =
+        path.includes("/last-opened") ||
+        event.queryStringParameters?.action === "last-opened" ||
+        (event.body && JSON.parse(event.body || "{}").action === "last-opened");
+
       if (isLastOpened) {
         // Update last opened timestamp
         try {
           await db.notifications.updateLastOpenedAt(userId);
-          return createSuccessResponse(null, 200, "Last opened timestamp updated");
+          return createSuccessResponse(
+            null,
+            200,
+            "Last opened timestamp updated",
+          );
         } catch (dbError) {
           console.error("Database error:", dbError);
-          return createErrorResponse("Failed to update last opened timestamp", 500, 'database_error');
+          return createErrorResponse(
+            "Failed to update last opened timestamp",
+            500,
+            "database_error",
+          );
         }
       } else {
-        return createErrorResponse("Invalid PATCH endpoint", 404, 'not_found');
+        return createErrorResponse("Invalid PATCH endpoint", 404, "not_found");
       }
     } else if (event.httpMethod === "POST") {
       // Mark notification(s) as read - supports single, bulk, or all
@@ -106,34 +115,62 @@ exports.handler = async (event, context) => {
         // Mark all notifications as read
         try {
           await db.notifications.markAllAsRead(userId);
-          return createSuccessResponse(null, 200, "All notifications marked as read");
+          return createSuccessResponse(
+            null,
+            200,
+            "All notifications marked as read",
+          );
         } catch (dbError) {
           console.error("Database error:", dbError);
-          return createErrorResponse("Failed to mark all notifications as read", 500, 'database_error');
+          return createErrorResponse(
+            "Failed to mark all notifications as read",
+            500,
+            "database_error",
+          );
         }
       } else if (Array.isArray(ids) && ids.length > 0) {
         // Mark multiple notifications as read
         try {
           await db.notifications.markManyAsRead(userId, ids);
-          return createSuccessResponse(null, 200, `${ids.length} notifications marked as read`);
+          return createSuccessResponse(
+            null,
+            200,
+            `${ids.length} notifications marked as read`,
+          );
         } catch (dbError) {
           console.error("Database error:", dbError);
-          return createErrorResponse("Failed to mark notifications as read", 500, 'database_error');
+          return createErrorResponse(
+            "Failed to mark notifications as read",
+            500,
+            "database_error",
+          );
         }
       } else if (notificationId) {
         // Mark single notification as read
         try {
           await db.notifications.markAsRead(userId, notificationId);
-          return createSuccessResponse(null, 200, "Notification marked as read");
+          return createSuccessResponse(
+            null,
+            200,
+            "Notification marked as read",
+          );
         } catch (dbError) {
           console.error("Database error:", dbError);
-          return createErrorResponse("Failed to update notification", 500, 'database_error');
+          return createErrorResponse(
+            "Failed to update notification",
+            500,
+            "database_error",
+          );
         }
       } else {
         return handleValidationError("notificationId or ids array is required");
       }
     } else {
-      return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
     }
   } catch (error) {
     console.error("Error in notifications function:", error);
@@ -143,7 +180,7 @@ exports.handler = async (event, context) => {
       name: error.name,
       code: error.code,
     });
-    return handleServerError(error, 'Notifications');
+    return handleServerError(error, "Notifications");
   }
 };
 

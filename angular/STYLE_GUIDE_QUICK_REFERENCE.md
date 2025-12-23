@@ -13,9 +13,9 @@ const name = "FlagFit Pro";
 const items = [1, 2, 3];
 
 // ❌ INCORRECT
-import {Component,signal} from '@angular/core'
-const name='FlagFit Pro'
-const items=[1,2,3]
+import { Component, signal } from "@angular/core";
+const name = "FlagFit Pro";
+const items = [1, 2, 3];
 ```
 
 ---
@@ -33,7 +33,7 @@ export class MyService {
 export class MyService {
   constructor(
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
   ) {}
 }
 ```
@@ -47,9 +47,9 @@ export class MyService {
 export class MyComponent {
   count = signal(0);
   doubled = computed(() => this.count() * 2);
-  
+
   increment() {
-    this.count.update(v => v + 1);
+    this.count.update((v) => v + 1);
   }
 }
 
@@ -75,13 +75,13 @@ export class MyComponent {
 export class ExampleComponent {
   // 1. Inputs
   @Input() title = "";
-  
+
   // 2. Signals
   count = signal(0);
-  
+
   // 3. Services
   private service = inject(MyService);
-  
+
   // 4. Methods
   handleClick() {}
 }
@@ -110,13 +110,13 @@ export class ExampleComponent {
 
 ## Naming Conventions
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Classes | PascalCase | `UserProfileComponent` |
-| Variables | camelCase | `userCount`, `isLoading` |
-| Constants | UPPER_SNAKE_CASE | `MAX_RETRIES`, `API_URL` |
-| Files | kebab-case | `user-profile.component.ts` |
-| Services | camelCase + Service | `UserService` |
+| Type      | Convention          | Example                     |
+| --------- | ------------------- | --------------------------- |
+| Classes   | PascalCase          | `UserProfileComponent`      |
+| Variables | camelCase           | `userCount`, `isLoading`    |
+| Constants | UPPER_SNAKE_CASE    | `MAX_RETRIES`, `API_URL`    |
+| Files     | kebab-case          | `user-profile.component.ts` |
+| Services  | camelCase + Service | `UserService`               |
 
 ---
 
@@ -173,14 +173,14 @@ this.dataService.loadData().subscribe({
 // ✅ CORRECT
 describe("MyService", () => {
   let service: MyService;
-  
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [MyService],
     });
     service = TestBed.inject(MyService);
   });
-  
+
   it("should work", () => {
     expect(service).toBeTruthy();
   });
@@ -193,7 +193,7 @@ describe("MyService", () => {
 
 ```typescript
 // ✅ CORRECT
-<button 
+<button
   (click)="handleClick()"
   [attr.aria-label]="'Close dialog'"
 >
@@ -217,6 +217,7 @@ describe("MyService", () => {
 ## Quick Checklist
 
 ### New Component
+
 - [ ] Standalone component
 - [ ] Uses `inject()` for dependencies
 - [ ] Uses signals for state
@@ -228,6 +229,7 @@ describe("MyService", () => {
 - [ ] Unit tests
 
 ### New Service
+
 - [ ] `providedIn: 'root'` (if singleton)
 - [ ] Uses `inject()` for dependencies
 - [ ] Exposes readonly signals
@@ -238,4 +240,3 @@ describe("MyService", () => {
 ---
 
 **See [STYLE_GUIDE.md](./STYLE_GUIDE.md) for complete documentation.**
-

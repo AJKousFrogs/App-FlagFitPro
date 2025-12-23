@@ -1,6 +1,6 @@
 /**
  * Enhanced Training AI Assistant
- * 
+ *
  * Features:
  * - Training-specific context awareness
  * - Schedule integration
@@ -11,8 +11,8 @@
  * - Recovery recommendations
  */
 
-import { flagFitChatbot } from './chatbot.js';
-import { logger } from '../../logger.js';
+import { flagFitChatbot } from "./chatbot.js";
+import { logger } from "../../logger.js";
 
 class EnhancedTrainingAssistant {
   constructor() {
@@ -23,7 +23,7 @@ class EnhancedTrainingAssistant {
       upcomingSessions: [],
       performanceMetrics: {},
       goals: [],
-      injuries: []
+      injuries: [],
     };
     this.isInitialized = false;
   }
@@ -32,7 +32,9 @@ class EnhancedTrainingAssistant {
    * Initialize the enhanced training assistant
    */
   async init() {
-    if (this.isInitialized) {return;}
+    if (this.isInitialized) {
+      return;
+    }
 
     // Load training context
     await this.loadTrainingContext();
@@ -44,7 +46,7 @@ class EnhancedTrainingAssistant {
     this.setupTrainingHandlers();
 
     this.isInitialized = true;
-    logger.info('[TrainingAssistant] Enhanced training assistant initialized');
+    logger.info("[TrainingAssistant] Enhanced training assistant initialized");
   }
 
   /**
@@ -70,35 +72,57 @@ class EnhancedTrainingAssistant {
       if (window.apiClient && window.API_ENDPOINTS) {
         try {
           const [scheduleRes, workoutsRes, metricsRes] = await Promise.all([
-            window.apiClient.get(window.API_ENDPOINTS.training?.schedule || '/api/training/schedule'),
-            window.apiClient.get(window.API_ENDPOINTS.training?.sessions || '/api/training/sessions'),
-            window.apiClient.get(window.API_ENDPOINTS.training?.metrics || '/api/training/metrics')
+            window.apiClient.get(
+              window.API_ENDPOINTS.training?.schedule ||
+                "/api/training/schedule",
+            ),
+            window.apiClient.get(
+              window.API_ENDPOINTS.training?.sessions ||
+                "/api/training/sessions",
+            ),
+            window.apiClient.get(
+              window.API_ENDPOINTS.training?.metrics || "/api/training/metrics",
+            ),
           ]);
 
           if (scheduleRes?.data) {
-            this.trainingContext.currentSchedule = scheduleRes.data.schedule || [];
-            this.trainingContext.upcomingSessions = scheduleRes.data.upcoming || [];
+            this.trainingContext.currentSchedule =
+              scheduleRes.data.schedule || [];
+            this.trainingContext.upcomingSessions =
+              scheduleRes.data.upcoming || [];
           }
 
           if (workoutsRes?.data) {
-            this.trainingContext.recentWorkouts = workoutsRes.data.sessions || [];
+            this.trainingContext.recentWorkouts =
+              workoutsRes.data.sessions || [];
           }
 
           if (metricsRes?.data) {
             this.trainingContext.performanceMetrics = metricsRes.data;
           }
         } catch (error) {
-          logger.warn('[TrainingAssistant] Failed to load from API:', error);
+          logger.warn("[TrainingAssistant] Failed to load from API:", error);
         }
       }
 
       // Load user goals
       if (window.storageService) {
-        this.trainingContext.goals = window.storageService.get('trainingGoals', [], { usePrefix: false });
-        this.trainingContext.injuries = window.storageService.get('injuries', [], { usePrefix: false });
+        this.trainingContext.goals = window.storageService.get(
+          "trainingGoals",
+          [],
+          { usePrefix: false },
+        );
+        this.trainingContext.injuries = window.storageService.get(
+          "injuries",
+          [],
+          { usePrefix: false },
+        );
       }
     } catch (error) {
-      logger.warn('[TrainingAssistant] Failed to load training context:', error);
+      logger.warn(
+        "[TrainingAssistant] Failed to load training context:",
+        error,
+      );
     }
   }
 
@@ -112,10 +136,10 @@ class EnhancedTrainingAssistant {
     } else {
       // Import chatbot if not available
       try {
-        const chatbotModule = await import('./chatbot.js');
+        const chatbotModule = await import("./chatbot.js");
         this.chatbot = chatbotModule.flagFitChatbot;
       } catch (error) {
-        logger.error('[TrainingAssistant] Failed to load chatbot:', error);
+        logger.error("[TrainingAssistant] Failed to load chatbot:", error);
         return;
       }
     }
@@ -134,34 +158,52 @@ class EnhancedTrainingAssistant {
    * Add training-specific knowledge base
    */
   addTrainingKnowledgeBase() {
-    if (!this.chatbot || !this.chatbot.knowledgeBase) {return;}
+    if (!this.chatbot || !this.chatbot.knowledgeBase) {
+      return;
+    }
 
     // Extend knowledge base with training-specific content
     this.chatbot.knowledgeBase.training_schedule = {
-      keywords: ['schedule', 'calendar', 'plan', 'program', 'periodization', 'taper'],
+      keywords: [
+        "schedule",
+        "calendar",
+        "plan",
+        "program",
+        "periodization",
+        "taper",
+      ],
       responses: [
-        'I can help you optimize your training schedule based on your goals and upcoming events.',
-        'Your current schedule includes ' + this.trainingContext.currentSchedule.length + ' planned sessions.',
-        'I can analyze your schedule for conflicts and suggest improvements.'
-      ]
+        "I can help you optimize your training schedule based on your goals and upcoming events.",
+        "Your current schedule includes " +
+          this.trainingContext.currentSchedule.length +
+          " planned sessions.",
+        "I can analyze your schedule for conflicts and suggest improvements.",
+      ],
     };
 
     this.chatbot.knowledgeBase.exercise_form = {
-      keywords: ['form', 'technique', 'posture', 'movement', 'execution'],
+      keywords: ["form", "technique", "posture", "movement", "execution"],
       responses: [
-        'Proper form is crucial for preventing injuries and maximizing performance.',
-        'I can analyze your exercise form based on your training videos or descriptions.',
-        'Common form issues include: improper alignment, excessive momentum, and incomplete range of motion.'
-      ]
+        "Proper form is crucial for preventing injuries and maximizing performance.",
+        "I can analyze your exercise form based on your training videos or descriptions.",
+        "Common form issues include: improper alignment, excessive momentum, and incomplete range of motion.",
+      ],
     };
 
     this.chatbot.knowledgeBase.periodization = {
-      keywords: ['periodization', 'taper', 'peak', 'overload', 'recovery', 'deload'],
+      keywords: [
+        "periodization",
+        "taper",
+        "peak",
+        "overload",
+        "recovery",
+        "deload",
+      ],
       responses: [
-        'Periodization involves structuring training into phases: base, strength, power, and peak.',
-        'Tapering typically involves 7-14 days of reduced volume (40-60%) while maintaining intensity (80-90%).',
-        'I can help you plan periodization based on your competition schedule.'
-      ]
+        "Periodization involves structuring training into phases: base, strength, power, and peak.",
+        "Tapering typically involves 7-14 days of reduced volume (40-60%) while maintaining intensity (80-90%).",
+        "I can help you plan periodization based on your competition schedule.",
+      ],
     };
   }
 
@@ -169,7 +211,9 @@ class EnhancedTrainingAssistant {
    * Enhance question parser with training intents
    */
   enhanceQuestionParser() {
-    if (!this.chatbot || !this.chatbot.parseQuestion) {return;}
+    if (!this.chatbot || !this.chatbot.parseQuestion) {
+      return;
+    }
 
     const originalParse = this.chatbot.parseQuestion.bind(this.chatbot);
 
@@ -178,17 +222,17 @@ class EnhancedTrainingAssistant {
 
       // Add training-specific intents
       if (this.isScheduleQuestion(question)) {
-        parsed.intent = 'schedule_query';
-        parsed.context = 'training_schedule';
+        parsed.intent = "schedule_query";
+        parsed.context = "training_schedule";
       } else if (this.isFormQuestion(question)) {
-        parsed.intent = 'form_analysis';
-        parsed.context = 'exercise_form';
+        parsed.intent = "form_analysis";
+        parsed.context = "exercise_form";
       } else if (this.isPeriodizationQuestion(question)) {
-        parsed.intent = 'periodization_guidance';
-        parsed.context = 'periodization';
+        parsed.intent = "periodization_guidance";
+        parsed.context = "periodization";
       } else if (this.isRecoveryQuestion(question)) {
-        parsed.intent = 'recovery_recommendation';
-        parsed.context = 'recovery';
+        parsed.intent = "recovery_recommendation";
+        parsed.context = "recovery";
       }
 
       return parsed;
@@ -199,7 +243,9 @@ class EnhancedTrainingAssistant {
    * Enhance answer generator with training context
    */
   enhanceAnswerGenerator() {
-    if (!this.chatbot || !this.chatbot.generateAnswer) {return;}
+    if (!this.chatbot || !this.chatbot.generateAnswer) {
+      return;
+    }
 
     const originalGenerate = this.chatbot.generateAnswer.bind(this.chatbot);
 
@@ -211,13 +257,13 @@ class EnhancedTrainingAssistant {
       let answer = await originalGenerate(question, parsed);
 
       // Enhance with training-specific information
-      if (parsed.intent === 'schedule_query') {
+      if (parsed.intent === "schedule_query") {
         answer = this.enhanceScheduleAnswer(answer, parsed);
-      } else if (parsed.intent === 'form_analysis') {
+      } else if (parsed.intent === "form_analysis") {
         answer = this.enhanceFormAnswer(answer, parsed);
-      } else if (parsed.intent === 'periodization_guidance') {
+      } else if (parsed.intent === "periodization_guidance") {
         answer = this.enhancePeriodizationAnswer(answer, parsed);
-      } else if (parsed.intent === 'recovery_recommendation') {
+      } else if (parsed.intent === "recovery_recommendation") {
         answer = this.enhanceRecoveryAnswer(answer, parsed);
       }
 
@@ -229,9 +275,16 @@ class EnhancedTrainingAssistant {
    * Check if question is about schedule
    */
   isScheduleQuestion(question) {
-    const scheduleKeywords = ['schedule', 'calendar', 'plan', 'when', 'what day', 'upcoming'];
-    return scheduleKeywords.some(keyword => 
-      question.toLowerCase().includes(keyword)
+    const scheduleKeywords = [
+      "schedule",
+      "calendar",
+      "plan",
+      "when",
+      "what day",
+      "upcoming",
+    ];
+    return scheduleKeywords.some((keyword) =>
+      question.toLowerCase().includes(keyword),
     );
   }
 
@@ -239,9 +292,16 @@ class EnhancedTrainingAssistant {
    * Check if question is about form
    */
   isFormQuestion(question) {
-    const formKeywords = ['form', 'technique', 'posture', 'how to', 'proper', 'correct'];
-    return formKeywords.some(keyword => 
-      question.toLowerCase().includes(keyword)
+    const formKeywords = [
+      "form",
+      "technique",
+      "posture",
+      "how to",
+      "proper",
+      "correct",
+    ];
+    return formKeywords.some((keyword) =>
+      question.toLowerCase().includes(keyword),
     );
   }
 
@@ -249,9 +309,15 @@ class EnhancedTrainingAssistant {
    * Check if question is about periodization
    */
   isPeriodizationQuestion(question) {
-    const periodizationKeywords = ['periodization', 'taper', 'peak', 'overload', 'deload'];
-    return periodizationKeywords.some(keyword => 
-      question.toLowerCase().includes(keyword)
+    const periodizationKeywords = [
+      "periodization",
+      "taper",
+      "peak",
+      "overload",
+      "deload",
+    ];
+    return periodizationKeywords.some((keyword) =>
+      question.toLowerCase().includes(keyword),
     );
   }
 
@@ -259,9 +325,15 @@ class EnhancedTrainingAssistant {
    * Check if question is about recovery
    */
   isRecoveryQuestion(question) {
-    const recoveryKeywords = ['recovery', 'rest', 'rest day', 'recover', 'fatigue'];
-    return recoveryKeywords.some(keyword => 
-      question.toLowerCase().includes(keyword)
+    const recoveryKeywords = [
+      "recovery",
+      "rest",
+      "rest day",
+      "recover",
+      "fatigue",
+    ];
+    return recoveryKeywords.some((keyword) =>
+      question.toLowerCase().includes(keyword),
     );
   }
 
@@ -276,7 +348,7 @@ class EnhancedTrainingAssistant {
 
     if (upcomingCount > 0) {
       enhanced += `\n\n**Your Upcoming Sessions:**\n`;
-      this.trainingContext.upcomingSessions.slice(0, 5).forEach(session => {
+      this.trainingContext.upcomingSessions.slice(0, 5).forEach((session) => {
         const date = new Date(session.date);
         enhanced += `- ${date.toLocaleDateString()}: ${session.title || session.name}\n`;
       });
@@ -316,7 +388,7 @@ class EnhancedTrainingAssistant {
     if (this.trainingContext.upcomingSessions.length > 0) {
       const nextEvent = this.trainingContext.upcomingSessions[0];
       const daysUntil = Math.ceil(
-        (new Date(nextEvent.date) - new Date()) / (1000 * 60 * 60 * 24)
+        (new Date(nextEvent.date) - new Date()) / (1000 * 60 * 60 * 24),
       );
 
       if (daysUntil <= 14 && daysUntil > 0) {
@@ -341,7 +413,7 @@ class EnhancedTrainingAssistant {
     if (recentLoad > 0) {
       enhanced += `\n\n**Your Recent Training Load:**\n`;
       enhanced += `Based on your recent workouts, your training load is ${recentLoad.toFixed(1)}. `;
-      
+
       if (recentLoad > 0.7) {
         enhanced += `Consider a recovery day or light session to prevent overtraining.`;
       } else if (recentLoad < 0.3) {
@@ -358,9 +430,11 @@ class EnhancedTrainingAssistant {
    * Calculate recent training load
    */
   calculateRecentTrainingLoad() {
-    if (this.trainingContext.recentWorkouts.length === 0) {return 0;}
+    if (this.trainingContext.recentWorkouts.length === 0) {
+      return 0;
+    }
 
-    const last7Days = this.trainingContext.recentWorkouts.filter(workout => {
+    const last7Days = this.trainingContext.recentWorkouts.filter((workout) => {
       const workoutDate = new Date(workout.date || workout.created_at);
       const daysAgo = (new Date() - workoutDate) / (1000 * 60 * 60 * 24);
       return daysAgo <= 7;
@@ -387,20 +461,22 @@ class EnhancedTrainingAssistant {
    * Add custom commands
    */
   addCustomCommands() {
-    if (!this.chatbot) {return;}
+    if (!this.chatbot) {
+      return;
+    }
 
     // Add "show schedule" command
-    this.chatbot.addCommand?.('show schedule', () => {
+    this.chatbot.addCommand?.("show schedule", () => {
       return this.getScheduleSummary();
     });
 
     // Add "analyze form" command
-    this.chatbot.addCommand?.('analyze form', (exercise) => {
+    this.chatbot.addCommand?.("analyze form", (exercise) => {
       return this.analyzeExerciseForm(exercise);
     });
 
     // Add "recovery status" command
-    this.chatbot.addCommand?.('recovery status', () => {
+    this.chatbot.addCommand?.("recovery status", () => {
       return this.getRecoveryStatus();
     });
   }
@@ -418,7 +494,7 @@ class EnhancedTrainingAssistant {
 
     if (upcoming.length > 0) {
       summary += `\n**Next 3 Sessions:**\n`;
-      upcoming.slice(0, 3).forEach(session => {
+      upcoming.slice(0, 3).forEach((session) => {
         const date = new Date(session.date);
         summary += `- ${date.toLocaleDateString()}: ${session.title || session.name}\n`;
       });
@@ -432,8 +508,10 @@ class EnhancedTrainingAssistant {
    */
   analyzeExerciseForm(exercise) {
     // Placeholder for form analysis
-    return `**Form Analysis for ${exercise}:**\n\nI can help analyze your form. ` +
-           `Please describe your current technique or share a video for detailed feedback.`;
+    return (
+      `**Form Analysis for ${exercise}:**\n\nI can help analyze your form. ` +
+      `Please describe your current technique or share a video for detailed feedback.`
+    );
   }
 
   /**
@@ -441,7 +519,7 @@ class EnhancedTrainingAssistant {
    */
   getRecoveryStatus() {
     const load = this.calculateRecentTrainingLoad();
-    const recentWorkouts = this.trainingContext.recentWorkouts.filter(w => {
+    const recentWorkouts = this.trainingContext.recentWorkouts.filter((w) => {
       const date = new Date(w.date || w.created_at);
       return (new Date() - date) / (1000 * 60 * 60 * 24) <= 7;
     });
@@ -491,8 +569,8 @@ const enhancedTrainingAssistant = new EnhancedTrainingAssistant();
 window.enhancedTrainingAssistant = enhancedTrainingAssistant;
 
 // Auto-initialize
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
     enhancedTrainingAssistant.init();
   });
 } else {
@@ -500,4 +578,3 @@ if (document.readyState === 'loading') {
 }
 
 export default enhancedTrainingAssistant;
-

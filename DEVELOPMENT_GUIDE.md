@@ -162,6 +162,7 @@ VITE_API_BASE_URL=http://localhost:4000
 ```
 
 **Note:** Dev servers automatically:
+
 - Load `.env.local` on startup
 - Inject variables into `window._env` for frontend
 - Set them in `localStorage` for development (localhost only)
@@ -294,6 +295,7 @@ VITE_ENABLE_DEBUG_LOGS=false
 ### **Alternative Deployment Options**
 
 For other hosting platforms, configure build settings according to their documentation. Ensure:
+
 - Build command: `cd angular && npm run build`
 - Output directory: `angular/dist/flagfit-pro`
 - Environment variables are properly configured
@@ -433,10 +435,10 @@ import * as Sentry from "@sentry/browser";
 // Get DSN from window._env (set by dev server or build process)
 const sentryDsn = window._env?.VITE_SENTRY_DSN;
 
-if (sentryDsn && window.location.hostname !== 'localhost') {
+if (sentryDsn && window.location.hostname !== "localhost") {
   Sentry.init({
     dsn: sentryDsn,
-    environment: window._env?.VITE_APP_ENV || 'production',
+    environment: window._env?.VITE_APP_ENV || "production",
     tracesSampleRate: 0.1,
   });
 }
@@ -450,7 +452,7 @@ import { gtag } from "gtag";
 
 export function trackEvent(action, category, label, value) {
   // Only track in production (not localhost)
-  if (window.location.hostname !== 'localhost') {
+  if (window.location.hostname !== "localhost") {
     gtag("event", action, {
       event_category: category,
       event_label: label,

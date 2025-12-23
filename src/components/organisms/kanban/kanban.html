@@ -19,31 +19,51 @@
       <div class="kanban-card" draggable="true" data-card-id="1">
         <div class="kanban-card-header">
           <h4 class="kanban-card-title">Review Training Plan</h4>
-          <button type="button" class="kanban-card-menu" aria-label="Card options">
-            <i data-lucide="more-vertical" style="width: 16px; height: 16px"></i>
+          <button
+            type="button"
+            class="kanban-card-menu"
+            aria-label="Card options"
+          >
+            <i
+              data-lucide="more-vertical"
+              style="width: 16px; height: 16px"
+            ></i>
           </button>
         </div>
-        <p class="kanban-card-description">Review and update the training plan for next week.</p>
+        <p class="kanban-card-description">
+          Review and update the training plan for next week.
+        </p>
         <div class="kanban-card-footer">
-          <span class="kanban-card-label" style="background: #089949;">Training</span>
+          <span class="kanban-card-label" style="background: #089949"
+            >Training</span
+          >
         </div>
       </div>
-      
+
       <div class="kanban-card" draggable="true" data-card-id="2">
         <div class="kanban-card-header">
           <h4 class="kanban-card-title">Schedule Team Meeting</h4>
-          <button type="button" class="kanban-card-menu" aria-label="Card options">
-            <i data-lucide="more-vertical" style="width: 16px; height: 16px"></i>
+          <button
+            type="button"
+            class="kanban-card-menu"
+            aria-label="Card options"
+          >
+            <i
+              data-lucide="more-vertical"
+              style="width: 16px; height: 16px"
+            ></i>
           </button>
         </div>
         <p class="kanban-card-description">Schedule weekly team meeting.</p>
         <div class="kanban-card-footer">
-          <span class="kanban-card-label" style="background: #667eea;">Meeting</span>
+          <span class="kanban-card-label" style="background: #667eea"
+            >Meeting</span
+          >
         </div>
       </div>
     </div>
   </div>
-  
+
   <!-- In Progress Column -->
   <div class="kanban-column" data-column="in-progress">
     <div class="kanban-column-header">
@@ -54,18 +74,29 @@
       <div class="kanban-card" draggable="true" data-card-id="3">
         <div class="kanban-card-header">
           <h4 class="kanban-card-title">Update Player Stats</h4>
-          <button type="button" class="kanban-card-menu" aria-label="Card options">
-            <i data-lucide="more-vertical" style="width: 16px; height: 16px"></i>
+          <button
+            type="button"
+            class="kanban-card-menu"
+            aria-label="Card options"
+          >
+            <i
+              data-lucide="more-vertical"
+              style="width: 16px; height: 16px"
+            ></i>
           </button>
         </div>
-        <p class="kanban-card-description">Update player statistics from last game.</p>
+        <p class="kanban-card-description">
+          Update player statistics from last game.
+        </p>
         <div class="kanban-card-footer">
-          <span class="kanban-card-label" style="background: #f59e0b;">Stats</span>
+          <span class="kanban-card-label" style="background: #f59e0b"
+            >Stats</span
+          >
         </div>
       </div>
     </div>
   </div>
-  
+
   <!-- Done Column -->
   <div class="kanban-column" data-column="done">
     <div class="kanban-column-header">
@@ -76,13 +107,24 @@
       <div class="kanban-card" draggable="true" data-card-id="4">
         <div class="kanban-card-header">
           <h4 class="kanban-card-title">Prepare Game Report</h4>
-          <button type="button" class="kanban-card-menu" aria-label="Card options">
-            <i data-lucide="more-vertical" style="width: 16px; height: 16px"></i>
+          <button
+            type="button"
+            class="kanban-card-menu"
+            aria-label="Card options"
+          >
+            <i
+              data-lucide="more-vertical"
+              style="width: 16px; height: 16px"
+            ></i>
           </button>
         </div>
-        <p class="kanban-card-description">Completed game report for last match.</p>
+        <p class="kanban-card-description">
+          Completed game report for last match.
+        </p>
         <div class="kanban-card-footer">
-          <span class="kanban-card-label" style="background: #10b981;">Report</span>
+          <span class="kanban-card-label" style="background: #10b981"
+            >Report</span
+          >
         </div>
       </div>
     </div>
@@ -217,76 +259,75 @@
 
 <script>
   // Kanban drag and drop functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const board = document.getElementById('kanban-board');
+  document.addEventListener("DOMContentLoaded", function () {
+    const board = document.getElementById("kanban-board");
     if (!board) return;
-    
+
     let draggedCard = null;
-    
+
     // Card drag start
-    board.addEventListener('dragstart', (e) => {
-      if (e.target.classList.contains('kanban-card')) {
+    board.addEventListener("dragstart", (e) => {
+      if (e.target.classList.contains("kanban-card")) {
         draggedCard = e.target;
-        e.target.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
+        e.target.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
       }
     });
-    
+
     // Card drag end
-    board.addEventListener('dragend', (e) => {
-      if (e.target.classList.contains('kanban-card')) {
-        e.target.classList.remove('dragging');
-        document.querySelectorAll('.kanban-column-content').forEach(col => {
-          col.classList.remove('drag-over');
+    board.addEventListener("dragend", (e) => {
+      if (e.target.classList.contains("kanban-card")) {
+        e.target.classList.remove("dragging");
+        document.querySelectorAll(".kanban-column-content").forEach((col) => {
+          col.classList.remove("drag-over");
         });
       }
     });
-    
+
     // Column drag over
-    board.addEventListener('dragover', (e) => {
+    board.addEventListener("dragover", (e) => {
       e.preventDefault();
-      const dropzone = e.target.closest('.kanban-column-content');
+      const dropzone = e.target.closest(".kanban-column-content");
       if (dropzone) {
-        dropzone.classList.add('drag-over');
+        dropzone.classList.add("drag-over");
       }
     });
-    
+
     // Column drag leave
-    board.addEventListener('dragleave', (e) => {
-      const dropzone = e.target.closest('.kanban-column-content');
+    board.addEventListener("dragleave", (e) => {
+      const dropzone = e.target.closest(".kanban-column-content");
       if (dropzone) {
-        dropzone.classList.remove('drag-over');
+        dropzone.classList.remove("drag-over");
       }
     });
-    
+
     // Column drop
-    board.addEventListener('drop', (e) => {
+    board.addEventListener("drop", (e) => {
       e.preventDefault();
-      const dropzone = e.target.closest('.kanban-column-content');
+      const dropzone = e.target.closest(".kanban-column-content");
       if (dropzone && draggedCard) {
         dropzone.appendChild(draggedCard);
         updateColumnCounts();
         draggedCard = null;
       }
-      document.querySelectorAll('.kanban-column-content').forEach(col => {
-        col.classList.remove('drag-over');
+      document.querySelectorAll(".kanban-column-content").forEach((col) => {
+        col.classList.remove("drag-over");
       });
     });
-    
+
     function updateColumnCounts() {
-      document.querySelectorAll('.kanban-column').forEach(column => {
-        const count = column.querySelectorAll('.kanban-card').length;
-        const countEl = column.querySelector('.kanban-column-count');
+      document.querySelectorAll(".kanban-column").forEach((column) => {
+        const count = column.querySelectorAll(".kanban-card").length;
+        const countEl = column.querySelector(".kanban-column-count");
         if (countEl) {
           countEl.textContent = count;
         }
       });
     }
-    
+
     // Initialize lucide icons
     if (window.lucide) {
       window.lucide.createIcons();
     }
   });
 </script>
-

@@ -9,6 +9,7 @@ This guide documents the implementation of advanced sports-specific UX patterns 
 **Location:** `angular/src/app/features/game-tracker/live-game-tracker.component.ts`
 
 A real-time game tracking interface with:
+
 - **Field Visualization**: Interactive SVG football field with yard lines, ball position, and player markers
 - **Gesture Controls**: Swipe left/right for undo/redo actions
 - **Haptic Feedback**: Tactile responses for game events (touchdowns, turnovers, etc.)
@@ -25,7 +26,7 @@ A real-time game tracking interface with:
 - **Touchdown Recording**: Quick touchdown button with celebration animation
 - **Turnover Tracking**: Quick turnover recording
 - **Play History**: Undo/redo functionality with gesture support
-- **Keyboard Shortcuts**: 
+- **Keyboard Shortcuts**:
   - `Space`: Pause/resume game
   - `Escape`: Show game menu
 
@@ -49,6 +50,7 @@ import { LiveGameTrackerComponent } from './features/game-tracker/live-game-trac
 **Location:** `angular/src/app/features/training/ai-training-companion.component.ts`
 
 A context-aware AI assistant that adapts to training situations with:
+
 - **Voice Recognition**: Natural language voice commands
 - **Context-Aware Insights**: Real-time training analysis and recommendations
 - **Smart Recommendations**: Personalized training suggestions with expected improvements
@@ -57,7 +59,7 @@ A context-aware AI assistant that adapts to training situations with:
 
 #### Features
 
-- **Voice Commands**: 
+- **Voice Commands**:
   - "Start training"
   - "Log session"
   - "Show stats"
@@ -96,15 +98,15 @@ import { AITrainingCompanionComponent } from './features/training/ai-training-co
 Provides tactile feedback for user interactions:
 
 ```typescript
-import { HapticFeedbackService } from './core/services/haptic-feedback.service';
+import { HapticFeedbackService } from "./core/services/haptic-feedback.service";
 
 // Trigger haptic feedback
-hapticService.trigger('light');    // Light vibration
-hapticService.trigger('medium');   // Medium vibration
-hapticService.trigger('heavy');    // Heavy vibration
-hapticService.trigger('success');  // Success pattern
-hapticService.trigger('warning');  // Warning pattern
-hapticService.trigger('error');    // Error pattern
+hapticService.trigger("light"); // Light vibration
+hapticService.trigger("medium"); // Medium vibration
+hapticService.trigger("heavy"); // Heavy vibration
+hapticService.trigger("success"); // Success pattern
+hapticService.trigger("warning"); // Warning pattern
+hapticService.trigger("error"); // Error pattern
 
 // Custom pattern
 hapticService.custom([100, 50, 100, 50, 200]);
@@ -117,10 +119,14 @@ hapticService.custom([100, 50, 100, 50, 200]);
 Formats game time in MM:SS format:
 
 ```typescript
-import { GameTimePipe } from './shared/pipes/game-time.pipe';
+import { GameTimePipe } from "./shared/pipes/game-time.pipe";
 
 // In template:
-{{ gameTime | gameTime }}  // Output: "15:30"
+{
+  {
+    gameTime | gameTime;
+  }
+} // Output: "15:30"
 ```
 
 ### Enhanced AI Service
@@ -162,9 +168,9 @@ import { LiveGameTrackerComponent } from './live-game-tracker.component';
   template: `
     <app-main-layout>
       <!-- Existing game tracker UI -->
-      
+
       <!-- Add live tracker when game is active -->
-      <app-live-game-tracker 
+      <app-live-game-tracker
         *ngIf="activeGameId()"
       ></app-live-game-tracker>
     </app-main-layout>
@@ -183,7 +189,7 @@ import { AITrainingCompanionComponent } from './ai-training-companion.component'
   template: `
     <app-main-layout>
       <!-- Training content -->
-      
+
       <!-- AI Companion (floating) -->
       <app-ai-training-companion></app-ai-training-companion>
     </app-main-layout>
@@ -194,6 +200,7 @@ import { AITrainingCompanionComponent } from './ai-training-companion.component'
 ## Styling and Theming
 
 Both components use:
+
 - **PrimeNG Components**: Dialog, SpeedDial, Carousel, Knob, Button
 - **Responsive Design**: Mobile-first with landscape optimizations
 - **Backdrop Filters**: Modern blur effects for overlays
@@ -275,4 +282,3 @@ The components integrate with these endpoints:
 - `/api/ai/analyze-context` - Analyze training context
 
 All endpoints have fallback mock data for offline development.
-

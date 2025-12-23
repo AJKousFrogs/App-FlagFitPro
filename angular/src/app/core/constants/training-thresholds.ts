@@ -8,6 +8,5 @@ export const TRAINING_THRESHOLDS = {
   SPRINT_M_S: 7.0, // Sprint threshold (m/s)
   ACWR_UNDER_TRAINING: 0.8,
   ACWR_SWEET_SPOT_MAX: 1.3,
-  ACWR_ELEVATED_RISK: 1.5
+  ACWR_ELEVATED_RISK: 1.5,
 } as const;
-

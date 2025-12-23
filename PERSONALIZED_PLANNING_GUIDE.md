@@ -11,6 +11,7 @@ Goal-based training plan system with automated periodization, game-day awareness
 **Service:** `TrainingPlanService` (`angular/src/app/core/services/training-plan.service.ts`)
 
 Auto-generates weekly training templates based on athlete goals:
+
 - **Speed**: Acceleration, top speed, mechanics
 - **Change of Direction**: Lateral movement, deceleration, reactive COD
 - **Agility**: Footwork, quickness, multi-directional movement
@@ -20,6 +21,7 @@ Auto-generates weekly training templates based on athlete goals:
 - **Endurance**: Aerobic base, VO2 max, lactate threshold
 
 **Usage:**
+
 ```typescript
 import { TrainingPlanService } from './core/services/training-plan.service';
 
@@ -41,12 +43,14 @@ generatePlan() {
 **Component:** `MicrocyclePlannerComponent` (enhanced)
 
 **Game-Day Auto-Adjustments:**
+
 - **48-72 hours before game**: Deload sprints (50% volume reduction)
 - **24-48 hours before game**: Minimal sprint work (2-3 sprints)
 - **<24 hours before game**: Rest or very light (20 min mobility)
 - **Game day**: Complete rest
 
 **ACWR-Based Progression:**
+
 - **ACWR > 1.5**: Reduce volume 30%, target ACWR 1.2
 - **ACWR > 1.3**: Reduce volume 15%, target ACWR 1.25
 - **ACWR < 0.8**: Increase volume 10%, target ACWR 1.0
@@ -71,6 +75,7 @@ if (acwr > 1.5) {
 ```
 
 **Readiness Integration:**
+
 - Low readiness: Additional 30% volume reduction
 - High readiness: 10% volume increase allowed
 
@@ -81,6 +86,7 @@ if (acwr > 1.5) {
 **Location:** `angular/src/app/features/training/goal-based-planner.component.ts`
 
 **Features:**
+
 - Goal selection dropdown
 - Real-time ACWR and readiness display
 - Auto-generated weekly plan with exercises
@@ -88,6 +94,7 @@ if (acwr > 1.5) {
 - Traffic light risk indicator
 
 **Usage:**
+
 ```typescript
 <app-goal-based-planner [athleteId]="'athlete-uuid'"></app-goal-based-planner>
 ```
@@ -97,6 +104,7 @@ if (acwr > 1.5) {
 **Location:** `angular/src/app/features/training/microcycle-planner.component.ts`
 
 **New Features:**
+
 - Game proximity detection (48-72 hour deload)
 - ACWR-based volume adjustments
 - Readiness level integration
@@ -124,6 +132,7 @@ Each goal has foundation and strength phase templates:
 - **Strength Phase**: Higher volume, intensity focus
 
 Templates include:
+
 - Session type (speed, agility, strength, technique, etc.)
 - Focus areas
 - Specific exercises
@@ -147,20 +156,20 @@ Returns upcoming game dates for game proximity calculations.
 if (hoursUntilGame > 48 && hoursUntilGame <= 72) {
   // Reduce sprint volume by 50%
   volume = volume * 0.5;
-  intensity = 'low';
+  intensity = "low";
 }
 
 // 24-48 hours before game
 if (hoursUntilGame > 24 && hoursUntilGame <= 48) {
   // Minimal sprint work (2-3 sprints)
-  volume = 2-3;
-  intensity = 'low';
+  volume = 2 - 3;
+  intensity = "low";
 }
 
 // <24 hours before game
 if (hoursUntilGame <= 24) {
   // Rest or very light
-  sessionType = 'recovery';
+  sessionType = "recovery";
   duration = 20;
 }
 ```
@@ -171,12 +180,12 @@ if (hoursUntilGame <= 24) {
 
 Based on ACWR thresholds:
 
-| ACWR Range | Volume Adjustment | Target ACWR | Reasoning |
-|-----------|-------------------|-------------|-----------|
-| > 1.5 | -30% | 1.2 | Danger zone - significant reduction |
-| 1.3 - 1.5 | -15% | 1.25 | Elevated risk - moderate reduction |
-| 0.8 - 1.3 | Maintain | Current | Sweet spot - no change |
-| < 0.8 | +10% | 1.0 | Under-training - can increase |
+| ACWR Range | Volume Adjustment | Target ACWR | Reasoning                           |
+| ---------- | ----------------- | ----------- | ----------------------------------- |
+| > 1.5      | -30%              | 1.2         | Danger zone - significant reduction |
+| 1.3 - 1.5  | -15%              | 1.25        | Elevated risk - moderate reduction  |
+| 0.8 - 1.3  | Maintain          | Current     | Sweet spot - no change              |
+| < 0.8      | +10%              | 1.0         | Under-training - can increase       |
 
 ### Intensity Adjustments
 
@@ -216,7 +225,7 @@ import { MicrocyclePlannerComponent } from './features/training/microcycle-plann
   template: `
     <!-- Goal-based plan generator -->
     <app-goal-based-planner [athleteId]="athleteId"></app-goal-based-planner>
-    
+
     <!-- Enhanced microcycle planner -->
     <app-microcycle-planner [athleteId]="athleteId"></app-microcycle-planner>
   `
@@ -241,4 +250,3 @@ import { MicrocyclePlannerComponent } from './features/training/microcycle-plann
 ## Files Enhanced
 
 - `angular/src/app/features/training/microcycle-planner.component.ts` - Added game-day awareness and ACWR progression
-

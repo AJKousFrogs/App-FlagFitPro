@@ -7,22 +7,26 @@ The Angular application has been upgraded to use Angular 21's modern animation s
 ## What Changed
 
 ### 1. **Centralized Animation System**
+
 - Created `angular/src/app/shared/animations/app.animations.ts` with reusable animation presets
 - All animations match design system timing tokens
 - Consistent easing functions across the application
 
 ### 2. **Performance Improvements**
+
 - Upgraded from `provideAnimations()` to `provideAnimationsAsync()` in `app.config.ts`
 - Animations load asynchronously, reducing initial bundle size
 - Better performance for applications with many animations
 
 ### 3. **Animation Utilities**
+
 - Created `animation.utils.ts` with helper classes and functions
 - `AnimationState` - Manage animation states
 - `AnimationPlayerManager` - Manage animation players for cleanup
 - `AnimationHelper` - Utility service for programmatic animations
 
 ### 4. **View Transitions**
+
 - Created `view-transitions.config.ts` for route transition utilities
 - Helper functions for managing view transitions
 - CSS styles for smooth page transitions
@@ -62,17 +66,17 @@ The Angular application has been upgraded to use Angular 21's modern animation s
 ### Basic Component Animation
 
 ```typescript
-import { Component } from '@angular/core';
-import { fadeInOut, slideDown } from '@shared/animations/app.animations';
+import { Component } from "@angular/core";
+import { fadeInOut, slideDown } from "@shared/animations/app.animations";
 
 @Component({
-  selector: 'app-my-component',
+  selector: "app-my-component",
   standalone: true,
   animations: [fadeInOut, slideDown],
   template: `
     <div [@fadeInOut]>Content</div>
     <div [@slideDown]>More content</div>
-  `
+  `,
 })
 export class MyComponent {}
 ```
@@ -103,11 +107,11 @@ export class ListComponent {
 ### Expand/Collapse Animation
 
 ```typescript
-import { Component } from '@angular/core';
-import { expandCollapse } from '@shared/animations/app.animations';
+import { Component } from "@angular/core";
+import { expandCollapse } from "@shared/animations/app.animations";
 
 @Component({
-  selector: 'app-expandable',
+  selector: "app-expandable",
   standalone: true,
   animations: [expandCollapse],
   template: `
@@ -115,7 +119,7 @@ import { expandCollapse } from '@shared/animations/app.animations';
     @if (expanded()) {
       <div [@expandCollapse]>Expanded content</div>
     }
-  `
+  `,
 })
 export class ExpandableComponent {
   expanded = signal(false);
@@ -125,21 +129,21 @@ export class ExpandableComponent {
 ### Programmatic Animations
 
 ```typescript
-import { Component, ElementRef, inject } from '@angular/core';
-import { AnimationHelper } from '@shared/animations/animation.utils';
+import { Component, ElementRef, inject } from "@angular/core";
+import { AnimationHelper } from "@shared/animations/animation.utils";
 
 @Component({
-  selector: 'app-animated',
+  selector: "app-animated",
   standalone: true,
-  template: `<div #myElement>Content</div>`
+  template: `<div #myElement>Content</div>`,
 })
 export class AnimatedComponent {
   private animationHelper = inject(AnimationHelper);
-  
+
   animate(elementRef: ElementRef) {
     const player = this.animationHelper.fadeIn(elementRef, 300);
     player.onDone(() => {
-      console.log('Animation complete');
+      console.log("Animation complete");
     });
   }
 }
@@ -148,14 +152,17 @@ export class AnimatedComponent {
 ### Custom Animation
 
 ```typescript
-import { Component } from '@angular/core';
-import { createFadeAnimation, ANIMATION_TIMINGS } from '@shared/animations/app.animations';
+import { Component } from "@angular/core";
+import {
+  createFadeAnimation,
+  ANIMATION_TIMINGS,
+} from "@shared/animations/app.animations";
 
 @Component({
-  selector: 'app-custom',
+  selector: "app-custom",
   standalone: true,
   animations: [createFadeAnimation(ANIMATION_TIMINGS.slow)],
-  template: `<div [@fade]>Content</div>`
+  template: `<div [@fade]>Content</div>`,
 })
 export class CustomComponent {}
 ```
@@ -163,21 +170,19 @@ export class CustomComponent {}
 ### View Transitions
 
 ```typescript
-import { Component } from '@angular/core';
-import { ViewTransitionHelper } from '@shared/animations/view-transitions.config';
+import { Component } from "@angular/core";
+import { ViewTransitionHelper } from "@shared/animations/view-transitions.config";
 
 @Component({
-  selector: 'app-navigation',
+  selector: "app-navigation",
   standalone: true,
-  template: `
-    <button (click)="navigate()">Navigate</button>
-  `
+  template: ` <button (click)="navigate()">Navigate</button> `,
 })
 export class NavigationComponent {
   navigate() {
     ViewTransitionHelper.startTransition(() => {
       // Navigation logic
-      this.router.navigate(['/new-route']);
+      this.router.navigate(["/new-route"]);
     });
   }
 }
@@ -188,19 +193,22 @@ export class NavigationComponent {
 All animations use consistent timing from design tokens:
 
 ```typescript
-import { ANIMATION_TIMINGS, ANIMATION_EASING } from '@shared/animations/app.animations';
+import {
+  ANIMATION_TIMINGS,
+  ANIMATION_EASING,
+} from "@shared/animations/app.animations";
 
 // Available timings:
-ANIMATION_TIMINGS.fast    // 150ms
-ANIMATION_TIMINGS.normal  // 200ms
-ANIMATION_TIMINGS.slow    // 300ms
-ANIMATION_TIMINGS.slower  // 500ms
+ANIMATION_TIMINGS.fast; // 150ms
+ANIMATION_TIMINGS.normal; // 200ms
+ANIMATION_TIMINGS.slow; // 300ms
+ANIMATION_TIMINGS.slower; // 500ms
 
 // Available easing:
-ANIMATION_EASING.productive  // ease
-ANIMATION_EASING.expressive  // cubic-bezier(0.4, 0, 0.2, 1)
-ANIMATION_EASING.entrance    // cubic-bezier(0, 0, 0.2, 1)
-ANIMATION_EASING.exit        // cubic-bezier(0.4, 0, 1, 1)
+ANIMATION_EASING.productive; // ease
+ANIMATION_EASING.expressive; // cubic-bezier(0.4, 0, 0.2, 1)
+ANIMATION_EASING.entrance; // cubic-bezier(0, 0, 0.2, 1)
+ANIMATION_EASING.exit; // cubic-bezier(0.4, 0, 1, 1)
 ```
 
 ## Accessibility
@@ -212,9 +220,12 @@ All animations respect user preferences:
 - View transitions automatically disable for reduced motion
 
 ```typescript
-import { prefersReducedMotion, getAnimationDuration } from '@shared/animations/animation.utils';
+import {
+  prefersReducedMotion,
+  getAnimationDuration,
+} from "@shared/animations/animation.utils";
 
-const duration = getAnimationDuration('300ms', '0ms'); // Returns '0ms' if reduced motion
+const duration = getAnimationDuration("300ms", "0ms"); // Returns '0ms' if reduced motion
 ```
 
 ## Migration Guide
@@ -267,4 +278,3 @@ import { fadeInOut } from '@shared/animations/app.animations';
 - [ ] Create animation presets for common UI patterns
 - [ ] Add animation performance monitoring
 - [ ] Create animation testing utilities
-

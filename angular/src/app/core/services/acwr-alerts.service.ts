@@ -14,20 +14,20 @@
  * @version 1.0.0
  */
 
-import { Injectable, signal, computed, effect, inject } from '@angular/core';
-import { LoggerService } from './logger.service';
+import { Injectable, signal, computed, effect, inject } from "@angular/core";
+import { LoggerService } from "./logger.service";
 import {
   LoadAlert,
   ACWRData,
   TrainingSession,
   RiskLevel,
   PlayerACWRProfile,
-  TrainingAdjustment
-} from '../models/acwr.models';
-import { AcwrService } from './acwr.service';
+  TrainingAdjustment,
+} from "../models/acwr.models";
+import { AcwrService } from "./acwr.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AcwrAlertsService {
   // Inject dependencies using inject() for Angular 21 best practices
@@ -49,10 +49,10 @@ export class AcwrAlertsService {
     const active = this.alerts();
     return {
       total: active.length,
-      critical: active.filter(a => a.severity === 'critical').length,
-      warning: active.filter(a => a.severity === 'warning').length,
-      info: active.filter(a => a.severity === 'info').length,
-      unacknowledged: active.filter(a => !a.acknowledged).length
+      critical: active.filter((a) => a.severity === "critical").length,
+      warning: active.filter((a) => a.severity === "warning").length,
+      info: active.filter((a) => a.severity === "info").length,
+      unacknowledged: active.filter((a) => !a.acknowledged).length,
     };
   });
 
@@ -72,44 +72,44 @@ export class AcwrAlertsService {
     const { ratio, riskZone, weeklyProgression } = acwrData;
 
     // Check for danger zone (ACWR > 1.50)
-    if (ratio > 1.50) {
+    if (ratio > 1.5) {
       this.createAlert({
-        type: 'danger-zone',
-        severity: 'critical',
+        type: "danger-zone",
+        severity: "critical",
         message: `CRITICAL: ACWR is ${ratio.toFixed(2)} - in danger zone!`,
         recommendation: riskZone.recommendation,
-        acwrValue: ratio
+        acwrValue: ratio,
       });
     }
     // Check for elevated risk (ACWR > 1.30)
-    else if (ratio > 1.30) {
+    else if (ratio > 1.3) {
       this.createAlert({
-        type: 'high-acwr',
-        severity: 'warning',
+        type: "high-acwr",
+        severity: "warning",
         message: `WARNING: ACWR is ${ratio.toFixed(2)} - elevated injury risk`,
         recommendation: riskZone.recommendation,
-        acwrValue: ratio
+        acwrValue: ratio,
       });
     }
     // Check for under-training (ACWR < 0.80)
-    else if (ratio > 0 && ratio < 0.80) {
+    else if (ratio > 0 && ratio < 0.8) {
       this.createAlert({
-        type: 'under-training',
-        severity: 'info',
+        type: "under-training",
+        severity: "info",
         message: `INFO: ACWR is ${ratio.toFixed(2)} - player may lack conditioning`,
         recommendation: riskZone.recommendation,
-        acwrValue: ratio
+        acwrValue: ratio,
       });
     }
 
     // Check for weekly load spike
     if (!weeklyProgression.isSafe && weeklyProgression.changePercent > 10) {
       this.createAlert({
-        type: 'spike-detected',
-        severity: 'warning',
+        type: "spike-detected",
+        severity: "warning",
         message: `WARNING: Weekly load increased by ${weeklyProgression.changePercent.toFixed(1)}%`,
-        recommendation: 'Limit load increase to <10% week-over-week',
-        acwrValue: ratio
+        recommendation: "Limit load increase to <10% week-over-week",
+        acwrValue: ratio,
       });
     }
   }
@@ -118,12 +118,15 @@ export class AcwrAlertsService {
    * Create a new alert
    */
   private createAlert(
-    alertData: Omit<LoadAlert, 'id' | 'playerId' | 'playerName' | 'timestamp' | 'acknowledged'>
+    alertData: Omit<
+      LoadAlert,
+      "id" | "playerId" | "playerName" | "timestamp" | "acknowledged"
+    >,
   ): void {
     // Check if similar alert already exists for today
     const today = new Date().toDateString();
     const existingAlert = this.alerts().find(
-      a => a.type === alertData.type && a.timestamp.toDateString() === today
+      (a) => a.type === alertData.type && a.timestamp.toDateString() === today,
     );
 
     if (existingAlert) {
@@ -132,18 +135,18 @@ export class AcwrAlertsService {
 
     const alert: LoadAlert = {
       id: this.generateAlertId(),
-      playerId: 'current-player', // TODO: Get from context
-      playerName: 'Current Player', // TODO: Get from player service
+      playerId: "current-player", // TODO: Get from context
+      playerName: "Current Player", // TODO: Get from player service
       timestamp: new Date(),
       acknowledged: false,
-      ...alertData
+      ...alertData,
     };
 
     // Add to active alerts
-    this.alerts.update(current => [...current, alert]);
+    this.alerts.update((current) => [...current, alert]);
 
     // Add to history
-    this.alertHistory.update(current => [...current, alert]);
+    this.alertHistory.update((current) => [...current, alert]);
 
     // Trigger notification if enabled
     if (this.notificationEnabled()) {
@@ -151,7 +154,7 @@ export class AcwrAlertsService {
     }
 
     // Notify coach if critical and enabled
-    if (alert.severity === 'critical' && this.coachNotificationEnabled()) {
+    if (alert.severity === "critical" && this.coachNotificationEnabled()) {
       this.notifyCoach(alert);
     }
   }
@@ -168,15 +171,15 @@ export class AcwrAlertsService {
    */
   private sendNotification(alert: LoadAlert): void {
     // TODO: Integrate with your notification system
-    this.logger.info('🔔 Alert:', alert.message);
+    this.logger.info("🔔 Alert:", alert.message);
 
     // Could trigger browser notification
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('FlagFit Pro - Load Alert', {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("FlagFit Pro - Load Alert", {
         body: alert.message,
-        icon: '/assets/icons/alert-icon.png',
-        badge: '/assets/icons/badge.png',
-        tag: alert.type
+        icon: "/assets/icons/alert-icon.png",
+        badge: "/assets/icons/badge.png",
+        tag: alert.type,
       });
     }
   }
@@ -186,7 +189,7 @@ export class AcwrAlertsService {
    */
   private notifyCoach(alert: LoadAlert): void {
     // TODO: Send email/SMS to coach
-    this.logger.info('📧 Notifying coach of critical alert:', alert.message);
+    this.logger.info("📧 Notifying coach of critical alert:", alert.message);
 
     // Could trigger:
     // - Email via backend API
@@ -199,17 +202,17 @@ export class AcwrAlertsService {
    * Acknowledge an alert
    */
   public acknowledgeAlert(alertId: string, acknowledgedBy: string): void {
-    this.alerts.update(current =>
-      current.map(alert =>
+    this.alerts.update((current) =>
+      current.map((alert) =>
         alert.id === alertId
           ? {
               ...alert,
               acknowledged: true,
               acknowledgedBy,
-              acknowledgedAt: new Date()
+              acknowledgedAt: new Date(),
             }
-          : alert
-      )
+          : alert,
+      ),
     );
   }
 
@@ -217,14 +220,14 @@ export class AcwrAlertsService {
    * Dismiss an alert
    */
   public dismissAlert(alertId: string): void {
-    this.alerts.update(current => current.filter(a => a.id !== alertId));
+    this.alerts.update((current) => current.filter((a) => a.id !== alertId));
   }
 
   /**
    * Clear all acknowledged alerts
    */
   public clearAcknowledgedAlerts(): void {
-    this.alerts.update(current => current.filter(a => !a.acknowledged));
+    this.alerts.update((current) => current.filter((a) => !a.acknowledged));
   }
 
   /**
@@ -237,8 +240,10 @@ export class AcwrAlertsService {
   /**
    * Get alerts by severity
    */
-  public getAlertsBySeverity(severity: 'critical' | 'warning' | 'info'): LoadAlert[] {
-    return this.alerts().filter(a => a.severity === severity);
+  public getAlertsBySeverity(
+    severity: "critical" | "warning" | "info",
+  ): LoadAlert[] {
+    return this.alerts().filter((a) => a.severity === severity);
   }
 
   /**
@@ -246,7 +251,7 @@ export class AcwrAlertsService {
    */
   public getAlertHistory(startDate: Date, endDate: Date): LoadAlert[] {
     return this.alertHistory().filter(
-      a => a.timestamp >= startDate && a.timestamp <= endDate
+      (a) => a.timestamp >= startDate && a.timestamp <= endDate,
     );
   }
 
@@ -258,28 +263,28 @@ export class AcwrAlertsService {
     reason: string;
     modifications?: string[];
   } {
-    const criticalAlerts = this.getAlertsBySeverity('critical');
+    const criticalAlerts = this.getAlertsBySeverity("critical");
     const modification = this.acwrService.getTrainingModification();
 
     if (criticalAlerts.length > 0) {
       return {
         canTrain: false,
-        reason: 'Player in danger zone - rest day recommended',
-        modifications: modification.modifications
+        reason: "Player in danger zone - rest day recommended",
+        modifications: modification.modifications,
       };
     }
 
     if (modification.shouldModify) {
       return {
         canTrain: true,
-        reason: 'Can train with modifications',
-        modifications: modification.modifications
+        reason: "Can train with modifications",
+        modifications: modification.modifications,
       };
     }
 
     return {
       canTrain: true,
-      reason: 'All systems green - train as planned'
+      reason: "All systems green - train as planned",
     };
   }
 
@@ -296,36 +301,43 @@ export class AcwrAlertsService {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     const weeklyAlerts = this.getAlertHistory(oneWeekAgo, new Date());
-    const criticalAlerts = weeklyAlerts.filter(a => a.severity === 'critical');
+    const criticalAlerts = weeklyAlerts.filter(
+      (a) => a.severity === "critical",
+    );
     const criticalDays = new Set(
-      criticalAlerts.map(a => a.timestamp.toDateString())
+      criticalAlerts.map((a) => a.timestamp.toDateString()),
     ).size;
 
-    const avgACWR = weeklyAlerts.reduce((sum, a) => sum + a.acwrValue, 0) /
+    const avgACWR =
+      weeklyAlerts.reduce((sum, a) => sum + a.acwrValue, 0) /
       (weeklyAlerts.length || 1);
 
     const recommendations: string[] = [];
 
     if (criticalDays > 2) {
-      recommendations.push('⚠️ Multiple critical days this week - review training program');
+      recommendations.push(
+        "⚠️ Multiple critical days this week - review training program",
+      );
     }
 
-    if (avgACWR > 1.30) {
-      recommendations.push('📉 Reduce overall training volume by 15-20%');
+    if (avgACWR > 1.3) {
+      recommendations.push("📉 Reduce overall training volume by 15-20%");
     } else if (avgACWR < 0.85) {
-      recommendations.push('📈 Gradually increase training load by 5-10%');
+      recommendations.push("📈 Gradually increase training load by 5-10%");
     }
 
-    const spikes = weeklyAlerts.filter(a => a.type === 'spike-detected');
+    const spikes = weeklyAlerts.filter((a) => a.type === "spike-detected");
     if (spikes.length > 0) {
-      recommendations.push('⚡ Multiple load spikes detected - improve progression');
+      recommendations.push(
+        "⚡ Multiple load spikes detected - improve progression",
+      );
     }
 
     return {
       totalAlerts: weeklyAlerts.length,
       criticalDays,
       averageACWR: parseFloat(avgACWR.toFixed(2)),
-      recommendations
+      recommendations,
     };
   }
 
@@ -347,18 +359,18 @@ export class AcwrAlertsService {
    * Request browser notification permission
    */
   public async requestNotificationPermission(): Promise<boolean> {
-    if (!('Notification' in window)) {
-      this.logger.warn('Browser does not support notifications');
+    if (!("Notification" in window)) {
+      this.logger.warn("Browser does not support notifications");
       return false;
     }
 
-    if (Notification.permission === 'granted') {
+    if (Notification.permission === "granted") {
       return true;
     }
 
-    if (Notification.permission !== 'denied') {
+    if (Notification.permission !== "denied") {
       const permission = await Notification.requestPermission();
-      return permission === 'granted';
+      return permission === "granted";
     }
 
     return false;
@@ -373,33 +385,33 @@ export class AcwrAlertsService {
       sessionType: any;
       plannedIntensity: number;
       plannedDuration: number;
-    }
+    },
   ): TrainingAdjustment {
     const acwrData = this.acwrService.acwrData();
     const predicted = this.acwrService.predictNextSessionLoad(
-      plannedSession.plannedIntensity
+      plannedSession.plannedIntensity,
     );
 
     let adjustedIntensity = plannedSession.plannedIntensity;
     let adjustedDuration = plannedSession.plannedDuration;
     const modifications: string[] = [];
-    let reason = '';
+    let reason = "";
 
     // Adjust based on projected ACWR
-    if (predicted.projectedACWR > 1.50) {
+    if (predicted.projectedACWR > 1.5) {
       adjustedIntensity = Math.max(3, plannedSession.plannedIntensity * 0.6);
       adjustedDuration = Math.floor(plannedSession.plannedDuration * 0.7);
-      modifications.push('Reduce intensity by 40%');
-      modifications.push('Reduce duration by 30%');
-      modifications.push('Skip all sprint work');
-      reason = 'Projected ACWR would exceed danger zone (>1.50)';
-    } else if (predicted.projectedACWR > 1.30) {
+      modifications.push("Reduce intensity by 40%");
+      modifications.push("Reduce duration by 30%");
+      modifications.push("Skip all sprint work");
+      reason = "Projected ACWR would exceed danger zone (>1.50)";
+    } else if (predicted.projectedACWR > 1.3) {
       adjustedIntensity = Math.max(4, plannedSession.plannedIntensity * 0.8);
       adjustedDuration = Math.floor(plannedSession.plannedDuration * 0.85);
-      modifications.push('Reduce intensity by 20%');
-      modifications.push('Reduce duration by 15%');
-      modifications.push('Limit high-intensity work');
-      reason = 'Projected ACWR would enter elevated risk zone (>1.30)';
+      modifications.push("Reduce intensity by 20%");
+      modifications.push("Reduce duration by 15%");
+      modifications.push("Limit high-intensity work");
+      reason = "Projected ACWR would enter elevated risk zone (>1.30)";
     }
 
     return {
@@ -409,13 +421,13 @@ export class AcwrAlertsService {
         sessionType: plannedSession.sessionType,
         adjustedIntensity,
         adjustedDuration,
-        modifications
+        modifications,
       },
       reason,
       acwrBeforeAdjustment: acwrData.ratio,
       projectedACWRWithoutAdjustment: predicted.projectedACWR,
       projectedACWRWithAdjustment: predicted.projectedACWR * 0.8, // Estimated
-      autoApplied: false
+      autoApplied: false,
     };
   }
 }

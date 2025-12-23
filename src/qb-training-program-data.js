@@ -9,8 +9,8 @@ export {
   QB_ASSESSMENTS,
   // TOURNAMENT_SIMULATION removed - unused export
   // QB_WEEKLY_SCHEDULES removed - unused export
-  default
-} from './data/qb-training/index.js';
+  default,
+} from "./data/qb-training/index.js";
 
 // Original code below (kept for reference, will be removed in future version)
 /*

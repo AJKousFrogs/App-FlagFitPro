@@ -83,6 +83,7 @@ The chatbot implements a sophisticated three-layer architecture:
 **Purpose**: Main chatbot controller managing UI, message handling, and response orchestration.
 
 **Key Responsibilities**:
+
 - Modal UI creation and management
 - Message history tracking
 - Event listener setup
@@ -90,6 +91,7 @@ The chatbot implements a sophisticated three-layer architecture:
 - Fallback handling
 
 **Key Methods**:
+
 - `open()` - Opens chatbot modal
 - `sendMessage()` - Handles user message submission
 - `getResponse()` - Orchestrates response generation
@@ -98,6 +100,7 @@ The chatbot implements a sophisticated three-layer architecture:
 - `handleQuickAction()` - Handles quick topic buttons
 
 **State Management**:
+
 ```javascript
 {
   messages: [],                    // Message history
@@ -119,12 +122,14 @@ The chatbot implements a sophisticated three-layer architecture:
 **Purpose**: Intelligent question understanding and entity extraction.
 
 **Capabilities**:
+
 - **Intent Detection**: Identifies 8 types of intents
 - **Entity Extraction**: Extracts supplements, injuries, recovery methods, training types, psychology topics
 - **Body Stats Parsing**: Extracts height, weight, age from natural language
 - **Context Understanding**: Detects urgency, specificity, time frames
 
 **Detected Intents**:
+
 1. `dosage` - "How much iron should I take?"
 2. `timing` - "When should I take creatine?"
 3. `safety` - "Is iron supplementation safe?"
@@ -135,6 +140,7 @@ The chatbot implements a sophisticated three-layer architecture:
 8. `protocol` - "What's the best sauna protocol?"
 
 **Entity Categories**:
+
 - **Supplements**: iron, creatine, protein, magnesium, vitamin D, beta-alanine, BCAA, glutamine, omega-3, zinc, calcium
 - **Injuries**: ankle sprain, hamstring strain, ACL, shoulder impingement, knee pain, back pain, tendonitis, concussion
 - **Recovery Methods**: sauna, cold therapy, ice bath, cryotherapy, massage, foam roll, compression, sleep
@@ -147,6 +153,7 @@ The chatbot implements a sophisticated three-layer architecture:
 
 **Template System**:
 Each intent has a specialized generator:
+
 - `generateDosageAnswer()` - Personalized dosage calculations
 - `generateTimingAnswer()` - Timing recommendations
 - `generateSafetyAnswer()` - Safety warnings and contraindications
@@ -158,6 +165,7 @@ Each intent has a specialized generator:
 - `generateGeneralAnswer()` - Fallback responses
 
 **Personalization Engine**:
+
 - **Iron Dosage**: Calculates based on height/weight (e.g., 190cm/89kg → 12mg/day)
 - **Protein Requirements**: Calculates based on weight (e.g., 89kg → 142g/day at 1.6g/kg)
 - **Creatine**: Provides loading/maintenance phases
@@ -168,6 +176,7 @@ Each intent has a specialized generator:
 **Purpose**: Enhances responses with formatting, context, and follow-up suggestions.
 
 **Enhancement Features**:
+
 - Follow-up question suggestions
 - Related topic recommendations
 - Medical disclaimers
@@ -181,12 +190,14 @@ Each intent has a specialized generator:
 **Purpose**: Interfaces with evidence-based knowledge database.
 
 **Features**:
+
 - 1-hour caching for frequent queries
 - Multi-source search (knowledge base entries → research articles → local fallback)
 - Evidence synthesis from multiple articles
 - Citation management
 
 **Search Strategy**:
+
 1. **Primary**: Search knowledge base entries (structured, processed data)
 2. **Secondary**: Search research articles (raw, comprehensive data)
 3. **Fallback**: Use local knowledge base (built-in responses)
@@ -216,6 +227,7 @@ intentPatterns: {
 4. **Body Stats Parsing**: Extracts height, weight, age from natural language
 
 **Example Parsing**:
+
 ```
 Input: "I am 190cm 89kg, how much iron do I have to take daily?"
 
@@ -249,6 +261,7 @@ Parsed Output: {
 ### Intent-Based Answer Templates
 
 Each intent type has a specialized answer generator that:
+
 1. Checks for knowledge base entries
 2. Falls back to research articles
 3. Synthesizes information from multiple sources
@@ -258,6 +271,7 @@ Each intent type has a specialized answer generator that:
 ### Personalization Examples
 
 **Iron Dosage Personalization**:
+
 ```javascript
 // Input: "I am 190cm 89kg, how much iron do I have to take daily?"
 // Calculation:
@@ -274,6 +288,7 @@ const recommended = Math.round(baseIron * athleteMultiplier); // 12mg/day
 ```
 
 **Protein Requirements Personalization**:
+
 ```javascript
 // Input: "I weigh 89kg, how much protein do I need?"
 // Calculation:
@@ -290,6 +305,7 @@ const dailyProtein = Math.round(weight * proteinPerKg); // 142g/day
 ### Multi-Source Synthesis
 
 When multiple sources are available:
+
 1. Prioritizes knowledge base entries (structured data)
 2. Falls back to research articles (raw data)
 3. Synthesizes information from multiple articles
@@ -302,6 +318,7 @@ When multiple sources are available:
 ### Database Schema
 
 The knowledge base integrates with the evidence-based knowledge system:
+
 - **Table**: `knowledge_base_entries` (from migration `028_evidence_based_knowledge_base.sql`)
 - **Fields**: `integrated_into_chatbot`, `chatbot_usage_count`
 - **Categories**: supplements, injuries, recovery_methods, training_methods, psychology
@@ -336,6 +353,7 @@ Search Knowledge Base Entries
 ### Modal Interface
 
 **Components**:
+
 - **Header**: Avatar, title, subtitle, close button
 - **Messages Area**: Scrollable message history with typing indicator
 - **Input Area**: Auto-resizing textarea with send button
@@ -344,6 +362,7 @@ Search Knowledge Base Entries
 ### Quick Action Buttons
 
 Pre-populated question pools for each topic:
+
 - **Psychology**: 10 pre-defined questions
 - **Nutrition**: 10 pre-defined questions
 - **Speed**: 10 pre-defined questions
@@ -351,6 +370,7 @@ Pre-populated question pools for each topic:
 - **Recovery**: 10 pre-defined questions
 
 **Smart Question Selection**:
+
 - Tracks asked questions per topic
 - Prevents repetition until all questions asked
 - Randomly selects from available questions
@@ -358,6 +378,7 @@ Pre-populated question pools for each topic:
 ### Message Display
 
 **Features**:
+
 - User messages (right-aligned)
 - Bot messages (left-aligned with avatar)
 - Typing indicator with animated dots
@@ -410,6 +431,7 @@ async handleAIChat(e) {
 ### 5. HTML Pages with Preloading
 
 Pages that preload chatbot:
+
 - `dashboard.html`
 - `training.html`
 - `analytics.html`
@@ -417,13 +439,13 @@ Pages that preload chatbot:
 - `tournaments.html`
 
 **Preloading Code**:
+
 ```javascript
-import("./src/js/components/chatbot.js")
-  .then((module) => {
-    if (module.flagFitChatbot) {
-      window.flagFitChatbot = module.flagFitChatbot;
-    }
-  });
+import("./src/js/components/chatbot.js").then((module) => {
+  if (module.flagFitChatbot) {
+    window.flagFitChatbot = module.flagFitChatbot;
+  }
+});
 ```
 
 ---
@@ -529,8 +551,9 @@ Fallback to Generic Helpful Message
 ### User-Friendly Error Messages
 
 Always provides helpful guidance:
+
 ```
-"I apologize, but I'm having trouble processing your question right now. 
+"I apologize, but I'm having trouble processing your question right now.
 I can help with:
 • Sports psychology & mental training
 • Nutrition & supplements
@@ -582,24 +605,24 @@ class FlagFitChatbot {
     this.askedQuestions = {};
     this.questionPools = this.initializeQuestionPools();
   }
-  
+
   // UI Methods
   open()
   close()
   createModal()
   setupEventListeners()
-  
+
   // Message Methods
   sendMessage()
   addMessage()
   showTypingIndicator()
   hideTypingIndicator()
-  
+
   // Response Methods
   getResponse()
   getLocalResponse()
   handleQuickAction()
-  
+
   // Utility Methods
   formatBotMessage()
   escapeHtml()
@@ -686,22 +709,23 @@ questionPools: {
 **User**: "I am 190cm 89kg, how much iron do I have to take daily?"
 
 **Response**:
+
 ```
-Based on your stats (190cm / 89kg), as an active flag football athlete, 
+Based on your stats (190cm / 89kg), as an active flag football athlete,
 you should aim for **12mg of iron per day**.
 
 **Important considerations:**
-• Get iron from food sources first: lean red meat, dark poultry, beans, 
+• Get iron from food sources first: lean red meat, dark poultry, beans,
   lentils, spinach, fortified cereals
-• If supplementing, take iron supplements separately from calcium 
+• If supplementing, take iron supplements separately from calcium
   supplements (they compete for absorption)
-• Vitamin C enhances iron absorption - pair iron-rich foods with citrus 
+• Vitamin C enhances iron absorption - pair iron-rich foods with citrus
   fruits or bell peppers
 • Avoid taking iron with coffee or tea (tannins reduce absorption)
-• If you're experiencing fatigue, get your ferritin levels checked - 
+• If you're experiencing fatigue, get your ferritin levels checked -
   athletes are prone to iron deficiency
 
-**Note:** Always consult with a sports nutritionist or doctor before 
+**Note:** Always consult with a sports nutritionist or doctor before
 starting iron supplementation, as excess iron can be harmful.
 ```
 
@@ -719,6 +743,7 @@ starting iron supplementation, as excess iron can be harmful.
 **User**: "Is creatine safe for athletes?"
 
 **Response**:
+
 ```
 **Safety Information:**
 
@@ -733,8 +758,8 @@ starting iron supplementation, as excess iron can be harmful.
 • Not recommended for those with kidney issues
 • Start with lower doses if sensitive
 
-**Important:** Always consult with a healthcare provider or sports 
-nutritionist before starting any new supplement, especially if you have 
+**Important:** Always consult with a healthcare provider or sports
+nutritionist before starting any new supplement, especially if you have
 existing health conditions or take medications.
 ```
 
@@ -790,4 +815,3 @@ The system successfully integrates with multiple pages, provides excellent user 
 **Last Updated**: 2024
 **Version**: 1.0
 **Status**: Production Ready
-

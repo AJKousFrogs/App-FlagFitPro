@@ -11,16 +11,20 @@
  * @version 1.0.0
  */
 
-import { Component, computed, signal, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AcwrService } from '../../core/services/acwr.service';
-import { LoadMonitoringService } from '../../core/services/load-monitoring.service';
-import { AcwrAlertsService } from '../../core/services/acwr-alerts.service';
-import { LoggerService } from '../../core/services/logger.service';
-import { ACWRData, RiskZone, TrainingSession } from '../../core/models/acwr.models';
+import { Component, computed, signal, OnInit, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { AcwrService } from "../../core/services/acwr.service";
+import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
+import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
+import { LoggerService } from "../../core/services/logger.service";
+import {
+  ACWRData,
+  RiskZone,
+  TrainingSession,
+} from "../../core/models/acwr.models";
 
 @Component({
-  selector: 'app-acwr-dashboard',
+  selector: "app-acwr-dashboard",
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -38,9 +42,9 @@ import { ACWRData, RiskZone, TrainingSession } from '../../core/models/acwr.mode
       @if (alerts().length > 0 && topAlert()) {
         <div class="alert-banner" [class]="'alert-' + topAlert()!.severity">
           <div class="alert-icon">
-            @if (topAlert()!.severity === 'critical') {
+            @if (topAlert()!.severity === "critical") {
               🚨
-            } @else if (topAlert()!.severity === 'warning') {
+            } @else if (topAlert()!.severity === "warning") {
               ⚠️
             } @else {
               ℹ️
@@ -50,11 +54,7 @@ import { ACWRData, RiskZone, TrainingSession } from '../../core/models/acwr.mode
             <h3>{{ topAlert()!.message }}</h3>
             <p>{{ topAlert()!.recommendation }}</p>
           </div>
-          <button
-            class="alert-dismiss"
-            (click)="dismissTopAlert()">
-            ✕
-          </button>
+          <button class="alert-dismiss" (click)="dismissTopAlert()">✕</button>
         </div>
       }
 
@@ -62,15 +62,18 @@ import { ACWRData, RiskZone, TrainingSession } from '../../core/models/acwr.mode
       <div class="acwr-main-card">
         <div class="acwr-ratio-display">
           <div class="ratio-circle" [style.border-color]="riskZone().color">
-            <div class="ratio-value">{{ acwrRatio() | number:'1.2-2' }}</div>
+            <div class="ratio-value">{{ acwrRatio() | number: "1.2-2" }}</div>
             <div class="ratio-label">ACWR</div>
           </div>
 
-          <div class="risk-zone-indicator" [style.background-color]="riskZone().color">
+          <div
+            class="risk-zone-indicator"
+            [style.background-color]="riskZone().color"
+          >
             <div class="risk-icon">
-              @if (riskZone().level === 'sweet-spot') {
+              @if (riskZone().level === "sweet-spot") {
                 ✓
-              } @else if (riskZone().level === 'danger-zone') {
+              } @else if (riskZone().level === "danger-zone") {
                 ⚠
               } @else {
                 ●
@@ -85,7 +88,9 @@ import { ACWRData, RiskZone, TrainingSession } from '../../core/models/acwr.mode
         <div class="load-breakdown">
           <div class="load-metric">
             <div class="metric-label">Acute Load (7-day)</div>
-            <div class="metric-value">{{ acuteLoad() | number:'1.0-0' }} AU</div>
+            <div class="metric-value">
+              {{ acuteLoad() | number: "1.0-0" }} AU
+            </div>
             <div class="metric-description">Current fatigue level</div>
           </div>
 
@@ -93,7 +98,9 @@ import { ACWRData, RiskZone, TrainingSession } from '../../core/models/acwr.mode
 
           <div class="load-metric">
             <div class="metric-label">Chronic Load (28-day)</div>
-            <div class="metric-value">{{ chronicLoad() | number:'1.0-0' }} AU</div>
+            <div class="metric-value">
+              {{ chronicLoad() | number: "1.0-0" }} AU
+            </div>
             <div class="metric-description">Training fitness base</div>
           </div>
         </div>
@@ -144,20 +151,31 @@ import { ACWRData, RiskZone, TrainingSession } from '../../core/models/acwr.mode
       <!-- Weekly Progression Check -->
       <div class="weekly-progression">
         <h3>Weekly Load Progression</h3>
-        <div class="progression-card" [class.unsafe]="!weeklyProgression().isSafe">
+        <div
+          class="progression-card"
+          [class.unsafe]="!weeklyProgression().isSafe"
+        >
           <div class="progression-stats">
             <div class="stat">
               <div class="stat-label">Current Week</div>
-              <div class="stat-value">{{ weeklyProgression().currentWeek | number:'1.0-0' }} AU</div>
+              <div class="stat-value">
+                {{ weeklyProgression().currentWeek | number: "1.0-0" }} AU
+              </div>
             </div>
             <div class="stat">
               <div class="stat-label">Previous Week</div>
-              <div class="stat-value">{{ weeklyProgression().previousWeek | number:'1.0-0' }} AU</div>
+              <div class="stat-value">
+                {{ weeklyProgression().previousWeek | number: "1.0-0" }} AU
+              </div>
             </div>
             <div class="stat">
               <div class="stat-label">Change</div>
-              <div class="stat-value" [class.positive]="weeklyProgression().changePercent > 0">
-                {{ weeklyProgression().changePercent > 0 ? '+' : '' }}{{ weeklyProgression().changePercent | number:'1.1-1' }}%
+              <div
+                class="stat-value"
+                [class.positive]="weeklyProgression().changePercent > 0"
+              >
+                {{ weeklyProgression().changePercent > 0 ? "+" : ""
+                }}{{ weeklyProgression().changePercent | number: "1.1-1" }}%
               </div>
             </div>
           </div>
@@ -217,279 +235,279 @@ import { ACWRData, RiskZone, TrainingSession } from '../../core/models/acwr.mode
 
       <!-- Last Updated -->
       <div class="dashboard-footer">
-        <small>
-          Last updated: {{ lastUpdated() | date:'short' }}
-        </small>
+        <small> Last updated: {{ lastUpdated() | date: "short" }} </small>
       </div>
     </div>
   `,
-  styles: [`
-    .acwr-dashboard {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .dashboard-header {
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-
-    .dashboard-header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .subtitle {
-      color: var(--text-secondary);
-      font-size: 1rem;
-    }
-
-    /* Alert Banner */
-    .alert-banner {
-      display: flex;
-      align-items: center;
-      padding: 1rem;
-      border-radius: 12px;
-      margin-bottom: 2rem;
-      gap: 1rem;
-    }
-
-    .alert-critical {
-      background: rgba(239, 68, 68, 0.1);
-      border: 2px solid rgb(239, 68, 68);
-    }
-
-    .alert-warning {
-      background: rgba(251, 191, 36, 0.1);
-      border: 2px solid rgb(251, 191, 36);
-    }
-
-    .alert-info {
-      background: rgba(59, 130, 246, 0.1);
-      border: 2px solid rgb(59, 130, 246);
-    }
-
-    .alert-icon {
-      font-size: 2rem;
-    }
-
-    .alert-content {
-      flex: 1;
-    }
-
-    .alert-content h3 {
-      margin: 0 0 0.5rem 0;
-      font-weight: 600;
-    }
-
-    .alert-dismiss {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      padding: 0.5rem;
-    }
-
-    /* Main ACWR Card */
-    .acwr-main-card {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      margin-bottom: 2rem;
-    }
-
-    .acwr-ratio-display {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3rem;
-      margin-bottom: 2rem;
-    }
-
-    .ratio-circle {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      border: 8px solid;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: white;
-    }
-
-    .ratio-value {
-      font-size: 3rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .ratio-label {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .risk-zone-indicator {
-      padding: 1.5rem 2rem;
-      border-radius: 12px;
-      color: white;
-      min-width: 250px;
-    }
-
-    .risk-icon {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .risk-label {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .risk-description {
-      font-size: 0.875rem;
-      opacity: 0.9;
-    }
-
-    /* Load Breakdown */
-    .load-breakdown {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 2rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border-color);
-    }
-
-    .load-metric {
-      text-align: center;
-    }
-
-    .metric-label {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-    }
-
-    .metric-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--brand-primary);
-    }
-
-    .metric-description {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .load-divider {
-      font-size: 2rem;
-      color: var(--text-muted);
-    }
-
-    /* Risk Zones Guide */
-    .risk-zones-guide {
-      margin-bottom: 2rem;
-    }
-
-    .risk-zones-guide h3 {
-      margin-bottom: 1rem;
-    }
-
-    .zones-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-    }
-
-    .zone-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      border: 2px solid var(--border-color);
-    }
-
-    .zone-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
-
-    .zone-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .zone-range {
-      font-weight: 600;
-      font-size: 0.875rem;
-    }
-
-    .zone-label {
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .zone-card p {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin: 0;
-    }
-
-    /* Quick Actions */
-    .quick-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .action-btn {
-      flex: 1;
-      padding: 1rem 1.5rem;
-      border-radius: 8px;
-      border: 2px solid var(--border-color);
-      background: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .action-btn.primary {
-      background: var(--brand-primary);
-      color: white;
-      border-color: var(--brand-primary);
-    }
-
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    @media (max-width: 768px) {
-      .acwr-ratio-display {
-        flex-direction: column;
+  styles: [
+    `
+      .acwr-dashboard {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-family: "Poppins", sans-serif;
       }
 
-      .quick-actions {
+      .dashboard-header {
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .dashboard-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+      }
+
+      /* Alert Banner */
+      .alert-banner {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        gap: 1rem;
+      }
+
+      .alert-critical {
+        background: rgba(239, 68, 68, 0.1);
+        border: 2px solid rgb(239, 68, 68);
+      }
+
+      .alert-warning {
+        background: rgba(251, 191, 36, 0.1);
+        border: 2px solid rgb(251, 191, 36);
+      }
+
+      .alert-info {
+        background: rgba(59, 130, 246, 0.1);
+        border: 2px solid rgb(59, 130, 246);
+      }
+
+      .alert-icon {
+        font-size: 2rem;
+      }
+
+      .alert-content {
+        flex: 1;
+      }
+
+      .alert-content h3 {
+        margin: 0 0 0.5rem 0;
+        font-weight: 600;
+      }
+
+      .alert-dismiss {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+
+      /* Main ACWR Card */
+      .acwr-main-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+
+      .acwr-ratio-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3rem;
+        margin-bottom: 2rem;
+      }
+
+      .ratio-circle {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        border: 8px solid;
+        display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: white;
+      }
+
+      .ratio-value {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .ratio-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .risk-zone-indicator {
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        color: white;
+        min-width: 250px;
+      }
+
+      .risk-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .risk-label {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .risk-description {
+        font-size: 0.875rem;
+        opacity: 0.9;
+      }
+
+      /* Load Breakdown */
+      .load-breakdown {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .load-metric {
+        text-align: center;
+      }
+
+      .metric-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+      }
+
+      .metric-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--brand-primary);
+      }
+
+      .metric-description {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      .load-divider {
+        font-size: 2rem;
+        color: var(--text-muted);
+      }
+
+      /* Risk Zones Guide */
+      .risk-zones-guide {
+        margin-bottom: 2rem;
+      }
+
+      .risk-zones-guide h3 {
+        margin-bottom: 1rem;
       }
 
       .zones-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
       }
-    }
-  `]
+
+      .zone-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid var(--border-color);
+      }
+
+      .zone-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .zone-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .zone-range {
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+
+      .zone-label {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .zone-card p {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0;
+      }
+
+      /* Quick Actions */
+      .quick-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .action-btn {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        border: 2px solid var(--border-color);
+        background: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .action-btn.primary {
+        background: var(--brand-primary);
+        color: white;
+        border-color: var(--brand-primary);
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      @media (max-width: 768px) {
+        .acwr-ratio-display {
+          flex-direction: column;
+        }
+
+        .quick-actions {
+          flex-direction: column;
+        }
+
+        .zones-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    `,
+  ],
 })
 export class AcwrDashboardComponent implements OnInit {
   // Inject services using Angular's inject() function
@@ -512,11 +530,11 @@ export class AcwrDashboardComponent implements OnInit {
   });
 
   public readonly trainingMods = computed(() =>
-    this.acwrService.getTrainingModification()
+    this.acwrService.getTrainingModification(),
   );
 
-  public readonly lastUpdated = computed(() =>
-    this.acwrService.acwrData().lastUpdated
+  public readonly lastUpdated = computed(
+    () => this.acwrService.acwrData().lastUpdated,
   );
 
   ngOnInit(): void {
@@ -542,11 +560,11 @@ export class AcwrDashboardComponent implements OnInit {
       const rpe = Math.max(3, Math.min(9, baseRPE + variation));
 
       const session = this.loadService.createQuickSession(
-        'player123',
-        'technical',
+        "player123",
+        "technical",
         rpe,
         90,
-        `Training session day ${28 - i}`
+        `Training session day ${28 - i}`,
       );
 
       session.date = date;
@@ -557,22 +575,22 @@ export class AcwrDashboardComponent implements OnInit {
   public dismissTopAlert(): void {
     const alert = this.topAlert();
     if (alert) {
-      this.alertsService.acknowledgeAlert(alert.id, 'current-user');
+      this.alertsService.acknowledgeAlert(alert.id, "current-user");
     }
   }
 
   public logSession(): void {
     // TODO: Open session logging modal
-    this.logger.debug('Open session logging form');
+    this.logger.debug("Open session logging form");
   }
 
   public viewHistory(): void {
     // TODO: Navigate to history page
-    this.logger.debug('Navigate to load history');
+    this.logger.debug("Navigate to load history");
   }
 
   public downloadReport(): void {
     // TODO: Generate PDF report
-    this.logger.debug('Generate ACWR report');
+    this.logger.debug("Generate ACWR report");
   }
 }

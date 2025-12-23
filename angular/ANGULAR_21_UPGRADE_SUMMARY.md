@@ -3,8 +3,9 @@
 ## Overview
 
 Successfully upgraded Angular directives to Angular 21 patterns:
+
 - `ngClass` → `[class]` binding
-- `ngStyle` → `[style]` binding  
+- `ngStyle` → `[style]` binding
 - `ngModel` → `model()` signals or `[value]` + `(input)` pattern
 
 ## Upgraded Components
@@ -39,12 +40,14 @@ Successfully upgraded Angular directives to Angular 21 patterns:
 ### Class Binding
 
 **Before (Angular < 21):**
+
 ```typescript
-[ngClass]="'class-' + variable"
-[ngClass]="{ 'active': isActive, 'disabled': isDisabled }"
+[ngClass] = "'class-' + variable"[ngClass] =
+  "{ 'active': isActive, 'disabled': isDisabled }";
 ```
 
 **After (Angular 21):**
+
 ```typescript
 [class]="'class-' + variable"
 [class.active]="isActive()"
@@ -54,45 +57,49 @@ Successfully upgraded Angular directives to Angular 21 patterns:
 ### Style Binding
 
 **Before (Angular < 21):**
+
 ```typescript
-[ngStyle]="{ 'color': textColor, 'font-size': fontSize + 'px' }"
+[ngStyle] = "{ 'color': textColor, 'font-size': fontSize + 'px' }";
 ```
 
 **After (Angular 21):**
+
 ```typescript
-[style.color]="textColor()"
-[style.font-size.px]="fontSize()"
+[style.color] = "textColor()"[style.font - size.px] = "fontSize()";
 ```
 
 ### Two-Way Binding
 
 **Before (Angular < 21):**
+
 ```typescript
-[(ngModel)]="value"
+[ngModel] = "value";
 ```
 
 **After (Angular 21) - Option 1: Signals**
+
 ```typescript
 // Component
-value = signal('');
+value = signal("");
 
 // Template
-[value]="value()"
-(input)="value.set($any($event.target).value)"
+[value] = "value()"(input) = "value.set($any($event.target).value)";
 ```
 
 **After (Angular 21) - Option 2: model() Signal**
+
 ```typescript
 // Component
-value = model('');
+value = model("");
 
 // Template
-[(ngModel)]="value"  // Still works with model() signal
+[ngModel] = "value"; // Still works with model() signal
 ```
 
 ## PrimeNG Components
 
 For PrimeNG components that require FormsModule:
+
 - Use `[value]` + `(onInput)` or `(onChange)` instead of `[(ngModel)]`
 - PrimeNG InputNumber: `[value]` + `(onInput)`
 - PrimeNG Select: `[value]` + `(onChange)`
@@ -137,4 +144,3 @@ The following components still use `ngModel` and should be upgraded:
 - Use `model()` signal when you need two-way binding with forms
 - Use `signal()` + manual binding for more control
 - Always use `()` to read signal values in templates
-

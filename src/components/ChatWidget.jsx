@@ -1,23 +1,23 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './ChatWidget.css';
+import React, { useState, useRef, useEffect } from "react";
+import "./ChatWidget.css";
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: 1,
-      type: 'assistant',
-      text: 'Welcome to FlagFit Pro! How can I help you today?',
-      timestamp: new Date()
-    }
+      type: "assistant",
+      text: "Welcome to FlagFit Pro! How can I help you today?",
+      timestamp: new Date(),
+    },
   ]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -49,13 +49,13 @@ const ChatWidget = () => {
 
     const userMessage = {
       id: Date.now(),
-      type: 'user',
+      type: "user",
       text: inputValue.trim(),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
     setIsTyping(true);
 
     // Clear any existing timeout
@@ -70,17 +70,17 @@ const ChatWidget = () => {
         "Based on your performance data, I recommend focusing on these areas.",
         "Your progress has been excellent! Here's what to work on next.",
         "I can help you optimize your flag football training routine.",
-        "That's a smart approach. Here are some additional tips."
+        "That's a smart approach. Here are some additional tips.",
       ];
 
       const assistantMessage = {
         id: Date.now() + 1,
-        type: 'assistant',
+        type: "assistant",
         text: responses[Math.floor(Math.random() * responses.length)],
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
       setIsTyping(false);
       responseTimeoutRef.current = null;
     }, 1000);
@@ -88,10 +88,10 @@ const ChatWidget = () => {
 
   const handleQuickAction = (action) => {
     const quickActions = {
-      'training-tip': 'Give me a training tip for today',
-      'nutrition-advice': 'What should I eat before training?',
-      'recovery-help': 'How can I improve my recovery?',
-      'schedule-help': 'Help me plan my training schedule'
+      "training-tip": "Give me a training tip for today",
+      "nutrition-advice": "What should I eat before training?",
+      "recovery-help": "How can I improve my recovery?",
+      "schedule-help": "Help me plan my training schedule",
     };
 
     setInputValue(quickActions[action] || action);
@@ -99,7 +99,7 @@ const ChatWidget = () => {
   };
 
   const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   return (
@@ -112,12 +112,12 @@ const ChatWidget = () => {
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === "Enter" || e.key === " ") {
             setIsOpen(!isOpen);
           }
         }}
       >
-        {isOpen ? '✕' : '💬'}
+        {isOpen ? "✕" : "💬"}
         {!isOpen && messages.length > 1 && (
           <div className="chat-notification" aria-label="New messages">
             {messages.length - 1}
@@ -148,7 +148,7 @@ const ChatWidget = () => {
             {messages.map((message) => (
               <div key={message.id} className={`chat-message ${message.type}`}>
                 <div className={`message-avatar ${message.type}`}>
-                  {message.type === 'user' ? '👤' : '🏈'}
+                  {message.type === "user" ? "👤" : "🏈"}
                 </div>
                 <div className={`message-content ${message.type}`}>
                   <div className="message-text">{message.text}</div>
@@ -158,7 +158,7 @@ const ChatWidget = () => {
                 </div>
               </div>
             ))}
-            
+
             {isTyping && (
               <div className="typing-indicator active">
                 <span>AI Coach is typing</span>
@@ -169,26 +169,26 @@ const ChatWidget = () => {
                 </div>
               </div>
             )}
-            
+
             <div ref={messagesEndRef} />
           </div>
 
           <div className="chat-quick-actions">
             <button
               className="quick-action"
-              onClick={() => handleQuickAction('training-tip')}
+              onClick={() => handleQuickAction("training-tip")}
             >
               💪 Training Tip
             </button>
             <button
               className="quick-action"
-              onClick={() => handleQuickAction('nutrition-advice')}
+              onClick={() => handleQuickAction("nutrition-advice")}
             >
               🥗 Nutrition
             </button>
             <button
               className="quick-action"
-              onClick={() => handleQuickAction('recovery-help')}
+              onClick={() => handleQuickAction("recovery-help")}
             >
               😴 Recovery
             </button>
@@ -210,7 +210,7 @@ const ChatWidget = () => {
               disabled={!inputValue.trim() || isTyping}
               aria-label="Send message"
             >
-              {isTyping ? '⏳' : '➤'}
+              {isTyping ? "⏳" : "➤"}
               <span className="sr-only">Send</span>
             </button>
           </form>

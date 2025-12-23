@@ -3,7 +3,7 @@
  * Checks passwords against Have I Been Pwned database via Supabase Edge Function
  */
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 /**
  * Check if a password has been leaked using the Supabase Edge Function
@@ -12,65 +12,76 @@ import { logger } from '../../logger.js';
  * @param {string} supabaseToken - Supabase auth token (optional, for authenticated requests)
  * @returns {Promise<{leaked: boolean, message: string}>}
  */
-export async function checkPasswordLeaked(password, supabaseUrl, supabaseToken = null) {
-  if (!password || typeof password !== 'string') {
+export async function checkPasswordLeaked(
+  password,
+  supabaseUrl,
+  supabaseToken = null,
+) {
+  if (!password || typeof password !== "string") {
     return {
       leaked: false,
-      message: 'Password is required',
+      message: "Password is required",
     };
   }
 
   if (!supabaseUrl) {
-    logger.warn('[Password Leak Check] Supabase URL not provided, skipping check');
+    logger.warn(
+      "[Password Leak Check] Supabase URL not provided, skipping check",
+    );
     return {
       leaked: false,
-      message: 'Password leak check unavailable',
+      message: "Password leak check unavailable",
     };
   }
 
   try {
     const functionUrl = `${supabaseUrl}/functions/v1/enable-leaked-password-protection`;
-    
+
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     // Add auth token if provided
     if (supabaseToken) {
-      headers['Authorization'] = `Bearer ${supabaseToken}`;
+      headers["Authorization"] = `Bearer ${supabaseToken}`;
     }
 
     const response = await fetch(functionUrl, {
-      method: 'POST',
+      method: "POST",
       headers,
       body: JSON.stringify({
-        action: 'check',
+        action: "check",
         password: password,
       }),
     });
 
     if (!response.ok) {
       // If function is unavailable or returns error, fail open (allow password)
-      logger.warn('[Password Leak Check] Function unavailable:', response.status);
+      logger.warn(
+        "[Password Leak Check] Function unavailable:",
+        response.status,
+      );
       return {
         leaked: false,
-        message: 'Password leak check unavailable',
+        message: "Password leak check unavailable",
       };
     }
 
     const result = await response.json();
     return {
       leaked: result.leaked || false,
-      message: result.message || (result.leaked 
-        ? 'This password has been found in data breaches. Please choose a different password.'
-        : 'Password is safe to use.'),
+      message:
+        result.message ||
+        (result.leaked
+          ? "This password has been found in data breaches. Please choose a different password."
+          : "Password is safe to use."),
     };
   } catch (error) {
     // Fail open - if there's an error, allow password (but log it)
-    logger.error('[Password Leak Check] Error:', error);
+    logger.error("[Password Leak Check] Error:", error);
     return {
       leaked: false,
-      message: 'Password leak check unavailable',
+      message: "Password leak check unavailable",
     };
   }
 }
@@ -82,18 +93,20 @@ export async function checkPasswordLeaked(password, supabaseUrl, supabaseToken =
  */
 export async function checkPasswordLeakedAuto(password) {
   // Get Supabase configuration from window._env or environment
-  const supabaseUrl = 
-    (typeof window !== 'undefined' && window._env?.SUPABASE_URL) ||
-    (typeof window !== 'undefined' && window._env?.VITE_SUPABASE_URL) ||
+  const supabaseUrl =
+    (typeof window !== "undefined" && window._env?.SUPABASE_URL) ||
+    (typeof window !== "undefined" && window._env?.VITE_SUPABASE_URL) ||
     null;
 
   // Try to get auth token from Supabase client if available
   let supabaseToken = null;
   try {
-    const { getSupabase } = await import('../services/supabase-client.js');
+    const { getSupabase } = await import("../services/supabase-client.js");
     const supabase = getSupabase();
     if (supabase) {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.access_token) {
         supabaseToken = session.access_token;
       }
@@ -105,4 +118,3 @@ export async function checkPasswordLeakedAuto(password) {
 
   return checkPasswordLeaked(password, supabaseUrl, supabaseToken);
 }
-

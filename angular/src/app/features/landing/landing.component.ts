@@ -15,7 +15,7 @@ import { ButtonModule } from "primeng/button";
         <div class="hero-gradient-1"></div>
         <div class="hero-gradient-2"></div>
       </div>
-    
+
       <div class="hero-container">
         <div class="hero-content">
           <div class="hero-logo-wrapper">
@@ -24,19 +24,19 @@ import { ButtonModule } from "primeng/button";
             </div>
             <div class="hero-badge">🏆 Pro Platform</div>
           </div>
-    
+
           <h1 class="hero-title">
             Elevate Your
             <span class="hero-title-accent">Flag Football</span>
             Game
           </h1>
-    
+
           <p class="hero-description">
             The ultimate training and competition platform for serious players.
             Track performance, join tournaments, and connect with a community
             that shares your passion for the game.
           </p>
-    
+
           <div class="hero-actions">
             <p-button
               label="Get Started Free"
@@ -52,7 +52,7 @@ import { ButtonModule } from "primeng/button";
               styleClass="p-button-lg"
             ></p-button>
           </div>
-    
+
           <div class="hero-stats">
             <div class="hero-stat">
               <div class="hero-stat-number">10K+</div>
@@ -70,7 +70,7 @@ import { ButtonModule } from "primeng/button";
         </div>
       </div>
     </section>
-    
+
     <section class="features-section">
       <div class="features-container">
         <div class="features-header">
@@ -80,18 +80,16 @@ import { ButtonModule } from "primeng/button";
             and grow faster
           </p>
         </div>
-    
+
         <div class="features-grid">
           @for (feature of features; track trackByFeatureId($index, feature)) {
-            <p-card
-              class="feature-card"
-              >
+            <p-card class="feature-card">
               <ng-template pTemplate="header">
                 <div class="feature-card-icon">
                   <div
                     class="feature-icon-wrapper"
                     [class]="'feature-icon-' + feature.id"
-                    >
+                  >
                     <i [class]="'pi ' + feature.icon"></i>
                   </div>
                 </div>
@@ -107,7 +105,7 @@ import { ButtonModule } from "primeng/button";
         </div>
       </div>
     </section>
-    `,
+  `,
   styles: [
     `
       .hero-section {

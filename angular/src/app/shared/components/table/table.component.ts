@@ -1,5 +1,11 @@
-import { Component, input, signal, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  input,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 export interface TableColumn {
   key: string;
@@ -9,32 +15,41 @@ export interface TableColumn {
 
 /**
  * Table Component - Angular 21
- * 
+ *
  * A data table component with sorting support
  * Uses Angular 21 signals for reactive state management
  */
 @Component({
-  selector: 'app-table',
+  selector: "app-table",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
     <div class="table-container">
-      <table class="table" [class.table-striped]="striped()" [class.table-bordered]="bordered()">
+      <table
+        class="table"
+        [class.table-striped]="striped()"
+        [class.table-bordered]="bordered()"
+      >
         <thead>
           <tr>
             @for (column of columns(); track column.key) {
               <th
                 [class.sortable]="column.sortable"
-                [class.sort-asc]="sortColumn() === column.key && sortDirection() === 'asc'"
-                [class.sort-desc]="sortColumn() === column.key && sortDirection() === 'desc'"
+                [class.sort-asc]="
+                  sortColumn() === column.key && sortDirection() === 'asc'
+                "
+                [class.sort-desc]="
+                  sortColumn() === column.key && sortDirection() === 'desc'
+                "
                 (click)="onSort(column)"
-                [attr.aria-sort]="getAriaSort(column)">
+                [attr.aria-sort]="getAriaSort(column)"
+              >
                 {{ column.label }}
                 @if (column.sortable) {
                   <span class="sort-icon">
                     @if (sortColumn() === column.key) {
-                      @if (sortDirection() === 'asc') {
+                      @if (sortDirection() === "asc") {
                         <i class="pi pi-sort-up"></i>
                       } @else {
                         <i class="pi pi-sort-down"></i>
@@ -66,82 +81,84 @@ export interface TableColumn {
       </table>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .table-container {
-      overflow-x: auto;
-      border-radius: var(--p-border-radius);
-      border: 1px solid var(--p-surface-border);
-    }
+      .table-container {
+        overflow-x: auto;
+        border-radius: var(--p-border-radius);
+        border: 1px solid var(--p-surface-border);
+      }
 
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--surface-primary);
-    }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--surface-primary);
+      }
 
-    .table th {
-      padding: 1rem;
-      text-align: left;
-      font-weight: 600;
-      color: var(--p-text-color);
-      background: var(--p-surface-50);
-      border-bottom: 2px solid var(--p-surface-border);
-      position: relative;
-    }
+      .table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--p-text-color);
+        background: var(--p-surface-50);
+        border-bottom: 2px solid var(--p-surface-border);
+        position: relative;
+      }
 
-    .table th.sortable {
-      cursor: pointer;
-      user-select: none;
-      padding-right: 2rem;
-    }
+      .table th.sortable {
+        cursor: pointer;
+        user-select: none;
+        padding-right: 2rem;
+      }
 
-    .table th.sortable:hover {
-      background: var(--p-surface-100);
-    }
+      .table th.sortable:hover {
+        background: var(--p-surface-100);
+      }
 
-    .sort-icon {
-      position: absolute;
-      right: 0.5rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--p-text-color-secondary);
-    }
+      .sort-icon {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--p-text-color-secondary);
+      }
 
-    .table th.sort-asc .sort-icon,
-    .table th.sort-desc .sort-icon {
-      color: var(--p-primary-color);
-    }
+      .table th.sort-asc .sort-icon,
+      .table th.sort-desc .sort-icon {
+        color: var(--p-primary-color);
+      }
 
-    .table td {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--p-surface-border);
-      color: var(--p-text-color);
-    }
+      .table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--p-surface-border);
+        color: var(--p-text-color);
+      }
 
-    .table tbody tr:hover {
-      background: var(--p-surface-50);
-    }
+      .table tbody tr:hover {
+        background: var(--p-surface-50);
+      }
 
-    .table-striped tbody tr:nth-child(even) {
-      background: var(--p-surface-25);
-    }
+      .table-striped tbody tr:nth-child(even) {
+        background: var(--p-surface-25);
+      }
 
-    .table-bordered th,
-    .table-bordered td {
-      border: 1px solid var(--p-surface-border);
-    }
+      .table-bordered th,
+      .table-bordered td {
+        border: 1px solid var(--p-surface-border);
+      }
 
-    .empty-message {
-      text-align: center;
-      padding: 2rem;
-      color: var(--p-text-color-secondary);
-      font-style: italic;
-    }
-  `]
+      .empty-message {
+        text-align: center;
+        padding: 2rem;
+        color: var(--p-text-color-secondary);
+        font-style: italic;
+      }
+    `,
+  ],
 })
 export class TableComponent {
   // Angular 21: Use input() signals instead of @Input()
@@ -152,13 +169,13 @@ export class TableComponent {
 
   // Sorting state
   sortColumn = signal<string | null>(null);
-  sortDirection = signal<'asc' | 'desc'>('asc');
+  sortDirection = signal<"asc" | "desc">("asc");
 
   // Computed sorted data
   sortedData = computed(() => {
     const data = this.data();
     const sortCol = this.sortColumn();
-    
+
     if (!sortCol) {
       return data;
     }
@@ -173,10 +190,10 @@ export class TableComponent {
       if (bVal == null) return -1;
 
       if (aVal < bVal) {
-        return direction === 'asc' ? -1 : 1;
+        return direction === "asc" ? -1 : 1;
       }
       if (aVal > bVal) {
-        return direction === 'asc' ? 1 : -1;
+        return direction === "asc" ? 1 : -1;
       }
       return 0;
     });
@@ -188,10 +205,12 @@ export class TableComponent {
     }
 
     if (this.sortColumn() === column.key) {
-      this.sortDirection.update(current => current === 'asc' ? 'desc' : 'asc');
+      this.sortDirection.update((current) =>
+        current === "asc" ? "desc" : "asc",
+      );
     } else {
       this.sortColumn.set(column.key);
-      this.sortDirection.set('asc');
+      this.sortDirection.set("asc");
     }
   }
 
@@ -199,11 +218,10 @@ export class TableComponent {
     if (!column.sortable || this.sortColumn() !== column.key) {
       return null;
     }
-    return this.sortDirection() === 'asc' ? 'ascending' : 'descending';
+    return this.sortDirection() === "asc" ? "ascending" : "descending";
   }
 
   trackByIndex(index: number): number {
     return index;
   }
 }
-

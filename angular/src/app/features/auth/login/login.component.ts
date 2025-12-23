@@ -24,7 +24,11 @@ import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AuthService } from "../../../core/services/auth.service";
-import { getFormControlError, isFormControlInvalid, markFormGroupTouched } from "../../../shared/utils/form.utils";
+import {
+  getFormControlError,
+  isFormControlInvalid,
+  markFormGroupTouched,
+} from "../../../shared/utils/form.utils";
 
 @Component({
   selector: "app-login",
@@ -38,8 +42,8 @@ import { getFormControlError, isFormControlInvalid, markFormGroupTouched } from 
     InputTextModule,
     CheckboxModule,
     MessageModule,
-    ToastModule
-],
+    ToastModule,
+  ],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
@@ -51,18 +55,18 @@ import { getFormControlError, isFormControlInvalid, markFormGroupTouched } from 
           </div>
           <h1 class="login-title">Sign in to FlagFit Pro</h1>
         </ng-template>
-    
+
         @if (isDemoMode()) {
           <div class="alert alert-info mb-4">
-            <strong>Demo Mode:</strong> This login accepts any email and password
-            for testing purposes.
+            <strong>Demo Mode:</strong> This login accepts any email and
+            password for testing purposes.
           </div>
         }
-    
+
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <input type="hidden" [value]="csrfToken()" />
-    
-            <div class="p-field mb-4">
+
+          <div class="p-field mb-4">
             <label for="email" class="p-label required">Email</label>
             <input
               id="email"
@@ -72,14 +76,14 @@ import { getFormControlError, isFormControlInvalid, markFormGroupTouched } from 
               placeholder="Enter your email"
               [class.ng-invalid]="emailError()"
               autocomplete="email"
-              />
+            />
             @if (emailError()) {
               <small class="p-error">
                 {{ emailError() }}
               </small>
             }
           </div>
-    
+
           <div class="p-field mb-4">
             <label for="password" class="p-label required">Password</label>
             <input
@@ -90,14 +94,14 @@ import { getFormControlError, isFormControlInvalid, markFormGroupTouched } from 
               placeholder="Enter your password"
               [class.ng-invalid]="passwordError()"
               autocomplete="current-password"
-              />
+            />
             @if (passwordError()) {
               <small class="p-error">
                 {{ passwordError() }}
               </small>
             }
           </div>
-    
+
           <div class="login-form-options mb-4">
             <div class="flex align-items-center">
               <p-checkbox
@@ -108,30 +112,30 @@ import { getFormControlError, isFormControlInvalid, markFormGroupTouched } from 
             </div>
             <a [routerLink]="['/reset-password']" class="text-primary"
               >Forgot your password?</a
-              >
-            </div>
-    
-            <p-button
-              type="submit"
-              label="Sign in"
-              icon="pi pi-lock"
-              [loading]="isLoading()"
-              [disabled]="!isFormValid()"
-              styleClass="w-full"
-              >
-            </p-button>
-          </form>
-    
-          <div class="login-divider my-4">
-            <span>Or</span>
-          </div>
-    
-          <a [routerLink]="['/register']" class="login-create-link"
-            >create a new account</a
             >
-          </p-card>
+          </div>
+
+          <p-button
+            type="submit"
+            label="Sign in"
+            icon="pi pi-lock"
+            [loading]="isLoading()"
+            [disabled]="!isFormValid()"
+            styleClass="w-full"
+          >
+          </p-button>
+        </form>
+
+        <div class="login-divider my-4">
+          <span>Or</span>
         </div>
-    `,
+
+        <a [routerLink]="['/register']" class="login-create-link"
+          >create a new account</a
+        >
+      </p-card>
+    </div>
+  `,
   styles: [
     `
       .login-page {
@@ -233,12 +237,16 @@ export class LoginComponent {
   // Computed form state signals
   isFormValid = computed(() => this.loginForm.valid);
   emailError = computed(() => {
-    const control = this.loginForm.get('email');
-    return control && (this.submitted() || control.touched) ? getFormControlError(control) : null;
+    const control = this.loginForm.get("email");
+    return control && (this.submitted() || control.touched)
+      ? getFormControlError(control)
+      : null;
   });
   passwordError = computed(() => {
-    const control = this.loginForm.get('password');
-    return control && (this.submitted() || control.touched) ? getFormControlError(control) : null;
+    const control = this.loginForm.get("password");
+    return control && (this.submitted() || control.touched)
+      ? getFormControlError(control)
+      : null;
   });
 
   constructor() {
@@ -253,7 +261,7 @@ export class LoginComponent {
       const demoMode =
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1";
-      
+
       this.isDemoMode.set(demoMode);
 
       if (demoMode) {
@@ -295,7 +303,7 @@ export class LoginComponent {
 
   onSubmit(): void {
     this.submitted.set(true);
-    
+
     if (this.loginForm.invalid) {
       markFormGroupTouched(this.loginForm);
       return;

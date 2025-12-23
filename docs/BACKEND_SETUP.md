@@ -128,6 +128,7 @@ npm run dev:full
 ```
 
 This will start:
+
 - Frontend: `http://localhost:3000` (or 5173)
 - Backend: `http://localhost:3001`
 

@@ -3,6 +3,7 @@
 ## Overview
 
 The application now includes leaked password protection that checks passwords against the Have I Been Pwned database before allowing users to:
+
 - Register new accounts
 - Reset passwords
 - Change passwords
@@ -16,6 +17,7 @@ The application now includes leaked password protection that checks passwords ag
 **Endpoint**: `https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection`
 
 **Features**:
+
 - Uses k-anonymity model (only sends first 5 chars of SHA-1 hash)
 - Never sends full password to external API
 - Fail-open design (allows password if API is unavailable)
@@ -26,6 +28,7 @@ The application now includes leaked password protection that checks passwords ag
 **Location**: `src/js/utils/password-leak-check.js`
 
 Provides two functions:
+
 - `checkPasswordLeaked(password, supabaseUrl, supabaseToken)` - Manual check with explicit parameters
 - `checkPasswordLeakedAuto(password)` - Automatic check using environment configuration
 
@@ -34,11 +37,13 @@ Provides two functions:
 ### 1. Registration Flow
 
 **Files Modified**:
+
 - `register.html` - Checks password before calling `authManager.register()`
 - `src/auth-manager.js` - Checks password in `register()` method before Supabase signup
 - `angular/src/app/features/auth/register/register.component.ts` - Checks password before Angular registration
 
 **Flow**:
+
 1. User enters password
 2. Password validated for complexity (existing validation)
 3. Password checked against leaked password database
@@ -48,9 +53,11 @@ Provides two functions:
 ### 2. Password Reset Flow
 
 **Files Modified**:
+
 - `reset-password.html` - Checks new password before resetting
 
 **Flow**:
+
 1. User enters new password
 2. Password validated for complexity
 3. Password checked against leaked password database
@@ -60,9 +67,11 @@ Provides two functions:
 ### 3. Password Change Flow
 
 **Files Modified**:
+
 - `src/auth-manager.js` - Checks new password in `changePassword()` method
 
 **Flow**:
+
 1. User enters new password
 2. Password validated for complexity
 3. Password checked against leaked password database
@@ -72,6 +81,7 @@ Provides two functions:
 ## Error Messages
 
 When a leaked password is detected, users see:
+
 > "This password has been found in data breaches. Please choose a different password."
 
 ## Security Features
@@ -99,6 +109,7 @@ To test the integration:
 ## Configuration
 
 The function automatically detects Supabase configuration from:
+
 - `window._env.SUPABASE_URL` (set by `supabase-config.js`)
 - `window._env.VITE_SUPABASE_URL` (alternative)
 - Environment variables
@@ -106,11 +117,13 @@ The function automatically detects Supabase configuration from:
 ## Deployment
 
 The Edge Function is deployed and available at:
+
 ```
 https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection
 ```
 
 To redeploy:
+
 ```bash
 supabase functions deploy enable-leaked-password-protection --project-ref pvziciccwxgftcielknm
 ```
@@ -118,8 +131,8 @@ supabase functions deploy enable-leaked-password-protection --project-ref pvzici
 ## Future Enhancements
 
 Potential improvements:
+
 - Add password strength indicator that includes leak status
 - Cache leak check results to reduce API calls
 - Add admin dashboard to view leak check statistics
 - Integrate with Supabase Auth hooks for automatic checking
-

@@ -2,7 +2,7 @@
  * Main JavaScript Entry Point
  * Initializes all universal components for the Flag Football application
  * This file should be included on all 26 pages for consistent functionality
- * 
+ *
  * Version: 2.0
  * Features:
  * - Enhanced error handling and recovery
@@ -20,11 +20,11 @@ import { UniversalMobileNav } from "./components/universal-mobile-nav.js";
 import { UniversalFormValidator } from "./components/universal-form-validator.js";
 import { UniversalChartAccessibility } from "./components/universal-chart-accessibility.js";
 import { UniversalFocusManagement } from "./components/universal-focus-management.js";
-import { 
-  performGlobalSearch, 
-  getRecentSearches, 
+import {
+  performGlobalSearch,
+  getRecentSearches,
   clearSearchHistory,
-  highlightMatches 
+  highlightMatches,
 } from "./services/global-search-service.js";
 
 // Global application state
@@ -88,7 +88,9 @@ class FlagFitApplication {
   }
 
   init() {
-    if (this.initialized) {return;}
+    if (this.initialized) {
+      return;
+    }
 
     // Wait for DOM to be ready
     if (document.readyState === "loading") {
@@ -144,12 +146,14 @@ class FlagFitApplication {
       this.performanceMeasure("init-duration", "init-start", "init-end");
 
       const initTime = this.performanceMetrics.measures.get("init-duration");
-      this.log(`FlagFit application initialized successfully in ${initTime?.duration.toFixed(2)}ms`);
+      this.log(
+        `FlagFit application initialized successfully in ${initTime?.duration.toFixed(2)}ms`,
+      );
 
       // Dispatch initialization event
       document.dispatchEvent(
         new CustomEvent("flagfit:initialized", {
-          detail: { 
+          detail: {
             app: this,
             initTime: initTime?.duration,
             timestamp: Date.now(),
@@ -174,16 +178,15 @@ class FlagFitApplication {
     }
 
     // Listen for changes
-    window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener(
-      "change",
-      (e) => {
+    window
+      .matchMedia("(prefers-reduced-motion: reduce)")
+      .addEventListener("change", (e) => {
         window.FlagFitApp.config.accessibility.reducedMotion = e.matches;
         document.documentElement.setAttribute(
           "data-reduced-motion",
           e.matches.toString(),
         );
-      },
-    );
+      });
 
     // Detect high contrast preference
     const prefersHighContrast = window.matchMedia(
@@ -203,15 +206,14 @@ class FlagFitApplication {
     }
 
     // Listen for theme changes
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener(
-      "change",
-      (e) => {
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
         document.documentElement.setAttribute(
           "data-theme",
           e.matches ? "dark" : "light",
         );
-      },
-    );
+      });
 
     // Detect touch capability
     const hasTouchCapability =
@@ -262,7 +264,10 @@ class FlagFitApplication {
   }
 
   initializeServiceWorker() {
-    if ("serviceWorker" in navigator && window.FlagFitApp.config.offline.enabled) {
+    if (
+      "serviceWorker" in navigator &&
+      window.FlagFitApp.config.offline.enabled
+    ) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
           .register("/sw.js")
@@ -273,7 +278,10 @@ class FlagFitApplication {
             registration.addEventListener("updatefound", () => {
               const newWorker = registration.installing;
               newWorker.addEventListener("statechange", () => {
-                if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                if (
+                  newWorker.state === "installed" &&
+                  navigator.serviceWorker.controller
+                ) {
                   this.showUpdateNotification();
                 }
               });
@@ -287,14 +295,20 @@ class FlagFitApplication {
   }
 
   initializeAchievementsSystem() {
-    if (window.achievementsService && window.FlagFitApp.state.achievements.enabled) {
+    if (
+      window.achievementsService &&
+      window.FlagFitApp.state.achievements.enabled
+    ) {
       try {
         // Check achievements on initialization
         const userData = this.calculateUserDataForAchievements();
-        const newAchievements = window.achievementsService.checkAchievements(userData);
+        const newAchievements =
+          window.achievementsService.checkAchievements(userData);
 
         if (newAchievements.length > 0) {
-          this.log(`Unlocked ${newAchievements.length} achievement(s) on initialization`);
+          this.log(
+            `Unlocked ${newAchievements.length} achievement(s) on initialization`,
+          );
         }
 
         // Schedule periodic achievement checks
@@ -315,8 +329,12 @@ class FlagFitApplication {
     // This will be enhanced by achievements-integration.js
     // Basic fallback data structure
     try {
-      const wellnessHistory = JSON.parse(localStorage.getItem("wellnessHistory") || "[]");
-      const trainingHistory = JSON.parse(localStorage.getItem("trainingHistory") || "[]");
+      const wellnessHistory = JSON.parse(
+        localStorage.getItem("wellnessHistory") || "[]",
+      );
+      const trainingHistory = JSON.parse(
+        localStorage.getItem("trainingHistory") || "[]",
+      );
 
       return {
         wellnessCount: wellnessHistory.length,
@@ -338,7 +356,7 @@ class FlagFitApplication {
     window.getRecentSearches = getRecentSearches;
     window.clearSearchHistory = clearSearchHistory;
     window.highlightMatches = highlightMatches;
-    
+
     // Initialize mobile navigation
     if (document.querySelector(".sidebar, .mobile-menu-toggle, nav")) {
       this.components.set("mobileNav", new UniversalMobileNav());
@@ -347,9 +365,10 @@ class FlagFitApplication {
 
     // Initialize enhanced sidebar navigation if sidebar exists
     // This will be auto-initialized by sidebar-loader, but we ensure it's available
-    if (document.getElementById('sidebar') && window.enhancedSidebarNav) {
+    if (document.getElementById("sidebar") && window.enhancedSidebarNav) {
       this.components.set("enhancedSidebarNav", window.enhancedSidebarNav);
-      window.FlagFitApp.components.enhancedSidebarNav = window.enhancedSidebarNav;
+      window.FlagFitApp.components.enhancedSidebarNav =
+        window.enhancedSidebarNav;
     }
 
     // Initialize form validation for pages with forms
@@ -623,7 +642,7 @@ class FlagFitApplication {
     const errorHandler = (e) => {
       this.errorCount++;
       this.handleError("JavaScript Error", e.error || e.message);
-      
+
       // Prevent error loops
       if (this.errorCount > this.maxErrors) {
         this.log("Too many errors detected. Disabling error reporting.");
@@ -641,7 +660,8 @@ class FlagFitApplication {
 
     this.eventListeners.set("error-handling", {
       error: () => window.removeEventListener("error", errorHandler),
-      rejection: () => window.removeEventListener("unhandledrejection", rejectionHandler),
+      rejection: () =>
+        window.removeEventListener("unhandledrejection", rejectionHandler),
     });
   }
 
@@ -658,8 +678,10 @@ class FlagFitApplication {
       window.addEventListener("load", () => {
         const perfData = performance.timing;
         const loadTime = perfData.loadEventEnd - perfData.navigationStart;
-        const domContentLoaded = perfData.domContentLoadedEventEnd - perfData.navigationStart;
-        const firstPaint = performance.getEntriesByType("paint")[0]?.startTime || 0;
+        const domContentLoaded =
+          perfData.domContentLoadedEventEnd - perfData.navigationStart;
+        const firstPaint =
+          performance.getEntriesByType("paint")[0]?.startTime || 0;
 
         window.FlagFitApp.state.performance.loadTime = loadTime;
         window.FlagFitApp.state.performance.renderTime = firstPaint;
@@ -670,7 +692,9 @@ class FlagFitApplication {
           navigationStart: perfData.navigationStart,
         };
 
-        this.log(`Performance metrics - Load: ${loadTime}ms, DOMContentLoaded: ${domContentLoaded}ms, First Paint: ${firstPaint.toFixed(2)}ms`);
+        this.log(
+          `Performance metrics - Load: ${loadTime}ms, DOMContentLoaded: ${domContentLoaded}ms, First Paint: ${firstPaint.toFixed(2)}ms`,
+        );
 
         // Report to analytics if available
         if (window.analytics && window.analytics.track) {
@@ -770,7 +794,9 @@ class FlagFitApplication {
       // Ctrl/Cmd + K for search
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
-        const searchInput = document.querySelector('input[type="search"], .search-input');
+        const searchInput = document.querySelector(
+          'input[type="search"], .search-input',
+        );
         if (searchInput) {
           searchInput.focus();
         }
@@ -778,9 +804,13 @@ class FlagFitApplication {
 
       // Escape to close modals
       if (e.key === "Escape") {
-        const openModal = document.querySelector(".modal.show, [role='dialog'][aria-hidden='false']");
+        const openModal = document.querySelector(
+          ".modal.show, [role='dialog'][aria-hidden='false']",
+        );
         if (openModal) {
-          const closeButton = openModal.querySelector('[data-dismiss="modal"], .modal-close');
+          const closeButton = openModal.querySelector(
+            '[data-dismiss="modal"], .modal-close',
+          );
           if (closeButton) {
             closeButton.click();
           }
@@ -811,7 +841,10 @@ class FlagFitApplication {
 
   handlePageVisible() {
     // Refresh achievements when page becomes visible
-    if (window.achievementsService && window.FlagFitApp.state.achievements.enabled) {
+    if (
+      window.achievementsService &&
+      window.FlagFitApp.state.achievements.enabled
+    ) {
       const userData = this.calculateUserDataForAchievements();
       window.achievementsService.checkAchievements(userData);
     }
@@ -833,19 +866,20 @@ class FlagFitApplication {
     notification.id = "offline-notification";
     notification.className = "offline-notification";
     notification.setAttribute("role", "alert");
-    
+
     // Create notification content using DOM methods instead of innerHTML
     const content = document.createElement("div");
     content.className = "offline-notification-content";
-    
+
     const icon = document.createElement("span");
     icon.className = "offline-icon";
     icon.textContent = "📡";
-    
+
     const message = document.createElement("span");
     message.className = "offline-message";
-    message.textContent = "You're currently offline. Some features may be limited.";
-    
+    message.textContent =
+      "You're currently offline. Some features may be limited.";
+
     content.appendChild(icon);
     content.appendChild(message);
     notification.appendChild(content);
@@ -894,19 +928,19 @@ class FlagFitApplication {
     // Show service worker update notification
     const notification = document.createElement("div");
     notification.className = "update-notification";
-    
+
     // Create notification content using DOM methods instead of innerHTML
     const content = document.createElement("div");
     content.className = "update-notification-content";
-    
+
     const message = document.createElement("span");
     message.textContent = "New version available!";
-    
+
     const updateButton = document.createElement("button");
     updateButton.className = "update-button";
     updateButton.textContent = "Update Now";
     updateButton.addEventListener("click", () => window.location.reload());
-    
+
     content.appendChild(message);
     content.appendChild(updateButton);
     notification.appendChild(content);
@@ -1036,16 +1070,19 @@ class FlagFitApplication {
     if (retryable && error?.retry) {
       const retryKey = `${type}-${errorInfo.message}`;
       const attempts = this.retryAttempts.get(retryKey) || 0;
-      
+
       if (attempts < 3) {
         this.retryAttempts.set(retryKey, attempts + 1);
-        setTimeout(() => {
-          try {
-            error.retry();
-          } catch (retryError) {
-            this.handleError(`${type} (Retry ${attempts + 1})`, retryError);
-          }
-        }, 1000 * (attempts + 1)); // Exponential backoff
+        setTimeout(
+          () => {
+            try {
+              error.retry();
+            } catch (retryError) {
+              this.handleError(`${type} (Retry ${attempts + 1})`, retryError);
+            }
+          },
+          1000 * (attempts + 1),
+        ); // Exponential backoff
       }
     }
 
@@ -1059,24 +1096,24 @@ class FlagFitApplication {
     const notification = document.createElement("div");
     notification.className = "error-notification";
     notification.setAttribute("role", "alert");
-    
+
     // Create notification content using DOM methods instead of innerHTML
     const content = document.createElement("div");
     content.className = "error-notification-content";
-    
+
     const icon = document.createElement("span");
     icon.className = "error-icon";
     icon.textContent = "⚠️";
-    
+
     const messageEl = document.createElement("span");
     messageEl.className = "error-message";
     messageEl.textContent = message; // Safe: message is already escaped by caller or should be
-    
+
     const closeButton = document.createElement("button");
     closeButton.className = "error-close";
     closeButton.textContent = "×";
     closeButton.addEventListener("click", () => notification.remove());
-    
+
     content.appendChild(icon);
     content.appendChild(messageEl);
     content.appendChild(closeButton);

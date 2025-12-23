@@ -3,35 +3,37 @@
  * Adds PDF/CSV export buttons to wellness page
  */
 
-import { logger } from '../logger.js';
+import { logger } from "../logger.js";
 
-(function() {
-  'use strict';
-  
+(function () {
+  "use strict";
+
   // Helper function to safely set HTML content
   // Uses temp container pattern - acceptable per ESLint exception for safe helper functions
   function setSafeContent(element, content, isHTML, allowRichText) {
-    if (!element) {return;}
+    if (!element) {
+      return;
+    }
     if (!isHTML) {
       element.textContent = content;
       return;
     }
     // Use temp container pattern for safe HTML insertion
-     
-    const temp = document.createElement('div');
+
+    const temp = document.createElement("div");
     // eslint-disable-next-line no-restricted-syntax
     temp.innerHTML = content; // Content is already sanitized by caller
     while (temp.firstChild) {
       element.appendChild(temp.firstChild);
     }
   }
-  
+
   // Helper function to create button content with icon and text
-  function createButtonContent(iconName, text, iconColor = '', iconClass = '') {
-    const span = document.createElement('span');
-    const icon = document.createElement('i');
-    icon.setAttribute('data-lucide', iconName);
-    icon.style.cssText = `width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px;${iconColor ? ` color: ${iconColor};` : ''}`;
+  function createButtonContent(iconName, text, iconColor = "", iconClass = "") {
+    const span = document.createElement("span");
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", iconName);
+    icon.style.cssText = `width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px;${iconColor ? ` color: ${iconColor};` : ""}`;
     if (iconClass) {
       icon.className = iconClass;
     }
@@ -50,23 +52,27 @@ import { logger } from '../logger.js';
 
     // Find a good location for export buttons
     // Look for wellness form or wellness header
-    const wellnessPage = document.querySelector('.wellness-page, .wellness-container, [class*="wellness"]');
+    const wellnessPage = document.querySelector(
+      '.wellness-page, .wellness-container, [class*="wellness"]',
+    );
 
     if (!wellnessPage) {
-      logger.debug('[Wellness Export] Wellness container not found, will try again');
+      logger.debug(
+        "[Wellness Export] Wellness container not found, will try again",
+      );
       setTimeout(addExportButtons, 500);
       return;
     }
 
     // Check if buttons already added
-    if (document.getElementById('wellness-export-buttons')) {
+    if (document.getElementById("wellness-export-buttons")) {
       return;
     }
 
     // Create export buttons container
-    const exportContainer = document.createElement('div');
-    exportContainer.id = 'wellness-export-buttons';
-    exportContainer.className = 'wellness-export-buttons';
+    const exportContainer = document.createElement("div");
+    exportContainer.id = "wellness-export-buttons";
+    exportContainer.className = "wellness-export-buttons";
     // Build container HTML (static content, safe)
     const containerHtml = `
       <div class="export-buttons-wrapper">
@@ -105,7 +111,7 @@ import { logger } from '../logger.js';
     `;
 
     // Add styles
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       .wellness-export-buttons {
         margin: var(--space-6, 32px) 0;
@@ -225,11 +231,14 @@ import { logger } from '../logger.js';
     document.head.appendChild(style);
 
     // Insert export buttons after the wellness form section
-    const formSection = document.querySelector('.wellness-form-section');
-    const chartsSection = document.querySelector('.wellness-charts-section');
-    
+    const formSection = document.querySelector(".wellness-form-section");
+    const chartsSection = document.querySelector(".wellness-charts-section");
+
     if (formSection && formSection.nextSibling) {
-      formSection.parentNode.insertBefore(exportContainer, formSection.nextSibling);
+      formSection.parentNode.insertBefore(
+        exportContainer,
+        formSection.nextSibling,
+      );
     } else if (chartsSection) {
       chartsSection.parentNode.insertBefore(exportContainer, chartsSection);
     } else {
@@ -237,12 +246,12 @@ import { logger } from '../logger.js';
     }
 
     // Initialize Lucide icons for the new content
-    if (typeof lucide !== 'undefined') {
+    if (typeof lucide !== "undefined") {
       lucide.createIcons(exportContainer);
     } else {
       // Wait for Lucide to load
       const checkLucide = setInterval(() => {
-        if (typeof lucide !== 'undefined') {
+        if (typeof lucide !== "undefined") {
           lucide.createIcons(exportContainer);
           clearInterval(checkLucide);
         }
@@ -250,73 +259,109 @@ import { logger } from '../logger.js';
       setTimeout(() => clearInterval(checkLucide), 5000);
     }
 
-    logger.info('[Wellness Export] Export buttons added');
+    logger.info("[Wellness Export] Export buttons added");
   }
 
   /**
    * Handle PDF export
    */
-  window.handleWellnessExportPDF = async function(event) {
+  window.handleWellnessExportPDF = async function (event) {
     // Try to get wellness data from service first, fallback to localStorage
     let wellnessHistory = [];
-    
+
     try {
       // Check if wellness service is available
-      if (window.wellnessService || (await import('./services/wellness-service.js').catch(() => null))) {
-        const { wellnessService } = await import('./services/wellness-service.js');
-        const endDate = new Date().toISOString().split('T')[0];
+      if (
+        window.wellnessService ||
+        (await import("./services/wellness-service.js").catch(() => null))
+      ) {
+        const { wellnessService } =
+          await import("./services/wellness-service.js");
+        const endDate = new Date().toISOString().split("T")[0];
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 90);
-        const startDateStr = startDate.toISOString().split('T')[0];
-        wellnessHistory = await wellnessService.getWellnessHistory(startDateStr, endDate);
+        const startDateStr = startDate.toISOString().split("T")[0];
+        wellnessHistory = await wellnessService.getWellnessHistory(
+          startDateStr,
+          endDate,
+        );
       }
     } catch (error) {
-      logger.warn('[Wellness Export] Could not load from service, trying localStorage:', error);
+      logger.warn(
+        "[Wellness Export] Could not load from service, trying localStorage:",
+        error,
+      );
     }
 
     // Fallback to localStorage if service unavailable or empty
     if (wellnessHistory.length === 0) {
-      wellnessHistory = JSON.parse(localStorage.getItem('wellnessHistory') || '[]');
+      wellnessHistory = JSON.parse(
+        localStorage.getItem("wellnessHistory") || "[]",
+      );
     }
 
     if (wellnessHistory.length === 0) {
-      alert('No wellness data to export. Log some wellness check-ins first!');
+      alert("No wellness data to export. Log some wellness check-ins first!");
       return;
     }
 
     // Show loading state
-    const btn = event.target.closest('.export-btn');
+    const btn = event.target.closest(".export-btn");
     // Store original content as DOM nodes (not HTML string)
     const originalContent = Array.from(btn.childNodes);
     btn.disabled = true;
     btn.replaceChildren();
-    const loadingContent = createButtonContent('loader-2', 'Generating PDF...', '', 'icon-spin');
+    const loadingContent = createButtonContent(
+      "loader-2",
+      "Generating PDF...",
+      "",
+      "icon-spin",
+    );
     btn.appendChild(loadingContent);
-    if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons(btn);
+    }
 
     // Export with slight delay for UI feedback
     setTimeout(async () => {
-      const success = await window.exportService.exportWellnessToPDF(wellnessHistory);
+      const success =
+        await window.exportService.exportWellnessToPDF(wellnessHistory);
 
       if (success) {
         btn.replaceChildren();
-        const successContent = createButtonContent('check-circle', 'PDF Downloaded!', '#10c96b');
+        const successContent = createButtonContent(
+          "check-circle",
+          "PDF Downloaded!",
+          "#10c96b",
+        );
         btn.appendChild(successContent);
-        if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons(btn);
+        }
         setTimeout(() => {
           btn.disabled = false;
           btn.replaceChildren(...originalContent);
-          if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
+          if (typeof lucide !== "undefined") {
+            lucide.createIcons(btn);
+          }
         }, 2000);
       } else {
         btn.replaceChildren();
-        const errorContent = createButtonContent('x-circle', 'Export Failed', '#ef4444');
+        const errorContent = createButtonContent(
+          "x-circle",
+          "Export Failed",
+          "#ef4444",
+        );
         btn.appendChild(errorContent);
-        if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons(btn);
+        }
         setTimeout(() => {
           btn.disabled = false;
           btn.replaceChildren(...originalContent);
-          if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
+          if (typeof lucide !== "undefined") {
+            lucide.createIcons(btn);
+          }
         }, 2000);
       }
     }, 300);
@@ -325,91 +370,129 @@ import { logger } from '../logger.js';
   /**
    * Handle CSV export
    */
-  window.handleWellnessExportCSV = async function(event) {
+  window.handleWellnessExportCSV = async function (event) {
     // Try to get wellness data from service first, fallback to localStorage
     let wellnessHistory = [];
-    
+
     try {
       // Check if wellness service is available
-      if (window.wellnessService || (await import('./services/wellness-service.js').catch(() => null))) {
-        const { wellnessService } = await import('./services/wellness-service.js');
-        const endDate = new Date().toISOString().split('T')[0];
+      if (
+        window.wellnessService ||
+        (await import("./services/wellness-service.js").catch(() => null))
+      ) {
+        const { wellnessService } =
+          await import("./services/wellness-service.js");
+        const endDate = new Date().toISOString().split("T")[0];
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 90);
-        const startDateStr = startDate.toISOString().split('T')[0];
-        wellnessHistory = await wellnessService.getWellnessHistory(startDateStr, endDate);
+        const startDateStr = startDate.toISOString().split("T")[0];
+        wellnessHistory = await wellnessService.getWellnessHistory(
+          startDateStr,
+          endDate,
+        );
       }
     } catch (error) {
-      logger.warn('[Wellness Export] Could not load from service, trying localStorage:', error);
+      logger.warn(
+        "[Wellness Export] Could not load from service, trying localStorage:",
+        error,
+      );
     }
 
     // Fallback to localStorage if service unavailable or empty
     if (wellnessHistory.length === 0) {
-      wellnessHistory = JSON.parse(localStorage.getItem('wellnessHistory') || '[]');
+      wellnessHistory = JSON.parse(
+        localStorage.getItem("wellnessHistory") || "[]",
+      );
     }
 
     if (wellnessHistory.length === 0) {
-      alert('No wellness data to export. Log some wellness check-ins first!');
+      alert("No wellness data to export. Log some wellness check-ins first!");
       return;
     }
 
     // Show loading state
-    const btn = event.target.closest('.export-btn');
+    const btn = event.target.closest(".export-btn");
     // Store original content as DOM nodes (not HTML string)
     const originalContent = Array.from(btn.childNodes);
     btn.disabled = true;
     btn.replaceChildren();
-    const loadingContent = createButtonContent('loader-2', 'Generating CSV...', '', 'icon-spin');
+    const loadingContent = createButtonContent(
+      "loader-2",
+      "Generating CSV...",
+      "",
+      "icon-spin",
+    );
     btn.appendChild(loadingContent);
-    if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons(btn);
+    }
 
     // Format data for CSV
-    const csvData = wellnessHistory.map(entry => ({
+    const csvData = wellnessHistory.map((entry) => ({
       Date: new Date(entry.date).toLocaleDateString(),
-      'Sleep (1-10)': entry.sleep || 'N/A',
-      'Energy (1-10)': entry.energy || 'N/A',
-      'Mood (1-10)': entry.mood || 'N/A',
-      'Stress (1-10)': entry.stress || 'N/A',
-      'Soreness (1-10)': entry.soreness || 'N/A',
-      'Motivation (1-10)': entry.motivation || 'N/A',
-      'Hydration (1-10)': entry.hydration || 'N/A',
-      Notes: entry.notes || ''
+      "Sleep (1-10)": entry.sleep || "N/A",
+      "Energy (1-10)": entry.energy || "N/A",
+      "Mood (1-10)": entry.mood || "N/A",
+      "Stress (1-10)": entry.stress || "N/A",
+      "Soreness (1-10)": entry.soreness || "N/A",
+      "Motivation (1-10)": entry.motivation || "N/A",
+      "Hydration (1-10)": entry.hydration || "N/A",
+      Notes: entry.notes || "",
     }));
 
     // Export with slight delay for UI feedback
     setTimeout(() => {
-      const success = window.exportService.exportToCSV(csvData, 'flagfit-wellness-data.csv');
+      const success = window.exportService.exportToCSV(
+        csvData,
+        "flagfit-wellness-data.csv",
+      );
 
       if (success) {
         btn.replaceChildren();
-        const successContent = createButtonContent('check-circle', 'CSV Downloaded!', '#10c96b');
+        const successContent = createButtonContent(
+          "check-circle",
+          "CSV Downloaded!",
+          "#10c96b",
+        );
         btn.appendChild(successContent);
-        if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons(btn);
+        }
         setTimeout(() => {
           btn.disabled = false;
           btn.replaceChildren(...originalContent);
-          if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
+          if (typeof lucide !== "undefined") {
+            lucide.createIcons(btn);
+          }
         }, 2000);
       } else {
         btn.replaceChildren();
-        const errorContent = createButtonContent('x-circle', 'Export Failed', '#ef4444');
+        const errorContent = createButtonContent(
+          "x-circle",
+          "Export Failed",
+          "#ef4444",
+        );
         btn.appendChild(errorContent);
-        if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons(btn);
+        }
         setTimeout(() => {
           btn.disabled = false;
           btn.replaceChildren(...originalContent);
-          if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
+          if (typeof lucide !== "undefined") {
+            lucide.createIcons(btn);
+          }
         }, 2000);
       }
     }, 300);
   };
 
   // Initialize
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', addExportButtons);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", addExportButtons);
   } else {
     addExportButtons();
   }
 
-  logger.info('[Wellness Export] Export buttons script loaded');
+  logger.info("[Wellness Export] Export buttons script loaded");
 })();

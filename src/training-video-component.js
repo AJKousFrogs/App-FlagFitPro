@@ -518,8 +518,9 @@ class TrainingVideoComponent extends ComponentWithCleanup {
       img.src = video.thumbnail;
       img.alt = video.title;
       img.className = "video-thumbnail";
-      img.onerror = function() {
-        this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180"><rect width="320" height="180" fill="%23f3f4f6"/><text x="160" y="90" text-anchor="middle" dy=".3em" fill="%236b7280">📺</text></svg>';
+      img.onerror = function () {
+        this.src =
+          'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180"><rect width="320" height="180" fill="%23f3f4f6"/><text x="160" y="90" text-anchor="middle" dy=".3em" fill="%236b7280">📺</text></svg>';
       };
 
       const content = document.createElement("div");
@@ -610,7 +611,9 @@ class TrainingVideoComponent extends ComponentWithCleanup {
         let video = null;
         playlist.forEach((section) => {
           const found = section.videos.find((v) => v.id === videoId);
-          if (found) {video = found;}
+          if (found) {
+            video = found;
+          }
         });
         if (video) {
           this.selectVideo(video);
@@ -656,7 +659,8 @@ class TrainingVideoComponent extends ComponentWithCleanup {
       setSafeContent(h4, video.title);
 
       const p = document.createElement("p");
-      p.textContent = "This is a demo video. Configure YouTube API for real videos.";
+      p.textContent =
+        "This is a demo video. Configure YouTube API for real videos.";
 
       const link = document.createElement("a");
       link.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(video.title)}`;
@@ -706,7 +710,8 @@ class TrainingVideoComponent extends ComponentWithCleanup {
         `;
 
     const content = document.createElement("div");
-    content.style.cssText = "background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px;";
+    content.style.cssText =
+      "background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px;";
 
     const h3 = document.createElement("h3");
     h3.style.marginBottom = "1rem";
@@ -719,30 +724,35 @@ class TrainingVideoComponent extends ComponentWithCleanup {
     inputDiv.style.marginBottom = "1rem";
 
     const label = document.createElement("label");
-    label.style.cssText = "display: block; margin-bottom: 0.5rem; font-weight: 500;";
+    label.style.cssText =
+      "display: block; margin-bottom: 0.5rem; font-weight: 500;";
     label.textContent = "Search for specific exercise or technique:";
 
     const input = document.createElement("input");
     input.type = "text";
     input.id = "exercise-search";
     input.placeholder = "e.g., A skips, B skips, sprint starts";
-    input.style.cssText = "width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;";
+    input.style.cssText =
+      "width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;";
 
     inputDiv.appendChild(label);
     inputDiv.appendChild(input);
 
     const buttonsDiv = document.createElement("div");
-    buttonsDiv.style.cssText = "display: flex; gap: 1rem; justify-content: flex-end;";
+    buttonsDiv.style.cssText =
+      "display: flex; gap: 1rem; justify-content: flex-end;";
 
     const cancelBtn = document.createElement("button");
     cancelBtn.type = "button";
-    cancelBtn.style.cssText = "background: #f3f4f6; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;";
+    cancelBtn.style.cssText =
+      "background: #f3f4f6; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;";
     cancelBtn.textContent = "Cancel";
     cancelBtn.addEventListener("click", () => modal.remove());
 
     const submitBtn = document.createElement("button");
     submitBtn.type = "submit";
-    submitBtn.style.cssText = "background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;";
+    submitBtn.style.cssText =
+      "background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;";
     submitBtn.textContent = "Search";
 
     buttonsDiv.appendChild(cancelBtn);
@@ -830,7 +840,8 @@ class TrainingVideoComponent extends ComponentWithCleanup {
     setSafeContent(h4, "Select a training video");
 
     const p = document.createElement("p");
-    p.textContent = "Choose a category to browse warm-up drills, sprint techniques, and more";
+    p.textContent =
+      "Choose a category to browse warm-up drills, sprint techniques, and more";
 
     content.appendChild(icon);
     content.appendChild(h4);

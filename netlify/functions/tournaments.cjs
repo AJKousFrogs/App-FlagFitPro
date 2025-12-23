@@ -9,7 +9,7 @@ const {
   handleServerError,
   handleNotFoundError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
@@ -159,19 +159,19 @@ const getTournamentsByYear = (year) => {
 const getTournamentsFromDB = async (type = null) => {
   try {
     checkEnvVars();
-    
+
     // Try to get tournaments from database
     let status = "all";
     if (type === "2026" || type === "2027") {
       // Filter by year if needed
       status = "all";
     }
-    
+
     const tournaments = await db.tournaments.getList(status, 50);
-    
+
     // Transform database format to match local format
     if (tournaments && tournaments.length > 0) {
-      return tournaments.map(t => ({
+      return tournaments.map((t) => ({
         id: t.id,
         name: t.name,
         location: t.location || t.city || "TBD",
@@ -184,14 +184,16 @@ const getTournamentsFromDB = async (type = null) => {
         description: t.description || "",
         venue: t.venue || "TBD",
         expectedTeams: t.expected_teams || t.expectedTeams || "TBD",
-        registrationDeadline: t.registration_deadline || t.registrationDeadline || "TBD",
+        registrationDeadline:
+          t.registration_deadline || t.registrationDeadline || "TBD",
         prizePool: t.prize_pool || t.prizePool || "TBD",
-        qualificationPoints: t.qualification_points || t.qualificationPoints || "TBD",
+        qualificationPoints:
+          t.qualification_points || t.qualificationPoints || "TBD",
         isInvitationOnly: t.is_invitation_only || t.isInvitationOnly || false,
         month: t.month || null,
       }));
     }
-    
+
     return null;
   } catch (error) {
     console.error("Error fetching tournaments from database:", error);
@@ -204,7 +206,7 @@ const getTournamentsFromDB = async (type = null) => {
 const getLeaderboard = async (tournamentId = null) => {
   try {
     checkEnvVars();
-    
+
     // Try to get leaderboard from database
     // This would require a tournament_leaderboard or games table
     // For now, return empty array - can be extended later
@@ -214,7 +216,7 @@ const getLeaderboard = async (tournamentId = null) => {
     //   .select("*")
     //   .order("points", { ascending: false })
     //   .limit(20);
-    
+
     return [];
   } catch (error) {
     console.error("Error fetching leaderboard:", error);
@@ -223,7 +225,7 @@ const getLeaderboard = async (tournamentId = null) => {
 };
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Tournaments', event);
+  logFunctionCall("Tournaments", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -235,7 +237,7 @@ exports.handler = async (event, context) => {
 
   // Only allow GET requests for now
   if (event.httpMethod !== "GET") {
-    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 
   try {
@@ -252,7 +254,7 @@ exports.handler = async (event, context) => {
     // Handle specific tournament details request
     if (id) {
       const allTournaments = getAllTournaments();
-      const tournament = allTournaments.find(t => t.id === id);
+      const tournament = allTournaments.find((t) => t.id === id);
       if (tournament) {
         return createSuccessResponse({ tournament });
       } else {
@@ -292,7 +294,7 @@ exports.handler = async (event, context) => {
 
     // Get tournaments from database or use local data
     let tournaments = await getTournamentsFromDB(type);
-    
+
     if (!tournaments || tournaments.length === 0) {
       // Fallback to local tournament schedule if database is empty
       if (type === "2026") {
@@ -308,12 +310,15 @@ exports.handler = async (event, context) => {
     } else if (type) {
       // Filter database results by type if needed
       if (type === "2026") {
-        tournaments = tournaments.filter(t => 
-          t.startDate && (t.startDate.startsWith("2026") || t.startDate === "TBD" && !t.month)
+        tournaments = tournaments.filter(
+          (t) =>
+            t.startDate &&
+            (t.startDate.startsWith("2026") ||
+              (t.startDate === "TBD" && !t.month)),
         );
       } else if (type === "2027") {
-        tournaments = tournaments.filter(t => 
-          t.startDate && (t.startDate.startsWith("2027") || t.month)
+        tournaments = tournaments.filter(
+          (t) => t.startDate && (t.startDate.startsWith("2027") || t.month),
         );
       }
       // "all" type returns all tournaments as-is
@@ -327,7 +332,6 @@ exports.handler = async (event, context) => {
       leaderboard: leaderboard || [],
     });
   } catch (error) {
-    return handleServerError(error, 'Tournaments');
+    return handleServerError(error, "Tournaments");
   }
 };
-

@@ -56,7 +56,7 @@ interface Player {
             countries
           </p>
         </p-card>
-    
+
         <!-- Team Overview Stats -->
         <p-card class="overview-card">
           <ng-template pTemplate="header">
@@ -67,16 +67,14 @@ interface Player {
           </ng-template>
           <div class="team-overview-grid">
             @for (stat of teamStats(); track trackByStatLabel($index, stat)) {
-              <div
-                class="overview-stat"
-                >
+              <div class="overview-stat">
                 <div class="overview-value">{{ stat.value }}</div>
                 <div class="overview-label">{{ stat.label }}</div>
               </div>
             }
           </div>
         </p-card>
-    
+
         <!-- Coaching Staff -->
         <div class="position-section">
           <h2 class="section-title">
@@ -84,10 +82,11 @@ interface Player {
             Coaching Staff & Support
           </h2>
           <div class="roster-grid">
-            @for (member of coachingStaff(); track trackByMemberName($index, member)) {
-              <p-card
-                class="staff-card"
-                >
+            @for (
+              member of coachingStaff();
+              track trackByMemberName($index, member)
+            ) {
+              <p-card class="staff-card">
                 <div class="player-header">
                   <div class="player-jersey">
                     {{ getInitials(member.name) }}
@@ -113,18 +112,13 @@ interface Player {
                   </div>
                 </div>
                 @if (member.achievements && member.achievements.length > 0) {
-                  <div
-                    class="achievements"
-                    >
+                  <div class="achievements">
                     <div class="achievements-title">Key Achievements:</div>
                     @for (
-                      achievement of member.achievements.slice(0, 2); track trackByAchievement($index,
-                      achievement)) {
-                      <div
-                        class="achievement-item"
-                        >
-                        • {{ achievement }}
-                      </div>
+                      achievement of member.achievements.slice(0, 2);
+                      track trackByAchievement($index, achievement)
+                    ) {
+                      <div class="achievement-item">• {{ achievement }}</div>
                     }
                   </div>
                 }
@@ -132,30 +126,28 @@ interface Player {
             }
           </div>
         </div>
-    
+
         <!-- Players by Position -->
         @for (
-          positionGroup of playersByPosition(); track trackByPosition($index,
-          positionGroup)) {
-          <div
-            class="position-section"
-            >
+          positionGroup of playersByPosition();
+          track trackByPosition($index, positionGroup)
+        ) {
+          <div class="position-section">
             <h2 class="section-title">
               <i [class]="getPositionIcon(positionGroup.position)"></i>
               {{ positionGroup.position }}
             </h2>
             <div class="roster-grid">
               @for (
-                player of positionGroup.players; track trackByPlayerJersey($index,
-                player)) {
-                <p-card
-                  class="player-card"
-                  >
+                player of positionGroup.players;
+                track trackByPlayerJersey($index, player)
+              ) {
+                <p-card class="player-card">
                   <div class="player-header">
                     <div
                       class="player-jersey"
                       [style.background]="getJerseyColor(player.position)"
-                      >
+                    >
                       {{ player.jersey }}
                     </div>
                     <div class="player-info">
@@ -181,8 +173,9 @@ interface Player {
                   @if (player.stats) {
                     <div class="player-stats">
                       @for (
-                        stat of getPlayerStats(player); track trackByStatKey($index,
-                        stat)) {
+                        stat of getPlayerStats(player);
+                        track trackByStatKey($index, stat)
+                      ) {
                         <p-tag
                           [value]="stat.label + ': ' + stat.value"
                           severity="info"
@@ -198,7 +191,7 @@ interface Player {
         }
       </div>
     </app-main-layout>
-    `,
+  `,
   styles: [
     `
       .roster-page {
@@ -579,8 +572,8 @@ export class RosterComponent implements OnInit {
 
   getJerseyColor(position: string): string {
     // Use design system colors - gradients use actual color values since CSS vars don't work in gradients
-    const primaryGreen = '#089949'; // var(--ds-primary-green) equivalent
-    const primaryLight = '#10c96b'; // var(--color-brand-primary-light) equivalent
+    const primaryGreen = "#089949"; // var(--ds-primary-green) equivalent
+    const primaryLight = "#10c96b"; // var(--color-brand-primary-light) equivalent
     const colors: Record<string, string> = {
       QB: `linear-gradient(135deg, ${primaryGreen}, ${primaryLight})`,
       WR: "linear-gradient(135deg, #3498db, #2980b9)",
@@ -588,7 +581,10 @@ export class RosterComponent implements OnInit {
       DB: "linear-gradient(135deg, #9b59b6, #8e44ad)",
       Rusher: "linear-gradient(135deg, #f39c12, #e67e22)",
     };
-    return colors[position] || `linear-gradient(135deg, ${primaryGreen}, ${primaryLight})`;
+    return (
+      colors[position] ||
+      `linear-gradient(135deg, ${primaryGreen}, ${primaryLight})`
+    );
   }
 
   getPlayerStats(player: Player): any[] {

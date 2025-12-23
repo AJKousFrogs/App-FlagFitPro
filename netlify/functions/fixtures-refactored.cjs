@@ -7,7 +7,12 @@
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { executeQuery, parseAthleteId, parseIntParam, calculateDateRange } = require("./utils/db-query-helper.cjs");
+const {
+  executeQuery,
+  parseAthleteId,
+  parseIntParam,
+  calculateDateRange,
+} = require("./utils/db-query-helper.cjs");
 const { successResponse } = require("./utils/response-helper.cjs");
 
 /**
@@ -15,9 +20,9 @@ const { successResponse } = require("./utils/response-helper.cjs");
  */
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'fixtures',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "fixtures",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     handler: async (event, context, { userId }) => {
       // Parse query parameters
       const { valid, athleteId, error } = parseAthleteId(event, userId);
@@ -25,7 +30,7 @@ exports.handler = async (event, context) => {
         return error;
       }
 
-      const days = parseIntParam(event, 'days', 14, 1, 365);
+      const days = parseIntParam(event, "days", 14, 1, 365);
       const { endDate } = calculateDateRange(days, true); // Forward-looking
 
       // Get fixtures (either athlete-specific or team-based)
@@ -43,7 +48,6 @@ exports.handler = async (event, context) => {
       }
 
       return successResponse(result.data);
-    }
+    },
   });
 };
-

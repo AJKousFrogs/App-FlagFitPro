@@ -11,6 +11,7 @@ This guide documents the modernization principles applied to the FlagFit Pro Ang
 **Principle**: Use Angular Signals for UI state management. Keep RxJS only for complex async work (API calls, intervals, websockets).
 
 **Before** (BehaviorSubject):
+
 ```typescript
 // ❌ Old pattern
 private _currentUser = new BehaviorSubject<User | null>(null);
@@ -23,6 +24,7 @@ this.service.currentUser$.subscribe(user => {
 ```
 
 **After** (Signals):
+
 ```typescript
 // ✅ Modern pattern
 private readonly _currentUser = signal<User | null>(null);
@@ -33,17 +35,20 @@ user = this.service.currentUser; // Direct signal access
 ```
 
 **Benefits**:
+
 - ✅ Automatic change detection (works with zoneless)
 - ✅ Better performance (no subscription overhead)
 - ✅ Simpler code (no manual subscriptions)
 - ✅ Type-safe and tree-shakeable
 
 **When to Use RxJS**:
+
 - ✅ API calls (`HttpClient` returns Observables)
 - ✅ Complex async streams (intervals, websockets, debouncing)
 - ✅ Real-time data streams that need operators
 
 **When to Use Signals**:
+
 - ✅ Component UI state
 - ✅ Service state that components consume
 - ✅ Derived/computed values
@@ -71,12 +76,14 @@ export const appConfig: ApplicationConfig = {
 ```
 
 **Configuration**:
+
 - ✅ Zone.js is **not installed** (not needed for zoneless)
 - ✅ Zone.js available as **optional peer dependency** (~0.16.0) for third-party libraries if needed
 - ✅ Polyfills array is empty (no zone.js polyfill)
 - ✅ All components use signals for reactive state
 
 **Benefits**:
+
 - ✅ Massive performance boost (no zone.js overhead)
 - ✅ Smaller bundle size (no zone.js in production)
 - ✅ Better DevTools integration
@@ -85,12 +92,14 @@ export const appConfig: ApplicationConfig = {
 - ✅ Automatic change detection on signal updates and DOM events
 
 **Compatibility**:
+
 - ✅ PrimeNG 21 fully supports zoneless change detection
 - ✅ Angular Material 21 fully supports zoneless change detection
 - ✅ Components using `setInterval`/`setTimeout` work correctly when updating signals
 - ✅ Works seamlessly with signals
 
 **Requirements**:
+
 - ✅ Use signals for reactive state
 - ✅ Use `effect()` instead of subscriptions for side effects
 - ✅ Use `computed()` for derived values
@@ -115,12 +124,14 @@ export const appConfig: ApplicationConfig = {
 ```
 
 **Benefits**:
+
 - ✅ Reduced initial bundle size
 - ✅ Faster initial load time
 - ✅ Better caching (chunks update independently)
 - ✅ Improved Core Web Vitals
 
 **Preloading Strategy**:
+
 - High-priority routes: Preload immediately (`preload: true, priority: 'high'`)
 - Medium-priority routes: Preload after 2s delay
 - Low-priority routes: Preload after 5s delay
@@ -143,6 +154,7 @@ export class DashboardComponent {}
 ```
 
 **Benefits**:
+
 - ✅ Smaller bundle size (tree-shaking)
 - ✅ Better IDE support
 - ✅ Explicit dependencies
@@ -153,17 +165,20 @@ export class DashboardComponent {}
 **Status**: ✅ Configured and ready
 
 **Files**:
+
 - `angular/src/app/app.config.server.ts`
 - `angular/server.ts`
 - `angular/src/main.server.ts`
 
 **Benefits**:
+
 - ✅ Better SEO
 - ✅ Faster initial render
 - ✅ Improved Core Web Vitals
 - ✅ Better user experience
 
 **Usage**:
+
 ```bash
 # Build for SSR
 npm run build:ssr
@@ -184,11 +199,12 @@ provideRouter(
   withComponentInputBinding(), // Route params as inputs
   withViewTransitions(), // Smooth page transitions
   withPreloading(AuthAwarePreloadStrategy), // Custom preloading
-  ...(isDevMode() ? [withDebugTracing()] : []) // Dev tools
-)
+  ...(isDevMode() ? [withDebugTracing()] : []), // Dev tools
+);
 ```
 
 **Benefits**:
+
 - ✅ Cleaner API
 - ✅ Better tree-shaking
 - ✅ More flexible
@@ -201,6 +217,7 @@ provideRouter(
 **Pattern**: Avoid unnecessary services for state, use signals + inject()
 
 **Before** (Service with BehaviorSubject):
+
 ```typescript
 // ❌ Unnecessary service wrapper
 @Injectable()
@@ -211,6 +228,7 @@ export class UserStateService {
 ```
 
 **After** (Direct signal in service):
+
 ```typescript
 // ✅ Direct signal access
 @Injectable()
@@ -226,6 +244,7 @@ export class MyComponent {
 ```
 
 **Benefits**:
+
 - ✅ Less boilerplate
 - ✅ Simpler code
 - ✅ Better performance
@@ -234,6 +253,7 @@ export class MyComponent {
 ## 📋 Migration Checklist
 
 ### Services
+
 - [x] Convert BehaviorSubject to signals (`supabase.service.ts`)
 - [x] Convert BehaviorSubject to signals (`wellness.service.ts`)
 - [x] Replace subscriptions with `effect()` (`auth.service.ts`)
@@ -241,17 +261,20 @@ export class MyComponent {
 - [x] Update ReactiveViewModel to prefer signals
 
 ### Components
+
 - [x] All components use standalone pattern
 - [x] Components use signals for UI state
 - [x] Components use `inject()` instead of constructor injection
 - [x] Components use `effect()` for side effects
 
 ### Routing
+
 - [x] All routes use `loadComponent()` for code splitting
 - [x] Functional routing APIs configured
 - [x] Custom preloading strategy implemented
 
 ### Configuration
+
 - [x] Zoneless change detection enabled
 - [x] SSR configured
 - [x] Functional providers used
@@ -261,12 +284,14 @@ export class MyComponent {
 ### ✅ DO
 
 1. **Use Signals for UI State**
+
    ```typescript
    readonly data = signal<Data[]>([]);
    readonly loading = signal(false);
    ```
 
 2. **Use RxJS for Complex Async Work**
+
    ```typescript
    getData(): Observable<Data> {
      return this.http.get<Data>('/api/data');
@@ -274,13 +299,15 @@ export class MyComponent {
    ```
 
 3. **Convert Observables to Signals When Needed**
+
    ```typescript
-   import { toSignal } from '@angular/core/rxjs-interop';
-   
+   import { toSignal } from "@angular/core/rxjs-interop";
+
    data = toSignal(this.service.getData(), { initialValue: [] });
    ```
 
 4. **Use `effect()` for Side Effects**
+
    ```typescript
    effect(() => {
      const user = this.authService.currentUser();
@@ -291,8 +318,9 @@ export class MyComponent {
    ```
 
 5. **Use `computed()` for Derived Values**
+
    ```typescript
-   readonly fullName = computed(() => 
+   readonly fullName = computed(() =>
      `${this.firstName()} ${this.lastName()}`
    );
    ```
@@ -305,12 +333,14 @@ export class MyComponent {
 ### ❌ DON'T
 
 1. **Don't Use BehaviorSubject for UI State**
+
    ```typescript
    // ❌ Bad
    private _data = new BehaviorSubject<Data[]>([]);
    ```
 
 2. **Don't Subscribe in Components (Use Signals)**
+
    ```typescript
    // ❌ Bad
    ngOnInit() {
@@ -318,12 +348,13 @@ export class MyComponent {
        this.data = data;
      });
    }
-   
+
    // ✅ Good
    data = this.service.data; // Signal
    ```
 
 3. **Don't Create Services Just for State**
+
    ```typescript
    // ❌ Bad - Unnecessary service wrapper
    @Injectable()
@@ -353,12 +384,13 @@ export class MyComponent {
 ### Example 1: Service State Migration
 
 **Before**:
+
 ```typescript
 @Injectable()
 export class UserService {
   private _user = new BehaviorSubject<User | null>(null);
   user$ = this._user.asObservable();
-  
+
   setUser(user: User) {
     this._user.next(user);
   }
@@ -366,12 +398,13 @@ export class UserService {
 ```
 
 **After**:
+
 ```typescript
 @Injectable()
 export class UserService {
   private readonly _user = signal<User | null>(null);
   readonly user = this._user.asReadonly();
-  
+
   setUser(user: User) {
     this._user.set(user);
   }
@@ -381,21 +414,20 @@ export class UserService {
 ### Example 2: Component Migration
 
 **Before**:
+
 ```typescript
 export class MyComponent implements OnInit, OnDestroy {
   user: User | null = null;
   private destroy$ = new Subject();
-  
+
   constructor(private userService: UserService) {}
-  
+
   ngOnInit() {
-    this.userService.user$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(user => {
+    this.userService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.user = user;
     });
   }
-  
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
@@ -404,6 +436,7 @@ export class MyComponent implements OnInit, OnDestroy {
 ```
 
 **After**:
+
 ```typescript
 export class MyComponent {
   private userService = inject(UserService);
@@ -414,6 +447,7 @@ export class MyComponent {
 ### Example 3: Side Effects Migration
 
 **Before**:
+
 ```typescript
 ngOnInit() {
   this.authService.currentUser$.subscribe(user => {
@@ -425,6 +459,7 @@ ngOnInit() {
 ```
 
 **After**:
+
 ```typescript
 constructor() {
   effect(() => {
@@ -450,9 +485,9 @@ The FlagFit Pro Angular application now follows all modern Angular 21 best pract
 - ✅ Signals + inject() pattern
 
 These practices result in:
+
 - 🚀 Better performance
 - 📦 Smaller bundles
 - 🛠️ Better developer experience
 - 🔒 Type safety
 - ♻️ Easier maintenance
-

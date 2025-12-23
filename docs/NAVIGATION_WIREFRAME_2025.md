@@ -60,6 +60,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ## 🎨 Visual Design System
 
 ### **Color Palette**
+
 - **Primary**: `#2563eb` (Blue-600) - Main brand color
 - **Secondary**: `#059669` (Emerald-600) - Success states
 - **Accent**: `#f59e0b` (Amber-500) - Warnings and highlights
@@ -67,12 +68,14 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 - **Background**: `#ffffff` (White) / `#111827` (Gray-900) - Light/Dark modes
 
 ### **Typography**
+
 - **Logo**: `Inter Bold, 24px` - Brand identity
 - **Navigation**: `Inter Medium, 16px` - Main navigation items
 - **Sub-navigation**: `Inter Regular, 14px` - Secondary items
 - **Status Text**: `Inter Regular, 12px` - Small status indicators
 
 ### **Spacing System**
+
 - **Container**: `max-width: 1280px, padding: 0 24px`
 - **Navigation Height**: `64px` (desktop), `56px` (mobile)
 - **Item Spacing**: `32px` between main nav items
@@ -83,12 +86,14 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ### **Primary Navigation Items**
 
 #### 1. **Dashboard** (🏠)
+
 - **Route**: `/dashboard`
 - **Icon**: HomeIcon
 - **Description**: Overview of performance, stats, and recent activity
 - **Sub-items**: None (direct link)
 
 #### 2. **Training** (💪)
+
 - **Route**: `/training`
 - **Icon**: AcademicCapIcon
 - **Description**: Practice sessions, drills, and skill development
@@ -101,6 +106,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
   - **Recovery** - Rest and regeneration protocols
 
 #### 3. **Community** (👥)
+
 - **Route**: `/community`
 - **Icon**: UserGroupIcon
 - **Description**: Team communication and social features
@@ -111,6 +117,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
   - **Leaderboards** - Performance rankings and achievements
 
 #### 4. **Tournaments** (🏆)
+
 - **Route**: `/tournaments`
 - **Icon**: TrophyIcon
 - **Description**: Competition and tournament management
@@ -121,6 +128,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
   - **Standings** - Current rankings and statistics
 
 #### 5. **Profile** (👤)
+
 - **Route**: `/profile`
 - **Icon**: UserIcon
 - **Description**: Personal settings and account management
@@ -133,6 +141,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ### **Secondary Navigation Elements**
 
 #### **Status Bar (Top Right)**
+
 ```
 [🔔 3] [🧑 Alex] [⚙️] [🟢 Synced] [🔍] [Logout]
 ```
@@ -145,6 +154,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 - **Logout**: Quick logout button (desktop only)
 
 #### **Team Context Bar (Below Main Nav)**
+
 ```
 🏈 Hawks • 7.8 Chemistry           vs Eagles Tomorrow • 🌤️ 75°F
 ```
@@ -157,18 +167,21 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ## 🎯 Interactive States
 
 ### **Hover Effects**
+
 - **Main Nav Items**: Background color change, subtle shadow
 - **Dropdown Triggers**: Arrow rotation, background highlight
 - **Status Icons**: Scale transform (1.05x), color transition
 - **User Avatar**: Ring highlight, scale transform
 
 ### **Active States**
+
 - **Current Page**: Blue underline, background tint
 - **Dropdown Open**: Arrow rotation, expanded background
 - **Notifications**: Red badge pulse animation
 - **Sync Status**: Green pulse for active sync
 
 ### **Focus States**
+
 - **Keyboard Navigation**: Blue outline, high contrast
 - **Accessibility**: Clear focus indicators for screen readers
 - **Tab Order**: Logical navigation flow
@@ -176,6 +189,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ## 📱 Mobile Navigation Patterns
 
 ### **Hamburger Menu (Mobile)**
+
 ```
 ┌─────────────────────────────────────────┐
 │ 🏈 FlagFit Pro    [🔔 3] [🧑 Alex] [☰] │
@@ -202,6 +216,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ```
 
 ### **Bottom Navigation (Mobile Alternative)**
+
 ```
 ┌─────────────────────────────────────────┐
 │                                         │
@@ -221,6 +236,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ## 🔧 Advanced Features
 
 ### **Smart Navigation**
+
 - **Context Awareness**: Show relevant nav items based on user role
 - **Progressive Disclosure**: Hide advanced features from beginners
 - **Personalization**: Remember user preferences and frequently used items
@@ -244,6 +260,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ## 🎨 Component Specifications
 
 ### **Navigation Container**
+
 ```css
 .navigation-container {
   position: sticky;
@@ -257,6 +274,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ```
 
 ### **Navigation Item**
+
 ```css
 .nav-item {
   padding: 12px 16px;
@@ -279,6 +297,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ```
 
 ### **Dropdown Menu**
+
 ```css
 .dropdown-menu {
   position: absolute;
@@ -295,6 +314,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ```
 
 ### **Status Indicators**
+
 ```css
 .status-indicator {
   display: inline-flex;
@@ -325,7 +345,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 ```typescript
 // Main Navigation Component
 @Component({
-  selector: 'app-navigation',
+  selector: "app-navigation",
   standalone: true,
   imports: [CommonModule, RouterModule, PrimeNGModules],
   template: `
@@ -364,7 +384,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
         <app-quick-actions />
       </div>
     </nav>
-  `
+  `,
 })
 export class NavigationComponent {
   // Angular 21: Use signals for reactive state
@@ -380,39 +400,38 @@ export class NavigationComponent {
 // Angular 21: Signal-based Navigation State
 export class NavigationComponent {
   // Signals for reactive state
-  currentRoute = signal('/dashboard');
+  currentRoute = signal("/dashboard");
   isMenuOpen = signal(false);
-  
+
   notifications = signal({
     unread: 3,
-    items: [] as Notification[]
+    items: [] as Notification[],
   });
-  
+
   user = signal({
-    name: 'Alex Rivera',
-    avatar: '/avatar.jpg',
-    role: 'player' as UserRole
+    name: "Alex Rivera",
+    avatar: "/avatar.jpg",
+    role: "player" as UserRole,
   });
-  
+
   team = signal({
-    name: 'Hawks',
+    name: "Hawks",
     chemistry: 7.8,
-    nextGame: 'vs Eagles Tomorrow'
+    nextGame: "vs Eagles Tomorrow",
   });
-  
+
   sync = signal({
-    status: 'synced' as SyncStatus,
-    lastSync: new Date('2024-12-19T10:30:00Z')
+    status: "synced" as SyncStatus,
+    lastSync: new Date("2024-12-19T10:30:00Z"),
   });
-  
+
   // Computed signal for derived state
-  hasUnreadNotifications = computed(() => 
-    this.notifications().unread > 0
-  );
+  hasUnreadNotifications = computed(() => this.notifications().unread > 0);
 }
 ```
 
 ### **Responsive Breakpoints**
+
 ```css
 /* Mobile First Approach */
 .navigation {
@@ -441,18 +460,21 @@ export class NavigationComponent {
 ## 📊 User Experience Metrics
 
 ### **Performance Targets**
+
 - **Navigation Load Time**: < 100ms
 - **Dropdown Open Time**: < 50ms
 - **Mobile Menu Transition**: < 200ms
 - **Accessibility Score**: 100/100
 
 ### **User Engagement Goals**
+
 - **Navigation Completion Rate**: > 95%
 - **Mobile Menu Usage**: > 80% on mobile devices
 - **Search Usage**: > 30% of users
 - **Notification Click Rate**: > 60%
 
 ### **Accessibility Standards**
+
 - **WCAG 2.1 AA Compliance**: Full compliance
 - **Keyboard Navigation**: 100% functional
 - **Screen Reader Support**: Complete compatibility
@@ -461,6 +483,7 @@ export class NavigationComponent {
 ## 🎯 Success Criteria
 
 ### **Functional Requirements**
+
 - ✅ All navigation items accessible from any page
 - ✅ Responsive design works on all screen sizes
 - ✅ Keyboard navigation fully functional
@@ -468,6 +491,7 @@ export class NavigationComponent {
 - ✅ Performance meets target metrics
 
 ### **User Experience Requirements**
+
 - ✅ Intuitive navigation flow
 - ✅ Clear visual hierarchy
 - ✅ Consistent interaction patterns

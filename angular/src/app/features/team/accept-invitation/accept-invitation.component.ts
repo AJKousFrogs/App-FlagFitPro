@@ -17,13 +17,7 @@ import { ToastModule } from "primeng/toast";
   selector: "app-accept-invitation",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterModule,
-    CardModule,
-    ButtonModule,
-    MessageModule,
-    ToastModule
-  ],
+  imports: [RouterModule, CardModule, ButtonModule, MessageModule, ToastModule],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
@@ -35,10 +29,13 @@ import { ToastModule } from "primeng/toast";
           </div>
           <h1 class="accept-invitation-title">Team Invitation</h1>
         </ng-template>
-    
+
         @if (isLoading()) {
           <div class="loading-state">
-            <p-message severity="info" [text]="'Loading invitation...'"></p-message>
+            <p-message
+              severity="info"
+              [text]="'Loading invitation...'"
+            ></p-message>
           </div>
         } @else if (invitationError()) {
           <div class="error-state">
@@ -49,7 +46,10 @@ import { ToastModule } from "primeng/toast";
           </div>
         } @else if (isAccepted()) {
           <div class="accepted-state">
-            <p-message severity="success" [text]="'Invitation accepted!'"></p-message>
+            <p-message
+              severity="success"
+              [text]="'Invitation accepted!'"
+            ></p-message>
             <p class="accepted-message">
               You've successfully joined {{ teamName() }}. Welcome to the team!
             </p>
@@ -65,10 +65,11 @@ import { ToastModule } from "primeng/toast";
             <div class="team-info">
               <h3>{{ invitationData()?.teamName }}</h3>
               <p class="team-description">
-                You've been invited to join this team by {{ invitationData()?.inviterName }}.
+                You've been invited to join this team by
+                {{ invitationData()?.inviterName }}.
               </p>
             </div>
-            
+
             <div class="invitation-actions">
               <p-button
                 label="Accept Invitation"
@@ -181,13 +182,15 @@ export class AcceptInvitationComponent implements OnInit {
 
   ngOnInit(): void {
     // Get invitation token from query params
-    const token = this.route.snapshot.queryParams['token'];
-    const invitationId = this.route.snapshot.queryParams['id'];
+    const token = this.route.snapshot.queryParams["token"];
+    const invitationId = this.route.snapshot.queryParams["id"];
 
     if (token || invitationId) {
       this.loadInvitation(token || invitationId);
     } else {
-      this.invitationError.set("Invalid invitation link. Please check your email.");
+      this.invitationError.set(
+        "Invalid invitation link. Please check your email.",
+      );
       this.isLoading.set(false);
     }
   }
@@ -196,22 +199,24 @@ export class AcceptInvitationComponent implements OnInit {
     try {
       // TODO: Call API to load invitation data
       // const response = await this.apiService.getInvitation(tokenOrId);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Mock data
       this.invitationData.set({
         teamName: "Eagles Flag Football",
         inviterName: "Coach Johnson",
-        invitationId: tokenOrId
+        invitationId: tokenOrId,
       });
       this.teamName.set("Eagles Flag Football");
-      
+
       this.isLoading.set(false);
     } catch (error: any) {
       this.isLoading.set(false);
-      this.invitationError.set(error.message || "Failed to load invitation. It may have expired.");
+      this.invitationError.set(
+        error.message || "Failed to load invitation. It may have expired.",
+      );
     }
   }
 
@@ -223,27 +228,28 @@ export class AcceptInvitationComponent implements OnInit {
     try {
       // TODO: Call API to accept invitation
       // await this.apiService.acceptInvitation(this.invitationData()!.invitationId);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       this.isAccepted.set(true);
-      
+
       this.messageService.add({
-        severity: 'success',
-        summary: 'Invitation Accepted',
-        detail: `You've joined ${this.teamName()}!`
+        severity: "success",
+        summary: "Invitation Accepted",
+        detail: `You've joined ${this.teamName()}!`,
       });
 
       // Redirect to roster after 2 seconds
       setTimeout(() => {
-        this.router.navigate(['/roster']);
+        this.router.navigate(["/roster"]);
       }, 2000);
     } catch (error: any) {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.message || 'Failed to accept invitation. Please try again.'
+        severity: "error",
+        summary: "Error",
+        detail:
+          error.message || "Failed to accept invitation. Please try again.",
       });
     } finally {
       this.isProcessing.set(false);
@@ -258,29 +264,29 @@ export class AcceptInvitationComponent implements OnInit {
     try {
       // TODO: Call API to decline invitation
       // await this.apiService.declineInvitation(this.invitationData()!.invitationId);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       this.messageService.add({
-        severity: 'info',
-        summary: 'Invitation Declined',
-        detail: 'You have declined the team invitation.'
+        severity: "info",
+        summary: "Invitation Declined",
+        detail: "You have declined the team invitation.",
       });
 
       // Redirect to dashboard
       setTimeout(() => {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(["/dashboard"]);
       }, 1000);
     } catch (error: any) {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.message || 'Failed to decline invitation. Please try again.'
+        severity: "error",
+        summary: "Error",
+        detail:
+          error.message || "Failed to decline invitation. Please try again.",
       });
     } finally {
       this.isProcessing.set(false);
     }
   }
 }
-

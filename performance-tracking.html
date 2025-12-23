@@ -34,21 +34,27 @@
     <!-- Sidebar Utilities -->
     <script src="./src/js/utils/sidebar-utils.js" defer></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
-  
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <div class="dashboard-container">
-            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
       <div data-sidebar-container></div>
-        <!-- Top Bar (Loaded Dynamically) -->
-        <div data-topbar-container></div>
+      <!-- Top Bar (Loaded Dynamically) -->
+      <div data-topbar-container></div>
 
       <main class="main-content" id="main-content">
         <div class="performance-tracking-container">
@@ -119,21 +125,48 @@
                 <div class="form-group">
                   <label for="weight-input" class="form-label">Weight</label>
                   <!-- Unit Toggle -->
-                  <div class="unit-toggle-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
-                    <button 
-                      type="button" 
-                      class="unit-toggle-btn unit-toggle-active" 
-                      data-unit="imperial" 
+                  <div
+                    class="unit-toggle-group"
+                    style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem"
+                  >
+                    <button
+                      type="button"
+                      class="unit-toggle-btn unit-toggle-active"
+                      data-unit="imperial"
                       id="weight-unit-imperial"
-                      style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-brand-primary, #10c96b); background: var(--color-brand-primary, #10c96b); color: white; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                      style="
+                        flex: 1;
+                        padding: 0.5rem 1rem;
+                        border: 2px solid var(--color-brand-primary, #10c96b);
+                        background: var(--color-brand-primary, #10c96b);
+                        color: white;
+                        border-radius: 0.5rem;
+                        cursor: pointer;
+                        font-weight: 600;
+                        font-size: 0.875rem;
+                        transition: all 0.2s;
+                      "
+                    >
                       Pounds (lbs)
                     </button>
-                    <button 
-                      type="button" 
-                      class="unit-toggle-btn" 
-                      data-unit="metric" 
+                    <button
+                      type="button"
+                      class="unit-toggle-btn"
+                      data-unit="metric"
                       id="weight-unit-metric"
-                      style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-border-secondary, #e5e7eb); background: white; color: var(--color-text-secondary, #6b7280); border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                      style="
+                        flex: 1;
+                        padding: 0.5rem 1rem;
+                        border: 2px solid var(--color-border-secondary, #e5e7eb);
+                        background: white;
+                        color: var(--color-text-secondary, #6b7280);
+                        border-radius: 0.5rem;
+                        cursor: pointer;
+                        font-weight: 600;
+                        font-size: 0.875rem;
+                        transition: all 0.2s;
+                      "
+                    >
                       Kilograms (kg)
                     </button>
                   </div>
@@ -154,7 +187,12 @@
                   <small id="weight-help" class="form-help"
                     >Enter your current weight</small
                   >
-                  <input type="hidden" id="weight-unit" name="weightUnit" value="imperial">
+                  <input
+                    type="hidden"
+                    id="weight-unit"
+                    name="weightUnit"
+                    value="imperial"
+                  />
                 </div>
                 <div class="form-group">
                   <label for="weight-date" class="form-label">Date</label>
@@ -396,22 +434,26 @@
         const unitLabel = document.getElementById("weight-unit-label");
         const unitInput = document.getElementById("weight-unit");
         const weightInput = document.getElementById("weight-input");
-        
+
         // Load saved preference or default to imperial
-        const savedUnit = localStorage.getItem("flagfit_weight_unit") || "imperial";
+        const savedUnit =
+          localStorage.getItem("flagfit_weight_unit") || "imperial";
         let currentUnit = savedUnit;
-        
+
         function updateUnit(unit) {
           currentUnit = unit;
           localStorage.setItem("flagfit_weight_unit", unit);
-          
+
           if (unit === "imperial") {
             imperialBtn.classList.add("unit-toggle-active");
-            imperialBtn.style.borderColor = "var(--color-brand-primary, #10c96b)";
-            imperialBtn.style.background = "var(--color-brand-primary, #10c96b)";
+            imperialBtn.style.borderColor =
+              "var(--color-brand-primary, #10c96b)";
+            imperialBtn.style.background =
+              "var(--color-brand-primary, #10c96b)";
             imperialBtn.style.color = "white";
             metricBtn.classList.remove("unit-toggle-active");
-            metricBtn.style.borderColor = "var(--color-border-secondary, #e5e7eb)";
+            metricBtn.style.borderColor =
+              "var(--color-border-secondary, #e5e7eb)";
             metricBtn.style.background = "white";
             metricBtn.style.color = "var(--color-text-secondary, #6b7280)";
             unitLabel.textContent = "lbs";
@@ -423,7 +465,8 @@
             metricBtn.style.background = "var(--color-brand-primary, #10c96b)";
             metricBtn.style.color = "white";
             imperialBtn.classList.remove("unit-toggle-active");
-            imperialBtn.style.borderColor = "var(--color-border-secondary, #e5e7eb)";
+            imperialBtn.style.borderColor =
+              "var(--color-border-secondary, #e5e7eb)";
             imperialBtn.style.background = "white";
             imperialBtn.style.color = "var(--color-text-secondary, #6b7280)";
             unitLabel.textContent = "kg";
@@ -431,7 +474,7 @@
             weightInput.placeholder = "Enter weight in kilograms";
           }
         }
-        
+
         imperialBtn.addEventListener("click", () => {
           // Convert value if switching from metric
           if (currentUnit === "metric" && weightInput.value) {
@@ -442,7 +485,7 @@
           }
           updateUnit("imperial");
         });
-        
+
         metricBtn.addEventListener("click", () => {
           // Convert value if switching from imperial
           if (currentUnit === "imperial" && weightInput.value) {
@@ -453,7 +496,7 @@
           }
           updateUnit("metric");
         });
-        
+
         // Initialize with saved preference
         updateUnit(currentUnit);
       }
@@ -478,9 +521,8 @@
 
         try {
           // Convert to kg for API (API expects kg)
-          const weightKg = weightUnit === "imperial" 
-            ? weight / 2.20462 
-            : weight;
+          const weightKg =
+            weightUnit === "imperial" ? weight / 2.20462 : weight;
 
           await performanceAPI.savePhysicalMeasurements({
             weight: weightKg,
@@ -582,9 +624,10 @@
           ) {
             const latestWeight =
               measurements.data[measurements.data.length - 1];
-            const weightUnit = localStorage.getItem("flagfit_weight_unit") || "imperial";
+            const weightUnit =
+              localStorage.getItem("flagfit_weight_unit") || "imperial";
             const currentWeightEl = document.getElementById("current-weight");
-            
+
             if (weightUnit === "imperial") {
               const weightLbs = Math.round(latestWeight.weight * 2.20462);
               currentWeightEl.textContent = `${weightLbs} lbs`;
@@ -750,7 +793,7 @@
       document.addEventListener("DOMContentLoaded", initPage);
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

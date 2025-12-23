@@ -1,6 +1,6 @@
 /**
  * Comprehensive Athlete Performance and Nutrition Data
- * 
+ *
  * This module provides data structures, constants, and utility functions for:
  * - Physical measurements and anthropometric data
  * - Performance tests and benchmarks
@@ -8,7 +8,7 @@
  * - Injury tracking categories
  * - Supplement guidance and schedules
  * - Nutrition recommendations
- * 
+ *
  * @module athlete-performance-data
  * @version 2.0.0
  */
@@ -36,7 +36,10 @@ export const SUPPLEMENT_GUIDE = {
       category: "Recovery",
       dosage: "200-400mg",
       form: "Citrate, Glycinate, or Threonate",
-      interactions: ["May enhance calcium absorption", "Avoid with high-dose zinc"],
+      interactions: [
+        "May enhance calcium absorption",
+        "Avoid with high-dose zinc",
+      ],
     },
     {
       name: "Vitamin D",
@@ -46,7 +49,10 @@ export const SUPPLEMENT_GUIDE = {
       category: "Essential",
       dosage: "1000-4000 IU",
       form: "D3 (cholecalciferol)",
-      interactions: ["Take with fat for absorption", "Monitor levels if taking high doses"],
+      interactions: [
+        "Take with fat for absorption",
+        "Monitor levels if taking high doses",
+      ],
     },
     {
       name: "Omega-3",
@@ -57,7 +63,10 @@ export const SUPPLEMENT_GUIDE = {
       category: "Recovery",
       dosage: "1000-3000mg EPA+DHA",
       form: "Fish oil or Algae-based",
-      interactions: ["Take with meals", "May thin blood - consult if on blood thinners"],
+      interactions: [
+        "Take with meals",
+        "May thin blood - consult if on blood thinners",
+      ],
     },
     {
       name: "Vitamin C",
@@ -68,7 +77,10 @@ export const SUPPLEMENT_GUIDE = {
       category: "Recovery",
       dosage: "500-1000mg (split)",
       form: "Ascorbic acid or buffered",
-      interactions: ["Enhances iron absorption", "May interfere with some medications"],
+      interactions: [
+        "Enhances iron absorption",
+        "May interfere with some medications",
+      ],
     },
     {
       name: "Iron",
@@ -79,7 +91,11 @@ export const SUPPLEMENT_GUIDE = {
       category: "Performance",
       dosage: "18-27mg (consult doctor)",
       form: "Ferrous sulfate or chelated",
-      interactions: ["Avoid with coffee/tea", "Take with Vitamin C", "Separate from calcium"],
+      interactions: [
+        "Avoid with coffee/tea",
+        "Take with Vitamin C",
+        "Separate from calcium",
+      ],
     },
     {
       name: "Probiotics",
@@ -109,7 +125,10 @@ export const SUPPLEMENT_GUIDE = {
       category: "Essential",
       dosage: "As per label",
       form: "B-complex supplement",
-      interactions: ["Water-soluble, excess excreted", "May cause bright yellow urine"],
+      interactions: [
+        "Water-soluble, excess excreted",
+        "May cause bright yellow urine",
+      ],
     },
   ],
 
@@ -130,7 +149,15 @@ export const SUPPLEMENT_GUIDE = {
     },
     carbohydrates: {
       title: "Complex Carbohydrates",
-      foods: ["Sweet potato", "Quinoa", "Oats", "Brown rice", "Whole grain pasta", "Barley", "Buckwheat"],
+      foods: [
+        "Sweet potato",
+        "Quinoa",
+        "Oats",
+        "Brown rice",
+        "Whole grain pasta",
+        "Barley",
+        "Buckwheat",
+      ],
       servingSize: "40-60g per meal",
       timing: "Pre-workout (1-2h), post-workout (30-60min)",
     },
@@ -177,7 +204,13 @@ export const SUPPLEMENT_GUIDE = {
     },
     hydration: {
       title: "Hydration & Electrolyte Sources",
-      foods: ["Coconut water", "Watermelon", "Milk", "Bananas", "Electrolyte drinks"],
+      foods: [
+        "Coconut water",
+        "Watermelon",
+        "Milk",
+        "Bananas",
+        "Electrolyte drinks",
+      ],
       servingSize: "As needed",
       timing: "Before, during, and after exercise",
     },
@@ -343,7 +376,10 @@ export const PERFORMANCE_TESTS = {
       category: "Composition",
       description: "Waist measurement at navel level",
       equipment: ["Measuring tape"],
-      target: { male: { elite: 80, good: 90, average: 100 }, female: { elite: 70, good: 80, average: 90 } },
+      target: {
+        male: { elite: 80, good: 90, average: 100 },
+        female: { elite: 70, good: 80, average: 90 },
+      },
     },
     hipCircumference: {
       name: "Hip Circumference",
@@ -439,11 +475,36 @@ export const WELLNESS_TRACKING = {
       "Ankle/Foot",
     ],
     severity: [
-      { level: 1, description: "No impact on training", color: "green", action: "Monitor" },
-      { level: 2, description: "Slight modification needed", color: "yellow", action: "Modify training" },
-      { level: 3, description: "Significant modification required", color: "orange", action: "Reduce intensity" },
-      { level: 4, description: "Unable to train specific movements", color: "red", action: "Rest affected area" },
-      { level: 5, description: "Unable to train at all", color: "red", action: "Seek medical attention" },
+      {
+        level: 1,
+        description: "No impact on training",
+        color: "green",
+        action: "Monitor",
+      },
+      {
+        level: 2,
+        description: "Slight modification needed",
+        color: "yellow",
+        action: "Modify training",
+      },
+      {
+        level: 3,
+        description: "Significant modification required",
+        color: "orange",
+        action: "Reduce intensity",
+      },
+      {
+        level: 4,
+        description: "Unable to train specific movements",
+        color: "red",
+        action: "Rest affected area",
+      },
+      {
+        level: 5,
+        description: "Unable to train at all",
+        color: "red",
+        action: "Seek medical attention",
+      },
     ],
     recoveryPhases: [
       "Acute (0-3 days)",
@@ -627,19 +688,35 @@ export const MOCK_ATHLETE_DATA = {
  * @param {boolean} lowerIsBetter - Whether lower values are better (e.g., time-based tests)
  * @returns {string} Performance grade: "Elite", "Good", "Average", or "Needs Improvement"
  */
-export const getPerformanceGrade = (current, targets, lowerIsBetter = false) => {
+export const getPerformanceGrade = (
+  current,
+  targets,
+  lowerIsBetter = false,
+) => {
   if (!targets || typeof current !== "number") {
     return "Unknown";
   }
 
   if (lowerIsBetter) {
-    if (current <= targets.elite) {return "Elite";}
-    if (current <= targets.good) {return "Good";}
-    if (current <= targets.average) {return "Average";}
+    if (current <= targets.elite) {
+      return "Elite";
+    }
+    if (current <= targets.good) {
+      return "Good";
+    }
+    if (current <= targets.average) {
+      return "Average";
+    }
   } else {
-    if (current >= targets.elite) {return "Elite";}
-    if (current >= targets.good) {return "Good";}
-    if (current >= targets.average) {return "Average";}
+    if (current >= targets.elite) {
+      return "Elite";
+    }
+    if (current >= targets.good) {
+      return "Good";
+    }
+    if (current >= targets.average) {
+      return "Average";
+    }
   }
 
   return "Needs Improvement";
@@ -652,9 +729,15 @@ export const getPerformanceGrade = (current, targets, lowerIsBetter = false) => 
  * @param {boolean} lowerIsBetter - Whether lower values are better
  * @returns {number} Improvement percentage (positive = improvement)
  */
-export const calculatePerformanceImprovement = (current, previous, lowerIsBetter = false) => {
-  if (!previous || previous === 0) {return 0;}
-  
+export const calculatePerformanceImprovement = (
+  current,
+  previous,
+  lowerIsBetter = false,
+) => {
+  if (!previous || previous === 0) {
+    return 0;
+  }
+
   if (lowerIsBetter) {
     // For time-based tests, improvement means lower time
     return (((previous - current) / previous) * 100).toFixed(1);
@@ -677,15 +760,27 @@ export const getWellnessColor = (score, lowerIsBetter = false) => {
 
   if (lowerIsBetter) {
     // For stress, soreness - lower is better
-    if (score <= 3) {return "var(--success)";}
-    if (score <= 5) {return "var(--accent)";}
-    if (score <= 7) {return "var(--warning)";}
+    if (score <= 3) {
+      return "var(--success)";
+    }
+    if (score <= 5) {
+      return "var(--accent)";
+    }
+    if (score <= 7) {
+      return "var(--warning)";
+    }
     return "var(--error)";
   } else {
     // For sleep, energy, motivation - higher is better
-    if (score >= 8) {return "var(--success)";}
-    if (score >= 6) {return "var(--accent)";}
-    if (score >= 4) {return "var(--warning)";}
+    if (score >= 8) {
+      return "var(--success)";
+    }
+    if (score >= 6) {
+      return "var(--accent)";
+    }
+    if (score >= 4) {
+      return "var(--warning)";
+    }
     return "var(--error)";
   }
 };
@@ -697,18 +792,22 @@ export const getWellnessColor = (score, lowerIsBetter = false) => {
  * @returns {Array} Array of supplements that need reminders
  */
 export const getSupplementReminders = (schedule, reminderWindow = 1) => {
-  if (!Array.isArray(schedule)) {return [];}
+  if (!Array.isArray(schedule)) {
+    return [];
+  }
 
   const now = new Date();
   const currentHour = now.getHours();
   const currentDate = now.toISOString().split("T")[0];
 
   return schedule.filter((item) => {
-    if (item.taken || item.date !== currentDate) {return false;}
-    
+    if (item.taken || item.date !== currentDate) {
+      return false;
+    }
+
     const supplementHour = parseInt(item.time.split(":")[0]);
     const timeDiff = Math.abs(currentHour - supplementHour);
-    
+
     return timeDiff <= reminderWindow && !item.taken;
   });
 };
@@ -720,8 +819,10 @@ export const getSupplementReminders = (schedule, reminderWindow = 1) => {
  * @returns {number} BMI value
  */
 export const calculateBMI = (weight, height) => {
-  if (!weight || !height || height <= 0) {return null;}
-  
+  if (!weight || !height || height <= 0) {
+    return null;
+  }
+
   const heightInMeters = height / 100;
   return parseFloat((weight / (heightInMeters * heightInMeters)).toFixed(1));
 };
@@ -732,11 +833,19 @@ export const calculateBMI = (weight, height) => {
  * @returns {string} BMI category
  */
 export const getBMICategory = (bmi) => {
-  if (!bmi || typeof bmi !== "number") {return "Unknown";}
-  
-  if (bmi < 18.5) {return "Underweight";}
-  if (bmi < 25) {return "Normal";}
-  if (bmi < 30) {return "Overweight";}
+  if (!bmi || typeof bmi !== "number") {
+    return "Unknown";
+  }
+
+  if (bmi < 18.5) {
+    return "Underweight";
+  }
+  if (bmi < 25) {
+    return "Normal";
+  }
+  if (bmi < 30) {
+    return "Overweight";
+  }
   return "Obese";
 };
 
@@ -746,7 +855,9 @@ export const getBMICategory = (bmi) => {
  * @returns {number} Readiness score (1-10)
  */
 export const calculateReadinessScore = (wellness) => {
-  if (!wellness) {return null;}
+  if (!wellness) {
+    return null;
+  }
 
   const factors = {
     sleep: wellness.sleep || 5,
@@ -766,7 +877,8 @@ export const calculateReadinessScore = (wellness) => {
   const sorenessScore = (10 - factors.soreness) * 0.2; // Invert soreness
   const motivationScore = factors.motivation * 0.1;
 
-  const total = sleepScore + energyScore + stressScore + sorenessScore + motivationScore;
+  const total =
+    sleepScore + energyScore + stressScore + sorenessScore + motivationScore;
   return Math.round(total * 10) / 10; // Round to 1 decimal
 };
 
@@ -777,21 +889,35 @@ export const calculateReadinessScore = (wellness) => {
  * @param {boolean} lowerIsBetter - Whether lower values are better
  * @returns {string} Trend: "improving", "declining", or "stable"
  */
-export const getPerformanceTrend = (current, previous, lowerIsBetter = false) => {
-  if (!previous || previous === 0) {return "stable";}
-  
+export const getPerformanceTrend = (
+  current,
+  previous,
+  lowerIsBetter = false,
+) => {
+  if (!previous || previous === 0) {
+    return "stable";
+  }
+
   const threshold = 0.01; // 1% change threshold
-  
+
   if (lowerIsBetter) {
     const change = (previous - current) / previous;
-    if (change > threshold) {return "improving";}
-    if (change < -threshold) {return "declining";}
+    if (change > threshold) {
+      return "improving";
+    }
+    if (change < -threshold) {
+      return "declining";
+    }
   } else {
     const change = (current - previous) / previous;
-    if (change > threshold) {return "improving";}
-    if (change < -threshold) {return "declining";}
+    if (change > threshold) {
+      return "improving";
+    }
+    if (change < -threshold) {
+      return "declining";
+    }
   }
-  
+
   return "stable";
 };
 
@@ -806,9 +932,10 @@ export const validatePerformanceTest = (testName, value) => {
     return { isValid: false, message: "Value must be a number" };
   }
 
-  const test = PERFORMANCE_TESTS.physical[testName] || 
-               Object.values(PERFORMANCE_TESTS.physical).find(t => t.name === testName);
-  
+  const test =
+    PERFORMANCE_TESTS.physical[testName] ||
+    Object.values(PERFORMANCE_TESTS.physical).find((t) => t.name === testName);
+
   if (!test) {
     return { isValid: false, message: "Unknown test type" };
   }
@@ -841,10 +968,14 @@ export const validatePerformanceTest = (testName, value) => {
  * @returns {string} Formatted date string
  */
 export const formatDate = (date, format = "short") => {
-  if (!date) {return "";}
-  
+  if (!date) {
+    return "";
+  }
+
   const dateObj = typeof date === "string" ? new Date(date) : date;
-  if (isNaN(dateObj.getTime())) {return "";}
+  if (isNaN(dateObj.getTime())) {
+    return "";
+  }
 
   const options = {
     short: { month: "short", day: "numeric", year: "numeric" },
@@ -865,15 +996,20 @@ export const formatDate = (date, format = "short") => {
  * @returns {number} Number of days since last test
  */
 export const getDaysSinceLastTest = (lastTestDate) => {
-  if (!lastTestDate) {return null;}
-  
-  const testDate = typeof lastTestDate === "string" ? new Date(lastTestDate) : lastTestDate;
-  if (isNaN(testDate.getTime())) {return null;}
-  
+  if (!lastTestDate) {
+    return null;
+  }
+
+  const testDate =
+    typeof lastTestDate === "string" ? new Date(lastTestDate) : lastTestDate;
+  if (isNaN(testDate.getTime())) {
+    return null;
+  }
+
   const now = new Date();
   const diffTime = Math.abs(now - testDate);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
   return diffDays;
 };
 
@@ -884,18 +1020,22 @@ export const getDaysSinceLastTest = (lastTestDate) => {
  * @returns {boolean} True if test is due
  */
 export const isTestDue = (lastTestDate, frequency) => {
-  if (!lastTestDate) {return true;}
-  
+  if (!lastTestDate) {
+    return true;
+  }
+
   const daysSince = getDaysSinceLastTest(lastTestDate);
-  if (daysSince === null) {return true;}
-  
+  if (daysSince === null) {
+    return true;
+  }
+
   const frequencyDays = {
     Weekly: 7,
     Monthly: 30,
     Quarterly: 90,
     Annually: 365,
   };
-  
+
   const requiredDays = frequencyDays[frequency] || 30;
   return daysSince >= requiredDays;
 };
@@ -913,7 +1053,7 @@ export const getInjurySeverityColor = (severity) => {
     4: "var(--error)",
     5: "var(--error)",
   };
-  
+
   return colors[severity] || "var(--text-secondary)";
 };
 
@@ -926,10 +1066,16 @@ export const getInjurySeverityColor = (severity) => {
 export const getBodyFatTarget = (gender, currentBodyFat) => {
   const targets = PERFORMANCE_TESTS.anthropometric.bodyFat.target;
   const genderTargets = targets[gender] || targets.male;
-  
+
   let category = "Needs Improvement";
-  if (currentBodyFat <= genderTargets.elite) {category = "Elite";} else if (currentBodyFat <= genderTargets.good) {category = "Good";} else if (currentBodyFat <= genderTargets.average) {category = "Average";}
-  
+  if (currentBodyFat <= genderTargets.elite) {
+    category = "Elite";
+  } else if (currentBodyFat <= genderTargets.good) {
+    category = "Good";
+  } else if (currentBodyFat <= genderTargets.average) {
+    category = "Average";
+  }
+
   return {
     category,
     elite: genderTargets.elite,

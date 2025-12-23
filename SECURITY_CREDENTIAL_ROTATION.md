@@ -8,6 +8,7 @@
 The following credentials were found in `.env` and need immediate rotation:
 
 ### 1. Database Credentials
+
 - **Service**: Supabase Database (PostgreSQL)
 - **Location**: `.env` line 2
 - **Exposed**: Database URL with embedded password
@@ -18,6 +19,7 @@ The following credentials were found in `.env` and need immediate rotation:
   4. Never commit the new URL to git
 
 ### 2. JWT Secret
+
 - **Location**: `.env` line 43-44
 - **Current**: `flagfit-pro-jwt-secret-key-2025-development`
 - **Action Required**:
@@ -26,6 +28,7 @@ The following credentials were found in `.env` and need immediate rotation:
   3. This will invalidate all existing sessions (users need to re-login)
 
 ### 3. Supabase Keys
+
 - **Location**: `.env` lines 98, 102-103
 - **Exposed**: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY
 - **Action Required**:
@@ -35,6 +38,7 @@ The following credentials were found in `.env` and need immediate rotation:
   4. Update environment variables
 
 ### 4. SendGrid API Key
+
 - **Location**: `.env` line 147
 - **Current**: Placeholder value (if real key is used, rotate it)
 - **Action Required**:
@@ -44,6 +48,7 @@ The following credentials were found in `.env` and need immediate rotation:
   4. Update SENDGRID_API_KEY environment variable
 
 ### 5. Other API Keys
+
 Review `.env` for any other API keys and rotate them all as a precaution.
 
 ---
@@ -51,6 +56,7 @@ Review `.env` for any other API keys and rotate them all as a precaution.
 ## 📋 ROTATION CHECKLIST
 
 ### Immediate Actions (Within 24 hours)
+
 - [ ] Rotate Supabase database password (if needed)
 - [ ] Generate new JWT secret
 - [ ] Rotate Supabase keys
@@ -61,7 +67,9 @@ Review `.env` for any other API keys and rotate them all as a precaution.
   - [ ] Any CI/CD systems
 
 ### Git History Cleanup (Within 48 hours)
+
 - [ ] Remove `.env` from git history using BFG Repo-Cleaner:
+
   ```bash
   # Install BFG
   brew install bfg  # macOS
@@ -80,6 +88,7 @@ Review `.env` for any other API keys and rotate them all as a precaution.
   ```
 
 - [ ] Alternative: Use git filter-branch (slower but built-in):
+
   ```bash
   git filter-branch --force --index-filter \
     "git rm --cached --ignore-unmatch .env" \
@@ -89,7 +98,9 @@ Review `.env` for any other API keys and rotate them all as a precaution.
   ```
 
 ### Prevention (Ongoing)
+
 - [ ] Add pre-commit hook to prevent credential commits:
+
   ```bash
   # .husky/pre-commit or .git/hooks/pre-commit
   #!/bin/sh
@@ -101,6 +112,7 @@ Review `.env` for any other API keys and rotate them all as a precaution.
   ```
 
 - [ ] Use `.env.example` for documentation (safe to commit):
+
   ```bash
   # Copy .env to .env.example and replace values with placeholders
   cp .env .env.example
@@ -118,6 +130,7 @@ Review `.env` for any other API keys and rotate them all as a precaution.
 ## 🔐 SECURE SECRET GENERATION
 
 ### Generate Strong Secrets
+
 ```bash
 # JWT Secret (32 bytes, base64)
 openssl rand -base64 32
@@ -134,6 +147,7 @@ LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 32
 ## ✅ VERIFICATION
 
 After rotation, verify:
+
 1. [ ] Application still works with new credentials
 2. [ ] No credentials in git history: `git log --all --full-history --source --find-object=.env`
 3. [ ] `.env` is in `.gitignore`
@@ -146,6 +160,7 @@ After rotation, verify:
 ## 📞 INCIDENT RESPONSE
 
 If you suspect credentials were accessed:
+
 1. Rotate ALL credentials immediately
 2. Review database logs for unauthorized access
 3. Review application logs for suspicious activity

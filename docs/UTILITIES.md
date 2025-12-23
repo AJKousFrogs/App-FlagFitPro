@@ -25,10 +25,10 @@ All utilities support both ES6 modules and CommonJS:
 
 ```javascript
 // ES6 Import
-import { escapeHtml } from './utils/sanitize.js';
+import { escapeHtml } from "./utils/sanitize.js";
 
 // CommonJS
-const { escapeHtml } = require('./utils/sanitize.js');
+const { escapeHtml } = require("./utils/sanitize.js");
 
 // Global (non-module scripts)
 window.sanitize.escapeHtml(text);
@@ -49,20 +49,23 @@ Prevents XSS attacks by escaping and sanitizing user-generated content.
 Escapes HTML special characters to prevent XSS attacks.
 
 **Parameters:**
+
 - `str` (string): String to escape
 
 **Returns:**
+
 - (string): Escaped string safe for HTML insertion
 
 **Example:**
+
 ```javascript
-import { escapeHtml } from './utils/sanitize.js';
+import { escapeHtml } from "./utils/sanitize.js";
 
 const userInput = '<script>alert("XSS")</script>';
 const safe = escapeHtml(userInput);
 // Result: '&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;'
 
-document.getElementById('display').innerHTML = safe; // Safe
+document.getElementById("display").innerHTML = safe; // Safe
 ```
 
 **Escaped Characters:**
@@ -76,6 +79,7 @@ document.getElementById('display').innerHTML = safe; // Safe
 | `/` | `&#x2F;` |
 
 **Edge Cases:**
+
 - `null` or `undefined` returns empty string
 - Numbers and other types converted to string first
 
@@ -86,32 +90,37 @@ document.getElementById('display').innerHTML = safe; // Safe
 Sanitizes HTML attributes, removing dangerous protocols.
 
 **Parameters:**
+
 - `attr` (string): Attribute value to sanitize
 
 **Returns:**
+
 - (string): Sanitized attribute value
 
 **Example:**
+
 ```javascript
-import { sanitizeAttribute } from './utils/sanitize.js';
+import { sanitizeAttribute } from "./utils/sanitize.js";
 
 // Removes javascript: protocol
-const dangerous = 'javascript:alert(1)';
+const dangerous = "javascript:alert(1)";
 const safe = sanitizeAttribute(dangerous);
 // Result: '' (empty string)
 
 // Normal attribute is escaped
-const normal = 'user-class';
+const normal = "user-class";
 const cleaned = sanitizeAttribute(normal);
 // Result: 'user-class'
 ```
 
 **Blocked Patterns:**
+
 - `javascript:` URLs
 - `data:` URLs
 - `vbscript:` URLs
 
 **Edge Cases:**
+
 - `null` or `undefined` returns empty string
 - Dangerous protocols return empty string
 - All other values are HTML-escaped
@@ -123,31 +132,35 @@ const cleaned = sanitizeAttribute(normal);
 Sanitizes URLs to prevent XSS via href/src attributes.
 
 **Parameters:**
+
 - `url` (string): URL to sanitize
 
 **Returns:**
+
 - (string): Sanitized URL or empty string if dangerous
 
 **Example:**
+
 ```javascript
-import { sanitizeUrl } from './utils/sanitize.js';
+import { sanitizeUrl } from "./utils/sanitize.js";
 
 // Safe protocols allowed
-const https = sanitizeUrl('https://example.com');
+const https = sanitizeUrl("https://example.com");
 // Result: 'https://example.com'
 
-const mailto = sanitizeUrl('mailto:user@example.com');
+const mailto = sanitizeUrl("mailto:user@example.com");
 // Result: 'mailto:user@example.com'
 
 // Dangerous protocols blocked
-const xss = sanitizeUrl('javascript:alert(1)');
+const xss = sanitizeUrl("javascript:alert(1)");
 // Result: '' (empty string, warning logged)
 
-const data = sanitizeUrl('data:text/html,<script>alert(1)</script>');
+const data = sanitizeUrl("data:text/html,<script>alert(1)</script>");
 // Result: '' (empty string, warning logged)
 ```
 
 **Allowed Protocols:**
+
 - `https://`
 - `http://`
 - `mailto:`
@@ -155,12 +168,14 @@ const data = sanitizeUrl('data:text/html,<script>alert(1)</script>');
 - `sms:`
 
 **Blocked Protocols:**
+
 - `javascript:`
 - `data:`
 - `vbscript:`
 - Any other non-standard protocol
 
 **Edge Cases:**
+
 - Empty or falsy values return empty string
 - URLs without protocol are allowed (relative URLs)
 - Trimmed before processing
@@ -172,48 +187,61 @@ const data = sanitizeUrl('data:text/html,<script>alert(1)</script>');
 Creates a DOM element with safe attribute and content handling.
 
 **Parameters:**
+
 - `tag` (string): HTML tag name (e.g., 'div', 'span', 'a')
 - `attributes` (object): Element attributes (optional, default: `{}`)
 - `content` (string|Node): Text content or child node (optional, default: `''`)
 
 **Returns:**
+
 - (HTMLElement): Safe DOM element
 
 **Example:**
+
 ```javascript
-import { createSafeElement } from './utils/sanitize.js';
+import { createSafeElement } from "./utils/sanitize.js";
 
 // Simple element
-const div = createSafeElement('div', { class: 'user-card' }, 'John Doe');
+const div = createSafeElement("div", { class: "user-card" }, "John Doe");
 
 // Element with multiple attributes
-const link = createSafeElement('a', {
-  href: 'https://example.com',
-  class: 'external-link',
-  target: '_blank'
-}, 'Visit Site');
+const link = createSafeElement(
+  "a",
+  {
+    href: "https://example.com",
+    class: "external-link",
+    target: "_blank",
+  },
+  "Visit Site",
+);
 
 // Element with child node
-const child = document.createElement('span');
-child.textContent = 'Child';
-const parent = createSafeElement('div', {}, child);
+const child = document.createElement("span");
+child.textContent = "Child";
+const parent = createSafeElement("div", {}, child);
 
 // Element with inline styles
-const styled = createSafeElement('div', {
-  style: {
-    color: 'blue',
-    fontSize: '16px'
-  }
-}, 'Styled text');
+const styled = createSafeElement(
+  "div",
+  {
+    style: {
+      color: "blue",
+      fontSize: "16px",
+    },
+  },
+  "Styled text",
+);
 ```
 
 **Special Attribute Handling:**
+
 - `href` and `src`: Automatically sanitized with `sanitizeUrl()`
 - `style`: Can be object or string
 - `class` or `className`: Set as className
 - All others: Sanitized with `sanitizeAttribute()`
 
 **Edge Cases:**
+
 - If content is a Node, it's appended; if string, set as textContent
 - Null/undefined content creates empty element
 - Invalid tag names throw DOM exception
@@ -225,16 +253,19 @@ const styled = createSafeElement('div', {
 Sanitizes HTML while allowing specific safe formatting tags.
 
 **Parameters:**
+
 - `html` (string): HTML string to sanitize
 
 **Returns:**
+
 - (string): Sanitized HTML with only allowed tags
 
 **Example:**
-```javascript
-import { sanitizeRichText } from './utils/sanitize.js';
 
-const userContent = 'Hello <b>world</b>! <script>alert(1)</script>';
+```javascript
+import { sanitizeRichText } from "./utils/sanitize.js";
+
+const userContent = "Hello <b>world</b>! <script>alert(1)</script>";
 const safe = sanitizeRichText(userContent);
 // Result: 'Hello <b>world</b>! &lt;script&gt;alert(1)&lt;/script&gt;'
 
@@ -242,20 +273,24 @@ element.innerHTML = safe; // Safe - script tags escaped, <b> preserved
 ```
 
 **Allowed Tags:**
+
 - `<b>`, `<strong>` (bold)
 - `<i>`, `<em>` (italic)
 - `<br>` (line break)
 
 **Process:**
+
 1. First escapes everything as text
 2. Then unescapes only allowed tags
 3. Dangerous content remains escaped
 
 **Limitations:**
+
 - Simple implementation for basic formatting
 - For production with complex needs, consider DOMPurify library
 
 **Edge Cases:**
+
 - Empty or falsy values return empty string
 - Nested tags are preserved if all are allowed
 - Attributes on allowed tags are stripped
@@ -279,23 +314,27 @@ Singleton class managing CSRF token lifecycle.
 Generates a cryptographically secure CSRF token.
 
 **Returns:**
+
 - (string): 64-character hex token
 
 **Example:**
+
 ```javascript
-import csrfProtection from './security/csrf-protection.js';
+import csrfProtection from "./security/csrf-protection.js";
 
 const token = csrfProtection.generateToken();
 // Result: "a1b2c3d4..." (64 hex chars)
 ```
 
 **Details:**
+
 - Uses Web Crypto API (`crypto.getRandomValues()`)
 - Generates 32 random bytes (256 bits)
 - Converts to hexadecimal string
 - Stores in sessionStorage automatically
 
 **Edge Cases:**
+
 - Automatically called on initialization
 - Overwrites existing token
 - If sessionStorage unavailable, stores in memory only
@@ -307,20 +346,24 @@ const token = csrfProtection.generateToken();
 Retrieves the current CSRF token.
 
 **Returns:**
+
 - (string|null): Current CSRF token
 
 **Example:**
+
 ```javascript
 const token = csrfProtection.getToken();
 console.log(token); // "a1b2c3d4..."
 ```
 
 **Fallback Chain:**
+
 1. Returns from memory if available
 2. Retrieves from sessionStorage
 3. Generates new token if none exists
 
 **Edge Cases:**
+
 - Never returns null (generates if missing)
 - sessionStorage errors logged but don't crash
 
@@ -331,9 +374,11 @@ console.log(token); // "a1b2c3d4..."
 Rotates (regenerates) the CSRF token.
 
 **Returns:**
+
 - (void)
 
 **Example:**
+
 ```javascript
 // After sensitive operation
 await login(credentials);
@@ -345,6 +390,7 @@ csrfProtection.rotateToken();
 ```
 
 **When to Rotate:**
+
 - After successful login
 - After password change
 - After privilege escalation
@@ -357,19 +403,22 @@ csrfProtection.rotateToken();
 Clears the CSRF token from memory and storage.
 
 **Returns:**
+
 - (void)
 
 **Example:**
+
 ```javascript
 // On logout
 function logout() {
   csrfProtection.clearToken();
   sessionStorage.clear();
-  window.location = '/login';
+  window.location = "/login";
 }
 ```
 
 **When to Clear:**
+
 - On logout
 - On session expiration
 - On authentication failure
@@ -381,23 +430,26 @@ function logout() {
 Returns headers object with CSRF token.
 
 **Returns:**
+
 - (object): Headers object `{ 'X-CSRF-Token': token }`
 
 **Example:**
+
 ```javascript
 const headers = {
-  'Content-Type': 'application/json',
-  ...csrfProtection.getHeaders()
+  "Content-Type": "application/json",
+  ...csrfProtection.getHeaders(),
 };
 
-fetch('/api/data', {
-  method: 'POST',
+fetch("/api/data", {
+  method: "POST",
   headers,
-  body: JSON.stringify(data)
+  body: JSON.stringify(data),
 });
 ```
 
 **Edge Cases:**
+
 - Returns empty object `{}` if no token available
 - Logs warning if token missing
 
@@ -408,37 +460,42 @@ fetch('/api/data', {
 Adds CSRF token to fetch options.
 
 **Parameters:**
+
 - `options` (object): Fetch options object (optional, default: `{}`)
 
 **Returns:**
+
 - (object): Modified options with CSRF token header
 
 **Example:**
+
 ```javascript
 // Basic usage
 const options = csrfProtection.addTokenToRequest({
-  method: 'POST',
-  body: JSON.stringify(data)
+  method: "POST",
+  body: JSON.stringify(data),
 });
 
-fetch('/api/endpoint', options);
+fetch("/api/endpoint", options);
 
 // Chain with other options
 const options = csrfProtection.addTokenToRequest({
-  method: 'DELETE',
+  method: "DELETE",
   headers: {
-    'Content-Type': 'application/json',
-    'Custom-Header': 'value'
-  }
+    "Content-Type": "application/json",
+    "Custom-Header": "value",
+  },
 });
 ```
 
 **Details:**
+
 - Creates `headers` object if not present
 - Adds `X-CSRF-Token` header
 - Preserves existing headers
 
 **Edge Cases:**
+
 - Safe to call with empty object
 - Doesn't override existing X-CSRF-Token header
 - Logs warning if no token available
@@ -450,14 +507,17 @@ const options = csrfProtection.addTokenToRequest({
 Checks if HTTP method requires CSRF protection.
 
 **Parameters:**
+
 - `method` (string): HTTP method name
 
 **Returns:**
+
 - (boolean): True if method requires CSRF protection
 
 **Example:**
+
 ```javascript
-if (csrfProtection.requiresProtection('POST')) {
+if (csrfProtection.requiresProtection("POST")) {
   options = csrfProtection.addTokenToRequest(options);
 }
 
@@ -465,17 +525,20 @@ fetch(url, options);
 ```
 
 **Protected Methods:**
+
 - `POST`
 - `PUT`
 - `DELETE`
 - `PATCH`
 
 **Unprotected Methods:**
+
 - `GET`
 - `HEAD`
 - `OPTIONS`
 
 **Edge Cases:**
+
 - Case-insensitive comparison
 - Unknown methods return false
 
@@ -486,28 +549,33 @@ fetch(url, options);
 Validates a token against the current token (constant-time comparison).
 
 **Parameters:**
+
 - `token` (string): Token to validate
 
 **Returns:**
+
 - (boolean): True if token matches
 
 **Example:**
+
 ```javascript
 // Server-side validation
-const clientToken = req.headers['x-csrf-token'];
+const clientToken = req.headers["x-csrf-token"];
 const isValid = csrfProtection.validateToken(clientToken);
 
 if (!isValid) {
-  return res.status(403).json({ error: 'Invalid CSRF token' });
+  return res.status(403).json({ error: "Invalid CSRF token" });
 }
 ```
 
 **Details:**
+
 - Uses constant-time comparison to prevent timing attacks
 - Compares each character using XOR
 - Returns false if lengths don't match
 
 **Edge Cases:**
+
 - Returns false if either token is null/undefined
 - Returns false if lengths differ
 - Safe against timing attacks
@@ -519,30 +587,35 @@ if (!isValid) {
 Adds CSRF token to FormData object.
 
 **Parameters:**
+
 - `formData` (FormData): Form data object
 
 **Returns:**
+
 - (FormData): Modified form data with CSRF token
 
 **Example:**
+
 ```javascript
 const formData = new FormData();
-formData.append('file', fileInput.files[0]);
-formData.append('title', 'My Upload');
+formData.append("file", fileInput.files[0]);
+formData.append("title", "My Upload");
 
 csrfProtection.addTokenToFormData(formData);
 
-fetch('/api/upload', {
-  method: 'POST',
-  body: formData
+fetch("/api/upload", {
+  method: "POST",
+  body: formData,
 });
 ```
 
 **Details:**
+
 - Adds token as `csrf_token` field
 - Preserves existing form fields
 
 **Edge Cases:**
+
 - Logs warning if no token available
 - Returns unmodified FormData if no token
 
@@ -553,20 +626,21 @@ fetch('/api/upload', {
 Returns HTML meta tag with CSRF token.
 
 **Returns:**
+
 - (string): HTML meta tag
 
 **Example:**
+
 ```javascript
 // Add to page head
-document.head.insertAdjacentHTML('beforeend',
-  csrfProtection.getMetaTag()
-);
+document.head.insertAdjacentHTML("beforeend", csrfProtection.getMetaTag());
 
 // Result in HTML:
 // <meta name="csrf-token" content="a1b2c3d4...">
 ```
 
 **Use Cases:**
+
 - Including token in HTML forms
 - Making token available to other scripts
 - Rendering server-side templates
@@ -582,7 +656,7 @@ A singleton instance is automatically created and available globally:
 window.csrfProtection.getToken();
 
 // ES6 import
-import csrfProtection from './security/csrf-protection.js';
+import csrfProtection from "./security/csrf-protection.js";
 ```
 
 ---
@@ -600,16 +674,17 @@ Standardized error handling utilities for consistent error management across the
 Error categories for classification.
 
 **Values:**
+
 ```javascript
 export const ErrorType = {
-  NETWORK: 'network',
-  VALIDATION: 'validation',
-  AUTHENTICATION: 'authentication',
-  AUTHORIZATION: 'authorization',
-  NOT_FOUND: 'not_found',
-  SERVER: 'server',
-  CLIENT: 'client',
-  UNKNOWN: 'unknown'
+  NETWORK: "network",
+  VALIDATION: "validation",
+  AUTHENTICATION: "authentication",
+  AUTHORIZATION: "authorization",
+  NOT_FOUND: "not_found",
+  SERVER: "server",
+  CLIENT: "client",
+  UNKNOWN: "unknown",
 };
 ```
 
@@ -622,16 +697,19 @@ export const ErrorType = {
 Custom error class with type and details.
 
 **Constructor:**
+
 ```javascript
-new AppError(message, type, details)
+new AppError(message, type, details);
 ```
 
 **Parameters:**
+
 - `message` (string): Error message
 - `type` (string): Error type from ErrorType enum (optional, default: `ErrorType.UNKNOWN`)
 - `details` (object): Additional error details (optional, default: `{}`)
 
 **Properties:**
+
 - `name` (string): Always 'AppError'
 - `message` (string): Error message
 - `type` (string): Error type
@@ -639,14 +717,14 @@ new AppError(message, type, details)
 - `timestamp` (string): ISO timestamp of error
 
 **Example:**
-```javascript
-import { AppError, ErrorType } from './utils/error-handling.js';
 
-throw new AppError(
-  'Invalid email format',
-  ErrorType.VALIDATION,
-  { field: 'email', value: userEmail }
-);
+```javascript
+import { AppError, ErrorType } from "./utils/error-handling.js";
+
+throw new AppError("Invalid email format", ErrorType.VALIDATION, {
+  field: "email",
+  value: userEmail,
+});
 ```
 
 ---
@@ -658,10 +736,12 @@ throw new AppError(
 Standardized error handler with logging and user notification.
 
 **Parameters:**
+
 - `error` (Error): Error object to handle
 - `options` (object): Handler options (optional)
 
 **Options:**
+
 - `context` (string): Operation context (default: `'Operation'`)
 - `logLevel` (string): Log level - 'error', 'warn', 'debug' (default: `'error'`)
 - `showToUser` (boolean): Show notification to user (default: `true`)
@@ -669,9 +749,11 @@ Standardized error handler with logging and user notification.
 - `onError` (function): Custom error callback (optional)
 
 **Returns:**
+
 - (object): Standardized error response
 
 **Response Format:**
+
 ```javascript
 {
   success: false,
@@ -683,24 +765,26 @@ Standardized error handler with logging and user notification.
 ```
 
 **Example:**
+
 ```javascript
-import { handleError } from './utils/error-handling.js';
+import { handleError } from "./utils/error-handling.js";
 
 try {
   await saveUserData(data);
 } catch (error) {
   return handleError(error, {
-    context: 'Save User Data',
+    context: "Save User Data",
     showToUser: true,
-    fallbackMessage: 'Failed to save data. Please try again.',
+    fallbackMessage: "Failed to save data. Please try again.",
     onError: (err, info) => {
       analytics.trackError(err, info);
-    }
+    },
   });
 }
 ```
 
 **Error Categorization:**
+
 - Detects error type from error properties
 - Maps HTTP status codes to error types
 - Provides user-friendly messages
@@ -713,32 +797,35 @@ try {
 Wraps async function with standardized error handling.
 
 **Parameters:**
+
 - `fn` (function): Async function to wrap
 - `options` (object): Handler options (same as handleError)
 
 **Returns:**
+
 - (function): Wrapped function
 
 **Example:**
+
 ```javascript
-import { withErrorHandling } from './utils/error-handling.js';
+import { withErrorHandling } from "./utils/error-handling.js";
 
 const saveData = withErrorHandling(
   async (data) => {
     return await api.save(data);
   },
   {
-    context: 'Save Data',
-    showToUser: true
-  }
+    context: "Save Data",
+    showToUser: true,
+  },
 );
 
 // Usage
 const result = await saveData(userData);
 if (result.success) {
-  console.log('Saved:', result.data);
+  console.log("Saved:", result.data);
 } else {
-  console.error('Error:', result.error);
+  console.error("Error:", result.error);
 }
 ```
 
@@ -749,28 +836,31 @@ if (result.success) {
 Executes async operation with error handling.
 
 **Parameters:**
+
 - `operation` (function): Async operation to execute
 - `options` (object): Handler options
 
 **Returns:**
+
 - (Promise<object>): Result object with `success` and `data`/`error`
 
 **Example:**
+
 ```javascript
-import { safeAsync } from './utils/error-handling.js';
+import { safeAsync } from "./utils/error-handling.js";
 
 const result = await safeAsync(
   async () => {
-    const response = await fetch('/api/data');
+    const response = await fetch("/api/data");
     return response.json();
   },
-  { context: 'Fetch Data' }
+  { context: "Fetch Data" },
 );
 
 if (result.success) {
-  console.log('Data:', result.data);
+  console.log("Data:", result.data);
 } else {
-  console.error('Error:', result.error);
+  console.error("Error:", result.error);
 }
 ```
 
@@ -781,10 +871,12 @@ if (result.success) {
 Retries failed operations with exponential backoff.
 
 **Parameters:**
+
 - `operation` (function): Operation to retry
 - `options` (object): Retry options
 
 **Options:**
+
 - `maxAttempts` (number): Maximum retry attempts (default: `3`)
 - `delay` (number): Initial delay in ms (default: `1000`)
 - `backoff` (number): Backoff multiplier (default: `2`)
@@ -792,16 +884,18 @@ Retries failed operations with exponential backoff.
 - `onRetry` (function): Callback on each retry
 
 **Returns:**
+
 - (Promise): Operation result
 
 **Example:**
+
 ```javascript
-import { withRetry, isRetryableError } from './utils/error-handling.js';
+import { withRetry, isRetryableError } from "./utils/error-handling.js";
 
 const data = await withRetry(
   async () => {
-    const response = await fetch('/api/data');
-    if (!response.ok) throw new Error('Request failed');
+    const response = await fetch("/api/data");
+    if (!response.ok) throw new Error("Request failed");
     return response.json();
   },
   {
@@ -813,15 +907,16 @@ const data = await withRetry(
     },
     onRetry: (error, attempt) => {
       console.log(`Retry attempt ${attempt}:`, error.message);
-    }
-  }
+    },
+  },
 );
 ```
 
 **Backoff Example:**
+
 - Attempt 1: Fails, wait 1000ms
-- Attempt 2: Fails, wait 2000ms (1000 * 2)
-- Attempt 3: Fails, wait 4000ms (2000 * 2)
+- Attempt 2: Fails, wait 2000ms (1000 \* 2)
+- Attempt 3: Fails, wait 4000ms (2000 \* 2)
 
 ---
 
@@ -830,18 +925,21 @@ const data = await withRetry(
 Creates validation error.
 
 **Parameters:**
+
 - `message` (string): Error message
 - `details` (object): Validation details (optional, default: `{}`)
 
 **Returns:**
+
 - (AppError): Validation error
 
 **Example:**
-```javascript
-import { validationError } from './utils/error-handling.js';
 
-if (!email.includes('@')) {
-  throw validationError('Invalid email format', { field: 'email' });
+```javascript
+import { validationError } from "./utils/error-handling.js";
+
+if (!email.includes("@")) {
+  throw validationError("Invalid email format", { field: "email" });
 }
 ```
 
@@ -852,18 +950,21 @@ if (!email.includes('@')) {
 Creates network error.
 
 **Parameters:**
+
 - `message` (string): Error message (optional)
 - `details` (object): Error details (optional, default: `{}`)
 
 **Returns:**
+
 - (AppError): Network error
 
 **Example:**
+
 ```javascript
-import { networkError } from './utils/error-handling.js';
+import { networkError } from "./utils/error-handling.js";
 
 if (!navigator.onLine) {
-  throw networkError('No internet connection');
+  throw networkError("No internet connection");
 }
 ```
 
@@ -874,14 +975,17 @@ if (!navigator.onLine) {
 Checks if error is retryable (network/server errors).
 
 **Parameters:**
+
 - `error` (Error): Error to check
 
 **Returns:**
+
 - (boolean): True if error is retryable
 
 **Example:**
+
 ```javascript
-import { isRetryableError } from './utils/error-handling.js';
+import { isRetryableError } from "./utils/error-handling.js";
 
 try {
   await fetchData();
@@ -897,6 +1001,7 @@ try {
 ```
 
 **Retryable Errors:**
+
 - Network errors
 - Server errors (5xx status codes)
 - AppError with type NETWORK or SERVER
@@ -908,23 +1013,27 @@ try {
 Wraps DOM operations with error handling.
 
 **Parameters:**
+
 - `operation` (function): DOM operation to execute
 - `options` (object): Options
 
 **Options:**
+
 - `logError` (boolean): Log error if occurs (default: `true`)
 - `defaultValue` (any): Value to return on error (default: `null`)
 
 **Returns:**
+
 - (any): Operation result or defaultValue
 
 **Example:**
+
 ```javascript
-import { safeDOMOperation } from './utils/error-handling.js';
+import { safeDOMOperation } from "./utils/error-handling.js";
 
 const element = safeDOMOperation(
-  () => document.querySelector('.user-profile'),
-  { defaultValue: null }
+  () => document.querySelector(".user-profile"),
+  { defaultValue: null },
 );
 
 if (element) {
@@ -939,21 +1048,25 @@ if (element) {
 Sets up global error handlers for unhandled errors and promise rejections.
 
 **Returns:**
+
 - (void)
 
 **Example:**
+
 ```javascript
-import { setupGlobalErrorHandlers } from './utils/error-handling.js';
+import { setupGlobalErrorHandlers } from "./utils/error-handling.js";
 
 // Call on app initialization
 setupGlobalErrorHandlers();
 ```
 
 **Handlers:**
+
 - `unhandledrejection`: Catches unhandled promise rejections
 - `error`: Catches global errors
 
 **Details:**
+
 - Logs all errors
 - Prevents default browser behavior
 - Should be called once during app initialization
@@ -977,32 +1090,37 @@ Singleton service for caching API responses and computed data.
 Retrieves data from cache.
 
 **Parameters:**
+
 - `key` (string): Cache key
 
 **Returns:**
+
 - (any): Cached data or null if not found/expired
 
 **Example:**
-```javascript
-import cacheService from './services/cache-service.js';
 
-const userData = cacheService.get('user_123');
+```javascript
+import cacheService from "./services/cache-service.js";
+
+const userData = cacheService.get("user_123");
 if (userData) {
   // Use cached data
   displayUser(userData);
 } else {
   // Fetch from API
   const data = await fetchUser(123);
-  cacheService.set('user_123', data);
+  cacheService.set("user_123", data);
 }
 ```
 
 **Lookup Order:**
+
 1. Memory cache (fast)
 2. localStorage (slower)
 3. Returns null if not found
 
 **Details:**
+
 - Expired entries removed automatically
 - Hit count incremented
 - Memory cache updated from localStorage hits
@@ -1014,42 +1132,48 @@ if (userData) {
 Stores data in cache.
 
 **Parameters:**
+
 - `key` (string): Cache key
 - `data` (any): Data to cache (must be JSON-serializable)
 - `options` (object): Cache options (optional)
 
 **Options:**
+
 - `ttl` (number): Time-to-live in milliseconds (default: `NETWORK.CACHE_DURATION_MEDIUM` = 15 min)
 - `persistToStorage` (boolean): Store in localStorage (default: `true`)
 
 **Returns:**
+
 - (void)
 
 **Example:**
+
 ```javascript
-import cacheService from './services/cache-service.js';
-import { NETWORK } from './config/app-constants.js';
+import cacheService from "./services/cache-service.js";
+import { NETWORK } from "./config/app-constants.js";
 
 // Cache for 5 minutes (memory + storage)
-cacheService.set('api_response', data, {
-  ttl: NETWORK.CACHE_DURATION_SHORT
+cacheService.set("api_response", data, {
+  ttl: NETWORK.CACHE_DURATION_SHORT,
 });
 
 // Cache for 1 hour (memory only)
-cacheService.set('temp_data', data, {
+cacheService.set("temp_data", data, {
   ttl: NETWORK.CACHE_DURATION_LONG,
-  persistToStorage: false
+  persistToStorage: false,
 });
 ```
 
 **TTL Constants:**
+
 ```javascript
-NETWORK.CACHE_DURATION_SHORT = 5 * 60 * 1000   // 5 minutes
-NETWORK.CACHE_DURATION_MEDIUM = 15 * 60 * 1000 // 15 minutes
-NETWORK.CACHE_DURATION_LONG = 60 * 60 * 1000   // 1 hour
+NETWORK.CACHE_DURATION_SHORT = 5 * 60 * 1000; // 5 minutes
+NETWORK.CACHE_DURATION_MEDIUM = 15 * 60 * 1000; // 15 minutes
+NETWORK.CACHE_DURATION_LONG = 60 * 60 * 1000; // 1 hour
 ```
 
 **Details:**
+
 - Stores in memory cache
 - Optionally persists to localStorage
 - Handles quota exceeded gracefully
@@ -1061,12 +1185,15 @@ NETWORK.CACHE_DURATION_LONG = 60 * 60 * 1000   // 1 hour
 Removes cache entry.
 
 **Parameters:**
+
 - `key` (string): Cache key to invalidate
 
 **Returns:**
+
 - (void)
 
 **Example:**
+
 ```javascript
 // Invalidate after update
 await updateUser(userId, data);
@@ -1080,23 +1207,27 @@ cacheService.invalidate(`user_${userId}`);
 Invalidates all cache entries matching a pattern.
 
 **Parameters:**
+
 - `pattern` (RegExp|string): Pattern to match keys
 
 **Returns:**
+
 - (void)
 
 **Example:**
+
 ```javascript
-import cacheService from './services/cache-service.js';
+import cacheService from "./services/cache-service.js";
 
 // Invalidate all user caches
 cacheService.invalidatePattern(/^user_/);
 
 // Invalidate all wellness data
-cacheService.invalidatePattern('wellness_');
+cacheService.invalidatePattern("wellness_");
 ```
 
 **Details:**
+
 - Matches against cache keys
 - Removes from both memory and localStorage
 - Logs count of invalidated entries
@@ -1108,9 +1239,11 @@ cacheService.invalidatePattern('wellness_');
 Clears all cache entries.
 
 **Returns:**
+
 - (void)
 
 **Example:**
+
 ```javascript
 // On logout
 function logout() {
@@ -1126,9 +1259,11 @@ function logout() {
 Returns cache statistics.
 
 **Returns:**
+
 - (object): Statistics object
 
 **Response:**
+
 ```javascript
 {
   hits: 150,
@@ -1142,6 +1277,7 @@ Returns cache statistics.
 ```
 
 **Example:**
+
 ```javascript
 const stats = cacheService.getStats();
 console.log(`Cache hit rate: ${stats.hitRate}`);
@@ -1154,9 +1290,11 @@ console.log(`Cache hit rate: ${stats.hitRate}`);
 Logs cache statistics to console.
 
 **Returns:**
+
 - (void)
 
 **Example:**
+
 ```javascript
 // Monitor cache performance
 setInterval(() => {
@@ -1169,6 +1307,7 @@ setInterval(() => {
 ### Cache Entry Properties
 
 Each cache entry stores:
+
 - `data`: The cached data
 - `timestamp`: When it was cached
 - `ttl`: Time-to-live in milliseconds
@@ -1177,6 +1316,7 @@ Each cache entry stores:
 ### LRU Eviction
 
 When memory cache is full (50 entries by default):
+
 - Least recently used entry is evicted
 - Based on hit count
 - Entry with fewest hits removed first
@@ -1184,6 +1324,7 @@ When memory cache is full (50 entries by default):
 ### Storage Management
 
 If localStorage quota exceeded:
+
 - Automatically removes oldest 25% of entries
 - Retries storage operation
 - Falls back to memory-only if still fails
@@ -1210,6 +1351,7 @@ Comprehensive validation utilities for forms, API data, and user inputs.
 Result object from validation operations.
 
 **Properties:**
+
 - `isValid` (boolean): Overall validation status
 - `errors` (object): Map of field errors
 - `warnings` (object): Map of field warnings
@@ -1221,6 +1363,7 @@ Result object from validation operations.
 Adds error for a field.
 
 **Parameters:**
+
 - `field` (string): Field name
 - `message` (string): Error message
 
@@ -1229,6 +1372,7 @@ Adds error for a field.
 Adds warning for a field.
 
 **Parameters:**
+
 - `field` (string): Field name
 - `message` (string): Warning message
 
@@ -1249,10 +1393,11 @@ Returns array of all error messages.
 Returns array of all warning messages.
 
 **Example:**
+
 ```javascript
 const result = new ValidationResult();
-result.addError('email', 'Invalid email format');
-result.addWarning('password', 'Password should be longer');
+result.addError("email", "Invalid email format");
+result.addWarning("password", "Password should be longer");
 
 console.log(result.isValid); // false
 console.log(result.errors); // { email: ['Invalid email format'] }
@@ -1268,17 +1413,20 @@ console.log(result.warnings); // { password: ['Password should be longer'] }
 Checks if value is not empty.
 
 **Parameters:**
+
 - `value` (any): Value to validate
 - `fieldName` (string): Field name for error message (optional, default: `'This field'`)
 
 **Returns:**
+
 - (string|null): Error message or null if valid
 
 **Example:**
-```javascript
-import { Validators } from './utils/validation.js';
 
-const error = Validators.required(userName, 'Username');
+```javascript
+import { Validators } from "./utils/validation.js";
+
+const error = Validators.required(userName, "Username");
 if (error) {
   console.error(error); // "Username is required"
 }
@@ -1291,20 +1439,24 @@ if (error) {
 Validates email format.
 
 **Parameters:**
+
 - `value` (string): Email to validate
 
 **Returns:**
+
 - (string|null): Error message or null if valid
 
 **Example:**
+
 ```javascript
-const error = Validators.email('invalid-email');
+const error = Validators.email("invalid-email");
 if (error) {
   console.error(error); // "Please enter a valid email address"
 }
 ```
 
 **Validation:**
+
 - Regex: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
 - Max length: 254 characters
 
@@ -1315,14 +1467,17 @@ if (error) {
 Validates password strength.
 
 **Parameters:**
+
 - `value` (string): Password to validate
 
 **Returns:**
+
 - (string|null): Error message or null if valid
 
 **Example:**
+
 ```javascript
-const error = Validators.password('weak');
+const error = Validators.password("weak");
 if (error) {
   console.error(error);
   // "Password must be at least 8 characters. Password must contain at least one uppercase letter..."
@@ -1330,6 +1485,7 @@ if (error) {
 ```
 
 **Requirements:**
+
 - Minimum 8 characters
 - Maximum 128 characters
 - At least one uppercase letter
@@ -1343,17 +1499,20 @@ if (error) {
 Validates string length.
 
 **Parameters:**
+
 - `value` (string): String to validate
 - `min` (number): Minimum length (optional)
 - `max` (number): Maximum length (optional)
 - `fieldName` (string): Field name (optional, default: `'Value'`)
 
 **Returns:**
+
 - (string|null): Error message or null if valid
 
 **Example:**
+
 ```javascript
-const error = Validators.length(userName, 2, 50, 'Username');
+const error = Validators.length(userName, 2, 50, "Username");
 if (error) {
   console.error(error); // "Username must be at least 2 characters"
 }
@@ -1366,17 +1525,20 @@ if (error) {
 Validates number range.
 
 **Parameters:**
+
 - `value` (number): Number to validate
 - `min` (number): Minimum value (optional)
 - `max` (number): Maximum value (optional)
 - `fieldName` (string): Field name (optional, default: `'Value'`)
 
 **Returns:**
+
 - (string|null): Error message or null if valid
 
 **Example:**
+
 ```javascript
-const error = Validators.range(age, 18, 100, 'Age');
+const error = Validators.range(age, 18, 100, "Age");
 if (error) {
   console.error(error); // "Age must be at least 18"
 }
@@ -1389,8 +1551,9 @@ if (error) {
 Validates URL format.
 
 **Example:**
+
 ```javascript
-const error = Validators.url('not-a-url');
+const error = Validators.url("not-a-url");
 if (error) {
   console.error(error); // "Please enter a valid URL starting with http:// or https://"
 }
@@ -1403,8 +1566,9 @@ if (error) {
 Validates phone number.
 
 **Example:**
+
 ```javascript
-const error = Validators.phone('+1-555-1234');
+const error = Validators.phone("+1-555-1234");
 // null (valid)
 ```
 
@@ -1415,8 +1579,9 @@ const error = Validators.phone('+1-555-1234');
 Validates date format.
 
 **Example:**
+
 ```javascript
-const error = Validators.date('2025-11-27');
+const error = Validators.date("2025-11-27");
 // null (valid)
 ```
 
@@ -1427,8 +1592,9 @@ const error = Validators.date('2025-11-27');
 Validates that two values match.
 
 **Example:**
+
 ```javascript
-const error = Validators.matches(password, confirmPassword, 'Passwords');
+const error = Validators.matches(password, confirmPassword, "Passwords");
 if (error) {
   console.error(error); // "Passwords do not match"
 }
@@ -1443,10 +1609,11 @@ if (error) {
 Validates wellness rating (1-10).
 
 **Example:**
-```javascript
-import { DomainValidators } from './utils/validation.js';
 
-const error = DomainValidators.wellnessRating(energyLevel, 'Energy');
+```javascript
+import { DomainValidators } from "./utils/validation.js";
+
+const error = DomainValidators.wellnessRating(energyLevel, "Energy");
 ```
 
 ---
@@ -1456,6 +1623,7 @@ const error = DomainValidators.wellnessRating(energyLevel, 'Energy');
 Validates sleep hours (0-24).
 
 **Example:**
+
 ```javascript
 const error = DomainValidators.sleepHours(7.5);
 ```
@@ -1467,6 +1635,7 @@ const error = DomainValidators.sleepHours(7.5);
 Validates workout duration (1-300 minutes).
 
 **Example:**
+
 ```javascript
 const error = DomainValidators.workoutDuration(60);
 ```
@@ -1480,18 +1649,21 @@ const error = DomainValidators.workoutDuration(60);
 Validates login form data.
 
 **Parameters:**
+
 - `data` (object): Form data with `email` and `password`
 
 **Returns:**
+
 - (ValidationResult): Validation result
 
 **Example:**
+
 ```javascript
-import { FormValidators } from './utils/validation.js';
+import { FormValidators } from "./utils/validation.js";
 
 const result = FormValidators.loginForm({
   email: userEmail,
-  password: userPassword
+  password: userPassword,
 });
 
 if (!result.isValid) {
@@ -1506,18 +1678,20 @@ if (!result.isValid) {
 Validates registration form data.
 
 **Required Fields:**
+
 - `name`: 2-100 characters
 - `email`: Valid email
 - `password`: Strong password
 - `confirmPassword`: Matches password
 
 **Example:**
+
 ```javascript
 const result = FormValidators.registrationForm({
-  name: 'John Doe',
-  email: 'john@example.com',
-  password: 'SecurePass123',
-  confirmPassword: 'SecurePass123'
+  name: "John Doe",
+  email: "john@example.com",
+  password: "SecurePass123",
+  confirmPassword: "SecurePass123",
 });
 ```
 
@@ -1528,6 +1702,7 @@ const result = FormValidators.registrationForm({
 Validates wellness check-in form.
 
 **Fields:**
+
 - `sleep`: 0-24 hours (warning if < 6)
 - `energy`: 1-10 rating (warning if ≤ 3)
 - `mood`: 1-10 rating
@@ -1535,13 +1710,14 @@ Validates wellness check-in form.
 - `notes`: Max 500 characters
 
 **Example:**
+
 ```javascript
 const result = FormValidators.wellnessForm({
   sleep: 7,
   energy: 8,
   mood: 7,
   stress: 4,
-  notes: 'Feeling good today'
+  notes: "Feeling good today",
 });
 
 if (result.hasWarnings()) {
@@ -1556,11 +1732,12 @@ if (result.hasWarnings()) {
 Validates profile update form.
 
 **Example:**
+
 ```javascript
 const result = FormValidators.profileForm({
-  name: 'John Doe',
-  email: 'john@example.com',
-  phone: '+1-555-1234'
+  name: "John Doe",
+  email: "john@example.com",
+  phone: "+1-555-1234",
 });
 ```
 
@@ -1575,10 +1752,12 @@ Normalizes user input for consistent formatting.
 **Note:** This function is for format normalization (lowercase, strip characters), NOT XSS prevention. For XSS prevention, use `escapeHtml()` from `sanitize.js`.
 
 **Parameters:**
+
 - `value` (any): Value to normalize
 - `type` (string): Input type (optional, default: `'text'`)
 
 **Types:**
+
 - `'text'`: Trim whitespace
 - `'email'`: Trim and lowercase
 - `'number'`: Only digits, `.`, `-`
@@ -1586,16 +1765,18 @@ Normalizes user input for consistent formatting.
 - `'alphanumeric'`: Only letters, numbers, spaces
 
 **Returns:**
+
 - (string): Normalized value
 
 **Example:**
-```javascript
-import { normalizeInput } from './utils/validation.js';
 
-const cleanEmail = normalizeInput('  USER@EXAMPLE.COM  ', 'email');
+```javascript
+import { normalizeInput } from "./utils/validation.js";
+
+const cleanEmail = normalizeInput("  USER@EXAMPLE.COM  ", "email");
 // Result: 'user@example.com'
 
-const cleanPhone = normalizeInput('(555) 123-4567!', 'phone');
+const cleanPhone = normalizeInput("(555) 123-4567!", "phone");
 // Result: '(555) 123-4567'
 ```
 
@@ -1606,17 +1787,20 @@ const cleanPhone = normalizeInput('(555) 123-4567!', 'phone');
 Validates form data using named validator.
 
 **Parameters:**
+
 - `formData` (object): Form data to validate
 - `validatorName` (string): Validator name from FormValidators
 
 **Returns:**
+
 - (ValidationResult): Validation result
 
 **Example:**
-```javascript
-import { validateForm } from './utils/validation.js';
 
-const result = validateForm(formData, 'registrationForm');
+```javascript
+import { validateForm } from "./utils/validation.js";
+
+const result = validateForm(formData, "registrationForm");
 
 if (!result.isValid) {
   displayValidationErrors(result, formElement);
@@ -1630,21 +1814,25 @@ if (!result.isValid) {
 Displays validation errors in UI.
 
 **Parameters:**
+
 - `result` (ValidationResult): Validation result
 - `formElement` (HTMLElement): Form element
 
 **Returns:**
+
 - (void)
 
 **Example:**
-```javascript
-import { displayValidationErrors } from './utils/validation.js';
 
-const result = validateForm(data, 'loginForm');
-displayValidationErrors(result, document.getElementById('loginForm'));
+```javascript
+import { displayValidationErrors } from "./utils/validation.js";
+
+const result = validateForm(data, "loginForm");
+displayValidationErrors(result, document.getElementById("loginForm"));
 ```
 
 **Features:**
+
 - Clears previous errors
 - Adds `.input-error` class to invalid inputs
 - Inserts error messages below inputs
@@ -1687,7 +1875,7 @@ export const UI = {
 
   // Loading states
   LOADING_MIN_DISPLAY: 300,
-  LOADING_DEBOUNCE: 100
+  LOADING_DEBOUNCE: 100,
 };
 ```
 
@@ -1710,7 +1898,7 @@ export const DATA_LIMITS = {
 
   // Pagination
   DEFAULT_PAGE_SIZE: 20,
-  MAX_PAGE_SIZE: 100
+  MAX_PAGE_SIZE: 100,
 };
 ```
 
@@ -1718,16 +1906,16 @@ export const DATA_LIMITS = {
 
 ```javascript
 export const AUTH = {
-  SESSION_TIMEOUT: 2 * 60 * 60 * 1000,        // 2 hours
-  SESSION_WARNING_TIME: 5 * 60 * 1000,        // 5 minutes
-  TOKEN_REFRESH_THRESHOLD: 5 * 60 * 1000,     // 5 minutes
+  SESSION_TIMEOUT: 2 * 60 * 60 * 1000, // 2 hours
+  SESSION_WARNING_TIME: 5 * 60 * 1000, // 5 minutes
+  TOKEN_REFRESH_THRESHOLD: 5 * 60 * 1000, // 5 minutes
   MAX_LOGIN_ATTEMPTS: 5,
-  LOCKOUT_DURATION: 15 * 60 * 1000,           // 15 minutes
+  LOCKOUT_DURATION: 15 * 60 * 1000, // 15 minutes
   PASSWORD_MIN_LENGTH: 8,
   PASSWORD_REQUIRE_UPPERCASE: true,
   PASSWORD_REQUIRE_LOWERCASE: true,
   PASSWORD_REQUIRE_NUMBER: true,
-  PASSWORD_REQUIRE_SPECIAL: false
+  PASSWORD_REQUIRE_SPECIAL: false,
 };
 ```
 
@@ -1752,7 +1940,7 @@ export const NETWORK = {
 
   // Debounce/throttle
   SEARCH_DEBOUNCE: 300,
-  SCROLL_THROTTLE: 100
+  SCROLL_THROTTLE: 100,
 };
 ```
 
@@ -1777,7 +1965,7 @@ export const WELLNESS = {
   // Warning thresholds
   LOW_ENERGY_THRESHOLD: 3,
   HIGH_STRESS_THRESHOLD: 7,
-  LOW_SLEEP_HOURS: 6
+  LOW_SLEEP_HOURS: 6,
 };
 ```
 
@@ -1785,16 +1973,16 @@ export const WELLNESS = {
 
 ```javascript
 export const STORAGE_KEYS = {
-  AUTH_TOKEN: 'authToken',
-  USER_DATA: 'userData',
-  WELLNESS_HISTORY: 'wellnessHistory',
-  WORKOUT_HISTORY: 'workoutHistory',
-  PREFERENCES: 'userPreferences',
-  THEME: 'themePreference',
-  LANGUAGE: 'languagePreference',
-  NOTIFICATIONS: 'notificationHistory',
-  CACHE_PREFIX: 'cache_',
-  CSRF_TOKEN: '__csrf_token'
+  AUTH_TOKEN: "authToken",
+  USER_DATA: "userData",
+  WELLNESS_HISTORY: "wellnessHistory",
+  WORKOUT_HISTORY: "workoutHistory",
+  PREFERENCES: "userPreferences",
+  THEME: "themePreference",
+  LANGUAGE: "languagePreference",
+  NOTIFICATIONS: "notificationHistory",
+  CACHE_PREFIX: "cache_",
+  CSRF_TOKEN: "__csrf_token",
 };
 ```
 
@@ -1813,8 +2001,9 @@ Returns true if viewport width 768-1279px.
 Returns true if viewport width ≥ 1280px.
 
 **Example:**
+
 ```javascript
-import { isMobile, UI } from './config/app-constants.js';
+import { isMobile, UI } from "./config/app-constants.js";
 
 if (isMobile()) {
   // Mobile-specific layout
@@ -1826,6 +2015,7 @@ if (isMobile()) {
 ## Version History
 
 **1.0.0** (November 2025)
+
 - Initial release
 - All utilities documented
 - Complete API reference
@@ -1835,6 +2025,7 @@ if (isMobile()) {
 ## Support
 
 For questions or issues with the utilities:
+
 - Check [Developer Guide](./DEVELOPER_GUIDE.md) for how-to guides
 - See [Security Documentation](./SECURITY.md) for security-specific guidance
 - Review [Architecture Documentation](./ARCHITECTURE.md) for design decisions

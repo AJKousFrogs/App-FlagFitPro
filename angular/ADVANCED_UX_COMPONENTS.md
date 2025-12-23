@@ -14,9 +14,11 @@ Four advanced components have been created following Angular 19 + PrimeNG best p
 ## Components Created
 
 ### 1. Performance Dashboard Component
+
 **Location:** `angular/src/app/shared/components/performance-dashboard/`
 
 **Features:**
+
 - Real-time metric updates with configurable intervals
 - Interactive knob displays for key performance metrics
 - Progress bars showing goal completion
@@ -24,14 +26,17 @@ Four advanced components have been created following Angular 19 + PrimeNG best p
 - Radar chart overview comparing current vs target performance
 
 **Key Technologies:**
+
 - PrimeNG Knob, Chart, ProgressBar, Tag modules
 - RxJS for real-time updates
 - Angular signals for reactive state management
 
 ### 2. Training Builder Component
+
 **Location:** `angular/src/app/shared/components/training-builder/`
 
 **Features:**
+
 - Multi-step wizard interface (Goals → Parameters → Generated Session)
 - Goal-based exercise selection with AI recommendations
 - Weather-aware training recommendations
@@ -39,28 +44,34 @@ Four advanced components have been created following Angular 19 + PrimeNG best p
 - Equipment-based filtering
 
 **Key Technologies:**
+
 - PrimeNG Steps, Timeline, Dialog modules
 - Reactive Forms for session configuration
 - Computed signals for dynamic session generation
 
 ### 3. Swipe Table Component
+
 **Location:** `angular/src/app/shared/components/swipe-table/`
 
 **Features:**
+
 - Touch-friendly swipe gestures (mobile only)
 - Edit and delete actions revealed on swipe
 - Responsive design (desktop shows actions always visible)
 - Accessible keyboard navigation support
 
 **Key Technologies:**
+
 - PrimeNG Table module
 - Touch event handling for mobile gestures
 - Responsive breakpoints for desktop/mobile behavior
 
 ### 4. Training Heatmap Component
+
 **Location:** `angular/src/app/shared/components/training-heatmap/`
 
 **Features:**
+
 - Calendar-style heatmap grid visualization
 - Toggle between intensity and volume views
 - Time range selection (3/6/12 months)
@@ -69,6 +80,7 @@ Four advanced components have been created following Angular 19 + PrimeNG best p
 - Full keyboard accessibility
 
 **Key Technologies:**
+
 - PrimeNG Dialog, Tooltip, ToggleButton modules
 - Dynamic grid generation based on date ranges
 - Accessible ARIA labels and keyboard navigation
@@ -76,24 +88,28 @@ Four advanced components have been created following Angular 19 + PrimeNG best p
 ## Implementation Details
 
 ### Architecture
+
 - All components are **standalone** (Angular 19 feature)
 - Use **OnPush change detection** for optimal performance
 - Leverage **Angular signals** for reactive state management
 - Follow **PrimeNG design system** patterns
 
 ### Accessibility
+
 - WCAG 2.1 AA compliant
 - Keyboard navigation support
 - ARIA labels and roles
 - Screen reader friendly
 
 ### Responsive Design
+
 - Mobile-first approach
 - Breakpoints at 768px for tablet/desktop
 - Touch-optimized interactions on mobile
 - Adaptive layouts for different screen sizes
 
 ### Performance Optimizations
+
 - OnPush change detection strategy
 - Computed signals for derived state
 - TrackBy functions for list rendering
@@ -102,6 +118,7 @@ Four advanced components have been created following Angular 19 + PrimeNG best p
 ## Usage Examples
 
 ### Performance Dashboard
+
 ```typescript
 import { PerformanceDashboardComponent } from '@app/shared/components/performance-dashboard';
 
@@ -112,6 +129,7 @@ import { PerformanceDashboardComponent } from '@app/shared/components/performanc
 ```
 
 ### Training Builder
+
 ```typescript
 import { TrainingBuilderComponent } from '@app/shared/components/training-builder';
 
@@ -119,6 +137,7 @@ import { TrainingBuilderComponent } from '@app/shared/components/training-builde
 ```
 
 ### Swipe Table
+
 ```typescript
 import { SwipeTableComponent } from '@app/shared/components/swipe-table';
 
@@ -131,6 +150,7 @@ import { SwipeTableComponent } from '@app/shared/components/swipe-table';
 ```
 
 ### Training Heatmap
+
 ```typescript
 import { TrainingHeatmapComponent } from '@app/shared/components/training-heatmap';
 
@@ -154,6 +174,7 @@ This component demonstrates all four components in a tabbed interface and can be
 ## Dependencies
 
 All components require:
+
 - Angular 19+
 - PrimeNG 19+
 - PrimeIcons
@@ -163,6 +184,7 @@ All components require:
 ## Styling
 
 Components use CSS custom properties for theming:
+
 - `--p-primary-color` - Primary brand color
 - `--p-surface-border` - Border colors
 - `--p-text-color` - Text colors
@@ -181,6 +203,7 @@ Customize these in your global styles or theme configuration.
 ## Testing
 
 Components are ready for:
+
 - Unit testing (standalone components)
 - Integration testing
 - E2E testing with Playwright
@@ -196,4 +219,3 @@ See `angular/src/app/shared/components/README.md` for detailed component documen
 - TypeScript strict mode compliant
 - No linting errors
 - Ready for production use (after backend integration)
-

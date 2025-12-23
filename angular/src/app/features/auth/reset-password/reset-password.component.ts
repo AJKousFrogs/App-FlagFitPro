@@ -30,8 +30,8 @@ import { ToastModule } from "primeng/toast";
     ButtonModule,
     InputTextModule,
     MessageModule,
-    ToastModule
-],
+    ToastModule,
+  ],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
@@ -43,7 +43,7 @@ import { ToastModule } from "primeng/toast";
           </div>
           <h1 class="reset-password-title">Reset Password</h1>
         </ng-template>
-    
+
         <form [formGroup]="resetForm" (ngSubmit)="onSubmit()">
           <div class="p-field mb-4">
             <label for="email" class="p-label required">Email</label>
@@ -55,14 +55,14 @@ import { ToastModule } from "primeng/toast";
               placeholder="Enter your email"
               [class.ng-invalid]="isFieldInvalid('email')"
               autocomplete="email"
-              />
-            @if (isFieldInvalid('email')) {
+            />
+            @if (isFieldInvalid("email")) {
               <small class="p-error">
                 {{ getFieldError("email") }}
               </small>
             }
           </div>
-    
+
           <p-button
             type="submit"
             label="Send Reset Link"
@@ -70,20 +70,20 @@ import { ToastModule } from "primeng/toast";
             [loading]="isLoading()"
             [disabled]="resetForm.invalid"
             styleClass="w-full mb-4"
-            >
+          >
           </p-button>
         </form>
-    
+
         <div class="reset-password-divider my-4">
           <span>Or</span>
         </div>
-    
+
         <a [routerLink]="['/login']" class="reset-password-login-link"
           >Back to Sign In</a
-          >
-        </p-card>
-      </div>
-    `,
+        >
+      </p-card>
+    </div>
+  `,
   styles: [
     `
       .reset-password-page {

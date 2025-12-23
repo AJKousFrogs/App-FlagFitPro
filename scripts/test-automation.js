@@ -1,5 +1,4 @@
 #!/usr/bin/env node
- 
 
 /**
  * Test Automation Script for Flag Football Training App
@@ -469,7 +468,9 @@ class TestAutomation {
 
   calculateOverallCoverage() {
     const coverage = this.testResults.coverage;
-    if (!coverage.unit) {return 0;}
+    if (!coverage.unit) {
+      return 0;
+    }
 
     return Math.round(
       (coverage.unit.lines +
@@ -482,18 +483,26 @@ class TestAutomation {
 
   calculatePerformanceScore() {
     const perf = this.testResults.performance;
-    if (!perf.avgResponseTime) {return 0;}
+    if (!perf.avgResponseTime) {
+      return 0;
+    }
 
     let score = 100;
 
     // Deduct points for slow response times
-    if (perf.avgResponseTime > 200) {score -= Math.min(50, (perf.avgResponseTime - 200) / 10);}
+    if (perf.avgResponseTime > 200) {
+      score -= Math.min(50, (perf.avgResponseTime - 200) / 10);
+    }
 
     // Deduct points for errors
-    if (perf.errorRate > 1) {score -= perf.errorRate * 10;}
+    if (perf.errorRate > 1) {
+      score -= perf.errorRate * 10;
+    }
 
     // Deduct points for high memory usage
-    if (perf.memoryUsage > 100) {score -= (perf.memoryUsage - 100) / 10;}
+    if (perf.memoryUsage > 100) {
+      score -= (perf.memoryUsage - 100) / 10;
+    }
 
     return Math.max(0, Math.round(score));
   }

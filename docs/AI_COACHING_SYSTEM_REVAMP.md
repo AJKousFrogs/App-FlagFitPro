@@ -15,11 +15,13 @@ This document defines a revamped AI coaching system with safety tiers, curated k
 ## Current Design Analysis
 
 ### Strengths
+
 - ✅ Good pipeline stages: intent → retrieval → generation → enhancer → caching
 - ✅ Personalization hooks (injury, schedule, body metrics, role)
 - ✅ Evidence-level indicator and disclaimers planned
 
 ### Critical Risks & Gaps
+
 - ❌ Medical/supplement advice is high liability
 - ❌ Retrieval sources not governed
 - ❌ No safety policy layer
@@ -33,11 +35,13 @@ This document defines a revamped AI coaching system with safety tiers, curated k
 ### Tier 1: General Training Info (Low Risk)
 
 **Examples:**
+
 - "How do I improve acceleration?"
 - "What's the best warm-up routine?"
 - "How do I improve my throwing mechanics?"
 
 **Output Rules:**
+
 - ✅ Full guidance allowed
 - ✅ No medical disclaimers required
 - ✅ Can provide specific techniques and protocols
@@ -49,11 +53,13 @@ This document defines a revamped AI coaching system with safety tiers, curated k
 ### Tier 2: Injury Prevention & Recovery (Medium Risk)
 
 **Examples:**
+
 - "Prevent hamstring strains"
 - "Recovery protocol for sore shoulder"
 - "How to avoid overuse injuries"
 
 **Output Rules:**
+
 - ✅ Evidence-based general guidance
 - ✅ "Stop/seek care if X" warnings
 - ✅ Conservative progressions
@@ -63,11 +69,12 @@ This document defines a revamped AI coaching system with safety tiers, curated k
 **Risk Level:** `medium`
 
 **Response Template:**
+
 ```
 [Answer with evidence-based guidance]
 
-⚠️ **Important**: If you experience [specific symptoms], 
-stop immediately and consult a healthcare professional. 
+⚠️ **Important**: If you experience [specific symptoms],
+stop immediately and consult a healthcare professional.
 This guidance is general and may not apply to your specific situation.
 ```
 
@@ -76,11 +83,13 @@ This guidance is general and may not apply to your specific situation.
 ### Tier 3: Supplements / Medical Dosing (High Risk)
 
 **Examples:**
+
 - "How much iron should I take?"
 - "What's the dosage for creatine?"
 - "Should I take vitamin D supplements?"
 
 **Output Rules:**
+
 - ❌ No direct dosing unless lab values provided
 - ✅ Education: what it's for, common ranges cited, risks
 - ✅ Clear "talk to clinician / do labs" guidance
@@ -90,11 +99,12 @@ This guidance is general and may not apply to your specific situation.
 **Risk Level:** `high`
 
 **Response Template:**
+
 ```
 [Educational content about the supplement]
 
-⚠️ **Medical Disclaimer**: Supplement dosing should be individualized 
-based on lab values, medical history, and professional evaluation. 
+⚠️ **Medical Disclaimer**: Supplement dosing should be individualized
+based on lab values, medical history, and professional evaluation.
 The ranges mentioned are general guidelines only.
 
 **Before taking supplements:**
@@ -103,7 +113,7 @@ The ranges mentioned are general guidelines only.
 3. Consider your medical history and current medications
 4. Start with conservative doses
 
-This information is not medical advice and does not replace 
+This information is not medical advice and does not replace
 professional medical consultation.
 ```
 
@@ -114,10 +124,18 @@ professional medical consultation.
 ### Intent Classification
 
 **Implementation:**
+
 ```typescript
 interface IntentClassification {
-  intent: 'dosage' | 'timing' | 'safety' | 'how_to' | 'what_is' | 'why' | 'protocol';
-  risk_level: 'low' | 'medium' | 'high';
+  intent:
+    | "dosage"
+    | "timing"
+    | "safety"
+    | "how_to"
+    | "what_is"
+    | "why"
+    | "protocol";
+  risk_level: "low" | "medium" | "high";
   entities: {
     supplements?: string[];
     injuries?: string[];
@@ -131,14 +149,22 @@ async function classifyIntent(query: string): Promise<IntentClassification> {
   // Use LLM or rule-based classification
   const classification = await llm.classify({
     query,
-    categories: ['dosage', 'timing', 'safety', 'how_to', 'what_is', 'why', 'protocol'],
+    categories: [
+      "dosage",
+      "timing",
+      "safety",
+      "how_to",
+      "what_is",
+      "why",
+      "protocol",
+    ],
     risk_keywords: {
-      high: ['dosage', 'mg', 'supplement', 'medication', 'iron', 'vitamin'],
-      medium: ['injury', 'pain', 'recovery', 'prevent'],
-      low: ['technique', 'form', 'warm-up', 'drill']
-    }
+      high: ["dosage", "mg", "supplement", "medication", "iron", "vitamin"],
+      medium: ["injury", "pain", "recovery", "prevent"],
+      low: ["technique", "form", "warm-up", "drill"],
+    },
   });
-  
+
   return classification;
 }
 ```
@@ -146,20 +172,30 @@ async function classifyIntent(query: string): Promise<IntentClassification> {
 ### Risk Level Determination
 
 **Rules:**
+
 1. **High Risk**: Contains dosage queries, supplement names, medical conditions
 2. **Medium Risk**: Contains injury/prevention/recovery keywords
 3. **Low Risk**: General training questions
 
 **Implementation:**
+
 ```typescript
-function determineRiskLevel(classification: IntentClassification): 'low' | 'medium' | 'high' {
-  if (classification.intent === 'dosage' || classification.entities.supplements?.length > 0) {
-    return 'high';
+function determineRiskLevel(
+  classification: IntentClassification,
+): "low" | "medium" | "high" {
+  if (
+    classification.intent === "dosage" ||
+    classification.entities.supplements?.length > 0
+  ) {
+    return "high";
   }
-  if (classification.intent === 'safety' || classification.entities.injuries?.length > 0) {
-    return 'medium';
+  if (
+    classification.intent === "safety" ||
+    classification.entities.injuries?.length > 0
+  ) {
+    return "medium";
   }
-  return 'low';
+  return "low";
 }
 ```
 
@@ -170,11 +206,13 @@ function determineRiskLevel(classification: IntentClassification): 'low' | 'medi
 ### Knowledge Base Structure
 
 **Tiers:**
+
 1. **Curated KB**: Own structured entries, reviewed
 2. **Trusted Sources**: Pre-selected journals/position stands
 3. **Open Web Fallback**: Optional, flagged as "lower certainty"
 
 **Schema:**
+
 ```sql
 CREATE TABLE knowledge_base (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -201,43 +239,52 @@ CREATE INDEX idx_knowledge_base_risk ON knowledge_base(risk_level);
 ### Source Scoring
 
 **Scoring Criteria:**
+
 - **Curated**: Score = 1.0 (highest confidence)
 - **Trusted Sources**: Score = 0.8-0.9 (peer-reviewed journals, position stands)
 - **Web Sources**: Score = 0.5-0.7 (depends on domain authority, recency)
 
 **Evidence Grades:**
+
 - **A / Strong**: Meta-analyses, systematic reviews, multiple RCTs
 - **B / Moderate**: Single RCTs, well-designed cohort studies
 - **C / Limited**: Case studies, expert opinion, anecdotal
 
 **Implementation:**
+
 ```typescript
 interface KnowledgeSource {
   id: string;
   content: string;
-  source_type: 'curated' | 'trusted' | 'web';
+  source_type: "curated" | "trusted" | "web";
   source_title: string;
   source_url?: string;
   source_quality_score: number;
   publication_date?: Date;
-  evidence_grade: 'A' | 'B' | 'C' | 'strong' | 'moderate' | 'limited';
+  evidence_grade: "A" | "B" | "C" | "strong" | "moderate" | "limited";
 }
 
-async function retrieveKnowledge(query: string, riskLevel: string): Promise<KnowledgeSource[]> {
+async function retrieveKnowledge(
+  query: string,
+  riskLevel: string,
+): Promise<KnowledgeSource[]> {
   // 1. Search curated KB first
   const curated = await searchCuratedKB(query, riskLevel);
-  
+
   // 2. Search trusted sources
   const trusted = await searchTrustedSources(query, riskLevel);
-  
+
   // 3. Filter by evidence grade threshold
-  const threshold = riskLevel === 'high' ? 'A' : riskLevel === 'medium' ? 'B' : 'C';
+  const threshold =
+    riskLevel === "high" ? "A" : riskLevel === "medium" ? "B" : "C";
   const filtered = [...curated, ...trusted].filter(
-    source => compareEvidenceGrade(source.evidence_grade, threshold) >= 0
+    (source) => compareEvidenceGrade(source.evidence_grade, threshold) >= 0,
   );
-  
+
   // 4. Sort by quality score
-  return filtered.sort((a, b) => b.source_quality_score - a.source_quality_score);
+  return filtered.sort(
+    (a, b) => b.source_quality_score - a.source_quality_score,
+  );
 }
 ```
 
@@ -248,9 +295,10 @@ async function retrieveKnowledge(query: string, riskLevel: string): Promise<Know
 ### Template System
 
 **Implementation:**
+
 ```typescript
 interface ResponseTemplate {
-  risk_level: 'low' | 'medium' | 'high';
+  risk_level: "low" | "medium" | "high";
   structure: {
     answer: string;
     citations: Citation[];
@@ -262,36 +310,36 @@ interface ResponseTemplate {
 function generateResponse(
   query: string,
   knowledge: KnowledgeSource[],
-  riskLevel: 'low' | 'medium' | 'high',
-  userContext: UserContext
+  riskLevel: "low" | "medium" | "high",
+  userContext: UserContext,
 ): ResponseTemplate {
   const template = getTemplateForRiskLevel(riskLevel);
-  
+
   // Generate answer from knowledge sources
   const answer = synthesizeAnswer(query, knowledge, userContext);
-  
+
   // Add citations
-  const citations = knowledge.map(source => ({
+  const citations = knowledge.map((source) => ({
     title: source.source_title,
     url: source.source_url,
     evidence_grade: source.evidence_grade,
-    date: source.publication_date
+    date: source.publication_date,
   }));
-  
+
   // Add disclaimers based on risk level
   const disclaimers = getDisclaimersForRiskLevel(riskLevel);
-  
+
   // Generate suggested actions
   const suggestedActions = generateSuggestedActions(query, answer, userContext);
-  
+
   return {
     risk_level: riskLevel,
     structure: {
       answer,
       citations,
       disclaimers,
-      suggested_actions: suggestedActions
-    }
+      suggested_actions: suggestedActions,
+    },
   };
 }
 ```
@@ -316,13 +364,14 @@ function generateResponse(
    - ⚠️ Always include "consult healthcare provider" disclaimer
 
 **Implementation:**
+
 ```typescript
 function personalizeRecommendation(
   recommendation: string,
   bodyStats: BodyStats,
-  riskLevel: 'low' | 'medium' | 'high'
+  riskLevel: "low" | "medium" | "high",
 ): string {
-  if (riskLevel === 'high') {
+  if (riskLevel === "high") {
     // Supplements: broad ranges only
     return addBroadRangeGuidance(recommendation, bodyStats);
   } else {
@@ -341,23 +390,28 @@ function personalizeRecommendation(
 **Make AI an action engine, not just chat:**
 
 **Examples:**
+
 1. **Load-Based Recommendations**:
+
    ```
-   "Based on your last 7 days, your load is trending up fast. 
+   "Based on your last 7 days, your load is trending up fast.
    Want me to suggest a lower-load recovery session tomorrow?"
    ```
+
    → Action: Create recovery session
 
 2. **Volume Tracking**:
+
    ```
-   "Your throwing volume is above your weekly target. 
+   "Your throwing volume is above your weekly target.
    I can adjust tomorrow's plan."
    ```
+
    → Action: Modify training plan
 
 3. **Injury-Aware Recommendations**:
    ```
-   "You reported tight hamstrings. I can insert a warm-up 
+   "You reported tight hamstrings. I can insert a warm-up
    protocol in your next two sessions."
    ```
    → Action: Add warm-up exercises
@@ -365,6 +419,7 @@ function personalizeRecommendation(
 ### Recommendation Log
 
 **Schema:**
+
 ```sql
 CREATE TABLE ai_recommendations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -386,9 +441,15 @@ CREATE INDEX idx_ai_recommendations_type ON ai_recommendations(recommendation_ty
 ```
 
 **Implementation:**
+
 ```typescript
 interface Recommendation {
-  type: 'create_session' | 'modify_plan' | 'add_exercise' | 'read_article' | 'ask_coach';
+  type:
+    | "create_session"
+    | "modify_plan"
+    | "add_exercise"
+    | "read_article"
+    | "ask_coach";
   reason: string;
   data: {
     // Type-specific data
@@ -402,31 +463,31 @@ interface Recommendation {
 async function generateRecommendations(
   query: string,
   answer: string,
-  userContext: UserContext
+  userContext: UserContext,
 ): Promise<Recommendation[]> {
   const recommendations: Recommendation[] = [];
-  
+
   // Analyze answer for actionable insights
   if (detectHighLoad(userContext.loadMetrics)) {
     recommendations.push({
-      type: 'create_session',
-      reason: 'High ACWR detected, recovery session recommended',
+      type: "create_session",
+      reason: "High ACWR detected, recovery session recommended",
       data: {
-        session: generateRecoverySession(userContext)
-      }
+        session: generateRecoverySession(userContext),
+      },
     });
   }
-  
+
   if (detectInjuryRisk(userContext.injuries)) {
     recommendations.push({
-      type: 'add_exercise',
-      reason: 'Injury prevention exercises recommended',
+      type: "add_exercise",
+      reason: "Injury prevention exercises recommended",
       data: {
-        exercise: getInjuryPreventionExercise(userContext.injuries[0])
-      }
+        exercise: getInjuryPreventionExercise(userContext.injuries[0]),
+      },
     });
   }
-  
+
   return recommendations;
 }
 ```
@@ -455,6 +516,7 @@ async function generateRecommendations(
    - Coaches can disable AI for specific players
 
 **Schema:**
+
 ```sql
 CREATE TABLE ai_coach_visibility (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -480,6 +542,7 @@ CREATE INDEX idx_ai_coach_visibility_type ON ai_coach_visibility(visibility_type
 ### User Feedback Capture
 
 **Schema:**
+
 ```sql
 CREATE TABLE ai_feedback (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -499,6 +562,7 @@ CREATE INDEX idx_ai_feedback_type ON ai_feedback(feedback_type);
 ### Improvement Loop
 
 **Process:**
+
 1. Collect feedback on responses
 2. Identify patterns (unsafe responses, incorrect information)
 3. Update knowledge base based on feedback
@@ -506,22 +570,26 @@ CREATE INDEX idx_ai_feedback_type ON ai_feedback(feedback_type);
 5. Update response templates
 
 **Implementation:**
+
 ```typescript
 async function processFeedback(feedback: Feedback) {
   // Log feedback
   await saveFeedback(feedback);
-  
+
   // Analyze patterns
-  if (feedback.feedback_type === 'unsafe' || feedback.feedback_type === 'incorrect') {
+  if (
+    feedback.feedback_type === "unsafe" ||
+    feedback.feedback_type === "incorrect"
+  ) {
     // Flag for review
     await flagForReview(feedback.message_id, feedback.feedback_reason);
-    
+
     // Update knowledge base if needed
-    if (feedback.feedback_reason.includes('incorrect information')) {
+    if (feedback.feedback_reason.includes("incorrect information")) {
       await updateKnowledgeBase(feedback.message_id, feedback.feedback_reason);
     }
   }
-  
+
   // Track outcomes
   if (feedback.outcome) {
     await trackOutcome(feedback.message_id, feedback.outcome);
@@ -536,6 +604,7 @@ async function processFeedback(feedback: Feedback) {
 ### POST /api/ai/chat
 
 **Request:**
+
 ```typescript
 {
   message: string;
@@ -547,6 +616,7 @@ async function processFeedback(feedback: Feedback) {
 ```
 
 **Response:**
+
 ```typescript
 {
   answer_markdown: string;
@@ -556,9 +626,14 @@ async function processFeedback(feedback: Feedback) {
     evidence_grade: string;
     date?: string;
   }>;
-  risk_level: 'low' | 'medium' | 'high';
+  risk_level: "low" | "medium" | "high";
   suggested_actions: Array<{
-    type: 'create_session' | 'modify_plan' | 'add_exercise' | 'read_article' | 'ask_coach';
+    type:
+      | "create_session"
+      | "modify_plan"
+      | "add_exercise"
+      | "read_article"
+      | "ask_coach";
     reason: string;
     data: any;
   }>;
@@ -568,6 +643,7 @@ async function processFeedback(feedback: Feedback) {
 ```
 
 **Pipeline:**
+
 1. Classify intent + risk
 2. Build context summary (injury, recent load, role, position)
 3. Retrieve sources with scoring
@@ -582,20 +658,21 @@ async function processFeedback(feedback: Feedback) {
 ### Cache Key Includes Context
 
 **Implementation:**
+
 ```typescript
 function generateCacheKey(
   query: string,
   userContext: UserContext,
-  riskLevel: string
+  riskLevel: string,
 ): string {
   // Include user context + time-sensitive flags
   const contextHash = hash({
     userId: userContext.userId,
     injuries: userContext.activeInjuries,
     recentLoad: userContext.recentLoad,
-    riskLevel
+    riskLevel,
   });
-  
+
   return `ai:chat:${hash(query)}:${contextHash}`;
 }
 
@@ -615,4 +692,3 @@ async function invalidateCache(userId: string, reason: string) {
 
 - [WORKFLOW_AND_BUSINESS_LOGIC.md](../WORKFLOW_AND_BUSINESS_LOGIC.md) - Business logic
 - [API_OWNERSHIP_MAP.md](./API_OWNERSHIP_MAP.md) - API structure
-

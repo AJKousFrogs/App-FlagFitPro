@@ -29,7 +29,9 @@ let messageInterval;
 let typingInterval;
 
 async function initChatPage() {
-  if (!authManager.requireAuth()) {return;}
+  if (!authManager.requireAuth()) {
+    return;
+  }
 
   // Check for channel parameter in URL (e.g., ?channel=flagfit-assistant)
   const urlParams = new URLSearchParams(window.location.search);
@@ -59,7 +61,9 @@ async function initChatPage() {
 // Ensure a channel exists, create it if it doesn't
 async function ensureChannelExists(channelName) {
   const channelsList = document.getElementById("channelsList");
-  if (!channelsList) {return;}
+  if (!channelsList) {
+    return;
+  }
 
   // Check if channel already exists
   const existingChannel = channelsList.querySelector(
@@ -72,7 +76,6 @@ async function ensureChannelExists(channelName) {
   // Special handling for AI assistant channel
   if (channelName === "flagfit-assistant") {
     createAIAssistantChannel();
-    
   }
 
   // For other channels, they would need to be created through the normal flow
@@ -82,7 +85,9 @@ async function ensureChannelExists(channelName) {
 // Create the AI Assistant channel
 function createAIAssistantChannel() {
   const channelsList = document.getElementById("channelsList");
-  if (!channelsList) {return;}
+  if (!channelsList) {
+    return;
+  }
 
   // Find where to insert (after Direct Messages category or at end)
   const dmCategory = Array.from(
@@ -262,7 +267,9 @@ function setupCallButtons() {
 
 function setupChannelSettings() {
   const settingsBtn = document.getElementById("channelSettingsBtn");
-  if (!settingsBtn) {return;}
+  if (!settingsBtn) {
+    return;
+  }
 
   const user = authManager.getCurrentUser();
   const userRole = authManager.getUserRole();
@@ -367,20 +374,20 @@ function openChannelSettings() {
 
   // Use setSafeContent to sanitize HTML before insertion
   setSafeContent(modal, modalHtml, true, true);
-  
+
   // Replace onclick with addEventListener
-  const overlay = modal.querySelector('.channel-modal-overlay');
-  const closeBtn = modal.querySelector('.channel-modal-close');
-  const cancelBtn = modal.querySelector('.channel-modal-cancel');
-  
+  const overlay = modal.querySelector(".channel-modal-overlay");
+  const closeBtn = modal.querySelector(".channel-modal-close");
+  const cancelBtn = modal.querySelector(".channel-modal-cancel");
+
   if (overlay) {
-    overlay.addEventListener('click', () => closeChannelModal());
+    overlay.addEventListener("click", () => closeChannelModal());
   }
   if (closeBtn) {
-    closeBtn.addEventListener('click', () => closeChannelModal());
+    closeBtn.addEventListener("click", () => closeChannelModal());
   }
   if (cancelBtn) {
-    cancelBtn.addEventListener('click', () => closeChannelModal());
+    cancelBtn.addEventListener("click", () => closeChannelModal());
   }
 
   document.body.appendChild(modal);
@@ -508,7 +515,9 @@ async function handleChannelCreation(e) {
 
 function addChannelToSidebar(channel) {
   const channelsList = document.getElementById("channelsList");
-  if (!channelsList) {return;}
+  if (!channelsList) {
+    return;
+  }
 
   // Find where to insert (after Team Channels category)
   const teamChannelsCategory = channelsList.querySelector(".channel-category");
@@ -689,7 +698,9 @@ async function loadMessages() {
 
 function updateMessagesContainer(messages) {
   const container = document.getElementById("messagesContainer");
-  if (!container) {return;}
+  if (!container) {
+    return;
+  }
 
   const currentUser = authManager.getCurrentUser();
 
@@ -728,15 +739,17 @@ function updateMessagesContainer(messages) {
     );
 
     // SECURITY: Sanitize author name to prevent XSS
-    const safeAuthorName = escapeHtml(msg.authorName || msg.author || 'Unknown');
+    const safeAuthorName = escapeHtml(
+      msg.authorName || msg.author || "Unknown",
+    );
 
     const avatar = document.createElement("div");
     avatar.className = "message-avatar";
     avatar.textContent = getInitials(safeAuthorName);
-    
+
     const content = document.createElement("div");
     content.className = "message-content";
-    
+
     const header = document.createElement("div");
     header.className = "message-header";
     const author = document.createElement("span");
@@ -748,14 +761,14 @@ function updateMessagesContainer(messages) {
     time.textContent = formatTime(msg.timestamp);
     header.appendChild(author);
     header.appendChild(time);
-    
+
     const text = document.createElement("div");
     text.className = "message-text";
     text.textContent = msg.text;
-    
+
     content.appendChild(header);
     content.appendChild(text);
-    
+
     // Add status and actions HTML using setSafeContent
     if (statusHtml) {
       const tempStatus = document.createElement("div");
@@ -771,7 +784,7 @@ function updateMessagesContainer(messages) {
         content.appendChild(tempActions.firstChild);
       }
     }
-    
+
     messageDiv.appendChild(avatar);
     messageDiv.appendChild(content);
 
@@ -793,13 +806,15 @@ async function sendMessage() {
   const sendBtn = document.getElementById("sendBtn");
   const message = input.value.trim();
 
-  if (!message) {return;}
+  if (!message) {
+    return;
+  }
 
   const user = authManager.getCurrentUser();
 
   // Show loading state with accessibility
   // Store original button content safely using temp container pattern
-  const tempContainer = document.createElement('div');
+  const tempContainer = document.createElement("div");
   tempContainer.appendChild(sendBtn.cloneNode(true));
   // eslint-disable-next-line no-restricted-syntax -- Safe extraction of existing button HTML for restoration (temp container pattern)
   const originalBtnText = tempContainer.innerHTML;
@@ -1021,10 +1036,10 @@ function addMessageToUI(message, isOwn = false) {
   const avatar = document.createElement("div");
   avatar.className = "message-avatar";
   avatar.textContent = getInitials(message.authorName);
-  
+
   const content = document.createElement("div");
   content.className = "message-content";
-  
+
   const header = document.createElement("div");
   header.className = "message-header";
   const author = document.createElement("span");
@@ -1036,14 +1051,14 @@ function addMessageToUI(message, isOwn = false) {
   time.textContent = formatTime(message.timestamp);
   header.appendChild(author);
   header.appendChild(time);
-  
+
   const text = document.createElement("div");
   text.className = "message-text";
   text.textContent = message.text;
-  
+
   content.appendChild(header);
   content.appendChild(text);
-  
+
   // Add status and actions HTML using temp containers
   if (statusHtml) {
     const tempStatus = document.createElement("div");
@@ -1059,7 +1074,7 @@ function addMessageToUI(message, isOwn = false) {
       content.appendChild(tempActions.firstChild);
     }
   }
-  
+
   messageDiv.appendChild(avatar);
   messageDiv.appendChild(content);
 
@@ -1162,7 +1177,7 @@ window.toggleSidebar = function () {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.querySelector(".menu-scrim");
     const toggle = document.getElementById("mobile-menu-toggle");
-    
+
     if (sidebar) {
       const isOpen = sidebar.classList.contains("is-open");
       if (isOpen) {
@@ -1191,7 +1206,7 @@ window.closeMenu = function () {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.querySelector(".menu-scrim");
     const toggle = document.getElementById("mobile-menu-toggle");
-    
+
     if (sidebar) {
       sidebar.classList.remove("is-open");
       overlay?.classList.remove("is-visible");

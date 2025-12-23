@@ -9,6 +9,7 @@ This directory contains advanced sports-specific components designed to elevate 
 A real-time performance monitoring dashboard with interactive metrics, trend indicators, and visualizations.
 
 **Features:**
+
 - Real-time metric updates (configurable interval)
 - Interactive knob displays for key metrics
 - Progress bars showing goal completion
@@ -16,6 +17,7 @@ A real-time performance monitoring dashboard with interactive metrics, trend ind
 - Radar chart overview of all performance dimensions
 
 **Usage:**
+
 ```typescript
 import { PerformanceDashboardComponent } from '@app/shared/components/performance-dashboard/performance-dashboard.component';
 
@@ -31,6 +33,7 @@ import { PerformanceDashboardComponent } from '@app/shared/components/performanc
 ```
 
 **Inputs:**
+
 - `athleteId?: string` - Optional athlete ID for filtering metrics
 - `realTimeEnabled: boolean` - Enable/disable real-time updates (default: true)
 
@@ -41,6 +44,7 @@ import { PerformanceDashboardComponent } from '@app/shared/components/performanc
 An AI-powered smart training session builder with multi-step wizard interface.
 
 **Features:**
+
 - Step-by-step session creation wizard
 - Goal-based exercise selection
 - Weather-aware recommendations
@@ -49,6 +53,7 @@ An AI-powered smart training session builder with multi-step wizard interface.
 - Equipment-based filtering
 
 **Usage:**
+
 ```typescript
 import { TrainingBuilderComponent } from '@app/shared/components/training-builder/training-builder.component';
 
@@ -59,6 +64,7 @@ import { TrainingBuilderComponent } from '@app/shared/components/training-builde
 ```
 
 **Features:**
+
 - Three-step wizard: Goals → Parameters → Generated Session
 - Real-time weather integration
 - AI-powered exercise recommendations
@@ -71,12 +77,14 @@ import { TrainingBuilderComponent } from '@app/shared/components/training-builde
 A mobile-optimized table component with swipe gestures for row actions.
 
 **Features:**
+
 - Touch-friendly swipe gestures (mobile only)
 - Edit and delete actions on swipe
 - Responsive design (desktop shows actions always visible)
 - Accessible keyboard navigation
 
 **Usage:**
+
 ```typescript
 import { SwipeTableComponent } from '@app/shared/components/swipe-table/swipe-table.component';
 
@@ -94,6 +102,7 @@ import { SwipeTableComponent } from '@app/shared/components/swipe-table/swipe-ta
 ```
 
 **Inputs:**
+
 - `data: Signal<any[]>` - Table data array
 - `columns: Signal<Array<{field: string, header: string}>>` - Column definitions
 - `onEdit?: (row: any) => void` - Edit callback
@@ -106,6 +115,7 @@ import { SwipeTableComponent } from '@app/shared/components/swipe-table/swipe-ta
 An interactive heatmap visualization for training load over time periods.
 
 **Features:**
+
 - Calendar-style heatmap grid
 - Toggle between intensity and volume views
 - Time range selection (3/6/12 months)
@@ -114,6 +124,7 @@ An interactive heatmap visualization for training load over time periods.
 - Accessible keyboard navigation
 
 **Usage:**
+
 ```typescript
 import { TrainingHeatmapComponent } from '@app/shared/components/training-heatmap/training-heatmap.component';
 
@@ -124,6 +135,7 @@ import { TrainingHeatmapComponent } from '@app/shared/components/training-heatma
 ```
 
 **Features:**
+
 - Visual representation of training consistency
 - Detailed modal on cell click
 - Legend for intensity levels
@@ -144,6 +156,7 @@ All components follow these principles:
 ## Dependencies
 
 All components require:
+
 - Angular 19+
 - PrimeNG 19+
 - PrimeIcons
@@ -152,10 +165,10 @@ All components require:
 ## Styling
 
 Components use CSS custom properties (CSS variables) for theming:
+
 - `--p-primary-color` - Primary brand color
 - `--p-surface-border` - Border colors
 - `--p-text-color` - Text colors
 - `--p-border-radius` - Border radius values
 
 Customize these in your global styles or theme configuration.
-

@@ -3,22 +3,24 @@
  * Displays achievements on the dashboard
  */
 
-import { logger } from '../logger.js';
+import { logger } from "../logger.js";
 
-(function() {
-  'use strict';
-  
+(function () {
+  "use strict";
+
   // Helper function to safely set HTML content
   // Uses temp container pattern - acceptable per ESLint exception for safe helper functions
   function setSafeContent(element, content, isHTML, allowRichText) {
-    if (!element) {return;}
+    if (!element) {
+      return;
+    }
     if (!isHTML) {
       element.textContent = content;
       return;
     }
     // Use temp container pattern for safe HTML insertion
-     
-    const temp = document.createElement('div');
+
+    const temp = document.createElement("div");
     // eslint-disable-next-line no-restricted-syntax
     temp.innerHTML = content; // Content is already sanitized by caller
     while (temp.firstChild) {
@@ -32,7 +34,7 @@ import { logger } from '../logger.js';
   function renderAchievementsWidget(containerId) {
     // Wait for achievements service to be available
     if (!window.achievementsService) {
-      logger.debug('[Achievements Widget] Waiting for achievements service...');
+      logger.debug("[Achievements Widget] Waiting for achievements service...");
       setTimeout(() => renderAchievementsWidget(containerId), 100);
       return;
     }
@@ -50,8 +52,8 @@ import { logger } from '../logger.js';
     const progress = service.getProgress();
 
     // Create widget HTML
-    const widget = document.createElement('div');
-    widget.className = 'achievements-widget';
+    const widget = document.createElement("div");
+    widget.className = "achievements-widget";
     // Build widget HTML (data is from trusted service, but we sanitize for safety)
     const widgetHtml = `
       <div class="achievements-header">
@@ -92,24 +94,24 @@ import { logger } from '../logger.js';
     // Clear and append using replaceChildren for consistency
     container.replaceChildren();
     container.appendChild(widget);
-    
+
     // Replace onclick with addEventListener
-    const viewAllBtn = widget.querySelector('.view-all-btn');
+    const viewAllBtn = widget.querySelector(".view-all-btn");
     if (viewAllBtn) {
-      viewAllBtn.removeAttribute('onclick');
-      viewAllBtn.addEventListener('click', () => {
-        if (typeof window.showAllAchievements === 'function') {
+      viewAllBtn.removeAttribute("onclick");
+      viewAllBtn.addEventListener("click", () => {
+        if (typeof window.showAllAchievements === "function") {
           window.showAllAchievements();
         }
       });
     }
-    
+
     // Initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
+    if (typeof lucide !== "undefined") {
       lucide.createIcons(widget);
     }
 
-    logger.info('[Achievements Widget] Rendered successfully');
+    logger.info("[Achievements Widget] Rendered successfully");
   }
 
   /**
@@ -118,27 +120,35 @@ import { logger } from '../logger.js';
   function renderAchievementsList(achievements) {
     // Sort: unlocked first, then by points
     const sorted = achievements.sort((a, b) => {
-      if (a.unlocked && !b.unlocked) {return -1;}
-      if (!a.unlocked && b.unlocked) {return 1;}
+      if (a.unlocked && !b.unlocked) {
+        return -1;
+      }
+      if (!a.unlocked && b.unlocked) {
+        return 1;
+      }
       return b.points - a.points;
     });
 
     // Show top 6 achievements
     const topAchievements = sorted.slice(0, 6);
 
-    return topAchievements.map(achievement => `
-      <div class="achievement-badge ${achievement.unlocked ? 'unlocked' : 'locked'} rarity-${achievement.rarity || 'common'}"
+    return topAchievements
+      .map(
+        (achievement) => `
+      <div class="achievement-badge ${achievement.unlocked ? "unlocked" : "locked"} rarity-${achievement.rarity || "common"}"
            title="${achievement.description}">
         <div class="achievement-icon">
           <i data-lucide="${achievement.icon}" style="width: 32px; height: 32px;"></i>
         </div>
         <div class="achievement-name">${achievement.name}</div>
         <div class="achievement-points">${achievement.points} pts</div>
-        ${achievement.rarity && achievement.rarity !== 'common' ? `<div class="achievement-rarity rarity-${achievement.rarity}">${achievement.rarity.toUpperCase()}</div>` : ''}
-        ${achievement.unlocked ? '<div class="achievement-check"><i data-lucide="check" style="width: 16px; height: 16px;"></i></div>' : ''}
-        ${!achievement.unlocked ? '<div class="achievement-lock"><i data-lucide="lock" style="width: 16px; height: 16px;"></i></div>' : ''}
+        ${achievement.rarity && achievement.rarity !== "common" ? `<div class="achievement-rarity rarity-${achievement.rarity}">${achievement.rarity.toUpperCase()}</div>` : ""}
+        ${achievement.unlocked ? '<div class="achievement-check"><i data-lucide="check" style="width: 16px; height: 16px;"></i></div>' : ""}
+        ${!achievement.unlocked ? '<div class="achievement-lock"><i data-lucide="lock" style="width: 16px; height: 16px;"></i></div>' : ""}
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   /**
@@ -146,12 +156,12 @@ import { logger } from '../logger.js';
    */
   function addAchievementsStyles() {
     // Check if styles already added
-    if (document.getElementById('achievements-widget-styles')) {
+    if (document.getElementById("achievements-widget-styles")) {
       return;
     }
 
-    const style = document.createElement('style');
-    style.id = 'achievements-widget-styles';
+    const style = document.createElement("style");
+    style.id = "achievements-widget-styles";
     style.textContent = `
       .achievements-widget {
         background: var(--surface-primary, #ffffff);
@@ -485,15 +495,26 @@ import { logger } from '../logger.js';
   /**
    * Show all achievements in a modal
    */
-  window.showAllAchievements = function() {
-    if (!window.achievementsService) {return;}
+  window.showAllAchievements = function () {
+    if (!window.achievementsService) {
+      return;
+    }
 
     const service = window.achievementsService;
-    const categories = ['wellness', 'training', 'performance', 'games', 'tournaments', 'qb', 'social', 'special'];
+    const categories = [
+      "wellness",
+      "training",
+      "performance",
+      "games",
+      "tournaments",
+      "qb",
+      "social",
+      "special",
+    ];
 
     // Create modal
-    const modal = document.createElement('div');
-    modal.className = 'achievements-modal';
+    const modal = document.createElement("div");
+    modal.className = "achievements-modal";
     // Build modal HTML (data is from trusted service, but we sanitize for safety)
     const modalHtml = `
       <div class="achievements-modal-overlay"></div>
@@ -546,50 +567,59 @@ import { logger } from '../logger.js';
           })()}
         </div>
 
-        ${categories.map(category => {
-          const categoryAchievements = service.getAchievementsByCategory(category);
-          if (categoryAchievements.length === 0) {return '';}
+        ${categories
+          .map((category) => {
+            const categoryAchievements =
+              service.getAchievementsByCategory(category);
+            if (categoryAchievements.length === 0) {
+              return "";
+            }
 
-          return `
+            return `
             <div class="category-section">
               <h3 class="category-title">${category.charAt(0).toUpperCase() + category.slice(1)}</h3>
               <div class="achievements-grid">
-                ${categoryAchievements.map(a => `
-                  <div class="achievement-badge ${a.unlocked ? 'unlocked' : 'locked'} rarity-${a.rarity || 'common'}">
+                ${categoryAchievements
+                  .map(
+                    (a) => `
+                  <div class="achievement-badge ${a.unlocked ? "unlocked" : "locked"} rarity-${a.rarity || "common"}">
                     <div class="achievement-icon">
                       <i data-lucide="${a.icon}" style="width: 32px; height: 32px;"></i>
                     </div>
                     <div class="achievement-name">${a.name}</div>
                     <div class="achievement-description">${a.description}</div>
                     <div class="achievement-points">${a.points} pts</div>
-                    ${a.rarity && a.rarity !== 'common' ? `<div class="achievement-rarity rarity-${a.rarity}">${a.rarity.toUpperCase()}</div>` : ''}
-                    ${a.unlocked ? '<div class="achievement-check"><i data-lucide="check" style="width: 16px; height: 16px;"></i></div>' : ''}
-                    ${!a.unlocked ? '<div class="achievement-lock"><i data-lucide="lock" style="width: 16px; height: 16px;"></i></div>' : ''}
+                    ${a.rarity && a.rarity !== "common" ? `<div class="achievement-rarity rarity-${a.rarity}">${a.rarity.toUpperCase()}</div>` : ""}
+                    ${a.unlocked ? '<div class="achievement-check"><i data-lucide="check" style="width: 16px; height: 16px;"></i></div>' : ""}
+                    ${!a.unlocked ? '<div class="achievement-lock"><i data-lucide="lock" style="width: 16px; height: 16px;"></i></div>' : ""}
                   </div>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </div>
             </div>
           `;
-        }).join('')}
+          })
+          .join("")}
       </div>
     `;
 
     // Use setSafeContent to sanitize HTML before insertion
     setSafeContent(modal, modalHtml, true, true);
-    
+
     // Replace onclick with addEventListener
-    const overlay = modal.querySelector('.achievements-modal-overlay');
-    const closeBtn = modal.querySelector('.modal-close');
-    
+    const overlay = modal.querySelector(".achievements-modal-overlay");
+    const closeBtn = modal.querySelector(".modal-close");
+
     if (overlay) {
-      overlay.addEventListener('click', () => modal.remove());
+      overlay.addEventListener("click", () => modal.remove());
     }
     if (closeBtn) {
-      closeBtn.addEventListener('click', () => modal.remove());
+      closeBtn.addEventListener("click", () => modal.remove());
     }
 
     // Add modal styles
-    const modalStyles = document.createElement('style');
+    const modalStyles = document.createElement("style");
     modalStyles.textContent = `
       .achievements-modal {
         position: fixed;
@@ -759,28 +789,28 @@ import { logger } from '../logger.js';
 
     document.head.appendChild(modalStyles);
     document.body.appendChild(modal);
-    
+
     // Initialize Lucide icons in modal
-    if (typeof lucide !== 'undefined') {
+    if (typeof lucide !== "undefined") {
       lucide.createIcons(modal);
     }
   };
 
   // Auto-render widget if container exists
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      if (document.getElementById('achievements-widget-container')) {
-        renderAchievementsWidget('achievements-widget-container');
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      if (document.getElementById("achievements-widget-container")) {
+        renderAchievementsWidget("achievements-widget-container");
       }
     });
   } else {
-    if (document.getElementById('achievements-widget-container')) {
-      renderAchievementsWidget('achievements-widget-container');
+    if (document.getElementById("achievements-widget-container")) {
+      renderAchievementsWidget("achievements-widget-container");
     }
   }
 
   // Export for manual rendering
   window.renderAchievementsWidget = renderAchievementsWidget;
 
-  logger.info('[Achievements Widget] Widget script loaded');
+  logger.info("[Achievements Widget] Widget script loaded");
 })();

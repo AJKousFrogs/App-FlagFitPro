@@ -178,7 +178,10 @@ class DatabaseConnection {
     try {
       // Get auth token from secure storage
       let token = null;
-      if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+      if (
+        window.secureStorage &&
+        typeof window.secureStorage.getAuthToken === "function"
+      ) {
         try {
           token = await window.secureStorage.getAuthToken();
         } catch (error) {

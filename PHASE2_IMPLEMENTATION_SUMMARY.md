@@ -16,6 +16,7 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 **Status**: ✅ **Already Properly Configured**
 
 **Verification**:
+
 - ✅ ACWR service uses `EvidenceConfigService` for evidence-based thresholds
 - ✅ Thresholds sourced from Gabbett (2016) and other research
 - ✅ Citations and science notes included in configuration
@@ -23,6 +24,7 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 - ✅ Service properly initializes from active preset
 
 **Files Verified**:
+
 - `angular/src/app/core/services/acwr.service.ts` - Uses EvidenceConfigService ✅
 - `angular/src/app/core/services/evidence-config.service.ts` - Manages evidence presets ✅
 - `angular/src/app/core/config/evidence-presets.ts` - Defines evidence-based configurations ✅
@@ -36,6 +38,7 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 **Status**: ✅ **Already Properly Configured**
 
 **Verification**:
+
 - ✅ Readiness service uses `EvidenceConfigService` for evidence-based weightings
 - ✅ Weightings optimized for team-sport contexts:
   - Workload (ACWR): 35%
@@ -47,6 +50,7 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 - ✅ Reduced data mode support for sparse wellness data
 
 **Files Verified**:
+
 - `angular/src/app/core/services/readiness.service.ts` - Uses EvidenceConfigService ✅
 - `angular/src/app/core/config/evidence-presets.ts` - Readiness config defined ✅
 
@@ -61,6 +65,7 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 **Issue**: Training plans were only stored in memory, lost on page reload
 
 **Changes Made**:
+
 - ✅ Added `savePlan()` method to persist plans to backend
 - ✅ Added `loadPlan()` method to retrieve saved plans
 - ✅ Added `getPlanHistory()` method to get plan history
@@ -68,15 +73,18 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 - ✅ Added `generateAndSavePlan()` convenience method
 
 **API Endpoints Used**:
+
 - `POST /api/training/plan` - Save plan
 - `GET /api/training/plan` - Load plan
 - `GET /api/training/plan/history` - Get plan history
 - `DELETE /api/training/plan/:id` - Delete plan
 
 **Files Modified**:
+
 - `angular/src/app/core/services/training-plan.service.ts` - Added persistence methods
 
 **Features**:
+
 - Plans persist across sessions
 - Plan history tracking
 - Error handling with fallbacks
@@ -93,6 +101,7 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 **Issue**: Notification state was scattered across components, causing inconsistencies
 
 **Changes Made**:
+
 - ✅ Created `NotificationStateService` as single source of truth
 - ✅ Implemented reactive state using Angular Signals
 - ✅ Added automatic badge count updates
@@ -101,11 +110,13 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 - ✅ Added optimistic updates with rollback
 
 **Files Created**:
+
 - `angular/src/app/core/services/notification-state.service.ts` - New centralized service
 
 **Features**:
+
 - **Reactive State**: Uses Angular Signals for reactive updates
-- **Computed Signals**: 
+- **Computed Signals**:
   - `unreadCount` - Automatically calculated
   - `unreadNotifications` - Filtered list
   - `readNotifications` - Filtered list
@@ -122,6 +133,7 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
   - `clearNotifications()` - Clear all (logout)
 
 **Benefits**:
+
 - Single source of truth for notification state
 - Consistent state across all components
 - Easier to test and maintain
@@ -134,12 +146,12 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 
 ## 📊 Impact Summary
 
-| Task | Status | Impact | Effort |
-|------|--------|--------|--------|
-| ACWR Service Audit | ✅ Verified | HIGH - Core training logic | Already done |
-| Readiness Service Audit | ✅ Verified | HIGH - Training decisions | Already done |
-| Training Plan Persistence | ✅ Implemented | MEDIUM - Workflow stability | 8-10 hrs |
-| Notification State Centralization | ✅ Implemented | MEDIUM - Foundation for real-time | 4-6 hrs |
+| Task                              | Status         | Impact                            | Effort       |
+| --------------------------------- | -------------- | --------------------------------- | ------------ |
+| ACWR Service Audit                | ✅ Verified    | HIGH - Core training logic        | Already done |
+| Readiness Service Audit           | ✅ Verified    | HIGH - Training decisions         | Already done |
+| Training Plan Persistence         | ✅ Implemented | MEDIUM - Workflow stability       | 8-10 hrs     |
+| Notification State Centralization | ✅ Implemented | MEDIUM - Foundation for real-time | 4-6 hrs      |
 
 **Total Effort**: ~12-16 hours (less than estimated due to existing implementations)
 
@@ -150,6 +162,7 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 ### Training Plan Persistence
 
 **Save Flow**:
+
 1. User generates/edits plan → `savePlan()` called
 2. Plan serialized and sent to backend
 3. Backend stores plan with athlete ID and week number
@@ -157,6 +170,7 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 5. Error handling with user feedback
 
 **Load Flow**:
+
 1. Component calls `loadPlan(athleteId, weekNumber?)`
 2. Service fetches from backend
 3. Plan deserialized and set in local state
@@ -166,12 +180,14 @@ Phase 2 focused on stabilizing foundational services so higher-level features ca
 ### Notification State Service
 
 **Architecture**:
+
 - **State Signals**: `notifications`, `loading`, `error`, `lastOpenedAt`
 - **Computed Signals**: `unreadCount`, `unreadNotifications`, `readNotifications`, `state`
 - **Methods**: CRUD operations with optimistic updates
 - **Error Handling**: Automatic rollback on API failures
 
 **Usage Pattern**:
+
 ```typescript
 // Inject service
 private notificationService = inject(NotificationStateService);
@@ -243,10 +259,10 @@ await this.notificationService.markAsRead(notificationId);
 ```typescript
 // Generate and save plan
 const plan = await trainingPlanService.generateAndSavePlan(athleteId, {
-  goal: 'speed',
+  goal: "speed",
   currentACWR: 1.2,
-  readinessLevel: 'high',
-  trainingDaysPerWeek: 5
+  readinessLevel: "high",
+  trainingDaysPerWeek: 5,
 });
 
 // Load saved plan
@@ -282,6 +298,7 @@ await notificationService.markAllAsRead();
 ### For Components Using Notifications
 
 **Before** (scattered state):
+
 ```typescript
 // Each component managed its own state
 const notifications = [];
@@ -289,6 +306,7 @@ const unreadCount = 0;
 ```
 
 **After** (centralized):
+
 ```typescript
 // Inject service
 private notificationService = inject(NotificationStateService);
@@ -301,12 +319,14 @@ readonly notifications = this.notificationService.unreadNotifications;
 ### For Components Using Training Plans
 
 **Before** (memory only):
+
 ```typescript
 // Plans lost on reload
 const plan = trainingPlanService.generateWeeklyPlan(config);
 ```
 
 **After** (persistent):
+
 ```typescript
 // Plans persist across sessions
 const plan = await trainingPlanService.generateAndSavePlan(athleteId, config);
@@ -316,4 +336,3 @@ const savedPlan = await trainingPlanService.loadPlan(athleteId);
 ---
 
 **Phase 2 Complete!** All foundational services are now stable and reliable. Ready for Phase 3 enhancements and documentation.
-

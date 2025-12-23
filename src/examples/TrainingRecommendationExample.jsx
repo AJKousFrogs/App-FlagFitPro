@@ -1,8 +1,8 @@
 // Training Recommendation Example
 // Demonstrates data-driven rule engine vs hardcoded conditionals
 
-import React, { useState } from 'react';
-import { TrainingRecommendationEngine } from '../utils/RuleEngine';
+import React, { useState } from "react";
+import { TrainingRecommendationEngine } from "../utils/RuleEngine";
 
 /**
  * BEFORE: Hardcoded if-chain approach (BAD)
@@ -12,31 +12,31 @@ const OldApproach_HardcodedConditionals = (hamstringStrength) => {
   // ❌ ANTI-PATTERN: Hardcoded business logic in conditionals
   if (hamstringStrength < 60) {
     return {
-      exercises: ['Nordic Hamstring Curls', 'Romanian Deadlifts'],
-      frequency: '4x per week',
+      exercises: ["Nordic Hamstring Curls", "Romanian Deadlifts"],
+      frequency: "4x per week",
       sets: 3,
       reps: 8,
-      injuryRisk: 'High - Immediate attention required'
+      injuryRisk: "High - Immediate attention required",
     };
   } else if (hamstringStrength >= 60 && hamstringStrength < 75) {
     return {
-      exercises: ['Single-leg Romanian Deadlifts', 'Hamstring Curls'],
-      frequency: '3x per week',
+      exercises: ["Single-leg Romanian Deadlifts", "Hamstring Curls"],
+      frequency: "3x per week",
       sets: 3,
       reps: 10,
-      injuryRisk: 'Moderate - Preventive training recommended'
+      injuryRisk: "Moderate - Preventive training recommended",
     };
   } else if (hamstringStrength >= 75) {
     return {
-      exercises: ['Maintenance Hamstring Curls'],
-      frequency: '2x per week',
+      exercises: ["Maintenance Hamstring Curls"],
+      frequency: "2x per week",
       sets: 2,
       reps: 12,
-      injuryRisk: 'Low - Maintain current level'
+      injuryRisk: "Low - Maintain current level",
     };
   }
 
-  return { error: 'No recommendation available' };
+  return { error: "No recommendation available" };
 };
 
 /**
@@ -45,7 +45,10 @@ const OldApproach_HardcodedConditionals = (hamstringStrength) => {
  */
 const NewApproach_DataDrivenRules = (hamstringStrength) => {
   // ✅ BEST PRACTICE: Business logic in configuration, evaluation in engine
-  return TrainingRecommendationEngine.getRecommendations('hamstring', hamstringStrength);
+  return TrainingRecommendationEngine.getRecommendations(
+    "hamstring",
+    hamstringStrength,
+  );
 };
 
 /**
@@ -57,15 +60,24 @@ const TrainingRecommendationDemo = () => {
   const [coreStability, setCoreStability] = useState(65);
 
   // Get recommendations using data-driven engine
-  const hamstringPlan = TrainingRecommendationEngine.getRecommendations('hamstring', hamstringStrength);
-  const quadricepsPlan = TrainingRecommendationEngine.getRecommendations('quadriceps', quadricepsStrength);
-  const corePlan = TrainingRecommendationEngine.getRecommendations('core', coreStability);
+  const hamstringPlan = TrainingRecommendationEngine.getRecommendations(
+    "hamstring",
+    hamstringStrength,
+  );
+  const quadricepsPlan = TrainingRecommendationEngine.getRecommendations(
+    "quadriceps",
+    quadricepsStrength,
+  );
+  const corePlan = TrainingRecommendationEngine.getRecommendations(
+    "core",
+    coreStability,
+  );
 
   // Or get comprehensive plan for all muscle groups
   const comprehensivePlan = TrainingRecommendationEngine.getComprehensivePlan({
     hamstring: hamstringStrength,
     quadriceps: quadricepsStrength,
-    core: coreStability
+    core: coreStability,
   });
 
   return (
@@ -84,14 +96,19 @@ const TrainingRecommendationDemo = () => {
         />
 
         <div className={`recommendation severity-${hamstringPlan.severity}`}>
-          <p><strong>Injury Risk:</strong> {hamstringPlan.injuryRisk}</p>
-          <p><strong>Frequency:</strong> {hamstringPlan.frequency}</p>
+          <p>
+            <strong>Injury Risk:</strong> {hamstringPlan.injuryRisk}
+          </p>
+          <p>
+            <strong>Frequency:</strong> {hamstringPlan.frequency}
+          </p>
 
           <h4>Recommended Exercises:</h4>
           <ul>
             {hamstringPlan.recommendations?.map((exercise, idx) => (
               <li key={idx}>
-                {exercise.exercise} - {exercise.sets} sets x {exercise.reps} reps
+                {exercise.exercise} - {exercise.sets} sets x {exercise.reps}{" "}
+                reps
               </li>
             ))}
           </ul>
@@ -110,13 +127,16 @@ const TrainingRecommendationDemo = () => {
         />
 
         <div className={`recommendation severity-${quadricepsPlan.severity}`}>
-          <p><strong>Frequency:</strong> {quadricepsPlan.frequency}</p>
+          <p>
+            <strong>Frequency:</strong> {quadricepsPlan.frequency}
+          </p>
 
           <h4>Recommended Exercises:</h4>
           <ul>
             {quadricepsPlan.recommendations?.map((exercise, idx) => (
               <li key={idx}>
-                {exercise.exercise} - {exercise.sets} sets x {exercise.reps} reps
+                {exercise.exercise} - {exercise.sets} sets x {exercise.reps}{" "}
+                reps
               </li>
             ))}
           </ul>
@@ -135,14 +155,22 @@ const TrainingRecommendationDemo = () => {
         />
 
         <div className={`recommendation severity-${corePlan.severity}`}>
-          <p><strong>Frequency:</strong> {corePlan.frequency}</p>
-          {corePlan.note && <p><em>{corePlan.note}</em></p>}
+          <p>
+            <strong>Frequency:</strong> {corePlan.frequency}
+          </p>
+          {corePlan.note && (
+            <p>
+              <em>{corePlan.note}</em>
+            </p>
+          )}
 
           <h4>Recommended Exercises:</h4>
           <ul>
             {corePlan.recommendations?.map((exercise, idx) => (
               <li key={idx}>
-                {exercise.exercise} - {exercise.duration || `${exercise.sets} sets x ${exercise.reps} reps`}
+                {exercise.exercise} -{" "}
+                {exercise.duration ||
+                  `${exercise.sets} sets x ${exercise.reps} reps`}
               </li>
             ))}
           </ul>
@@ -155,7 +183,10 @@ const TrainingRecommendationDemo = () => {
         {comprehensivePlan.map((plan, idx) => (
           <div key={idx} className={`plan-item severity-${plan.severity}`}>
             <h4>{plan.muscle.toUpperCase()}</h4>
-            <p>Current: {plan.currentStrength}% - {plan.injuryRisk || 'Assess individually'}</p>
+            <p>
+              Current: {plan.currentStrength}% -{" "}
+              {plan.injuryRisk || "Assess individually"}
+            </p>
           </div>
         ))}
       </div>

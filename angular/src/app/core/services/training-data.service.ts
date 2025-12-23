@@ -61,45 +61,49 @@ export class TrainingDataService {
    * Always uses backend API - never direct Supabase queries
    * By default, filters to sessions up to and including today
    */
-  getTrainingSessions(options?: TrainingSessionsOptions): Observable<TrainingSession[]> {
+  getTrainingSessions(
+    options?: TrainingSessionsOptions,
+  ): Observable<TrainingSession[]> {
     const params: Record<string, any> = {};
-    
+
     if (options?.startDate) {
-      params['startDate'] = options.startDate;
-    }
-    
-    if (options?.endDate) {
-      params['endDate'] = options.endDate;
-    }
-    
-    if (options?.includeUpcoming) {
-      params['includeUpcoming'] = options.includeUpcoming.toString();
-    }
-    
-    if (options?.status) {
-      params['status'] = options.status;
-    }
-    
-    if (options?.limit) {
-      params['limit'] = options.limit.toString();
+      params["startDate"] = options.startDate;
     }
 
-    return this.apiService.get<TrainingSession[]>(
-      API_ENDPOINTS.training.sessions,
-      params
-    ).pipe(
-      map((response) => {
-        if (response.error) {
-          this.logger.error("Error fetching training sessions:", response.error);
-          return [];
-        }
-        return response.data || [];
-      }),
-      catchError((error) => {
-        this.logger.error("Error fetching training sessions:", error);
-        return from(Promise.resolve([]));
-      })
-    );
+    if (options?.endDate) {
+      params["endDate"] = options.endDate;
+    }
+
+    if (options?.includeUpcoming) {
+      params["includeUpcoming"] = options.includeUpcoming.toString();
+    }
+
+    if (options?.status) {
+      params["status"] = options.status;
+    }
+
+    if (options?.limit) {
+      params["limit"] = options.limit.toString();
+    }
+
+    return this.apiService
+      .get<TrainingSession[]>(API_ENDPOINTS.training.sessions, params)
+      .pipe(
+        map((response) => {
+          if (response.error) {
+            this.logger.error(
+              "Error fetching training sessions:",
+              response.error,
+            );
+            return [];
+          }
+          return response.data || [];
+        }),
+        catchError((error) => {
+          this.logger.error("Error fetching training sessions:", error);
+          return from(Promise.resolve([]));
+        }),
+      );
   }
 
   /**
@@ -111,7 +115,7 @@ export class TrainingDataService {
       map((sessions) => {
         const session = sessions.find((s) => s.id === id);
         return session || null;
-      })
+      }),
     );
   }
 
@@ -120,24 +124,26 @@ export class TrainingDataService {
    * Uses backend API endpoint
    */
   createTrainingSession(
-    session: Omit<TrainingSession, "id" | "created_at" | "updated_at">
+    session: Omit<TrainingSession, "id" | "created_at" | "updated_at">,
   ): Observable<TrainingSession | null> {
-    return this.apiService.post<TrainingSession>(
-      API_ENDPOINTS.training.createSession,
-      session
-    ).pipe(
-      map((response) => {
-        if (response.error) {
-          this.logger.error("Error creating training session:", response.error);
-          throw new Error(response.error);
-        }
-        return response.data || null;
-      }),
-      catchError((error) => {
-        this.logger.error("Error creating training session:", error);
-        throw error;
-      })
-    );
+    return this.apiService
+      .post<TrainingSession>(API_ENDPOINTS.training.createSession, session)
+      .pipe(
+        map((response) => {
+          if (response.error) {
+            this.logger.error(
+              "Error creating training session:",
+              response.error,
+            );
+            throw new Error(response.error);
+          }
+          return response.data || null;
+        }),
+        catchError((error) => {
+          this.logger.error("Error creating training session:", error);
+          throw error;
+        }),
+      );
   }
 
   /**
@@ -146,7 +152,7 @@ export class TrainingDataService {
    */
   updateTrainingSession(
     id: string,
-    updates: Partial<TrainingSession>
+    updates: Partial<TrainingSession>,
   ): Observable<TrainingSession | null> {
     this.logger.warn("Update training session not yet implemented via API");
     return from(Promise.resolve(null));
@@ -165,74 +171,78 @@ export class TrainingDataService {
    * Get training statistics for the current user
    * Uses centralized backend endpoint for consistent calculations
    */
-  getTrainingStats(options?: { startDate?: string; endDate?: string }): Observable<TrainingStats | null> {
+  getTrainingStats(options?: {
+    startDate?: string;
+    endDate?: string;
+  }): Observable<TrainingStats | null> {
     const params: Record<string, any> = {};
-    
+
     if (options?.startDate) {
-      params['startDate'] = options.startDate;
+      params["startDate"] = options.startDate;
     }
-    
+
     if (options?.endDate) {
-      params['endDate'] = options.endDate;
+      params["endDate"] = options.endDate;
     }
 
-    return this.apiService.get<TrainingStats>(
-      "/training-stats-enhanced",
-      params
-    ).pipe(
-      map((response) => {
-        if (response.error) {
-          this.logger.error("Error fetching training stats:", response.error);
-          return {
-            total_sessions: 0,
-            total_duration: 0,
-            avg_duration: 0,
-            sessions_this_week: 0,
-            sessions_this_month: 0,
-          };
-        }
-        
-        const stats = response.data;
-        if (!stats) {
-          return {
-            total_sessions: 0,
-            total_duration: 0,
-            avg_duration: 0,
-            sessions_this_week: 0,
-            sessions_this_month: 0,
-          };
-        }
+    return this.apiService
+      .get<TrainingStats>("/training-stats-enhanced", params)
+      .pipe(
+        map((response) => {
+          if (response.error) {
+            this.logger.error("Error fetching training stats:", response.error);
+            return {
+              total_sessions: 0,
+              total_duration: 0,
+              avg_duration: 0,
+              sessions_this_week: 0,
+              sessions_this_month: 0,
+            };
+          }
 
-        // Map backend response to TrainingStats interface
-        return {
-          total_sessions: stats.total_sessions || 0,
-          total_duration: stats.total_duration || 0,
-          avg_duration: stats.avg_duration || 0,
-          sessions_this_week: stats.weekly_sessions || 0,
-          sessions_this_month: 0, // Can be calculated if needed
-          total_load: stats.total_load,
-          avg_load: stats.avg_load,
-          current_streak: stats.current_streak,
-          acwr: stats.acwr,
-          acute_load: stats.acute_load,
-          chronic_load: stats.chronic_load,
-          acwr_risk_zone: stats.acwr_risk_zone,
-          weekly_volume: stats.weekly_volume,
-          weekly_duration: stats.weekly_duration,
-          weekly_sessions: stats.weekly_sessions,
-          weekly_avg_intensity: stats.weekly_avg_intensity,
-        };
-      }),
-      catchError((error) => {
-        this.logger.error("Error fetching training stats:", error);
-        return from(Promise.resolve({
-          total_sessions: 0,
-          total_duration: 0,
-          avg_duration: 0,
-          sessions_this_week: 0,
-          sessions_this_month: 0,
-        }));
-      })
-    );
+          const stats = response.data;
+          if (!stats) {
+            return {
+              total_sessions: 0,
+              total_duration: 0,
+              avg_duration: 0,
+              sessions_this_week: 0,
+              sessions_this_month: 0,
+            };
+          }
+
+          // Map backend response to TrainingStats interface
+          return {
+            total_sessions: stats.total_sessions || 0,
+            total_duration: stats.total_duration || 0,
+            avg_duration: stats.avg_duration || 0,
+            sessions_this_week: stats.weekly_sessions || 0,
+            sessions_this_month: 0, // Can be calculated if needed
+            total_load: stats.total_load,
+            avg_load: stats.avg_load,
+            current_streak: stats.current_streak,
+            acwr: stats.acwr,
+            acute_load: stats.acute_load,
+            chronic_load: stats.chronic_load,
+            acwr_risk_zone: stats.acwr_risk_zone,
+            weekly_volume: stats.weekly_volume,
+            weekly_duration: stats.weekly_duration,
+            weekly_sessions: stats.weekly_sessions,
+            weekly_avg_intensity: stats.weekly_avg_intensity,
+          };
+        }),
+        catchError((error) => {
+          this.logger.error("Error fetching training stats:", error);
+          return from(
+            Promise.resolve({
+              total_sessions: 0,
+              total_duration: 0,
+              avg_duration: 0,
+              sessions_this_week: 0,
+              sessions_this_month: 0,
+            }),
+          );
+        }),
+      );
   }
 }

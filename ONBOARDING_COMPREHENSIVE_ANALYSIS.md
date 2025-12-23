@@ -5,6 +5,7 @@
 The FlagFit Pro onboarding process is a multi-stage journey designed to guide new coaches and players through account creation, email verification, profile completion, and initial app orientation. The system supports two distinct user types (coaches and players) with role-specific onboarding paths, though currently lacks explicit role selection during registration. The onboarding flow consists of five main stages: Registration, Email Verification, Profile Completion, Onboarding Tour, and Dashboard Initialization.
 
 **Key Findings:**
+
 - ✅ Robust registration with email verification
 - ✅ Comprehensive profile completion system
 - ✅ Interactive onboarding tour for new users
@@ -92,7 +93,7 @@ The onboarding system consists of multiple interconnected components:
 
 ### Component Files
 
-- **Registration**: 
+- **Registration**:
   - `register.html` (Vanilla JS)
   - `angular/src/app/features/auth/register/register.component.ts` (Angular)
   - `netlify/functions/auth-register.cjs` (Backend)
@@ -145,19 +146,21 @@ const userData = {
   email: normalizedEmail,
   password_hash: hashedPassword,
   email_verified: false,
-  role: role || 'player'  // Defaults to 'player' if not provided
+  role: role || "player", // Defaults to 'player' if not provided
 };
 ```
 
 **Current Behavior:**
+
 - Registration form does not include role selection
 - Role defaults to 'player' unless explicitly provided
 - Role can be changed post-registration (presumably via admin or profile settings)
 
 **Database Schema:**
+
 ```sql
 -- From database/migrations/038_add_username_and_verification_fields.sql
-ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'player' 
+ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'player'
 CHECK (role IN ('player', 'coach', 'admin'));
 ```
 
@@ -168,10 +171,12 @@ CHECK (role IN ('player', 'coach', 'admin'));
 ### Stage 1: Registration Form Submission
 
 **Entry Points:**
+
 - `/register.html` (Vanilla JS implementation)
 - `/register` route (Angular implementation)
 
 **Form Fields:**
+
 1. **Full Name** (required)
    - Single text input
    - Parsed into `first_name` and `last_name` on backend
@@ -190,6 +195,7 @@ CHECK (role IN ('player', 'coach', 'admin'));
    - Must match password field
 
 **Validation:**
+
 - Client-side: `UniversalFormValidator` component
 - Server-side: `validateRequestBody()` in `netlify/functions/validation.cjs`
 - Password strength validation
@@ -217,6 +223,7 @@ CHECK (role IN ('player', 'coach', 'admin'));
 ```
 
 **Security Features:**
+
 - ✅ Rate limiting (5 registrations per 15 minutes)
 - ✅ CSRF protection
 - ✅ Password hashing with bcrypt
@@ -225,6 +232,7 @@ CHECK (role IN ('player', 'coach', 'admin'));
 - ✅ SQL injection prevention (parameterized queries)
 
 **Error Handling:**
+
 - Database connection errors → 503 Service Unavailable
 - Duplicate email → 409 Conflict
 - Validation errors → 400 Bad Request
@@ -233,6 +241,7 @@ CHECK (role IN ('player', 'coach', 'admin'));
 ### Stage 3: Registration Response
 
 **Success Response:**
+
 ```json
 {
   "success": true,
@@ -252,6 +261,7 @@ CHECK (role IN ('player', 'coach', 'admin'));
 ```
 
 **Client-Side Handling:**
+
 ```javascript
 // src/auth-manager.js
 - Store JWT token securely (AES-GCM encryption)
@@ -262,6 +272,7 @@ CHECK (role IN ('player', 'coach', 'admin'));
 ```
 
 **Current Redirect Behavior:**
+
 - After successful registration → `/login.html?registered=true`
 - User must verify email before first login
 - No automatic login after registration
@@ -273,17 +284,20 @@ CHECK (role IN ('player', 'coach', 'admin'));
 ### Stage 1: Email Sending
 
 **Email Service:**
+
 - Function: `netlify/functions/send-email.cjs`
 - Template: HTML email with verification link
 - Link format: `{APP_URL}/verify-email.html?token={verification_token}`
 
 **Email Content:**
+
 - Welcome message
 - Verification link (24-hour expiry)
 - Instructions to click link
 - Fallback: manual token entry (not currently implemented)
 
 **Error Handling:**
+
 - Email sending failures do NOT block registration
 - User account is created even if email fails
 - User can request resend (functionality may need verification)
@@ -293,6 +307,7 @@ CHECK (role IN ('player', 'coach', 'admin'));
 **Page:** `verify-email.html`
 
 **Process:**
+
 1. Extract token from URL query parameter
 2. Display loading spinner
 3. Call `/api/auth-verify-email` endpoint
@@ -303,6 +318,7 @@ CHECK (role IN ('player', 'coach', 'admin'));
 **Verification Endpoint:** `netlify/functions/auth-verify-email.cjs`
 
 **Backend Process:**
+
 ```javascript
 1. Extract token from request body
 2. Find user by verification_token
@@ -315,6 +331,7 @@ CHECK (role IN ('player', 'coach', 'admin'));
 ```
 
 **Token Expiry:**
+
 - Verification tokens expire after 24 hours
 - Expired tokens return: "Verification token has expired"
 - Users must request new verification email if expired
@@ -322,12 +339,14 @@ CHECK (role IN ('player', 'coach', 'admin'));
 ### Stage 3: Post-Verification
 
 **After Successful Verification:**
+
 - User is automatically logged in
 - JWT token stored in localStorage
 - User data stored
 - Redirect to dashboard
 
 **Already Verified:**
+
 - If user clicks link again, still generates new JWT token
 - Allows login without error
 
@@ -363,11 +382,13 @@ CHECK (role IN ('player', 'coach', 'admin'));
 ### Profile Completion Modal
 
 **Trigger Conditions:**
+
 - Can be shown manually: `profileCompletionManager.showProfileCompletionModal()`
 - Can be required: `profileCompletionManager.checkAndShow(required=true)`
 - Checks if required fields are missing: `profileCompletionManager.needsCompletion()`
 
 **Required Fields Check:**
+
 ```javascript
 needsCompletion() {
   const profile = this.getStoredProfile();
@@ -377,6 +398,7 @@ needsCompletion() {
 ```
 
 **Form Submission:**
+
 1. Collect form data
 2. Convert height (feet/inches → cm)
 3. Convert weight (lbs → kg)
@@ -388,8 +410,10 @@ needsCompletion() {
 9. Redirect to dashboard if required
 
 **Data Storage:**
+
 - LocalStorage key: `user_profile`
 - Format:
+
 ```json
 {
   "firstName": "John",
@@ -407,6 +431,7 @@ needsCompletion() {
 ```
 
 **API Integration:**
+
 - Attempts to save to `/api/user/profile` endpoint
 - Falls back to localStorage if API fails
 - Non-blocking (doesn't prevent profile completion)
@@ -448,11 +473,12 @@ The onboarding tour consists of 5 steps:
 ### Tour Initialization
 
 **Trigger:**
+
 ```javascript
 init() {
   const onboardingCompleted = storageService.get("onboardingCompleted", null);
   const isNewUser = !onboardingCompleted && this.isFirstVisit();
-  
+
   if (isNewUser) {
     this.startOnboarding();
   }
@@ -460,6 +486,7 @@ init() {
 ```
 
 **First Visit Detection:**
+
 - Checks `hasVisitedDashboard` flag in localStorage
 - Sets flag on first visit
 - Only shows tour if onboarding not completed AND first visit
@@ -467,34 +494,40 @@ init() {
 ### Tour Features
 
 **UI Components:**
+
 - Modal overlay with progress bar
 - Step indicators (dots)
 - Navigation buttons (Back/Next/Skip)
 - Keyboard navigation (Arrow keys, Escape)
 
 **Accessibility:**
+
 - ARIA labels and roles
 - Focus trap within modal
 - Keyboard navigation support
 - Screen reader friendly
 
 **Progress Tracking:**
+
 - Progress bar shows completion percentage
 - Step dots indicate current step
 - Completed steps tracked in `completedSteps` Set
 
 **Skip Functionality:**
+
 - User can skip at any time
 - Confirmation dialog before skipping
 - Saves `onboardingCompleted` flag
 
 **Completion:**
+
 - Saves completion flag to localStorage
 - Shows welcome message
 - Fades out modal
 - Restores focus
 
 **Restart Capability:**
+
 - `restartOnboarding()` method available
 - Can be called from help menu
 - Clears completion flag
@@ -517,11 +550,12 @@ init() {
 ### Role-Based Dashboard Routing
 
 **Angular Implementation:**
+
 ```typescript
 // angular/src/app/features/dashboard/dashboard.component.ts
 userRole = computed(() => {
   const user = this.authService.getUser();
-  return user?.role || 'player';
+  return user?.role || "player";
 });
 
 template: `
@@ -530,16 +564,18 @@ template: `
   } @else {
     <app-athlete-dashboard></app-athlete-dashboard>
   }
-`
+`;
 ```
 
 **Dashboard Components:**
+
 - **Coach Dashboard:** `CoachDashboardComponent`
 - **Athlete Dashboard:** `AthleteDashboardComponent`
 
 ### Dashboard Initialization Process
 
 **Vanilla JS Flow:**
+
 1. Check authentication
 2. Load user data
 3. Initialize notification store
@@ -548,6 +584,7 @@ template: `
 6. Initialize widgets
 
 **Angular Flow:**
+
 1. Component initialization (`ngOnInit`)
 2. Configure header via `HeaderService`
 3. Role-based component rendering
@@ -556,18 +593,21 @@ template: `
 ### Dashboard Features Loaded
 
 **Common Features:**
+
 - Performance metrics
 - Recent activity
 - Quick actions
 - Notifications
 
 **Coach-Specific:**
+
 - Team overview
 - Player analytics
 - Training schedule management
 - Roster management
 
 **Player-Specific:**
+
 - Personal stats
 - Training progress
 - Upcoming sessions
@@ -580,12 +620,14 @@ template: `
 ### Current State: Limited Differentiation
 
 **Players:**
+
 - Default role assignment
 - Profile completion focuses on playing position, jersey number
 - Dashboard shows athlete-specific features
 - Onboarding tour is generic (not role-specific)
 
 **Coaches:**
+
 - No explicit role selection during registration
 - Must be assigned coach role post-registration (presumably)
 - Profile completion still asks for playing position (may not be relevant)
@@ -620,6 +662,7 @@ template: `
 ### Current Team System
 
 **Database Schema:**
+
 ```sql
 -- Teams table
 CREATE TABLE teams (
@@ -649,18 +692,21 @@ CREATE TABLE team_members (
 ### Team Joining Flow (Not Integrated into Onboarding)
 
 **Current State:**
+
 - Team joining is separate from onboarding
 - No team joining step in initial onboarding flow
 - Players must discover team features independently
 - Coaches must discover team creation independently
 
 **Team Joining Methods (Inferred):**
+
 1. **Public Teams:** Browse and join public teams
 2. **Invitations:** Receive team invitation (email/link)
 3. **Team Code:** Join with team code (if implemented)
 4. **Coach Creation:** Coaches create teams and invite players
 
 **Missing from Onboarding:**
+
 - No explanation of team features
 - No prompt to join/create a team
 - No team discovery during onboarding
@@ -769,6 +815,7 @@ Tour Complete → Dashboard ready
 ### State Storage
 
 **localStorage Keys:**
+
 - `authToken`: JWT token (encrypted)
 - `userData`: User object
 - `user_profile`: Profile completion data
@@ -777,6 +824,7 @@ Tour Complete → Dashboard ready
 - `hasVisitedDashboard`: Boolean
 
 **Storage Service:**
+
 - Uses `storageService` from `src/js/services/storage-service-unified.js`
 - Supports prefixing for namespacing
 - Handles serialization/deserialization
@@ -788,6 +836,7 @@ Tour Complete → Dashboard ready
 ### Authentication Integration
 
 **AuthManager** (`src/auth-manager.js`):
+
 - Handles registration
 - Manages login/logout
 - Token management
@@ -795,6 +844,7 @@ Tour Complete → Dashboard ready
 - API client token setting
 
 **API Client** (`src/api-config.js`):
+
 - Sets auth token for API calls
 - Handles authenticated requests
 - Manages API endpoints
@@ -802,12 +852,14 @@ Tour Complete → Dashboard ready
 ### Database Integration
 
 **Supabase Client** (`netlify/functions/supabase-client.cjs`):
+
 - User creation
 - Email verification
 - Profile updates
 - Team operations
 
 **Database Tables:**
+
 - `users`: User accounts
 - `teams`: Team information
 - `team_members`: Team memberships
@@ -815,6 +867,7 @@ Tour Complete → Dashboard ready
 ### Email Integration
 
 **Email Service** (`netlify/functions/send-email.cjs`):
+
 - Sends verification emails
 - Email templates
 - Error handling
@@ -822,12 +875,14 @@ Tour Complete → Dashboard ready
 ### UI Integration
 
 **Components:**
+
 - Registration form (HTML/Angular)
 - Profile completion modal
 - Onboarding tour modal
 - Dashboard components
 
 **Styling:**
+
 - CSS modules for each component
 - Responsive design
 - Accessibility styles
@@ -839,6 +894,7 @@ Tour Complete → Dashboard ready
 ### Registration Errors
 
 **Handled Cases:**
+
 1. **Duplicate Email**
    - Error: "User with this email already exists"
    - Status: 409 Conflict
@@ -871,6 +927,7 @@ Tour Complete → Dashboard ready
 ### Email Verification Errors
 
 **Handled Cases:**
+
 1. **Missing Token**
    - Error: "No verification token provided"
    - User Action: Check email for correct link
@@ -897,6 +954,7 @@ Tour Complete → Dashboard ready
 ### Profile Completion Errors
 
 **Handled Cases:**
+
 1. **Missing Required Fields**
    - Form validation prevents submission
    - Error messages per field
@@ -913,6 +971,7 @@ Tour Complete → Dashboard ready
 ### Onboarding Tour Errors
 
 **Handled Cases:**
+
 1. **Storage Failure**
    - Gracefully degrades
    - Tour may show again
@@ -946,6 +1005,7 @@ Tour Complete → Dashboard ready
 ### Registration Form
 
 **Accessibility:**
+
 - ✅ ARIA labels on form fields
 - ✅ ARIA-describedby for error messages
 - ✅ Required field indicators
@@ -954,12 +1014,14 @@ Tour Complete → Dashboard ready
 - ✅ Error messages associated with fields
 
 **Improvements Needed:**
+
 - ⚠️ Password requirements could be more accessible
 - ⚠️ Success messages could use ARIA live regions
 
 ### Profile Completion Modal
 
 **Accessibility:**
+
 - ✅ Modal has ARIA dialog role
 - ✅ ARIA-labelledby for title
 - ✅ ARIA-modal attribute
@@ -968,12 +1030,14 @@ Tour Complete → Dashboard ready
 - ✅ Form labels and descriptions
 
 **Improvements Needed:**
+
 - ⚠️ Height input (feet/inches) could be more accessible
 - ⚠️ Date picker accessibility
 
 ### Onboarding Tour
 
 **Accessibility:**
+
 - ✅ Modal has ARIA dialog role
 - ✅ ARIA-labelledby for title
 - ✅ ARIA-modal attribute
@@ -983,17 +1047,20 @@ Tour Complete → Dashboard ready
 - ✅ Progress bar
 
 **Improvements Needed:**
+
 - ⚠️ Screen reader announcements for step changes
 - ⚠️ Skip confirmation could be more accessible
 
 ### Email Verification Page
 
 **Accessibility:**
+
 - ✅ Loading states announced
 - ✅ Success/error messages
 - ✅ Clear instructions
 
 **Improvements Needed:**
+
 - ⚠️ Could use ARIA live regions for status updates
 
 ---
@@ -1003,41 +1070,49 @@ Tour Complete → Dashboard ready
 ### Registration Performance
 
 **Optimizations:**
+
 - ✅ Client-side validation reduces server calls
 - ✅ Password hashing is async (non-blocking)
 - ✅ Email sending is non-blocking (doesn't delay response)
 - ✅ Rate limiting prevents abuse
 
 **Potential Issues:**
+
 - ⚠️ Database queries could be optimized
 - ⚠️ Email sending could be queued for better performance
 
 ### Email Verification Performance
 
 **Optimizations:**
+
 - ✅ Token lookup is indexed
 - ✅ Single database query for verification
 
 **Potential Issues:**
+
 - ⚠️ Token expiry check adds minimal overhead
 
 ### Profile Completion Performance
 
 **Optimizations:**
+
 - ✅ LocalStorage for immediate save
 - ✅ API save is optional/non-blocking
 
 **Potential Issues:**
+
 - ⚠️ Large profile data in localStorage
 
 ### Onboarding Tour Performance
 
 **Optimizations:**
+
 - ✅ Lightweight modal implementation
 - ✅ Minimal DOM manipulation
 - ✅ Storage flags prevent re-showing
 
 **Potential Issues:**
+
 - ⚠️ Modal creation on every step (could be optimized)
 
 ---
@@ -1123,22 +1198,15 @@ Tour Complete → Dashboard ready
 ### Implementation Priority
 
 **Phase 1 (Critical):**
+
 1. Add role selection to registration
 2. Create role-specific onboarding tours
 3. Add email resend functionality
 4. Make profile completion role-aware
 
-**Phase 2 (High Value):**
-5. Integrate team joining into onboarding
-6. Add welcome email
-7. Improve mobile onboarding
-8. Add analytics tracking
+**Phase 2 (High Value):** 5. Integrate team joining into onboarding 6. Add welcome email 7. Improve mobile onboarding 8. Add analytics tracking
 
-**Phase 3 (Enhancements):**
-9. Add social login
-10. Improve accessibility
-11. Add progress persistence
-12. Multi-language support
+**Phase 3 (Enhancements):** 9. Add social login 10. Improve accessibility 11. Add progress persistence 12. Multi-language support
 
 ---
 
@@ -1154,6 +1222,7 @@ The FlagFit Pro onboarding process provides a solid foundation for welcoming new
 The system architecture is well-designed and extensible, making these improvements feasible. The modular component structure allows for incremental enhancements without major refactoring.
 
 **Overall Assessment:**
+
 - ✅ **Strengths:** Security, validation, accessibility basics
 - ⚠️ **Areas for Improvement:** Role differentiation, team integration, edge case handling
 - 🎯 **Recommendation:** Prioritize role-specific onboarding and team integration for maximum impact
@@ -1165,33 +1234,38 @@ The system architecture is well-designed and extensible, making these improvemen
 ### Key Files
 
 **Registration:**
+
 - `register.html` - Registration form (Vanilla JS)
 - `angular/src/app/features/auth/register/register.component.ts` - Angular registration
 - `netlify/functions/auth-register.cjs` - Registration backend
 - `src/auth-manager.js` - Client-side auth management
 
 **Email Verification:**
+
 - `verify-email.html` - Verification page
 - `netlify/functions/auth-verify-email.cjs` - Verification backend
 - `netlify/functions/send-email.cjs` - Email service
 
 **Profile Completion:**
+
 - `src/profile-completion.js` - Profile completion manager
 
 **Onboarding Tour:**
+
 - `src/onboarding-manager.js` - Onboarding tour manager
 
 **Dashboard:**
+
 - `src/js/pages/dashboard-page.js` - Dashboard page (Vanilla JS)
 - `angular/src/app/features/dashboard/dashboard.component.ts` - Dashboard component (Angular)
 
 **Database:**
+
 - `database/create-auth-tables.sql` - User/team tables
 - `database/migrations/001_base_tables.sql` - Base schema
 - `database/migrations/038_add_username_and_verification_fields.sql` - Role field
 
 ---
 
-*Document Generated: 2024*
-*Last Updated: Based on current codebase analysis*
-
+_Document Generated: 2024_
+_Last Updated: Based on current codebase analysis_

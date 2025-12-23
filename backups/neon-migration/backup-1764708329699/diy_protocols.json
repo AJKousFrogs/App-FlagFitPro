@@ -4,9 +4,7 @@
     "protocol_name": "Bodyweight Strength Circuit",
     "protocol_type": "training",
     "target_outcome": "Build strength without expensive equipment",
-    "equipment_needed": [
-      "none"
-    ],
+    "equipment_needed": ["none"],
     "time_required_minutes": 45,
     "difficulty_level": "beginner",
     "step_by_step_instructions": [
@@ -30,10 +28,7 @@
     "protocol_name": "Kitchen Nutrition Prep",
     "protocol_type": "nutrition",
     "target_outcome": "Affordable meal preparation for performance",
-    "equipment_needed": [
-      "basic_cookware",
-      "storage_containers"
-    ],
+    "equipment_needed": ["basic_cookware", "storage_containers"],
     "time_required_minutes": 60,
     "difficulty_level": "beginner",
     "step_by_step_instructions": [
@@ -57,9 +52,7 @@
     "protocol_name": "Park Mobility Routine",
     "protocol_type": "mobility",
     "target_outcome": "Improve flexibility using public facilities",
-    "equipment_needed": [
-      "none"
-    ],
+    "equipment_needed": ["none"],
     "time_required_minutes": 30,
     "difficulty_level": "beginner",
     "step_by_step_instructions": [
@@ -83,11 +76,7 @@
     "protocol_name": "Home Ice Bath Protocol",
     "protocol_type": "recovery",
     "target_outcome": "Reduce muscle soreness and inflammation",
-    "equipment_needed": [
-      "portable_ice_bath_tub",
-      "ice_cubes",
-      "thermometer"
-    ],
+    "equipment_needed": ["portable_ice_bath_tub", "ice_cubes", "thermometer"],
     "time_required_minutes": 20,
     "difficulty_level": "beginner",
     "step_by_step_instructions": [

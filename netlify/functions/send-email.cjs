@@ -6,7 +6,7 @@ const {
   createSuccessResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
 // Initialize email transporter
@@ -61,13 +61,17 @@ function getFromEmail() {
 
 // Get app URL
 function getAppUrl() {
-  return process.env.APP_URL || process.env.URL || "https://webflagfootballfrogs.netlify.app";
+  return (
+    process.env.APP_URL ||
+    process.env.URL ||
+    "https://webflagfootballfrogs.netlify.app"
+  );
 }
 
 // Email verification template
-function getVerificationEmailTemplate(name, verificationUrl, role = 'player') {
-  const isCoach = role === 'coach';
-  const roleSpecificContent = isCoach 
+function getVerificationEmailTemplate(name, verificationUrl, role = "player") {
+  const isCoach = role === "coach";
+  const roleSpecificContent = isCoach
     ? `
             <p><strong>As a coach,</strong> you'll be able to:</p>
             <ul>
@@ -154,7 +158,7 @@ function getVerificationEmailTemplate(name, verificationUrl, role = 'player') {
 }
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Send-Email', event);
+  logFunctionCall("Send-Email", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -184,12 +188,15 @@ exports.handler = async (event, context) => {
         headers: CORS_HEADERS,
         body: JSON.stringify({
           success: false,
-          error: "Email service not configured. Please set up email credentials in environment variables.",
+          error:
+            "Email service not configured. Please set up email credentials in environment variables.",
         }),
       };
     }
 
-    const { type, to, name, verificationUrl, token, role } = JSON.parse(event.body || "{}");
+    const { type, to, name, verificationUrl, token, role } = JSON.parse(
+      event.body || "{}",
+    );
 
     if (!type || !to) {
       return {
@@ -218,8 +225,9 @@ exports.handler = async (event, context) => {
           };
         }
 
-        const url = verificationUrl || `${getAppUrl()}/verify-email.html?token=${token}`;
-        const userRole = role || 'player'; // Default to player if not provided
+        const url =
+          verificationUrl || `${getAppUrl()}/verify-email.html?token=${token}`;
+        const userRole = role || "player"; // Default to player if not provided
         mailOptions = {
           from: {
             name: "FlagFit Pro",
@@ -244,7 +252,7 @@ exports.handler = async (event, context) => {
     }
 
     const result = await transporter.sendMail(mailOptions);
-    
+
     console.log(`✅ Email sent successfully to ${to}:`, result.messageId);
 
     return createSuccessResponse(
@@ -254,11 +262,10 @@ exports.handler = async (event, context) => {
         type,
       },
       200,
-      "Email sent successfully"
+      "Email sent successfully",
     );
   } catch (error) {
     console.error("Error sending email:", error);
     return handleServerError(error, "Failed to send email");
   }
 };
-

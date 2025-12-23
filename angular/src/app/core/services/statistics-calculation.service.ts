@@ -72,11 +72,13 @@ export interface Workout {
   providedIn: "root",
 })
 export class StatisticsCalculationService {
-
   /**
    * Calculate completion percentage with proper rounding and validation
    */
-  calculateCompletionPercentage(completions: number, attempts: number): CompletionPercentageResult {
+  calculateCompletionPercentage(
+    completions: number,
+    attempts: number,
+  ): CompletionPercentageResult {
     // Validation
     if (!Number.isInteger(completions) || !Number.isInteger(attempts)) {
       throw new Error("Completion stats must be integers");
@@ -116,7 +118,7 @@ export class StatisticsCalculationService {
       return {
         rate: 0,
         severity: "low",
-        recommendation: "No targets recorded"
+        recommendation: "No targets recorded",
       };
     }
 
@@ -138,10 +140,12 @@ export class StatisticsCalculationService {
 
     if (rounded > 15) {
       severity = "critical";
-      recommendation = "Critical drop rate. Focus on hand placement and concentration drills.";
+      recommendation =
+        "Critical drop rate. Focus on hand placement and concentration drills.";
     } else if (rounded > 10) {
       severity = "high";
-      recommendation = "High drop rate. Implement technique improvement program.";
+      recommendation =
+        "High drop rate. Implement technique improvement program.";
     } else if (rounded > 5) {
       severity = "medium";
       recommendation = "Moderate drop rate. Maintain current technique focus.";
@@ -156,7 +160,10 @@ export class StatisticsCalculationService {
   /**
    * Calculate flag pull success rate with confidence intervals
    */
-  calculateFlagPullSuccessRate(successes: number, attempts: number): FlagPullSuccessRateResult {
+  calculateFlagPullSuccessRate(
+    successes: number,
+    attempts: number,
+  ): FlagPullSuccessRateResult {
     // Validation
     if (!Number.isInteger(successes) || !Number.isInteger(attempts)) {
       throw new Error("Pull stats must be integers");
@@ -167,7 +174,7 @@ export class StatisticsCalculationService {
         rate: 0,
         confidence95: [0, 0],
         sampleSizeAdequate: false,
-        defensiveGrade: "Insufficient Data"
+        defensiveGrade: "Insufficient Data",
       };
     }
 
@@ -184,17 +191,22 @@ export class StatisticsCalculationService {
     const z = 1.96; // 95% confidence
     const denominator = 1 + (z * z) / attempts;
     const center = (p + (z * z) / (2 * attempts)) / denominator;
-    const margin = (z * Math.sqrt(p * (1 - p) / attempts + (z * z) / (4 * attempts * attempts))) / denominator;
+    const margin =
+      (z *
+        Math.sqrt(
+          (p * (1 - p)) / attempts + (z * z) / (4 * attempts * attempts),
+        )) /
+      denominator;
 
     const lowerBound = Math.max(0, (center - margin) * 100);
     const upperBound = Math.min(100, (center + margin) * 100);
     const confidence95: [number, number] = [
       Number(lowerBound.toFixed(1)),
-      Number(upperBound.toFixed(1))
+      Number(upperBound.toFixed(1)),
     ];
 
     // Sample size adequacy (Cochran's rule: n*p >= 5 and n*(1-p) >= 5)
-    const sampleSizeAdequate = (attempts * p >= 5) && (attempts * (1 - p) >= 5);
+    const sampleSizeAdequate = attempts * p >= 5 && attempts * (1 - p) >= 5;
 
     // Defensive grading
     let defensiveGrade: string;
@@ -209,14 +221,17 @@ export class StatisticsCalculationService {
       rate: rounded,
       confidence95,
       sampleSizeAdequate,
-      defensiveGrade
+      defensiveGrade,
     };
   }
 
   /**
    * Calculate streak with timezone safety
    */
-  calculateStreak(workouts: Workout[], referenceDate: Date = new Date()): StreakResult {
+  calculateStreak(
+    workouts: Workout[],
+    referenceDate: Date = new Date(),
+  ): StreakResult {
     if (!Array.isArray(workouts) || workouts.length === 0) {
       const tomorrow = new Date(referenceDate);
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -224,18 +239,23 @@ export class StatisticsCalculationService {
         currentStreak: 0,
         longestStreak: 0,
         stretchDates: [],
-        nextOpportunity: tomorrow
+        nextOpportunity: tomorrow,
       };
     }
 
     // Normalize all dates to UTC midnight for consistent comparison
     const normalizeToUTCMidnight = (date: Date): Date => {
-      const normalized = new Date(Date.UTC(
-        date.getUTCFullYear(),
-        date.getUTCMonth(),
-        date.getUTCDate(),
-        0, 0, 0, 0
-      ));
+      const normalized = new Date(
+        Date.UTC(
+          date.getUTCFullYear(),
+          date.getUTCMonth(),
+          date.getUTCDate(),
+          0,
+          0,
+          0,
+          0,
+        ),
+      );
       return normalized;
     };
 
@@ -243,11 +263,11 @@ export class StatisticsCalculationService {
     const workoutDates = Array.from(
       new Set(
         workouts
-          .map(w => normalizeToUTCMidnight(new Date(w.date)))
-          .map(d => d.getTime())
-      )
+          .map((w) => normalizeToUTCMidnight(new Date(w.date)))
+          .map((d) => d.getTime()),
+      ),
     )
-      .map(ts => new Date(ts))
+      .map((ts) => new Date(ts))
       .sort((a, b) => b.getTime() - a.getTime()); // Newest first
 
     const refNormalized = normalizeToUTCMidnight(referenceDate);
@@ -258,7 +278,8 @@ export class StatisticsCalculationService {
 
     for (const workoutDate of workoutDates) {
       const dayDifference =
-        (expectedDate.getTime() - workoutDate.getTime()) / (1000 * 60 * 60 * 24);
+        (expectedDate.getTime() - workoutDate.getTime()) /
+        (1000 * 60 * 60 * 24);
 
       // Allow for 1-day gaps (rest days) but not 2+ days
       if (dayDifference === 0) {
@@ -294,10 +315,11 @@ export class StatisticsCalculationService {
           if (currentLength > longestStreak) {
             longestStreak = currentLength;
           }
-          if (stretchStart && currentLength >= 3) { // Only track stretches of 3+
+          if (stretchStart && currentLength >= 3) {
+            // Only track stretches of 3+
             stretchDates.push({
               start: new Date(workoutDates[i + 1]),
-              end: stretchStart
+              end: stretchStart,
             });
           }
           currentLength = 1;
@@ -311,7 +333,7 @@ export class StatisticsCalculationService {
     if (stretchStart && currentLength >= 3) {
       stretchDates.push({
         start: new Date(workoutDates[workoutDates.length - 1]),
-        end: stretchStart
+        end: stretchStart,
       });
     }
 
@@ -323,14 +345,17 @@ export class StatisticsCalculationService {
       currentStreak,
       longestStreak,
       stretchDates: stretchDates.reverse(), // Oldest first
-      nextOpportunity
+      nextOpportunity,
     };
   }
 
   /**
    * Calculate weekly statistics with data quality tracking
    */
-  calculateWeeklyStats(workouts: Workout[], referenceDate: Date = new Date()): WeeklyStatsResult {
+  calculateWeeklyStats(
+    workouts: Workout[],
+    referenceDate: Date = new Date(),
+  ): WeeklyStatsResult {
     // Get week boundaries (ISO week: Monday-Sunday)
     const getISOWeekStart = (date: Date): Date => {
       const d = new Date(date);
@@ -346,7 +371,7 @@ export class StatisticsCalculationService {
     weekEnd.setHours(23, 59, 59, 999);
 
     // Filter workouts within week
-    const weekWorkouts = workouts.filter(w => {
+    const weekWorkouts = workouts.filter((w) => {
       const workoutDate = new Date(w.date);
       return workoutDate >= weekStart && workoutDate <= weekEnd;
     });
@@ -357,7 +382,7 @@ export class StatisticsCalculationService {
     let estimatedCount = 0;
     const intensityPoints: number[] = [];
 
-    weekWorkouts.forEach(workout => {
+    weekWorkouts.forEach((workout) => {
       if (workout.duration) {
         totalMinutes += workout.duration * 60; // Convert hours to minutes
         recordedCount++;
@@ -375,7 +400,8 @@ export class StatisticsCalculationService {
 
     // Calculate data quality
     const totalWorkouts = weekWorkouts.length;
-    const recordedPercentage = totalWorkouts > 0 ? recordedCount / totalWorkouts : 0;
+    const recordedPercentage =
+      totalWorkouts > 0 ? recordedCount / totalWorkouts : 0;
     let dataQuality: "complete" | "partial" | "poor";
 
     if (recordedPercentage >= 0.9) {
@@ -387,13 +413,18 @@ export class StatisticsCalculationService {
     }
 
     // Calculate variance in load
-    const avgIntensity = intensityPoints.length > 0
-      ? intensityPoints.reduce((a, b) => a + b) / intensityPoints.length
-      : 0;
+    const avgIntensity =
+      intensityPoints.length > 0
+        ? intensityPoints.reduce((a, b) => a + b) / intensityPoints.length
+        : 0;
 
-    const variance = intensityPoints.length > 1
-      ? intensityPoints.reduce((sum, intensity) => sum + Math.pow(intensity - avgIntensity, 2), 0) / intensityPoints.length
-      : 0;
+    const variance =
+      intensityPoints.length > 1
+        ? intensityPoints.reduce(
+            (sum, intensity) => sum + Math.pow(intensity - avgIntensity, 2),
+            0,
+          ) / intensityPoints.length
+        : 0;
 
     const totalHours = Math.round((totalMinutes / 60) * 10) / 10;
 
@@ -407,8 +438,8 @@ export class StatisticsCalculationService {
       weeklyLoad: {
         totalIntensityPoints: intensityPoints.reduce((a, b) => a + b, 0),
         avgIntensityPerSession: avgIntensity,
-        varianceInLoad: Number(Math.sqrt(variance).toFixed(2))
-      }
+        varianceInLoad: Number(Math.sqrt(variance).toFixed(2)),
+      },
     };
   }
 
@@ -446,9 +477,11 @@ export class StatisticsCalculationService {
     // Recommendation
     let recommendation = "";
     if (isOutlier) {
-      recommendation = "Consult healthcare provider - value outside normal range";
+      recommendation =
+        "Consult healthcare provider - value outside normal range";
     } else if (bmi > 30) {
-      recommendation = "Focus on nutrition and cardio for improved athletic performance";
+      recommendation =
+        "Focus on nutrition and cardio for improved athletic performance";
     } else if (bmi < 18.5) {
       recommendation = "Increase caloric intake to support training demands";
     } else {
@@ -460,7 +493,7 @@ export class StatisticsCalculationService {
       category,
       athleteAdjustment,
       isOutlier,
-      recommendation
+      recommendation,
     };
   }
 
@@ -472,7 +505,7 @@ export class StatisticsCalculationService {
     neckCm: number,
     hipsCm: number | undefined,
     heightCm: number,
-    gender: 'male' | 'female'
+    gender: "male" | "female",
   ): BodyFatCalculationResult {
     // Validation
     if (waistCm < 50 || waistCm > 200) {
@@ -499,13 +532,13 @@ export class StatisticsCalculationService {
 
       const log10 = (x: number) => Math.log10(x);
       bodyFatPercentage =
-        (86.010 * log10(difference)) -
-        (70.041 * log10(heightCm)) +
-        36.76;
+        86.01 * log10(difference) - 70.041 * log10(heightCm) + 36.76;
     } else {
       // Navy method for females (requires hips)
       if (!hipsCm || hipsCm < 50 || hipsCm > 200) {
-        throw new Error("Hip measurement required and must be valid for females");
+        throw new Error(
+          "Hip measurement required and must be valid for females",
+        );
       }
 
       // BF% = 163.205 * log10(waist + hip - neck) - 97.684 * log10(height) - 78.387
@@ -517,13 +550,14 @@ export class StatisticsCalculationService {
 
       const log10 = (x: number) => Math.log10(x);
       bodyFatPercentage =
-        (163.205 * log10(sum)) -
-        (97.684 * log10(heightCm)) -
-        78.387;
+        163.205 * log10(sum) - 97.684 * log10(heightCm) - 78.387;
     }
 
     // Ensure result is within realistic bounds
-    bodyFatPercentage = Math.max(3, Math.min(60, Number(bodyFatPercentage.toFixed(1))));
+    bodyFatPercentage = Math.max(
+      3,
+      Math.min(60, Number(bodyFatPercentage.toFixed(1))),
+    );
 
     // Category classification
     let category: string;
@@ -546,7 +580,7 @@ export class StatisticsCalculationService {
       category,
       confidence,
       measurements: { waist: waistCm, neck: neckCm, hips: hipsCm },
-      validMeasurements: true
+      validMeasurements: true,
     };
   }
 
@@ -555,13 +589,13 @@ export class StatisticsCalculationService {
    */
   private getDefaultDurationByType(type?: string): number {
     const defaults: { [key: string]: number } = {
-      "speed": 45,
-      "strength": 60,
-      "agility": 30,
-      "endurance": 50,
-      "flag_practice": 60,
-      "technique": 45,
-      "training": 45
+      speed: 45,
+      strength: 60,
+      agility: 30,
+      endurance: 50,
+      flag_practice: 60,
+      technique: 45,
+      training: 45,
     };
     return defaults[type || ""] || 45; // Explicit defaults per type
   }
@@ -569,15 +603,18 @@ export class StatisticsCalculationService {
   /**
    * Get intensity score by workout type and intensity level
    */
-  private getIntensityScore(type?: string, intensity?: "high" | "medium" | "low"): number {
+  private getIntensityScore(
+    type?: string,
+    intensity?: "high" | "medium" | "low",
+  ): number {
     const baseScores: { [key: string]: number } = {
-      "speed": 8,
-      "strength": 7,
-      "agility": 8,
-      "endurance": 6,
-      "flag_practice": 8,
-      "technique": 5,
-      "training": 6
+      speed: 8,
+      strength: 7,
+      agility: 8,
+      endurance: 6,
+      flag_practice: 8,
+      technique: 5,
+      training: 6,
     };
 
     const base = baseScores[type || ""] || 6;
@@ -589,4 +626,3 @@ export class StatisticsCalculationService {
     return base;
   }
 }
-

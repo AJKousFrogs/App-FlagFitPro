@@ -7,12 +7,14 @@ FlagFit Pro is a React-based flag football training platform built with wirefram
 ## 🎯 Core Principles
 
 ### Design Philosophy
+
 - **Wireframe-First**: All UI components follow wireframe design patterns
 - **Accessibility-First**: WCAG compliance and universal design
 - **Performance-First**: Optimized loading, animations, and user experience
 - **Mobile-First**: Responsive design with touch-optimized interactions
 
 ### Technical Standards
+
 - **Component-Based**: Modular React functional components
 - **Hook-Driven**: Custom hooks for state management and logic
 - **Type-Safe**: PropTypes and defensive programming
@@ -44,13 +46,14 @@ src/
 ## 🎨 Design System
 
 ### Typography System
+
 ```css
 /* Primary font family */
 font-family: 'Poppins', sans-serif;
 
 /* Typography hierarchy */
 h1: 2.5rem (700 weight)
-h2: 1.875rem (600 weight) 
+h2: 1.875rem (600 weight)
 h3: 1.5rem (600 weight)
 body: 1rem (400 weight)
 small: 0.875rem (400 weight)
@@ -58,6 +61,7 @@ caption: 0.75rem (400 weight)
 ```
 
 ### Color Palette
+
 ```css
 /* Primary colors */
 --primary-black: #1a1a1a;
@@ -73,6 +77,7 @@ caption: 0.75rem (400 weight)
 ```
 
 ### Component Patterns
+
 ```jsx
 // Wireframe card pattern
 <div className="wireframe-card">
@@ -90,8 +95,10 @@ caption: 0.75rem (400 weight)
 ## 🔧 Core Components
 
 ### 1. ChatWidget (`src/components/ChatWidget.jsx`)
+
 **Purpose**: AI coach interaction system
 **Features**:
+
 - Real-time messaging with typing indicators
 - Quick action buttons for common requests
 - Persistent chat history and context
@@ -112,8 +119,10 @@ tabIndex={0}
 ```
 
 ### 2. FilterManager (`src/utils/FilterManager.js`)
+
 **Purpose**: Interactive filtering and button management
 **Features**:
+
 - Dynamic button state management
 - Keyboard navigation support
 - Loading states and visual feedback
@@ -138,8 +147,10 @@ setupAccessibilityAttributes(button) {
 ```
 
 ### 3. Authentication Service (`src/services/auth.service.js`)
+
 **Purpose**: User authentication and session management
 **Features**:
+
 - JWT-style token management
 - localStorage persistence
 - Mock user data for development
@@ -163,6 +174,7 @@ getCurrentUser() {
 ## 🎯 Page Architecture
 
 ### Dashboard Page
+
 ```jsx
 const DashboardPage = () => (
   <div className="container">
@@ -177,18 +189,21 @@ const DashboardPage = () => (
 ```
 
 ### Training Page
+
 - Personalized workout recommendations
 - Interactive exercise categories
 - Progress tracking and customization
 - Responsive card layouts
 
 ### Community Page
+
 - Discussion forums with real-time updates
 - Team leaderboard and rankings
 - Social interaction features
 - Performance correlation displays
 
 ### Tournaments Page
+
 - LA28 Olympic qualification tracking
 - Tournament schedules and results
 - Achievement system integration
@@ -197,13 +212,14 @@ const DashboardPage = () => (
 ## 🔄 State Management
 
 ### React Context Pattern
+
 ```jsx
 // Supabase client setup
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL,
-  process.env.VITE_SUPABASE_ANON_KEY
+  process.env.VITE_SUPABASE_ANON_KEY,
 );
 
 // Use Supabase directly in components or create a custom hook
@@ -213,17 +229,22 @@ export const useSupabase = () => {
 ```
 
 ### Custom Hooks Pattern
+
 ```jsx
 // Enhanced reducer hook
-export const useStandardReducer = (initialState, actionTypes, customReducer = null) => {
+export const useStandardReducer = (
+  initialState,
+  actionTypes,
+  customReducer = null,
+) => {
   const [state, dispatch] = useReducer(
     customReducer || standardReducer,
-    initialState
+    initialState,
   );
 
-  const actions = useMemo(() => 
-    createActionCreators(actionTypes, dispatch), 
-    [actionTypes]
+  const actions = useMemo(
+    () => createActionCreators(actionTypes, dispatch),
+    [actionTypes],
   );
 
   return [state, actions];
@@ -233,6 +254,7 @@ export const useStandardReducer = (initialState, actionTypes, customReducer = nu
 ## ♿ Accessibility Implementation
 
 ### WCAG Compliance
+
 - **Level AA compliance** for all interactive elements
 - **Keyboard navigation** for complete functionality
 - **Screen reader support** with ARIA labels and live regions
@@ -240,6 +262,7 @@ export const useStandardReducer = (initialState, actionTypes, customReducer = nu
 - **High contrast** support for visual accessibility
 
 ### Implementation Patterns
+
 ```jsx
 // Accessible button pattern
 <button
@@ -265,6 +288,7 @@ export const useStandardReducer = (initialState, actionTypes, customReducer = nu
 ```
 
 ### Skip Links
+
 ```jsx
 // Navigation skip links
 <div className="skip-links">
@@ -280,6 +304,7 @@ export const useStandardReducer = (initialState, actionTypes, customReducer = nu
 ## 🚀 Performance Optimization
 
 ### Loading States
+
 ```jsx
 // Component loading pattern
 const [isLoading, setIsLoading] = useState(false);
@@ -295,6 +320,7 @@ const handleAsyncAction = async () => {
 ```
 
 ### Animation and Transitions
+
 ```css
 /* Smooth state transitions */
 .wireframe-card {
@@ -315,27 +341,32 @@ const handleAsyncAction = async () => {
 ```
 
 ### Code Splitting
+
 ```jsx
 // Lazy loading for performance
-const LazyComponent = lazy(() => import('./HeavyComponent'));
+const LazyComponent = lazy(() => import("./HeavyComponent"));
 
 <Suspense fallback={<LoadingSpinner />}>
   <LazyComponent />
-</Suspense>
+</Suspense>;
 ```
 
 ## 🔒 Security Measures
 
 ### Content Security Policy
+
 ```html
 <!-- CSP headers in index.html -->
-<meta http-equiv="Content-Security-Policy" 
-      content="default-src 'self'; 
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self'; 
                script-src 'self' 'unsafe-eval' 'unsafe-inline'; 
-               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;" />
+               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;"
+/>
 ```
 
 ### Authentication Security
+
 ```javascript
 // Secure token handling
 const secureStorage = {
@@ -345,13 +376,14 @@ const secureStorage = {
   getItem: (key) => {
     const item = localStorage.getItem(key);
     return item ? JSON.parse(atob(item)) : null;
-  }
+  },
 };
 ```
 
 ## 📱 Responsive Design
 
 ### Breakpoint System
+
 ```css
 /* Mobile first approach */
 .container {
@@ -374,9 +406,11 @@ const secureStorage = {
 ```
 
 ### Touch Optimization
+
 ```css
 /* Touch-friendly interactive elements */
-.cta-primary, .cta-secondary {
+.cta-primary,
+.cta-secondary {
   min-height: 44px;
   min-width: 44px;
   padding: 12px 24px;
@@ -392,35 +426,38 @@ const secureStorage = {
 ## 🧪 Testing Strategy
 
 ### Component Testing
+
 ```javascript
 // Test interactive components
-test('FilterManager handles button clicks', () => {
-  const button = screen.getByRole('button', { name: /filter/ });
+test("FilterManager handles button clicks", () => {
+  const button = screen.getByRole("button", { name: /filter/ });
   fireEvent.click(button);
-  expect(button).toHaveAttribute('aria-pressed', 'true');
+  expect(button).toHaveAttribute("aria-pressed", "true");
 });
 
 // Test accessibility
-test('ChatWidget is keyboard accessible', () => {
-  const toggle = screen.getByRole('button', { name: /toggle ai coach/ });
-  fireEvent.keyDown(toggle, { key: 'Enter' });
-  expect(screen.getByRole('dialog')).toBeVisible();
+test("ChatWidget is keyboard accessible", () => {
+  const toggle = screen.getByRole("button", { name: /toggle ai coach/ });
+  fireEvent.keyDown(toggle, { key: "Enter" });
+  expect(screen.getByRole("dialog")).toBeVisible();
 });
 ```
 
 ### Performance Testing
+
 ```javascript
 // Test loading states
-test('components show loading state during async operations', async () => {
+test("components show loading state during async operations", async () => {
   render(<AsyncComponent />);
-  fireEvent.click(screen.getByText('Load Data'));
-  expect(screen.getByText('Loading...')).toBeInTheDocument();
+  fireEvent.click(screen.getByText("Load Data"));
+  expect(screen.getByText("Loading...")).toBeInTheDocument();
 });
 ```
 
 ## 🚀 Deployment Configuration
 
 ### Build Optimization
+
 ```javascript
 // vite.config.js optimizations
 export default defineConfig({
@@ -428,26 +465,28 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-          'router': ['react-router-dom']
-        }
-      }
-    }
+          "react-vendor": ["react", "react-dom"],
+          router: ["react-router-dom"],
+        },
+      },
+    },
   },
   server: {
-    host: true // Enable network access
-  }
+    host: true, // Enable network access
+  },
 });
 ```
 
 ### Service Worker Integration
+
 ```javascript
 // Progressive Web App features
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => console.log('SW registered'))
-      .catch(error => console.log('SW registration failed'));
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((registration) => console.log("SW registered"))
+      .catch((error) => console.log("SW registration failed"));
   });
 }
 ```
@@ -455,6 +494,7 @@ if ('serviceWorker' in navigator) {
 ## 📋 Development Workflow
 
 ### Code Quality Standards
+
 1. **ESLint Configuration**: Consistent code formatting
 2. **Component Documentation**: JSDoc comments for all components
 3. **Accessibility Testing**: Screen reader and keyboard testing
@@ -462,6 +502,7 @@ if ('serviceWorker' in navigator) {
 5. **Cross-browser Testing**: Chrome, Firefox, Safari compatibility
 
 ### Git Workflow
+
 ```bash
 # Feature development
 git checkout -b feature/new-component
@@ -479,6 +520,7 @@ git push origin main --tags
 ## 🎯 Future Enhancements
 
 ### Planned Features
+
 - **Real-time Collaboration**: Multi-user training sessions
 - **Advanced Analytics**: Performance prediction algorithms
 - **Mobile App**: React Native companion app
@@ -486,6 +528,7 @@ git push origin main --tags
 - **Internationalization**: Multi-language support
 
 ### Technical Debt Management
+
 - **Component Refactoring**: Extract reusable patterns
 - **Performance Optimization**: Minimize bundle size
 - **Accessibility Improvements**: WCAG AAA compliance
@@ -512,7 +555,7 @@ When implementing new AI features:
 
 ---
 
-*This document serves as the single source of truth for FlagFit Pro architecture and implementation. Keep it updated as the project evolves.*
+_This document serves as the single source of truth for FlagFit Pro architecture and implementation. Keep it updated as the project evolves._
 
 **Last Updated**: December 2024
 **Version**: 2.0

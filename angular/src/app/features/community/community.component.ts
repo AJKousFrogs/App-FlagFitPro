@@ -51,22 +51,22 @@ interface Comment {
     AvatarModule,
     BadgeModule,
     MainLayoutComponent,
-    PageHeaderComponent
-],
+    PageHeaderComponent,
+  ],
   template: `
     <app-main-layout>
       <div class="community-page">
         <app-page-header
           title="Community Hub"
           subtitle="Connect with the flag football community"
-          >
+        >
           <p-button
             label="Create Post"
             icon="pi pi-plus"
             (onClick)="scrollToCreatePost()"
           ></p-button>
         </app-page-header>
-    
+
         <div class="community-grid">
           <!-- Feed Container -->
           <div class="feed-container">
@@ -79,7 +79,7 @@ interface Comment {
                 rows="4"
                 [autoResize]="true"
                 class="post-input"
-                >
+              >
               </textarea>
               <div class="post-actions">
                 <div class="post-options">
@@ -106,13 +106,11 @@ interface Comment {
                 ></p-button>
               </div>
             </p-card>
-    
+
             <!-- Posts Feed -->
             <div class="posts-feed">
               @for (post of posts(); track trackByPostId($index, post)) {
-                <p-card
-                  class="post-card"
-                  >
+                <p-card class="post-card">
                   <div class="post-header">
                     <p-avatar
                       [label]="post.authorInitials"
@@ -127,142 +125,143 @@ interface Comment {
                           <span>
                             • <i class="pi pi-map-marker"></i>
                             {{ post.location }}</span
-                            >
-                          }
-                        </div>
+                          >
+                        }
                       </div>
                     </div>
-                    <div class="post-content">
-                      <p class="post-text">{{ post.content }}</p>
+                  </div>
+                  <div class="post-content">
+                    <p class="post-text">{{ post.content }}</p>
+                  </div>
+                  <div class="post-engagement">
+                    <div class="engagement-stats">
+                      <span
+                        ><i class="pi pi-thumbs-up"></i>
+                        {{ post.likes }} likes</span
+                      >
+                      <span
+                        ><i class="pi pi-comments"></i>
+                        {{ post.comments }} comments</span
+                      >
+                      <span
+                        ><i class="pi pi-share-alt"></i>
+                        {{ post.shares }} shares</span
+                      >
                     </div>
-                    <div class="post-engagement">
-                      <div class="engagement-stats">
-                        <span
-                          ><i class="pi pi-thumbs-up"></i>
-                          {{ post.likes }} likes</span
-                          >
-                          <span
-                            ><i class="pi pi-comments"></i>
-                            {{ post.comments }} comments</span
-                            >
-                            <span
-                              ><i class="pi pi-share-alt"></i>
-                              {{ post.shares }} shares</span
-                              >
+                    <div class="engagement-actions">
+                      <p-button
+                        [icon]="post.isLiked ? 'pi pi-heart' : 'pi pi-heart'"
+                        [text]="true"
+                        [label]="post.isLiked ? 'Liked' : 'Like'"
+                        [class.liked]="post.isLiked"
+                        (onClick)="toggleLike(post)"
+                      >
+                      </p-button>
+                      <p-button
+                        icon="pi pi-comments"
+                        [text]="true"
+                        label="Comment"
+                        (onClick)="toggleComments(post)"
+                      >
+                      </p-button>
+                      <p-button
+                        icon="pi pi-share-alt"
+                        [text]="true"
+                        label="Share"
+                      >
+                      </p-button>
+                    </div>
+                  </div>
+                  @if (post.showComments && post.commentsList) {
+                    <div class="comments-section">
+                      @for (
+                        comment of post.commentsList;
+                        track trackByCommentAuthor($index, comment)
+                      ) {
+                        <div class="comment">
+                          <p-avatar
+                            [label]="comment.authorInitials"
+                            styleClass="mr-2"
+                            shape="circle"
+                          ></p-avatar>
+                          <div class="comment-content">
+                            <div class="comment-author">
+                              {{ comment.author }}
                             </div>
-                            <div class="engagement-actions">
-                              <p-button
-                                [icon]="post.isLiked ? 'pi pi-heart' : 'pi pi-heart'"
-                                [text]="true"
-                                [label]="post.isLiked ? 'Liked' : 'Like'"
-                                [class.liked]="post.isLiked"
-                                (onClick)="toggleLike(post)"
-                                >
-                              </p-button>
-                              <p-button
-                                icon="pi pi-comments"
-                                [text]="true"
-                                label="Comment"
-                                (onClick)="toggleComments(post)"
-                                >
-                              </p-button>
-                              <p-button
-                                icon="pi pi-share-alt"
-                                [text]="true"
-                                label="Share"
-                                >
-                              </p-button>
+                            <div class="comment-text">
+                              {{ comment.content }}
+                            </div>
+                            <div class="comment-time">
+                              {{ comment.timeAgo }}
                             </div>
                           </div>
-                          @if (post.showComments && post.commentsList) {
-                            <div
-                              class="comments-section"
-                              >
-                              @for (
-                                comment of post.commentsList; track trackByCommentAuthor($index,
-                                comment)) {
-                                <div
-                                  class="comment"
-                                  >
-                                  <p-avatar
-                                    [label]="comment.authorInitials"
-                                    styleClass="mr-2"
-                                    shape="circle"
-                                  ></p-avatar>
-                                  <div class="comment-content">
-                                    <div class="comment-author">{{ comment.author }}</div>
-                                    <div class="comment-text">{{ comment.content }}</div>
-                                    <div class="comment-time">{{ comment.timeAgo }}</div>
-                                  </div>
-                                </div>
-                              }
-                            </div>
-                          }
-                        </p-card>
+                        </div>
                       }
                     </div>
-                  </div>
-    
-                  <!-- Sidebar -->
-                  <div class="sidebar-content">
-                    <!-- Leaderboard -->
-                    <p-card class="sidebar-card">
-                      <ng-template pTemplate="header">
-                        <h3 class="section-title">
-                          <i class="pi pi-trophy"></i>
-                          Leaderboard
-                        </h3>
-                      </ng-template>
-                      <div class="leaderboard-list">
-                        @for (
-                          entry of leaderboard(); track trackByLeaderboardRank($index,
-                          entry)) {
-                          <div
-                            class="leaderboard-item"
-                            >
-                            <div class="rank">{{ entry.rank }}</div>
-                            <p-avatar
-                              [label]="entry.initials"
-                              styleClass="mr-2"
-                              shape="circle"
-                            ></p-avatar>
-                            <div class="leaderboard-info">
-                              <div class="leaderboard-name">{{ entry.name }}</div>
-                              <div class="leaderboard-score">
-                                {{ entry.score }} points
-                              </div>
-                            </div>
-                          </div>
-                        }
+                  }
+                </p-card>
+              }
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="sidebar-content">
+            <!-- Leaderboard -->
+            <p-card class="sidebar-card">
+              <ng-template pTemplate="header">
+                <h3 class="section-title">
+                  <i class="pi pi-trophy"></i>
+                  Leaderboard
+                </h3>
+              </ng-template>
+              <div class="leaderboard-list">
+                @for (
+                  entry of leaderboard();
+                  track trackByLeaderboardRank($index, entry)
+                ) {
+                  <div class="leaderboard-item">
+                    <div class="rank">{{ entry.rank }}</div>
+                    <p-avatar
+                      [label]="entry.initials"
+                      styleClass="mr-2"
+                      shape="circle"
+                    ></p-avatar>
+                    <div class="leaderboard-info">
+                      <div class="leaderboard-name">{{ entry.name }}</div>
+                      <div class="leaderboard-score">
+                        {{ entry.score }} points
                       </div>
-                    </p-card>
-    
-                    <!-- Trending Topics -->
-                    <p-card class="sidebar-card">
-                      <ng-template pTemplate="header">
-                        <h3 class="section-title">
-                          <i class="pi pi-fire"></i>
-                          Trending Topics
-                        </h3>
-                      </ng-template>
-                      <div class="topics-list">
-                        @for (
-                          topic of trendingTopics(); track trackByTopicName($index,
-                          topic)) {
-                          <div
-                            class="topic-item"
-                            >
-                            <span class="topic-name">#{{ topic.name }}</span>
-                            <span class="topic-count">{{ topic.count }} posts</span>
-                          </div>
-                        }
-                      </div>
-                    </p-card>
+                    </div>
                   </div>
-                </div>
+                }
               </div>
-            </app-main-layout>
-    `,
+            </p-card>
+
+            <!-- Trending Topics -->
+            <p-card class="sidebar-card">
+              <ng-template pTemplate="header">
+                <h3 class="section-title">
+                  <i class="pi pi-fire"></i>
+                  Trending Topics
+                </h3>
+              </ng-template>
+              <div class="topics-list">
+                @for (
+                  topic of trendingTopics();
+                  track trackByTopicName($index, topic)
+                ) {
+                  <div class="topic-item">
+                    <span class="topic-name">#{{ topic.name }}</span>
+                    <span class="topic-count">{{ topic.count }} posts</span>
+                  </div>
+                }
+              </div>
+            </p-card>
+          </div>
+        </div>
+      </div>
+    </app-main-layout>
+  `,
   styles: [
     `
       .community-page {

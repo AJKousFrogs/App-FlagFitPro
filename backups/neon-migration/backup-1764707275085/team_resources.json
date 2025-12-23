@@ -108,10 +108,7 @@
     "ownership_model": "community_owned",
     "location": "Virtual platform",
     "availability_status": "available",
-    "maintenance_schedule": [
-      "pre_webinar_testing",
-      "post_webinar_feedback"
-    ],
+    "maintenance_schedule": ["pre_webinar_testing", "post_webinar_feedback"],
     "insurance_coverage": null,
     "depreciation_years": null,
     "expected_lifespan_years": 1,

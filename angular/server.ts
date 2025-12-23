@@ -17,7 +17,7 @@ app.use(
   express.static(browserDistFolder, {
     maxAge: "1y",
     index: false,
-  })
+  }),
 );
 
 // Create Angular SSR engine
@@ -32,4 +32,3 @@ const server = app.listen(port, () => {
 });
 
 export default app;
-

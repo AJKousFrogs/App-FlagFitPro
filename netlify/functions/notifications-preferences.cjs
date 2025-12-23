@@ -8,13 +8,13 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 exports.handler = async (event, context) => {
-  logFunctionCall('NotificationsPreferences', event);
+  logFunctionCall("NotificationsPreferences", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -48,29 +48,43 @@ exports.handler = async (event, context) => {
         return createSuccessResponse(preferences);
       } catch (dbError) {
         console.error("Database error:", dbError);
-        return createErrorResponse("Failed to get preferences", 500, 'database_error');
+        return createErrorResponse(
+          "Failed to get preferences",
+          500,
+          "database_error",
+        );
       }
     } else if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
       const body = JSON.parse(event.body || "{}");
       const { preferences } = body;
 
-      if (!preferences || typeof preferences !== 'object') {
+      if (!preferences || typeof preferences !== "object") {
         return handleValidationError("preferences object is required");
       }
 
       try {
-        const updated = await db.notifications.updateUserPreferences(userId, preferences);
+        const updated = await db.notifications.updateUserPreferences(
+          userId,
+          preferences,
+        );
         return createSuccessResponse(updated);
       } catch (dbError) {
         console.error("Database error:", dbError);
-        return createErrorResponse("Failed to update preferences", 500, 'database_error');
+        return createErrorResponse(
+          "Failed to update preferences",
+          500,
+          "database_error",
+        );
       }
     } else {
-      return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
     }
   } catch (error) {
     console.error("Error in notifications-preferences function:", error);
-    return handleServerError(error, 'NotificationsPreferences');
+    return handleServerError(error, "NotificationsPreferences");
   }
 };
-

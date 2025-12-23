@@ -82,6 +82,7 @@ The search system implements a unified search interface that queries multiple da
 **Purpose**: Central search orchestrator that aggregates results from multiple sources.
 
 **Key Responsibilities**:
+
 - Query normalization and text processing
 - Multi-source search coordination
 - Result scoring and ranking
@@ -91,7 +92,9 @@ The search system implements a unified search interface that queries multiple da
 **Key Functions**:
 
 #### `performGlobalSearch(query)`
+
 Main entry point for global search. Orchestrates searches across all sources:
+
 - Static content (pages, protocols)
 - Players (with caching)
 - Knowledge base entries
@@ -100,6 +103,7 @@ Main entry point for global search. Orchestrates searches across all sources:
 - Community posts
 
 **Search Flow**:
+
 1. Normalize query (lowercase, trim, remove diacritics)
 2. Search static content synchronously
 3. Search async sources in parallel (players, knowledge base, tournaments, games, community)
@@ -109,7 +113,9 @@ Main entry point for global search. Orchestrates searches across all sources:
 7. Format for display
 
 #### `searchPlayers(query, players)`
+
 Specialized player search with advanced scoring:
+
 - Exact name match: 100 points
 - Name contains query: 80 points
 - First/last name match: 70 points
@@ -119,18 +125,22 @@ Specialized player search with advanced scoring:
 - Country match: 20 points
 
 **Player Data Sources**:
+
 - Primary: API endpoints (`/api/roster/players`, `/api/coach/team`, `/roster`)
 - Fallback: Local team data (`real-team-data.js`)
 - Caching: 5-minute cache to reduce API calls
 
 #### `normalizeText(text)`
+
 Text normalization for consistent matching:
+
 - Converts to lowercase
 - Removes diacritics (accents)
 - Trims whitespace
 - Handles Unicode normalization
 
 **Example**:
+
 ```javascript
 normalizeText("José García") → "jose garcia"
 normalizeText("Müller") → "muller"
@@ -141,6 +151,7 @@ normalizeText("Müller") → "muller"
 **Purpose**: UI controller for the global search combobox interface.
 
 **Key Features**:
+
 - Debounced search input (250ms delay)
 - Keyboard navigation (Arrow keys, Enter, Escape)
 - ARIA-compliant combobox pattern
@@ -148,13 +159,14 @@ normalizeText("Müller") → "muller"
 - Click-outside-to-close behavior
 
 **Search Input Handler**:
+
 ```javascript
 const search = debounce(async (query) => {
   if (!query.trim()) {
     render([]);
     return;
   }
-  
+
   const results = await window.performGlobalSearch(query);
   items = results;
   render(results);
@@ -162,6 +174,7 @@ const search = debounce(async (query) => {
 ```
 
 **Keyboard Navigation**:
+
 - **ArrowDown**: Navigate down through results
 - **ArrowUp**: Navigate up through results
 - **Enter**: Select highlighted result and navigate
@@ -169,6 +182,7 @@ const search = debounce(async (query) => {
 - **Tab**: Standard tab navigation
 
 **Accessibility Features**:
+
 - `role="combobox"` on input
 - `role="listbox"` on results container
 - `role="option"` on each result item
@@ -181,6 +195,7 @@ const search = debounce(async (query) => {
 **Purpose**: Interfaces with evidence-based knowledge database for search.
 
 **Key Features**:
+
 - 1-hour caching for frequent queries
 - Multi-source search (knowledge base entries → research articles)
 - Evidence synthesis from multiple articles
@@ -189,14 +204,18 @@ const search = debounce(async (query) => {
 **Search Methods**:
 
 #### `searchKnowledgeBase(query, category)`
+
 Searches knowledge base entries:
+
 - Checks cache first (1-hour TTL)
 - Calls API endpoint `/knowledge-search`
 - Returns top 5 results
 - Falls back gracefully on errors
 
 #### `getEvidenceBasedAnswer(question)`
+
 Gets comprehensive answer with citations:
+
 1. First tries knowledge base entries
 2. Falls back to article search
 3. Synthesizes answer from multiple sources
@@ -207,21 +226,23 @@ Gets comprehensive answer with citations:
 **Purpose**: Netlify Function that queries the PostgreSQL database for knowledge base entries.
 
 **Security Features**:
+
 - Input validation (query max 500 characters)
 - Category whitelist validation
 - SQL injection prevention (parameterized queries)
 - Limit validation (1-50 results)
 
 **Search Query**:
+
 ```sql
-SELECT 
+SELECT
   kbe.*,
   array_agg(DISTINCT ra.id) as supporting_articles,
   array_agg(DISTINCT ra.title) as article_titles
 FROM knowledge_base_entries kbe
 LEFT JOIN unnest(kbe.supporting_articles) as article_id ON true
 LEFT JOIN research_articles ra ON ra.id = article_id
-WHERE 
+WHERE
   kbe.answer ILIKE $1
   OR kbe.question ILIKE $1
   OR kbe.topic ILIKE $1
@@ -232,6 +253,7 @@ LIMIT $3
 ```
 
 **Allowed Categories**:
+
 - training, nutrition, recovery, technique, mental, injury, equipment, strategy
 
 ### 5. Exercise Library Search (`exercise-library-page.js`)
@@ -239,6 +261,7 @@ LIMIT $3
 **Purpose**: Specialized search for exercise library with filtering and pagination.
 
 **Key Features**:
+
 - Debounced search (300ms delay)
 - Category filtering (tabs)
 - Pagination (20 items per page)
@@ -246,12 +269,14 @@ LIMIT $3
 - DocumentFragment for efficient DOM updates
 
 **Search Fields**:
+
 - Exercise name
 - Category
 - Primary muscles
 - Equipment
 
 **Filtering**:
+
 - Category tabs: All, Posterior Chain, Plyometric, Sprint, Strength, Core, Recovery, Agility
 - Search term filtering across all fields
 - Combined filter + search logic
@@ -265,15 +290,18 @@ LIMIT $3
 **Source**: Hardcoded `SEARCHABLE_CONTENT` array in `global-search-service.js`
 
 **Content Types**:
+
 - **Training Protocols**: Morning Mobility Routine, Universal Warm-Up, Sunday Recovery Protocol
 - **Pages**: Training Schedule, Training, Exercise Library, Dashboard, Performance Tracking, Roster, Analytics, Community, AI Training Scheduler
 
 **Search Fields**:
+
 - Label (exact match: 100 points)
 - Keywords (exact: 50, contains: 30, partial: 20, word-by-word: 10)
 - Description (15 points)
 
 **Example Entry**:
+
 ```javascript
 {
   label: "Morning Mobility Routine",
@@ -290,12 +318,14 @@ LIMIT $3
 **Source**: API endpoints or local team data
 
 **Search Fields**:
+
 - Name (full, first, last)
 - Jersey number
 - Position
 - Country
 
 **Scoring**:
+
 - Exact name match: 100
 - Name contains query: 80
 - First/last name match: 70
@@ -313,6 +343,7 @@ LIMIT $3
 **Source**: PostgreSQL database (`knowledge_base_entries` table)
 
 **Search Fields**:
+
 - Question
 - Answer
 - Topic
@@ -320,6 +351,7 @@ LIMIT $3
 **Scoring**: 40 points (medium priority)
 
 **Features**:
+
 - Evidence strength ordering
 - Query count ordering
 - Supporting articles aggregation
@@ -330,11 +362,13 @@ LIMIT $3
 **Source**: API endpoint (`/api/tournaments`)
 
 **Search Fields**:
+
 - Name (60 points exact, 40 points partial)
 - Location (30 points)
 - Description (20 points)
 
 **Result Format**:
+
 ```javascript
 {
   label: tournament.name,
@@ -350,11 +384,13 @@ LIMIT $3
 **Source**: API endpoint (`/api/games`)
 
 **Search Fields**:
+
 - Opponent name (50 points)
 - Location (30 points)
 - Date (20 points)
 
 **Result Format**:
+
 ```javascript
 {
   label: `Game vs ${opponent}`,
@@ -370,10 +406,12 @@ LIMIT $3
 **Source**: API endpoint (`/api/community/feed`)
 
 **Search Fields**:
+
 - Title (50 points exact, 30 points partial)
 - Content (20 points)
 
 **Result Format**:
+
 ```javascript
 {
   label: post.title,
@@ -393,6 +431,7 @@ LIMIT $3
 The search system uses a weighted scoring algorithm to rank results by relevance:
 
 **Score Ranges**:
+
 - **100 points**: Exact label/name match (highest priority)
 - **80 points**: Name/label contains query
 - **70 points**: First/last name match
@@ -417,6 +456,7 @@ The search system uses a weighted scoring algorithm to rank results by relevance
 **Query**: "john"
 
 **Results**:
+
 1. Player "John Smith" (exact name match) → 100 points
 2. Player "Johnny Doe" (name contains) → 80 points
 3. Player "Johnson" (word-by-word) → 30 points
@@ -434,6 +474,7 @@ The search system uses a weighted scoring algorithm to rank results by relevance
 **Location**: Top bar, accessible from all pages
 
 **HTML Structure**:
+
 ```html
 <input
   id="global-search"
@@ -447,6 +488,7 @@ The search system uses a weighted scoring algorithm to rank results by relevance
 ```
 
 **Features**:
+
 - Auto-complete dropdown
 - Real-time search (debounced)
 - Keyboard navigation
@@ -456,6 +498,7 @@ The search system uses a weighted scoring algorithm to rank results by relevance
 ### Results Display
 
 **Result Item Structure**:
+
 ```html
 <div role="option" class="result-item" aria-selected="false">
   <div class="result-label">Result Title</div>
@@ -465,11 +508,13 @@ The search system uses a weighted scoring algorithm to rank results by relevance
 ```
 
 **Visual Hierarchy**:
+
 - **Label**: Primary text (bold, larger)
 - **Description**: Secondary info (smaller, muted)
 - **Category**: Badge/tag (colored, small)
 
 **States**:
+
 - **Default**: Normal appearance
 - **Hover**: Highlight background
 - **Selected** (keyboard): Highlighted with `aria-selected="true"`
@@ -478,6 +523,7 @@ The search system uses a weighted scoring algorithm to rank results by relevance
 ### Keyboard Navigation
 
 **Navigation Flow**:
+
 1. User types query → Results appear
 2. ArrowDown → Highlight first result
 3. ArrowDown/ArrowUp → Navigate through results
@@ -485,6 +531,7 @@ The search system uses a weighted scoring algorithm to rank results by relevance
 5. Escape → Close dropdown
 
 **ARIA Attributes**:
+
 - `aria-activedescendant`: Points to currently highlighted result
 - `aria-expanded`: Indicates dropdown state
 - `aria-live`: Announces result count
@@ -492,11 +539,13 @@ The search system uses a weighted scoring algorithm to rank results by relevance
 ### Status Announcements
 
 **Screen Reader Announcements**:
+
 - "X results found" when results appear
 - "No matches found" when no results
 - "Search error occurred" on errors
 
 **Implementation**:
+
 ```javascript
 const status = document.getElementById("search-status");
 status.textContent = `${results.length} result${results.length !== 1 ? "s" : ""} found`;
@@ -511,10 +560,12 @@ status.textContent = `${results.length} result${results.length !== 1 ? "s" : ""}
 **Purpose**: Reduce API calls and improve performance
 
 **Implementation**:
+
 - **Global Search**: 250ms debounce
 - **Exercise Library**: 300ms debounce
 
 **Benefits**:
+
 - Reduces server load
 - Improves responsiveness
 - Prevents excessive API calls
@@ -522,12 +573,14 @@ status.textContent = `${results.length} result${results.length !== 1 ? "s" : ""}
 ### Caching Strategies
 
 #### Player Data Cache
+
 - **Duration**: 5 minutes
 - **Key**: Timestamp-based
 - **Invalidation**: Time-based expiration
 - **Benefits**: Reduces API calls for player searches
 
 #### Knowledge Base Cache
+
 - **Duration**: 1 hour
 - **Key**: `{query}_{category}`
 - **Storage**: In-memory Map
@@ -536,6 +589,7 @@ status.textContent = `${results.length} result${results.length !== 1 ? "s" : ""}
 ### Result Limiting
 
 **Top 20 Results**:
+
 - Limits result set to top 20 by score
 - Reduces DOM rendering time
 - Improves UI responsiveness
@@ -544,12 +598,14 @@ status.textContent = `${results.length} result${results.length !== 1 ? "s" : ""}
 ### Async Search Execution
 
 **Parallel Execution**:
+
 - All async searches run in parallel using `Promise.all` pattern
 - Each source searched independently
 - Results aggregated after all complete
 - Error handling per source (doesn't block others)
 
 **Example**:
+
 ```javascript
 // All searches run in parallel
 const [players, knowledge, tournaments, games, community] = await Promise.all([
@@ -557,18 +613,20 @@ const [players, knowledge, tournaments, games, community] = await Promise.all([
   searchKnowledgeBase(query),
   searchTournaments(query),
   searchGames(query),
-  searchCommunityPosts(query)
+  searchCommunityPosts(query),
 ]);
 ```
 
 ### DOM Optimization
 
 **Exercise Library**:
+
 - Uses `DocumentFragment` for batch DOM operations
 - Single DOM update per search
 - Efficient pagination (only renders visible items)
 
 **Global Search**:
+
 - Efficient result rendering
 - Minimal DOM manipulation
 - Event delegation for click handlers
@@ -582,12 +640,14 @@ const [players, knowledge, tournaments, games, community] = await Promise.all([
 **File**: `src/components/organisms/top-bar/top-bar.js`
 
 **Integration**:
+
 - Search input in top bar HTML
 - `window.performGlobalSearch` function call
 - Results dropdown rendering
 - Keyboard navigation handling
 
 **Initialization**:
+
 ```javascript
 function init() {
   initSearch();
@@ -600,11 +660,13 @@ function init() {
 **File**: `src/js/main.js`
 
 **Setup**:
+
 - Imports `global-search-service.js`
 - Exposes `window.performGlobalSearch`
 - Initializes top bar component
 
 **Code**:
+
 ```javascript
 import { performGlobalSearch } from "./services/global-search-service.js";
 window.performGlobalSearch = performGlobalSearch;
@@ -615,6 +677,7 @@ window.performGlobalSearch = performGlobalSearch;
 **File**: `src/js/pages/exercise-library-page.js`
 
 **Features**:
+
 - Independent search implementation
 - Category filtering
 - Pagination
@@ -623,10 +686,12 @@ window.performGlobalSearch = performGlobalSearch;
 ### 4. Knowledge Base Integration
 
 **Files**:
+
 - `src/js/services/knowledge-base-service.js`
 - `netlify/functions/knowledge-search.cjs`
 
 **Flow**:
+
 1. Frontend calls `knowledgeBaseService.searchKnowledgeBase()`
 2. Service checks cache
 3. If not cached, calls API endpoint
@@ -638,6 +703,7 @@ window.performGlobalSearch = performGlobalSearch;
 **File**: `src/api-config.js`
 
 **Endpoints**:
+
 - Knowledge search: `/knowledge-search`
 - Tournaments: `/api/tournaments`
 - Games: `/api/games`
@@ -645,6 +711,7 @@ window.performGlobalSearch = performGlobalSearch;
 - Players: `/api/roster/players`
 
 **Environment Detection**:
+
 - Netlify Functions (production)
 - Netlify Dev (local development)
 - Direct API (fallback)
@@ -658,11 +725,13 @@ window.performGlobalSearch = performGlobalSearch;
 #### 1. API Fallbacks
 
 **Player Search**:
+
 - Primary: API endpoints (`/api/roster/players`, `/api/coach/team`)
 - Fallback: Local team data (`real-team-data.js`)
 - Final: Empty array (graceful degradation)
 
 **Knowledge Base**:
+
 - Primary: Database query
 - Fallback: Empty results (no error thrown)
 - Logging: Warnings logged, but search continues
@@ -670,6 +739,7 @@ window.performGlobalSearch = performGlobalSearch;
 #### 2. Error Handling Per Source
 
 **Pattern**:
+
 ```javascript
 try {
   const results = await searchSource(query);
@@ -681,6 +751,7 @@ try {
 ```
 
 **Benefits**:
+
 - One failing source doesn't break entire search
 - Partial results still displayed
 - User experience maintained
@@ -688,11 +759,13 @@ try {
 #### 3. Input Validation
 
 **Query Validation**:
+
 - Empty queries return empty results
 - Whitespace-only queries ignored
 - Query length limits (500 chars for knowledge base)
 
 **API Validation**:
+
 - Category whitelist validation
 - Limit validation (1-50)
 - SQL injection prevention
@@ -700,11 +773,13 @@ try {
 ### User-Friendly Error Messages
 
 **Error States**:
+
 - **No Results**: "No matches found"
 - **Search Error**: "Search error occurred"
 - **Empty Query**: No message (results hidden)
 
 **Implementation**:
+
 ```javascript
 if (results.length > 0) {
   status.textContent = `${results.length} results found`;
@@ -722,6 +797,7 @@ if (results.length > 0) {
 ### ARIA Implementation
 
 **Combobox Pattern**:
+
 - `role="combobox"` on input
 - `role="listbox"` on results container
 - `role="option"` on each result
@@ -734,6 +810,7 @@ if (results.length > 0) {
 ### Keyboard Navigation
 
 **Supported Keys**:
+
 - **ArrowDown**: Navigate to next result
 - **ArrowUp**: Navigate to previous result
 - **Enter**: Select highlighted result
@@ -741,6 +818,7 @@ if (results.length > 0) {
 - **Tab**: Standard tab navigation
 
 **Focus Management**:
+
 - Input maintains focus during navigation
 - `aria-activedescendant` tracks highlighted item
 - Visual highlight matches ARIA state
@@ -748,11 +826,13 @@ if (results.length > 0) {
 ### Screen Reader Support
 
 **Announcements**:
+
 - Result count announced via `aria-live`
 - Status updates announced
 - Navigation state communicated
 
 **Labels**:
+
 - Input has `aria-label` or associated label
 - Results have descriptive labels
 - Categories announced
@@ -760,11 +840,13 @@ if (results.length > 0) {
 ### Visual Indicators
 
 **Focus Indicators**:
+
 - Clear focus ring on input
 - Highlighted result visible
 - Selected state obvious
 
 **Status Indicators**:
+
 - Loading state (if implemented)
 - Error state
 - Empty state
@@ -776,6 +858,7 @@ if (results.length > 0) {
 ### Query Normalization
 
 **Process**:
+
 1. Convert to lowercase
 2. Trim whitespace
 3. Normalize Unicode (NFD)
@@ -783,6 +866,7 @@ if (results.length > 0) {
 5. Split into words
 
 **Code**:
+
 ```javascript
 function normalizeText(text) {
   return text
@@ -796,6 +880,7 @@ function normalizeText(text) {
 ### Scoring Algorithm
 
 **Static Content Scoring**:
+
 ```javascript
 // Label match (highest priority)
 if (item.label.toLowerCase().includes(normalizedQuery)) {
@@ -823,11 +908,13 @@ for (const word of queryWords) {
 ### Deduplication
 
 **Strategy**:
+
 - Uses `Set` to track seen results
 - Key format: `${type}-${url}`
 - Prevents duplicate results from different sources
 
 **Code**:
+
 ```javascript
 const seen = new Set();
 const resultKey = `${item.type}-${item.url}`;
@@ -840,6 +927,7 @@ if (!seen.has(resultKey)) {
 ### Result Formatting
 
 **Standard Result Structure**:
+
 ```javascript
 {
   label: string,        // Display name
@@ -897,6 +985,7 @@ if (!seen.has(resultKey)) {
 **Query**: "john smith"
 
 **Results**:
+
 1. Player "John Smith" (exact match) → 100 points
    - Description: "Quarterback • #12 • USA"
    - URL: `/roster.html#player-123`
@@ -909,6 +998,7 @@ if (!seen.has(resultKey)) {
 **Query**: "morning mobility"
 
 **Results**:
+
 1. Protocol "Morning Mobility Routine" (exact label) → 100 points
    - Description: "15-minute daily mobility routine"
    - URL: `training.html#schedule`
@@ -919,6 +1009,7 @@ if (!seen.has(resultKey)) {
 **Query**: "iron supplementation"
 
 **Results**:
+
 1. Knowledge Entry "Iron Supplementation for Athletes" → 40 points
    - Description: "Evidence-based guide to iron supplementation..."
    - URL: `/knowledge.html?topic=iron_supplementation`
@@ -929,6 +1020,7 @@ if (!seen.has(resultKey)) {
 **Query**: "training"
 
 **Results** (top 5):
+
 1. Page "Training" (exact label) → 100 points
 2. Protocol "Training Schedule" (keyword match) → 50 points
 3. Knowledge Entry "Training Methods" → 40 points
@@ -1000,11 +1092,3 @@ The system successfully integrates with multiple pages, provides excellent user 
 **Last Updated**: 2024
 **Version**: 1.0
 **Status**: Production Ready
-
-
-
-
-
-
-
-

@@ -8,10 +8,10 @@ import {
   ViewChild,
   inject,
   effect,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
 
 declare var YT: any;
 
@@ -20,7 +20,7 @@ declare var YT: any;
  * Wrapper around YouTube IFrame API for Angular 21
  */
 @Component({
-  selector: 'app-youtube-player',
+  selector: "app-youtube-player",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, CardModule, ButtonModule],
@@ -152,7 +152,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   stateChange = output<string>();
   error = output<string>();
 
-  @ViewChild('youtubeContainer', { static: true })
+  @ViewChild("youtubeContainer", { static: true })
   youtubeContainer!: ElementRef<HTMLDivElement>;
 
   private youtubeApiLoaded = signal<boolean>(false);
@@ -198,16 +198,16 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     }
 
     // Check if API is already loaded
-    if (typeof YT !== 'undefined' && YT.Player) {
+    if (typeof YT !== "undefined" && YT.Player) {
       this.youtubeApiLoaded.set(true);
       this.initializePlayer();
       return;
     }
 
     // Load the IFrame Player API
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName("script")[0];
     firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
     // Set up callback
@@ -281,21 +281,28 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   }
 
   private onPlayerStateChange(event: any): void {
-    const states = ['UNSTARTED', 'ENDED', 'PLAYING', 'PAUSED', 'BUFFERING', 'CUED'];
+    const states = [
+      "UNSTARTED",
+      "ENDED",
+      "PLAYING",
+      "PAUSED",
+      "BUFFERING",
+      "CUED",
+    ];
     const state = states[event.data];
     this.stateChange.emit(state);
 
-    this.isPlaying.set(state === 'PLAYING');
+    this.isPlaying.set(state === "PLAYING");
   }
 
   private onPlayerError(event: any): void {
     const errors = [
-      'Invalid video ID',
-      'Video removed',
-      'Video private',
-      'Age restricted',
+      "Invalid video ID",
+      "Video removed",
+      "Video private",
+      "Age restricted",
     ];
-    const errorMsg = errors[event.data] || 'Unknown error';
+    const errorMsg = errors[event.data] || "Unknown error";
     this.error.emit(errorMsg);
     this.loading.set(false);
   }
@@ -348,7 +355,6 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   }
 }
-

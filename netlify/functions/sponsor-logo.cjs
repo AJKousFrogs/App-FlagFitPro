@@ -8,7 +8,7 @@ const {
   createSuccessResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
 // Cache for logo data (in-memory, resets on function restart)
@@ -19,59 +19,66 @@ const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 async function fetchImageAsBase64(imageUrl) {
   return new Promise((resolve, reject) => {
     const protocol = imageUrl.startsWith("https") ? https : http;
-    
-    const request = protocol.get(imageUrl, {
-      timeout: 10000, // 10 second timeout
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Netlify Function)'
-      }
-    }, (response) => {
-      // Check if response is successful
-      if (response.statusCode !== 200) {
-        reject(new Error(`Failed to fetch image: ${response.statusCode}`));
-        return;
-      }
 
-      // Check content type
-      const contentType = response.headers["content-type"] || response.headers["Content-Type"] || "image/png";
-      if (!contentType.startsWith("image/")) {
-        reject(new Error(`Invalid content type: ${contentType}`));
-        return;
-      }
-
-      // Collect image data with size limit (5MB)
-      const chunks = [];
-      let totalSize = 0;
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      
-      response.on("data", (chunk) => {
-        totalSize += chunk.length;
-        if (totalSize > maxSize) {
-          request.destroy();
-          reject(new Error("Image too large"));
+    const request = protocol.get(
+      imageUrl,
+      {
+        timeout: 10000, // 10 second timeout
+        headers: {
+          "User-Agent": "Mozilla/5.0 (compatible; Netlify Function)",
+        },
+      },
+      (response) => {
+        // Check if response is successful
+        if (response.statusCode !== 200) {
+          reject(new Error(`Failed to fetch image: ${response.statusCode}`));
           return;
         }
-        chunks.push(chunk);
-      });
-      
-      response.on("end", () => {
-        try {
-          const buffer = Buffer.concat(chunks);
-          const base64 = buffer.toString("base64");
-          resolve({
-            data: base64,
-            contentType: contentType,
-          });
-        } catch (error) {
-          reject(new Error(`Failed to process image: ${error.message}`));
+
+        // Check content type
+        const contentType =
+          response.headers["content-type"] ||
+          response.headers["Content-Type"] ||
+          "image/png";
+        if (!contentType.startsWith("image/")) {
+          reject(new Error(`Invalid content type: ${contentType}`));
+          return;
         }
-      });
-    });
-    
+
+        // Collect image data with size limit (5MB)
+        const chunks = [];
+        let totalSize = 0;
+        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        response.on("data", (chunk) => {
+          totalSize += chunk.length;
+          if (totalSize > maxSize) {
+            request.destroy();
+            reject(new Error("Image too large"));
+            return;
+          }
+          chunks.push(chunk);
+        });
+
+        response.on("end", () => {
+          try {
+            const buffer = Buffer.concat(chunks);
+            const base64 = buffer.toString("base64");
+            resolve({
+              data: base64,
+              contentType: contentType,
+            });
+          } catch (error) {
+            reject(new Error(`Failed to process image: ${error.message}`));
+          }
+        });
+      },
+    );
+
     request.on("error", (error) => {
       reject(error);
     });
-    
+
     request.on("timeout", () => {
       request.destroy();
       reject(new Error("Request timeout"));
@@ -122,7 +129,7 @@ exports.handler = async (event, context) => {
       "chemius.net",
       "gearxpro-sports.com",
     ];
-    
+
     let urlObj;
     try {
       urlObj = new URL(imageUrl);
@@ -134,9 +141,9 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ error: "Invalid URL format" }),
       };
     }
-    
+
     const isAllowed = allowedDomains.some((domain) =>
-      urlObj.hostname.includes(domain)
+      urlObj.hostname.includes(domain),
     );
 
     if (!isAllowed) {
@@ -194,7 +201,7 @@ exports.handler = async (event, context) => {
       name: error.name,
       code: error.code,
     });
-    
+
     // Return a proper error response instead of crashing
     try {
       return handleServerError(error, "Failed to proxy sponsor logo");
@@ -204,16 +211,15 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 500,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
           error: "Failed to proxy sponsor logo",
-          errorType: "server_error"
-        })
+          errorType: "server_error",
+        }),
       };
     }
   }
 };
-

@@ -26,7 +26,7 @@ interface SquadMember {
   workload: number;
   acwr: number;
   readiness: number;
-  riskFlag: 'low' | 'medium' | 'high';
+  riskFlag: "low" | "medium" | "high";
 }
 
 interface UpcomingFixture {
@@ -70,7 +70,9 @@ interface UpcomingFixture {
           <p-card class="stat-card">
             <div class="stat-content">
               <div class="stat-label">Avg Workload</div>
-              <div class="stat-value">{{ avgWorkload() | number:'1.0-0' }} AU</div>
+              <div class="stat-value">
+                {{ avgWorkload() | number: "1.0-0" }} AU
+              </div>
             </div>
           </p-card>
           <p-card class="stat-card">
@@ -129,7 +131,7 @@ interface UpcomingFixture {
                 <td>{{ member.position }}</td>
                 <td>
                   <span [class]="getACWRClass(member.acwr)">
-                    {{ member.acwr | number:'1.2-2' }}
+                    {{ member.acwr | number: "1.2-2" }}
                   </span>
                 </td>
                 <td>
@@ -165,8 +167,10 @@ interface UpcomingFixture {
             @for (fixture of upcomingFixtures(); track fixture.id) {
               <div class="fixture-item">
                 <div class="fixture-date">
-                  <div class="fixture-day">{{ fixture.date | date:'d' }}</div>
-                  <div class="fixture-month">{{ fixture.date | date:'MMM' }}</div>
+                  <div class="fixture-day">{{ fixture.date | date: "d" }}</div>
+                  <div class="fixture-month">
+                    {{ fixture.date | date: "MMM" }}
+                  </div>
                 </div>
                 <div class="fixture-info">
                   <div class="fixture-title">{{ fixture.opponent }}</div>
@@ -397,18 +401,18 @@ export class CoachDashboardComponent implements OnInit {
     const squadMembers: SquadMember[] = members.map((member: any) => {
       const acwr = member.acwr || 1.0;
       const readiness = member.readiness || 75;
-      
-      let riskFlag: 'low' | 'medium' | 'high' = 'low';
+
+      let riskFlag: "low" | "medium" | "high" = "low";
       if (acwr > 1.5 || readiness < 55) {
-        riskFlag = 'high';
+        riskFlag = "high";
       } else if (acwr > 1.3 || readiness < 70) {
-        riskFlag = 'medium';
+        riskFlag = "medium";
       }
 
       return {
         id: member.id || member.user_id,
-        name: member.name || member.full_name || 'Unknown',
-        position: member.position || 'N/A',
+        name: member.name || member.full_name || "Unknown",
+        position: member.position || "N/A",
         workload: member.workload || member.today_workload || 0,
         acwr,
         readiness,
@@ -420,11 +424,13 @@ export class CoachDashboardComponent implements OnInit {
     this.squadSize.set(squadMembers.length);
 
     // Calculate average workload
-    const avg = squadMembers.reduce((sum, m) => sum + m.workload, 0) / squadMembers.length;
+    const avg =
+      squadMembers.reduce((sum, m) => sum + m.workload, 0) /
+      squadMembers.length;
     this.avgWorkload.set(avg || 0);
 
     // Filter risk flags (medium and high)
-    const flags = squadMembers.filter(m => m.riskFlag !== 'low');
+    const flags = squadMembers.filter((m) => m.riskFlag !== "low");
     this.riskFlags.set(flags);
 
     // Create workload distribution chart
@@ -432,16 +438,16 @@ export class CoachDashboardComponent implements OnInit {
   }
 
   createWorkloadChart(members: SquadMember[]): void {
-    const workloads = members.map(m => m.workload);
-    const labels = members.map(m => m.name.split(' ')[0]); // First name only
+    const workloads = members.map((m) => m.workload);
+    const labels = members.map((m) => m.name.split(" ")[0]); // First name only
 
     this.workloadChartData.set({
       labels,
       datasets: [
         {
-          label: 'Workload (AU)',
+          label: "Workload (AU)",
           data: workloads,
-          backgroundColor: '#10c96b',
+          backgroundColor: "#10c96b",
         },
       ],
     });
@@ -474,10 +480,10 @@ export class CoachDashboardComponent implements OnInit {
       })
       .map((f: any) => ({
         id: f.id || f.game_id,
-        opponent: f.opponent || f.opponent_name || 'TBD',
+        opponent: f.opponent || f.opponent_name || "TBD",
         date: new Date(f.game_start || f.date || f.game_date),
-        location: f.location || '',
-        gameType: f.game_type || 'Game',
+        location: f.location || "",
+        gameType: f.game_type || "Game",
       }))
       .sort((a, b) => a.date.getTime() - b.date.getTime())
       .slice(0, 5); // Next 5 fixtures
@@ -488,40 +494,40 @@ export class CoachDashboardComponent implements OnInit {
   loadMockSquadData(): void {
     const mockMembers: SquadMember[] = [
       {
-        id: '1',
-        name: 'Alex Johnson',
-        position: 'QB',
+        id: "1",
+        name: "Alex Johnson",
+        position: "QB",
         workload: 450,
         acwr: 1.15,
         readiness: 82,
-        riskFlag: 'low',
+        riskFlag: "low",
       },
       {
-        id: '2',
-        name: 'Sarah Williams',
-        position: 'WR',
+        id: "2",
+        name: "Sarah Williams",
+        position: "WR",
         workload: 520,
         acwr: 1.45,
         readiness: 68,
-        riskFlag: 'medium',
+        riskFlag: "medium",
       },
       {
-        id: '3',
-        name: 'Mike Davis',
-        position: 'DB',
+        id: "3",
+        name: "Mike Davis",
+        position: "DB",
         workload: 380,
         acwr: 1.65,
         readiness: 55,
-        riskFlag: 'high',
+        riskFlag: "high",
       },
       {
-        id: '4',
-        name: 'Chris Brown',
-        position: 'RB',
+        id: "4",
+        name: "Chris Brown",
+        position: "RB",
         workload: 490,
         acwr: 1.25,
         readiness: 75,
-        riskFlag: 'low',
+        riskFlag: "low",
       },
     ];
 
@@ -531,18 +537,18 @@ export class CoachDashboardComponent implements OnInit {
   loadMockFixtures(): void {
     const mockFixtures: UpcomingFixture[] = [
       {
-        id: '1',
-        opponent: 'Eagles',
+        id: "1",
+        opponent: "Eagles",
         date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-        location: 'Home Field',
-        gameType: 'Regular Season',
+        location: "Home Field",
+        gameType: "Regular Season",
       },
       {
-        id: '2',
-        opponent: 'Hawks',
+        id: "2",
+        opponent: "Hawks",
         date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-        location: 'Away',
-        gameType: 'Regular Season',
+        location: "Away",
+        gameType: "Regular Season",
       },
     ];
 
@@ -550,40 +556,43 @@ export class CoachDashboardComponent implements OnInit {
   }
 
   getACWRClass(acwr: number): string {
-    if (acwr > 1.5) return 'acwr-red';
-    if (acwr > 1.3) return 'acwr-yellow';
-    return 'acwr-green';
+    if (acwr > 1.5) return "acwr-red";
+    if (acwr > 1.3) return "acwr-yellow";
+    return "acwr-green";
   }
 
   getReadinessClass(readiness: number): string {
-    if (readiness >= 75) return 'readiness-high';
-    if (readiness >= 55) return 'readiness-medium';
-    return 'readiness-low';
+    if (readiness >= 75) return "readiness-high";
+    if (readiness >= 55) return "readiness-medium";
+    return "readiness-low";
   }
 
   getRiskSeverity(risk: string): "success" | "warn" | "danger" | "info" {
     const severities: Record<string, "success" | "warn" | "danger" | "info"> = {
-      low: 'success',
-      medium: 'warn',
-      high: 'danger',
+      low: "success",
+      medium: "warn",
+      high: "danger",
     };
-    return severities[risk] || 'info';
+    return severities[risk] || "info";
   }
 
   getFixtureStatus(date: Date): string {
-    const daysUntil = Math.ceil((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-    if (daysUntil < 0) return 'Past';
-    if (daysUntil === 0) return 'Today';
-    if (daysUntil === 1) return 'Tomorrow';
+    const daysUntil = Math.ceil(
+      (date.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+    );
+    if (daysUntil < 0) return "Past";
+    if (daysUntil === 0) return "Today";
+    if (daysUntil === 1) return "Tomorrow";
     if (daysUntil <= 7) return `${daysUntil} days`;
-    return 'Upcoming';
+    return "Upcoming";
   }
 
   getFixtureSeverity(date: Date): "danger" | "warn" | "info" {
-    const daysUntil = Math.ceil((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-    if (daysUntil <= 3) return 'danger';
-    if (daysUntil <= 7) return 'warn';
-    return 'info';
+    const daysUntil = Math.ceil(
+      (date.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+    );
+    if (daysUntil <= 3) return "danger";
+    if (daysUntil <= 7) return "warn";
+    return "info";
   }
 }
-

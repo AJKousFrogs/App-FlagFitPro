@@ -11,7 +11,7 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { ButtonModule } from "primeng/button";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
 import { ApiService } from "../../../core/services/api.service";
-import { LoggerService } from '../../../core/services/logger.service';
+import { LoggerService } from "../../../core/services/logger.service";
 
 export interface SubSkill {
   name: string;
@@ -39,11 +39,7 @@ export interface SkillData {
     <p-card header="Skills Assessment">
       <div class="skills-container">
         <div class="radar-container">
-          <p-chart
-            type="radar"
-            [data]="radarData()"
-            [options]="radarOptions"
-          >
+          <p-chart type="radar" [data]="radarData()" [options]="radarOptions">
           </p-chart>
         </div>
 
@@ -51,7 +47,10 @@ export interface SkillData {
           <div class="skills-breakdown">
             <h4>{{ selectedSkill()?.label }} Breakdown</h4>
             <div class="sub-skills">
-              @for (subSkill of selectedSkill()?.breakdown; track trackBySubSkillName($index, subSkill)) {
+              @for (
+                subSkill of selectedSkill()?.breakdown;
+                track trackBySubSkillName($index, subSkill)
+              ) {
                 <div class="sub-skill">
                   <span class="sub-skill-name">{{ subSkill.name }}</span>
                   <p-progressBar
@@ -62,10 +61,10 @@ export interface SkillData {
                     icon="pi pi-play-circle"
                     [text]="true"
                     label="Practice"
-                size="small"
-                (onClick)="startSkillDrill(subSkill)"
-              >
-              </p-button>
+                    size="small"
+                    (onClick)="startSkillDrill(subSkill)"
+                  >
+                  </p-button>
                 </div>
               }
             </div>
@@ -289,4 +288,3 @@ export class InteractiveSkillsRadarComponent {
     return subSkill.name;
   }
 }
-

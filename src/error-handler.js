@@ -184,7 +184,8 @@ export class ErrorHandler {
 
     // Create elements using safe DOM methods (no innerHTML)
     const container = document.createElement("div");
-    container.style.cssText = "display: flex; align-items: flex-start; gap: 0.75rem;";
+    container.style.cssText =
+      "display: flex; align-items: flex-start; gap: 0.75rem;";
 
     // Icon
     const icon = document.createElement("span");
@@ -293,7 +294,9 @@ export class ErrorHandler {
   static showNotification(message, type = "info", duration = 5000) {
     // Remove any existing notifications of the same type
     const existing = document.querySelector(`.error-notification.${type}`);
-    if (existing) {existing.remove();}
+    if (existing) {
+      existing.remove();
+    }
 
     const notification = document.createElement("div");
     notification.className = `error-notification ${type}`;
@@ -328,7 +331,8 @@ export class ErrorHandler {
 
     // Create elements using safe DOM methods (no innerHTML)
     const container = document.createElement("div");
-    container.style.cssText = "display: flex; align-items: flex-start; gap: 0.75rem;";
+    container.style.cssText =
+      "display: flex; align-items: flex-start; gap: 0.75rem;";
 
     // Icon
     const iconSpan = document.createElement("span");

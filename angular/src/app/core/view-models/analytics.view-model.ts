@@ -1,17 +1,22 @@
 /**
  * Analytics ViewModel
- * 
+ *
  * Manages analytics state with signals
  * Uses ReactiveViewModel for real-time data streams
  * Perfect for live analytics dashboards
  */
 
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { interval } from 'rxjs';
-import { switchMap, map, shareReplay, startWith } from 'rxjs/operators';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ReactiveViewModel } from './reactive.view-model';
-import { AnalyticsDataService, PerformanceTrendsData, TeamChemistryData, TrainingDistributionData } from '../services/data/analytics-data.service';
+import { Injectable, inject, signal, computed } from "@angular/core";
+import { interval } from "rxjs";
+import { switchMap, map, shareReplay, startWith } from "rxjs/operators";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { ReactiveViewModel } from "./reactive.view-model";
+import {
+  AnalyticsDataService,
+  PerformanceTrendsData,
+  TeamChemistryData,
+  TrainingDistributionData,
+} from "../services/data/analytics-data.service";
 
 @Injectable()
 export class AnalyticsViewModel extends ReactiveViewModel {
@@ -34,28 +39,33 @@ export class AnalyticsViewModel extends ReactiveViewModel {
     interval(this.realTimeUpdateInterval).pipe(
       startWith(0),
       switchMap(() => this.analyticsDataService.getPerformanceTrends()),
-      shareReplay(1)
+      shareReplay(1),
     ),
-    'performanceTrends'
+    "performanceTrends",
   );
 
   // Convert stream to signal for reactive updates
   readonly livePerformanceTrends = toSignal(
-    this.performanceTrends$.pipe(
-      map(data => data)
-    ),
-    { initialValue: null }
+    this.performanceTrends$.pipe(map((data) => data)),
+    { initialValue: null },
   );
 
   // Derived/computed signals
-  readonly hasPerformanceData = computed(() => this.performanceTrends() !== null);
+  readonly hasPerformanceData = computed(
+    () => this.performanceTrends() !== null,
+  );
   readonly hasTeamChemistryData = computed(() => this.teamChemistry() !== null);
-  readonly hasTrainingDistributionData = computed(() => this.trainingDistribution() !== null);
+  readonly hasTrainingDistributionData = computed(
+    () => this.trainingDistribution() !== null,
+  );
 
   /**
    * Initialize analytics - loads all data
    */
-  override initialize(athleteId?: string, enableRealTime: boolean = false): void {
+  override initialize(
+    athleteId?: string,
+    enableRealTime: boolean = false,
+  ): void {
     if (this.initialized()) {
       return;
     }
@@ -73,71 +83,59 @@ export class AnalyticsViewModel extends ReactiveViewModel {
    * Load all analytics data
    */
   loadAllAnalytics(athleteId?: string): void {
-    this.subscribe(
-      this.analyticsDataService.getAllAnalytics(athleteId),
-      {
-        next: (data) => {
-          if (data.performanceTrends) {
-            this.performanceTrends.set(data.performanceTrends);
-          }
-          if (data.teamChemistry) {
-            this.teamChemistry.set(data.teamChemistry);
-          }
-          if (data.trainingDistribution) {
-            this.trainingDistribution.set(data.trainingDistribution);
-          }
-          if (data.positionPerformance) {
-            this.positionPerformance.set(data.positionPerformance);
-          }
-          if (data.injuryRisk) {
-            this.injuryRisk.set(data.injuryRisk);
-          }
-          if (data.speedDevelopment) {
-            this.speedDevelopment.set(data.speedDevelopment);
-          }
-          this.initialized.set(true);
+    this.subscribe(this.analyticsDataService.getAllAnalytics(athleteId), {
+      next: (data) => {
+        if (data.performanceTrends) {
+          this.performanceTrends.set(data.performanceTrends);
         }
-      }
-    );
+        if (data.teamChemistry) {
+          this.teamChemistry.set(data.teamChemistry);
+        }
+        if (data.trainingDistribution) {
+          this.trainingDistribution.set(data.trainingDistribution);
+        }
+        if (data.positionPerformance) {
+          this.positionPerformance.set(data.positionPerformance);
+        }
+        if (data.injuryRisk) {
+          this.injuryRisk.set(data.injuryRisk);
+        }
+        if (data.speedDevelopment) {
+          this.speedDevelopment.set(data.speedDevelopment);
+        }
+        this.initialized.set(true);
+      },
+    });
   }
 
   /**
    * Load individual analytics sections
    */
   loadPerformanceTrends(athleteId?: string): void {
-    this.subscribe(
-      this.analyticsDataService.getPerformanceTrends(athleteId),
-      {
-        next: (data) => {
-          this.performanceTrends.set(data);
-        },
-        showLoading: false
-      }
-    );
+    this.subscribe(this.analyticsDataService.getPerformanceTrends(athleteId), {
+      next: (data) => {
+        this.performanceTrends.set(data);
+      },
+      showLoading: false,
+    });
   }
 
   loadTeamChemistry(): void {
-    this.subscribe(
-      this.analyticsDataService.getTeamChemistry(),
-      {
-        next: (data) => {
-          this.teamChemistry.set(data);
-        },
-        showLoading: false
-      }
-    );
+    this.subscribe(this.analyticsDataService.getTeamChemistry(), {
+      next: (data) => {
+        this.teamChemistry.set(data);
+      },
+      showLoading: false,
+    });
   }
 
   loadTrainingDistribution(): void {
-    this.subscribe(
-      this.analyticsDataService.getTrainingDistribution(),
-      {
-        next: (data) => {
-          this.trainingDistribution.set(data);
-        },
-        showLoading: false
-      }
-    );
+    this.subscribe(this.analyticsDataService.getTrainingDistribution(), {
+      next: (data) => {
+        this.trainingDistribution.set(data);
+      },
+      showLoading: false,
+    });
   }
 
   /**
@@ -145,17 +143,14 @@ export class AnalyticsViewModel extends ReactiveViewModel {
    */
   startRealTimeUpdates(athleteId?: string): void {
     this.realTimeEnabled.set(true);
-    
+
     // Subscribe to reactive stream
-    this.subscribe(
-      this.performanceTrends$,
-      {
-        next: (data) => {
-          this.performanceTrends.set(data);
-        },
-        showLoading: false
-      }
-    );
+    this.subscribe(this.performanceTrends$, {
+      next: (data) => {
+        this.performanceTrends.set(data);
+      },
+      showLoading: false,
+    });
   }
 
   /**
@@ -187,4 +182,3 @@ export class AnalyticsViewModel extends ReactiveViewModel {
     this.speedDevelopment.set(null);
   }
 }
-

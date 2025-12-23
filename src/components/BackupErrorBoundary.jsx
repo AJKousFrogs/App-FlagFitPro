@@ -1,5 +1,5 @@
-import React from 'react';
-import { logger } from '../logger.js';
+import React from "react";
+import { logger } from "../logger.js";
 
 class BackupErrorBoundary extends React.Component {
   constructor(props) {
@@ -12,21 +12,25 @@ class BackupErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    logger.error('Backup Error Boundary:', error, errorInfo);
+    logger.error("Backup Error Boundary:", error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ 
-          border: '1px solid red', 
-          padding: '10px', 
-          margin: '10px',
-          background: '#fee' 
-        }}>
+        <div
+          style={{
+            border: "1px solid red",
+            padding: "10px",
+            margin: "10px",
+            background: "#fee",
+          }}
+        >
           <h3>Backup System Error</h3>
           <p>Something went wrong with the backup system.</p>
-          <button onClick={() => this.setState({ hasError: false, error: null })}>
+          <button
+            onClick={() => this.setState({ hasError: false, error: null })}
+          >
             Try Again
           </button>
         </div>

@@ -395,7 +395,9 @@ export class PerformanceAnalytics {
     const tests = this.performanceData.performanceTests;
 
     Object.keys(tests).forEach((testType) => {
-      if (testType === "dates" || tests[testType].length < 2) {return;}
+      if (testType === "dates" || tests[testType].length < 2) {
+        return;
+      }
 
       const values = tests[testType];
       const recent = values[values.length - 1];
@@ -447,7 +449,9 @@ export class PerformanceAnalytics {
 
   // Calculate trend direction
   calculateTrend(values) {
-    if (values.length < 2) {return "stable";}
+    if (values.length < 2) {
+      return "stable";
+    }
 
     const recent =
       values.slice(-3).reduce((a, b) => a + b, 0) / Math.min(3, values.length);
@@ -456,7 +460,9 @@ export class PerformanceAnalytics {
       Math.min(3, values.length);
 
     const change = recent - older;
-    if (Math.abs(change) < 0.1) {return "stable";}
+    if (Math.abs(change) < 0.1) {
+      return "stable";
+    }
     return change > 0 ? "improving" : "declining";
   }
 
@@ -510,7 +516,9 @@ export class PerformanceAnalytics {
   // Create performance trend chart with enhanced configuration
   createPerformanceTrendChart(canvasId, timeframe = "6m") {
     const canvas = document.getElementById(canvasId);
-    if (!canvas || typeof Chart === "undefined") {return;}
+    if (!canvas || typeof Chart === "undefined") {
+      return;
+    }
 
     // Import enhanced chart config dynamically
     import("./enhanced-chart-config.js")
@@ -546,7 +554,9 @@ export class PerformanceAnalytics {
   // Fallback basic chart creation
   createBasicPerformanceChart(canvasId, timeframe = "6m") {
     const canvas = document.getElementById(canvasId);
-    if (!canvas || typeof Chart === "undefined") {return;}
+    if (!canvas || typeof Chart === "undefined") {
+      return;
+    }
 
     const stats = this.getPerformanceStats(timeframe);
     const data = stats.performanceTrends;
@@ -644,7 +654,9 @@ export class PerformanceAnalytics {
   // Create wellness chart with enhanced configuration
   createWellnessChart(canvasId, timeframe = "30d") {
     const canvas = document.getElementById(canvasId);
-    if (!canvas || typeof Chart === "undefined") {return;}
+    if (!canvas || typeof Chart === "undefined") {
+      return;
+    }
 
     // Import enhanced chart config dynamically
     import("./enhanced-chart-config.js")
@@ -680,7 +692,9 @@ export class PerformanceAnalytics {
   // Fallback basic wellness chart
   createBasicWellnessChart(canvasId, timeframe = "30d") {
     const canvas = document.getElementById(canvasId);
-    if (!canvas || typeof Chart === "undefined") {return;}
+    if (!canvas || typeof Chart === "undefined") {
+      return;
+    }
 
     const stats = this.getPerformanceStats(timeframe);
     const data = stats.wellness;
@@ -778,7 +792,9 @@ export class PerformanceAnalytics {
   // Create body composition chart
   createBodyCompositionChart(canvasId) {
     const canvas = document.getElementById(canvasId);
-    if (!canvas || typeof Chart === "undefined") {return;}
+    if (!canvas || typeof Chart === "undefined") {
+      return;
+    }
 
     const data = this.performanceData.bodyComposition;
 
@@ -857,7 +873,9 @@ export class PerformanceAnalytics {
   // Create performance overview radar chart
   createPerformanceOverviewChart(canvasId) {
     const canvas = document.getElementById(canvasId);
-    if (!canvas || typeof Chart === "undefined") {return;}
+    if (!canvas || typeof Chart === "undefined") {
+      return;
+    }
 
     const scores = this.performanceData.currentScores;
 
@@ -926,7 +944,9 @@ export class PerformanceAnalytics {
   // Destroy all charts (cleanup)
   destroyCharts() {
     Object.values(this.chartInstances).forEach((chart) => {
-      if (chart) {chart.destroy();}
+      if (chart) {
+        chart.destroy();
+      }
     });
     this.chartInstances = {};
   }
@@ -938,7 +958,9 @@ export const PerformanceCalculations = {
   calculateBMI(weight, height) {
     const heightInches = parseFloat(height);
     const weightLbs = parseFloat(weight);
-    if (!heightInches || !weightLbs) {return null;}
+    if (!heightInches || !weightLbs) {
+      return null;
+    }
 
     const heightMeters = heightInches * 0.0254;
     const weightKg = weightLbs * 0.453592;
@@ -947,11 +969,19 @@ export const PerformanceCalculations = {
 
   // Get BMI category
   getBMICategory(bmi) {
-    if (!bmi) {return "Unknown";}
+    if (!bmi) {
+      return "Unknown";
+    }
     const bmiNum = parseFloat(bmi);
-    if (bmiNum < 18.5) {return "Underweight";}
-    if (bmiNum < 25) {return "Normal";}
-    if (bmiNum < 30) {return "Overweight";}
+    if (bmiNum < 18.5) {
+      return "Underweight";
+    }
+    if (bmiNum < 25) {
+      return "Normal";
+    }
+    if (bmiNum < 30) {
+      return "Overweight";
+    }
     return "Obese";
   },
 
@@ -975,15 +1005,37 @@ export const PerformanceCalculations = {
     const standards = this.getPerformanceStandards(age, gender);
     const testStandards = standards[testType];
 
-    if (!testStandards) {return { grade: "N/A", percentile: 0 };}
+    if (!testStandards) {
+      return { grade: "N/A", percentile: 0 };
+    }
 
     let percentile = 0;
     if (["fortyYardDash", "proAgility", "lDrill"].includes(testType)) {
       // Lower is better for time-based tests
-      if (value <= testStandards.excellent) {percentile = 95;} else if (value <= testStandards.good) {percentile = 80;} else if (value <= testStandards.average) {percentile = 60;} else if (value <= testStandards.belowAverage) {percentile = 40;} else {percentile = 20;}
+      if (value <= testStandards.excellent) {
+        percentile = 95;
+      } else if (value <= testStandards.good) {
+        percentile = 80;
+      } else if (value <= testStandards.average) {
+        percentile = 60;
+      } else if (value <= testStandards.belowAverage) {
+        percentile = 40;
+      } else {
+        percentile = 20;
+      }
     } else {
       // Higher is better for distance/weight tests
-      if (value >= testStandards.excellent) {percentile = 95;} else if (value >= testStandards.good) {percentile = 80;} else if (value >= testStandards.average) {percentile = 60;} else if (value >= testStandards.belowAverage) {percentile = 40;} else {percentile = 20;}
+      if (value >= testStandards.excellent) {
+        percentile = 95;
+      } else if (value >= testStandards.good) {
+        percentile = 80;
+      } else if (value >= testStandards.average) {
+        percentile = 60;
+      } else if (value >= testStandards.belowAverage) {
+        percentile = 40;
+      } else {
+        percentile = 20;
+      }
     }
 
     const grade =

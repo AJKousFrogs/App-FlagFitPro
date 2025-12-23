@@ -7,7 +7,13 @@ A reusable file upload component with drag-and-drop, progress tracking, and vali
 ```html
 <div class="file-upload-container">
   <div class="upload-dropzone">
-    <input type="file" id="file-input" multiple accept="*/*" class="file-input-hidden" />
+    <input
+      type="file"
+      id="file-input"
+      multiple
+      accept="*/*"
+      class="file-input-hidden"
+    />
     <div class="upload-content">
       <div class="upload-placeholder">
         <i data-lucide="upload-cloud" style="width: 48px; height: 48px;"></i>
@@ -25,32 +31,32 @@ A reusable file upload component with drag-and-drop, progress tracking, and vali
 class FileUpload {
   constructor(container) {
     this.container = container;
-    this.dropzone = container.querySelector('.upload-dropzone');
-    this.fileInput = container.querySelector('#file-input');
+    this.dropzone = container.querySelector(".upload-dropzone");
+    this.fileInput = container.querySelector("#file-input");
     this.init();
   }
 
   init() {
-    this.dropzone.addEventListener('click', () => this.fileInput.click());
-    this.dropzone.addEventListener('dragover', (e) => this.handleDragOver(e));
-    this.dropzone.addEventListener('dragleave', (e) => this.handleDragLeave(e));
-    this.dropzone.addEventListener('drop', (e) => this.handleDrop(e));
-    this.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+    this.dropzone.addEventListener("click", () => this.fileInput.click());
+    this.dropzone.addEventListener("dragover", (e) => this.handleDragOver(e));
+    this.dropzone.addEventListener("dragleave", (e) => this.handleDragLeave(e));
+    this.dropzone.addEventListener("drop", (e) => this.handleDrop(e));
+    this.fileInput.addEventListener("change", (e) => this.handleFileSelect(e));
   }
 
   handleDragOver(e) {
     e.preventDefault();
-    this.dropzone.setAttribute('data-drag-over', 'true');
+    this.dropzone.setAttribute("data-drag-over", "true");
   }
 
   handleDragLeave(e) {
     e.preventDefault();
-    this.dropzone.setAttribute('data-drag-over', 'false');
+    this.dropzone.setAttribute("data-drag-over", "false");
   }
 
   handleDrop(e) {
     e.preventDefault();
-    this.dropzone.setAttribute('data-drag-over', 'false');
+    this.dropzone.setAttribute("data-drag-over", "false");
     const files = e.dataTransfer.files;
     this.processFiles(Array.from(files));
   }
@@ -64,7 +70,7 @@ class FileUpload {
 
   processFiles(files) {
     // Process and validate files
-    console.log('Files selected:', files);
+    console.log("Files selected:", files);
   }
 }
 ```
@@ -79,4 +85,3 @@ class FileUpload {
 - `.upload-hint` - Hint text
 - `.upload-progress` - Progress container
 - `.upload-error` - Error message container
-

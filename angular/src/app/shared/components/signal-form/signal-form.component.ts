@@ -1,22 +1,26 @@
 /**
  * Angular 21 Signal-Based Form Component
- * 
+ *
  * Demonstrates Angular 21's model() API for signal-based forms
  * Enhanced with accessibility features and improved DX
  */
 
-import { Component, model, computed, signal, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
-import { FormValidators, combineValidators, createSignalFormField } from '../../utils/form.utils';
-import { LoggerService } from '../../../core/services/logger.service';
+import { Component, model, computed, signal, output } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
+import { InputTextModule } from "primeng/inputtext";
+import { MessageModule } from "primeng/message";
+import {
+  FormValidators,
+  combineValidators,
+  createSignalFormField,
+} from "../../utils/form.utils";
+import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
-  selector: 'app-signal-form',
+  selector: "app-signal-form",
   standalone: true,
   imports: [
     CommonModule,
@@ -28,12 +32,13 @@ import { LoggerService } from '../../../core/services/logger.service';
   ],
   template: `
     <p-card header="Angular 21 Signal Form (model() API)">
-      <form (ngSubmit)="onSubmit()" [attr.aria-label]="'User registration form'">
+      <form
+        (ngSubmit)="onSubmit()"
+        [attr.aria-label]="'User registration form'"
+      >
         <!-- Name Field -->
         <div class="p-field mb-3">
-          <label for="name" [class.required]="true">
-            Name
-          </label>
+          <label for="name" [class.required]="true"> Name </label>
           <input
             id="name"
             type="text"
@@ -42,17 +47,20 @@ import { LoggerService } from '../../../core/services/logger.service';
             (blur)="nameField.touched.set(true)"
             [class.ng-invalid]="nameField.showError()"
             [attr.aria-invalid]="nameField.showError()"
-            [attr.aria-describedby]="nameField.showError() ? 'name-error' : 'name-hint'"
+            [attr.aria-describedby]="
+              nameField.showError() ? 'name-error' : 'name-hint'
+            "
             [attr.aria-required]="true"
             placeholder="Enter your name"
             autocomplete="name"
           />
           @if (nameField.showError()) {
-            <small 
-              id="name-error" 
-              class="p-error" 
+            <small
+              id="name-error"
+              class="p-error"
               role="alert"
-              [attr.aria-live]="'polite'">
+              [attr.aria-live]="'polite'"
+            >
               {{ nameField.error() }}
             </small>
           } @else {
@@ -64,9 +72,7 @@ import { LoggerService } from '../../../core/services/logger.service';
 
         <!-- Email Field -->
         <div class="p-field mb-3">
-          <label for="email" [class.required]="true">
-            Email
-          </label>
+          <label for="email" [class.required]="true"> Email </label>
           <input
             id="email"
             type="email"
@@ -75,17 +81,20 @@ import { LoggerService } from '../../../core/services/logger.service';
             (blur)="emailField.touched.set(true)"
             [class.ng-invalid]="emailField.showError()"
             [attr.aria-invalid]="emailField.showError()"
-            [attr.aria-describedby]="emailField.showError() ? 'email-error' : 'email-hint'"
+            [attr.aria-describedby]="
+              emailField.showError() ? 'email-error' : 'email-hint'
+            "
             [attr.aria-required]="true"
             placeholder="Enter your email"
             autocomplete="email"
           />
           @if (emailField.showError()) {
-            <small 
-              id="email-error" 
-              class="p-error" 
+            <small
+              id="email-error"
+              class="p-error"
               role="alert"
-              [attr.aria-live]="'polite'">
+              [attr.aria-live]="'polite'"
+            >
               {{ emailField.error() }}
             </small>
           } @else {
@@ -97,9 +106,7 @@ import { LoggerService } from '../../../core/services/logger.service';
 
         <!-- Password Field -->
         <div class="p-field mb-3">
-          <label for="password" [class.required]="true">
-            Password
-          </label>
+          <label for="password" [class.required]="true"> Password </label>
           <input
             id="password"
             type="password"
@@ -108,17 +115,20 @@ import { LoggerService } from '../../../core/services/logger.service';
             (blur)="passwordField.touched.set(true)"
             [class.ng-invalid]="passwordField.showError()"
             [attr.aria-invalid]="passwordField.showError()"
-            [attr.aria-describedby]="passwordField.showError() ? 'password-error' : 'password-hint'"
+            [attr.aria-describedby]="
+              passwordField.showError() ? 'password-error' : 'password-hint'
+            "
             [attr.aria-required]="true"
             placeholder="Enter your password"
             autocomplete="new-password"
           />
           @if (passwordField.showError()) {
-            <small 
-              id="password-error" 
-              class="p-error" 
+            <small
+              id="password-error"
+              class="p-error"
               role="alert"
-              [attr.aria-live]="'polite'">
+              [attr.aria-live]="'polite'"
+            >
               {{ passwordField.error() }}
             </small>
           } @else {
@@ -129,14 +139,15 @@ import { LoggerService } from '../../../core/services/logger.service';
         </div>
 
         <!-- Form Status -->
-        <div 
-          class="form-status mb-3" 
-          role="status" 
+        <div
+          class="form-status mb-3"
+          role="status"
           [attr.aria-live]="'polite'"
-          [attr.aria-atomic]="true">
+          [attr.aria-atomic]="true"
+        >
           <strong>Form Valid:</strong>
           <span [class.valid]="isFormValid()" [class.invalid]="!isFormValid()">
-            {{ isFormValid() ? 'Yes' : 'No' }}
+            {{ isFormValid() ? "Yes" : "No" }}
           </span>
         </div>
 
@@ -145,7 +156,9 @@ import { LoggerService } from '../../../core/services/logger.service';
           type="submit"
           label="Submit"
           [disabled]="!isFormValid()"
-          [attr.aria-describedby]="!isFormValid() ? 'form-validation-info' : null"
+          [attr.aria-describedby]="
+            !isFormValid() ? 'form-validation-info' : null
+          "
         />
         @if (!isFormValid()) {
           <div id="form-validation-info" class="sr-only">
@@ -155,57 +168,59 @@ import { LoggerService } from '../../../core/services/logger.service';
       </form>
     </p-card>
   `,
-  styles: [`
-    .form-status {
-      padding: 0.5rem;
-      background: var(--p-surface-50);
-      border-radius: var(--p-border-radius);
-    }
+  styles: [
+    `
+      .form-status {
+        padding: 0.5rem;
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+      }
 
-    .valid {
-      color: var(--p-success-color);
-      font-weight: 600;
-    }
+      .valid {
+        color: var(--p-success-color);
+        font-weight: 600;
+      }
 
-    .invalid {
-      color: var(--p-error-color);
-      font-weight: 600;
-    }
+      .invalid {
+        color: var(--p-error-color);
+        font-weight: 600;
+      }
 
-    label.required::after {
-      content: " *";
-      color: var(--p-error-color);
-      margin-left: 0.25rem;
-    }
+      label.required::after {
+        content: " *";
+        color: var(--p-error-color);
+        margin-left: 0.25rem;
+      }
 
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border-width: 0;
-    }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
 
-    input:focus-visible {
-      outline: 2px solid var(--p-primary-color);
-      outline-offset: 2px;
-    }
+      input:focus-visible {
+        outline: 2px solid var(--p-primary-color);
+        outline-offset: 2px;
+      }
 
-    input[aria-invalid="true"] {
-      border-color: var(--p-error-color);
-    }
-  `],
+      input[aria-invalid="true"] {
+        border-color: var(--p-error-color);
+      }
+    `,
+  ],
 })
 export class SignalFormComponent {
   // Form fields using Angular 21 model() API for two-way binding
-  name = model<string>('');
-  email = model<string>('');
+  name = model<string>("");
+  email = model<string>("");
   private logger = inject(LoggerService);
-  password = model<string>('');
+  password = model<string>("");
 
   // Form submission event
   formSubmit = output<{ name: string; email: string; password: string }>();
@@ -213,17 +228,17 @@ export class SignalFormComponent {
   // Enhanced form fields with validation and accessibility
   nameField = createSignalFormField(
     () => this.name(),
-    combineValidators(FormValidators.required)
+    combineValidators(FormValidators.required),
   );
 
   emailField = createSignalFormField(
     () => this.email(),
-    combineValidators(FormValidators.required, FormValidators.email)
+    combineValidators(FormValidators.required, FormValidators.email),
   );
 
   passwordField = createSignalFormField(
     () => this.password(),
-    combineValidators(FormValidators.required, FormValidators.minLength(8))
+    combineValidators(FormValidators.required, FormValidators.minLength(8)),
   );
 
   // Form validity (computed signal)
@@ -248,9 +263,9 @@ export class SignalFormComponent {
         email: this.email(),
         password: this.password(),
       };
-      
+
       this.formSubmit.emit(formData);
-      this.logger.debug('Form submitted:', formData);
+      this.logger.debug("Form submitted:", formData);
     } else {
       // Focus first invalid field for accessibility
       this.focusFirstInvalidField();
@@ -260,12 +275,11 @@ export class SignalFormComponent {
   // Accessibility: Focus first invalid field
   private focusFirstInvalidField(): void {
     if (this.nameField.showError()) {
-      document.getElementById('name')?.focus();
+      document.getElementById("name")?.focus();
     } else if (this.emailField.showError()) {
-      document.getElementById('email')?.focus();
+      document.getElementById("email")?.focus();
     } else if (this.passwordField.showError()) {
-      document.getElementById('password')?.focus();
+      document.getElementById("password")?.focus();
     }
   }
 }
-

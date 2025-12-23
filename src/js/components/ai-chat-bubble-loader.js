@@ -1,8 +1,8 @@
 // AI Chat Bubble Loader - FlagFit Pro
 // Dynamically loads the AI chat bubble component into pages that need it
 
-import { setSafeContent } from '../utils/shared.js';
-import { logger } from '../../logger.js';
+import { setSafeContent } from "../utils/shared.js";
+import { logger } from "../../logger.js";
 
 /**
  * Initialize AI Chat Button functionality
@@ -64,24 +64,24 @@ async function handleAIChat(e) {
  * Looks for data-ai-chat-container attribute
  */
 export function loadAIChatBubble() {
-  const container = document.querySelector('[data-ai-chat-container]');
+  const container = document.querySelector("[data-ai-chat-container]");
   if (!container) {
     return; // No container found, skip loading
   }
 
   // Check if already loaded
-  if (container.querySelector('.ai-chat-bubble')) {
+  if (container.querySelector(".ai-chat-bubble")) {
     return; // Already loaded
   }
 
   // Create AI chat bubble using DOM methods instead of innerHTML
   const chatBubble = document.createElement("div");
   chatBubble.className = "ai-chat-bubble";
-  
+
   const chatButton = document.createElement("button");
   chatButton.className = "ai-chat-button";
   chatButton.textContent = '💬 "Ask FlagFit Assistant"';
-  
+
   chatBubble.appendChild(chatButton);
   container.appendChild(chatBubble);
 
@@ -90,10 +90,8 @@ export function loadAIChatBubble() {
 }
 
 // Auto-load on DOMContentLoaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadAIChatBubble);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", loadAIChatBubble);
 } else {
   loadAIChatBubble();
 }
-
-

@@ -3,8 +3,8 @@
  * Intelligent caching for API responses with TTL, invalidation, and storage management
  */
 
-import { logger } from '../../logger.js';
-import { NETWORK, STORAGE_KEYS } from '../config/app-constants.js';
+import { logger } from "../../logger.js";
+import { NETWORK, STORAGE_KEYS } from "../config/app-constants.js";
 
 /**
  * Cache entry structure
@@ -42,13 +42,13 @@ class CacheService {
       hits: 0,
       misses: 0,
       sets: 0,
-      evictions: 0
+      evictions: 0,
     };
 
     // Clean up expired entries periodically
     this.startCleanupInterval();
 
-    logger.debug('[Cache] Cache service initialized');
+    logger.debug("[Cache] Cache service initialized");
   }
 
   /**
@@ -64,7 +64,9 @@ class CacheService {
       if (!entry.isExpired()) {
         entry.incrementHits();
         this.stats.hits++;
-        logger.debug(`[Cache] Hit: ${key} (${entry.hits} hits, ${Math.round(entry.getRemainingTTL() / 1000)}s remaining)`);
+        logger.debug(
+          `[Cache] Hit: ${key} (${entry.hits} hits, ${Math.round(entry.getRemainingTTL() / 1000)}s remaining)`,
+        );
         return entry.data;
       } else {
         // Expired, remove from memory
@@ -97,7 +99,7 @@ class CacheService {
         }
       }
     } catch (error) {
-      logger.warn('[Cache] Error reading from localStorage:', error);
+      logger.warn("[Cache] Error reading from localStorage:", error);
     }
 
     this.stats.misses++;
@@ -112,10 +114,8 @@ class CacheService {
    * @param {object} options - Cache options
    */
   set(key, data, options = {}) {
-    const {
-      ttl = NETWORK.CACHE_DURATION_MEDIUM,
-      persistToStorage = true
-    } = options;
+    const { ttl = NETWORK.CACHE_DURATION_MEDIUM, persistToStorage = true } =
+      options;
 
     const entry = new CacheEntry(data, ttl);
 
@@ -130,15 +130,17 @@ class CacheService {
           data: entry.data,
           timestamp: entry.timestamp,
           ttl: entry.ttl,
-          hits: entry.hits
+          hits: entry.hits,
         });
 
         localStorage.setItem(storageKey, serialized);
         logger.debug(`[Cache] Set (with persistence): ${key}, TTL: ${ttl}ms`);
       } catch (error) {
         // Handle quota exceeded
-        if (error.name === 'QuotaExceededError') {
-          logger.warn('[Cache] localStorage quota exceeded, clearing old entries');
+        if (error.name === "QuotaExceededError") {
+          logger.warn(
+            "[Cache] localStorage quota exceeded, clearing old entries",
+          );
           this.clearOldStorageEntries();
 
           // Try again
@@ -147,14 +149,14 @@ class CacheService {
             const serialized = JSON.stringify({
               data: entry.data,
               timestamp: entry.timestamp,
-              ttl: entry.ttl
+              ttl: entry.ttl,
             });
             localStorage.setItem(storageKey, serialized);
           } catch (retryError) {
-            logger.error('[Cache] Failed to cache after cleanup:', retryError);
+            logger.error("[Cache] Failed to cache after cleanup:", retryError);
           }
         } else {
-          logger.warn('[Cache] Error writing to localStorage:', error);
+          logger.warn("[Cache] Error writing to localStorage:", error);
         }
       }
     } else {
@@ -211,7 +213,7 @@ class CacheService {
       localStorage.removeItem(storageKey);
       logger.debug(`[Cache] Invalidated: ${key}`);
     } catch (error) {
-      logger.warn('[Cache] Error invalidating cache:', error);
+      logger.warn("[Cache] Error invalidating cache:", error);
     }
   }
 
@@ -220,7 +222,7 @@ class CacheService {
    * @param {RegExp|string} pattern - Pattern to match keys
    */
   invalidatePattern(pattern) {
-    const regex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
+    const regex = typeof pattern === "string" ? new RegExp(pattern) : pattern;
     let count = 0;
 
     // Clear from memory cache
@@ -244,10 +246,12 @@ class CacheService {
         }
       }
     } catch (error) {
-      logger.warn('[Cache] Error invalidating pattern:', error);
+      logger.warn("[Cache] Error invalidating pattern:", error);
     }
 
-    logger.debug(`[Cache] Invalidated ${count} entries matching pattern: ${pattern}`);
+    logger.debug(
+      `[Cache] Invalidated ${count} entries matching pattern: ${pattern}`,
+    );
   }
 
   /**
@@ -263,9 +267,9 @@ class CacheService {
           localStorage.removeItem(key);
         }
       }
-      logger.debug('[Cache] Cleared all cache entries');
+      logger.debug("[Cache] Cleared all cache entries");
     } catch (error) {
-      logger.warn('[Cache] Error clearing cache:', error);
+      logger.warn("[Cache] Error clearing cache:", error);
     }
   }
 
@@ -275,17 +279,19 @@ class CacheService {
   clearOldStorageEntries() {
     try {
       const keys = Object.keys(localStorage);
-      const cacheKeys = keys.filter(k => k.startsWith(this.cachePrefix));
+      const cacheKeys = keys.filter((k) => k.startsWith(this.cachePrefix));
 
       // Parse entries and sort by timestamp
-      const entries = cacheKeys.map(key => {
-        try {
-          const data = JSON.parse(localStorage.getItem(key));
-          return { key, timestamp: data.timestamp || 0 };
-        } catch {
-          return { key, timestamp: 0 };
-        }
-      }).sort((a, b) => a.timestamp - b.timestamp);
+      const entries = cacheKeys
+        .map((key) => {
+          try {
+            const data = JSON.parse(localStorage.getItem(key));
+            return { key, timestamp: data.timestamp || 0 };
+          } catch {
+            return { key, timestamp: 0 };
+          }
+        })
+        .sort((a, b) => a.timestamp - b.timestamp);
 
       // Remove oldest 25%
       const toRemove = Math.ceil(entries.length * 0.25);
@@ -295,7 +301,7 @@ class CacheService {
 
       logger.debug(`[Cache] Cleared ${toRemove} old cache entries`);
     } catch (error) {
-      logger.warn('[Cache] Error clearing old entries:', error);
+      logger.warn("[Cache] Error clearing old entries:", error);
     }
   }
 
@@ -313,12 +319,13 @@ class CacheService {
     // Clean localStorage (sample to avoid performance issues)
     try {
       const keys = Object.keys(localStorage);
-      const cacheKeys = keys.filter(k => k.startsWith(this.cachePrefix));
+      const cacheKeys = keys.filter((k) => k.startsWith(this.cachePrefix));
 
       // Only check a sample if there are many keys
-      const keysToCheck = cacheKeys.length > 50
-        ? cacheKeys.sort(() => Math.random() - 0.5).slice(0, 20)
-        : cacheKeys;
+      const keysToCheck =
+        cacheKeys.length > 50
+          ? cacheKeys.sort(() => Math.random() - 0.5).slice(0, 20)
+          : cacheKeys;
 
       for (const storageKey of keysToCheck) {
         try {
@@ -335,10 +342,10 @@ class CacheService {
         }
       }
     } catch (error) {
-      logger.warn('[Cache] Error during cleanup:', error);
+      logger.warn("[Cache] Error during cleanup:", error);
     }
 
-    logger.debug('[Cache] Cleanup completed');
+    logger.debug("[Cache] Cleanup completed");
   }
 
   /**
@@ -346,11 +353,14 @@ class CacheService {
    */
   startCleanupInterval() {
     // Clean up every 5 minutes
-    this.cleanupInterval = setInterval(() => {
-      this.cleanup();
-    }, 5 * 60 * 1000);
+    this.cleanupInterval = setInterval(
+      () => {
+        this.cleanup();
+      },
+      5 * 60 * 1000,
+    );
 
-    logger.debug('[Cache] Cleanup interval started');
+    logger.debug("[Cache] Cleanup interval started");
   }
 
   /**
@@ -360,7 +370,7 @@ class CacheService {
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
       this.cleanupInterval = null;
-      logger.debug('[Cache] Cleanup interval stopped');
+      logger.debug("[Cache] Cleanup interval stopped");
     }
   }
 
@@ -369,15 +379,19 @@ class CacheService {
    * @returns {object} Cache statistics
    */
   getStats() {
-    const hitRate = this.stats.hits + this.stats.misses > 0
-      ? (this.stats.hits / (this.stats.hits + this.stats.misses) * 100).toFixed(2)
-      : 0;
+    const hitRate =
+      this.stats.hits + this.stats.misses > 0
+        ? (
+            (this.stats.hits / (this.stats.hits + this.stats.misses)) *
+            100
+          ).toFixed(2)
+        : 0;
 
     return {
       ...this.stats,
       hitRate: `${hitRate}%`,
       memoryCacheSize: this.memoryCache.size,
-      maxMemoryCacheSize: this.maxMemoryCacheSize
+      maxMemoryCacheSize: this.maxMemoryCacheSize,
     };
   }
 
@@ -386,7 +400,7 @@ class CacheService {
    */
   logStats() {
     const stats = this.getStats();
-    logger.info('[Cache] Statistics:', stats);
+    logger.info("[Cache] Statistics:", stats);
   }
 }
 
@@ -397,10 +411,10 @@ const cacheService = new CacheService();
 export { cacheService, CacheService };
 
 // Make available globally
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.cacheService = cacheService;
 }
 
 export default cacheService;
 
-logger.info('[Cache] Cache service loaded');
+logger.info("[Cache] Cache service loaded");

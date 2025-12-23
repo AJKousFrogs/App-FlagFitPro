@@ -42,7 +42,7 @@ export class AdminService {
       .get<HealthMetric[]>(API_ENDPOINTS.admin.healthMetrics)
       .pipe(
         map((response) => response.data || []),
-        catchError(() => of(this.getMockHealthMetrics()))
+        catchError(() => of(this.getMockHealthMetrics())),
       );
   }
 
@@ -50,12 +50,10 @@ export class AdminService {
    * Sync USDA food data
    */
   syncUSDAData(): Observable<boolean> {
-    return this.apiService
-      .post<boolean>(API_ENDPOINTS.admin.syncUSDA, {})
-      .pipe(
-        map((response) => response.success || false),
-        catchError(() => of(false))
-      );
+    return this.apiService.post<boolean>(API_ENDPOINTS.admin.syncUSDA, {}).pipe(
+      map((response) => response.success || false),
+      catchError(() => of(false)),
+    );
   }
 
   /**
@@ -66,7 +64,7 @@ export class AdminService {
       .post<boolean>(API_ENDPOINTS.admin.syncResearch, {})
       .pipe(
         map((response) => response.success || false),
-        catchError(() => of(false))
+        catchError(() => of(false)),
       );
   }
 
@@ -84,7 +82,7 @@ export class AdminService {
             timestamp: new Date(backup.timestamp),
           };
         }),
-        catchError(() => of(this.getMockBackupInfo()))
+        catchError(() => of(this.getMockBackupInfo())),
       );
   }
 
@@ -102,7 +100,7 @@ export class AdminService {
             timestamp: new Date(status.timestamp),
           }));
         }),
-        catchError(() => of(this.getMockSyncStatus()))
+        catchError(() => of(this.getMockSyncStatus())),
       );
   }
 
@@ -119,8 +117,8 @@ export class AdminService {
             totalFoods: 376000,
             lastUpdated: new Date().getTime(),
             categories: 25,
-          })
-        )
+          }),
+        ),
       );
   }
 
@@ -137,8 +135,8 @@ export class AdminService {
             totalStudies: 1250,
             lastUpdated: new Date().getTime(),
             categories: 12,
-          })
-        )
+          }),
+        ),
       );
   }
 
@@ -146,52 +144,52 @@ export class AdminService {
   private getMockHealthMetrics(): HealthMetric[] {
     return [
       {
-        name: 'Database Connection',
-        value: 'Connected',
-        status: 'healthy',
-        severity: 'success',
-        icon: 'pi pi-check-circle',
-        color: '#10c96b',
+        name: "Database Connection",
+        value: "Connected",
+        status: "healthy",
+        severity: "success",
+        icon: "pi pi-check-circle",
+        color: "#10c96b",
       },
       {
-        name: 'Active Connections',
+        name: "Active Connections",
         value: 12,
-        status: 'healthy',
-        severity: 'success',
-        icon: 'pi pi-link',
-        color: '#10c96b',
+        status: "healthy",
+        severity: "success",
+        icon: "pi pi-link",
+        color: "#10c96b",
       },
       {
-        name: 'Database Size',
-        value: '2.4 GB',
-        status: 'healthy',
-        severity: 'success',
-        icon: 'pi pi-database',
-        color: '#10c96b',
+        name: "Database Size",
+        value: "2.4 GB",
+        status: "healthy",
+        severity: "success",
+        icon: "pi pi-database",
+        color: "#10c96b",
       },
       {
-        name: 'Query Performance',
-        value: '125ms avg',
-        status: 'healthy',
-        severity: 'success',
-        icon: 'pi pi-clock',
-        color: '#10c96b',
+        name: "Query Performance",
+        value: "125ms avg",
+        status: "healthy",
+        severity: "success",
+        icon: "pi pi-clock",
+        color: "#10c96b",
       },
       {
-        name: 'Cache Hit Rate',
-        value: '94%',
-        status: 'healthy',
-        severity: 'success',
-        icon: 'pi pi-bolt',
-        color: '#10c96b',
+        name: "Cache Hit Rate",
+        value: "94%",
+        status: "healthy",
+        severity: "success",
+        icon: "pi pi-bolt",
+        color: "#10c96b",
       },
       {
-        name: 'Last Backup',
-        value: '2 hours ago',
-        status: 'healthy',
-        severity: 'success',
-        icon: 'pi pi-save',
-        color: '#10c96b',
+        name: "Last Backup",
+        value: "2 hours ago",
+        status: "healthy",
+        severity: "success",
+        icon: "pi pi-save",
+        color: "#10c96b",
       },
     ];
   }
@@ -199,24 +197,24 @@ export class AdminService {
   private getMockSyncStatus(): SyncStatus[] {
     return [
       {
-        source: 'USDA Foods',
+        source: "USDA Foods",
         timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-        result: 'success',
-        severity: 'success',
+        result: "success",
+        severity: "success",
         recordsUpdated: 1250,
       },
       {
-        source: 'Research Studies',
+        source: "Research Studies",
         timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-        result: 'success',
-        severity: 'success',
+        result: "success",
+        severity: "success",
         recordsUpdated: 45,
       },
       {
-        source: 'Recovery Protocols',
+        source: "Recovery Protocols",
         timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
-        result: 'success',
-        severity: 'success',
+        result: "success",
+        severity: "success",
         recordsUpdated: 8,
       },
     ];
@@ -224,11 +222,10 @@ export class AdminService {
 
   private getMockBackupInfo(): BackupInfo {
     return {
-      filename: `backup-${new Date().toISOString().split('T')[0]}.sql`,
+      filename: `backup-${new Date().toISOString().split("T")[0]}.sql`,
       size: 2456789, // bytes
       timestamp: new Date(),
-      status: 'completed',
+      status: "completed",
     };
   }
 }
-

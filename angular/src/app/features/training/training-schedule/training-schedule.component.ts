@@ -37,7 +37,7 @@ interface TrainingSession {
     DatePicker,
     TagModule,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -74,7 +74,10 @@ interface TrainingSession {
             <div class="sessions-list">
               @if (sessions().length === 0) {
                 <div class="empty-state">
-                  <p>No training sessions scheduled. Click "New Session" to add one.</p>
+                  <p>
+                    No training sessions scheduled. Click "New Session" to add
+                    one.
+                  </p>
                 </div>
               } @else {
                 @for (session of sessions(); track session.id) {
@@ -84,7 +87,9 @@ interface TrainingSession {
                       <p class="session-date">
                         {{ session.date | date: "MMM d, y 'at' h:mm a" }}
                       </p>
-                      <p class="session-duration">Duration: {{ session.duration }} min</p>
+                      <p class="session-duration">
+                        Duration: {{ session.duration }} min
+                      </p>
                     </div>
                     <div class="session-status">
                       <p-tag
@@ -177,7 +182,7 @@ export class TrainingScheduleComponent implements OnInit {
     try {
       // TODO: Call API to load training sessions
       // const response = await this.apiService.getTrainingSessions();
-      
+
       // Mock data
       this.sessions.set([
         {
@@ -210,7 +215,17 @@ export class TrainingScheduleComponent implements OnInit {
     this.logger.debug("Create new session");
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warn" | "secondary" | "contrast" | "danger" | null | undefined {
+  getStatusSeverity(
+    status: string,
+  ):
+    | "success"
+    | "info"
+    | "warn"
+    | "secondary"
+    | "contrast"
+    | "danger"
+    | null
+    | undefined {
     switch (status) {
       case "completed":
         return "success";
@@ -221,4 +236,3 @@ export class TrainingScheduleComponent implements OnInit {
     }
   }
 }
-

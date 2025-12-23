@@ -1,17 +1,17 @@
 /**
  * Dashboard Data Service
- * 
+ *
  * Pure data service - handles API calls only
  * No state management, returns Observables
- * 
+ *
  * Pattern: Data Services handle API/Netlify function calls
  * View Models handle state management using signals
  */
 
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ApiService, API_ENDPOINTS } from '../api.service';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { ApiService, API_ENDPOINTS } from "../api.service";
 
 export interface DashboardStats {
   totalSessions: number;
@@ -29,7 +29,7 @@ export interface DashboardData {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class DashboardDataService {
   private apiService = inject(ApiService);
@@ -39,58 +39,64 @@ export class DashboardDataService {
    * Pure data fetching - returns Observable
    */
   getDashboard(): Observable<DashboardData> {
-    return this.apiService.get<DashboardData>(API_ENDPOINTS.dashboard.overview).pipe(
-      map(response => {
-        if (response.success && response.data) {
-          return response.data;
-        }
-        // Return default structure if API fails
-        return this.getDefaultDashboard();
-      })
-    );
+    return this.apiService
+      .get<DashboardData>(API_ENDPOINTS.dashboard.overview)
+      .pipe(
+        map((response) => {
+          if (response.success && response.data) {
+            return response.data;
+          }
+          // Return default structure if API fails
+          return this.getDefaultDashboard();
+        }),
+      );
   }
 
   /**
    * Get training calendar data
    */
   getTrainingCalendar(): Observable<any[]> {
-    return this.apiService.get<any[]>(API_ENDPOINTS.dashboard.trainingCalendar).pipe(
-      map(response => response.success && response.data ? response.data : [])
-    );
+    return this.apiService
+      .get<any[]>(API_ENDPOINTS.dashboard.trainingCalendar)
+      .pipe(
+        map((response) =>
+          response.success && response.data ? response.data : [],
+        ),
+      );
   }
 
   /**
    * Get recent activity
    */
   getRecentActivity(limit: number = 10): Observable<any[]> {
-    return this.apiService.get<any[]>(
-      API_ENDPOINTS.dashboard.overview,
-      { activityLimit: limit }
-    ).pipe(
-      map(response => {
-        if (response.success && response.data?.recentActivity) {
-          return response.data.recentActivity;
-        }
-        return [];
-      })
-    );
+    return this.apiService
+      .get<any[]>(API_ENDPOINTS.dashboard.overview, { activityLimit: limit })
+      .pipe(
+        map((response) => {
+          if (response.success && response.data?.recentActivity) {
+            return response.data.recentActivity;
+          }
+          return [];
+        }),
+      );
   }
 
   /**
    * Get upcoming sessions
    */
   getUpcomingSessions(limit: number = 5): Observable<any[]> {
-    return this.apiService.get<any[]>(
-      API_ENDPOINTS.dashboard.trainingCalendar,
-      { upcoming: true, limit }
-    ).pipe(
-      map(response => {
-        if (response.success && response.data) {
-          return Array.isArray(response.data) ? response.data : [];
-        }
-        return [];
-      })
-    );
+    return this.apiService
+      .get<
+        any[]
+      >(API_ENDPOINTS.dashboard.trainingCalendar, { upcoming: true, limit })
+      .pipe(
+        map((response) => {
+          if (response.success && response.data) {
+            return Array.isArray(response.data) ? response.data : [];
+          }
+          return [];
+        }),
+      );
   }
 
   /**
@@ -102,13 +108,12 @@ export class DashboardDataService {
         totalSessions: 0,
         performanceScore: 0,
         weeklyLoad: 0,
-        acwr: 0
+        acwr: 0,
       },
       recentActivity: [],
       upcomingSessions: [],
       performanceChart: null,
-      trainingChart: null
+      trainingChart: null,
     };
   }
 }
-

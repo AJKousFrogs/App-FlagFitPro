@@ -39,6 +39,7 @@ FlagFit Pro uses evidence-based configurations for all training load monitoring,
 **Primary Research**: Gabbett, T. J. (2016). "The training—injury prevention paradox: should athletes be training smarter and harder?"
 
 **Key Findings**:
+
 - ACWR between **0.80-1.30** = "Sweet spot" with lowest injury risk
 - ACWR **> 1.50** = Danger zone with highest injury risk
 - ACWR **< 0.80** = Under-training, insufficient conditioning
@@ -49,33 +50,37 @@ FlagFit Pro uses evidence-based configurations for all training load monitoring,
 **Method**: EWMA (Exponentially Weighted Moving Average)
 
 **Windows**:
+
 - **Acute Load**: 7 days (fatigue indicator)
 - **Chronic Load**: 28 days (fitness indicator)
-- **Lambda Values**: 
+- **Lambda Values**:
   - Acute: 0.2 (more weight to recent days)
   - Chronic: 0.05 (smoother, long-term trend)
 
 **Risk Zones**:
 
-| ACWR Range | Risk Level | Color | Action |
-|------------|------------|-------|--------|
-| < 0.80 | Under-Training | Orange | Gradually increase volume 5-10% per week |
-| 0.80 - 1.30 | Sweet Spot | Green | Maintain current load (optimal) |
-| 1.31 - 1.50 | Elevated Risk | Yellow | Reduce high-intensity by 15-20% |
-| > 1.50 | Danger Zone | Red | Reduce load 20-30%, skip sprints |
+| ACWR Range  | Risk Level     | Color  | Action                                   |
+| ----------- | -------------- | ------ | ---------------------------------------- |
+| < 0.80      | Under-Training | Orange | Gradually increase volume 5-10% per week |
+| 0.80 - 1.30 | Sweet Spot     | Green  | Maintain current load (optimal)          |
+| 1.31 - 1.50 | Elevated Risk  | Yellow | Reduce high-intensity by 15-20%          |
+| > 1.50      | Danger Zone    | Red    | Reduce load 20-30%, skip sprints         |
 
 ### Safeguards
 
 **Minimum Chronic Load Floor**: 50 AU
+
 - Prevents inflated ratios during return from injury/time off
 - Ensures meaningful ACWR calculations
 
 **Data Quality Requirements**:
+
 - Minimum **21 days** of data
 - Minimum **12 sessions** in chronic window
 - Low confidence flag if < 8 sessions in 4 weeks
 
 **Weekly Progression Cap**:
+
 - Standard: **10%** weekly increase (Gabbett 2016)
 - Conservative: **7%** for higher-risk athletes
 
@@ -103,7 +108,7 @@ FlagFit Pro uses evidence-based configurations for all training load monitoring,
 
 ### Citations
 
-- **Gabbett, T. J. (2016)**: "The training—injury prevention paradox: should athletes be training smarter and harder?" *British Journal of Sports Medicine*, 50(5), 273-280.
+- **Gabbett, T. J. (2016)**: "The training—injury prevention paradox: should athletes be training smarter and harder?" _British Journal of Sports Medicine_, 50(5), 273-280.
 - Multiple systematic reviews and practitioner guidelines
 
 ---
@@ -113,6 +118,7 @@ FlagFit Pro uses evidence-based configurations for all training load monitoring,
 ### Scientific Foundation
 
 **Primary Research**:
+
 - **Halson, S. L. (2014)**: Sleep and recovery in athletes
 - **Fullagar, H. H. K., et al. (2015)**: Sleep and athletic performance
 - **Saw, A. E., et al. (2016)**: Wellness scores predict perceived performance
@@ -124,20 +130,22 @@ FlagFit Pro uses evidence-based configurations for all training load monitoring,
 
 **Weightings (Team-Sport Optimized)**:
 
-| Component | Weight | Rationale |
-|-----------|--------|-----------|
-| Workload (ACWR) | 35% | Reduced from 40% to increase wellness/sleep influence |
-| Wellness Index | 30% | Increased from 25% for team-sport contexts |
-| Sleep | 20% | Strong evidence base (Halson 2014, Fullagar 2015) |
-| Game Proximity | 15% | Post-match recovery considerations |
+| Component       | Weight | Rationale                                             |
+| --------------- | ------ | ----------------------------------------------------- |
+| Workload (ACWR) | 35%    | Reduced from 40% to increase wellness/sleep influence |
+| Wellness Index  | 30%    | Increased from 25% for team-sport contexts            |
+| Sleep           | 20%    | Strong evidence base (Halson 2014, Fullagar 2015)     |
+| Game Proximity  | 15%    | Post-match recovery considerations                    |
 
 ### Wellness Index
 
 **Components** (1-5 scale):
+
 - **Required**: Fatigue, Sleep Quality, Soreness
 - **Optional**: Mood, Stress, Energy
 
 **Calculation**:
+
 - Average of available components
 - Converted to 0-100 scale
 - Completeness threshold: 60% (below this, use sleep-proxy mode)
@@ -146,17 +154,18 @@ FlagFit Pro uses evidence-based configurations for all training load monitoring,
 
 **Starting Points** (require team calibration):
 
-| Score Range | Level | Suggestion | Action |
-|-------------|-------|------------|--------|
-| < 55 | Low | Deload | Reduce intensity or volume |
-| 55 - 75 | Moderate | Maintain | Keep planned workload |
-| > 75 | High | Push | Can tolerate higher intensity |
+| Score Range | Level    | Suggestion | Action                        |
+| ----------- | -------- | ---------- | ----------------------------- |
+| < 55        | Low      | Deload     | Reduce intensity or volume    |
+| 55 - 75     | Moderate | Maintain   | Keep planned workload         |
+| > 75        | High     | Push       | Can tolerate higher intensity |
 
 **Note**: These are population-level starting points. Teams should calibrate using their own injury and performance history.
 
 ### Reduced Data Mode
 
 When wellness completeness < 60%:
+
 - Sleep weight multiplier: **1.5x** (increases sleep influence)
 - Uses sleep metrics as proxy for broader wellness
 - Based on research: Simple sleep metrics can proxy broader wellness when resources are limited (Saw 2016)
@@ -191,10 +200,10 @@ When wellness completeness < 60%:
 
 ### Citations
 
-- **Halson, S. L. (2014)**: Sleep in elite athletes and nutritional interventions to enhance sleep. *Sports Medicine*, 44(S1), 13-23.
-- **Fullagar, H. H. K., et al. (2015)**: Sleep and athletic performance: The effects of sleep loss on exercise performance, and physiological and cognitive responses to exercise. *Sports Medicine*, 45(2), 161-186.
-- **Saw, A. E., et al. (2016)**: Monitoring the athlete training response: Subjective self-reported measures trump commonly used objective measures: A systematic review. *British Journal of Sports Medicine*, 50(5), 281-291.
-- **McLellan, C. P., et al. (2011)**: Markers of postmatch fatigue in professional rugby league players. *Journal of Strength and Conditioning Research*, 25(4), 1030-1039.
+- **Halson, S. L. (2014)**: Sleep in elite athletes and nutritional interventions to enhance sleep. _Sports Medicine_, 44(S1), 13-23.
+- **Fullagar, H. H. K., et al. (2015)**: Sleep and athletic performance: The effects of sleep loss on exercise performance, and physiological and cognitive responses to exercise. _Sports Medicine_, 45(2), 161-186.
+- **Saw, A. E., et al. (2016)**: Monitoring the athlete training response: Subjective self-reported measures trump commonly used objective measures: A systematic review. _British Journal of Sports Medicine_, 50(5), 281-291.
+- **McLellan, C. P., et al. (2011)**: Markers of postmatch fatigue in professional rugby league players. _Journal of Strength and Conditioning Research_, 25(4), 1030-1039.
 
 ---
 
@@ -203,6 +212,7 @@ When wellness completeness < 60%:
 ### Scientific Foundation
 
 **Primary Research**:
+
 - **Bosquet, L., et al. (2007)**: Effects of tapering on performance: A meta-analysis
 - **Mujika, I., & Padilla, S. (2003)**: Scientific bases for precompetition tapering strategies
 
@@ -211,22 +221,25 @@ When wellness completeness < 60%:
 **Taper Duration Ranges**:
 
 | Event Importance | Duration (Days) | Volume Reduction |
-|------------------|-----------------|------------------|
-| Major | 10-14 | 50-70% |
-| High | 7-10 | 40-60% |
-| Medium | 5-7 | 30-50% |
-| Minor | 3-5 | 20-40% |
+| ---------------- | --------------- | ---------------- |
+| Major            | 10-14           | 50-70%           |
+| High             | 7-10            | 40-60%           |
+| Medium           | 5-7             | 30-50%           |
+| Minor            | 3-5             | 20-40%           |
 
 **Intensity Floor**: 80-90% of normal
+
 - Maintains moderate-high intensity during taper
 - Prevents detraining (Mujika 2003)
 
 **Post-Overload Taper**:
+
 - Volume reduction: 60-90%
 - Duration: 10-14 days
 - Applied after overload periods
 
 **Overload Period** (before major events):
+
 - Duration: 14-28 days
 - Volume multiplier: 1.1x
 - Intensity multiplier: 0.95x
@@ -264,8 +277,8 @@ When wellness completeness < 60%:
 
 ### Citations
 
-- **Bosquet, L., et al. (2007)**: Effects of tapering on performance: A meta-analysis. *Medicine & Science in Sports & Exercise*, 39(8), 1358-1365.
-- **Mujika, I., & Padilla, S. (2003)**: Scientific bases for precompetition tapering strategies. *Medicine & Science in Sports & Exercise*, 35(7), 1182-1187.
+- **Bosquet, L., et al. (2007)**: Effects of tapering on performance: A meta-analysis. _Medicine & Science in Sports & Exercise_, 39(8), 1358-1365.
+- **Mujika, I., & Padilla, S. (2003)**: Scientific bases for precompetition tapering strategies. _Medicine & Science in Sports & Exercise_, 35(7), 1182-1187.
 
 ---
 
@@ -274,16 +287,19 @@ When wellness completeness < 60%:
 ### Available Presets
 
 **1. Adult Flag Competitive v1** (`adult_flag_competitive_v1`)
+
 - Population: 18-35 years, competitive, 3-6 sessions/week
 - Default preset for most users
 
 **2. Youth Flag v1** (`youth_flag_v1`)
+
 - Population: 13-17 years, recreational/competitive
 - More conservative thresholds
 
 ### Preset Structure
 
 Each preset includes:
+
 - **Population assumptions**: Age range, sport type, competition level
 - **ACWR configuration**: Thresholds, windows, safeguards
 - **Readiness configuration**: Weightings, cut-points, reduced data mode
@@ -295,7 +311,7 @@ Each preset includes:
 
 ```typescript
 // In Angular service
-evidenceConfigService.setActivePreset('youth_flag_v1');
+evidenceConfigService.setActivePreset("youth_flag_v1");
 
 // Services automatically update
 acwrService.resetConfig(); // Uses new preset
@@ -309,12 +325,14 @@ readinessService.resetConfig(); // Uses new preset
 ### Coach Override Guidelines
 
 **What Can Be Overridden**:
+
 - ACWR thresholds (if team-specific data shows different optimal ranges)
 - Readiness cut-points (should be calibrated using team's injury/performance history)
 - Taper duration and volume reductions (based on athlete response)
 - Weekly progression caps (for individual athletes)
 
 **What Should Stay Evidence-Based**:
+
 - ACWR calculation method (EWMA)
 - Window sizes (7/28 days)
 - Readiness component weightings (unless strong team-specific data)
@@ -323,16 +341,19 @@ readinessService.resetConfig(); // Uses new preset
 ### Calibration Process
 
 **1. Readiness Cut-Points**:
+
 - Track readiness scores and injury/performance outcomes
 - Adjust cut-points based on team-specific patterns
 - Document calibration rationale
 
 **2. ACWR Thresholds**:
+
 - Monitor injury rates at different ACWR ranges
 - Adjust if team shows different tolerance patterns
 - Consider individual athlete variations
 
 **3. Weekly Progression Caps**:
+
 - Start with evidence-based 10% cap
 - Reduce to 7% for higher-risk athletes
 - Increase only with strong justification
@@ -370,16 +391,16 @@ const preset = evidenceConfigService.getActivePreset();
 // Update ACWR thresholds
 acwrService.updateConfig({
   thresholds: {
-    sweetSpotHigh: 1.4 // Team-specific adjustment
-  }
+    sweetSpotHigh: 1.4, // Team-specific adjustment
+  },
 });
 
 // Update Readiness cut-points
 readinessService.updateConfig({
   cutPoints: {
     lowMax: 50, // Calibrated based on team data
-    moderateMax: 70
-  }
+    moderateMax: 70,
+  },
 });
 
 // Reset to evidence defaults
@@ -392,23 +413,27 @@ readinessService.resetConfig();
 ## References
 
 ### ACWR
-- Gabbett, T. J. (2016). The training—injury prevention paradox: should athletes be training smarter and harder? *British Journal of Sports Medicine*, 50(5), 273-280.
+
+- Gabbett, T. J. (2016). The training—injury prevention paradox: should athletes be training smarter and harder? _British Journal of Sports Medicine_, 50(5), 273-280.
 
 ### Readiness
-- Halson, S. L. (2014). Sleep in elite athletes and nutritional interventions to enhance sleep. *Sports Medicine*, 44(S1), 13-23.
-- Fullagar, H. H. K., et al. (2015). Sleep and athletic performance: The effects of sleep loss on exercise performance, and physiological and cognitive responses to exercise. *Sports Medicine*, 45(2), 161-186.
-- Saw, A. E., et al. (2016). Monitoring the athlete training response: Subjective self-reported measures trump commonly used objective measures: A systematic review. *British Journal of Sports Medicine*, 50(5), 281-291.
-- McLellan, C. P., et al. (2011). Markers of postmatch fatigue in professional rugby league players. *Journal of Strength and Conditioning Research*, 25(4), 1030-1039.
+
+- Halson, S. L. (2014). Sleep in elite athletes and nutritional interventions to enhance sleep. _Sports Medicine_, 44(S1), 13-23.
+- Fullagar, H. H. K., et al. (2015). Sleep and athletic performance: The effects of sleep loss on exercise performance, and physiological and cognitive responses to exercise. _Sports Medicine_, 45(2), 161-186.
+- Saw, A. E., et al. (2016). Monitoring the athlete training response: Subjective self-reported measures trump commonly used objective measures: A systematic review. _British Journal of Sports Medicine_, 50(5), 281-291.
+- McLellan, C. P., et al. (2011). Markers of postmatch fatigue in professional rugby league players. _Journal of Strength and Conditioning Research_, 25(4), 1030-1039.
 
 ### Tapering
-- Bosquet, L., et al. (2007). Effects of tapering on performance: A meta-analysis. *Medicine & Science in Sports & Exercise*, 39(8), 1358-1365.
-- Mujika, I., & Padilla, S. (2003). Scientific bases for precompetition tapering strategies. *Medicine & Science in Sports & Exercise*, 35(7), 1182-1187.
+
+- Bosquet, L., et al. (2007). Effects of tapering on performance: A meta-analysis. _Medicine & Science in Sports & Exercise_, 39(8), 1358-1365.
+- Mujika, I., & Padilla, S. (2003). Scientific bases for precompetition tapering strategies. _Medicine & Science in Sports & Exercise_, 35(7), 1182-1187.
 
 ---
 
 ## Support
 
 For questions about evidence-based configurations:
+
 1. Review this documentation
 2. Check evidence preset citations
 3. Consult with sports science team
@@ -428,4 +453,3 @@ For questions about evidence-based configurations:
 - Calibration process documented
 
 **Remember**: Evidence-based configurations are starting points. Teams should calibrate using their own data for optimal accuracy.
-

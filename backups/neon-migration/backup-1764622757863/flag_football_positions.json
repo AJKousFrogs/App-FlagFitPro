@@ -162,12 +162,7 @@
       "agility": "high",
       "instincts": "critical"
     },
-    "technical_skills": [
-      "Tackling",
-      "Coverage",
-      "Blitzing",
-      "Block shedding"
-    ],
+    "technical_skills": ["Tackling", "Coverage", "Blitzing", "Block shedding"],
     "tactical_understanding": [
       "Run fits",
       "Coverage schemes",

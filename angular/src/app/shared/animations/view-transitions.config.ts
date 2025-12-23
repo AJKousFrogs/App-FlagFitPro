@@ -1,11 +1,11 @@
 /**
  * View Transitions Configuration
- * 
+ *
  * Angular 21 View Transitions API configuration
  * Provides smooth page transitions between routes
  */
 
-import { ViewTransitionsService } from '@angular/router';
+import { ViewTransitionsService } from "@angular/router";
 
 /**
  * View Transition Options
@@ -24,7 +24,7 @@ export class ViewTransitionHelper {
    * Check if view transitions are supported
    */
   static isSupported(): boolean {
-    return typeof document !== 'undefined' && 'startViewTransition' in document;
+    return typeof document !== "undefined" && "startViewTransition" in document;
   }
 
   /**
@@ -43,8 +43,8 @@ export class ViewTransitionHelper {
    * Skip transition for next navigation
    */
   static skipNextTransition(): void {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-skip-transition', 'true');
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute("data-skip-transition", "true");
     }
   }
 
@@ -52,12 +52,13 @@ export class ViewTransitionHelper {
    * Check if transition should be skipped
    */
   static shouldSkipTransition(): boolean {
-    if (typeof document === 'undefined') {
+    if (typeof document === "undefined") {
       return false;
     }
-    const skip = document.documentElement.getAttribute('data-skip-transition') === 'true';
+    const skip =
+      document.documentElement.getAttribute("data-skip-transition") === "true";
     if (skip) {
-      document.documentElement.removeAttribute('data-skip-transition');
+      document.documentElement.removeAttribute("data-skip-transition");
     }
     return skip;
   }
@@ -164,4 +165,3 @@ export const VIEW_TRANSITION_STYLES = `
     }
   }
 `;
-

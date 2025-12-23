@@ -1,8 +1,8 @@
 // NFL Player Comparison Database Seeder
 // Based on 20 years of real NFL combine data for user comparisons
 
-import { neon } from '@neondatabase/serverless';
-import { config } from 'dotenv';
+import { neon } from "@neondatabase/serverless";
+import { config } from "dotenv";
 
 config();
 
@@ -12,9 +12,9 @@ const sql = neon(process.env.DATABASE_URL);
 const nflCombineData = [
   // Elite Speed Demons
   {
-    player_name: 'Xavier Worthy',
-    position: 'WR',
-    college: 'Texas',
+    player_name: "Xavier Worthy",
+    position: "WR",
+    college: "Texas",
     draft_year: 2024,
     draft_round: 1,
     draft_pick: 28,
@@ -27,15 +27,15 @@ const nflCombineData = [
     vertical_jump: 39.0,
     broad_jump: 129,
     nfl_seasons_played: 1,
-    career_achievements: ['NFL_Record_Holder'],
+    career_achievements: ["NFL_Record_Holder"],
     success_rating: 8,
     combine_year: 2024,
-    current_status: 'Active'
+    current_status: "Active",
   },
   {
-    player_name: 'John Ross III',
-    position: 'WR',
-    college: 'Washington',
+    player_name: "John Ross III",
+    position: "WR",
+    college: "Washington",
     draft_year: 2017,
     draft_round: 1,
     draft_pick: 9,
@@ -48,15 +48,15 @@ const nflCombineData = [
     vertical_jump: 36.0,
     broad_jump: 118,
     nfl_seasons_played: 6,
-    career_achievements: ['Former_Record_Holder'],
+    career_achievements: ["Former_Record_Holder"],
     success_rating: 6,
     combine_year: 2017,
-    current_status: 'Active'
+    current_status: "Active",
   },
   {
-    player_name: 'Henry Ruggs III',
-    position: 'WR',
-    college: 'Alabama',
+    player_name: "Henry Ruggs III",
+    position: "WR",
+    college: "Alabama",
     draft_year: 2020,
     draft_round: 1,
     draft_pick: 12,
@@ -72,14 +72,14 @@ const nflCombineData = [
     career_achievements: [],
     success_rating: 5,
     combine_year: 2020,
-    current_status: 'Retired'
+    current_status: "Retired",
   },
-  
+
   // Elite DBs
   {
-    player_name: 'Kalon Barnes',
-    position: 'CB',
-    college: 'Baylor',
+    player_name: "Kalon Barnes",
+    position: "CB",
+    college: "Baylor",
     draft_year: 2022,
     draft_round: 7,
     draft_pick: 248,
@@ -92,15 +92,15 @@ const nflCombineData = [
     vertical_jump: 40.5,
     broad_jump: 124,
     nfl_seasons_played: 2,
-    career_achievements: ['Combine_Record'],
+    career_achievements: ["Combine_Record"],
     success_rating: 6,
     combine_year: 2022,
-    current_status: 'Active'
+    current_status: "Active",
   },
   {
-    player_name: 'Dunta Robinson',
-    position: 'CB',
-    college: 'South Carolina',
+    player_name: "Dunta Robinson",
+    position: "CB",
+    college: "South Carolina",
     draft_year: 2004,
     draft_round: 1,
     draft_pick: 10,
@@ -113,17 +113,17 @@ const nflCombineData = [
     vertical_jump: 35.0,
     broad_jump: 115,
     nfl_seasons_played: 11,
-    career_achievements: ['Pro_Bowl', 'Record_Holder'],
+    career_achievements: ["Pro_Bowl", "Record_Holder"],
     success_rating: 8,
     combine_year: 2004,
-    current_status: 'Retired'
+    current_status: "Retired",
   },
-  
+
   // Elite but realistic targets for flag football
   {
-    player_name: 'Jerry Rice',
-    position: 'WR',
-    college: 'Mississippi Valley State',
+    player_name: "Jerry Rice",
+    position: "WR",
+    college: "Mississippi Valley State",
     draft_year: 1985,
     draft_round: 1,
     draft_pick: 16,
@@ -136,15 +136,15 @@ const nflCombineData = [
     vertical_jump: 34.0,
     broad_jump: 108,
     nfl_seasons_played: 20,
-    career_achievements: ['Hall_of_Fame', 'Super_Bowl', 'All_Pro'],
+    career_achievements: ["Hall_of_Fame", "Super_Bowl", "All_Pro"],
     success_rating: 10,
     combine_year: 1985,
-    current_status: 'Hall_of_Fame'
+    current_status: "Hall_of_Fame",
   },
   {
-    player_name: 'Larry Fitzgerald',
-    position: 'WR',
-    college: 'Pittsburgh',
+    player_name: "Larry Fitzgerald",
+    position: "WR",
+    college: "Pittsburgh",
     draft_year: 2004,
     draft_round: 1,
     draft_pick: 3,
@@ -157,17 +157,17 @@ const nflCombineData = [
     vertical_jump: 32.0,
     broad_jump: 105,
     nfl_seasons_played: 17,
-    career_achievements: ['Pro_Bowl', 'All_Pro'],
+    career_achievements: ["Pro_Bowl", "All_Pro"],
     success_rating: 9,
     combine_year: 2004,
-    current_status: 'Retired'
+    current_status: "Retired",
   },
-  
+
   // Good but achievable targets
   {
-    player_name: 'Julian Edelman',
-    position: 'WR',
-    college: 'Kent State',
+    player_name: "Julian Edelman",
+    position: "WR",
+    college: "Kent State",
     draft_year: 2009,
     draft_round: 7,
     draft_pick: 232,
@@ -180,38 +180,38 @@ const nflCombineData = [
     vertical_jump: 35.0,
     broad_jump: 118,
     nfl_seasons_played: 11,
-    career_achievements: ['Super_Bowl', 'Super_Bowl_MVP'],
+    career_achievements: ["Super_Bowl", "Super_Bowl_MVP"],
     success_rating: 8,
     combine_year: 2009,
-    current_status: 'Retired'
+    current_status: "Retired",
   },
   {
-    player_name: 'Wes Welker',
-    position: 'WR',
-    college: 'Texas Tech',
+    player_name: "Wes Welker",
+    position: "WR",
+    college: "Texas Tech",
     draft_year: 2004,
     draft_round: null, // Undrafted
     draft_pick: null,
     height_inches: 69,
     weight_pounds: 185,
     forty_yard_dash: 4.65,
-    ten_yard_split: 1.70,
+    ten_yard_split: 1.7,
     three_cone_drill: 6.58,
     twenty_yard_shuttle: 4.08,
     vertical_jump: 31.0,
     broad_jump: 102,
     nfl_seasons_played: 12,
-    career_achievements: ['Pro_Bowl', 'All_Pro'],
+    career_achievements: ["Pro_Bowl", "All_Pro"],
     success_rating: 8,
     combine_year: 2004,
-    current_status: 'Retired'
+    current_status: "Retired",
   },
-  
+
   // Average NFL level (flag football elite targets)
   {
-    player_name: 'Anquan Boldin',
-    position: 'WR',
-    college: 'Florida State',
+    player_name: "Anquan Boldin",
+    position: "WR",
+    college: "Florida State",
     draft_year: 2003,
     draft_round: 1,
     draft_pick: 54,
@@ -224,15 +224,15 @@ const nflCombineData = [
     vertical_jump: 30.0,
     broad_jump: 98,
     nfl_seasons_played: 14,
-    career_achievements: ['Pro_Bowl', 'Super_Bowl'],
+    career_achievements: ["Pro_Bowl", "Super_Bowl"],
     success_rating: 8,
     combine_year: 2003,
-    current_status: 'Retired'
+    current_status: "Retired",
   },
   {
-    player_name: 'Hines Ward',
-    position: 'WR',
-    college: 'Georgia',
+    player_name: "Hines Ward",
+    position: "WR",
+    college: "Georgia",
     draft_year: 1998,
     draft_round: 3,
     draft_pick: 92,
@@ -245,17 +245,17 @@ const nflCombineData = [
     vertical_jump: 29.0,
     broad_jump: 95,
     nfl_seasons_played: 14,
-    career_achievements: ['Pro_Bowl', 'Super_Bowl'],
+    career_achievements: ["Pro_Bowl", "Super_Bowl"],
     success_rating: 8,
     combine_year: 1998,
-    current_status: 'Retired'
+    current_status: "Retired",
   },
-  
+
   // Slower but successful (shows technique > speed)
   {
-    player_name: 'Cooper Kupp',
-    position: 'WR',
-    college: 'Eastern Washington',
+    player_name: "Cooper Kupp",
+    position: "WR",
+    college: "Eastern Washington",
     draft_year: 2017,
     draft_round: 3,
     draft_pick: 69,
@@ -268,38 +268,38 @@ const nflCombineData = [
     vertical_jump: 33.5,
     broad_jump: 108,
     nfl_seasons_played: 7,
-    career_achievements: ['All_Pro', 'Triple_Crown'],
+    career_achievements: ["All_Pro", "Triple_Crown"],
     success_rating: 9,
     combine_year: 2017,
-    current_status: 'Active'
+    current_status: "Active",
   },
   {
-    player_name: 'Adam Thielen',
-    position: 'WR',
-    college: 'Minnesota State',
+    player_name: "Adam Thielen",
+    position: "WR",
+    college: "Minnesota State",
     draft_year: 2013,
     draft_round: null, // Undrafted
     draft_pick: null,
     height_inches: 73,
     weight_pounds: 200,
     forty_yard_dash: 4.64,
-    ten_yard_split: 1.70,
+    ten_yard_split: 1.7,
     three_cone_drill: 6.85,
-    twenty_yard_shuttle: 4.20,
+    twenty_yard_shuttle: 4.2,
     vertical_jump: 32.0,
     broad_jump: 105,
     nfl_seasons_played: 10,
-    career_achievements: ['Pro_Bowl'],
+    career_achievements: ["Pro_Bowl"],
     success_rating: 7,
     combine_year: 2013,
-    current_status: 'Active'
+    current_status: "Active",
   },
-  
+
   // Defensive backs with various speed levels
   {
-    player_name: 'Deion Sanders',
-    position: 'CB',
-    college: 'Florida State',
+    player_name: "Deion Sanders",
+    position: "CB",
+    college: "Florida State",
     draft_year: 1989,
     draft_round: 1,
     draft_pick: 5,
@@ -312,15 +312,15 @@ const nflCombineData = [
     vertical_jump: 38.0,
     broad_jump: 125,
     nfl_seasons_played: 14,
-    career_achievements: ['Hall_of_Fame', 'Super_Bowl', 'All_Pro'],
+    career_achievements: ["Hall_of_Fame", "Super_Bowl", "All_Pro"],
     success_rating: 10,
     combine_year: 1989,
-    current_status: 'Hall_of_Fame'
+    current_status: "Hall_of_Fame",
   },
   {
-    player_name: 'Darrelle Revis',
-    position: 'CB',
-    college: 'Pittsburgh',
+    player_name: "Darrelle Revis",
+    position: "CB",
+    college: "Pittsburgh",
     draft_year: 2007,
     draft_round: 1,
     draft_pick: 14,
@@ -333,17 +333,17 @@ const nflCombineData = [
     vertical_jump: 38.0,
     broad_jump: 119,
     nfl_seasons_played: 11,
-    career_achievements: ['All_Pro', 'Super_Bowl'],
+    career_achievements: ["All_Pro", "Super_Bowl"],
     success_rating: 9,
     combine_year: 2007,
-    current_status: 'Retired'
+    current_status: "Retired",
   },
-  
+
   // More achievable DB targets
   {
-    player_name: 'Malcolm Butler',
-    position: 'CB',
-    college: 'West Alabama',
+    player_name: "Malcolm Butler",
+    position: "CB",
+    college: "West Alabama",
     draft_year: 2014,
     draft_round: null, // Undrafted
     draft_pick: null,
@@ -356,17 +356,17 @@ const nflCombineData = [
     vertical_jump: 34.0,
     broad_jump: 110,
     nfl_seasons_played: 8,
-    career_achievements: ['Super_Bowl_Hero'],
+    career_achievements: ["Super_Bowl_Hero"],
     success_rating: 7,
     combine_year: 2014,
-    current_status: 'Active'
+    current_status: "Active",
   },
-  
+
   // Examples across different eras
   {
-    player_name: 'Chad Johnson',
-    position: 'WR',
-    college: 'Oregon State',
+    player_name: "Chad Johnson",
+    position: "WR",
+    college: "Oregon State",
     draft_year: 2001,
     draft_round: 2,
     draft_pick: 36,
@@ -379,20 +379,20 @@ const nflCombineData = [
     vertical_jump: 35.5,
     broad_jump: 115,
     nfl_seasons_played: 11,
-    career_achievements: ['Pro_Bowl', 'All_Pro'],
+    career_achievements: ["Pro_Bowl", "All_Pro"],
     success_rating: 8,
     combine_year: 2001,
-    current_status: 'Retired'
-  }
+    current_status: "Retired",
+  },
 ];
 
 async function seedNFLPlayerDatabase() {
   try {
-    console.log('🏈 Seeding NFL player comparison database...');
-    
+    console.log("🏈 Seeding NFL player comparison database...");
+
     // Create the table first
-    console.log('🏗️ Creating NFL combine performances table...');
-    
+    console.log("🏗️ Creating NFL combine performances table...");
+
     for (const player of nflCombineData) {
       await sql`
         INSERT INTO nfl_combine_performances (
@@ -412,26 +412,28 @@ async function seedNFLPlayerDatabase() {
         ) ON CONFLICT DO NOTHING
       `;
     }
-    
-    console.log('✅ NFL player data seeded successfully!');
-    
+
+    console.log("✅ NFL player data seeded successfully!");
+
     // Test the comparison function with a sample user performance
-    console.log('\\n🧪 Testing comparison system...');
-    
+    console.log("\\n🧪 Testing comparison system...");
+
     // Test with 4.68s (user example from your message)
     const testComparison = await sql`
       SELECT * FROM generate_user_nfl_comparison(1, '40_yard_dash', 4.68)
     `;
-    
+
     if (testComparison.length > 0) {
       const result = testComparison[0];
-      console.log('\\n📊 SAMPLE COMPARISON (4.68s 40-yard):');
+      console.log("\\n📊 SAMPLE COMPARISON (4.68s 40-yard):");
       console.log(`   Message: "${result.comparison_message}"`);
       console.log(`   Percentile: ${result.user_percentile}%`);
-      console.log(`   Better than: ${result.better_than_count}/${result.total_players_count} NFL players`);
+      console.log(
+        `   Better than: ${result.better_than_count}/${result.total_players_count} NFL players`,
+      );
       console.log(`   Motivation level: ${result.motivation_level}`);
     }
-    
+
     // Show sample data
     const samplePlayers = await sql`
       SELECT player_name, position, draft_year, forty_yard_dash, 
@@ -440,13 +442,15 @@ async function seedNFLPlayerDatabase() {
       ORDER BY forty_yard_dash
       LIMIT 10
     `;
-    
-    console.log('\\n⚡ FASTEST NFL PLAYERS IN DATABASE:');
-    samplePlayers.forEach(p => {
-      const achievements = p.career_achievements.join(', ') || 'None';
-      console.log(`   ${p.forty_yard_dash}s - ${p.player_name} (${p.position}, ${p.draft_year}) - ${achievements}`);
+
+    console.log("\\n⚡ FASTEST NFL PLAYERS IN DATABASE:");
+    samplePlayers.forEach((p) => {
+      const achievements = p.career_achievements.join(", ") || "None";
+      console.log(
+        `   ${p.forty_yard_dash}s - ${p.player_name} (${p.position}, ${p.draft_year}) - ${achievements}`,
+      );
     });
-    
+
     // Show slower successful players
     const slowerPlayers = await sql`
       SELECT player_name, position, draft_year, forty_yard_dash, 
@@ -456,23 +460,29 @@ async function seedNFLPlayerDatabase() {
       ORDER BY success_rating DESC, forty_yard_dash
       LIMIT 5
     `;
-    
-    console.log('\\n🎯 SLOWER BUT HIGHLY SUCCESSFUL PLAYERS:');
-    slowerPlayers.forEach(p => {
-      const achievements = p.career_achievements.join(', ') || 'None';
-      console.log(`   ${p.forty_yard_dash}s - ${p.player_name} (${p.position}, ${p.draft_year}) - ${achievements} (Rating: ${p.success_rating}/10)`);
+
+    console.log("\\n🎯 SLOWER BUT HIGHLY SUCCESSFUL PLAYERS:");
+    slowerPlayers.forEach((p) => {
+      const achievements = p.career_achievements.join(", ") || "None";
+      console.log(
+        `   ${p.forty_yard_dash}s - ${p.player_name} (${p.position}, ${p.draft_year}) - ${achievements} (Rating: ${p.success_rating}/10)`,
+      );
     });
-    
-    const totalCount = await sql`SELECT COUNT(*) as count FROM nfl_combine_performances`;
+
+    const totalCount =
+      await sql`SELECT COUNT(*) as count FROM nfl_combine_performances`;
     console.log(`\\n📊 Total NFL players in database: ${totalCount[0].count}`);
-    
-    console.log('\\n🚀 NFL COMPARISON SYSTEM READY!');
-    console.log('   Users can now see exactly where they stand vs real NFL players');
-    console.log('   Examples: "Today you\'re as fast as Jerry Rice who ran 4.59s in 1985 (Hall of Fame)"');
-    console.log('   Shows both speed and career success for motivation');
-    
+
+    console.log("\\n🚀 NFL COMPARISON SYSTEM READY!");
+    console.log(
+      "   Users can now see exactly where they stand vs real NFL players",
+    );
+    console.log(
+      '   Examples: "Today you\'re as fast as Jerry Rice who ran 4.59s in 1985 (Hall of Fame)"',
+    );
+    console.log("   Shows both speed and career success for motivation");
   } catch (error) {
-    console.error('❌ Error seeding NFL player database:', error);
+    console.error("❌ Error seeding NFL player database:", error);
     process.exit(1);
   }
 }

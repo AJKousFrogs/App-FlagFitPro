@@ -15,31 +15,37 @@ Your FlagFit Pro app now has **real-time data synchronization** across all devic
 ## 📡 What Has Real-Time Updates
 
 ### 1. **Training Sessions**
+
 - New session added → appears instantly
 - Session completed → status updates live
 - Workload changes → dashboard refreshes
 
 ### 2. **Games/Matches**
+
 - Live game tracking → plays update in real-time
 - Stats changes → team sees updates immediately
 - Score updates → everyone synced
 
 ### 3. **Wellness Data**
+
 - Sleep logs → readiness recalculates
 - Mood/fatigue → wellness index updates
 - Recovery metrics → team dashboard refreshes
 
 ### 4. **Performance Metrics**
+
 - Sprint times → trends update
 - Jump heights → performance graphs refresh
 - Skills assessments → progress tracks live
 
 ### 5. **Readiness/ACWR**
+
 - Training load → ACWR recalculates
 - Wellness → readiness score updates
 - Risk zones → traffic lights change
 
 ### 6. **Team Updates** (Coaches)
+
 - Athlete completes workout → coach sees it
 - Wellness submitted → team status updates
 - Performance logged → analytics refresh
@@ -65,26 +71,25 @@ UI Refreshes (Automatic)
 ```typescript
 // 1. Extend RealtimeBaseComponent
 export class MyComponent extends RealtimeBaseComponent implements OnInit {
-
   ngOnInit() {
     this.setupRealtimeSubscriptions();
   }
 
   // 2. Set up subscriptions
   private setupRealtimeSubscriptions() {
-    const unsub = this.realtimeService.subscribeToTrainingSessions(
-      (event) => this.handleUpdate(event)
+    const unsub = this.realtimeService.subscribeToTrainingSessions((event) =>
+      this.handleUpdate(event),
     );
     this.addSubscription(unsub); // Auto-cleanup on destroy
   }
 
   // 3. Handle updates
   private handleUpdate(event: RealtimeEvent) {
-    if (event.eventType === 'INSERT') {
+    if (event.eventType === "INSERT") {
       // New record added
-    } else if (event.eventType === 'UPDATE') {
+    } else if (event.eventType === "UPDATE") {
       // Record updated
-    } else if (event.eventType === 'DELETE') {
+    } else if (event.eventType === "DELETE") {
       // Record deleted
     }
   }
@@ -98,6 +103,7 @@ export class MyComponent extends RealtimeBaseComponent implements OnInit {
 Located: `src/app/core/services/realtime.service.ts`
 
 **Available Subscriptions:**
+
 - `subscribeToTrainingSessions(callback)` - Training data
 - `subscribeToGames(callback)` - Game/match data
 - `subscribeToWellness(callback)` - Wellness entries
@@ -107,11 +113,13 @@ Located: `src/app/core/services/realtime.service.ts`
 - `subscribeToMessages(conversationId, callback)` - Chat messages
 
 **Methods:**
+
 - `unsubscribeAll()` - Close all connections
 - `getActiveSubscriptions()` - List active channels
 - `isSubscribed(channelName)` - Check if subscribed
 
 **Signals:**
+
 - `isConnected()` - Connection status (boolean)
 - `connectionStatus()` - 'connected' | 'disconnected' | 'connecting'
 
@@ -120,6 +128,7 @@ Located: `src/app/core/services/realtime.service.ts`
 Located: `src/app/shared/components/realtime-base.component.ts`
 
 **Usage:**
+
 ```typescript
 export class MyComponent extends RealtimeBaseComponent {
   // Automatic subscription cleanup on destroy!
@@ -127,6 +136,7 @@ export class MyComponent extends RealtimeBaseComponent {
 ```
 
 **Methods:**
+
 - `addSubscription(unsubscribe)` - Register for cleanup
 - `unsubscribeAll()` - Manual cleanup
 
@@ -137,11 +147,15 @@ export class MyComponent extends RealtimeBaseComponent {
 Located: `src/app/shared/components/live-indicator/live-indicator.component.ts`
 
 **Usage:**
+
 ```html
-<app-live-indicator [isLive]="realtimeService.isConnected()"></app-live-indicator>
+<app-live-indicator
+  [isLive]="realtimeService.isConnected()"
+></app-live-indicator>
 ```
 
 **Features:**
+
 - Pulsing red dot when connected
 - "LIVE" text indicator
 - Gray when disconnected
@@ -153,28 +167,27 @@ The athlete dashboard now has real-time updates:
 
 ```typescript
 export class AthleteDashboardComponent extends RealtimeBaseComponent {
-
   private setupRealtimeSubscriptions() {
     // Training sessions
     this.addSubscription(
       this.realtimeService.subscribeToTrainingSessions((event) => {
         this.loadTodayWorkload(userId);
         this.loadNextSession(userId);
-      })
+      }),
     );
 
     // Readiness scores
     this.addSubscription(
       this.realtimeService.subscribeToReadiness((event) => {
         this.readinessService.calculateToday(userId).subscribe();
-      })
+      }),
     );
 
     // Performance metrics
     this.addSubscription(
       this.realtimeService.subscribeToPerformance((event) => {
         this.loadTrends(userId);
-      })
+      }),
     );
   }
 }
@@ -183,11 +196,13 @@ export class AthleteDashboardComponent extends RealtimeBaseComponent {
 ## 🚀 Adding Real-Time to New Components
 
 ### Step 1: Extend Base Component
+
 ```typescript
 export class NewComponent extends RealtimeBaseComponent implements OnInit {
 ```
 
 ### Step 2: Set Up Subscriptions
+
 ```typescript
 ngOnInit() {
   this.setupRealtimeSubscriptions();
@@ -203,8 +218,11 @@ private setupRealtimeSubscriptions() {
 ```
 
 ### Step 3: Add Live Indicator (Optional)
+
 ```html
-<app-live-indicator [isLive]="realtimeService.isConnected()"></app-live-indicator>
+<app-live-indicator
+  [isLive]="realtimeService.isConnected()"
+></app-live-indicator>
 ```
 
 ## 🔐 Security
@@ -224,14 +242,20 @@ private setupRealtimeSubscriptions() {
 ## 🐛 Debugging
 
 ### Check Connection Status
+
 ```typescript
-console.log('Connected:', this.realtimeService.isConnected());
-console.log('Status:', this.realtimeService.connectionStatus());
-console.log('Active subscriptions:', this.realtimeService.getActiveSubscriptions());
+console.log("Connected:", this.realtimeService.isConnected());
+console.log("Status:", this.realtimeService.connectionStatus());
+console.log(
+  "Active subscriptions:",
+  this.realtimeService.getActiveSubscriptions(),
+);
 ```
 
 ### Enable Console Logs
+
 Real-time events are logged to console:
+
 ```
 🔴 LIVE: Training session updated {...}
 ✅ Subscribed to training_sessions
@@ -241,12 +265,14 @@ Real-time events are logged to console:
 ### Common Issues
 
 **No updates received:**
+
 1. Check if logged in (needs authenticated user)
 2. Verify Supabase Realtime is enabled on your tables
 3. Check browser console for connection errors
 4. Ensure Row Level Security allows SELECT
 
 **Memory leaks:**
+
 - Always extend `RealtimeBaseComponent` for automatic cleanup
 - Or manually call `unsubscribeAll()` in `ngOnDestroy()`
 

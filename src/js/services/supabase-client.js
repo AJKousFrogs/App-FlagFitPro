@@ -5,13 +5,13 @@
 
 // Import Supabase from CDN for browser compatibility
 const { createClient } = window.supabase || {};
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 // Get Supabase configuration from environment or window globals
 const getSupabaseConfig = () => {
   // Check if running in browser
-  if (typeof window === 'undefined') {
-    logger.error('[Supabase] Not running in browser environment');
+  if (typeof window === "undefined") {
+    logger.error("[Supabase] Not running in browser environment");
     return { url: null, anonKey: null };
   }
 
@@ -20,7 +20,7 @@ const getSupabaseConfig = () => {
   if (window._env?.SUPABASE_URL && window._env?.SUPABASE_ANON_KEY) {
     return {
       url: window._env.SUPABASE_URL,
-      anonKey: window._env.SUPABASE_ANON_KEY
+      anonKey: window._env.SUPABASE_ANON_KEY,
     };
   }
 
@@ -29,27 +29,36 @@ const getSupabaseConfig = () => {
   // or from localStorage (for development)
 
   // For local development, check localStorage for testing
-  const isDevelopment = window.location.hostname === 'localhost' ||
-                       window.location.hostname === '127.0.0.1';
+  const isDevelopment =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
 
   if (isDevelopment) {
-    const localUrl = localStorage.getItem('SUPABASE_URL');
-    const localKey = localStorage.getItem('SUPABASE_ANON_KEY');
+    const localUrl = localStorage.getItem("SUPABASE_URL");
+    const localKey = localStorage.getItem("SUPABASE_ANON_KEY");
 
     if (localUrl && localKey) {
-      logger.debug('[Supabase] Using credentials from localStorage (development only)');
+      logger.debug(
+        "[Supabase] Using credentials from localStorage (development only)",
+      );
       return { url: localUrl, anonKey: localKey };
     }
 
     // In development, show helpful error message
-    logger.error('[Supabase] Missing configuration. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
-    logger.error('[Supabase] Or add them to localStorage for local testing');
+    logger.error(
+      "[Supabase] Missing configuration. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY",
+    );
+    logger.error("[Supabase] Or add them to localStorage for local testing");
     return { url: null, anonKey: null };
   }
 
   // Production: Fail securely - no fallback to hardcoded values
-  logger.error('[Supabase] CRITICAL: Missing Supabase configuration in production');
-  logger.error('[Supabase] Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables');
+  logger.error(
+    "[Supabase] CRITICAL: Missing Supabase configuration in production",
+  );
+  logger.error(
+    "[Supabase] Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables",
+  );
   return { url: null, anonKey: null };
 };
 
@@ -59,14 +68,16 @@ let isInitialized = false;
 
 export const initializeSupabase = () => {
   if (isInitialized && supabaseClient) {
-    logger.debug('[Supabase] Already initialized');
+    logger.debug("[Supabase] Already initialized");
     return supabaseClient;
   }
 
   const config = getSupabaseConfig();
 
   if (!config.url || !config.anonKey) {
-    logger.error('[Supabase] Missing configuration. URL or Anon Key not found.');
+    logger.error(
+      "[Supabase] Missing configuration. URL or Anon Key not found.",
+    );
     return null;
   }
 
@@ -76,21 +87,21 @@ export const initializeSupabase = () => {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
-        storageKey: 'flagfit-auth',
-        storage: window.localStorage
+        storageKey: "flagfit-auth",
+        storage: window.localStorage,
       },
       realtime: {
         params: {
-          eventsPerSecond: 10
-        }
-      }
+          eventsPerSecond: 10,
+        },
+      },
     });
 
     isInitialized = true;
-    logger.success('[Supabase] Client initialized successfully');
+    logger.success("[Supabase] Client initialized successfully");
     return supabaseClient;
   } catch (error) {
-    logger.error('[Supabase] Failed to initialize client:', error);
+    logger.error("[Supabase] Failed to initialize client:", error);
     return null;
   }
 };
@@ -123,24 +134,26 @@ class RealtimeManager {
   subscribe(table, options = {}, callback) {
     const client = getSupabase();
     if (!client) {
-      logger.error('[Realtime] Cannot subscribe - Supabase client not initialized');
+      logger.error(
+        "[Realtime] Cannot subscribe - Supabase client not initialized",
+      );
       return null;
     }
 
     const {
-      event = '*', // INSERT, UPDATE, DELETE, or *
+      event = "*", // INSERT, UPDATE, DELETE, or *
       filter = null, // e.g., 'user_id=eq.123'
-      schema = 'public'
+      schema = "public",
     } = options;
 
-    const channelName = `${schema}:${table}:${event}:${filter || 'all'}`;
+    const channelName = `${schema}:${table}:${event}:${filter || "all"}`;
 
     // Check if channel already exists
     if (this.channels.has(channelName)) {
       logger.debug(`[Realtime] Reusing existing channel: ${channelName}`);
       const channel = this.channels.get(channelName);
       return {
-        unsubscribe: () => this.unsubscribe(channelName)
+        unsubscribe: () => this.unsubscribe(channelName),
       };
     }
 
@@ -150,28 +163,28 @@ class RealtimeManager {
 
       // Build subscription query
       const subscription = channel.on(
-        'postgres_changes',
+        "postgres_changes",
         {
           event,
           schema,
           table,
-          filter
+          filter,
         },
         (payload) => {
           logger.debug(`[Realtime] Change detected in ${table}:`, payload);
           callback(payload);
-        }
+        },
       );
 
       // Subscribe to the channel
       subscription.subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
+        if (status === "SUBSCRIBED") {
           logger.success(`[Realtime] Subscribed to ${table} (${event})`);
-        } else if (status === 'CHANNEL_ERROR') {
+        } else if (status === "CHANNEL_ERROR") {
           logger.error(`[Realtime] Channel error for ${table}`);
-        } else if (status === 'TIMED_OUT') {
+        } else if (status === "TIMED_OUT") {
           logger.warn(`[Realtime] Subscription timed out for ${table}`);
-        } else if (status === 'CLOSED') {
+        } else if (status === "CLOSED") {
           logger.debug(`[Realtime] Channel closed for ${table}`);
         }
       });
@@ -181,7 +194,7 @@ class RealtimeManager {
       this.subscriptions.set(channelName, { table, event, callback });
 
       return {
-        unsubscribe: () => this.unsubscribe(channelName)
+        unsubscribe: () => this.unsubscribe(channelName),
       };
     } catch (error) {
       logger.error(`[Realtime] Failed to subscribe to ${table}:`, error);
@@ -206,7 +219,10 @@ class RealtimeManager {
       this.subscriptions.delete(channelName);
       logger.debug(`[Realtime] Unsubscribed from ${channelName}`);
     } catch (error) {
-      logger.error(`[Realtime] Failed to unsubscribe from ${channelName}:`, error);
+      logger.error(
+        `[Realtime] Failed to unsubscribe from ${channelName}:`,
+        error,
+      );
     }
   }
 
@@ -214,12 +230,12 @@ class RealtimeManager {
    * Unsubscribe from all channels
    */
   async unsubscribeAll() {
-    logger.debug('[Realtime] Unsubscribing from all channels...');
-    const promises = Array.from(this.channels.keys()).map(channelName =>
-      this.unsubscribe(channelName)
+    logger.debug("[Realtime] Unsubscribing from all channels...");
+    const promises = Array.from(this.channels.keys()).map((channelName) =>
+      this.unsubscribe(channelName),
     );
     await Promise.all(promises);
-    logger.success('[Realtime] Unsubscribed from all channels');
+    logger.success("[Realtime] Unsubscribed from all channels");
   }
 
   /**
@@ -235,7 +251,7 @@ class RealtimeManager {
   listActive() {
     return Array.from(this.subscriptions.entries()).map(([channel, info]) => ({
       channel,
-      ...info
+      ...info,
     }));
   }
 }
@@ -254,12 +270,12 @@ export const supabaseHelpers = {
    */
   subscribeToChatMessages(channel, callback) {
     return realtimeManager.subscribe(
-      'chat_messages',
+      "chat_messages",
       {
-        event: 'INSERT',
-        filter: `channel=eq.${channel}`
+        event: "INSERT",
+        filter: `channel=eq.${channel}`,
       },
-      (payload) => callback(payload.new)
+      (payload) => callback(payload.new),
     );
   },
 
@@ -270,12 +286,12 @@ export const supabaseHelpers = {
    */
   subscribeToNotifications(userId, callback) {
     return realtimeManager.subscribe(
-      'notifications',
+      "notifications",
       {
-        event: 'INSERT',
-        filter: `user_id=eq.${userId}`
+        event: "INSERT",
+        filter: `user_id=eq.${userId}`,
       },
-      (payload) => callback(payload.new)
+      (payload) => callback(payload.new),
     );
   },
 
@@ -286,12 +302,12 @@ export const supabaseHelpers = {
    */
   subscribeToTeamUpdates(teamId, callback) {
     return realtimeManager.subscribe(
-      'teams',
+      "teams",
       {
-        event: '*',
-        filter: `id=eq.${teamId}`
+        event: "*",
+        filter: `id=eq.${teamId}`,
       },
-      (payload) => callback(payload)
+      (payload) => callback(payload),
     );
   },
 
@@ -302,12 +318,14 @@ export const supabaseHelpers = {
    */
   subscribeToGameUpdates(gameId, callback) {
     const options = {
-      event: '*'
+      event: "*",
     };
     if (gameId) {
       options.filter = `id=eq.${gameId}`;
     }
-    return realtimeManager.subscribe('games', options, (payload) => callback(payload));
+    return realtimeManager.subscribe("games", options, (payload) =>
+      callback(payload),
+    );
   },
 
   /**
@@ -316,11 +334,11 @@ export const supabaseHelpers = {
    */
   subscribeToCommunityPosts(callback) {
     return realtimeManager.subscribe(
-      'posts',
+      "posts",
       {
-        event: 'INSERT'
+        event: "INSERT",
       },
-      (payload) => callback(payload.new)
+      (payload) => callback(payload.new),
     );
   },
 
@@ -331,12 +349,12 @@ export const supabaseHelpers = {
    */
   subscribeToTrainingSessions(userId, callback) {
     return realtimeManager.subscribe(
-      'training_sessions',
+      "training_sessions",
       {
-        event: '*',
-        filter: `user_id=eq.${userId}`
+        event: "*",
+        filter: `user_id=eq.${userId}`,
       },
-      (payload) => callback(payload)
+      (payload) => callback(payload),
     );
   },
 
@@ -347,13 +365,15 @@ export const supabaseHelpers = {
    */
   subscribeToTournaments(tournamentId, callback) {
     const options = {
-      event: '*'
+      event: "*",
     };
     if (tournamentId) {
       options.filter = `id=eq.${tournamentId}`;
     }
-    return realtimeManager.subscribe('tournaments', options, (payload) => callback(payload));
-  }
+    return realtimeManager.subscribe("tournaments", options, (payload) =>
+      callback(payload),
+    );
+  },
 };
 
 // Auto-initialize on import (safe - will return null if config missing)
@@ -363,7 +383,7 @@ try {
   initializeSupabase();
 } catch (error) {
   // Silently fail - initialization will happen when needed
-  logger.debug('[Supabase] Auto-initialization deferred:', error.message);
+  logger.debug("[Supabase] Auto-initialization deferred:", error.message);
 }
 
 // Export everything
@@ -372,5 +392,5 @@ export default {
   getSupabase,
   initializeSupabase,
   realtimeManager,
-  supabaseHelpers
+  supabaseHelpers,
 };

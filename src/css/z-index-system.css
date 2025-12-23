@@ -48,28 +48,68 @@
    Apply these classes or use CSS variables directly
    ================================================================ */
 
-.z-background { z-index: var(--z-background); }
-.z-background-pattern { z-index: var(--z-background-pattern); }
-.z-background-gradient { z-index: var(--z-background-gradient); }
+.z-background {
+  z-index: var(--z-background);
+}
+.z-background-pattern {
+  z-index: var(--z-background-pattern);
+}
+.z-background-gradient {
+  z-index: var(--z-background-gradient);
+}
 
-.z-content { z-index: var(--z-content); }
-.z-sidebar { z-index: var(--z-sidebar); }
-.z-main-content { z-index: var(--z-main-content); }
+.z-content {
+  z-index: var(--z-content);
+}
+.z-sidebar {
+  z-index: var(--z-sidebar);
+}
+.z-main-content {
+  z-index: var(--z-main-content);
+}
 
-.z-header { z-index: var(--z-header); }
-.z-top-bar { z-index: var(--z-top-bar); }
-.z-sticky-nav { z-index: var(--z-sticky-nav); }
-.z-mobile-menu { z-index: var(--z-mobile-menu); }
+.z-header {
+  z-index: var(--z-header);
+}
+.z-top-bar {
+  z-index: var(--z-top-bar);
+}
+.z-sticky-nav {
+  z-index: var(--z-sticky-nav);
+}
+.z-mobile-menu {
+  z-index: var(--z-mobile-menu);
+}
 
-.z-dropdown { z-index: var(--z-dropdown); }
-.z-tooltip { z-index: var(--z-tooltip); }
-.z-popover { z-index: var(--z-popover); }
-.z-search-results { z-index: var(--z-search-results); }
+.z-dropdown {
+  z-index: var(--z-dropdown);
+}
+.z-tooltip {
+  z-index: var(--z-tooltip);
+}
+.z-popover {
+  z-index: var(--z-popover);
+}
+.z-search-results {
+  z-index: var(--z-search-results);
+}
 
-.z-modal-backdrop { z-index: var(--z-modal-backdrop); }
-.z-modal { z-index: var(--z-modal); }
-.z-toast { z-index: var(--z-toast); }
-.z-loading-overlay { z-index: var(--z-loading-overlay); }
+.z-modal-backdrop {
+  z-index: var(--z-modal-backdrop);
+}
+.z-modal {
+  z-index: var(--z-modal);
+}
+.z-toast {
+  z-index: var(--z-toast);
+}
+.z-loading-overlay {
+  z-index: var(--z-loading-overlay);
+}
 
-.z-emergency { z-index: var(--z-emergency); }
-.z-debug { z-index: var(--z-debug); }
+.z-emergency {
+  z-index: var(--z-emergency);
+}
+.z-debug {
+  z-index: var(--z-debug);
+}

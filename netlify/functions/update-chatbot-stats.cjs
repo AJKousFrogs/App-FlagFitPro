@@ -1,8 +1,8 @@
 // Update Chatbot Statistics API Endpoint
 // Updates chatbot usage statistics and tracks preferred topics
 
-const { Pool } = require('pg');
-const { authenticateRequest } = require('./utils/auth-helper.cjs');
+const { Pool } = require("pg");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
 
 // Use shared auth helper for consistency with other backend functions
 // This ensures consistent authentication patterns across all Netlify functions
@@ -21,9 +21,9 @@ function createSuccessResponse(data) {
   return {
     statusCode: 200,
     headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
     body: JSON.stringify({ success: true, data }),
   };
@@ -34,9 +34,9 @@ function createErrorResponse(message, statusCode = 400) {
   return {
     statusCode,
     headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
     body: JSON.stringify({ success: false, error: message }),
   };
@@ -44,30 +44,30 @@ function createErrorResponse(message, statusCode = 400) {
 
 exports.handler = async (event, context) => {
   // Handle CORS preflight
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
       },
-      body: '',
+      body: "",
     };
   }
 
-  if (event.httpMethod !== 'POST') {
-    return createErrorResponse('Method not allowed', 405);
+  if (event.httpMethod !== "POST") {
+    return createErrorResponse("Method not allowed", 405);
   }
 
   try {
     // Authenticate request using shared auth helper
     const authResult = await authenticateRequest(event);
-    
+
     if (!authResult.success || !authResult.user) {
       return createErrorResponse(
-        authResult.error?.message || 'Unauthorized - Invalid or missing token',
-        401
+        authResult.error?.message || "Unauthorized - Invalid or missing token",
+        401,
       );
     }
 
@@ -76,25 +76,26 @@ exports.handler = async (event, context) => {
     // Parse request body
     let bodyData = {};
     try {
-      bodyData = JSON.parse(event.body || '{}');
+      bodyData = JSON.parse(event.body || "{}");
     } catch (parseError) {
-      return createErrorResponse('Invalid JSON in request body', 400);
+      return createErrorResponse("Invalid JSON in request body", 400);
     }
 
     const { topic } = bodyData;
 
     // Update chatbot query statistics using database function
-    await pool.query(
-      `SELECT update_chatbot_query_stats($1, $2)`,
-      [userId, topic || null]
-    );
+    await pool.query(`SELECT update_chatbot_query_stats($1, $2)`, [
+      userId,
+      topic || null,
+    ]);
 
-    return createSuccessResponse({ message: 'Statistics updated successfully' });
+    return createSuccessResponse({
+      message: "Statistics updated successfully",
+    });
   } catch (error) {
-    console.error('Error in update-chatbot-stats function:', error);
-    return createErrorResponse('Internal server error', 500);
+    console.error("Error in update-chatbot-stats function:", error);
+    return createErrorResponse("Internal server error", 500);
   } finally {
     // Don't close pool - it's reused across invocations
   }
 };
-

@@ -25,9 +25,12 @@
 
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
+
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script
@@ -39,9 +42,17 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Universal Form Validator -->
-    <script type="module" src="./src/js/components/universal-form-validator.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/universal-form-validator.js"
+      defer
+    ></script>
     <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/footer-loader.js"
+      defer
+    ></script>
   </head>
   <body class="page-auth">
     <div
@@ -120,7 +131,7 @@
 
         <div class="form-group">
           <label for="password" class="form-label required">Password</label>
-          <div class="password-input-wrapper" style="position: relative;">
+          <div class="password-input-wrapper" style="position: relative">
             <input
               type="password"
               id="password"
@@ -140,8 +151,16 @@
               aria-pressed="false"
               tabindex="0"
             >
-              <i data-lucide="eye" aria-hidden="true" class="icon-18 password-eye-icon"></i>
-              <i data-lucide="eye-off" aria-hidden="true" class="icon-18 password-eye-off-icon"></i>
+              <i
+                data-lucide="eye"
+                aria-hidden="true"
+                class="icon-18 password-eye-icon"
+              ></i>
+              <i
+                data-lucide="eye-off"
+                aria-hidden="true"
+                class="icon-18 password-eye-off-icon"
+              ></i>
             </button>
           </div>
           <div
@@ -160,7 +179,7 @@
             id="password-requirements"
             class="password-requirements form-hint mt-2"
             role="note"
-            style="display: none;"
+            style="display: none"
           >
             Password must be at least 8 characters and include uppercase,
             lowercase, number, and special character (@$!%*?&).
@@ -178,16 +197,18 @@
           class="login-form-options flex justify-between items-center mb-6 text-sm"
         >
           <div class="login-checkbox-group flex items-center gap-2">
-            <input 
-              type="checkbox" 
-              id="remember" 
-              name="remember" 
+            <input
+              type="checkbox"
+              id="remember"
+              name="remember"
               aria-describedby="remember-hint"
             />
             <label for="remember" class="text-primary cursor-pointer"
               >Remember me</label
             >
-            <span id="remember-hint" class="sr-only">Keep me signed in on this device</span>
+            <span id="remember-hint" class="sr-only"
+              >Keep me signed in on this device</span
+            >
           </div>
           <a
             href="/reset-password.html"
@@ -238,7 +259,11 @@
           id="resendVerificationLink"
           class="text-primary"
           style="text-decoration: none"
-          onclick="event.preventDefault(); showResendVerificationModal(); return false;"
+          onclick="
+            event.preventDefault();
+            showResendVerificationModal();
+            return false;
+          "
           >Didn't receive verification email? Resend</a
         >
       </div>
@@ -250,7 +275,10 @@
         <div class="login-sponsors-title text-sm text-muted mb-4">
           Proudly sponsored by
         </div>
-        <div id="sponsorLogos" class="login-sponsor-logos flex justify-center gap-6 flex-wrap items-center">
+        <div
+          id="sponsorLogos"
+          class="login-sponsor-logos flex justify-center gap-6 flex-wrap items-center"
+        >
           <!-- Sponsors will be loaded dynamically here -->
         </div>
       </div>
@@ -260,8 +288,16 @@
       import { authManager } from "./src/auth-manager.js";
       import { validateEmail } from "./src/js/utils/shared.js";
       import { escapeHtml } from "./src/js/utils/sanitize.js";
-      import { showMessage, hideMessage, clearMessages } from "./src/js/utils/message-utils.js";
-      import { generateCSRFToken, validateCSRFToken, setCSRFTokenInForm } from "./src/js/utils/security-utils.js";
+      import {
+        showMessage,
+        hideMessage,
+        clearMessages,
+      } from "./src/js/utils/message-utils.js";
+      import {
+        generateCSRFToken,
+        validateCSRFToken,
+        setCSRFTokenInForm,
+      } from "./src/js/utils/security-utils.js";
       import { createLoginRateLimiter } from "./src/js/utils/security-utils.js";
       // OAuth disabled - using email/password only
       // import { OAuthButtons } from "./src/components/oauth-buttons.js";
@@ -302,7 +338,7 @@
 
           // Validate CSRF token
           const formToken = document.getElementById("csrfToken").value;
-            if (!validateCSRFToken(formToken)) {
+          if (!validateCSRFToken(formToken)) {
             showMessage(
               "errorMessage",
               "Security validation failed. Please refresh the page.",
@@ -336,7 +372,7 @@
             }
 
             const rateLimiter = createLoginRateLimiter();
-            
+
             if (result.success) {
               rateLimiter.recordAttempt(true);
 
@@ -357,19 +393,28 @@
           } catch (error) {
             const rateLimiter = createLoginRateLimiter();
             rateLimiter.recordAttempt(false);
-            
+
             // Provide more specific error messages
             let errorMessage = "Login failed. Please try again.";
             if (error.message) {
               if (error.message.includes("Invalid login credentials")) {
-                errorMessage = "Invalid email or password. Please check your credentials and try again.";
-              } else if (error.message.includes("Email not confirmed") || error.message.includes("not verified")) {
-                errorMessage = "Please verify your email before logging in. Check your inbox for the verification link.";
-              } else if (error.message.includes("network") || error.message.includes("fetch")) {
-                errorMessage = "Network error. Please check your connection and try again.";
+                errorMessage =
+                  "Invalid email or password. Please check your credentials and try again.";
+              } else if (
+                error.message.includes("Email not confirmed") ||
+                error.message.includes("not verified")
+              ) {
+                errorMessage =
+                  "Please verify your email before logging in. Check your inbox for the verification link.";
+              } else if (
+                error.message.includes("network") ||
+                error.message.includes("fetch")
+              ) {
+                errorMessage =
+                  "Network error. Please check your connection and try again.";
               }
             }
-            
+
             showMessage("errorMessage", errorMessage);
             updateSubmitButtonState(false);
 
@@ -390,19 +435,25 @@
           // Since this button only appears after successful login, try to redirect directly
           // First check if we have auth data stored (upgraded to use secureStorage)
           let hasStoredAuth = false;
-          
+
           // Try secureStorage API first (preferred method)
-          if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+          if (
+            window.secureStorage &&
+            typeof window.secureStorage.getAuthToken === "function"
+          ) {
             try {
               const token = await window.secureStorage.getAuthToken();
               if (token) {
                 hasStoredAuth = true;
               }
             } catch (error) {
-              console.debug("Secure storage check failed, trying fallback:", error);
+              console.debug(
+                "Secure storage check failed, trying fallback:",
+                error,
+              );
             }
           }
-          
+
           // Fallback: check legacy storage locations
           if (!hasStoredAuth) {
             hasStoredAuth =
@@ -453,8 +504,9 @@
         const modal = document.createElement("div");
         modal.id = "resendVerificationModal";
         modal.className = "modal-overlay";
-        modal.style.cssText = "position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;";
-        
+        modal.style.cssText =
+          "position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;";
+
         modal.innerHTML = `
           <div class="modal-content card" style="max-width: 400px; width: 90%; padding: 24px; position: relative;">
             <button onclick="closeResendVerificationModal()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--color-text-secondary);">&times;</button>
@@ -482,61 +534,71 @@
             </form>
           </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
+
         // Handle form submission
-        document.getElementById("resendVerificationForm").addEventListener("submit", async function(e) {
-          e.preventDefault();
-          const email = document.getElementById("resendEmail").value;
-          const errorDiv = document.getElementById("resendError");
-          const successDiv = document.getElementById("resendSuccess");
-          const submitButton = this.querySelector('button[type="submit"]');
-          
-          errorDiv.style.display = "none";
-          successDiv.style.display = "none";
-          
-          if (!validateEmail(email)) {
-            errorDiv.textContent = "Please enter a valid email address.";
-            errorDiv.style.display = "block";
-            return;
-          }
-          
-          submitButton.disabled = true;
-          submitButton.textContent = "Sending...";
-          
-          try {
-            const response = await fetch("/.netlify/functions/auth-resend-verification", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ email }),
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-              successDiv.textContent = result.message || "Verification email sent! Please check your inbox.";
-              successDiv.style.display = "block";
-              setTimeout(() => {
-                closeResendVerificationModal();
-              }, 3000);
-            } else {
-              errorDiv.textContent = result.error || "Failed to send verification email. Please try again.";
+        document
+          .getElementById("resendVerificationForm")
+          .addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const email = document.getElementById("resendEmail").value;
+            const errorDiv = document.getElementById("resendError");
+            const successDiv = document.getElementById("resendSuccess");
+            const submitButton = this.querySelector('button[type="submit"]');
+
+            errorDiv.style.display = "none";
+            successDiv.style.display = "none";
+
+            if (!validateEmail(email)) {
+              errorDiv.textContent = "Please enter a valid email address.";
+              errorDiv.style.display = "block";
+              return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Sending...";
+
+            try {
+              const response = await fetch(
+                "/.netlify/functions/auth-resend-verification",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ email }),
+                },
+              );
+
+              const result = await response.json();
+
+              if (result.success) {
+                successDiv.textContent =
+                  result.message ||
+                  "Verification email sent! Please check your inbox.";
+                successDiv.style.display = "block";
+                setTimeout(() => {
+                  closeResendVerificationModal();
+                }, 3000);
+              } else {
+                errorDiv.textContent =
+                  result.error ||
+                  "Failed to send verification email. Please try again.";
+                errorDiv.style.display = "block";
+                submitButton.disabled = false;
+                submitButton.textContent = "Send Email";
+              }
+            } catch (error) {
+              errorDiv.textContent =
+                "An error occurred. Please try again later.";
               errorDiv.style.display = "block";
               submitButton.disabled = false;
               submitButton.textContent = "Send Email";
             }
-          } catch (error) {
-            errorDiv.textContent = "An error occurred. Please try again later.";
-            errorDiv.style.display = "block";
-            submitButton.disabled = false;
-            submitButton.textContent = "Send Email";
-          }
-        });
+          });
       }
-      
+
       function closeResendVerificationModal() {
         const modal = document.getElementById("resendVerificationModal");
         if (modal) {
@@ -554,9 +616,15 @@
         toggleButton.addEventListener("click", function () {
           const isPassword = passwordInput.type === "password";
           passwordInput.type = isPassword ? "text" : "password";
-          toggleButton.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
-          toggleButton.setAttribute("aria-pressed", isPassword ? "true" : "false");
-          
+          toggleButton.setAttribute(
+            "aria-label",
+            isPassword ? "Hide password" : "Show password",
+          );
+          toggleButton.setAttribute(
+            "aria-pressed",
+            isPassword ? "true" : "false",
+          );
+
           // Icon visibility is handled by CSS based on aria-pressed
           // Re-initialize Lucide icons after toggle
           if (typeof lucide !== "undefined") {
@@ -627,7 +695,10 @@
       function initKeyboardShortcuts() {
         document.addEventListener("keydown", function (e) {
           // Escape key clears form
-          if (e.key === "Escape" && document.activeElement.tagName === "INPUT") {
+          if (
+            e.key === "Escape" &&
+            document.activeElement.tagName === "INPUT"
+          ) {
             const activeInput = document.activeElement;
             if (activeInput.value && !activeInput.hasAttribute("readonly")) {
               activeInput.value = "";
@@ -666,7 +737,7 @@
             }
             originalError.apply(console, args);
           };
-          
+
           // Initialize icons
           lucide.createIcons();
         }
@@ -686,7 +757,7 @@
         // Initialize rate limiting
         const rateLimiter = createLoginRateLimiter();
         const rateLimitState = rateLimiter.getState();
-        
+
         // Show rate limit warning if too many attempts
         if (rateLimitState.isLimited) {
           const timeRemaining = rateLimiter.getTimeRemaining();
@@ -695,23 +766,25 @@
               "errorMessage",
               `Too many login attempts. Please wait ${timeRemaining} minutes before trying again.`,
             );
-            const submitButton = document.querySelector('button[type="submit"]');
+            const submitButton = document.querySelector(
+              'button[type="submit"]',
+            );
             if (submitButton) submitButton.disabled = true;
           }
         }
 
         // Check for URL parameters (registered, verified)
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('registered') === 'true') {
+        if (urlParams.get("registered") === "true") {
           showMessage(
             "successMessage",
-            "Registration successful! Please check your email and verify your account before logging in."
+            "Registration successful! Please check your email and verify your account before logging in.",
           );
         }
-        if (urlParams.get('verified') === 'true') {
+        if (urlParams.get("verified") === "true") {
           showMessage(
             "successMessage",
-            "Email verified! You can now log in with your credentials."
+            "Email verified! You can now log in with your credentials.",
           );
         }
 
@@ -737,11 +810,20 @@
         // Fallback logos helper function
         const renderFallbackLogos = () => {
           const fallbackLogos = [
-            { name: "LA PRIMAFIT", url: "https://www.laprimafit.com/image/cache/catalog/logo/La_primafit_logo_black_linear_white_600w-1062x185.png" },
-            { name: "Chemius", url: "https://www.chemius.net/wp-content/uploads/2021/09/logo-chemius-header.png" },
-            { name: "GEAR XPRO", url: "https://gearxpro-sports.com/cdn/shop/files/Secondary_logo_Positive.png?v=1737387514&width=290" }
+            {
+              name: "LA PRIMAFIT",
+              url: "https://www.laprimafit.com/image/cache/catalog/logo/La_primafit_logo_black_linear_white_600w-1062x185.png",
+            },
+            {
+              name: "Chemius",
+              url: "https://www.chemius.net/wp-content/uploads/2021/09/logo-chemius-header.png",
+            },
+            {
+              name: "GEAR XPRO",
+              url: "https://gearxpro-sports.com/cdn/shop/files/Secondary_logo_Positive.png?v=1737387514&width=290",
+            },
           ];
-          
+
           const sponsorLogosContainer = document.getElementById("sponsorLogos");
           sponsorLogosContainer.innerHTML = fallbackLogos
             .map(
@@ -754,14 +836,14 @@
                   onerror="this.src='${sponsor.url}'"
                 />
               </div>
-            `
+            `,
             )
             .join("");
         };
 
         try {
           const response = await fetch(`${apiBaseUrl}/sponsors`);
-          
+
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -770,7 +852,7 @@
           const sponsors = data.sponsors || [];
 
           const sponsorLogosContainer = document.getElementById("sponsorLogos");
-          
+
           if (sponsors.length === 0) {
             // Fallback to hardcoded logos using proxy if API fails or no sponsors found
             renderFallbackLogos();
@@ -785,8 +867,8 @@
                 <img
                   src="${sponsor.logoUrl}"
                   alt="${sponsor.name}"
-                  style="height: 24px; width: auto; filter: brightness(0);${sponsor.websiteUrl ? ' cursor: pointer;' : ''}"
-                  ${sponsor.websiteUrl ? `onclick="window.open('${sponsor.websiteUrl}', '_blank')"` : ''}
+                  style="height: 24px; width: auto; filter: brightness(0);${sponsor.websiteUrl ? " cursor: pointer;" : ""}"
+                  ${sponsor.websiteUrl ? `onclick="window.open('${sponsor.websiteUrl}', '_blank')"` : ""}
                 />
               </div>
             `,
@@ -794,7 +876,7 @@
             .join("");
         } catch (error) {
           console.error("Failed to load sponsors:", error);
-          
+
           // Fallback to hardcoded logos using proxy on error
           renderFallbackLogos();
         }

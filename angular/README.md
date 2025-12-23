@@ -35,6 +35,7 @@ The application will be available at `http://localhost:4200`
 - **[STYLE_GUIDE_QUICK_REFERENCE.md](./STYLE_GUIDE_QUICK_REFERENCE.md)** - Quick reference card
 
 Key topics covered:
+
 - Code formatting and TypeScript standards
 - Angular 21 patterns (signals, standalone components, inject())
 - Component and service guidelines
@@ -50,11 +51,13 @@ Key topics covered:
 Angular 21 includes enhanced debugging capabilities. See [ANGULAR_DEVTOOLS_SETUP.md](./ANGULAR_DEVTOOLS_SETUP.md) for complete setup instructions.
 
 **Quick Setup**:
+
 1. Install [Angular DevTools browser extension](https://chromewebstore.google.com/detail/angular-devtools/ienfalfjdbdpebioblfackkekamfmbnh)
 2. Open your app in development mode
 3. Open browser DevTools (F12) → Look for "Angular" tab
 
 **Features Available**:
+
 - 🔍 Visual Signal Graph Explorer
 - ⚡ Real-time Change Detection Tracing
 - 🧠 Hydration Troubleshooting

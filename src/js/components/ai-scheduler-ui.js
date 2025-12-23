@@ -27,7 +27,7 @@ class AISchedulerUI {
 
     // Load current profile
     this.currentProfile = playerProfileService.getCurrentProfile();
-    
+
     this.render();
   }
 
@@ -167,11 +167,11 @@ class AISchedulerUI {
   renderGenerationSection() {
     // Set default dates - start from today, end 10 months later
     const today = new Date();
-    const defaultStart = today.toISOString().split('T')[0];
+    const defaultStart = today.toISOString().split("T")[0];
     const endDate = new Date(today);
     endDate.setMonth(endDate.getMonth() + 10);
-    const defaultEnd = endDate.toISOString().split('T')[0];
-    
+    const defaultEnd = endDate.toISOString().split("T")[0];
+
     return `
       <div class="generation-controls">
         <div class="form-group">
@@ -247,7 +247,9 @@ class AISchedulerUI {
    * Render weeks
    */
   renderWeeks() {
-    return this.currentSchedule.weeks.map(week => `
+    return this.currentSchedule.weeks
+      .map(
+        (week) => `
       <div class="schedule-week">
         <div class="week-header">
           <h4>Week ${week.weekNumber} - ${week.phase.replace(/_/g, " ").toUpperCase()}</h4>
@@ -261,30 +263,35 @@ class AISchedulerUI {
           <span>Practices: ${week.summary.practiceDays} days</span>
         </div>
         <div class="week-days">
-          ${week.days.map(day => this.renderDay(day)).join("")}
+          ${week.days.map((day) => this.renderDay(day)).join("")}
         </div>
       </div>
-    `).join("");
+    `,
+      )
+      .join("");
   }
 
   /**
    * Render day
    */
   renderDay(day) {
-    const activities = day.activities.map(a => {
-      if (a.type === "tournament") {
-        return `<span class="activity-tag tournament">🏆 ${a.name}</span>`;
-      }
-      if (a.type === "league_game") {
-        return `<span class="activity-tag league-game">⚽ ${a.league}</span>`;
-      }
-      if (a.type.includes("practice")) {
-        return `<span class="activity-tag practice">🏈 ${a.type}</span>`;
-      }
-      return `<span class="activity-tag">${a.type}</span>`;
-    }).join("");
+    const activities = day.activities
+      .map((a) => {
+        if (a.type === "tournament") {
+          return `<span class="activity-tag tournament">🏆 ${a.name}</span>`;
+        }
+        if (a.type === "league_game") {
+          return `<span class="activity-tag league-game">⚽ ${a.league}</span>`;
+        }
+        if (a.type.includes("practice")) {
+          return `<span class="activity-tag practice">🏈 ${a.type}</span>`;
+        }
+        return `<span class="activity-tag">${a.type}</span>`;
+      })
+      .join("");
 
-    const trainingClass = day.training?.volume === 0 ? "rest-day" : "training-day";
+    const trainingClass =
+      day.training?.volume === 0 ? "rest-day" : "training-day";
     const volumePercent = Math.round((day.training?.volume || 0) * 100);
     const intensityPercent = Math.round((day.training?.intensity || 0) * 100);
 
@@ -295,24 +302,36 @@ class AISchedulerUI {
           <span class="day-date">${day.date.toLocaleDateString()}</span>
         </div>
         ${activities ? `<div class="day-activities">${activities}</div>` : ""}
-        ${day.training ? `
+        ${
+          day.training
+            ? `
           <div class="day-training">
             <div class="training-title">${day.training.title}</div>
             <div class="training-metrics">
               <span>Volume: ${volumePercent}%</span>
               <span>Intensity: ${intensityPercent}%</span>
             </div>
-            ${day.adjustments.length > 0 ? `
+            ${
+              day.adjustments.length > 0
+                ? `
               <div class="training-adjustments">
-                ${day.adjustments.map(adj => `
+                ${day.adjustments
+                  .map(
+                    (adj) => `
                   <div class="adjustment">
                     <span class="adjustment-reason">${adj.reason}</span>
                   </div>
-                `).join("")}
+                `,
+                  )
+                  .join("")}
               </div>
-            ` : ""}
+            `
+                : ""
+            }
           </div>
-        ` : ""}
+        `
+            : ""
+        }
       </div>
     `;
   }
@@ -324,7 +343,9 @@ class AISchedulerUI {
     // Profile creation
     const createProfileBtn = document.getElementById("create-profile-btn");
     if (createProfileBtn) {
-      createProfileBtn.addEventListener("click", () => this.handleCreateProfile());
+      createProfileBtn.addEventListener("click", () =>
+        this.handleCreateProfile(),
+      );
     }
 
     // Load example profile
@@ -361,7 +382,9 @@ class AISchedulerUI {
     // Generate schedule
     const generateBtn = document.getElementById("generate-schedule-btn");
     if (generateBtn) {
-      generateBtn.addEventListener("click", () => this.handleGenerateSchedule());
+      generateBtn.addEventListener("click", () =>
+        this.handleGenerateSchedule(),
+      );
     }
 
     // Export buttons
@@ -421,7 +444,9 @@ class AISchedulerUI {
    */
   async handleFileUpload(event) {
     const file = event.target.files[0];
-    if (!file) {return;}
+    if (!file) {
+      return;
+    }
 
     if (!this.currentProfile) {
       alert("Please create a player profile first");
@@ -429,8 +454,13 @@ class AISchedulerUI {
     }
 
     try {
-      await playerProfileService.parseAndAddSchedule(this.currentProfile.id, file);
-      this.currentProfile = playerProfileService.getPlayerProfile(this.currentProfile.id);
+      await playerProfileService.parseAndAddSchedule(
+        this.currentProfile.id,
+        file,
+      );
+      this.currentProfile = playerProfileService.getPlayerProfile(
+        this.currentProfile.id,
+      );
       this.render();
       alert("Schedule uploaded successfully!");
     } catch (error) {
@@ -476,7 +506,9 @@ class AISchedulerUI {
       });
     }
 
-    this.currentProfile = playerProfileService.getPlayerProfile(this.currentProfile.id);
+    this.currentProfile = playerProfileService.getPlayerProfile(
+      this.currentProfile.id,
+    );
     this.render();
     alert("Event added successfully!");
   }
@@ -508,11 +540,11 @@ class AISchedulerUI {
       const schedule = aiTrainingScheduler.generatePersonalizedSchedule(
         this.currentProfile,
         new Date(startDate),
-        new Date(endDate)
+        new Date(endDate),
       );
 
       this.currentSchedule = schedule;
-      
+
       // Update the schedule display with the rendered HTML
       const scheduleDisplayEl = document.getElementById("schedule-display");
       if (scheduleDisplayEl) {
@@ -526,7 +558,8 @@ class AISchedulerUI {
       this.syncWithTrainingSchedule();
 
       if (statusEl) {
-        statusEl.textContent = "Schedule generated successfully! You can now export or sync with your training schedule.";
+        statusEl.textContent =
+          "Schedule generated successfully! You can now export or sync with your training schedule.";
         statusEl.className = "status-message success";
       }
 
@@ -554,7 +587,10 @@ class AISchedulerUI {
       return;
     }
 
-    const exported = aiTrainingScheduler.exportSchedule(this.currentSchedule, format);
+    const exported = aiTrainingScheduler.exportSchedule(
+      this.currentSchedule,
+      format,
+    );
     const blob = new Blob([exported], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -576,22 +612,26 @@ class AISchedulerUI {
    */
   syncWithTrainingSchedule() {
     if (!this.currentSchedule) {
-      logger.warn('No schedule generated yet');
+      logger.warn("No schedule generated yet");
       return;
     }
 
     // Store schedule in localStorage for training-schedule.html to use
-    localStorage.setItem('aiGeneratedSchedule', JSON.stringify(this.currentSchedule));
-    
-    // Dispatch custom event for other components to listen
-    window.dispatchEvent(new CustomEvent('aiScheduleGenerated', {
-      detail: this.currentSchedule
-    }));
+    localStorage.setItem(
+      "aiGeneratedSchedule",
+      JSON.stringify(this.currentSchedule),
+    );
 
-    logger.debug('Schedule synced with training schedule page');
+    // Dispatch custom event for other components to listen
+    window.dispatchEvent(
+      new CustomEvent("aiScheduleGenerated", {
+        detail: this.currentSchedule,
+      }),
+    );
+
+    logger.debug("Schedule synced with training schedule page");
   }
 }
 
 // Export class
 export default AISchedulerUI;
-

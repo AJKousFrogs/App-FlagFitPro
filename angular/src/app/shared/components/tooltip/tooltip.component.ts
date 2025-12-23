@@ -1,15 +1,15 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TooltipModule } from 'primeng/tooltip';
+import { Component, input, ChangeDetectionStrategy } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { TooltipModule } from "primeng/tooltip";
 
 /**
  * Tooltip Component - Angular 21
- * 
+ *
  * A wrapper around PrimeNG Tooltip for consistent tooltip behavior
  * Uses Angular 21 signals for reactive state management
  */
 @Component({
-  selector: 'app-tooltip',
+  selector: "app-tooltip",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TooltipModule],
@@ -23,26 +23,28 @@ import { TooltipModule } from 'primeng/tooltip';
       [showDelay]="showDelay()"
       [hideDelay]="hideDelay()"
       [escape]="escape()"
-      [appendTo]="appendTo()">
+      [appendTo]="appendTo()"
+    >
       <ng-content></ng-content>
     </span>
   `,
-  styles: [`
-    :host {
-      display: inline-block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: inline-block;
+      }
+    `,
+  ],
 })
 export class TooltipComponent {
   // Configuration
-  text = input<string>('');
-  position = input<'top' | 'bottom' | 'left' | 'right'>('top');
-  event = input<'hover' | 'focus' | 'click'>('hover');
+  text = input<string>("");
+  position = input<"top" | "bottom" | "left" | "right">("top");
+  event = input<"hover" | "focus" | "click">("hover");
   styleClass = input<string>();
   disabled = input<boolean>(false);
   showDelay = input<number>(0);
   hideDelay = input<number>(0);
   escape = input<boolean>(true);
-  appendTo = input<string | HTMLElement>('body');
+  appendTo = input<string | HTMLElement>("body");
 }
-

@@ -7,7 +7,7 @@ const {
   createSuccessResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -152,7 +152,6 @@ const getFallbackActivity = () => [
   },
 ];
 
-
 // Get training calendar data
 const getTrainingCalendar = async (userId) => {
   try {
@@ -162,22 +161,23 @@ const getTrainingCalendar = async (userId) => {
     nextWeek.setDate(nextWeek.getDate() + 7);
 
     const { data: sessions, error } = await supabaseAdmin
-      .from('training_sessions')
-      .select('id, workout_type, session_date, completed_at, duration')
-      .eq('user_id', userId)
-      .gte('session_date', today.toISOString().split('T')[0])
-      .lte('session_date', nextWeek.toISOString().split('T')[0])
-      .order('session_date', { ascending: true });
+      .from("training_sessions")
+      .select("id, workout_type, session_date, completed_at, duration")
+      .eq("user_id", userId)
+      .gte("session_date", today.toISOString().split("T")[0])
+      .lte("session_date", nextWeek.toISOString().split("T")[0])
+      .order("session_date", { ascending: true });
 
     if (error) {
-      console.error('Error fetching training calendar:', error);
+      console.error("Error fetching training calendar:", error);
       throw error;
     }
 
     // Group by date
     const calendar = {};
-    (sessions || []).forEach(session => {
-      const dateKey = session.session_date || session.completed_at?.split('T')[0];
+    (sessions || []).forEach((session) => {
+      const dateKey =
+        session.session_date || session.completed_at?.split("T")[0];
       if (dateKey) {
         if (!calendar[dateKey]) {
           calendar[dateKey] = [];
@@ -185,20 +185,20 @@ const getTrainingCalendar = async (userId) => {
         calendar[dateKey].push({
           id: session.id,
           type: session.workout_type,
-          duration: session.duration
+          duration: session.duration,
         });
       }
     });
 
     return {
       calendar: calendar,
-      upcomingSessions: sessions || []
+      upcomingSessions: sessions || [],
     };
   } catch (error) {
-    console.error('Error in getTrainingCalendar:', error);
+    console.error("Error in getTrainingCalendar:", error);
     return {
       calendar: {},
-      upcomingSessions: []
+      upcomingSessions: [],
     };
   }
 };
@@ -208,16 +208,16 @@ const getTeamChemistry = async (userId) => {
   try {
     // Get user's team memberships
     const { data: teamMemberships, error: teamError } = await supabaseAdmin
-      .from('team_members')
-      .select('team_id')
-      .eq('user_id', userId)
+      .from("team_members")
+      .select("team_id")
+      .eq("user_id", userId)
       .limit(1);
 
     if (teamError || !teamMemberships || teamMemberships.length === 0) {
       return {
         teamId: null,
         chemistry: null,
-        members: []
+        members: [],
       };
     }
 
@@ -225,16 +225,16 @@ const getTeamChemistry = async (userId) => {
 
     // Get team members
     const { data: members, error: membersError } = await supabaseAdmin
-      .from('team_members')
-      .select('user_id, role')
-      .eq('team_id', teamId);
+      .from("team_members")
+      .select("user_id, role")
+      .eq("team_id", teamId);
 
     if (membersError) {
-      console.error('Error fetching team members:', membersError);
+      console.error("Error fetching team members:", membersError);
       return {
         teamId: teamId,
         chemistry: null,
-        members: []
+        members: [],
       };
     }
 
@@ -245,14 +245,14 @@ const getTeamChemistry = async (userId) => {
     return {
       teamId: teamId,
       chemistry: chemistry,
-      members: members || []
+      members: members || [],
     };
   } catch (error) {
-    console.error('Error in getTeamChemistry:', error);
+    console.error("Error in getTeamChemistry:", error);
     return {
       teamId: null,
       chemistry: null,
-      members: []
+      members: [],
     };
   }
 };
@@ -260,15 +260,15 @@ const getTeamChemistry = async (userId) => {
 // Health check endpoint
 const getHealth = async () => {
   return {
-    status: 'healthy',
+    status: "healthy",
     timestamp: new Date().toISOString(),
-    service: 'dashboard'
+    service: "dashboard",
   };
 };
 
 exports.handler = async (event, context) => {
   // Log function call for debugging
-  logFunctionCall('Dashboard', event);
+  logFunctionCall("Dashboard", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -314,12 +314,15 @@ exports.handler = async (event, context) => {
     const path = event.path.replace("/.netlify/functions/dashboard", "");
 
     // Route to appropriate handler
-    if (path.includes("/training-calendar") || path.endsWith("/training-calendar")) {
+    if (
+      path.includes("/training-calendar") ||
+      path.endsWith("/training-calendar")
+    ) {
       const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:training-calendar`;
       const data = await getOrFetch(
         cacheKey,
         async () => await getTrainingCalendar(userId),
-        CACHE_TTL.DASHBOARD
+        CACHE_TTL.DASHBOARD,
       );
       return createSuccessResponse(data);
     }
@@ -329,7 +332,7 @@ exports.handler = async (event, context) => {
       const data = await getOrFetch(
         cacheKey,
         async () => await getTeamChemistry(userId),
-        CACHE_TTL.DASHBOARD
+        CACHE_TTL.DASHBOARD,
       );
       return createSuccessResponse(data);
     }
@@ -344,12 +347,12 @@ exports.handler = async (event, context) => {
     const dashboardData = await getOrFetch(
       cacheKey,
       async () => await getDashboardData(userId),
-      CACHE_TTL.DASHBOARD
+      CACHE_TTL.DASHBOARD,
     );
 
     return createSuccessResponse(dashboardData);
   } catch (error) {
     console.error("Error in dashboard function:", error);
-    return handleServerError(error, 'Dashboard');
+    return handleServerError(error, "Dashboard");
   }
 };

@@ -16,4 +16,3 @@ export class GameTimePipe implements PipeTransform {
     return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
 }
-

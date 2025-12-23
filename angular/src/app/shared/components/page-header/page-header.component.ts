@@ -21,7 +21,7 @@ import { ButtonModule } from "primeng/button";
       </div>
       <ng-content></ng-content>
     </div>
-    `,
+  `,
   styles: [
     `
       /* Uses standardized layout-system.scss classes */

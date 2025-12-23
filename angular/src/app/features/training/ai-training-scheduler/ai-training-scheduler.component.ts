@@ -37,7 +37,7 @@ interface AISuggestion {
     DatePicker,
     TagModule,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -56,7 +56,9 @@ interface AISuggestion {
             <div class="suggestions-list">
               @if (suggestions().length === 0) {
                 <div class="empty-state">
-                  <p>No suggestions at this time. Your schedule looks optimal!</p>
+                  <p>
+                    No suggestions at this time. Your schedule looks optimal!
+                  </p>
                 </div>
               } @else {
                 @for (suggestion of suggestions(); track suggestion.id) {
@@ -187,20 +189,22 @@ export class AiTrainingSchedulerComponent implements OnInit {
     try {
       // TODO: Call API to load AI suggestions
       // const response = await this.apiService.getAITrainingSuggestions();
-      
+
       // Mock suggestions
       this.suggestions.set([
         {
           id: "1",
           type: "swap",
-          message: "Consider moving speed session 24h later based on your readiness score",
+          message:
+            "Consider moving speed session 24h later based on your readiness score",
           date: new Date(),
           accepted: false,
         },
         {
           id: "2",
           type: "reduce",
-          message: "Reduce intensity for tomorrow's session - ACWR slightly elevated",
+          message:
+            "Reduce intensity for tomorrow's session - ACWR slightly elevated",
           date: new Date(),
           accepted: false,
         },
@@ -213,7 +217,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
   applySuggestion(suggestionId: string): void {
     // TODO: Apply suggestion
     const suggestions = this.suggestions();
-    const index = suggestions.findIndex(s => s.id === suggestionId);
+    const index = suggestions.findIndex((s) => s.id === suggestionId);
     if (index > -1) {
       suggestions[index].accepted = true;
       this.suggestions.set([...suggestions]);
@@ -222,11 +226,21 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
   dismissSuggestion(suggestionId: string): void {
     // TODO: Dismiss suggestion
-    const suggestions = this.suggestions().filter(s => s.id !== suggestionId);
+    const suggestions = this.suggestions().filter((s) => s.id !== suggestionId);
     this.suggestions.set(suggestions);
   }
 
-  getSuggestionSeverity(type: string): "success" | "info" | "warn" | "secondary" | "contrast" | "danger" | null | undefined {
+  getSuggestionSeverity(
+    type: string,
+  ):
+    | "success"
+    | "info"
+    | "warn"
+    | "secondary"
+    | "contrast"
+    | "danger"
+    | null
+    | undefined {
     switch (type) {
       case "swap":
         return "info";
@@ -239,4 +253,3 @@ export class AiTrainingSchedulerComponent implements OnInit {
     }
   }
 }
-

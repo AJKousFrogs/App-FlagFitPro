@@ -28,18 +28,28 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
     <!-- Sidebar Utilities -->
     <script src="./src/js/utils/sidebar-utils.js" defer></script>
     <!-- Notification Panel Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/notification-panel-loader.js" defer></script>
-  
+    <script
+      type="module"
+      src="./src/js/components/notification-panel-loader.js"
+      defer
+    ></script>
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <div class="dashboard-container">
@@ -80,7 +90,9 @@
 
           <!-- Wellness Snapshot -->
           <div class="wellness-snapshot-card">
-            <h2 class="section-title text-heading-xl text-primary">WELLNESS SNAPSHOT</h2>
+            <h2 class="section-title text-heading-xl text-primary">
+              WELLNESS SNAPSHOT
+            </h2>
             <div class="wellness-table-container">
               <table class="wellness-table">
                 <thead>
@@ -133,9 +145,13 @@
 
           <!-- Injury Reports -->
           <div class="injury-reports-card">
-            <h2 class="section-title text-heading-xl text-primary">INJURY REPORTS</h2>
+            <h2 class="section-title text-heading-xl text-primary">
+              INJURY REPORTS
+            </h2>
             <div class="injury-reports-content">
-              <h3 class="card-title text-heading-md text-primary">Latest Issues</h3>
+              <h3 class="card-title text-heading-md text-primary">
+                Latest Issues
+              </h3>
               <ul class="injury-list">
                 <li class="injury-item">
                   <span class="injury-player">Player 2:</span>
@@ -158,9 +174,13 @@
 
           <!-- Training Management -->
           <div class="training-management-card">
-            <h2 class="section-title text-heading-xl text-primary">TRAINING MANAGEMENT</h2>
+            <h2 class="section-title text-heading-xl text-primary">
+              TRAINING MANAGEMENT
+            </h2>
             <div class="training-management-content">
-              <h3 class="card-title text-heading-md text-primary">TODAY'S SESSION</h3>
+              <h3 class="card-title text-heading-md text-primary">
+                TODAY'S SESSION
+              </h3>
               <div class="session-info">
                 <div class="session-time">18:30 — Speed & Agility</div>
                 <div class="session-stats">
@@ -183,7 +203,9 @@
 
           <!-- AI Coaching Assistant -->
           <div class="ai-coaching-card">
-            <h2 class="section-title text-heading-xl text-primary">AI COACHING ASSISTANT</h2>
+            <h2 class="section-title text-heading-xl text-primary">
+              AI COACHING ASSISTANT
+            </h2>
             <div class="ai-coaching-content">
               <div class="ai-suggestion">
                 "3 players show early fatigue patterns. Suggested:
@@ -206,7 +228,7 @@
     <!-- Notification Panel (Loaded Dynamically) -->
     <div data-notification-panel-container></div>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

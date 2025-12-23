@@ -13,7 +13,9 @@ export class SecureDOMUtils {
    * @param {string} text - Text content to set
    */
   static setTextContent(element, text) {
-    if (!element) {return;}
+    if (!element) {
+      return;
+    }
     element.textContent = String(text || "");
   }
 
@@ -64,7 +66,9 @@ export class SecureDOMUtils {
    * @param {Array} children - Array of child configurations
    */
   static replaceChildren(parent, children = []) {
-    if (!parent) {return;}
+    if (!parent) {
+      return;
+    }
 
     // Clear existing content safely
     parent.replaceChildren();
@@ -88,14 +92,16 @@ export class SecureDOMUtils {
    * @param {Object} data - Data to inject into template
    */
   static updateFromTemplate(element, templateString, data = {}) {
-    if (!element || !templateString) {return;}
+    if (!element || !templateString) {
+      return;
+    }
 
     // Create a temporary container
     const temp = document.createElement("div");
 
     // Sanitize and process template
     const sanitizedTemplate = this.sanitizeTemplate(templateString, data);
-     
+
     // Safe: Using temp container pattern for sanitized content
     // eslint-disable-next-line no-restricted-syntax
     temp.innerHTML = sanitizedTemplate;
@@ -138,7 +144,9 @@ export class SecureDOMUtils {
    * @param {boolean} isTrusted - Confirms content is from trusted source
    */
   static setTrustedHTML(element, htmlContent, isTrusted = false) {
-    if (!element) {return;}
+    if (!element) {
+      return;
+    }
 
     if (!isTrusted) {
       logger.warn(
@@ -149,7 +157,7 @@ export class SecureDOMUtils {
     }
 
     // Only for truly trusted content (e.g., static templates, server responses with CSRF protection)
-     
+
     // Safe: Explicitly marked as trusted content - use with caution
     // eslint-disable-next-line no-restricted-syntax
     element.innerHTML = htmlContent;
@@ -162,7 +170,7 @@ export class SecureDOMUtils {
    */
   static createFragmentFromHTML(html) {
     const template = document.createElement("template");
-     
+
     // Safe: Using template element with sanitized content
     // eslint-disable-next-line no-restricted-syntax
     template.innerHTML = this.sanitizeTemplate(html, {});
@@ -176,7 +184,9 @@ export class SecureDOMUtils {
    * @param {Object} data - Data for template
    */
   static appendFromTemplate(target, template, data = {}) {
-    if (!target || !template) {return;}
+    if (!target || !template) {
+      return;
+    }
 
     const clone = template.content.cloneNode(true);
 

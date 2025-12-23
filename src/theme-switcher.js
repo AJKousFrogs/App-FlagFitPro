@@ -1,7 +1,7 @@
 // Theme Switcher - Toggle between light and dark mode
 // Handles theme switching and persistence
 
-import { logger } from './logger.js';
+import { logger } from "./logger.js";
 
 // Create a simple storage wrapper that works with or without storageService
 const storage = {
@@ -13,8 +13,10 @@ const storage = {
     // Fallback to direct localStorage access
     try {
       const storedValue = localStorage.getItem(key);
-      if (!storedValue) {return defaultValue;}
-      
+      if (!storedValue) {
+        return defaultValue;
+      }
+
       // Try to parse as JSON first, but handle plain strings
       try {
         const parsed = JSON.parse(storedValue);
@@ -43,14 +45,15 @@ const storage = {
       }
       return true;
     } catch (e) {
-      loggerInstance.error('Failed to save to localStorage:', e);
+      loggerInstance.error("Failed to save to localStorage:", e);
       return false;
     }
-  }
+  },
 };
 
 // Use logger - prefer window.logger for script tag compatibility, otherwise use imported logger
-const loggerInstance = (typeof window !== "undefined" && window.logger) ? window.logger : logger;
+const loggerInstance =
+  typeof window !== "undefined" && window.logger ? window.logger : logger;
 
 class ThemeSwitcher {
   constructor() {
@@ -91,7 +94,9 @@ class ThemeSwitcher {
     // Check if toggle already exists in HTML - attach listeners instead of creating
     const existingToggle = document.getElementById("theme-toggle");
     const headerToggle = document.getElementById("header-theme-toggle");
-    const headerToggleButton = document.getElementById("header-theme-toggle-button");
+    const headerToggleButton = document.getElementById(
+      "header-theme-toggle-button",
+    );
 
     // Handle button version (icon-based toggle)
     if (headerToggleButton) {
@@ -268,7 +273,9 @@ class ThemeSwitcher {
     }
 
     // Update button version if it exists
-    const headerToggleButton = document.getElementById("header-theme-toggle-button");
+    const headerToggleButton = document.getElementById(
+      "header-theme-toggle-button",
+    );
     if (headerToggleButton) {
       this.updateButtonState(headerToggleButton, theme);
     }
@@ -301,7 +308,11 @@ class ThemeSwitcher {
     textElements.forEach((textElement) => {
       // Check if it's the header toggle (has emoji)
       const container = textElement.closest(".theme-toggle-container");
-      if (container && (container.querySelector("#header-theme-toggle") || container.querySelector("#header-theme-toggle-button"))) {
+      if (
+        container &&
+        (container.querySelector("#header-theme-toggle") ||
+          container.querySelector("#header-theme-toggle-button"))
+      ) {
         textElement.textContent = theme === "dark" ? "🌙 Dark" : "☀️ Light";
       } else {
         textElement.textContent = theme === "dark" ? "Dark" : "Light";
@@ -310,8 +321,10 @@ class ThemeSwitcher {
   }
 
   updateButtonState(button, theme) {
-    if (!button) {return;}
-    
+    if (!button) {
+      return;
+    }
+
     // Update aria-label and title for accessibility
     if (theme === "dark") {
       button.setAttribute("aria-label", "Switch to light theme");
@@ -320,7 +333,7 @@ class ThemeSwitcher {
       button.setAttribute("aria-label", "Switch to dark theme");
       button.setAttribute("title", "Switch to dark theme");
     }
-    
+
     // CSS handles icon visibility via opacity transitions based on data-theme attribute
     // Just ensure the button is visible
     button.style.display = "";

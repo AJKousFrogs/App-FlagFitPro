@@ -6,7 +6,13 @@ A toggle switch component for binary on/off states.
 
 ```html
 <label class="form-toggle">
-  <input type="checkbox" id="toggle-1" name="toggle-1" class="toggle-input" role="switch" />
+  <input
+    type="checkbox"
+    id="toggle-1"
+    name="toggle-1"
+    class="toggle-input"
+    role="switch"
+  />
   <span class="toggle-slider"></span>
   <span class="toggle-label">Enable notifications</span>
 </label>
@@ -31,4 +37,3 @@ A toggle switch component for binary on/off states.
 - Includes `aria-checked` attribute
 - Supports keyboard navigation
 - Focus indicator included
-

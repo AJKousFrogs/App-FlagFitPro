@@ -15,7 +15,9 @@ class GameStatsService {
     this.storageKey = "flagfit_games";
     this.currentGameKey = "flagfit_current_game";
     // Use backend in production/staging, localStorage in development
-    this.useBackend = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    this.useBackend =
+      window.location.hostname !== "localhost" &&
+      window.location.hostname !== "127.0.0.1";
   }
 
   /**
@@ -57,7 +59,9 @@ class GameStatsService {
     // Try to save to backend
     if (this.useBackend) {
       try {
-        const token = storageService.get("authToken", null, { usePrefix: false });
+        const token = storageService.get("authToken", null, {
+          usePrefix: false,
+        });
         if (!token) {
           logger.warn("No auth token, skipping backend save");
           return true; // Saved to localStorage
@@ -65,7 +69,9 @@ class GameStatsService {
 
         // Prepare game data for API
         const gameData = {
-          teamId: game.teamId || `TEAM_${storageService.get("userId", "", { usePrefix: false })}`,
+          teamId:
+            game.teamId ||
+            `TEAM_${storageService.get("userId", "", { usePrefix: false })}`,
           opponentName: game.opponentName,
           gameDate: game.gameDate,
           gameTime: game.gameTime,
@@ -83,14 +89,11 @@ class GameStatsService {
           // Update existing game
           response = await apiClient.put(
             API_ENDPOINTS.games.update(game.gameId),
-            gameData
+            gameData,
           );
         } else {
           // Create new game
-          response = await apiClient.post(
-            API_ENDPOINTS.games.create,
-            gameData
-          );
+          response = await apiClient.post(API_ENDPOINTS.games.create, gameData);
         }
 
         if (response.success) {
@@ -148,7 +151,9 @@ class GameStatsService {
     // Try backend first
     if (this.useBackend) {
       try {
-        const token = storageService.get("authToken", null, { usePrefix: false });
+        const token = storageService.get("authToken", null, {
+          usePrefix: false,
+        });
         if (token) {
           const response = await apiClient.get(API_ENDPOINTS.games.list);
           if (response.success && response.data) {
@@ -196,7 +201,9 @@ class GameStatsService {
    */
   getCurrentGame() {
     try {
-      return storageService.get(this.currentGameKey, null, { usePrefix: false });
+      return storageService.get(this.currentGameKey, null, {
+        usePrefix: false,
+      });
     } catch (error) {
       logger.error("Error loading current game:", error);
       return null;
@@ -233,7 +240,9 @@ class GameStatsService {
   getGamesByDateRange(startDate, endDate) {
     const games = this.getAllGames({ forceSync: true });
     if (!Array.isArray(games)) {
-      logger.warn("getAllGames() did not return an array in getGamesByDateRange");
+      logger.warn(
+        "getAllGames() did not return an array in getGamesByDateRange",
+      );
       return [];
     }
     return games.filter((game) => {
@@ -254,15 +263,21 @@ class GameStatsService {
     // Try backend first for consistent, date-filtered stats
     if (this.useBackend && !options.forceLocal) {
       try {
-        const token = storageService.get("authToken", null, { usePrefix: false });
+        const token = storageService.get("authToken", null, {
+          usePrefix: false,
+        });
         if (token) {
           const params = new URLSearchParams();
-          if (options.season) {params.append("season", options.season);}
-          if (options.teamId) {params.append("teamId", options.teamId);}
-          
-          const url = `${API_ENDPOINTS.playerStats.aggregated}?playerId=${playerId}${params.toString() ? '&' + params.toString() : ''}`;
+          if (options.season) {
+            params.append("season", options.season);
+          }
+          if (options.teamId) {
+            params.append("teamId", options.teamId);
+          }
+
+          const url = `${API_ENDPOINTS.playerStats.aggregated}?playerId=${playerId}${params.toString() ? "&" + params.toString() : ""}`;
           const response = await apiClient.get(url);
-          
+
           if (response.success && response.data) {
             // Transform backend format to frontend format
             return {
@@ -291,7 +306,10 @@ class GameStatsService {
           }
         }
       } catch (error) {
-        logger.warn("Error fetching stats from backend, falling back to local calculation:", error);
+        logger.warn(
+          "Error fetching stats from backend, falling back to local calculation:",
+          error,
+        );
         // Fall through to local calculation
       }
     }
@@ -325,7 +343,9 @@ class GameStatsService {
     };
 
     games.forEach((game) => {
-      if (!game.plays) {return;}
+      if (!game.plays) {
+        return;
+      }
 
       let playerInGame = false;
 
@@ -343,8 +363,12 @@ class GameStatsService {
         // Passing stats
         if (isQB && play.playType === "pass") {
           stats.passAttempts++;
-          if (play.outcome === "completion") {stats.completions++;}
-          if (play.outcome === "interception") {stats.interceptions++;}
+          if (play.outcome === "completion") {
+            stats.completions++;
+          }
+          if (play.outcome === "interception") {
+            stats.interceptions++;
+          }
           if (
             play.throwAccuracy === "bad" ||
             play.throwAccuracy === "terrible"
@@ -357,8 +381,12 @@ class GameStatsService {
         // Receiving stats
         if (isReceiver && play.playType === "pass") {
           stats.targets++;
-          if (play.outcome === "completion") {stats.receptions++;}
-          if (play.isDrop) {stats.drops++;}
+          if (play.outcome === "completion") {
+            stats.receptions++;
+          }
+          if (play.isDrop) {
+            stats.drops++;
+          }
         }
 
         // Rushing stats
@@ -378,7 +406,9 @@ class GameStatsService {
         }
       });
 
-      if (playerInGame) {stats.gamesPlayed++;}
+      if (playerInGame) {
+        stats.gamesPlayed++;
+      }
     });
 
     // Calculate percentages
@@ -414,16 +444,20 @@ class GameStatsService {
   async getPlayerStatsByDateRange(playerId, startDate, endDate) {
     if (this.useBackend) {
       try {
-        const token = storageService.get("authToken", null, { usePrefix: false });
+        const token = storageService.get("authToken", null, {
+          usePrefix: false,
+        });
         if (token) {
           const params = new URLSearchParams({
             playerId,
-            startDate: startDate.toISOString().split('T')[0],
-            endDate: endDate.toISOString().split('T')[0],
+            startDate: startDate.toISOString().split("T")[0],
+            endDate: endDate.toISOString().split("T")[0],
           });
-          
-          const response = await apiClient.get(`${API_ENDPOINTS.playerStats.dateRange}?${params.toString()}`);
-          
+
+          const response = await apiClient.get(
+            `${API_ENDPOINTS.playerStats.dateRange}?${params.toString()}`,
+          );
+
           if (response.success && response.data) {
             return response.data;
           }
@@ -458,18 +492,28 @@ class GameStatsService {
     };
 
     games.forEach((game) => {
-      if (!game.plays) {return;}
+      if (!game.plays) {
+        return;
+      }
       game.plays.forEach((play) => {
         // Aggregate stats (same logic as getPlayerStats)
         if (play.quarterbackId === playerId && play.playType === "pass") {
           stats.passAttempts++;
-          if (play.outcome === "completion") {stats.completions++;}
-          if (play.outcome === "interception") {stats.interceptions++;}
+          if (play.outcome === "completion") {
+            stats.completions++;
+          }
+          if (play.outcome === "interception") {
+            stats.interceptions++;
+          }
         }
         if (play.receiverId === playerId && play.playType === "pass") {
           stats.targets++;
-          if (play.outcome === "completion") {stats.receptions++;}
-          if (play.isDrop) {stats.drops++;}
+          if (play.outcome === "completion") {
+            stats.receptions++;
+          }
+          if (play.isDrop) {
+            stats.drops++;
+          }
         }
         if (play.ballCarrierId === playerId && play.playType === "run") {
           stats.rushingAttempts++;
@@ -477,20 +521,28 @@ class GameStatsService {
         }
         if (play.defenderId === playerId && play.playType === "flag_pull") {
           stats.flagPullAttempts++;
-          if (play.isSuccessful) {stats.flagPulls++;} else {stats.missedFlagPulls++;}
+          if (play.isSuccessful) {
+            stats.flagPulls++;
+          } else {
+            stats.missedFlagPulls++;
+          }
         }
       });
     });
 
     // Calculate percentages
     if (stats.passAttempts > 0) {
-      stats.completionPercentage = Number(((stats.completions / stats.passAttempts) * 100).toFixed(1));
+      stats.completionPercentage = Number(
+        ((stats.completions / stats.passAttempts) * 100).toFixed(1),
+      );
     }
     if (stats.targets > 0) {
       stats.dropRate = Number(((stats.drops / stats.targets) * 100).toFixed(1));
     }
     if (stats.flagPullAttempts > 0) {
-      stats.flagPullSuccessRate = Number(((stats.flagPulls / stats.flagPullAttempts) * 100).toFixed(1));
+      stats.flagPullSuccessRate = Number(
+        ((stats.flagPulls / stats.flagPullAttempts) * 100).toFixed(1),
+      );
     }
 
     return stats;
@@ -504,13 +556,17 @@ class GameStatsService {
   getPlayerDropAnalysis(playerId) {
     const games = this.getAllGames({ forceSync: true });
     if (!Array.isArray(games)) {
-      logger.warn("getAllGames() did not return an array in getPlayerDropAnalysis");
+      logger.warn(
+        "getAllGames() did not return an array in getPlayerDropAnalysis",
+      );
       return { totalDrops: 0, dropRate: 0, drops: [] };
     }
     const drops = [];
 
     games.forEach((game) => {
-      if (!game.plays) {return;}
+      if (!game.plays) {
+        return;
+      }
 
       game.plays.forEach((play) => {
         if (play.receiverId === playerId && play.isDrop) {
@@ -565,13 +621,17 @@ class GameStatsService {
   getDefenderFlagPullAnalysis(playerId) {
     const games = this.getAllGames({ forceSync: true });
     if (!Array.isArray(games)) {
-      logger.warn("getAllGames() did not return an array in getDefenderFlagPullAnalysis");
+      logger.warn(
+        "getAllGames() did not return an array in getDefenderFlagPullAnalysis",
+      );
       return { successRate: 0, attempts: [] };
     }
     const attempts = [];
 
     games.forEach((game) => {
-      if (!game.plays) {return;}
+      if (!game.plays) {
+        return;
+      }
 
       game.plays.forEach((play) => {
         if (play.defenderId === playerId && play.playType === "flag_pull") {
@@ -622,13 +682,17 @@ class GameStatsService {
   getQBAccuracyAnalysis(playerId) {
     const games = this.getAllGames({ forceSync: true });
     if (!Array.isArray(games)) {
-      logger.warn("getAllGames() did not return an array in getPlayerThrowAnalysis");
+      logger.warn(
+        "getAllGames() did not return an array in getPlayerThrowAnalysis",
+      );
       return { totalThrows: 0, throws: [] };
     }
     const throws = [];
 
     games.forEach((game) => {
-      if (!game.plays) {return;}
+      if (!game.plays) {
+        return;
+      }
 
       game.plays.forEach((play) => {
         if (play.quarterbackId === playerId && play.playType === "pass") {
@@ -661,9 +725,15 @@ class GameStatsService {
       }
 
       byRoute[t.routeType].attempts++;
-      if (t.outcome === "completion") {byRoute[t.routeType].completions++;}
-      if (t.outcome !== "completion") {byRoute[t.routeType].incompletions++;}
-      if (t.isDrop) {byRoute[t.routeType].drops++;}
+      if (t.outcome === "completion") {
+        byRoute[t.routeType].completions++;
+      }
+      if (t.outcome !== "completion") {
+        byRoute[t.routeType].incompletions++;
+      }
+      if (t.isDrop) {
+        byRoute[t.routeType].drops++;
+      }
       if (t.throwAccuracy === "bad" || t.throwAccuracy === "terrible") {
         byRoute[t.routeType].badThrows++;
       }
@@ -716,58 +786,70 @@ class GameStatsService {
     game.plays.forEach((play) => {
       if (play.playType === "pass") {
         stats.passAttempts++;
-        if (play.outcome === "completion") {stats.completions++;} else {stats.incompletions++;}
-        if (play.isDrop) {stats.drops++;}
-        if (play.outcome === "interception") {stats.interceptions++;}
+        if (play.outcome === "completion") {
+          stats.completions++;
+        } else {
+          stats.incompletions++;
+        }
+        if (play.isDrop) {
+          stats.drops++;
+        }
+        if (play.outcome === "interception") {
+          stats.interceptions++;
+        }
       } else if (play.playType === "run") {
         stats.rushingAttempts++;
         stats.totalYards += play.yardsGained || 0;
       } else if (play.playType === "flag_pull") {
         stats.flagPullAttempts++;
-        if (play.isSuccessful) {stats.flagPulls++;}
+        if (play.isSuccessful) {
+          stats.flagPulls++;
+        }
       }
     });
 
     // Calculate percentages using validated calculation service
     if (stats.passAttempts > 0) {
       try {
-        const completionResult = statisticsCalculationService.calculateCompletionPercentage(
-          stats.completions,
-          stats.passAttempts
-        );
+        const completionResult =
+          statisticsCalculationService.calculateCompletionPercentage(
+            stats.completions,
+            stats.passAttempts,
+          );
         stats.completionPercentage = completionResult.percentage.toFixed(1);
       } catch (error) {
-        logger.warn('Error calculating completion percentage:', error);
-        stats.completionPercentage = '0.0';
+        logger.warn("Error calculating completion percentage:", error);
+        stats.completionPercentage = "0.0";
       }
 
       try {
         const dropRateResult = statisticsCalculationService.calculateDropRate(
           stats.drops,
-          stats.passAttempts
+          stats.passAttempts,
         );
         stats.dropRate = dropRateResult.rate.toFixed(1);
         stats.dropRateSeverity = dropRateResult.severity;
         stats.dropRateRecommendation = dropRateResult.recommendation;
       } catch (error) {
-        logger.warn('Error calculating drop rate:', error);
-        stats.dropRate = '0.0';
+        logger.warn("Error calculating drop rate:", error);
+        stats.dropRate = "0.0";
       }
     }
 
     if (stats.flagPullAttempts > 0) {
       try {
-        const flagPullResult = statisticsCalculationService.calculateFlagPullSuccessRate(
-          stats.flagPulls,
-          stats.flagPullAttempts
-        );
+        const flagPullResult =
+          statisticsCalculationService.calculateFlagPullSuccessRate(
+            stats.flagPulls,
+            stats.flagPullAttempts,
+          );
         stats.flagPullSuccessRate = flagPullResult.rate.toFixed(1);
         stats.flagPullConfidence95 = flagPullResult.confidence95;
         stats.flagPullSampleSizeAdequate = flagPullResult.sampleSizeAdequate;
         stats.defensiveGrade = flagPullResult.defensiveGrade;
       } catch (error) {
-        logger.warn('Error calculating flag pull success rate:', error);
-        stats.flagPullSuccessRate = '0.0';
+        logger.warn("Error calculating flag pull success rate:", error);
+        stats.flagPullSuccessRate = "0.0";
       }
     }
 

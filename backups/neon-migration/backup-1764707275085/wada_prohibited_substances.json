@@ -11,10 +11,7 @@
     "prohibition_reason": null,
     "exceptions": null,
     "detection_window_days": 30,
-    "common_sources": [
-      "anabolic_steroids",
-      "testosterone_boosters"
-    ],
+    "common_sources": ["anabolic_steroids", "testosterone_boosters"],
     "cross_contamination_risk": false,
     "flag_football_relevance": "high",
     "position_specific_risks": null,
@@ -33,10 +30,7 @@
     "prohibition_reason": null,
     "exceptions": null,
     "detection_window_days": 7,
-    "common_sources": [
-      "blood_doping",
-      "recombinant_epo"
-    ],
+    "common_sources": ["blood_doping", "recombinant_epo"],
     "cross_contamination_risk": false,
     "flag_football_relevance": "moderate",
     "position_specific_risks": null,
@@ -78,11 +72,7 @@
     "prohibition_reason": null,
     "exceptions": null,
     "detection_window_days": 30,
-    "common_sources": [
-      "marijuana",
-      "cbd_products",
-      "hemp_products"
-    ],
+    "common_sources": ["marijuana", "cbd_products", "hemp_products"],
     "cross_contamination_risk": false,
     "flag_football_relevance": "low",
     "position_specific_risks": null,

@@ -15,7 +15,7 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
       media="print"
-      onload="this.media='all'"
+      onload="this.media = 'all'"
     />
     <noscript>
       <link
@@ -44,26 +44,31 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
     <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
     <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
-  
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <div class="dashboard-container">
       <!-- Sidebar - Icon Only -->
-            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
       <div data-sidebar-container></div>
 
-
-              <!-- Top Bar (Loaded Dynamically) -->
-        <div data-topbar-container></div>
+      <!-- Top Bar (Loaded Dynamically) -->
+      <div data-topbar-container></div>
 
       <main class="main-content">
         <!-- Header -->
@@ -201,9 +206,8 @@
           );
 
           // Import exercise library page module
-          const exerciseModule = await import(
-            "./src/js/pages/exercise-library-page.js"
-          );
+          const exerciseModule =
+            await import("./src/js/pages/exercise-library-page.js");
           const { exerciseLibraryPage } = exerciseModule;
 
           // Initialize optimized exercise library page
@@ -394,7 +398,7 @@
       });
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

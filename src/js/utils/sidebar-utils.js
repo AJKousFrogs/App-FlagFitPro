@@ -20,7 +20,7 @@
         const sidebar = document.getElementById("sidebar");
         const overlay = document.querySelector(".menu-scrim");
         const toggle = document.getElementById("mobile-menu-toggle");
-        
+
         if (sidebar) {
           const isOpen = sidebar.classList.contains("is-open");
           if (isOpen) {
@@ -51,7 +51,7 @@
         const sidebar = document.getElementById("sidebar");
         const overlay = document.querySelector(".menu-scrim");
         const toggle = document.getElementById("mobile-menu-toggle");
-        
+
         if (sidebar) {
           sidebar.classList.remove("is-open");
           overlay?.classList.remove("is-visible");
@@ -62,4 +62,3 @@
     };
   }
 })();
-

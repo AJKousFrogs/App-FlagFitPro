@@ -1,48 +1,52 @@
-import { useReducer, useMemo } from 'react';
+import { useReducer, useMemo } from "react";
 
 /**
  * Enhanced useReducer hook that provides automatic action creators
  * and standardized loading/error handling patterns
  */
-export const useStandardReducer = (initialState, actionTypes, customReducer = null) => {
+export const useStandardReducer = (
+  initialState,
+  actionTypes,
+  customReducer = null,
+) => {
   // Standard reducer that handles loading and error states
   const standardReducer = (state, action) => {
     // Handle standard loading states
-    if (action.type.endsWith('_START')) {
+    if (action.type.endsWith("_START")) {
       return {
         ...state,
         isLoading: true,
-        error: null
+        error: null,
       };
     }
-    
+
     // Handle standard success states
-    if (action.type.endsWith('_SUCCESS')) {
+    if (action.type.endsWith("_SUCCESS")) {
       return {
         ...state,
         isLoading: false,
         error: null,
-        ...action.payload
+        ...action.payload,
       };
     }
-    
+
     // Handle standard failure states
-    if (action.type.endsWith('_FAILURE')) {
+    if (action.type.endsWith("_FAILURE")) {
       return {
         ...state,
         isLoading: false,
-        error: action.payload || action.error || 'An error occurred'
+        error: action.payload || action.error || "An error occurred",
       };
     }
-    
+
     // Handle clear error action
-    if (action.type === 'CLEAR_ERROR') {
+    if (action.type === "CLEAR_ERROR") {
       return {
         ...state,
-        error: null
+        error: null,
       };
     }
-    
+
     // If custom reducer is provided, let it handle the action first
     if (customReducer) {
       const customResult = customReducer(state, action);
@@ -51,34 +55,36 @@ export const useStandardReducer = (initialState, actionTypes, customReducer = nu
         return customResult;
       }
     }
-    
+
     // Default case - return state unchanged
     return state;
   };
-  
+
   const [state, dispatch] = useReducer(standardReducer, initialState);
-  
+
   // Generate action creators based on action types
   const actions = useMemo(() => {
     const actionCreators = {};
-    
+
     Object.entries(actionTypes).forEach(([key, actionType]) => {
       // Convert ACTION_TYPE to actionType (camelCase function name)
-      const functionName = key.toLowerCase().replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
-      
+      const functionName = key
+        .toLowerCase()
+        .replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+
       actionCreators[functionName] = (payload) => {
         dispatch({ type: actionType, payload });
       };
     });
-    
+
     // Add clearError action
     actionCreators.clearError = () => {
-      dispatch({ type: 'CLEAR_ERROR' });
+      dispatch({ type: "CLEAR_ERROR" });
     };
-    
+
     return actionCreators;
   }, [actionTypes]);
-  
+
   return [state, dispatch, actions];
 };
 

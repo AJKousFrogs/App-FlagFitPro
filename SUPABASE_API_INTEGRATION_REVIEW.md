@@ -6,6 +6,7 @@
 ## Executive Summary
 
 Your Supabase API integration patterns are **fundamentally correct** and follow best practices. The architecture uses:
+
 - Service key (`supabaseAdmin`) for backend operations (bypasses RLS)
 - Anon key for frontend client initialization
 - Proper error handling and environment variable management
@@ -20,12 +21,14 @@ However, there are some areas for improvement and optimization.
 ### 1. **Client Initialization**
 
 **Frontend (`src/js/services/supabase-client.js`):**
+
 - ✅ Proper singleton pattern with lazy initialization
-- ✅ Multiple environment variable fallbacks (window._env, import.meta.env, localStorage)
+- ✅ Multiple environment variable fallbacks (window.\_env, import.meta.env, localStorage)
 - ✅ Correct auth configuration (autoRefreshToken, persistSession)
 - ✅ Realtime subscriptions properly configured
 
 **Backend (`netlify/functions/supabase-client.cjs`):**
+
 - ✅ Separate clients for admin (`supabaseAdmin`) and regular (`supabase`) operations
 - ✅ Proper error handling with enhanced connection errors
 - ✅ Environment variable validation before initialization
@@ -34,6 +37,7 @@ However, there are some areas for improvement and optimization.
 ### 2. **Query Patterns**
 
 All queries use correct Supabase PostgREST syntax:
+
 ```javascript
 // ✅ Correct pattern
 const { data, error } = await supabaseAdmin
@@ -69,12 +73,14 @@ const { data, error } = await supabaseAdmin
 ### 1. **Mixed Authentication Approach**
 
 **Current State:**
+
 - Custom JWT authentication system
 - Supabase Auth not being used
 - Frontend Supabase client initialized but underutilized
 
 **Issue:**
 You're not leveraging Supabase's built-in authentication features, which provide:
+
 - Automatic session management
 - Built-in email verification
 - Social auth providers
@@ -83,11 +89,13 @@ You're not leveraging Supabase's built-in authentication features, which provide
 
 **Recommendation:**
 Consider migrating to Supabase Auth for:
+
 - Better integration with RLS policies
 - Reduced custom code maintenance
 - Built-in security features
 
 **If keeping custom JWT:**
+
 - Ensure JWT tokens are properly validated
 - Consider adding refresh token mechanism
 - Document the custom auth flow
@@ -95,6 +103,7 @@ Consider migrating to Supabase Auth for:
 ### 2. **Frontend Supabase Client Underutilized**
 
 **Current State:**
+
 - Frontend has Supabase client initialized
 - Most API calls go through Netlify Functions instead
 - Direct Supabase queries from frontend are rare
@@ -103,18 +112,21 @@ Consider migrating to Supabase Auth for:
 This is actually **fine** for your architecture, but you could optimize:
 
 **Option A: Keep Current Pattern (Recommended)**
+
 - All data access through Netlify Functions
 - Better security (service key never exposed)
 - More control over business logic
 - ✅ **This is what you're doing - keep it**
 
 **Option B: Hybrid Approach**
+
 - Use Supabase client for read-only public data
 - Use Netlify Functions for writes and sensitive operations
 - Reduces serverless function calls
 
 **Recommendation:**
 Your current pattern is correct. If you want to optimize, consider:
+
 - Using frontend Supabase client for realtime subscriptions (you already do this ✅)
 - Using frontend client for public/read-only queries (tournaments, leaderboards)
 - Keeping Netlify Functions for writes and authenticated operations
@@ -122,17 +134,20 @@ Your current pattern is correct. If you want to optimize, consider:
 ### 3. **RLS Policy Usage**
 
 **Current State:**
+
 - RLS policies are defined and enabled
 - Backend uses service key which bypasses RLS
 - Frontend uses anon key but doesn't query directly
 
 **Analysis:**
 This is **correct** for your architecture:
+
 - Service key bypasses RLS (intended for backend admin operations)
 - RLS policies protect against direct frontend queries
 - Your JWT validation in Netlify Functions provides authorization
 
 **Recommendation:**
+
 - ✅ Keep current pattern
 - Consider adding integration tests that verify RLS policies work when using anon key
 - Document that RLS protects against direct database access
@@ -141,11 +156,13 @@ This is **correct** for your architecture:
 
 **Current State:**
 Good handling of common error codes:
+
 - `42P01` - Table doesn't exist
 - `PGRST116` - No rows found
 
 **Recommendation:**
 Add handling for additional Supabase error codes:
+
 ```javascript
 // Common Supabase error codes to handle:
 // PGRST116 - No rows returned
@@ -162,6 +179,7 @@ Add handling for additional Supabase error codes:
 Queries are correct but could be optimized:
 
 **Example from `supabase-client.cjs`:**
+
 ```javascript
 // Current
 const { data, error } = await supabaseAdmin
@@ -172,11 +190,13 @@ const { data, error } = await supabaseAdmin
 ```
 
 **Recommendation:**
+
 - Use specific column selection instead of `*` when possible
 - Add `.limit()` to prevent large result sets
 - Consider using `.select()` with specific columns for better performance
 
 **Example:**
+
 ```javascript
 // Optimized
 const { data, error } = await supabaseAdmin
@@ -189,16 +209,19 @@ const { data, error } = await supabaseAdmin
 ### 6. **Connection Pooling**
 
 **Current State:**
+
 - Each Netlify Function creates its own Supabase client
 - Clients are created at module load time
 
 **Analysis:**
 This is fine for serverless functions, but consider:
+
 - Supabase client is lightweight and designed for this pattern
 - Each function invocation gets a fresh client (good for isolation)
 - No connection pooling needed (Supabase handles this)
 
 **Recommendation:**
+
 - ✅ Current pattern is correct
 - No changes needed
 
@@ -247,7 +270,7 @@ if (error) {
     code: error.code,
     message: error.message,
     details: error.details,
-    hint: error.hint
+    hint: error.hint,
   });
   throw error;
 }
@@ -265,6 +288,7 @@ initializeSupabase();
 **Issue:** This runs immediately when module is imported, which might fail if environment variables aren't ready.
 
 **Recommendation:**
+
 - Remove auto-initialization
 - Initialize explicitly when needed
 - Or make it safe with try-catch
@@ -312,11 +336,13 @@ initializeSupabase();
 ## 🎯 Conclusion
 
 Your Supabase API integration patterns are **fundamentally sound** and follow best practices. The architecture correctly separates concerns:
+
 - Backend uses service key for admin operations
 - Frontend uses anon key (though mostly through Netlify Functions)
 - Proper error handling and security measures in place
 
 The main improvements would be:
+
 1. Consistency in error handling
 2. Query optimization
 3. Better documentation of architectural decisions
@@ -324,4 +350,3 @@ The main improvements would be:
 **Overall Grade: A-**
 
 The integration is production-ready with minor optimizations recommended.
-

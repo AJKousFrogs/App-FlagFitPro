@@ -21,18 +21,22 @@ This document defines handling for edge cases, error scenarios, and business rul
 **Current Behavior**: Supabase blocks login if `email_verified = false`
 
 **Handling:**
+
 ```typescript
 // Frontend: Check verification status
-const { data: { user } } = await supabase.auth.getUser();
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 if (!user?.email_confirmed_at) {
   // Show resend verification UI
-  return { error: 'EMAIL_NOT_VERIFIED' };
+  return { error: "EMAIL_NOT_VERIFIED" };
 }
 ```
 
 **Edge Cases:**
+
 1. **Resend verification**: User can request new verification email
-2. **Changing email while unverified**: 
+2. **Changing email while unverified**:
    - Old verification token invalidated
    - New verification email sent
    - User must verify new email
@@ -42,6 +46,7 @@ if (!user?.email_confirmed_at) {
    - Set `email_normalized` from auth email
 
 **Implementation:**
+
 ```sql
 -- Trigger to auto-create profile
 CREATE OR REPLACE FUNCTION handle_new_user()
@@ -71,7 +76,7 @@ CREATE TRIGGER on_auth_user_created
 
 **Handling:**
 
-1. **Token Storage**: 
+1. **Token Storage**:
    - Tokens stored as hashed values in database
    - Never store raw tokens
    - Use `bcrypt` or `argon2` for hashing
@@ -97,6 +102,7 @@ CREATE TRIGGER on_auth_user_created
    - Log reset failures (email, IP, reason)
 
 **Implementation:**
+
 ```sql
 CREATE TABLE password_reset_tokens (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -122,31 +128,34 @@ CREATE INDEX idx_reset_tokens_expires ON password_reset_tokens(expires_at);
 **Decision**: **Enforce unique team names per active team**
 
 **Handling:**
+
 ```sql
 -- Unique constraint on active teams only
-CREATE UNIQUE INDEX idx_teams_name_unique 
-ON teams(name) 
+CREATE UNIQUE INDEX idx_teams_name_unique
+ON teams(name)
 WHERE deleted_at IS NULL;
 ```
 
 **Edge Cases:**
+
 1. **Duplicate name after soft delete**: Allowed (team can reuse name)
 2. **Case sensitivity**: Normalize to lowercase for comparison
 3. **Whitespace**: Trim whitespace before comparison
 
 **Implementation:**
+
 ```typescript
 // Backend validation
 const normalizedName = name.trim().toLowerCase();
 const existing = await supabase
-  .from('teams')
-  .select('id')
-  .eq('name_normalized', normalizedName)
-  .is('deleted_at', null)
+  .from("teams")
+  .select("id")
+  .eq("name_normalized", normalizedName)
+  .is("deleted_at", null)
   .single();
 
 if (existing) {
-  throw new Error('TEAM_NAME_EXISTS');
+  throw new Error("TEAM_NAME_EXISTS");
 }
 ```
 
@@ -184,28 +193,33 @@ if (existing) {
    - Inform user invitation was cancelled
 
 **Implementation:**
+
 ```typescript
 async function acceptInvitation(token: string) {
   // 1. Validate token
   const invitation = await getInvitationByToken(token);
-  if (!invitation) throw new Error('INVITATION_NOT_FOUND');
-  if (invitation.status !== 'pending') throw new Error('INVITATION_INVALID_STATUS');
-  if (invitation.expires_at < new Date()) throw new Error('INVITATION_EXPIRED');
-  
+  if (!invitation) throw new Error("INVITATION_NOT_FOUND");
+  if (invitation.status !== "pending")
+    throw new Error("INVITATION_INVALID_STATUS");
+  if (invitation.expires_at < new Date()) throw new Error("INVITATION_EXPIRED");
+
   // 2. Verify email match
   const user = await getCurrentUser();
   if (invitation.email_normalized !== normalizeEmail(user.email)) {
-    throw new Error('INVITATION_EMAIL_MISMATCH');
+    throw new Error("INVITATION_EMAIL_MISMATCH");
   }
-  
+
   // 3. Check existing membership
   const existing = await getTeamMember(invitation.team_id, user.id);
   if (existing && existing.deleted_at === null) {
     // Already member, just mark invitation as accepted
-    await updateInvitation(invitation.id, { status: 'accepted', accepted_at: new Date() });
+    await updateInvitation(invitation.id, {
+      status: "accepted",
+      accepted_at: new Date(),
+    });
     return { success: true, alreadyMember: true };
   }
-  
+
   // 4. Create or reactivate membership
   if (existing) {
     await reactivateTeamMember(existing.id);
@@ -215,16 +229,16 @@ async function acceptInvitation(token: string) {
       user_id: user.id,
       role_team: invitation.role_team,
       position: invitation.position,
-      jersey_number: invitation.jersey_number
+      jersey_number: invitation.jersey_number,
     });
   }
-  
+
   // 5. Mark invitation as accepted
-  await updateInvitation(invitation.id, { 
-    status: 'accepted', 
-    accepted_at: new Date() 
+  await updateInvitation(invitation.id, {
+    status: "accepted",
+    accepted_at: new Date(),
   });
-  
+
   return { success: true };
 }
 ```
@@ -236,13 +250,15 @@ async function acceptInvitation(token: string) {
 **Constraint**: One pending invitation per email per team
 
 **Implementation:**
+
 ```sql
-CREATE UNIQUE INDEX idx_team_invitations_pending 
-ON team_invitations(team_id, email_normalized) 
+CREATE UNIQUE INDEX idx_team_invitations_pending
+ON team_invitations(team_id, email_normalized)
 WHERE status = 'pending';
 ```
 
 **Edge Cases:**
+
 1. **Multiple invitations for same email**: Only one pending allowed
 2. **Resending invitation**: Revoke old, create new
 3. **Invitation after acceptance**: Allowed (new invitation)
@@ -260,6 +276,7 @@ WHERE status = 'pending';
 **Rule**: Show "insufficient baseline" until day 28
 
 **Implementation:**
+
 ```sql
 CREATE OR REPLACE FUNCTION calculate_acwr_safe(
   player_uuid UUID,
@@ -285,25 +302,25 @@ BEGIN
   WHERE player_id = player_uuid
     AND date <= reference_date
     AND date > reference_date - INTERVAL '28 days';
-  
+
   -- Calculate acute (always possible if >= 7 days)
   SELECT COALESCE(AVG(daily_load), 0) INTO acute_val
   FROM load_daily
   WHERE player_id = player_uuid
     AND date <= reference_date
     AND date > reference_date - INTERVAL '6 days';
-  
+
   -- Calculate chronic (requires 28 days)
   SELECT COALESCE(AVG(daily_load), 0) INTO chronic_val
   FROM load_daily
   WHERE player_id = player_uuid
     AND date <= reference_date
     AND date > reference_date - INTERVAL '27 days';
-  
+
   -- Determine risk level
   IF baseline_count < 21 THEN
     -- Insufficient baseline
-    RETURN QUERY SELECT 
+    RETURN QUERY SELECT
       NULL::DECIMAL(5,2) as acwr,
       'baseline_building'::VARCHAR(20) as risk_level,
       baseline_count as baseline_days,
@@ -311,7 +328,7 @@ BEGIN
       chronic_val as chronic_28;
   ELSIF chronic_val < 50 THEN
     -- Baseline too low
-    RETURN QUERY SELECT 
+    RETURN QUERY SELECT
       NULL::DECIMAL(5,2) as acwr,
       'baseline_low'::VARCHAR(20) as risk_level,
       baseline_count as baseline_days,
@@ -321,8 +338,8 @@ BEGIN
     -- Calculate ACWR
     acwr_val := acute_val / chronic_val;
     risk := get_injury_risk_level(acwr_val);
-    
-    RETURN QUERY SELECT 
+
+    RETURN QUERY SELECT
       acwr_val as acwr,
       risk as risk_level,
       baseline_count as baseline_days,
@@ -334,6 +351,7 @@ $$ LANGUAGE plpgsql;
 ```
 
 **UI Display:**
+
 - Days 1-20: "Building baseline (X/28 days)"
 - Days 21-27: "Baseline almost ready (X/28 days)"
 - Day 28+: Show ACWR and risk level
@@ -349,11 +367,12 @@ $$ LANGUAGE plpgsql;
 **Rule**: Minimum denominator threshold
 
 **Implementation:**
+
 ```sql
 -- In calculate_acwr_safe function
 IF chronic_val < 50 THEN
   -- Baseline too low, don't calculate ACWR
-  RETURN QUERY SELECT 
+  RETURN QUERY SELECT
     NULL::DECIMAL(5,2) as acwr,
     'baseline_low'::VARCHAR(20) as risk_level,
     baseline_count as baseline_days,
@@ -376,7 +395,7 @@ END IF;
 
 **Handling:**
 
-1. **Edit Window**: 
+1. **Edit Window**:
    - Allow edits within 24 hours of completion
    - After 24 hours, require coach/admin approval
 
@@ -391,6 +410,7 @@ END IF;
    - Log editor and timestamp
 
 **Implementation:**
+
 ```sql
 CREATE TABLE workout_log_amendments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -410,14 +430,14 @@ RETURNS TRIGGER AS $$
 BEGIN
   -- Recalculate daily load
   PERFORM update_load_monitoring_for_date(NEW.player_id, DATE(NEW.completed_at));
-  
+
   -- Recalculate metrics for affected range
   PERFORM recalculate_load_metrics_range(
     NEW.player_id,
     DATE(NEW.completed_at),
     DATE(NEW.completed_at) + INTERVAL '28 days'
   );
-  
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -438,6 +458,7 @@ CREATE TRIGGER trigger_recalculate_load_on_update
 **Solution**: **Separate entities**
 
 **Schema:**
+
 ```sql
 -- Planned sessions (templates)
 CREATE TABLE training_sessions (
@@ -458,6 +479,7 @@ CREATE TABLE workout_logs (
 ```
 
 **API Endpoints:**
+
 - `POST /api/training/sessions` → Creates planned session
 - `POST /api/training/workout-logs` → Creates completed session
 - `GET /api/training/today` → Returns planned sessions for today
@@ -472,15 +494,16 @@ CREATE TABLE workout_logs (
 **Enforcement:**
 
 1. **Database Constraints**:
+
 ```sql
 -- Phases must be sequential within program
-CREATE UNIQUE INDEX idx_phases_sequential 
-ON training_phases(program_id, phase_order) 
+CREATE UNIQUE INDEX idx_phases_sequential
+ON training_phases(program_id, phase_order)
 WHERE deleted_at IS NULL;
 
 -- Weeks must be sequential within phase
-CREATE UNIQUE INDEX idx_weeks_sequential 
-ON training_weeks(phase_id, week_number) 
+CREATE UNIQUE INDEX idx_weeks_sequential
+ON training_weeks(phase_id, week_number)
 WHERE deleted_at IS NULL;
 
 -- Date ranges must not overlap
@@ -512,23 +535,24 @@ CREATE TRIGGER trigger_check_phase_dates
 ```
 
 2. **Application Validation**:
+
 ```typescript
 async function createPhase(programId: string, phase: PhaseInput) {
   // Check sequential order
   const existingPhases = await getPhases(programId);
-  const maxOrder = Math.max(...existingPhases.map(p => p.phase_order), 0);
+  const maxOrder = Math.max(...existingPhases.map((p) => p.phase_order), 0);
   if (phase.phase_order !== maxOrder + 1) {
-    throw new Error('Phases must be sequential');
+    throw new Error("Phases must be sequential");
   }
-  
+
   // Check date ranges
   if (existingPhases.length > 0) {
     const lastPhase = existingPhases[existingPhases.length - 1];
     if (phase.start_date <= lastPhase.end_date) {
-      throw new Error('Phase start date must be after previous phase end date');
+      throw new Error("Phase start date must be after previous phase end date");
     }
   }
-  
+
   // Create phase
   return await createPhaseRecord(programId, phase);
 }
@@ -537,6 +561,7 @@ async function createPhase(programId: string, phase: PhaseInput) {
 **Edge Case**: Coach edits dates mid-season
 
 **Handling:**
+
 - Allow date edits if no sessions completed yet
 - If sessions completed: Require admin approval or create new phase
 - Notify affected players of schedule changes
@@ -548,11 +573,13 @@ async function createPhase(programId: string, phase: PhaseInput) {
 ### Tournament Formats
 
 **Supported Formats:**
+
 1. **Round Robin**: All teams play each other
 2. **Single Elimination**: Bracket format
 3. **Pools + Playoffs**: Group stage then knockout
 
 **Implementation:**
+
 ```sql
 CREATE TABLE tournaments (
   -- ... existing fields
@@ -562,6 +589,7 @@ CREATE TABLE tournaments (
 ```
 
 **Bracket Metadata Examples:**
+
 ```json
 // Single Elimination
 {
@@ -586,12 +614,14 @@ CREATE TABLE tournaments (
 ### Tie Breakers
 
 **Rules:**
+
 1. Head-to-head record
 2. Point differential
 3. Points scored
 4. Coin flip (last resort)
 
 **Implementation:**
+
 ```sql
 CREATE TABLE tournament_standings (
   tournament_id UUID NOT NULL REFERENCES tournaments(id),
@@ -630,11 +660,13 @@ $$ LANGUAGE plpgsql;
 ### Match Editing Rules
 
 **Rules:**
+
 1. **Before match start**: Free editing
 2. **After match start**: Locked (only organizer can edit)
 3. **After match complete**: Locked (only organizer with reason)
 
 **Implementation:**
+
 ```sql
 CREATE TABLE tournament_matches (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -665,16 +697,16 @@ BEGIN
     ) THEN
       RAISE EXCEPTION 'Only tournament organizer can edit completed matches';
     END IF;
-    
+
     -- Require edit reason
     IF NEW.edit_reason IS NULL OR NEW.edit_reason = '' THEN
       RAISE EXCEPTION 'Edit reason required for completed matches';
     END IF;
-    
+
     NEW.edited_at = NOW();
     NEW.edited_by = auth.user_id();
   END IF;
-  
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -690,30 +722,35 @@ CREATE TRIGGER trigger_prevent_match_editing
 ### Team Withdrawal Rules
 
 **Rules:**
+
 1. **Before tournament start**: Free withdrawal, refund if applicable
 2. **After tournament start**: Withdrawal allowed, no refund, affects bracket
 3. **After first match**: Withdrawal requires organizer approval
 
 **Implementation:**
+
 ```typescript
 async function withdrawFromTournament(tournamentId: string, teamId: string) {
   const tournament = await getTournament(tournamentId);
   const registration = await getRegistration(tournamentId, teamId);
-  
+
   // Check withdrawal rules
   if (tournament.start_date > new Date()) {
     // Before start: free withdrawal
-    await updateRegistration(registration.id, { status: 'withdrawn' });
+    await updateRegistration(registration.id, { status: "withdrawn" });
     if (tournament.entry_fee > 0) {
       await processRefund(registration.id);
     }
-  } else if (tournament.start_date <= new Date() && !hasPlayedMatch(teamId, tournamentId)) {
+  } else if (
+    tournament.start_date <= new Date() &&
+    !hasPlayedMatch(teamId, tournamentId)
+  ) {
     // After start, before first match: withdrawal allowed
-    await updateRegistration(registration.id, { status: 'withdrawn' });
+    await updateRegistration(registration.id, { status: "withdrawn" });
     await updateBracket(tournamentId); // Remove from bracket
   } else {
     // After first match: require approval
-    throw new Error('WITHDRAWAL_REQUIRES_APPROVAL');
+    throw new Error("WITHDRAWAL_REQUIRES_APPROVAL");
   }
 }
 ```
@@ -725,6 +762,7 @@ async function withdrawFromTournament(tournamentId: string, teamId: string) {
 ### Event Schema & Retention
 
 **Event Schema:**
+
 ```typescript
 interface AnalyticsEvent {
   user_id?: UUID;
@@ -742,11 +780,13 @@ interface AnalyticsEvent {
 ```
 
 **Retention Policy:**
+
 - **Raw events**: 90 days
 - **Aggregates**: Indefinite
 - **PII minimization**: Hash user_id for long-term storage
 
 **Implementation:**
+
 ```sql
 -- Automated cleanup job
 CREATE OR REPLACE FUNCTION cleanup_old_analytics_events()
@@ -767,4 +807,3 @@ $$ LANGUAGE plpgsql;
 
 - [DATABASE_SCHEMA_CONSTRAINTS.md](./DATABASE_SCHEMA_CONSTRAINTS.md) - Schema details
 - [WORKFLOW_AND_BUSINESS_LOGIC.md](../WORKFLOW_AND_BUSINESS_LOGIC.md) - Business logic
-

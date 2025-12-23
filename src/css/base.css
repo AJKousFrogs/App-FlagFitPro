@@ -375,7 +375,9 @@ button:disabled {
   clip-path: inset(50%);
   opacity: 0;
   pointer-events: none;
-  transition: top var(--motion-duration-fast, 200ms) ease, opacity var(--motion-duration-fast, 200ms) ease;
+  transition:
+    top var(--motion-duration-fast, 200ms) ease,
+    opacity var(--motion-duration-fast, 200ms) ease;
 }
 
 .skip-link:focus {

@@ -22,14 +22,14 @@
 
 ## What to Do This Week (12 hours)
 
-| Task | Time | Impact | Start | Why |
-|------|------|--------|-------|-----|
-| Fix message persistence | 3h | 🔴 CRITICAL | Monday | Messages lost on refresh |
-| Add conversation history | 2h | 🔴 CRITICAL | Tuesday | Users can't see past chats |
-| Improve error visibility | 2h | 🔴 CRITICAL | Wednesday | Errors silently fail |
-| Fix timeout handling | 2h | 🔴 CRITICAL | Thursday | 10s timeout too short for complex queries |
-| Add loading state feedback | 1h | 🟡 HIGH | Friday | Users don't know system is working |
-| Test knowledge base fallback | 2h | 🟡 HIGH | Friday | Ensure fallbacks work reliably |
+| Task                         | Time | Impact      | Start     | Why                                       |
+| ---------------------------- | ---- | ----------- | --------- | ----------------------------------------- |
+| Fix message persistence      | 3h   | 🔴 CRITICAL | Monday    | Messages lost on refresh                  |
+| Add conversation history     | 2h   | 🔴 CRITICAL | Tuesday   | Users can't see past chats                |
+| Improve error visibility     | 2h   | 🔴 CRITICAL | Wednesday | Errors silently fail                      |
+| Fix timeout handling         | 2h   | 🔴 CRITICAL | Thursday  | 10s timeout too short for complex queries |
+| Add loading state feedback   | 1h   | 🟡 HIGH     | Friday    | Users don't know system is working        |
+| Test knowledge base fallback | 2h   | 🟡 HIGH     | Friday    | Ensure fallbacks work reliably            |
 
 **Result:** Chatbot is reliable. Users can see their history. Errors are visible. ✅
 
@@ -37,13 +37,13 @@
 
 ## What to Do Next (20 hours)
 
-| Task | Time | Impact | Why |
-|------|------|--------|-----|
-| Add conversation context | 6h | HIGH | Remember previous questions in session |
-| Integrate user profile | 4h | HIGH | Better personalization (age, gender, goals) |
-| Harden knowledge base integration | 4h | HIGH | Prevent silent failures |
-| Add message persistence to DB | 3h | HIGH | Cross-device access, analytics |
-| Improve entity extraction | 3h | HIGH | Better understanding of complex questions |
+| Task                              | Time | Impact | Why                                         |
+| --------------------------------- | ---- | ------ | ------------------------------------------- |
+| Add conversation context          | 6h   | HIGH   | Remember previous questions in session      |
+| Integrate user profile            | 4h   | HIGH   | Better personalization (age, gender, goals) |
+| Harden knowledge base integration | 4h   | HIGH   | Prevent silent failures                     |
+| Add message persistence to DB     | 3h   | HIGH   | Cross-device access, analytics              |
+| Improve entity extraction         | 3h   | HIGH   | Better understanding of complex questions   |
 
 **Result:** Chatbot is intelligent. Context-aware. Personalized. Persistent. ✅
 
@@ -51,13 +51,13 @@
 
 ## What to Do Later (18 hours)
 
-| Task | Time | Impact | Why |
-|------|------|--------|-----|
-| Add NLP integration | 8h | MEDIUM | Better natural language understanding |
-| Polish UX (animations, transitions) | 2h | MEDIUM | Smoother experience |
-| Add voice input | 4h | MEDIUM | Hands-free interaction |
-| Write comprehensive tests | 3h | MEDIUM | Prevent regressions |
-| Add multi-language support | 1h | LOW | Future expansion |
+| Task                                | Time | Impact | Why                                   |
+| ----------------------------------- | ---- | ------ | ------------------------------------- |
+| Add NLP integration                 | 8h   | MEDIUM | Better natural language understanding |
+| Polish UX (animations, transitions) | 2h   | MEDIUM | Smoother experience                   |
+| Add voice input                     | 4h   | MEDIUM | Hands-free interaction                |
+| Write comprehensive tests           | 3h   | MEDIUM | Prevent regressions                   |
+| Add multi-language support          | 1h   | LOW    | Future expansion                      |
 
 **Result:** Chatbot is polished. Advanced features. Maintainable. ✅
 
@@ -126,7 +126,7 @@
 ✅ **Uncover dependencies** → See what breaks when knowledge base fails  
 ✅ **Prevent rework** → Don't build context on broken persistence  
 ✅ **Reduce risk** → Small fixes = small blast radius  
-✅ **Better UX** → Users see progress, not silent failures  
+✅ **Better UX** → Users see progress, not silent failures
 
 ---
 
@@ -137,7 +137,7 @@
 ❌ Timeouts frustrate users  
 ❌ No conversation history = repeated questions  
 ❌ Have to rewrite because persistence breaks  
-❌ Takes 2x longer total  
+❌ Takes 2x longer total
 
 ---
 
@@ -244,6 +244,7 @@ Answer these → get Week 1 detailed task breakdown.
 ## Quick Reference: File Locations
 
 ### Core Files
+
 - `src/js/components/chatbot.js` - Main chatbot component (1,049 lines)
 - `src/js/utils/question-parser.js` - Question understanding
 - `src/js/utils/answer-generator.js` - Answer generation
@@ -251,12 +252,14 @@ Answer these → get Week 1 detailed task breakdown.
 - `src/js/services/knowledge-base-service.js` - Knowledge base integration
 
 ### Integration Points
+
 - `src/js/pages/dashboard-page.js` - Dashboard integration
 - `src/js/pages/training-page.js` - Training page integration
 - `src/js/pages/chat-page.js` - Chat page integration
 - `angular/src/app/features/chat/chat.component.ts` - Angular component
 
 ### Documentation
+
 - `CHATBOT_COMPREHENSIVE_ANALYSIS.md` - Full analysis
 - `docs/CHATBOT_LOGIC_DOCUMENTATION.md` - Technical docs
 
@@ -265,18 +268,21 @@ Answer these → get Week 1 detailed task breakdown.
 ## Metrics to Track
 
 ### Reliability Metrics
+
 - Message persistence success rate (target: 100%)
 - Error visibility rate (target: 100% of errors shown)
 - Timeout rate (target: <1% of queries)
 - Fallback success rate (target: 100%)
 
 ### User Experience Metrics
+
 - Average response time (target: <3s)
 - User satisfaction (target: >4/5)
 - Conversation length (target: >3 messages)
 - Repeat question rate (target: <10%)
 
 ### Technical Metrics
+
 - Knowledge base hit rate (target: >60%)
 - Local fallback rate (target: <40%)
 - Error rate (target: <5%)
@@ -294,4 +300,3 @@ If it's low-effort + high-impact, do it now.
 **Created:** December 2024  
 **Confidence Level:** HIGH (backed by codebase analysis + comprehensive review)  
 **ROI:** 5x chatbot reliability in 2 weeks
-

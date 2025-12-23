@@ -37,7 +37,7 @@ interface OnboardingStep {
     StepsModule,
     ToastModule,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   providers: [MessageService],
   template: `
@@ -86,12 +86,16 @@ interface OnboardingStep {
               <div class="step-content">
                 <h3>What are your goals?</h3>
                 <div class="form-group">
-                  <label>Select your primary goals (select all that apply)</label>
+                  <label
+                    >Select your primary goals (select all that apply)</label
+                  >
                   <div class="goals-grid">
                     @for (goal of goals; track goal.id) {
                       <div
                         class="goal-card"
-                        [class.selected]="onboardingData.goals.includes(goal.id)"
+                        [class.selected]="
+                          onboardingData.goals.includes(goal.id)
+                        "
                         (click)="toggleGoal(goal.id)"
                       >
                         <i [class]="goal.icon"></i>
@@ -304,9 +308,9 @@ export class OnboardingComponent implements OnInit {
     try {
       // TODO: Call API to save onboarding data
       // await this.apiService.completeOnboarding(this.onboardingData);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       this.messageService.add({
         severity: "success",
@@ -329,4 +333,3 @@ export class OnboardingComponent implements OnInit {
     }
   }
 }
-

@@ -1,24 +1,24 @@
 /**
  * Base ViewModel Class
- * 
+ *
  * Separates data fetching (RxJS Observables) from state management (Signals)
- * 
+ *
  * Pattern:
  * - Data Services: Handle API calls, return Observables
  * - View Models: Manage component state using Signals, subscribe to data services
- * 
+ *
  * Usage:
  * ```typescript
  * export class DashboardViewModel extends BaseViewModel {
  *   private dashboardService = inject(DashboardDataService);
- *   
+ *
  *   // State (Signals)
  *   stats = signal<Stat[]>([]);
  *   loading = signal(false);
- *   
+ *
  *   // Derived state (Computed)
  *   totalStats = computed(() => this.stats().reduce((sum, s) => sum + s.value, 0));
- *   
+ *
  *   // Data fetching (RxJS)
  *   loadDashboard() {
  *     this.loading.set(true);
@@ -40,10 +40,17 @@
  * ```
  */
 
-import { Injectable, signal, computed, effect, DestroyRef, inject } from '@angular/core';
-import { Observable, Subject, takeUntil, catchError, finalize } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LoggerService } from '../services/logger.service';
+import {
+  Injectable,
+  signal,
+  computed,
+  effect,
+  DestroyRef,
+  inject,
+} from "@angular/core";
+import { Observable, Subject, takeUntil, catchError, finalize } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { LoggerService } from "../services/logger.service";
 
 @Injectable()
 export abstract class BaseViewModel {
@@ -75,7 +82,7 @@ export abstract class BaseViewModel {
       error?: (error: any) => void;
       complete?: () => void;
       showLoading?: boolean;
-    } = {}
+    } = {},
   ): void {
     const { next, error, complete, showLoading = true } = callbacks;
 
@@ -102,7 +109,7 @@ export abstract class BaseViewModel {
           if (complete) {
             complete();
           }
-        })
+        }),
       )
       .subscribe({
         next: (value) => {
@@ -117,9 +124,10 @@ export abstract class BaseViewModel {
    * Handle errors consistently
    */
   protected handleError(error: any): void {
-    const errorMessage = error?.message || error?.error?.message || 'An error occurred';
+    const errorMessage =
+      error?.message || error?.error?.message || "An error occurred";
     this.error.set(errorMessage);
-    this.logger.error('[ViewModel Error]', error);
+    this.logger.error("[ViewModel Error]", error);
   }
 
   /**
@@ -137,4 +145,3 @@ export abstract class BaseViewModel {
    */
   abstract initialize(...args: any[]): void;
 }
-

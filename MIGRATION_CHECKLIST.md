@@ -1,11 +1,13 @@
 # Design System Migration Checklist
 
 ## Overview
+
 This checklist tracks the migration of components and pages to use the new centralized design system tokens.
 
 ## ✅ Completed
 
 ### Design System Foundation
+
 - [x] Created `design-system-tokens.scss` (single source of truth)
 - [x] Created `standardized-components.scss` (component variants)
 - [x] Created `layout-system.scss` (reusable layouts)
@@ -13,6 +15,7 @@ This checklist tracks the migration of components and pages to use the new centr
 - [x] Deprecated legacy token files (`_variables.scss`, `_tokens.scss`, `_theme.scss`)
 
 ### Components Updated
+
 - [x] `PageHeaderComponent` - Updated to use layout system
 - [x] `HeaderComponent` - Updated avatar color to use CSS variable
 - [x] `StatsGridComponent` - Updated hardcoded colors to CSS variables
@@ -22,6 +25,7 @@ This checklist tracks the migration of components and pages to use the new centr
 ## 🔄 In Progress
 
 ### Legacy Files (Deprecated but still functional)
+
 - [ ] Remove `angular/src/assets/styles/_variables.scss` (after all components migrated)
 - [ ] Remove `angular/src/assets/styles/_tokens.scss` (after all components migrated)
 - [ ] Remove `angular/src/assets/styles/_theme.scss` (after all components migrated)
@@ -30,6 +34,7 @@ This checklist tracks the migration of components and pages to use the new centr
 ## 📋 Components to Update
 
 ### Shared Components
+
 - [ ] `WellnessWidgetComponent` - Update statusColor signal default value
 - [ ] `ReadinessWidgetComponent` - Check for hardcoded colors
 - [ ] `TrafficLightRiskComponent` - Migrate from Tailwind to design tokens
@@ -37,6 +42,7 @@ This checklist tracks the migration of components and pages to use the new centr
 - [ ] `SmartBreadcrumbsComponent` - Verify using layout system classes
 
 ### Feature Components
+
 - [ ] `DashboardComponent` - Update chart colors and styling
 - [ ] `TrainingComponent` - Update hardcoded colors
 - [ ] `MicrocyclePlannerComponent` - Migrate hardcoded colors to tokens
@@ -49,6 +55,7 @@ This checklist tracks the migration of components and pages to use the new centr
 - [ ] `GameTrackerComponent` - Update colors
 
 ### HTML Pages
+
 - [ ] Update all HTML pages to include `design-system-tokens.css`
 - [ ] Replace hardcoded colors in HTML pages
 - [ ] Update button classes to use standardized variants
@@ -59,6 +66,7 @@ This checklist tracks the migration of components and pages to use the new centr
 ### Find and Replace Patterns
 
 **Hardcoded Primary Green:**
+
 ```typescript
 // Find
 '#089949'
@@ -72,6 +80,7 @@ color: var(--ds-primary-green)
 ```
 
 **Hardcoded Colors in Styles:**
+
 ```scss
 // Find
 background-color: #089949;
@@ -83,6 +92,7 @@ color: var(--color-text-on-primary);
 ```
 
 **Legacy Token Usage:**
+
 ```scss
 // Find
 var(--color-brand-primary)
@@ -97,6 +107,7 @@ var(--ds-primary-green)  // Preferred
 ## 📐 Component Variant Migration
 
 ### Buttons
+
 ```html
 <!-- Old -->
 <button class="btn btn-success">Save</button>
@@ -108,6 +119,7 @@ var(--ds-primary-green)  // Preferred
 ```
 
 ### Cards
+
 ```html
 <!-- Old -->
 <div class="custom-card">...</div>
@@ -117,6 +129,7 @@ var(--ds-primary-green)  // Preferred
 ```
 
 ### Tags/Badges
+
 ```html
 <!-- Old -->
 <span class="badge badge-green">New</span>
@@ -128,6 +141,7 @@ var(--ds-primary-green)  // Preferred
 ## 🔍 Search Commands
 
 ### Find Hardcoded Colors
+
 ```bash
 # Find all instances of #089949
 grep -r "#089949" angular/src/app/
@@ -138,6 +152,7 @@ grep -r "background.*#" angular/src/app/
 ```
 
 ### Find Legacy Token Usage
+
 ```bash
 # Find components using old token files
 grep -r "@import.*variables" angular/src/app/
@@ -171,15 +186,18 @@ grep -r "@import.*theme" angular/src/app/
 ## 🎯 Priority Order
 
 ### High Priority (Frequently Used)
+
 1. Dashboard components
 2. Shared components (used across app)
 3. Navigation components
 
 ### Medium Priority
+
 4. Feature-specific components
 5. Form components
 
 ### Low Priority
+
 6. Utility components
 7. One-off pages
 
@@ -197,4 +215,3 @@ grep -r "@import.*theme" angular/src/app/
 - Don't break existing functionality during migration
 - Test thoroughly after each component update
 - Keep this checklist updated as you progress
-

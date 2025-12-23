@@ -7,6 +7,7 @@
 ## 🎨 Colors
 
 ### Brand Colors
+
 ```css
 --color-brand-primary          /* #089949 - Main brand color */
 --color-brand-primary-hover    /* #036d35 - Hover state */
@@ -14,6 +15,7 @@
 ```
 
 ### Status Colors
+
 ```css
 --color-status-success         /* #63ad0e - Success/positive */
 --color-status-warning         /* #ffc000 - Warning/alert */
@@ -22,6 +24,7 @@
 ```
 
 ### Text Colors
+
 ```css
 --color-text-primary           /* #1a1a1a - Main text (white bg) */
 --color-text-secondary         /* #4a4a4a - Secondary text */
@@ -30,6 +33,7 @@
 ```
 
 ### Surface Colors
+
 ```css
 --surface-primary              /* #ffffff - Main background */
 --surface-secondary            /* #f8faf9 - Card background */
@@ -51,6 +55,7 @@
 ```
 
 **Common Usage:**
+
 - `padding: var(--space-md)` - Standard padding
 - `gap: var(--space-lg)` - Component spacing
 - `margin-bottom: var(--space-xl)` - Section spacing
@@ -60,6 +65,7 @@
 ## ✍️ Typography
 
 ### Font Sizes
+
 ```css
 --font-heading-xl    /* 30px - Page titles */
 --font-heading-lg    /* 24px - Section headers */
@@ -69,6 +75,7 @@
 ```
 
 ### Font Weights
+
 ```css
 --font-weight-normal    /* 400 */
 --font-weight-medium    /* 500 */
@@ -77,6 +84,7 @@
 ```
 
 ### Line Heights
+
 ```css
 --line-height-tight    /* 1.2 - Headings */
 --line-height-normal   /* 1.5 - Body text */
@@ -88,6 +96,7 @@
 ## 🔘 Buttons
 
 ### Variants
+
 ```html
 <button class="btn btn-primary">Primary</button>
 <button class="btn btn-secondary">Secondary</button>
@@ -97,6 +106,7 @@
 ```
 
 ### Sizes
+
 ```html
 <button class="btn btn-primary btn-xs">XS</button>
 <button class="btn btn-primary btn-sm">Small</button>
@@ -105,6 +115,7 @@
 ```
 
 ### With Icons
+
 ```html
 <button class="btn btn-primary btn-md">
   <i data-lucide="save" style="width: 18px; height: 18px;"></i>
@@ -117,6 +128,7 @@
 ## 📝 Forms
 
 ### Input
+
 ```html
 <input type="text" class="form-input" placeholder="Enter text" />
 <input type="text" class="form-input error" placeholder="Error" />
@@ -124,6 +136,7 @@
 ```
 
 ### Form Group
+
 ```html
 <div class="form-group">
   <label class="form-label">Label</label>
@@ -141,12 +154,8 @@
   <div class="card-header">
     <h3 class="card-title">Title</h3>
   </div>
-  <div class="card-body">
-    Content here
-  </div>
-  <div class="card-footer">
-    Footer content
-  </div>
+  <div class="card-body">Content here</div>
+  <div class="card-footer">Footer content</div>
 </div>
 ```
 
@@ -197,6 +206,7 @@
 ```
 
 **Usage:**
+
 ```css
 .button {
   transition: all var(--transition-base);
@@ -228,6 +238,7 @@
 ```
 
 **Usage:**
+
 ```css
 @media (min-width: 768px) {
   /* Tablet and up */
@@ -239,11 +250,13 @@
 ## ✅ Color Rules (CRITICAL)
 
 ### ✅ Allowed
+
 - **Green on White**: `--color-brand-primary` on white backgrounds
 - **White on Green**: `--color-text-on-primary` on green backgrounds
 - **Black on White**: `--color-text-primary` on white backgrounds
 
 ### ❌ Forbidden
+
 - **Black on Green**: Never use `--color-text-primary` on green backgrounds
 - **Green on Black**: Use white text instead
 
@@ -252,6 +265,7 @@
 ## 🎨 Common Patterns
 
 ### Button with Icon
+
 ```html
 <button class="btn btn-primary btn-md">
   <i data-lucide="icon-name" style="width: 18px; height: 18px;"></i>
@@ -260,6 +274,7 @@
 ```
 
 ### Card Layout
+
 ```html
 <div class="card">
   <div class="card-header">
@@ -272,23 +287,17 @@
 ```
 
 ### Form Layout
+
 ```html
 <div class="form-group">
-  <label class="form-label text-body-sm font-weight-medium">
-    Label
-  </label>
-  <input 
-    type="text" 
-    class="form-input" 
-    placeholder="Enter value"
-  />
-  <span class="form-error text-body-xs">
-    Error message
-  </span>
+  <label class="form-label text-body-sm font-weight-medium"> Label </label>
+  <input type="text" class="form-input" placeholder="Enter value" />
+  <span class="form-error text-body-xs"> Error message </span>
 </div>
 ```
 
 ### Flex Layout
+
 ```html
 <div style="display: flex; align-items: center; gap: var(--space-md);">
   <button class="btn btn-primary">Action</button>
@@ -301,24 +310,35 @@
 ## 🚨 Common Mistakes
 
 ### ❌ Don't Hardcode Colors
+
 ```css
 /* BAD */
-.button { color: #089949; }
+.button {
+  color: #089949;
+}
 
 /* GOOD */
-.button { color: var(--color-brand-primary); }
+.button {
+  color: var(--color-brand-primary);
+}
 ```
 
 ### ❌ Don't Use Arbitrary Spacing
+
 ```css
 /* BAD */
-.container { padding: 13px; }
+.container {
+  padding: 13px;
+}
 
 /* GOOD */
-.container { padding: var(--space-md); }
+.container {
+  padding: var(--space-md);
+}
 ```
 
 ### ❌ Don't Mix Token Systems
+
 ```css
 /* BAD */
 .component {
@@ -348,15 +368,18 @@
 ## 🔍 Finding Tokens
 
 ### Need a color?
+
 1. Check semantic tokens: `--color-brand-*`, `--color-status-*`
 2. Check text colors: `--color-text-*`
 3. Check surfaces: `--surface-*`
 
 ### Need spacing?
+
 1. Use 8-point grid: `--space-xs` through `--space-3xl`
 2. Prefer semantic: `--space-md`, `--space-lg`
 
 ### Need typography?
+
 1. Headings: `--font-heading-*`
 2. Body: `--font-body-*`
 3. Weights: `--font-weight-*`
@@ -364,4 +387,3 @@
 ---
 
 **Quick Tip:** Use your editor's autocomplete to see all available tokens!
-

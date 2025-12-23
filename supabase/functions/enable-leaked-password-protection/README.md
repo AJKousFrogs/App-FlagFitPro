@@ -16,18 +16,18 @@ This Supabase Edge Function provides leaked password protection by checking pass
 
 ```javascript
 const response = await fetch(
-  'https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection',
+  "https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection",
   {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${supabaseToken}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${supabaseToken}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      action: 'check',
-      password: 'userPassword123',
+      action: "check",
+      password: "userPassword123",
     }),
-  }
+  },
 );
 
 const result = await response.json();
@@ -38,17 +38,17 @@ const result = await response.json();
 
 ```javascript
 const response = await fetch(
-  'https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection',
+  "https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection",
   {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${supabaseToken}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${supabaseToken}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      action: 'status',
+      action: "status",
     }),
-  }
+  },
 );
 ```
 
@@ -60,26 +60,26 @@ You can integrate this into your authentication flow:
 // In your sign-up or password change handler
 async function validatePassword(password) {
   const response = await fetch(
-    'https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection',
+    "https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection",
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${supabaseToken}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${supabaseToken}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        action: 'check',
+        action: "check",
         password: password,
       }),
-    }
+    },
   );
 
   const result = await response.json();
-  
+
   if (result.leaked) {
     throw new Error(result.message);
   }
-  
+
   return true;
 }
 ```
@@ -102,6 +102,6 @@ supabase functions deploy enable-leaked-password-protection
 ## Environment Variables
 
 The function uses these environment variables (automatically provided by Supabase):
+
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
-

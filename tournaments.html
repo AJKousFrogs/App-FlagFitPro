@@ -51,44 +51,63 @@
         });
     </script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
     <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
     <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
     <!-- AI Chat Bubble Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
-  
+    <script
+      type="module"
+      src="./src/js/components/ai-chat-bubble-loader.js"
+      defer
+    ></script>
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <div class="dashboard-container">
-            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
       <div data-sidebar-container></div>
-<main
+      <main
         class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
       >
-                <!-- Top Bar (Loaded Dynamically) -->
+        <!-- Top Bar (Loaded Dynamically) -->
         <div data-topbar-container></div>
 
-        <header
-          class="card u-padding-24 u-margin-bottom-30 header-card"
-        >
+        <header class="card u-padding-24 u-margin-bottom-30 header-card">
           <div class="u-flex-between-wrap">
             <div class="u-flex-1-min-0">
-              <h1 class="text-heading-xl text-primary space-tight u-flex-center-gap-3">
-                <i data-lucide="trophy" class="icon-28 u-color-brand-primary" aria-hidden="true"></i>
+              <h1
+                class="text-heading-xl text-primary space-tight u-flex-center-gap-3"
+              >
+                <i
+                  data-lucide="trophy"
+                  class="icon-28 u-color-brand-primary"
+                  aria-hidden="true"
+                ></i>
                 Official Tournament Schedule 2026-2027
               </h1>
               <p class="text-body-sm text-secondary">
-                International Flag Football Season featuring 7 major tournaments across Europe
+                International Flag Football Season featuring 7 major tournaments
+                across Europe
               </p>
             </div>
             <div>
-              <button class="btn btn-primary btn-md u-white-space-nowrap" id="nextTournamentBtn" aria-label="View next tournament">
+              <button
+                class="btn btn-primary btn-md u-white-space-nowrap"
+                id="nextTournamentBtn"
+                aria-label="View next tournament"
+              >
                 <i data-lucide="calendar" aria-hidden="true"></i>
                 <span>Next Tournament</span>
               </button>
@@ -145,28 +164,18 @@
         </section>
 
         <!-- Loading state -->
-        <div
-          id="tournamentsLoading"
-          class="card loading-container"
-        >
+        <div id="tournamentsLoading" class="card loading-container">
           <div class="loading-content">
             <div class="loading-spinner"></div>
-            <div class="loading-text">
-              Loading tournaments...
-            </div>
+            <div class="loading-text">Loading tournaments...</div>
           </div>
         </div>
 
         <!-- Empty state -->
-        <div
-          id="tournamentsEmpty"
-          class="card empty-state-container"
-        >
+        <div id="tournamentsEmpty" class="card empty-state-container">
           <div class="empty-state-content">
             <i data-lucide="calendar-x" class="empty-state-icon"></i>
-            <div class="empty-state-title">
-              No tournaments found
-            </div>
+            <div class="empty-state-title">No tournaments found</div>
             <div class="empty-state-text">
               Check back later for upcoming tournaments.
             </div>
@@ -376,10 +385,33 @@
           </div>
         </section>
 
-        <section class="card leaderboard" style="margin-top: var(--space-8);">
-          <div class="card-header" style="border-bottom: 1px solid var(--color-border-secondary); padding: var(--space-6);">
-            <h3 style="font-size: var(--text-xl); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin: 0; display: flex; align-items: center; gap: var(--space-2);">
-              <i data-lucide="award" style="width: 24px; height: 24px; color: var(--color-brand-primary);"></i>
+        <section class="card leaderboard" style="margin-top: var(--space-8)">
+          <div
+            class="card-header"
+            style="
+              border-bottom: 1px solid var(--color-border-secondary);
+              padding: var(--space-6);
+            "
+          >
+            <h3
+              style="
+                font-size: var(--text-xl);
+                font-weight: var(--font-weight-semibold);
+                color: var(--color-text-primary);
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: var(--space-2);
+              "
+            >
+              <i
+                data-lucide="award"
+                style="
+                  width: 24px;
+                  height: 24px;
+                  color: var(--color-brand-primary);
+                "
+              ></i>
               Tournament Rankings
             </h3>
           </div>
@@ -475,14 +507,14 @@
           if (!response) {
             // Use a timeout to prevent hanging on slow API
             const timeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error("API timeout")), 3000)
+              setTimeout(() => reject(new Error("API timeout")), 3000),
             );
-            
+
             response = await Promise.race([
               apiClient.get(API_ENDPOINTS.tournaments.list),
               timeoutPromise,
             ]);
-            
+
             // Cache successful responses for 5 minutes
             if (response && response.success) {
               PerformanceUtils.cacheResponse(cacheKey, response, 5);
@@ -492,34 +524,50 @@
           // Only update if we got valid data and it's different from local data
           if (response && response.success && response.data.tournaments) {
             // Validate API response structure - must have startDate or month field
-            const isValidTournamentData = response.data.tournaments.every(t => 
-              t.startDate || t.month || t.id?.includes('_2026') || t.id?.includes('_2027')
+            const isValidTournamentData = response.data.tournaments.every(
+              (t) =>
+                t.startDate ||
+                t.month ||
+                t.id?.includes("_2026") ||
+                t.id?.includes("_2027"),
             );
-            
+
             // Only use API data if it matches expected structure
             if (!isValidTournamentData) {
-              console.debug("API returned invalid tournament structure, keeping local data");
+              console.debug(
+                "API returned invalid tournament structure, keeping local data",
+              );
               return; // Keep local data, ignore API response
             }
-            
+
             // Check if API data is different from what's currently displayed
-            const currentTournamentIds = Array.from(grid?.querySelectorAll('[data-tournament-id]') || [])
-              .map(el => el.getAttribute('data-tournament-id'));
-            const apiTournamentIds = response.data.tournaments.map(t => t.id);
-            
+            const currentTournamentIds = Array.from(
+              grid?.querySelectorAll("[data-tournament-id]") || [],
+            ).map((el) => el.getAttribute("data-tournament-id"));
+            const apiTournamentIds = response.data.tournaments.map((t) => t.id);
+
             // Only update if data is different
-            if (JSON.stringify(currentTournamentIds.sort()) !== JSON.stringify(apiTournamentIds.sort())) {
+            if (
+              JSON.stringify(currentTournamentIds.sort()) !==
+              JSON.stringify(apiTournamentIds.sort())
+            ) {
               updateTournamentsGrid(response.data.tournaments);
             }
 
-            if (response.data.leaderboard && Array.isArray(response.data.leaderboard)) {
+            if (
+              response.data.leaderboard &&
+              Array.isArray(response.data.leaderboard)
+            ) {
               updateLeaderboard(response.data.leaderboard);
             }
           }
         } catch (error) {
           // Silently fail - we already have local data displayed
           if (isEmpty) {
-            console.warn("Failed to load tournaments from API, using local data:", error);
+            console.warn(
+              "Failed to load tournaments from API, using local data:",
+              error,
+            );
           }
         } finally {
           // Hide loading state
@@ -537,7 +585,9 @@
           btn.style.color = "";
           btn.style.fontWeight = "";
         });
-        const activeTabBtn = document.querySelector(`[data-tab="${defaultTab}"]`);
+        const activeTabBtn = document.querySelector(
+          `[data-tab="${defaultTab}"]`,
+        );
         if (activeTabBtn) {
           activeTabBtn.classList.add("active");
           activeTabBtn.style.color = "var(--color-brand-primary)";
@@ -554,9 +604,9 @@
           const daysUntil = getDaysUntilTournament(nextTournament);
           const btnText = btn.querySelector("span");
           if (daysUntil !== null) {
-            btnText.textContent = `Next: ${nextTournament.name} (${daysUntil} ${daysUntil === 1 ? 'day' : 'days'})`;
+            btnText.textContent = `Next: ${nextTournament.name} (${daysUntil} ${daysUntil === 1 ? "day" : "days"})`;
           } else {
-            btnText.textContent = `Next: ${nextTournament.name}${nextTournament.month ? ` (${nextTournament.month})` : ''}`;
+            btnText.textContent = `Next: ${nextTournament.name}${nextTournament.month ? ` (${nextTournament.month})` : ""}`;
           }
           btn.onclick = () => scrollToTournament(nextTournament.id);
         } else {
@@ -608,7 +658,12 @@
             const typeInfo = getTournamentTypeInfo(tournament.type);
             const daysUntil = getDaysUntilTournament(tournament);
             const preparation = getTournamentPreparation(tournament);
-            const statusClass = daysUntil !== null && daysUntil <= 7 ? "status-urgent" : daysUntil !== null && daysUntil <= 30 ? "status-soon" : "status-upcoming";
+            const statusClass =
+              daysUntil !== null && daysUntil <= 7
+                ? "status-urgent"
+                : daysUntil !== null && daysUntil <= 30
+                  ? "status-soon"
+                  : "status-upcoming";
 
             return `
                 <div class="card card-elevated tournament-card" data-tournament-id="${escapeHtml(tournament.id)}">
@@ -641,7 +696,7 @@
                                         ${formatTournamentDate(tournament)}
                                     </div>
                                     <div class="tournament-info-value">
-                                        ${daysUntil !== null ? `${daysUntil} ${daysUntil === 1 ? 'day' : 'days'} away` : tournament.month ? `${tournament.month} 2027` : "Date TBD"}
+                                        ${daysUntil !== null ? `${daysUntil} ${daysUntil === 1 ? "day" : "days"} away` : tournament.month ? `${tournament.month} 2027` : "Date TBD"}
                                     </div>
                                 </div>
                             </div>
@@ -677,7 +732,7 @@
                                 </div>
                                 <div class="tournament-info-content-alt">
                                     <div class="tournament-info-label-alt">
-                                        ${tournament.expectedTeams === "TBD" ? "TBD" : typeof tournament.expectedTeams === 'number' ? tournament.expectedTeams + " teams" : escapeHtml(String(tournament.expectedTeams))}
+                                        ${tournament.expectedTeams === "TBD" ? "TBD" : typeof tournament.expectedTeams === "number" ? tournament.expectedTeams + " teams" : escapeHtml(String(tournament.expectedTeams))}
                                     </div>
                                     <div class="tournament-info-value-alt">
                                         ${tournament.isInvitationOnly ? "Invitation Only" : "Expected"}
@@ -699,12 +754,17 @@
                                 ${preparation.description}
                             </p>
                             <ul style="margin: 0; padding-left: var(--space-4); list-style: none;">
-                                ${preparation.tasks.slice(0, 2).map(task => `
+                                ${preparation.tasks
+                                  .slice(0, 2)
+                                  .map(
+                                    (task) => `
                                     <li style="font-size: var(--text-xs); color: var(--color-text-secondary); margin-bottom: var(--space-1); position: relative; padding-left: var(--space-3);">
                                         <span style="position: absolute; left: 0; color: var(--color-brand-primary);">•</span>
                                         ${task}
                                     </li>
-                                `).join("")}
+                                `,
+                                  )
+                                  .join("")}
                             </ul>
                         </div>
                         <div class="tournament-actions" style="display: flex; gap: var(--space-3);">
@@ -736,20 +796,31 @@
         }
 
         leaderboard.innerHTML = teams
-          .map(
-            (team, index) => {
-              const rank = index + 1;
-              const rankClass = getRankClass(rank);
-              const rankColors = {
-                first: { bg: "linear-gradient(135deg, #ffd700 0%, #ffb300 100%)", color: "#000" },
-                second: { bg: "linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%)", color: "#000" },
-                third: { bg: "linear-gradient(135deg, #cd7f32 0%, #b87333 100%)", color: "#fff" },
-                other: { bg: "var(--surface-secondary)", color: "var(--color-text-secondary)" }
-              };
-              const colors = rankColors[rankClass] || rankColors.other;
-              
-              return `
-                <div class="leaderboard-item" style="display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) 0; border-bottom: ${index < teams.length - 1 ? '1px solid var(--color-border-secondary)' : 'none'};">
+          .map((team, index) => {
+            const rank = index + 1;
+            const rankClass = getRankClass(rank);
+            const rankColors = {
+              first: {
+                bg: "linear-gradient(135deg, #ffd700 0%, #ffb300 100%)",
+                color: "#000",
+              },
+              second: {
+                bg: "linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%)",
+                color: "#000",
+              },
+              third: {
+                bg: "linear-gradient(135deg, #cd7f32 0%, #b87333 100%)",
+                color: "#fff",
+              },
+              other: {
+                bg: "var(--surface-secondary)",
+                color: "var(--color-text-secondary)",
+              },
+            };
+            const colors = rankColors[rankClass] || rankColors.other;
+
+            return `
+                <div class="leaderboard-item" style="display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) 0; border-bottom: ${index < teams.length - 1 ? "1px solid var(--color-border-secondary)" : "none"};">
                     <div class="rank rank-${rankClass}" style="width: 40px; height: 40px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; font-weight: var(--font-weight-bold); font-size: var(--text-lg); background: ${colors.bg}; color: ${colors.color}; flex-shrink: 0;">
                         ${rank}
                     </div>
@@ -758,7 +829,7 @@
                             ${team.name}
                         </div>
                         <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
-                            ${team.wins} wins • ${team.losses} ${team.losses === 1 ? 'loss' : 'losses'} • ${team.pointsScored} points scored
+                            ${team.wins} wins • ${team.losses} ${team.losses === 1 ? "loss" : "losses"} • ${team.pointsScored} points scored
                         </div>
                     </div>
                     <div style="font-size: var(--text-lg); font-weight: var(--font-weight-bold); color: var(--color-brand-primary); flex-shrink: 0;">
@@ -766,8 +837,7 @@
                     </div>
                 </div>
             `;
-            }
-          )
+          })
           .join("");
       }
 
@@ -798,17 +868,17 @@
         }
 
         // Remove active class from all tabs
-        document
-          .querySelectorAll(".tab-button")
-          .forEach((btn) => {
-            btn.classList.remove("active");
-            btn.style.color = "";
-            btn.style.fontWeight = "";
-          });
+        document.querySelectorAll(".tab-button").forEach((btn) => {
+          btn.classList.remove("active");
+          btn.style.color = "";
+          btn.style.fontWeight = "";
+        });
 
         // Add active class to clicked tab
         // If called from click event, use event.target; otherwise find by data-tab attribute
-        const clickedTab = (event && event.target) || document.querySelector(`[data-tab="${tab}"]`);
+        const clickedTab =
+          (event && event.target) ||
+          document.querySelector(`[data-tab="${tab}"]`);
         if (clickedTab && clickedTab.classList) {
           clickedTab.classList.add("active");
           clickedTab.style.color = "var(--color-brand-primary)";
@@ -858,32 +928,50 @@
           const response = await apiClient.get(endpoint, { type });
 
           // Only update if API returns valid data with correct structure
-          if (response && response.success && response.data.tournaments && response.data.tournaments.length > 0) {
+          if (
+            response &&
+            response.success &&
+            response.data.tournaments &&
+            response.data.tournaments.length > 0
+          ) {
             // Validate API response structure - must have startDate or month field
-            const isValidTournamentData = response.data.tournaments.every(t => 
-              t.startDate || t.month || t.id?.includes('_2026') || t.id?.includes('_2027')
+            const isValidTournamentData = response.data.tournaments.every(
+              (t) =>
+                t.startDate ||
+                t.month ||
+                t.id?.includes("_2026") ||
+                t.id?.includes("_2027"),
             );
-            
+
             // Only use API data if it matches expected structure
             if (!isValidTournamentData) {
-              console.debug("API returned invalid tournament structure, keeping local data");
+              console.debug(
+                "API returned invalid tournament structure, keeping local data",
+              );
               return; // Keep local data, ignore API response
             }
-            
+
             const grid = document.getElementById("tournamentsGrid");
-            const currentTournamentIds = Array.from(grid?.querySelectorAll('[data-tournament-id]') || [])
-              .map(el => el.getAttribute('data-tournament-id'));
-            const apiTournamentIds = response.data.tournaments.map(t => t.id);
-            
+            const currentTournamentIds = Array.from(
+              grid?.querySelectorAll("[data-tournament-id]") || [],
+            ).map((el) => el.getAttribute("data-tournament-id"));
+            const apiTournamentIds = response.data.tournaments.map((t) => t.id);
+
             // Only update if data is different
-            if (JSON.stringify(currentTournamentIds.sort()) !== JSON.stringify(apiTournamentIds.sort())) {
+            if (
+              JSON.stringify(currentTournamentIds.sort()) !==
+              JSON.stringify(apiTournamentIds.sort())
+            ) {
               updateTournamentsGrid(response.data.tournaments);
             }
           }
           // If API fails or returns empty, keep local data displayed (silent fail)
         } catch (error) {
           // Silently fail - local data is already displayed
-          console.debug("Background tournament update failed, using local data:", error);
+          console.debug(
+            "Background tournament update failed, using local data:",
+            error,
+          );
         }
       }
 
@@ -928,10 +1016,9 @@
       };
 
       document.addEventListener("DOMContentLoaded", initTournamentsPage);
-
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

@@ -54,6 +54,7 @@
 ## Free Tier Limits
 
 ✅ **What You Get (Free):**
+
 - 60 calls/minute
 - 1,000,000 calls/month
 - Current weather data
@@ -61,11 +62,13 @@
 - Weather maps
 
 ❌ **What's Not Included:**
+
 - Historical weather data
 - 16-day forecast
 - Advanced weather alerts
 
 **For your app:** The free tier is more than enough! You'll get:
+
 - Current weather for training sessions
 - Weather suitability calculations
 - Location-based weather data
@@ -75,11 +78,13 @@
 ### Test in Browser
 
 Visit this URL (replace `YOUR_API_KEY` with your actual key):
+
 ```
 https://api.openweathermap.org/data/2.5/weather?q=San%20Francisco&appid=YOUR_API_KEY&units=imperial
 ```
 
 **Expected Response:**
+
 ```json
 {
   "coord": { "lon": -122.42, "lat": 37.77 },
@@ -105,11 +110,13 @@ Should return weather data instead of mock data.
 ### ❌ "Invalid API key" Error
 
 **Causes:**
+
 - API key not activated yet (wait 10-60 minutes after signup)
 - Wrong API key copied
 - API key deleted/regenerated
 
 **Solution:**
+
 - Wait a few minutes after creating account
 - Double-check the key is correct
 - Make sure you copied the entire key
@@ -117,11 +124,13 @@ Should return weather data instead of mock data.
 ### ❌ "401 Unauthorized" Error
 
 **Causes:**
+
 - API key not set in Netlify
 - Variable name misspelled (`OPENWEATHER_API_KEY` must be exact)
 - Not redeployed after adding variable
 
 **Solution:**
+
 - Check Netlify environment variables
 - Verify variable name is exactly `OPENWEATHER_API_KEY`
 - Trigger a new deploy
@@ -129,9 +138,11 @@ Should return weather data instead of mock data.
 ### ❌ Rate Limit Exceeded
 
 **Causes:**
+
 - Too many requests (free tier: 60/minute)
 
 **Solution:**
+
 - Wait a minute before trying again
 - Check your app isn't making too many requests
 - Consider caching weather data
@@ -139,6 +150,7 @@ Should return weather data instead of mock data.
 ## What Happens Without API Key?
 
 If `OPENWEATHER_API_KEY` is not set:
+
 - Weather endpoint still works ✅
 - Returns mock/example weather data ✅
 - Training suitability uses default values ✅
@@ -149,19 +161,21 @@ So the app works fine without it, but you'll get real weather data once you add 
 ## Quick Reference
 
 **API Key Location:**
+
 - Dashboard: https://home.openweathermap.org/api_keys
 - Sign Up: https://home.openweathermap.org/users/sign_up
 
 **Netlify Variable:**
+
 - Name: `OPENWEATHER_API_KEY`
 - Value: Your API key from OpenWeatherMap
 - Scope: All scopes
 
 **API Documentation:**
+
 - Current Weather: https://openweathermap.org/current
 - API Guide: https://openweathermap.org/api
 
 ---
 
 **That's it!** Once you add the API key to Netlify and redeploy, your weather endpoints will use real weather data! 🌤️
-

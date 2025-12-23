@@ -84,7 +84,9 @@ html[data-theme="light"] {
   --status-error-500: var(--primitive-error-600); /* #dc2626 - red */
   --status-error-50: rgba(220, 38, 38, 0.05);
   --status-error-100: rgba(220, 38, 38, 0.1);
-  --status-info-500: var(--primitive-primary-400); /* #40ccaf - light green/teal */
+  --status-info-500: var(
+    --primitive-primary-400
+  ); /* #40ccaf - light green/teal */
   --status-info-50: rgba(64, 204, 175, 0.05);
   --status-info-100: rgba(64, 204, 175, 0.1);
 }
@@ -155,7 +157,9 @@ html[data-theme="light"] body {
   background: var(--surface-elevated);
   border: 1px solid var(--color-border-primary);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 [data-theme="light"] .card:hover,
@@ -184,7 +188,9 @@ html[data-theme="light"] body {
   background: var(--surface-elevated);
   border: 1px solid var(--color-border-primary);
   color: var(--color-text-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 [data-theme="light"] input:hover,

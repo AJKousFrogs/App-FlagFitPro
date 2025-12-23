@@ -1,9 +1,9 @@
 /**
  * QuickLink Preloading Strategy
- * 
+ *
  * Angular 21 Strategy that preloads routes when links are visible in viewport
  * Similar to Quicklink library but integrated with Angular Router
- * 
+ *
  * This strategy:
  * - Preloads routes when navigation links become visible
  * - Respects user preferences (prefers-reduced-motion, data-saver)
@@ -11,14 +11,14 @@
  * - Optimizes for mobile networks
  */
 
-import { Injectable, inject } from '@angular/core';
-import { PreloadingStrategy, Route, Router } from '@angular/router';
-import { Observable, of, fromEvent } from 'rxjs';
-import { filter, debounceTime, take } from 'rxjs/operators';
-import { DOCUMENT } from '@angular/common';
+import { Injectable, inject } from "@angular/core";
+import { PreloadingStrategy, Route, Router } from "@angular/router";
+import { Observable, of, fromEvent } from "rxjs";
+import { filter, debounceTime, take } from "rxjs/operators";
+import { DOCUMENT } from "@angular/common";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class QuickLinkPreloadStrategy implements PreloadingStrategy {
   private router = inject(Router);
@@ -28,13 +28,13 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
 
   constructor() {
     // Initialize Intersection Observer for link visibility detection
-    if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+    if (typeof window !== "undefined" && "IntersectionObserver" in window) {
       this.setupIntersectionObserver();
     }
   }
 
   preload(route: Route, load: () => Observable<any>): Observable<any> {
-    const routePath = route.path || '';
+    const routePath = route.path || "";
 
     // Don't preload if already preloaded
     if (this.preloadedRoutes.has(routePath)) {
@@ -42,7 +42,7 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
     }
 
     // Don't preload if route has data.preload = false
-    if (route.data && route.data['preload'] === false) {
+    if (route.data && route.data["preload"] === false) {
       return of(null);
     }
 
@@ -66,8 +66,8 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const link = entry.target as HTMLAnchorElement;
-            const href = link.getAttribute('href');
-            if (href && href.startsWith('/')) {
+            const href = link.getAttribute("href");
+            if (href && href.startsWith("/")) {
               // Preload route when link becomes visible
               this.preloadRoute(href);
             }
@@ -75,9 +75,9 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
         });
       },
       {
-        rootMargin: '50px', // Start preloading 50px before link enters viewport
+        rootMargin: "50px", // Start preloading 50px before link enters viewport
         threshold: 0.1,
-      }
+      },
     );
 
     // Observe all router links
@@ -85,16 +85,18 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
   }
 
   private observeRouterLinks(): void {
-    const links = this.document.querySelectorAll('a[routerLink]');
+    const links = this.document.querySelectorAll("a[routerLink]");
     links.forEach((link) => {
       this.observer?.observe(link);
     });
 
     // Observe dynamically added links
     const mutationObserver = new MutationObserver(() => {
-      const newLinks = this.document.querySelectorAll('a[routerLink]:not([data-observed])');
+      const newLinks = this.document.querySelectorAll(
+        "a[routerLink]:not([data-observed])",
+      );
       newLinks.forEach((link) => {
-        link.setAttribute('data-observed', 'true');
+        link.setAttribute("data-observed", "true");
         this.observer?.observe(link);
       });
     });
@@ -107,7 +109,7 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
 
   private preloadRoute(path: string): void {
     // Find route config and trigger preload
-    const routePath = path.replace('/', '');
+    const routePath = path.replace("/", "");
     const route = this.router.config.find((r) => r.path === routePath);
     if (route && route.loadComponent && !this.preloadedRoutes.has(routePath)) {
       this.preloadedRoutes.add(routePath);
@@ -121,8 +123,10 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
     if (!link) return false;
 
     const rect = link.getBoundingClientRect();
-    const viewportHeight = window.innerHeight || this.document.documentElement.clientHeight;
-    const viewportWidth = window.innerWidth || this.document.documentElement.clientWidth;
+    const viewportHeight =
+      window.innerHeight || this.document.documentElement.clientHeight;
+    const viewportWidth =
+      window.innerWidth || this.document.documentElement.clientWidth;
 
     return (
       rect.top >= -50 &&
@@ -134,18 +138,21 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
 
   private shouldSkipPreload(): boolean {
     // Check for reduced motion preference
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return true;
     }
 
     // Check for data saver mode
-    if ('connection' in navigator) {
+    if ("connection" in navigator) {
       const connection = (navigator as any).connection;
       if (connection?.saveData) {
         return true;
       }
       // Skip on slow connections
-      if (connection?.effectiveType === 'slow-2g' || connection?.effectiveType === '2g') {
+      if (
+        connection?.effectiveType === "slow-2g" ||
+        connection?.effectiveType === "2g"
+      ) {
         return true;
       }
     }
@@ -153,4 +160,3 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
     return false;
   }
 }
-

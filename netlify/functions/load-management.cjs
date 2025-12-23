@@ -8,7 +8,7 @@ const {
   createErrorResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -34,7 +34,9 @@ async function getTrainingLoads(userId, startDate, endDate) {
       .lte("session_date", endDate.toISOString().split("T")[0])
       .order("session_date", { ascending: true });
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     return data.map((row) => row.training_load || 0);
   } catch (error) {
@@ -247,7 +249,9 @@ async function calculateTSB(userId, date) {
  * Calculate Exponentially Weighted Moving Average
  */
 function calculateEWMA(trainingHistory, timeConstant) {
-  if (trainingHistory.length === 0) {return 0;}
+  if (trainingHistory.length === 0) {
+    return 0;
+  }
 
   const sorted = [...trainingHistory].sort(
     (a, b) => new Date(a.date) - new Date(b.date),
@@ -393,7 +397,15 @@ async function handleInjuryRisk(method, userId, query) {
 
   // Determine risk level
   let riskLevel;
-  if (compositeRisk < 0.2) {riskLevel = "low";} else if (compositeRisk < 0.4) {riskLevel = "moderate";} else if (compositeRisk < 0.7) {riskLevel = "high";} else {riskLevel = "critical";}
+  if (compositeRisk < 0.2) {
+    riskLevel = "low";
+  } else if (compositeRisk < 0.4) {
+    riskLevel = "moderate";
+  } else if (compositeRisk < 0.7) {
+    riskLevel = "high";
+  } else {
+    riskLevel = "critical";
+  }
 
   return {
     statusCode: 200,
@@ -443,7 +455,7 @@ async function handleTrainingLoads(method, userId, query) {
  * Main handler
  */
 exports.handler = async (event, _context) => {
-  logFunctionCall('Load-Management', event);
+  logFunctionCall("Load-Management", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -494,17 +506,17 @@ exports.handler = async (event, _context) => {
         response = await handleTrainingLoads(httpMethod, userId, query);
         break;
       default:
-        response = createErrorResponse("Endpoint not found", 404, 'not_found');
+        response = createErrorResponse("Endpoint not found", 404, "not_found");
         // Convert to old format for consistency
         response = {
           statusCode: response.statusCode,
           headers: response.headers,
-          body: response.body
+          body: response.body,
         };
     }
 
     return response;
   } catch (error) {
-    return handleServerError(error, 'Load-Management');
+    return handleServerError(error, "Load-Management");
   }
 };

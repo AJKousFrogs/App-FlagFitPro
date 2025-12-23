@@ -1,5 +1,5 @@
 #!/usr/bin/env node
- 
+
 /**
  * Process Research Articles into Knowledge Base Entries
  *
@@ -75,7 +75,9 @@ async function processSupplements() {
       [`%${supplement}%`, supplement],
     );
 
-    if (articles.rows.length === 0) {continue;}
+    if (articles.rows.length === 0) {
+      continue;
+    }
 
     // Extract dosage information
     const dosageInfo = extractDosageInfo(articles.rows, supplement);
@@ -142,7 +144,9 @@ async function processInjuries() {
       [injury, `%${injury.replace("_", " ")}%`],
     );
 
-    if (articles.rows.length === 0) {continue;}
+    if (articles.rows.length === 0) {
+      continue;
+    }
 
     const treatmentInfo = extractTreatmentInfo(articles.rows);
     const preventionInfo = extractPreventionInfo(articles.rows);
@@ -197,7 +201,9 @@ async function processRecoveryMethods() {
       [method.name, `%${method.name.replace("_", " ")}%`],
     );
 
-    if (articles.rows.length === 0) {continue;}
+    if (articles.rows.length === 0) {
+      continue;
+    }
 
     const protocols = extractProtocols(articles.rows, method.protocol);
 
@@ -305,8 +311,12 @@ function extractBestPractices(articles) {
 }
 
 function determineConsensusLevel(articles) {
-  if (articles.length >= 5) {return "high";}
-  if (articles.length >= 3) {return "moderate";}
+  if (articles.length >= 5) {
+    return "high";
+  }
+  if (articles.length >= 3) {
+    return "moderate";
+  }
   return "low";
 }
 

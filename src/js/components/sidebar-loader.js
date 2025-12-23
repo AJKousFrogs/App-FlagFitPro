@@ -4,18 +4,18 @@
  * Handles active state based on current page
  */
 
-import { BaseComponentLoader } from './base-component-loader.js';
-import { onDOMReady } from '../utils/dom-ready.js';
-import { logger } from '../../logger.js';
+import { BaseComponentLoader } from "./base-component-loader.js";
+import { onDOMReady } from "../utils/dom-ready.js";
+import { logger } from "../../logger.js";
 
 class SidebarLoader extends BaseComponentLoader {
   constructor() {
     super({
-      containerSelector: '[data-sidebar-container]',
-      componentPath: './src/components/organisms/sidebar-navigation.html',
-      componentName: 'Sidebar',
+      containerSelector: "[data-sidebar-container]",
+      componentPath: "./src/components/organisms/sidebar-navigation.html",
+      componentName: "Sidebar",
       createContainer: SidebarLoader.createSidebarContainer,
-      autoInit: false // We'll handle initialization manually
+      autoInit: false, // We'll handle initialization manually
     });
 
     this.currentPage = SidebarLoader.getCurrentPage();
@@ -27,7 +27,7 @@ class SidebarLoader extends BaseComponentLoader {
    */
   static getCurrentPage() {
     const path = window.location.pathname;
-    const page = path.split('/').pop().replace('.html', '') || 'dashboard';
+    const page = path.split("/").pop().replace(".html", "") || "dashboard";
     return page;
   }
 
@@ -35,13 +35,13 @@ class SidebarLoader extends BaseComponentLoader {
    * Create sidebar container if it doesn't exist
    */
   static createContainer() {
-    const dashboardContainer = document.querySelector('.dashboard-container');
+    const dashboardContainer = document.querySelector(".dashboard-container");
     if (!dashboardContainer) {
-      throw new Error('Dashboard container not found');
+      throw new Error("Dashboard container not found");
     }
 
-    const container = document.createElement('div');
-    container.setAttribute('data-sidebar-container', '');
+    const container = document.createElement("div");
+    container.setAttribute("data-sidebar-container", "");
     dashboardContainer.insertBefore(container, dashboardContainer.firstChild);
     return container;
   }
@@ -62,23 +62,28 @@ class SidebarLoader extends BaseComponentLoader {
    * Initialize enhanced sidebar features
    */
   async initializeEnhancedFeatures() {
-    const sidebar = document.getElementById('sidebar');
-    if (!sidebar) {return;}
+    const sidebar = document.getElementById("sidebar");
+    if (!sidebar) {
+      return;
+    }
 
     // Ensure Lucide icons are initialized (base loader handles this, but double-check)
-    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    if (typeof lucide !== "undefined" && lucide.createIcons) {
       lucide.createIcons(sidebar);
     }
 
     // Load and initialize enhanced sidebar navigation
     try {
-      const { EnhancedSidebarNav } = await import('./enhanced-sidebar-nav.js');
+      const { EnhancedSidebarNav } = await import("./enhanced-sidebar-nav.js");
       // The EnhancedSidebarNav auto-initializes, but we ensure it's set up
       if (!window.enhancedSidebarNav) {
         window.enhancedSidebarNav = new EnhancedSidebarNav();
       }
     } catch (error) {
-      logger.warn('[Sidebar Loader] Could not load enhanced sidebar navigation:', error);
+      logger.warn(
+        "[Sidebar Loader] Could not load enhanced sidebar navigation:",
+        error,
+      );
     }
   }
 
@@ -87,25 +92,25 @@ class SidebarLoader extends BaseComponentLoader {
    */
   setActivePage() {
     // Remove all active classes
-    const navItems = document.querySelectorAll('.sidebar .nav-item');
-    navItems.forEach(item => item.classList.remove('active'));
+    const navItems = document.querySelectorAll(".sidebar .nav-item");
+    navItems.forEach((item) => item.classList.remove("active"));
 
     // Add active class to current page
     const currentNavItem = document.querySelector(
-      `.sidebar .nav-item[data-page="${this.currentPage}"]`
+      `.sidebar .nav-item[data-page="${this.currentPage}"]`,
     );
 
     if (currentNavItem) {
-      currentNavItem.classList.add('active');
-      currentNavItem.setAttribute('aria-current', 'page');
+      currentNavItem.classList.add("active");
+      currentNavItem.setAttribute("aria-current", "page");
     } else {
       // Fallback: try to match by href
       const fallbackItem = document.querySelector(
-        `.sidebar .nav-item[href*="${this.currentPage}"]`
+        `.sidebar .nav-item[href*="${this.currentPage}"]`,
       );
       if (fallbackItem) {
-        fallbackItem.classList.add('active');
-        fallbackItem.setAttribute('aria-current', 'page');
+        fallbackItem.classList.add("active");
+        fallbackItem.setAttribute("aria-current", "page");
       }
     }
   }

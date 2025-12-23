@@ -23,7 +23,7 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
   swipeThreshold = input<number>(50); // Minimum distance in pixels to trigger swipe
   swipeVelocity = input<number>(0.3); // Minimum velocity for quick swipe
   enablePullToRefresh = input<boolean>(false); // Enable pull-to-refresh on container
-  
+
   // Angular 21: Using output() for better type safety
   swipeRight = output<SwipeEvent>();
   swipeLeft = output<SwipeEvent>();
@@ -111,7 +111,10 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     const velocity = distance / duration;
 
     // Handle pull-to-refresh
-    if (this.enablePullToRefresh() && this.pullDistance > this.swipeThreshold()) {
+    if (
+      this.enablePullToRefresh() &&
+      this.pullDistance > this.swipeThreshold()
+    ) {
       this.pullToRefresh.emit();
       this.resetPullIndicator();
       return;
@@ -126,7 +129,14 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     const absY = Math.abs(deltaY);
 
     const swipeEvent: SwipeEvent = {
-      direction: absX > absY ? (deltaX > 0 ? "right" : "left") : deltaY > 0 ? "down" : "up",
+      direction:
+        absX > absY
+          ? deltaX > 0
+            ? "right"
+            : "left"
+          : deltaY > 0
+            ? "down"
+            : "up",
       distance,
     };
 
@@ -165,4 +175,3 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     this.pullDistance = 0;
   }
 }
-

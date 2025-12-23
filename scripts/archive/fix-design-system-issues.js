@@ -1,4 +1,3 @@
- 
 // Comprehensive Design System Fix Script
 // Fixes all issues found in the audit
 

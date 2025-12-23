@@ -5,25 +5,25 @@ import {
   signal,
   inject,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { ChartModule } from 'primeng/chart';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { KnobModule } from 'primeng/knob';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { Tabs } from 'primeng/tabview';
-import { TimelineModule } from 'primeng/timeline';
-import { RecoveryService } from '../../../core/services/recovery.service';
-import { firstValueFrom } from 'rxjs';
-import { interval, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { LoggerService } from '../../../core/services/logger.service';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { ChartModule } from "primeng/chart";
+import { ButtonModule } from "primeng/button";
+import { TagModule } from "primeng/tag";
+import { KnobModule } from "primeng/knob";
+import { ProgressBarModule } from "primeng/progressbar";
+import { Tabs } from "primeng/tabview";
+import { TimelineModule } from "primeng/timeline";
+import { RecoveryService } from "../../../core/services/recovery.service";
+import { firstValueFrom } from "rxjs";
+import { interval, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
-  selector: 'app-recovery-dashboard',
+  selector: "app-recovery-dashboard",
   standalone: true,
   imports: [
     CommonModule,
@@ -627,37 +627,37 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
 
   getRecoveryColor(): string {
     const score = this.recoveryScoreValue;
-    if (score >= 80) return '#10c96b';
-    if (score >= 60) return '#f1c40f';
-    return '#ef4444';
+    if (score >= 80) return "#10c96b";
+    if (score >= 60) return "#f1c40f";
+    return "#ef4444";
   }
 
   getRecoveryStatus(): string {
     const score = this.recoveryScoreValue;
-    if (score >= 80) return 'Excellent';
-    if (score >= 60) return 'Good';
-    if (score >= 40) return 'Fair';
-    return 'Poor';
+    if (score >= 80) return "Excellent";
+    if (score >= 60) return "Good";
+    if (score >= 40) return "Fair";
+    return "Poor";
   }
 
   getProtocolSeverity(category: string): string {
     const severityMap: Record<string, string> = {
-      Cryotherapy: 'info',
-      Compression: 'success',
-      'Manual Therapy': 'warn',
-      'Heat Therapy': 'danger',
-      Sleep: 'help',
+      Cryotherapy: "info",
+      Compression: "success",
+      "Manual Therapy": "warn",
+      "Heat Therapy": "danger",
+      Sleep: "help",
     };
-    return severityMap[category] || 'info';
+    return severityMap[category] || "info";
   }
 
   selectProtocol(protocol: any) {
-    this.logger.debug('Selected protocol:', protocol);
+    this.logger.debug("Selected protocol:", protocol);
   }
 
   async startProtocol(protocol: any) {
     const session = await firstValueFrom(
-      this.recoveryService.startRecoverySession(protocol)
+      this.recoveryService.startRecoverySession(protocol),
     );
     this.activeSession.set(session);
     this.setupSessionTimer(session);
@@ -665,7 +665,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
 
   showProtocolDetails(protocol: any) {
     // Open protocol details modal with research evidence
-    this.logger.debug('Show details for:', protocol);
+    this.logger.debug("Show details for:", protocol);
   }
 
   toggleSession() {
@@ -691,16 +691,16 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   }
 
   openStudy(doi: string) {
-    window.open(`https://doi.org/${doi}`, '_blank');
+    window.open(`https://doi.org/${doi}`, "_blank");
   }
 
   private async loadRecoveryData() {
     const data = await firstValueFrom(
-      this.recoveryService.getRecoveryMetrics()
+      this.recoveryService.getRecoveryMetrics(),
     );
     this.recoveryScoreValue = data.overallScore;
     this.recoveryMetrics.set(data.metrics);
@@ -708,14 +708,14 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
 
   private async loadRecommendedProtocols() {
     const protocols = await firstValueFrom(
-      this.recoveryService.getRecommendedProtocols()
+      this.recoveryService.getRecommendedProtocols(),
     );
     this.recommendedProtocols.set(protocols);
   }
 
   private async loadResearchInsights() {
     const insights = await firstValueFrom(
-      this.recoveryService.getResearchInsights()
+      this.recoveryService.getResearchInsights(),
     );
     this.researchInsights.set(insights);
   }
@@ -723,24 +723,24 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   private setupChartData() {
     // Setup chart data for analytics
     this.weeklyRecoveryData = {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       datasets: [
         {
-          label: 'Recovery Score',
+          label: "Recovery Score",
           data: [75, 78, 72, 85, 80, 77, 82],
-          borderColor: '#10c96b',
-          backgroundColor: 'rgba(16, 201, 107, 0.1)',
+          borderColor: "#10c96b",
+          backgroundColor: "rgba(16, 201, 107, 0.1)",
         },
       ],
     };
 
     this.protocolEffectivenessData = {
-      labels: ['Cryotherapy', 'Compression', 'Manual Therapy', 'Heat Therapy'],
+      labels: ["Cryotherapy", "Compression", "Manual Therapy", "Heat Therapy"],
       datasets: [
         {
-          label: 'Effectiveness Rating',
+          label: "Effectiveness Rating",
           data: [8.5, 7.8, 8.2, 7.5],
-          backgroundColor: ['#10c96b', '#f1c40f', '#ef4444', '#8b5cf6'],
+          backgroundColor: ["#10c96b", "#f1c40f", "#ef4444", "#8b5cf6"],
         },
       ],
     };
@@ -769,7 +769,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
         ...step,
         completed: false,
         active: index === 0,
-      }))
+      })),
     );
 
     // Start timer
@@ -801,4 +801,3 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 }
-

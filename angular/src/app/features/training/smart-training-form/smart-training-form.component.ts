@@ -23,7 +23,10 @@ import { TagModule } from "primeng/tag";
 import { SelectButtonModule } from "primeng/selectbutton";
 import { ToastModule } from "primeng/toast";
 import { MessageService } from "primeng/api";
-import { AIService, TrainingSuggestion } from "../../../core/services/ai.service";
+import {
+  AIService,
+  TrainingSuggestion,
+} from "../../../core/services/ai.service";
 import {
   WeatherService,
   WeatherData,
@@ -134,11 +137,14 @@ interface EquipmentOption {
               <div class="weather-indicator">
                 <i class="pi pi-sun"></i>
                 <span
-                  >{{ weatherData()?.temp }}°F, {{ weatherData()?.condition }}</span
+                  >{{ weatherData()?.temp }}°F,
+                  {{ weatherData()?.condition }}</span
                 >
                 <p-tag
                   [value]="weatherData()?.suitability"
-                  [severity]="getWeatherSeverity(weatherData()?.suitability || 'good')"
+                  [severity]="
+                    getWeatherSeverity(weatherData()?.suitability || 'good')
+                  "
                 >
                 </p-tag>
               </div>
@@ -155,15 +161,15 @@ interface EquipmentOption {
         <!-- Smart Equipment Suggestions -->
         @if (recommendedEquipment().length > 0) {
           <div class="equipment-section">
-          <h5>Recommended Equipment</h5>
-          <div class="equipment-grid">
-            <p-selectButton
-              formControlName="equipment"
-              [options]="equipmentSelectOptions()"
-              [multiple]="true"
-            >
-            </p-selectButton>
-          </div>
+            <h5>Recommended Equipment</h5>
+            <div class="equipment-grid">
+              <p-selectButton
+                formControlName="equipment"
+                [options]="equipmentSelectOptions()"
+                [multiple]="true"
+              >
+              </p-selectButton>
+            </div>
           </div>
         }
 
@@ -562,4 +568,3 @@ export class SmartTrainingFormComponent implements OnInit {
     });
   }
 }
-

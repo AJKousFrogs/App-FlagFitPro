@@ -1,18 +1,22 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { SelectModule } from 'primeng/select';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { TrainingPlanService, TrainingGoal, WeeklyTrainingPlan } from '../../core/services/training-plan.service';
-import { AcwrService } from '../../core/services/acwr.service';
-import { ReadinessService } from '../../core/services/readiness.service';
-import { LoggerService } from '../../core/services/logger.service';
-import { TrafficLightRiskComponent } from '../../shared/components/traffic-light-risk/traffic-light-risk.component';
+import { Component, OnInit, inject, signal, computed } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { SelectModule } from "primeng/select";
+import { ButtonModule } from "primeng/button";
+import { TagModule } from "primeng/tag";
+import {
+  TrainingPlanService,
+  TrainingGoal,
+  WeeklyTrainingPlan,
+} from "../../core/services/training-plan.service";
+import { AcwrService } from "../../core/services/acwr.service";
+import { ReadinessService } from "../../core/services/readiness.service";
+import { LoggerService } from "../../core/services/logger.service";
+import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
 
 @Component({
-  selector: 'app-goal-based-planner',
+  selector: "app-goal-based-planner",
   standalone: true,
   imports: [
     CommonModule,
@@ -21,18 +25,24 @@ import { TrafficLightRiskComponent } from '../../shared/components/traffic-light
     SelectModule,
     ButtonModule,
     TagModule,
-    TrafficLightRiskComponent
+    TrafficLightRiskComponent,
   ],
   template: `
     <div class="goal-planner bg-surface-primary rounded-lg shadow-medium p-6">
       <div class="header mb-6">
-        <h2 class="text-2xl font-bold text-text-primary mb-2">Goal-Based Training Planner</h2>
-        <p class="text-text-secondary">Select your goal and get an auto-generated weekly training plan</p>
+        <h2 class="text-2xl font-bold text-text-primary mb-2">
+          Goal-Based Training Planner
+        </h2>
+        <p class="text-text-secondary">
+          Select your goal and get an auto-generated weekly training plan
+        </p>
       </div>
 
       <!-- Goal Selection -->
       <div class="goal-selection mb-6 p-4 bg-surface-secondary rounded-lg">
-        <label class="block text-sm font-semibold text-text-primary mb-3">Select Training Goal</label>
+        <label class="block text-sm font-semibold text-text-primary mb-3"
+          >Select Training Goal</label
+        >
         <p-select
           [(ngModel)]="selectedGoal"
           [options]="goalOptions"
@@ -40,7 +50,8 @@ import { TrafficLightRiskComponent } from '../../shared/components/traffic-light
           optionValue="value"
           placeholder="Choose your primary goal"
           class="w-full"
-          (onChange)="onGoalChange()">
+          (onChange)="onGoalChange()"
+        >
         </p-select>
         <p class="text-xs text-text-secondary mt-2">
           The plan will auto-adjust based on your ACWR and readiness scores
@@ -52,27 +63,40 @@ import { TrafficLightRiskComponent } from '../../shared/components/traffic-light
         <div class="status-section mb-6 p-4 bg-surface-secondary rounded-lg">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div class="stat-item">
-              <div class="stat-label text-xs text-text-secondary">Current ACWR</div>
-              <div class="stat-value text-lg font-bold" [class]="getACWRColorClass()">
-                {{ currentACWR() | number:'1.2-2' }}
+              <div class="stat-label text-xs text-text-secondary">
+                Current ACWR
+              </div>
+              <div
+                class="stat-value text-lg font-bold"
+                [class]="getACWRColorClass()"
+              >
+                {{ currentACWR() | number: "1.2-2" }}
               </div>
             </div>
             <div class="stat-item">
-              <div class="stat-label text-xs text-text-secondary">Readiness</div>
+              <div class="stat-label text-xs text-text-secondary">
+                Readiness
+              </div>
               <div class="stat-value text-lg font-bold">
-                <p-tag [severity]="getReadinessSeverity()" [value]="readinessLevel() | titlecase"></p-tag>
+                <p-tag
+                  [severity]="getReadinessSeverity()"
+                  [value]="readinessLevel() | titlecase"
+                ></p-tag>
               </div>
             </div>
             <div class="stat-item">
-              <div class="stat-label text-xs text-text-secondary">Progression Rule</div>
+              <div class="stat-label text-xs text-text-secondary">
+                Progression Rule
+              </div>
               <div class="stat-value text-sm font-semibold">
                 {{ getProgressionRule() }}
               </div>
             </div>
           </div>
-          <app-traffic-light-risk 
-            [riskZone]="currentRiskZone()" 
-            [acwrValue]="currentACWR()">
+          <app-traffic-light-risk
+            [riskZone]="currentRiskZone()"
+            [acwrValue]="currentACWR()"
+          >
           </app-traffic-light-risk>
         </div>
 
@@ -83,43 +107,72 @@ import { TrafficLightRiskComponent } from '../../shared/components/traffic-light
               <h3 class="text-xl font-semibold text-text-primary">
                 Weekly Training Plan - {{ getGoalLabel() }}
               </h3>
-              <p-tag [value]="weeklyPlan()?.phase | titlecase" severity="info"></p-tag>
+              <p-tag
+                [value]="weeklyPlan()?.phase | titlecase"
+                severity="info"
+              ></p-tag>
             </div>
 
             <div class="sessions-grid grid grid-cols-1 md:grid-cols-7 gap-4">
               @for (session of weeklyPlan()?.sessions; track session.day) {
-                <div class="session-card p-4 rounded-lg border-2 bg-white" [class]="getSessionCardClass(session)">
+                <div
+                  class="session-card p-4 rounded-lg border-2 bg-white"
+                  [class]="getSessionCardClass(session)"
+                >
                   <div class="session-header mb-3">
-                    <div class="day-name font-bold text-lg">{{ getDayName(session.day) }}</div>
-                    <p-tag [value]="session.sessionType | titlecase" [severity]="getSessionTypeSeverity(session.sessionType)"></p-tag>
+                    <div class="day-name font-bold text-lg">
+                      {{ getDayName(session.day) }}
+                    </div>
+                    <p-tag
+                      [value]="session.sessionType | titlecase"
+                      [severity]="getSessionTypeSeverity(session.sessionType)"
+                    ></p-tag>
                   </div>
 
                   <div class="session-details">
                     <div class="focus-area mb-2">
                       <div class="text-xs text-text-secondary mb-1">Focus</div>
-                      <div class="text-sm font-semibold">{{ session.focus.join(', ') }}</div>
+                      <div class="text-sm font-semibold">
+                        {{ session.focus.join(", ") }}
+                      </div>
                     </div>
 
                     <div class="exercises mb-2">
-                      <div class="text-xs text-text-secondary mb-1">Exercises</div>
+                      <div class="text-xs text-text-secondary mb-1">
+                        Exercises
+                      </div>
                       <ul class="text-xs list-disc list-inside">
-                        @for (exercise of session.exercises.slice(0, 3); track exercise) {
+                        @for (
+                          exercise of session.exercises.slice(0, 3);
+                          track exercise
+                        ) {
                           <li>{{ exercise }}</li>
                         }
                         @if (session.exercises.length > 3) {
-                          <li class="text-text-secondary">+{{ session.exercises.length - 3 }} more</li>
+                          <li class="text-text-secondary">
+                            +{{ session.exercises.length - 3 }} more
+                          </li>
                         }
                       </ul>
                     </div>
 
-                    <div class="session-metrics grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-gray-200">
+                    <div
+                      class="session-metrics grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-gray-200"
+                    >
                       <div>
                         <div class="text-xs text-text-secondary">Duration</div>
-                        <div class="font-semibold">{{ session.duration }} min</div>
+                        <div class="font-semibold">
+                          {{ session.duration }} min
+                        </div>
                       </div>
                       <div>
                         <div class="text-xs text-text-secondary">Intensity</div>
-                        <div class="font-semibold" [class]="'text-' + getIntensityColor(session.intensity)">
+                        <div
+                          class="font-semibold"
+                          [class]="
+                            'text-' + getIntensityColor(session.intensity)
+                          "
+                        >
                           {{ session.intensity | titlecase }}
                         </div>
                       </div>
@@ -129,13 +182,17 @@ import { TrafficLightRiskComponent } from '../../shared/components/traffic-light
                       </div>
                       <div>
                         <div class="text-xs text-text-secondary">Rest</div>
-                        <div class="font-semibold text-xs">{{ session.restPeriods }}</div>
+                        <div class="font-semibold text-xs">
+                          {{ session.restPeriods }}
+                        </div>
                       </div>
                     </div>
 
                     @if (session.notes) {
                       <div class="notes mt-2 pt-2 border-t border-gray-100">
-                        <div class="text-xs text-text-secondary italic">{{ session.notes }}</div>
+                        <div class="text-xs text-text-secondary italic">
+                          {{ session.notes }}
+                        </div>
                       </div>
                     }
                   </div>
@@ -149,7 +206,9 @@ import { TrafficLightRiskComponent } from '../../shared/components/traffic-light
               <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <div class="text-xs text-text-secondary">Total Volume</div>
-                  <div class="text-lg font-bold">{{ weeklyPlan()?.totalVolume }}</div>
+                  <div class="text-lg font-bold">
+                    {{ weeklyPlan()?.totalVolume }}
+                  </div>
                 </div>
                 <div>
                   <div class="text-xs text-text-secondary">Training Days</div>
@@ -157,12 +216,30 @@ import { TrafficLightRiskComponent } from '../../shared/components/traffic-light
                 </div>
                 <div>
                   <div class="text-xs text-text-secondary">ACWR Target</div>
-                  <div class="text-lg font-bold">{{ weeklyPlan()?.progressionRules.acwrThreshold | number:'1.2-2' }}</div>
+                  <div class="text-lg font-bold">
+                    {{
+                      weeklyPlan()?.progressionRules.acwrThreshold
+                        | number: "1.2-2"
+                    }}
+                  </div>
                 </div>
                 <div>
-                  <div class="text-xs text-text-secondary">Volume Adjustment</div>
-                  <div class="text-lg font-bold" [class]="weeklyPlan()?.progressionRules.volumeAdjustment > 0 ? 'text-green-600' : 'text-red-600'">
-                    {{ weeklyPlan()?.progressionRules.volumeAdjustment > 0 ? '+' : '' }}{{ weeklyPlan()?.progressionRules.volumeAdjustment }}%
+                  <div class="text-xs text-text-secondary">
+                    Volume Adjustment
+                  </div>
+                  <div
+                    class="text-lg font-bold"
+                    [class]="
+                      weeklyPlan()?.progressionRules.volumeAdjustment > 0
+                        ? 'text-green-600'
+                        : 'text-red-600'
+                    "
+                  >
+                    {{
+                      weeklyPlan()?.progressionRules.volumeAdjustment > 0
+                        ? "+"
+                        : ""
+                    }}{{ weeklyPlan()?.progressionRules.volumeAdjustment }}%
                   </div>
                 </div>
               </div>
@@ -178,49 +255,52 @@ import { TrafficLightRiskComponent } from '../../shared/components/traffic-light
             label="Generate Plan"
             icon="pi pi-calculator"
             [loading]="loading()"
-            (onClick)="generatePlan()">
+            (onClick)="generatePlan()"
+          >
           </p-button>
         </div>
       }
     </div>
   `,
-  styles: [`
-    .stat-item {
-      @apply text-center;
-    }
+  styles: [
+    `
+      .stat-item {
+        @apply text-center;
+      }
 
-    .stat-label {
-      @apply mb-1;
-    }
+      .stat-label {
+        @apply mb-1;
+      }
 
-    .stat-value {
-      @apply text-lg;
-    }
+      .stat-value {
+        @apply text-lg;
+      }
 
-    .session-card {
-      @apply transition-all duration-200;
-    }
+      .session-card {
+        @apply transition-all duration-200;
+      }
 
-    .session-card:hover {
-      @apply shadow-lg transform -translate-y-1;
-    }
+      .session-card:hover {
+        @apply shadow-lg transform -translate-y-1;
+      }
 
-    .text-green-600 {
-      color: #16a34a;
-    }
+      .text-green-600 {
+        color: #16a34a;
+      }
 
-    .text-yellow-600 {
-      color: #ca8a04;
-    }
+      .text-yellow-600 {
+        color: #ca8a04;
+      }
 
-    .text-red-600 {
-      color: #dc2626;
-    }
+      .text-red-600 {
+        color: #dc2626;
+      }
 
-    .text-blue-600 {
-      color: #2563eb;
-    }
-  `]
+      .text-blue-600 {
+        color: #2563eb;
+      }
+    `,
+  ],
 })
 export class GoalBasedPlannerComponent implements OnInit {
   @Input() athleteId!: string;
@@ -237,21 +317,26 @@ export class GoalBasedPlannerComponent implements OnInit {
 
   currentACWR = computed(() => this.acwrService.acwrRatio());
   currentRiskZone = computed(() => this.acwrService.riskZone());
-  readinessLevel = computed(() => this.readinessService.current()?.level || 'moderate');
+  readinessLevel = computed(
+    () => this.readinessService.current()?.level || "moderate",
+  );
 
   goalOptions = [
-    { label: 'Speed', value: 'speed' },
-    { label: 'Change of Direction', value: 'change-of-direction' },
-    { label: 'Agility', value: 'agility' },
-    { label: 'Route Running', value: 'route-running' },
-    { label: 'Defense', value: 'defense' },
-    { label: 'Power', value: 'power' },
-    { label: 'Endurance', value: 'endurance' }
+    { label: "Speed", value: "speed" },
+    { label: "Change of Direction", value: "change-of-direction" },
+    { label: "Agility", value: "agility" },
+    { label: "Route Running", value: "route-running" },
+    { label: "Defense", value: "defense" },
+    { label: "Power", value: "power" },
+    { label: "Endurance", value: "endurance" },
   ];
 
   async ngOnInit() {
     if (this.athleteId) {
-      const games = await this.trainingPlanService.getUpcomingGames(this.athleteId, 14);
+      const games = await this.trainingPlanService.getUpcomingGames(
+        this.athleteId,
+        14,
+      );
       this.gameDays.set(games);
     }
   }
@@ -272,78 +357,86 @@ export class GoalBasedPlannerComponent implements OnInit {
         goal: this.selectedGoal()!,
         currentACWR: this.currentACWR(),
         readinessLevel: this.readinessLevel(),
-        gameDays: this.gameDays()
+        gameDays: this.gameDays(),
       });
 
       this.weeklyPlan.set(plan);
     } catch (error) {
-      this.logger.error('Error generating plan:', error);
+      this.logger.error("Error generating plan:", error);
     } finally {
       this.loading.set(false);
     }
   }
 
   getGoalLabel(): string {
-    return this.goalOptions.find(g => g.value === this.selectedGoal())?.label || '';
+    return (
+      this.goalOptions.find((g) => g.value === this.selectedGoal())?.label || ""
+    );
   }
 
   getDayName(dayIndex: number): string {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days[dayIndex] || '';
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    return days[dayIndex] || "";
   }
 
   getACWRColorClass(): string {
     const acwr = this.currentACWR();
-    if (acwr > 1.5) return 'text-red-600';
-    if (acwr > 1.3) return 'text-yellow-600';
-    if (acwr < 0.8) return 'text-orange-500';
-    return 'text-green-600';
+    if (acwr > 1.5) return "text-red-600";
+    if (acwr > 1.3) return "text-yellow-600";
+    if (acwr < 0.8) return "text-orange-500";
+    return "text-green-600";
   }
 
-  getReadinessSeverity(): 'success' | 'warning' | 'danger' {
+  getReadinessSeverity(): "success" | "warning" | "danger" {
     return this.readinessService.getSeverity(this.readinessLevel());
   }
 
   getProgressionRule(): string {
     const acwr = this.currentACWR();
-    if (acwr > 1.5) return 'Reduce volume 30%';
-    if (acwr > 1.3) return 'Reduce volume 15%';
-    if (acwr < 0.8) return 'Increase volume 10%';
-    return 'Maintain current load';
+    if (acwr > 1.5) return "Reduce volume 30%";
+    if (acwr > 1.3) return "Reduce volume 15%";
+    if (acwr < 0.8) return "Increase volume 10%";
+    return "Maintain current load";
   }
 
   getSessionCardClass(session: any): string {
-    if (session.sessionType === 'recovery' || session.sessionType === 'game') {
-      return 'border-gray-300';
+    if (session.sessionType === "recovery" || session.sessionType === "game") {
+      return "border-gray-300";
     }
-    if (session.intensity === 'high') return 'border-orange-500 bg-orange-50';
-    if (session.intensity === 'medium') return 'border-blue-500 bg-blue-50';
-    return 'border-green-500 bg-green-50';
+    if (session.intensity === "high") return "border-orange-500 bg-orange-50";
+    if (session.intensity === "medium") return "border-blue-500 bg-blue-50";
+    return "border-green-500 bg-green-50";
   }
 
-  getSessionTypeSeverity(type: string): 'success' | 'info' | 'warning' | 'danger' {
-    const severityMap: Record<string, 'success' | 'info' | 'warning' | 'danger'> = {
-      'speed': 'danger',
-      'agility': 'warning',
-      'strength': 'info',
-      'technique': 'success',
-      'conditioning': 'warning',
-      'recovery': 'success',
-      'game': 'info'
+  getSessionTypeSeverity(
+    type: string,
+  ): "success" | "info" | "warning" | "danger" {
+    const severityMap: Record<
+      string,
+      "success" | "info" | "warning" | "danger"
+    > = {
+      speed: "danger",
+      agility: "warning",
+      strength: "info",
+      technique: "success",
+      conditioning: "warning",
+      recovery: "success",
+      game: "info",
     };
-    return severityMap[type] || 'info';
+    return severityMap[type] || "info";
   }
 
   getIntensityColor(intensity: string): string {
-    if (intensity === 'high') return 'red-600';
-    if (intensity === 'medium') return 'yellow-600';
-    return 'green-600';
+    if (intensity === "high") return "red-600";
+    if (intensity === "medium") return "yellow-600";
+    return "green-600";
   }
 
   getTrainingDays(): number {
-    return this.weeklyPlan()?.sessions.filter(s => 
-      s.sessionType !== 'recovery' && s.sessionType !== 'game'
-    ).length || 0;
+    return (
+      this.weeklyPlan()?.sessions.filter(
+        (s) => s.sessionType !== "recovery" && s.sessionType !== "game",
+      ).length || 0
+    );
   }
 }
-

@@ -15,15 +15,24 @@
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#089949" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
 
     <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
+    <link
+      rel="apple-touch-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
 
     <!-- Microsoft Tile -->
     <meta name="msapplication-TileColor" content="#089949" />
-    <meta name="msapplication-TileImage" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
+    <meta
+      name="msapplication-TileImage"
+      content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -79,22 +88,34 @@
     <script src="./src/js/export-service.js" defer></script>
     <script src="./src/js/wellness-export-buttons.js" defer></script>
     <!-- Wellness Service -->
-    <script type="module" src="./src/js/services/wellness-service.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/services/wellness-service.js"
+      defer
+    ></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
-    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
-  
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+
     <!-- Supabase Configuration (Centralized) -->
     <script src="./src/js/config/supabase-config.js" defer></script>
-    
-    <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
   </head>
   <body>
     <!-- Skip link for accessibility -->
-    <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
+    <a href="#main-content" class="skip-link" aria-label="Skip to main content"
+      >Skip to main content</a
+    >
     <div class="dashboard-container">
       <!-- Sidebar Overlay for Mobile -->
       <div
@@ -104,15 +125,14 @@
         onclick="toggleSidebar()"
       ></div>
 
-            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
       <div data-sidebar-container></div>
-
 
       <main
         id="main-content"
         class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
       >
-                <!-- Top Bar (Loaded Dynamically) -->
+        <!-- Top Bar (Loaded Dynamically) -->
         <div data-topbar-container></div>
 
         <!-- Wellness Content -->
@@ -124,7 +144,11 @@
             >
               Wellness & Recovery
             </div>
-            <h1 class="hero-main-title text-heading-2xl text-primary space-relaxed">Your Health Dashboard</h1>
+            <h1
+              class="hero-main-title text-heading-2xl text-primary space-relaxed"
+            >
+              Your Health Dashboard
+            </h1>
             <p class="text-body-md text-secondary">
               Monitor recovery, nutrition, and mental wellness
             </p>
@@ -133,21 +157,41 @@
 
         <!-- Wellness Data Entry Form -->
         <div class="wellness-form-section u-margin-bottom-64">
-          <div class="wellness-form-card u-radius-xl u-padding-24 u-shadow-sm u-bg-primary">
-            <div class="u-display-flex u-justify-between u-align-center u-margin-bottom-24">
+          <div
+            class="wellness-form-card u-radius-xl u-padding-24 u-shadow-sm u-bg-primary"
+          >
+            <div
+              class="u-display-flex u-justify-between u-align-center u-margin-bottom-24"
+            >
               <h2 class="section-title text-heading-xl text-primary">
-                <i data-lucide="clipboard-check" class="icon-20 icon-inline"></i>
+                <i
+                  data-lucide="clipboard-check"
+                  class="icon-20 icon-inline"
+                ></i>
                 Daily Wellness Check-In
               </h2>
-              <div class="wellness-streak u-display-flex u-align-center u-gap-8">
-                <i data-lucide="flame" class="icon-16" style="color: var(--color-warning)"></i>
-                <span class="u-text-body-sm u-font-weight-600" id="wellness-streak">0 day streak</span>
+              <div
+                class="wellness-streak u-display-flex u-align-center u-gap-8"
+              >
+                <i
+                  data-lucide="flame"
+                  class="icon-16"
+                  style="color: var(--color-warning)"
+                ></i>
+                <span
+                  class="u-text-body-sm u-font-weight-600"
+                  id="wellness-streak"
+                  >0 day streak</span
+                >
               </div>
             </div>
 
             <form id="wellness-form" class="wellness-form">
               <div class="form-date-selector u-margin-bottom-24">
-                <label for="wellness-date" class="u-text-body-sm u-font-weight-600 u-margin-bottom-8">
+                <label
+                  for="wellness-date"
+                  class="u-text-body-sm u-font-weight-600 u-margin-bottom-8"
+                >
                   Date
                 </label>
                 <input
@@ -177,7 +221,9 @@
                     class="wellness-slider"
                     data-metric="sleep"
                   />
-                  <div class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary">
+                  <div
+                    class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary"
+                  >
                     <span>Poor</span>
                     <span>Excellent</span>
                   </div>
@@ -188,7 +234,9 @@
                   <label for="energy" class="metric-label">
                     <i data-lucide="zap" class="icon-16"></i>
                     Energy Level
-                    <span class="metric-value-display" id="energy-value">5</span>
+                    <span class="metric-value-display" id="energy-value"
+                      >5</span
+                    >
                   </label>
                   <input
                     type="range"
@@ -200,7 +248,9 @@
                     class="wellness-slider"
                     data-metric="energy"
                   />
-                  <div class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary">
+                  <div
+                    class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary"
+                  >
                     <span>Low</span>
                     <span>High</span>
                   </div>
@@ -211,7 +261,9 @@
                   <label for="stress" class="metric-label">
                     <i data-lucide="brain" class="icon-16"></i>
                     Stress Level
-                    <span class="metric-value-display" id="stress-value">5</span>
+                    <span class="metric-value-display" id="stress-value"
+                      >5</span
+                    >
                   </label>
                   <input
                     type="range"
@@ -223,7 +275,9 @@
                     class="wellness-slider"
                     data-metric="stress"
                   />
-                  <div class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary">
+                  <div
+                    class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary"
+                  >
                     <span>Low</span>
                     <span>High</span>
                   </div>
@@ -234,7 +288,9 @@
                   <label for="soreness" class="metric-label">
                     <i data-lucide="activity" class="icon-16"></i>
                     Muscle Soreness
-                    <span class="metric-value-display" id="soreness-value">5</span>
+                    <span class="metric-value-display" id="soreness-value"
+                      >5</span
+                    >
                   </label>
                   <input
                     type="range"
@@ -246,7 +302,9 @@
                     class="wellness-slider"
                     data-metric="soreness"
                   />
-                  <div class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary">
+                  <div
+                    class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary"
+                  >
                     <span>None</span>
                     <span>Very Sore</span>
                   </div>
@@ -257,7 +315,9 @@
                   <label for="motivation" class="metric-label">
                     <i data-lucide="target" class="icon-16"></i>
                     Motivation
-                    <span class="metric-value-display" id="motivation-value">5</span>
+                    <span class="metric-value-display" id="motivation-value"
+                      >5</span
+                    >
                   </label>
                   <input
                     type="range"
@@ -269,7 +329,9 @@
                     class="wellness-slider"
                     data-metric="motivation"
                   />
-                  <div class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary">
+                  <div
+                    class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary"
+                  >
                     <span>Low</span>
                     <span>High</span>
                   </div>
@@ -292,7 +354,9 @@
                     class="wellness-slider"
                     data-metric="mood"
                   />
-                  <div class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary">
+                  <div
+                    class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary"
+                  >
                     <span>Poor</span>
                     <span>Great</span>
                   </div>
@@ -303,7 +367,9 @@
                   <label for="hydration" class="metric-label">
                     <i data-lucide="droplets" class="icon-16"></i>
                     Hydration
-                    <span class="metric-value-display" id="hydration-value">5</span>
+                    <span class="metric-value-display" id="hydration-value"
+                      >5</span
+                    >
                   </label>
                   <input
                     type="range"
@@ -315,7 +381,9 @@
                     class="wellness-slider"
                     data-metric="hydration"
                   />
-                  <div class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary">
+                  <div
+                    class="metric-labels u-display-flex u-justify-between u-text-body-xs u-text-secondary"
+                  >
                     <span>Low</span>
                     <span>Optimal</span>
                   </div>
@@ -323,7 +391,10 @@
               </div>
 
               <div class="form-notes u-margin-top-24">
-                <label for="notes" class="u-text-body-sm u-font-weight-600 u-margin-bottom-8">
+                <label
+                  for="notes"
+                  class="u-text-body-sm u-font-weight-600 u-margin-bottom-8"
+                >
                   Notes (optional)
                 </label>
                 <textarea
@@ -358,7 +429,10 @@
         </div>
 
         <!-- Wellness Metrics Grid -->
-        <div class="wellness-grid u-display-grid u-gap-24 u-margin-bottom-64" id="wellness-metrics-grid">
+        <div
+          class="wellness-grid u-display-grid u-gap-24 u-margin-bottom-64"
+          id="wellness-metrics-grid"
+        >
           <!-- Recovery Score -->
           <div class="wellness-card u-radius-xl u-padding-24 u-shadow-sm">
             <div
@@ -430,8 +504,12 @@
                 style="width: 0%; background: var(--color-primary)"
               ></div>
             </div>
-            <p class="u-text-body-sm u-text-secondary" id="readiness-score-text">
-              <span id="readiness-level">--</span> • <span id="readiness-suggestion">--</span>
+            <p
+              class="u-text-body-sm u-text-secondary"
+              id="readiness-score-text"
+            >
+              <span id="readiness-level">--</span> •
+              <span id="readiness-suggestion">--</span>
             </p>
             <button
               class="btn btn-sm btn-tertiary u-margin-top-8"
@@ -449,12 +527,19 @@
 
         <!-- Wellness Trends Chart -->
         <div class="wellness-charts-section u-margin-bottom-64">
-          <div class="wellness-chart-card u-radius-xl u-padding-24 u-shadow-sm u-bg-primary">
-            <h2 class="section-title text-heading-xl text-primary space-relaxed">
+          <div
+            class="wellness-chart-card u-radius-xl u-padding-24 u-shadow-sm u-bg-primary"
+          >
+            <h2
+              class="section-title text-heading-xl text-primary space-relaxed"
+            >
               <i data-lucide="trending-up" class="icon-20 icon-inline"></i>
               Wellness Trends (Last 30 Days)
             </h2>
-            <div class="chart-container" style="position: relative; height: 400px;">
+            <div
+              class="chart-container"
+              style="position: relative; height: 400px"
+            >
               <canvas id="wellness-trends-chart"></canvas>
             </div>
           </div>
@@ -462,8 +547,12 @@
 
         <!-- Historical Entries -->
         <div class="wellness-history-section u-margin-bottom-64">
-          <div class="wellness-history-card u-radius-xl u-padding-24 u-shadow-sm u-bg-primary">
-            <div class="u-display-flex u-justify-between u-align-center u-margin-bottom-24">
+          <div
+            class="wellness-history-card u-radius-xl u-padding-24 u-shadow-sm u-bg-primary"
+          >
+            <div
+              class="u-display-flex u-justify-between u-align-center u-margin-bottom-24"
+            >
               <h2 class="section-title text-heading-xl text-primary">
                 <i data-lucide="history" class="icon-20 icon-inline"></i>
                 Recent Entries
@@ -478,7 +567,9 @@
             <div id="wellness-history-list" class="wellness-history-list">
               <div class="wellness-loading u-text-center u-padding-24">
                 <i data-lucide="loader-2" class="icon-24 icon-spin"></i>
-                <p class="u-text-body-sm u-text-secondary u-margin-top-12">Loading wellness history...</p>
+                <p class="u-text-body-sm u-text-secondary u-margin-top-12">
+                  Loading wellness history...
+                </p>
               </div>
             </div>
           </div>
@@ -650,14 +741,14 @@
       function setButtonLoading(button, loadingText) {
         if (!button) return;
         button.disabled = true;
-        button.textContent = '';
-        const icon = document.createElement('i');
-        icon.setAttribute('data-lucide', 'loader-2');
-        icon.className = 'icon-16 icon-spin';
-        const text = document.createTextNode(` ${loadingText || 'Loading...'}`);
+        button.textContent = "";
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", "loader-2");
+        icon.className = "icon-16 icon-spin";
+        const text = document.createTextNode(` ${loadingText || "Loading..."}`);
         button.appendChild(icon);
         button.appendChild(text);
-        if (typeof lucide !== 'undefined') lucide.createIcons(button);
+        if (typeof lucide !== "undefined") lucide.createIcons(button);
       }
 
       /**
@@ -665,14 +756,14 @@
        */
       function setButtonSuccess(button, successText) {
         if (!button) return;
-        button.textContent = '';
-        const icon = document.createElement('i');
-        icon.setAttribute('data-lucide', 'check');
-        icon.className = 'icon-16';
-        const text = document.createTextNode(` ${successText || 'Saved!'}`);
+        button.textContent = "";
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", "check");
+        icon.className = "icon-16";
+        const text = document.createTextNode(` ${successText || "Saved!"}`);
         button.appendChild(icon);
         button.appendChild(text);
-        if (typeof lucide !== 'undefined') lucide.createIcons(button);
+        if (typeof lucide !== "undefined") lucide.createIcons(button);
       }
 
       /**
@@ -680,14 +771,14 @@
        */
       function setButtonError(button, errorText) {
         if (!button) return;
-        button.textContent = '';
-        const icon = document.createElement('i');
-        icon.setAttribute('data-lucide', 'x');
-        icon.className = 'icon-16';
-        const text = document.createTextNode(` ${errorText || 'Error'}`);
+        button.textContent = "";
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", "x");
+        icon.className = "icon-16";
+        const text = document.createTextNode(` ${errorText || "Error"}`);
         button.appendChild(icon);
         button.appendChild(text);
-        if (typeof lucide !== 'undefined') lucide.createIcons(button);
+        if (typeof lucide !== "undefined") lucide.createIcons(button);
       }
 
       /**
@@ -696,29 +787,29 @@
       function restoreButton(button, originalHTML) {
         if (!button) return;
         button.disabled = false;
-        if (originalHTML && originalHTML.includes('<i')) {
-          const temp = document.createElement('div');
+        if (originalHTML && originalHTML.includes("<i")) {
+          const temp = document.createElement("div");
           temp.innerHTML = originalHTML;
-          button.textContent = '';
+          button.textContent = "";
           while (temp.firstChild) {
             button.appendChild(temp.firstChild);
           }
-          if (typeof lucide !== 'undefined') lucide.createIcons(button);
+          if (typeof lucide !== "undefined") lucide.createIcons(button);
         } else {
-          button.textContent = originalHTML || '';
+          button.textContent = originalHTML || "";
         }
       }
 
       /**
        * Helper: Safely set score value with HTML span
        */
-      function setScoreValue(elementId, score, suffix = '/100') {
+      function setScoreValue(elementId, score, suffix = "/100") {
         const element = document.getElementById(elementId);
         if (!element) return;
-        element.textContent = '';
+        element.textContent = "";
         const scoreText = document.createTextNode(String(score));
-        const span = document.createElement('span');
-        span.className = 'u-text-body-lg u-text-secondary';
+        const span = document.createElement("span");
+        span.className = "u-text-body-lg u-text-secondary";
         span.textContent = suffix;
         element.appendChild(scoreText);
         element.appendChild(span);
@@ -728,61 +819,70 @@
        * Helper: Create wellness metric card element
        */
       function createMetricCard(metric, latest, summary) {
-        const value = metric.value !== null && metric.value !== undefined ? metric.value : '--';
-        const percentage = metric.value !== null && metric.value !== undefined ? (metric.value / 10 * 100) : 0;
-        
-        const card = document.createElement('div');
-        card.className = 'wellness-card u-radius-xl u-padding-24 u-shadow-sm';
-        
-        const header = document.createElement('div');
-        header.className = 'card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16';
-        
-        const title = document.createElement('h3');
-        title.className = 'card-title text-heading-lg text-primary';
+        const value =
+          metric.value !== null && metric.value !== undefined
+            ? metric.value
+            : "--";
+        const percentage =
+          metric.value !== null && metric.value !== undefined
+            ? (metric.value / 10) * 100
+            : 0;
+
+        const card = document.createElement("div");
+        card.className = "wellness-card u-radius-xl u-padding-24 u-shadow-sm";
+
+        const header = document.createElement("div");
+        header.className =
+          "card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16";
+
+        const title = document.createElement("h3");
+        title.className = "card-title text-heading-lg text-primary";
         title.textContent = metric.label;
-        
-        const iconDiv = document.createElement('div');
-        iconDiv.className = 'wellness-icon';
+
+        const iconDiv = document.createElement("div");
+        iconDiv.className = "wellness-icon";
         iconDiv.style.cssText = `background: var(--color-${metric.color}-subtle); color: var(--color-${metric.color});`;
-        const icon = document.createElement('i');
-        icon.setAttribute('data-lucide', metric.icon);
-        icon.className = 'icon-20';
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", metric.icon);
+        icon.className = "icon-20";
         iconDiv.appendChild(icon);
-        
+
         header.appendChild(title);
         header.appendChild(iconDiv);
-        
-        const valueDiv = document.createElement('div');
-        valueDiv.className = 'wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8';
+
+        const valueDiv = document.createElement("div");
+        valueDiv.className =
+          "wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8";
         const valueText = document.createTextNode(String(value));
-        const unitSpan = document.createElement('span');
-        unitSpan.className = 'u-text-body-lg u-text-secondary';
+        const unitSpan = document.createElement("span");
+        unitSpan.className = "u-text-body-lg u-text-secondary";
         unitSpan.textContent = metric.unit;
         valueDiv.appendChild(valueText);
         valueDiv.appendChild(unitSpan);
-        
-        const progressContainer = document.createElement('div');
-        progressContainer.className = 'wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8';
-        const progressBar = document.createElement('div');
-        progressBar.className = 'u-height-full u-radius-sm';
+
+        const progressContainer = document.createElement("div");
+        progressContainer.className =
+          "wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8";
+        const progressBar = document.createElement("div");
+        progressBar.className = "u-height-full u-radius-sm";
         progressBar.style.cssText = `width: ${percentage}%; background: var(--color-${metric.color})`;
         progressContainer.appendChild(progressBar);
-        
-        const description = document.createElement('p');
-        description.className = 'u-text-body-sm u-text-secondary';
+
+        const description = document.createElement("p");
+        description.className = "u-text-body-sm u-text-secondary";
         if (latest) {
           description.textContent = "Today's entry";
         } else if (summary.count > 0) {
           description.textContent = `30-day average (${summary.count} entries)`;
         } else {
-          description.textContent = 'No data available';
+          description.textContent = "No data available";
         }
-        
+
         card.appendChild(header);
         card.appendChild(valueDiv);
         card.appendChild(progressContainer);
         card.appendChild(description);
-        
+
         return card;
       }
 
@@ -792,35 +892,40 @@
       function createHistoryItem(entry, wellnessService) {
         const date = new Date(entry.date);
         const recoveryScore = wellnessService.calculateRecoveryScore(entry);
-        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        
-        const item = document.createElement('div');
-        item.className = 'wellness-history-item u-padding-16 u-radius-lg u-border-secondary u-margin-bottom-12';
-        item.setAttribute('data-date', entry.date);
-        item.style.cursor = 'pointer';
-        
-        const content = document.createElement('div');
-        content.className = 'u-display-flex u-justify-between u-align-center';
-        
-        const left = document.createElement('div');
-        const dateDiv = document.createElement('div');
-        dateDiv.className = 'u-text-heading-sm u-font-weight-600';
+        const dateStr = date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        const item = document.createElement("div");
+        item.className =
+          "wellness-history-item u-padding-16 u-radius-lg u-border-secondary u-margin-bottom-12";
+        item.setAttribute("data-date", entry.date);
+        item.style.cursor = "pointer";
+
+        const content = document.createElement("div");
+        content.className = "u-display-flex u-justify-between u-align-center";
+
+        const left = document.createElement("div");
+        const dateDiv = document.createElement("div");
+        dateDiv.className = "u-text-heading-sm u-font-weight-600";
         dateDiv.textContent = dateStr;
-        const details = document.createElement('div');
-        details.className = 'u-text-body-xs u-text-secondary u-margin-top-4';
-        details.textContent = `Sleep: ${entry.sleep ?? '--'} | Energy: ${entry.energy ?? '--'} | Stress: ${entry.stress ?? '--'} | Soreness: ${entry.soreness ?? '--'}`;
+        const details = document.createElement("div");
+        details.className = "u-text-body-xs u-text-secondary u-margin-top-4";
+        details.textContent = `Sleep: ${entry.sleep ?? "--"} | Energy: ${entry.energy ?? "--"} | Stress: ${entry.stress ?? "--"} | Soreness: ${entry.soreness ?? "--"}`;
         left.appendChild(dateDiv);
         left.appendChild(details);
-        
-        const right = document.createElement('div');
-        right.className = 'u-text-heading-md u-font-weight-700';
-        right.style.color = 'var(--color-success)';
-        right.textContent = String(recoveryScore ?? '--');
-        
+
+        const right = document.createElement("div");
+        right.className = "u-text-heading-md u-font-weight-700";
+        right.style.color = "var(--color-success)";
+        right.textContent = String(recoveryScore ?? "--");
+
         content.appendChild(left);
         content.appendChild(right);
         item.appendChild(content);
-        
+
         return item;
       }
 
@@ -828,14 +933,14 @@
        * Helper: Create loading state element
        */
       function createLoadingState() {
-        const div = document.createElement('div');
-        div.className = 'wellness-loading u-text-center u-padding-24';
-        const icon = document.createElement('i');
-        icon.setAttribute('data-lucide', 'loader-2');
-        icon.className = 'icon-24 icon-spin';
-        const p = document.createElement('p');
-        p.className = 'u-text-body-sm u-text-secondary u-margin-top-12';
-        p.textContent = 'Loading...';
+        const div = document.createElement("div");
+        div.className = "wellness-loading u-text-center u-padding-24";
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", "loader-2");
+        icon.className = "icon-24 icon-spin";
+        const p = document.createElement("p");
+        p.className = "u-text-body-sm u-text-secondary u-margin-top-12";
+        p.textContent = "Loading...";
         div.appendChild(icon);
         div.appendChild(p);
         return div;
@@ -844,15 +949,17 @@
       /**
        * Helper: Create empty state element
        */
-      function createEmptyState(message = 'No wellness entries found for this period') {
-        const div = document.createElement('div');
-        div.className = 'wellness-empty u-text-center u-padding-24';
-        const icon = document.createElement('i');
-        icon.setAttribute('data-lucide', 'inbox');
-        icon.className = 'icon-32';
-        icon.style.color = 'var(--color-secondary)';
-        const p = document.createElement('p');
-        p.className = 'u-text-body-sm u-text-secondary u-margin-top-12';
+      function createEmptyState(
+        message = "No wellness entries found for this period",
+      ) {
+        const div = document.createElement("div");
+        div.className = "wellness-empty u-text-center u-padding-24";
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", "inbox");
+        icon.className = "icon-32";
+        icon.style.color = "var(--color-secondary)";
+        const p = document.createElement("p");
+        p.className = "u-text-body-sm u-text-secondary u-margin-top-12";
         p.textContent = message;
         div.appendChild(icon);
         div.appendChild(p);
@@ -862,15 +969,15 @@
       /**
        * Helper: Create error state element
        */
-      function createErrorState(message = 'Error loading wellness history') {
-        const div = document.createElement('div');
-        div.className = 'wellness-error u-text-center u-padding-24';
-        const icon = document.createElement('i');
-        icon.setAttribute('data-lucide', 'alert-circle');
-        icon.className = 'icon-32';
-        icon.style.color = 'var(--color-error)';
-        const p = document.createElement('p');
-        p.className = 'u-text-body-sm u-text-secondary u-margin-top-12';
+      function createErrorState(message = "Error loading wellness history") {
+        const div = document.createElement("div");
+        div.className = "wellness-error u-text-center u-padding-24";
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", "alert-circle");
+        icon.className = "icon-32";
+        icon.style.color = "var(--color-error)";
+        const p = document.createElement("p");
+        p.className = "u-text-body-sm u-text-secondary u-margin-top-12";
         p.textContent = message;
         div.appendChild(icon);
         div.appendChild(p);
@@ -878,19 +985,22 @@
       }
 
       // Check authentication - wait for initialization first
-      authManager.waitForInit().then(() => {
-        if (!authManager.isAuthenticated()) {
+      authManager
+        .waitForInit()
+        .then(() => {
+          if (!authManager.isAuthenticated()) {
+            window.location.href = "/login.html";
+          }
+        })
+        .catch((error) => {
+          logger.error("Auth check failed:", error);
           window.location.href = "/login.html";
-        }
-      }).catch((error) => {
-        logger.error("Auth check failed:", error);
-        window.location.href = "/login.html";
-      });
+        });
 
       // Wellness Page Controller
       class WellnessPage {
         constructor() {
-          this.currentDate = new Date().toISOString().split('T')[0];
+          this.currentDate = new Date().toISOString().split("T")[0];
           this.wellnessChart = null;
           this.init();
         }
@@ -908,17 +1018,19 @@
         async waitForDependencies() {
           // Wait for Chart.js
           let attempts = 0;
-          while (typeof Chart === 'undefined' && attempts < 50) {
-            await new Promise(resolve => setTimeout(resolve, 100));
+          while (typeof Chart === "undefined" && attempts < 50) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
             attempts++;
           }
-          if (typeof Chart === 'undefined') {
-            logger.warn('[Wellness] Chart.js not loaded, charts will be disabled');
+          if (typeof Chart === "undefined") {
+            logger.warn(
+              "[Wellness] Chart.js not loaded, charts will be disabled",
+            );
           }
         }
 
         setDefaultDate() {
-          const dateInput = document.getElementById('wellness-date');
+          const dateInput = document.getElementById("wellness-date");
           if (dateInput) {
             dateInput.value = this.currentDate;
             dateInput.max = this.currentDate; // Can't select future dates
@@ -927,23 +1039,23 @@
 
         setupEventListeners() {
           // Form submission
-          const form = document.getElementById('wellness-form');
+          const form = document.getElementById("wellness-form");
           if (form) {
-            form.addEventListener('submit', (e) => this.handleSubmit(e));
+            form.addEventListener("submit", (e) => this.handleSubmit(e));
           }
 
           // Load entry button
-          const loadBtn = document.getElementById('wellness-load-btn');
+          const loadBtn = document.getElementById("wellness-load-btn");
           if (loadBtn) {
-            loadBtn.addEventListener('click', () => {
-              const dateInput = document.getElementById('wellness-date');
+            loadBtn.addEventListener("click", () => {
+              const dateInput = document.getElementById("wellness-date");
               this.loadEntryForDate(dateInput.value);
             });
           }
 
           // Slider value updates
-          document.querySelectorAll('.wellness-slider').forEach(slider => {
-            slider.addEventListener('input', (e) => {
+          document.querySelectorAll(".wellness-slider").forEach((slider) => {
+            slider.addEventListener("input", (e) => {
               const metric = e.target.dataset.metric;
               const valueDisplay = document.getElementById(`${metric}-value`);
               if (valueDisplay) {
@@ -953,17 +1065,17 @@
           });
 
           // Date change
-          const dateInput = document.getElementById('wellness-date');
+          const dateInput = document.getElementById("wellness-date");
           if (dateInput) {
-            dateInput.addEventListener('change', () => {
+            dateInput.addEventListener("change", () => {
               this.loadEntryForDate(dateInput.value);
             });
           }
 
           // History timeframe change
-          const timeframeSelect = document.getElementById('history-timeframe');
+          const timeframeSelect = document.getElementById("history-timeframe");
           if (timeframeSelect) {
-            timeframeSelect.addEventListener('change', () => {
+            timeframeSelect.addEventListener("change", () => {
               this.loadWellnessHistory();
             });
           }
@@ -971,65 +1083,63 @@
 
         async handleSubmit(e) {
           e.preventDefault();
-          const submitBtn = document.getElementById('wellness-submit-btn');
+          const submitBtn = document.getElementById("wellness-submit-btn");
           const originalText = submitBtn.innerHTML;
-          
+
           try {
-            setButtonLoading(submitBtn, 'Saving...');
+            setButtonLoading(submitBtn, "Saving...");
 
             const formData = new FormData(e.target);
             const wellnessData = {
-              date: formData.get('date'),
-              sleep: parseInt(formData.get('sleep')) || null,
-              energy: parseInt(formData.get('energy')) || null,
-              stress: parseInt(formData.get('stress')) || null,
-              soreness: parseInt(formData.get('soreness')) || null,
-              motivation: parseInt(formData.get('motivation')) || null,
-              mood: parseInt(formData.get('mood')) || null,
-              hydration: parseInt(formData.get('hydration')) || null,
-              notes: formData.get('notes') || null,
+              date: formData.get("date"),
+              sleep: parseInt(formData.get("sleep")) || null,
+              energy: parseInt(formData.get("energy")) || null,
+              stress: parseInt(formData.get("stress")) || null,
+              soreness: parseInt(formData.get("soreness")) || null,
+              motivation: parseInt(formData.get("motivation")) || null,
+              mood: parseInt(formData.get("mood")) || null,
+              hydration: parseInt(formData.get("hydration")) || null,
+              notes: formData.get("notes") || null,
             };
 
             await wellnessService.saveWellnessData(wellnessData);
-            
-            setButtonSuccess(submitBtn, 'Saved!');
-            submitBtn.style.background = 'var(--color-success)';
-            
+
+            setButtonSuccess(submitBtn, "Saved!");
+            submitBtn.style.background = "var(--color-success)";
+
             // Reload data
             await this.loadWellnessData();
             await this.loadWellnessHistory();
             await this.updateStreak();
             this.updateCharts();
-            
+
             // Trigger wellness submitted event for notifications
             document.dispatchEvent(
-              new CustomEvent('wellnessSubmitted', {
+              new CustomEvent("wellnessSubmitted", {
                 detail: { entry: wellnessData, date: wellnessData.date },
               }),
             );
 
             setTimeout(() => {
               restoreButton(submitBtn, originalText);
-              submitBtn.style.background = '';
+              submitBtn.style.background = "";
             }, 2000);
-
           } catch (error) {
-            logger.error('[Wellness] Error saving data:', error);
-            setButtonError(submitBtn, 'Error');
-            submitBtn.style.background = 'var(--color-error)';
+            logger.error("[Wellness] Error saving data:", error);
+            setButtonError(submitBtn, "Error");
+            submitBtn.style.background = "var(--color-error)";
             setTimeout(() => {
               restoreButton(submitBtn, originalText);
-              submitBtn.style.background = '';
+              submitBtn.style.background = "";
             }, 2000);
           }
         }
-
 
         async loadWellnessData() {
           try {
             const latest = await wellnessService.getLatestWellness();
             const summary = await wellnessService.getWellnessSummary(30);
-            
+
             // Update recovery score
             let recoveryScore = null;
             if (latest) {
@@ -1048,92 +1158,102 @@
             }
 
             if (recoveryScore !== null) {
-              setScoreValue('recovery-score-value', recoveryScore);
-              document.getElementById('recovery-progress').style.width = `${recoveryScore}%`;
-              
-              let statusText = '';
-              let statusColor = 'var(--color-success)';
+              setScoreValue("recovery-score-value", recoveryScore);
+              document.getElementById("recovery-progress").style.width =
+                `${recoveryScore}%`;
+
+              let statusText = "";
+              let statusColor = "var(--color-success)";
               if (recoveryScore >= 80) {
-                statusText = 'Excellent recovery state';
-                statusColor = 'var(--color-success)';
+                statusText = "Excellent recovery state";
+                statusColor = "var(--color-success)";
               } else if (recoveryScore >= 60) {
-                statusText = 'Good recovery state';
-                statusColor = 'var(--color-primary)';
+                statusText = "Good recovery state";
+                statusColor = "var(--color-primary)";
               } else if (recoveryScore >= 40) {
-                statusText = 'Moderate recovery - consider rest';
-                statusColor = 'var(--color-warning)';
+                statusText = "Moderate recovery - consider rest";
+                statusColor = "var(--color-warning)";
               } else {
-                statusText = 'Low recovery - rest recommended';
-                statusColor = 'var(--color-error)';
+                statusText = "Low recovery - rest recommended";
+                statusColor = "var(--color-error)";
               }
-              
-              document.getElementById('recovery-score-text').textContent = statusText;
-              document.getElementById('recovery-progress').style.background = statusColor;
+
+              document.getElementById("recovery-score-text").textContent =
+                statusText;
+              document.getElementById("recovery-progress").style.background =
+                statusColor;
             }
 
             // Update today's metrics
             this.updateTodayMetrics(latest, summary);
-            
+
             // Load readiness score
             await this.loadReadinessScore();
-            
           } catch (error) {
-            logger.error('[Wellness] Error loading wellness data:', error);
+            logger.error("[Wellness] Error loading wellness data:", error);
           }
         }
 
         async loadReadinessScore() {
           try {
-            const refreshBtn = document.getElementById('refresh-readiness-btn');
+            const refreshBtn = document.getElementById("refresh-readiness-btn");
             if (refreshBtn) {
-              setButtonLoading(refreshBtn, 'Loading...');
+              setButtonLoading(refreshBtn, "Loading...");
             }
 
-            const readinessData = await wellnessService.calculateReadinessScore();
-            
+            const readinessData =
+              await wellnessService.calculateReadinessScore();
+
             if (readinessData && readinessData.score !== undefined) {
               const score = readinessData.score;
-              const level = readinessData.level || 'moderate';
-              const suggestion = readinessData.suggestion || 'maintain';
+              const level = readinessData.level || "moderate";
+              const suggestion = readinessData.suggestion || "maintain";
 
-              setScoreValue('readiness-score-value', score);
-              document.getElementById('readiness-progress').style.width = `${score}%`;
-              
+              setScoreValue("readiness-score-value", score);
+              document.getElementById("readiness-progress").style.width =
+                `${score}%`;
+
               // Set color based on level
-              let statusColor = 'var(--color-primary)';
-              if (level === 'high') {
-                statusColor = 'var(--color-success)';
-              } else if (level === 'low') {
-                statusColor = 'var(--color-error)';
+              let statusColor = "var(--color-primary)";
+              if (level === "high") {
+                statusColor = "var(--color-success)";
+              } else if (level === "low") {
+                statusColor = "var(--color-error)";
               } else {
-                statusColor = 'var(--color-warning)';
+                statusColor = "var(--color-warning)";
               }
-              
-              document.getElementById('readiness-progress').style.background = statusColor;
-              
+
+              document.getElementById("readiness-progress").style.background =
+                statusColor;
+
               // Format level and suggestion
               const levelText = level.charAt(0).toUpperCase() + level.slice(1);
-              const suggestionText = suggestion.charAt(0).toUpperCase() + suggestion.slice(1);
-              
-              document.getElementById('readiness-level').textContent = levelText;
-              document.getElementById('readiness-suggestion').textContent = suggestionText;
-              
+              const suggestionText =
+                suggestion.charAt(0).toUpperCase() + suggestion.slice(1);
+
+              document.getElementById("readiness-level").textContent =
+                levelText;
+              document.getElementById("readiness-suggestion").textContent =
+                suggestionText;
+
               // Add component scores if available
               if (readinessData.componentScores) {
-                const componentText = `Workload: ${readinessData.componentScores.workload || '--'}, Wellness: ${readinessData.componentScores.wellness || '--'}, Sleep: ${readinessData.componentScores.sleep || '--'}`;
-                const readinessTextEl = document.getElementById('readiness-score-text');
+                const componentText = `Workload: ${readinessData.componentScores.workload || "--"}, Wellness: ${readinessData.componentScores.wellness || "--"}, Sleep: ${readinessData.componentScores.sleep || "--"}`;
+                const readinessTextEl = document.getElementById(
+                  "readiness-score-text",
+                );
                 if (readinessTextEl) {
-                  readinessTextEl.textContent = '';
-                  const levelSpan = document.createElement('span');
-                  levelSpan.id = 'readiness-level';
+                  readinessTextEl.textContent = "";
+                  const levelSpan = document.createElement("span");
+                  levelSpan.id = "readiness-level";
                   levelSpan.textContent = levelText;
-                  const separator = document.createTextNode(' • ');
-                  const suggestionSpan = document.createElement('span');
-                  suggestionSpan.id = 'readiness-suggestion';
+                  const separator = document.createTextNode(" • ");
+                  const suggestionSpan = document.createElement("span");
+                  suggestionSpan.id = "readiness-suggestion";
                   suggestionSpan.textContent = suggestionText;
-                  const br = document.createElement('br');
-                  const componentSpan = document.createElement('span');
-                  componentSpan.className = 'u-text-body-xs u-text-secondary';
+                  const br = document.createElement("br");
+                  const componentSpan = document.createElement("span");
+                  componentSpan.className = "u-text-body-xs u-text-secondary";
                   componentSpan.textContent = componentText;
                   readinessTextEl.appendChild(levelSpan);
                   readinessTextEl.appendChild(separator);
@@ -1143,37 +1263,72 @@
                 }
               }
             } else {
-              setScoreValue('readiness-score-value', '--');
-              document.getElementById('readiness-progress').style.width = '0%';
-              document.getElementById('readiness-level').textContent = '--';
-              document.getElementById('readiness-suggestion').textContent = '--';
+              setScoreValue("readiness-score-value", "--");
+              document.getElementById("readiness-progress").style.width = "0%";
+              document.getElementById("readiness-level").textContent = "--";
+              document.getElementById("readiness-suggestion").textContent =
+                "--";
             }
 
             if (refreshBtn) {
-              restoreButton(refreshBtn, '<i data-lucide="refresh-cw" class="icon-16"></i> Refresh');
+              restoreButton(
+                refreshBtn,
+                '<i data-lucide="refresh-cw" class="icon-16"></i> Refresh',
+              );
             }
           } catch (error) {
-            logger.error('[Wellness] Error loading readiness score:', error);
-            const refreshBtn = document.getElementById('refresh-readiness-btn');
+            logger.error("[Wellness] Error loading readiness score:", error);
+            const refreshBtn = document.getElementById("refresh-readiness-btn");
             if (refreshBtn) {
-              restoreButton(refreshBtn, '<i data-lucide="refresh-cw" class="icon-16"></i> Refresh');
+              restoreButton(
+                refreshBtn,
+                '<i data-lucide="refresh-cw" class="icon-16"></i> Refresh',
+              );
             }
           }
         }
 
         updateTodayMetrics(latest, summary) {
-          const container = document.getElementById('today-metrics-container');
+          const container = document.getElementById("today-metrics-container");
           if (!container) return;
 
           const metrics = [
-            { key: 'sleep', label: 'Sleep Quality', icon: 'moon', color: 'primary', value: latest?.sleep || summary.avgSleep, unit: '/10' },
-            { key: 'energy', label: 'Energy Level', icon: 'zap', color: 'success', value: latest?.energy || summary.avgEnergy, unit: '/10' },
-            { key: 'stress', label: 'Stress Level', icon: 'brain', color: 'warning', value: latest?.stress || summary.avgStress, unit: '/10' },
-            { key: 'hydration', label: 'Hydration', icon: 'droplets', color: 'info', value: latest?.hydration || summary.avgHydration, unit: '/10' },
+            {
+              key: "sleep",
+              label: "Sleep Quality",
+              icon: "moon",
+              color: "primary",
+              value: latest?.sleep || summary.avgSleep,
+              unit: "/10",
+            },
+            {
+              key: "energy",
+              label: "Energy Level",
+              icon: "zap",
+              color: "success",
+              value: latest?.energy || summary.avgEnergy,
+              unit: "/10",
+            },
+            {
+              key: "stress",
+              label: "Stress Level",
+              icon: "brain",
+              color: "warning",
+              value: latest?.stress || summary.avgStress,
+              unit: "/10",
+            },
+            {
+              key: "hydration",
+              label: "Hydration",
+              icon: "droplets",
+              color: "info",
+              value: latest?.hydration || summary.avgHydration,
+              unit: "/10",
+            },
           ];
 
-          container.textContent = '';
-          metrics.forEach(metric => {
+          container.textContent = "";
+          metrics.forEach((metric) => {
             const card = createMetricCard(metric, latest, summary);
             container.appendChild(card);
           });
@@ -1185,69 +1340,73 @@
         }
 
         async loadWellnessHistory() {
-          const timeframe = parseInt(document.getElementById('history-timeframe')?.value || '30');
-          const endDate = new Date().toISOString().split('T')[0];
+          const timeframe = parseInt(
+            document.getElementById("history-timeframe")?.value || "30",
+          );
+          const endDate = new Date().toISOString().split("T")[0];
           const startDate = new Date();
           startDate.setDate(startDate.getDate() - timeframe);
-          const startDateStr = startDate.toISOString().split('T')[0];
+          const startDateStr = startDate.toISOString().split("T")[0];
 
-          const list = document.getElementById('wellness-history-list');
+          const list = document.getElementById("wellness-history-list");
           if (!list) return;
 
-          list.textContent = '';
+          list.textContent = "";
           list.appendChild(createLoadingState());
-          if (typeof lucide !== 'undefined') lucide.createIcons(list);
+          if (typeof lucide !== "undefined") lucide.createIcons(list);
 
           try {
-            const history = await wellnessService.getWellnessHistory(startDateStr, endDate);
-            
-            list.textContent = '';
-            
+            const history = await wellnessService.getWellnessHistory(
+              startDateStr,
+              endDate,
+            );
+
+            list.textContent = "";
+
             if (history.length === 0) {
               list.appendChild(createEmptyState());
-              if (typeof lucide !== 'undefined') lucide.createIcons(list);
+              if (typeof lucide !== "undefined") lucide.createIcons(list);
               return;
             }
 
-            history.forEach(entry => {
+            history.forEach((entry) => {
               const item = createHistoryItem(entry, wellnessService);
               list.appendChild(item);
             });
 
             // Add click handlers to history items
-            list.querySelectorAll('.wellness-history-item').forEach(item => {
-              item.addEventListener('click', () => {
+            list.querySelectorAll(".wellness-history-item").forEach((item) => {
+              item.addEventListener("click", () => {
                 const date = item.dataset.date;
                 if (date) {
-                  document.getElementById('wellness-date').value = date;
+                  document.getElementById("wellness-date").value = date;
                   this.loadEntryForDate();
                 }
               });
             });
-
           } catch (error) {
-            logger.error('[Wellness] Error loading history:', error);
-            list.textContent = '';
+            logger.error("[Wellness] Error loading history:", error);
+            list.textContent = "";
             list.appendChild(createErrorState());
-            if (typeof lucide !== 'undefined') lucide.createIcons(list);
+            if (typeof lucide !== "undefined") lucide.createIcons(list);
           }
         }
 
         async updateStreak() {
           try {
             const streak = await wellnessService.getWellnessStreak();
-            const streakEl = document.getElementById('wellness-streak');
+            const streakEl = document.getElementById("wellness-streak");
             if (streakEl) {
-              streakEl.textContent = `${streak} day${streak !== 1 ? 's' : ''} streak`;
+              streakEl.textContent = `${streak} day${streak !== 1 ? "s" : ""} streak`;
             }
           } catch (error) {
-            logger.error('[Wellness] Error updating streak:', error);
+            logger.error("[Wellness] Error updating streak:", error);
           }
         }
 
         setupCharts() {
-          if (typeof Chart === 'undefined') {
-            logger.warn('[Wellness] Chart.js not available, skipping charts');
+          if (typeof Chart === "undefined") {
+            logger.warn("[Wellness] Chart.js not available, skipping charts");
             return;
           }
 
@@ -1255,60 +1414,68 @@
         }
 
         async updateCharts() {
-          if (typeof Chart === 'undefined') return;
+          if (typeof Chart === "undefined") return;
 
-          const canvas = document.getElementById('wellness-trends-chart');
+          const canvas = document.getElementById("wellness-trends-chart");
           if (!canvas) return;
 
           try {
-            const endDate = new Date().toISOString().split('T')[0];
+            const endDate = new Date().toISOString().split("T")[0];
             const startDate = new Date();
             startDate.setDate(startDate.getDate() - 30);
-            const startDateStr = startDate.toISOString().split('T')[0];
+            const startDateStr = startDate.toISOString().split("T")[0];
 
-            const history = await wellnessService.getWellnessHistory(startDateStr, endDate);
+            const history = await wellnessService.getWellnessHistory(
+              startDateStr,
+              endDate,
+            );
 
             if (history.length === 0) {
               if (this.wellnessChart) {
                 this.wellnessChart.destroy();
               }
               const parent = canvas.parentElement;
-              parent.textContent = '';
-              const noDataDiv = document.createElement('div');
-              noDataDiv.className = 'u-text-center u-padding-24';
-              const noDataP = document.createElement('p');
-              noDataP.className = 'u-text-body-sm u-text-secondary';
-              noDataP.textContent = 'No data available for chart';
+              parent.textContent = "";
+              const noDataDiv = document.createElement("div");
+              noDataDiv.className = "u-text-center u-padding-24";
+              const noDataP = document.createElement("p");
+              noDataP.className = "u-text-body-sm u-text-secondary";
+              noDataP.textContent = "No data available for chart";
               noDataDiv.appendChild(noDataP);
               parent.appendChild(noDataDiv);
               return;
             }
 
-            const labels = history.map(entry => {
-              const date = new Date(entry.date);
-              return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            }).reverse();
+            const labels = history
+              .map((entry) => {
+                const date = new Date(entry.date);
+                return date.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                });
+              })
+              .reverse();
 
             const datasets = [
               {
-                label: 'Sleep',
-                data: history.map(e => e.sleep).reverse(),
-                borderColor: 'rgb(59, 130, 246)',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                label: "Sleep",
+                data: history.map((e) => e.sleep).reverse(),
+                borderColor: "rgb(59, 130, 246)",
+                backgroundColor: "rgba(59, 130, 246, 0.1)",
                 tension: 0.4,
               },
               {
-                label: 'Energy',
-                data: history.map(e => e.energy).reverse(),
-                borderColor: 'rgb(16, 201, 107)',
-                backgroundColor: 'rgba(16, 201, 107, 0.1)',
+                label: "Energy",
+                data: history.map((e) => e.energy).reverse(),
+                borderColor: "rgb(16, 201, 107)",
+                backgroundColor: "rgba(16, 201, 107, 0.1)",
                 tension: 0.4,
               },
               {
-                label: 'Stress',
-                data: history.map(e => e.stress).reverse(),
-                borderColor: 'rgb(239, 68, 68)',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                label: "Stress",
+                data: history.map((e) => e.stress).reverse(),
+                borderColor: "rgb(239, 68, 68)",
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
                 tension: 0.4,
               },
             ];
@@ -1318,17 +1485,17 @@
             }
 
             this.wellnessChart = new Chart(canvas, {
-              type: 'line',
+              type: "line",
               data: { labels, datasets },
               options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                   legend: {
-                    position: 'top',
+                    position: "top",
                   },
                   tooltip: {
-                    mode: 'index',
+                    mode: "index",
                     intersect: false,
                   },
                 },
@@ -1341,48 +1508,58 @@
               },
             });
           } catch (error) {
-            logger.error('[Wellness] Error updating charts:', error);
+            logger.error("[Wellness] Error updating charts:", error);
           }
         }
 
         async loadEntryForDate(date) {
-          const dateInput = document.getElementById('wellness-date');
+          const dateInput = document.getElementById("wellness-date");
           if (date) {
             dateInput.value = date;
           }
           const selectedDate = dateInput.value;
-          
+
           try {
             const entry = await wellnessService.getWellnessData(selectedDate);
-            
+
             if (entry) {
               // Populate form
-              document.getElementById('sleep').value = entry.sleep || 5;
-              document.getElementById('sleep-value').textContent = entry.sleep || 5;
-              document.getElementById('energy').value = entry.energy || 5;
-              document.getElementById('energy-value').textContent = entry.energy || 5;
-              document.getElementById('stress').value = entry.stress || 5;
-              document.getElementById('stress-value').textContent = entry.stress || 5;
-              document.getElementById('soreness').value = entry.soreness || 5;
-              document.getElementById('soreness-value').textContent = entry.soreness || 5;
-              document.getElementById('motivation').value = entry.motivation || 5;
-              document.getElementById('motivation-value').textContent = entry.motivation || 5;
-              document.getElementById('mood').value = entry.mood || 5;
-              document.getElementById('mood-value').textContent = entry.mood || 5;
-              document.getElementById('hydration').value = entry.hydration || 5;
-              document.getElementById('hydration-value').textContent = entry.hydration || 5;
-              document.getElementById('notes').value = entry.notes || '';
+              document.getElementById("sleep").value = entry.sleep || 5;
+              document.getElementById("sleep-value").textContent =
+                entry.sleep || 5;
+              document.getElementById("energy").value = entry.energy || 5;
+              document.getElementById("energy-value").textContent =
+                entry.energy || 5;
+              document.getElementById("stress").value = entry.stress || 5;
+              document.getElementById("stress-value").textContent =
+                entry.stress || 5;
+              document.getElementById("soreness").value = entry.soreness || 5;
+              document.getElementById("soreness-value").textContent =
+                entry.soreness || 5;
+              document.getElementById("motivation").value =
+                entry.motivation || 5;
+              document.getElementById("motivation-value").textContent =
+                entry.motivation || 5;
+              document.getElementById("mood").value = entry.mood || 5;
+              document.getElementById("mood-value").textContent =
+                entry.mood || 5;
+              document.getElementById("hydration").value = entry.hydration || 5;
+              document.getElementById("hydration-value").textContent =
+                entry.hydration || 5;
+              document.getElementById("notes").value = entry.notes || "";
             } else {
               // Reset to defaults
-              document.querySelectorAll('.wellness-slider').forEach(slider => {
-                slider.value = 5;
-                const metric = slider.dataset.metric;
-                document.getElementById(`${metric}-value`).textContent = '5';
-              });
-              document.getElementById('notes').value = '';
+              document
+                .querySelectorAll(".wellness-slider")
+                .forEach((slider) => {
+                  slider.value = 5;
+                  const metric = slider.dataset.metric;
+                  document.getElementById(`${metric}-value`).textContent = "5";
+                });
+              document.getElementById("notes").value = "";
             }
           } catch (error) {
-            logger.error('[Wellness] Error loading entry:', error);
+            logger.error("[Wellness] Error loading entry:", error);
           }
         }
       }
@@ -1414,7 +1591,7 @@
       logger.info("Wellness page initialized");
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

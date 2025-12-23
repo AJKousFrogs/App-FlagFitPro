@@ -1,6 +1,6 @@
 /**
  * Integration Tests: Notification Flow
- * 
+ *
  * Tests the complete notification flow including:
  * - Loading notifications
  * - Marking as read (single, bulk, all)
@@ -41,7 +41,7 @@ describe("Notification Flow Integration Tests", () => {
       }
 
       notify() {
-        this.listeners.forEach(cb => cb(this.getState()));
+        this.listeners.forEach((cb) => cb(this.getState()));
       }
 
       getState() {
@@ -59,15 +59,18 @@ describe("Notification Flow Integration Tests", () => {
       }
 
       calculateUnreadCount() {
-        return this.notifications.filter(n => !n.read).length;
+        return this.notifications.filter((n) => !n.read).length;
       }
 
       async loadNotifications(options = {}) {
         this.setState({ loading: true, error: null });
 
         try {
-          const response = await mockApiClient.get("/api/dashboard/notifications", options);
-          
+          const response = await mockApiClient.get(
+            "/api/dashboard/notifications",
+            options,
+          );
+
           let notifications = [];
           if (response && response.success && response.data) {
             if (Array.isArray(response.data)) {
@@ -77,7 +80,7 @@ describe("Notification Flow Integration Tests", () => {
             }
           }
 
-          const unreadCount = notifications.filter(n => !n.read).length;
+          const unreadCount = notifications.filter((n) => !n.read).length;
 
           this.setState({
             notifications,
@@ -97,7 +100,9 @@ describe("Notification Flow Integration Tests", () => {
       }
 
       async markOneRead(id) {
-        const notification = this.notifications.find(n => String(n.id) === String(id));
+        const notification = this.notifications.find(
+          (n) => String(n.id) === String(id),
+        );
         if (!notification || notification.read) {
           return;
         }
@@ -110,12 +115,17 @@ describe("Notification Flow Integration Tests", () => {
         this.notify();
 
         try {
-          const response = await mockApiClient.post("/api/dashboard/notifications", {
-            notificationId: String(id),
-          });
+          const response = await mockApiClient.post(
+            "/api/dashboard/notifications",
+            {
+              notificationId: String(id),
+            },
+          );
 
           if (!response || response.success === false) {
-            throw new Error(response?.error || "Failed to mark notification as read");
+            throw new Error(
+              response?.error || "Failed to mark notification as read",
+            );
           }
 
           this.notify();
@@ -131,25 +141,32 @@ describe("Notification Flow Integration Tests", () => {
       }
 
       async markAllRead() {
-        const unreadNotifications = this.notifications.filter(n => !n.read);
+        const unreadNotifications = this.notifications.filter((n) => !n.read);
         if (unreadNotifications.length === 0) {
           return;
         }
 
         // Optimistic update
-        const previousState = this.notifications.map(n => ({ ...n }));
-        this.notifications.forEach(n => { n.read = true; });
+        const previousState = this.notifications.map((n) => ({ ...n }));
+        this.notifications.forEach((n) => {
+          n.read = true;
+        });
         const previousUnreadCount = this.unreadCount;
         this.unreadCount = 0;
         this.notify();
 
         try {
-          const response = await mockApiClient.post("/api/dashboard/notifications", {
-            notificationId: "all",
-          });
+          const response = await mockApiClient.post(
+            "/api/dashboard/notifications",
+            {
+              notificationId: "all",
+            },
+          );
 
           if (!response || response.success === false) {
-            throw new Error(response?.error || "Failed to mark all notifications as read");
+            throw new Error(
+              response?.error || "Failed to mark all notifications as read",
+            );
           }
 
           this.notify();
@@ -166,12 +183,14 @@ describe("Notification Flow Integration Tests", () => {
 
       async refreshBadge() {
         try {
-          const response = await mockApiClient.get("/api/dashboard/notifications/count");
-          
+          const response = await mockApiClient.get(
+            "/api/dashboard/notifications/count",
+          );
+
           let count = 0;
           if (response && response.success !== false && response.data) {
             count = response.data.unreadCount || response.data.count || 0;
-          } else if (typeof response === 'number') {
+          } else if (typeof response === "number") {
             count = response;
           } else if (response.unreadCount !== undefined) {
             count = response.unreadCount;
@@ -224,7 +243,7 @@ describe("Notification Flow Integration Tests", () => {
       });
 
       const promise = notificationStore.loadNotifications();
-      
+
       // Check loading is true during request
       expect(loadingState).toBe(true);
       expect(notificationStore.loading).toBe(true);
@@ -244,7 +263,9 @@ describe("Notification Flow Integration Tests", () => {
     it("should handle API errors gracefully", async () => {
       mockApiClient.get.mockRejectedValueOnce(new Error("Network error"));
 
-      await expect(notificationStore.loadNotifications()).rejects.toThrow("Network error");
+      await expect(notificationStore.loadNotifications()).rejects.toThrow(
+        "Network error",
+      );
       expect(notificationStore.loading).toBe(false);
       expect(notificationStore.error).toBe("Network error");
     });
@@ -254,9 +275,7 @@ describe("Notification Flow Integration Tests", () => {
       mockApiClient.get.mockResolvedValueOnce({
         success: true,
         data: {
-          notifications: [
-            { id: "1", message: "Test", read: false },
-          ],
+          notifications: [{ id: "1", message: "Test", read: false }],
         },
       });
 
@@ -284,7 +303,7 @@ describe("Notification Flow Integration Tests", () => {
       expect(notificationStore.unreadCount).toBe(1);
       expect(mockApiClient.post).toHaveBeenCalledWith(
         "/api/dashboard/notifications",
-        { notificationId: "1" }
+        { notificationId: "1" },
       );
     });
 
@@ -296,7 +315,9 @@ describe("Notification Flow Integration Tests", () => {
 
       expect(notificationStore.notifications[0].read).toBe(false);
       expect(notificationStore.unreadCount).toBe(initialUnreadCount);
-      expect(notificationStore.error).toBe("Couldn't mark as read, please retry.");
+      expect(notificationStore.error).toBe(
+        "Couldn't mark as read, please retry.",
+      );
     });
 
     it("should mark all notifications as read", async () => {
@@ -304,16 +325,18 @@ describe("Notification Flow Integration Tests", () => {
 
       await notificationStore.markAllRead();
 
-      expect(notificationStore.notifications.every(n => n.read)).toBe(true);
+      expect(notificationStore.notifications.every((n) => n.read)).toBe(true);
       expect(notificationStore.unreadCount).toBe(0);
       expect(mockApiClient.post).toHaveBeenCalledWith(
         "/api/dashboard/notifications",
-        { notificationId: "all" }
+        { notificationId: "all" },
       );
     });
 
     it("should revert optimistic update when mark all fails", async () => {
-      const initialNotifications = notificationStore.notifications.map(n => ({ ...n }));
+      const initialNotifications = notificationStore.notifications.map((n) => ({
+        ...n,
+      }));
       const initialUnreadCount = notificationStore.unreadCount;
 
       mockApiClient.post.mockRejectedValueOnce(new Error("API error"));
@@ -331,7 +354,9 @@ describe("Notification Flow Integration Tests", () => {
     });
 
     it("should not mark all if already all read", async () => {
-      notificationStore.notifications.forEach(n => { n.read = true; });
+      notificationStore.notifications.forEach((n) => {
+        n.read = true;
+      });
       notificationStore.unreadCount = 0;
 
       await notificationStore.markAllRead();
@@ -391,7 +416,7 @@ describe("Notification Flow Integration Tests", () => {
       notificationStore.setState({ unreadCount: 5 });
 
       expect(callback).toHaveBeenCalledWith(
-        expect.objectContaining({ unreadCount: 5 })
+        expect.objectContaining({ unreadCount: 5 }),
       );
     });
 
@@ -469,7 +494,7 @@ describe("Notification Flow Integration Tests", () => {
       await notificationStore.markOneRead("2");
 
       expect(notificationStore.unreadCount).toBe(0);
-      expect(notificationStore.notifications.every(n => n.read)).toBe(true);
+      expect(notificationStore.notifications.every((n) => n.read)).toBe(true);
     });
   });
 
@@ -506,4 +531,3 @@ describe("Notification Flow Integration Tests", () => {
     });
   });
 });
-

@@ -3,9 +3,9 @@
  * Handles all wellness data operations with Supabase
  */
 
-import { getSupabase } from './supabase-client.js';
-import { logger } from '../../logger.js';
-import { authManager } from '../../auth-manager.js';
+import { getSupabase } from "./supabase-client.js";
+import { logger } from "../../logger.js";
+import { authManager } from "../../auth-manager.js";
 
 export class WellnessService {
   constructor() {
@@ -18,7 +18,7 @@ export class WellnessService {
     if (!this.supabase) {
       this.supabase = getSupabase();
       if (!this.supabase) {
-        logger.error('[Wellness] Failed to initialize Supabase client');
+        logger.error("[Wellness] Failed to initialize Supabase client");
         return false;
       }
     }
@@ -32,7 +32,7 @@ export class WellnessService {
     await authManager.waitForInit();
     const user = authManager.getCurrentUser();
     if (!user) {
-      throw new Error('User not authenticated');
+      throw new Error("User not authenticated");
     }
     return user.id || user.email;
   }
@@ -43,7 +43,7 @@ export class WellnessService {
   mapToWellnessLogs(data, userId) {
     // Convert user_id to UUID format if needed (wellness_logs uses athlete_id UUID)
     const athleteId = userId; // Assume it's already a UUID or will be converted by Supabase
-    
+
     return {
       athlete_id: athleteId,
       log_date: data.date,
@@ -61,8 +61,10 @@ export class WellnessService {
    * Convert wellness_logs format back to wellness_data format for compatibility
    */
   mapFromWellnessLogs(data) {
-    if (!data) {return null;}
-    
+    if (!data) {
+      return null;
+    }
+
     return {
       id: data.id,
       user_id: data.athlete_id,
@@ -85,57 +87,64 @@ export class WellnessService {
    */
   async saveWellnessData(data) {
     if (!(await this.init())) {
-      throw new Error('Wellness service not initialized');
+      throw new Error("Wellness service not initialized");
     }
 
     const userId = await this.getUserId();
-    const date = data.date || new Date().toISOString().split('T')[0];
+    const date = data.date || new Date().toISOString().split("T")[0];
 
     // Map to wellness_logs format
-    const wellnessEntry = this.mapToWellnessLogs({
-      date: date,
-      sleep: data.sleep ?? null,
-      energy: data.energy ?? null,
-      stress: data.stress ?? null,
-      soreness: data.soreness ?? null,
-      motivation: data.motivation ?? null,
-      mood: data.mood ?? null,
-      hydration: data.hydration ?? null,
-    }, userId);
+    const wellnessEntry = this.mapToWellnessLogs(
+      {
+        date: date,
+        sleep: data.sleep ?? null,
+        energy: data.energy ?? null,
+        stress: data.stress ?? null,
+        soreness: data.soreness ?? null,
+        motivation: data.motivation ?? null,
+        mood: data.mood ?? null,
+        hydration: data.hydration ?? null,
+      },
+      userId,
+    );
 
     try {
       // Check if entry exists for this date
       const { data: existing } = await this.supabase
-        .from('wellness_logs')
-        .select('id')
-        .eq('athlete_id', userId)
-        .eq('log_date', date)
+        .from("wellness_logs")
+        .select("id")
+        .eq("athlete_id", userId)
+        .eq("log_date", date)
         .single();
 
       let result;
       if (existing) {
         // Update existing entry
         const { data, error } = await this.supabase
-          .from('wellness_logs')
+          .from("wellness_logs")
           .update(wellnessEntry)
-          .eq('id', existing.id)
+          .eq("id", existing.id)
           .select()
           .single();
 
-        if (error) {throw error;}
+        if (error) {
+          throw error;
+        }
         result = this.mapFromWellnessLogs(data);
-        logger.success('[Wellness] Updated wellness entry for', date);
+        logger.success("[Wellness] Updated wellness entry for", date);
       } else {
         // Insert new entry
         const { data, error } = await this.supabase
-          .from('wellness_logs')
+          .from("wellness_logs")
           .insert(wellnessEntry)
           .select()
           .single();
 
-        if (error) {throw error;}
+        if (error) {
+          throw error;
+        }
         result = this.mapFromWellnessLogs(data);
-        logger.success('[Wellness] Created wellness entry for', date);
+        logger.success("[Wellness] Created wellness entry for", date);
       }
 
       // Clear cache
@@ -143,14 +152,14 @@ export class WellnessService {
 
       // Dispatch event
       document.dispatchEvent(
-        new CustomEvent('wellnessSubmitted', {
+        new CustomEvent("wellnessSubmitted", {
           detail: { entry: result, date },
         }),
       );
 
       return result;
     } catch (error) {
-      logger.error('[Wellness] Error saving wellness data:', error);
+      logger.error("[Wellness] Error saving wellness data:", error);
       throw error;
     }
   }
@@ -176,13 +185,13 @@ export class WellnessService {
 
     try {
       const { data, error } = await this.supabase
-        .from('wellness_logs')
-        .select('*')
-        .eq('athlete_id', userId)
-        .eq('log_date', date)
+        .from("wellness_logs")
+        .select("*")
+        .eq("athlete_id", userId)
+        .eq("log_date", date)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error && error.code !== "PGRST116") {
         // PGRST116 = no rows returned, which is fine
         throw error;
       }
@@ -197,7 +206,7 @@ export class WellnessService {
 
       return result;
     } catch (error) {
-      logger.error('[Wellness] Error fetching wellness data:', error);
+      logger.error("[Wellness] Error fetching wellness data:", error);
       return null;
     }
   }
@@ -223,17 +232,21 @@ export class WellnessService {
 
     try {
       const { data, error } = await this.supabase
-        .from('wellness_logs')
-        .select('*')
-        .eq('athlete_id', userId)
-        .gte('log_date', startDate)
-        .lte('log_date', endDate)
-        .order('log_date', { ascending: false });
+        .from("wellness_logs")
+        .select("*")
+        .eq("athlete_id", userId)
+        .gte("log_date", startDate)
+        .lte("log_date", endDate)
+        .order("log_date", { ascending: false });
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
 
       // Map results back to wellness_data format
-      const mappedData = (data || []).map(entry => this.mapFromWellnessLogs(entry));
+      const mappedData = (data || []).map((entry) =>
+        this.mapFromWellnessLogs(entry),
+      );
 
       // Cache result
       this.cache.set(cacheKey, {
@@ -243,7 +256,7 @@ export class WellnessService {
 
       return mappedData;
     } catch (error) {
-      logger.error('[Wellness] Error fetching wellness history:', error);
+      logger.error("[Wellness] Error fetching wellness history:", error);
       return [];
     }
   }
@@ -252,10 +265,10 @@ export class WellnessService {
    * Get wellness summary (averages) for a date range
    */
   async getWellnessSummary(days = 30) {
-    const endDate = new Date().toISOString().split('T')[0];
+    const endDate = new Date().toISOString().split("T")[0];
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
-    const startDateStr = startDate.toISOString().split('T')[0];
+    const startDateStr = startDate.toISOString().split("T")[0];
 
     const history = await this.getWellnessHistory(startDateStr, endDate);
 
@@ -272,7 +285,15 @@ export class WellnessService {
       };
     }
 
-    const metrics = ['sleep', 'energy', 'stress', 'soreness', 'motivation', 'mood', 'hydration'];
+    const metrics = [
+      "sleep",
+      "energy",
+      "stress",
+      "soreness",
+      "motivation",
+      "mood",
+      "hydration",
+    ];
     const summary = { count: history.length };
 
     metrics.forEach((metric) => {
@@ -281,7 +302,9 @@ export class WellnessService {
         .filter((val) => val !== null && val !== undefined);
       summary[`avg${metric.charAt(0).toUpperCase() + metric.slice(1)}`] =
         values.length > 0
-          ? Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 10) / 10
+          ? Math.round(
+              (values.reduce((a, b) => a + b, 0) / values.length) * 10,
+            ) / 10
           : null;
     });
 
@@ -292,7 +315,9 @@ export class WellnessService {
    * Calculate recovery score from wellness data
    */
   calculateRecoveryScore(data) {
-    if (!data) {return null;}
+    if (!data) {
+      return null;
+    }
 
     const metrics = {
       sleep: data.sleep || 5,
@@ -344,14 +369,14 @@ export class WellnessService {
 
     try {
       const { data, error } = await this.supabase
-        .from('wellness_logs')
-        .select('*')
-        .eq('athlete_id', userId)
-        .order('log_date', { ascending: false })
+        .from("wellness_logs")
+        .select("*")
+        .eq("athlete_id", userId)
+        .order("log_date", { ascending: false })
         .limit(1)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error && error.code !== "PGRST116") {
         throw error;
       }
 
@@ -365,7 +390,7 @@ export class WellnessService {
 
       return result;
     } catch (error) {
-      logger.error('[Wellness] Error fetching latest wellness:', error);
+      logger.error("[Wellness] Error fetching latest wellness:", error);
       return null;
     }
   }
@@ -375,14 +400,20 @@ export class WellnessService {
    */
   async getWellnessStreak() {
     const history = await this.getWellnessHistory(
-      new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      new Date().toISOString().split('T')[0],
+      new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      new Date().toISOString().split("T")[0],
     );
 
-    if (history.length === 0) {return 0;}
+    if (history.length === 0) {
+      return 0;
+    }
 
     // Sort by date descending (date field is mapped from log_date)
-    const sorted = history.sort((a, b) => new Date(b.date || b.log_date) - new Date(a.date || a.log_date));
+    const sorted = history.sort(
+      (a, b) => new Date(b.date || b.log_date) - new Date(a.date || a.log_date),
+    );
 
     let streak = 0;
     const today = new Date();
@@ -410,8 +441,8 @@ export class WellnessService {
   async calculateReadinessScore(date = null) {
     try {
       const userId = await this.getUserId();
-      const { API_ENDPOINTS } = await import('../../api-config.js');
-      const { apiClient } = await import('../../api-config.js');
+      const { API_ENDPOINTS } = await import("../../api-config.js");
+      const { apiClient } = await import("../../api-config.js");
 
       const endpoint = API_ENDPOINTS.readiness.calculate;
       const requestData = {
@@ -423,15 +454,18 @@ export class WellnessService {
       }
 
       const response = await apiClient.post(endpoint, requestData);
-      
+
       if (response.error) {
-        logger.warn('[Wellness] Readiness score calculation failed:', response.error);
+        logger.warn(
+          "[Wellness] Readiness score calculation failed:",
+          response.error,
+        );
         return null;
       }
 
       return response.data || response;
     } catch (error) {
-      logger.error('[Wellness] Error calculating readiness score:', error);
+      logger.error("[Wellness] Error calculating readiness score:", error);
       return null;
     }
   }
@@ -442,8 +476,8 @@ export class WellnessService {
   async getReadinessHistory(days = 30) {
     try {
       const userId = await this.getUserId();
-      const { API_ENDPOINTS } = await import('../../api-config.js');
-      const { apiClient } = await import('../../api-config.js');
+      const { API_ENDPOINTS } = await import("../../api-config.js");
+      const { apiClient } = await import("../../api-config.js");
 
       const endpoint = API_ENDPOINTS.readiness.history;
       const response = await apiClient.get(endpoint, {
@@ -452,13 +486,16 @@ export class WellnessService {
       });
 
       if (response.error) {
-        logger.warn('[Wellness] Readiness history fetch failed:', response.error);
+        logger.warn(
+          "[Wellness] Readiness history fetch failed:",
+          response.error,
+        );
         return [];
       }
 
       return response.data || response || [];
     } catch (error) {
-      logger.error('[Wellness] Error fetching readiness history:', error);
+      logger.error("[Wellness] Error fetching readiness history:", error);
       return [];
     }
   }
@@ -466,4 +503,3 @@ export class WellnessService {
 
 // Create singleton instance
 export const wellnessService = new WellnessService();
-

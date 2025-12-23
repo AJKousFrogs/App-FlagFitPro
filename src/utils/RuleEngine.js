@@ -8,8 +8,8 @@ import {
   CALORIE_MATCH_RATINGS,
   COLOR_SCHEMES,
   CORRELATION_LEVELS,
-  SCORE_LEVELS
-} from '../config/thresholds';
+  SCORE_LEVELS,
+} from "../config/thresholds";
 
 /**
  * Base Rule Evaluator
@@ -24,8 +24,8 @@ class RuleEvaluator {
    */
   static evaluate(rules, value) {
     return rules
-      .filter(rule => rule.condition(value))
-      .flatMap(rule => rule.impacts || [rule]);
+      .filter((rule) => rule.condition(value))
+      .flatMap((rule) => rule.impacts || [rule]);
   }
 
   /**
@@ -35,7 +35,7 @@ class RuleEvaluator {
    * @returns {Object|null} First matching rule or null
    */
   static findFirst(rules, value) {
-    return rules.find(rule => rule.condition(value)) || null;
+    return rules.find((rule) => rule.condition(value)) || null;
   }
 }
 
@@ -49,7 +49,7 @@ export class WeatherImpactCalculator {
       temperature: this.evaluateTemperature.bind(this),
       wind: this.evaluateWind.bind(this),
       humidity: this.evaluateHumidity.bind(this),
-      precipitation: this.evaluatePrecipitation.bind(this)
+      precipitation: this.evaluatePrecipitation.bind(this),
     };
   }
 
@@ -64,12 +64,14 @@ export class WeatherImpactCalculator {
       running: 0,
       endurance: 0,
       performance: 0,
-      injuryRisk: 'Low',
-      recommendations: []
+      injuryRisk: "Low",
+      recommendations: [],
     };
 
     // Early return guard clause
-    if (!weather) {return impact;}
+    if (!weather) {
+      return impact;
+    }
 
     // Apply each strategy
     Object.entries(this.impactStrategies).forEach(([key, strategy]) => {
@@ -85,10 +87,10 @@ export class WeatherImpactCalculator {
   evaluateTemperature(weather, impact) {
     const matches = RuleEvaluator.evaluate(
       WEATHER_IMPACT_RULES.temperature,
-      weather.temp
+      weather.temp,
     );
 
-    matches.forEach(match => {
+    matches.forEach((match) => {
       this.applyImpact(impact, match);
     });
   }
@@ -96,10 +98,10 @@ export class WeatherImpactCalculator {
   evaluateWind(weather, impact) {
     const matches = RuleEvaluator.evaluate(
       WEATHER_IMPACT_RULES.wind,
-      weather.windSpeed
+      weather.windSpeed,
     );
 
-    matches.forEach(match => {
+    matches.forEach((match) => {
       this.applyImpact(impact, match);
     });
   }
@@ -107,10 +109,10 @@ export class WeatherImpactCalculator {
   evaluateHumidity(weather, impact) {
     const matches = RuleEvaluator.evaluate(
       WEATHER_IMPACT_RULES.humidity,
-      weather.humidity
+      weather.humidity,
     );
 
-    matches.forEach(match => {
+    matches.forEach((match) => {
       this.applyImpact(impact, match);
     });
   }
@@ -118,19 +120,19 @@ export class WeatherImpactCalculator {
   evaluatePrecipitation(weather, impact) {
     const matches = RuleEvaluator.evaluate(
       WEATHER_IMPACT_RULES.precipitation,
-      weather.conditions
+      weather.conditions,
     );
 
-    matches.forEach(match => {
+    matches.forEach((match) => {
       this.applyImpact(impact, match);
     });
   }
 
   applyImpact(impact, match) {
     Object.entries(match).forEach(([key, value]) => {
-      if (key === 'recommendations') {
+      if (key === "recommendations") {
         impact.recommendations.push(...value);
-      } else if (typeof value === 'number') {
+      } else if (typeof value === "number") {
         impact[key] = (impact[key] || 0) + value;
       } else {
         impact[key] = value;
@@ -140,13 +142,21 @@ export class WeatherImpactCalculator {
 
   calculateRiskLevel(weather) {
     const score = WEATHER_IMPACT_RULES.riskFactors
-      .filter(factor => factor.condition(weather.temp || weather.windSpeed || weather.conditions))
+      .filter((factor) =>
+        factor.condition(
+          weather.temp || weather.windSpeed || weather.conditions,
+        ),
+      )
       .reduce((sum, factor) => sum + factor.score, 0);
 
     // Guard clauses for risk level
-    if (score >= 5) {return 'High';}
-    if (score >= 3) {return 'Medium';}
-    return 'Low';
+    if (score >= 5) {
+      return "High";
+    }
+    if (score >= 3) {
+      return "Medium";
+    }
+    return "Low";
   }
 }
 
@@ -166,15 +176,15 @@ export class TrainingRecommendationEngine {
     if (!TRAINING_RULES[muscleGroup]) {
       return {
         error: `Unknown muscle group: ${muscleGroup}`,
-        recommendations: []
+        recommendations: [],
       };
     }
 
     // Guard clause - validate strength
     if (strength < 0 || strength > 100) {
       return {
-        error: 'Strength must be between 0 and 100',
-        recommendations: []
+        error: "Strength must be between 0 and 100",
+        recommendations: [],
       };
     }
 
@@ -184,16 +194,16 @@ export class TrainingRecommendationEngine {
     // Guard clause - no matching rule
     if (!matchingRule) {
       return {
-        severity: 'unknown',
+        severity: "unknown",
         recommendations: [],
-        note: 'No recommendations available'
+        note: "No recommendations available",
       };
     }
 
     return {
       muscleGroup,
       currentStrength: strength,
-      ...matchingRule
+      ...matchingRule,
     };
   }
 
@@ -205,7 +215,7 @@ export class TrainingRecommendationEngine {
   static getComprehensivePlan(strengthProfile) {
     return Object.entries(strengthProfile).map(([muscle, strength]) => ({
       muscle,
-      ...this.getRecommendations(muscle, strength)
+      ...this.getRecommendations(muscle, strength),
     }));
   }
 }
@@ -223,7 +233,9 @@ export class Classifier {
    */
   static getColorByThreshold(value, thresholds) {
     // Guard clause for invalid input
-    if (value === null || value === undefined) {return '#9E9E9E';}
+    if (value === null || value === undefined) {
+      return "#9E9E9E";
+    }
 
     for (const threshold of thresholds) {
       if (value >= threshold.min) {
@@ -231,7 +243,7 @@ export class Classifier {
       }
     }
 
-    return '#9E9E9E'; // Default gray
+    return "#9E9E9E"; // Default gray
   }
 
   /**
@@ -242,7 +254,9 @@ export class Classifier {
    */
   static getLabelByThreshold(value, thresholds) {
     // Guard clause
-    if (value === null || value === undefined) {return 'Unknown';}
+    if (value === null || value === undefined) {
+      return "Unknown";
+    }
 
     for (const threshold of thresholds) {
       if (value >= threshold.min) {
@@ -250,7 +264,7 @@ export class Classifier {
       }
     }
 
-    return 'Unknown';
+    return "Unknown";
   }
 
   /**
@@ -266,15 +280,15 @@ export class Classifier {
         return {
           color: level.value,
           label: level.label,
-          score: riskScore
+          score: riskScore,
         };
       }
     }
 
     return {
-      color: '#9E9E9E',
-      label: 'Unknown',
-      score: riskScore
+      color: "#9E9E9E",
+      label: "Unknown",
+      score: riskScore,
     };
   }
 
@@ -285,9 +299,15 @@ export class Classifier {
    */
   static getChemistryLevel(score) {
     return {
-      color: this.getColorByThreshold(score, Object.values(COLOR_SCHEMES.chemistry)),
-      label: this.getLabelByThreshold(score, Object.values(COLOR_SCHEMES.chemistry)),
-      score
+      color: this.getColorByThreshold(
+        score,
+        Object.values(COLOR_SCHEMES.chemistry),
+      ),
+      label: this.getLabelByThreshold(
+        score,
+        Object.values(COLOR_SCHEMES.chemistry),
+      ),
+      score,
     };
   }
 
@@ -300,15 +320,21 @@ export class Classifier {
   static getCompletionLevel(current, target) {
     // Guard clause
     if (!target || target === 0) {
-      return { color: '#9E9E9E', label: 'Unknown', percentage: 0 };
+      return { color: "#9E9E9E", label: "Unknown", percentage: 0 };
     }
 
     const percentage = (current / target) * 100;
 
     return {
-      color: this.getColorByThreshold(percentage, Object.values(COLOR_SCHEMES.completion)),
-      label: this.getLabelByThreshold(percentage, Object.values(COLOR_SCHEMES.completion)),
-      percentage: Math.round(percentage)
+      color: this.getColorByThreshold(
+        percentage,
+        Object.values(COLOR_SCHEMES.completion),
+      ),
+      label: this.getLabelByThreshold(
+        percentage,
+        Object.values(COLOR_SCHEMES.completion),
+      ),
+      percentage: Math.round(percentage),
     };
   }
 
@@ -321,7 +347,7 @@ export class Classifier {
     return {
       color: this.getColorByThreshold(correlation, CORRELATION_LEVELS),
       label: this.getLabelByThreshold(correlation, CORRELATION_LEVELS),
-      value: correlation
+      value: correlation,
     };
   }
 
@@ -334,7 +360,7 @@ export class Classifier {
     return {
       color: this.getColorByThreshold(score, SCORE_LEVELS),
       label: this.getLabelByThreshold(score, SCORE_LEVELS),
-      score
+      score,
     };
   }
 }
@@ -352,7 +378,7 @@ export class ActivityLevelCalculator {
   static getActivityLevel(sessionsPerWeek) {
     // Guard clause for invalid input
     if (sessionsPerWeek < 0) {
-      return { multiplier: 1.0, label: 'Invalid', sessions: 0 };
+      return { multiplier: 1.0, label: "Invalid", sessions: 0 };
     }
 
     // Find first matching threshold using guard clause pattern
@@ -361,13 +387,13 @@ export class ActivityLevelCalculator {
         return {
           multiplier: level.multiplier,
           label: level.label,
-          sessions: sessionsPerWeek
+          sessions: sessionsPerWeek,
         };
       }
     }
 
     // Fallback
-    return { multiplier: 1.2, label: 'Sedentary', sessions: sessionsPerWeek };
+    return { multiplier: 1.2, label: "Sedentary", sessions: sessionsPerWeek };
   }
 }
 
@@ -385,11 +411,11 @@ export class CalorieMatchEvaluator {
   static evaluate(templateCalories, targetCalories) {
     // Guard clauses
     if (!templateCalories || !targetCalories) {
-      return { rating: 'Unknown', color: '#9E9E9E', difference: 0 };
+      return { rating: "Unknown", color: "#9E9E9E", difference: 0 };
     }
 
     if (targetCalories === 0) {
-      return { rating: 'Invalid Target', color: '#9E9E9E', difference: 0 };
+      return { rating: "Invalid Target", color: "#9E9E9E", difference: 0 };
     }
 
     const difference = Math.abs(templateCalories - targetCalories);
@@ -402,17 +428,17 @@ export class CalorieMatchEvaluator {
           rating: match.rating,
           color: match.color,
           difference: Math.round(difference),
-          percentage: Math.round(percentageDiff)
+          percentage: Math.round(percentageDiff),
         };
       }
     }
 
     // Fallback
     return {
-      rating: 'Poor match',
-      color: '#9E9E9E',
+      rating: "Poor match",
+      color: "#9E9E9E",
       difference: Math.round(difference),
-      percentage: Math.round(percentageDiff)
+      percentage: Math.round(percentageDiff),
     };
   }
 }
@@ -451,5 +477,5 @@ export default {
   Classifier,
   ActivityLevelCalculator,
   CalorieMatchEvaluator,
-  LookupHelper
+  LookupHelper,
 };

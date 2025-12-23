@@ -29,10 +29,12 @@
 ### 1. Duplicate `shared.js` Utility Files
 
 **Files:**
+
 - `src/utils/shared.js` (535 lines)
 - `src/js/utils/shared.js` (742 lines)
 
 **Issue**: Both files contain overlapping utility functions:
+
 - `getInitials()` - Duplicate implementation
 - `formatTime()` / `formatDateTime()` - Duplicate implementations
 - `validateEmail()` / `isValidEmail()` - Similar functionality, different names
@@ -42,17 +44,20 @@
 - `shuffleArray()` - Duplicate implementations
 - `formatNumber()` / `formatPercentage()` - Duplicate implementations
 
-**Impact**: 
+**Impact**:
+
 - Code confusion - developers may import from wrong file
 - Maintenance burden - changes need to be made in two places
 - Bundle size - both files may be included unnecessarily
 
-**Recommendation**: 
+**Recommendation**:
+
 - ✅ **`src/utils/shared.js` is COMPLETELY UNUSED** - No files import from it
 - ✅ All imports correctly use `src/js/utils/shared.js`
 - **ACTION**: Delete `src/utils/shared.js` immediately (dead code)
 
 **Files importing from `src/js/utils/shared.js`** (correct usage):
+
 - `src/js/pages/training-page.js`
 - `src/js/pages/dashboard-page.js`
 - `src/js/pages/settings-page.js`
@@ -67,18 +72,21 @@
 ### 2. ✅ Duplicate Supabase Client Files - **RESOLVED**
 
 **Files (before cleanup):**
+
 - ~~`src/js/utils/supabase-client.js`~~ - **REMOVED** (unused)
 - ~~`src/js/utils/supabase-client.cjs`~~ - **REMOVED** (unused)
 - `src/js/services/supabase-client.js` (377 lines) - Frontend/browser client ✅ **KEPT**
 - `netlify/functions/supabase-client.cjs` - Netlify Functions client ✅ **KEPT**
 
-**Resolution**: 
+**Resolution**:
+
 - ✅ Removed unused `src/js/utils/supabase-client.js` and `.cjs` files
 - ✅ Frontend uses `src/js/services/supabase-client.js` (correct)
 - ✅ Netlify functions use `netlify/functions/supabase-client.cjs` (correct)
 - No naming conflicts remaining
 
 **Files importing supabase-client** (all correct):
+
 - Frontend code imports from `src/js/services/supabase-client.js` ✅
 - Netlify functions import from `netlify/functions/supabase-client.cjs` ✅
 
@@ -87,18 +95,21 @@
 ### 3. ✅ Duplicate Database Migrations - **RESOLVED**
 
 **Files (before cleanup):**
+
 - ~~`supabase/migrations/20250122000000_drop_unused_indexes.sql`~~ - **REMOVED**
 - `database/migrations/049_drop_unused_indexes.sql` ✅ **KEPT** (primary system)
 - ~~`supabase/migrations/20251221130010_add_missing_foreign_key_indexes.sql`~~ - **REMOVED**
 - `database/migrations/050_add_missing_foreign_key_indexes.sql` ✅ **KEPT** (primary system)
 
-**Resolution**: 
+**Resolution**:
+
 - ✅ `database/migrations/` is the PRIMARY migration system (has execution scripts, plans)
 - ✅ `supabase/migrations/` contains Supabase CLI migrations (timestamped format)
 - ✅ Removed duplicate migrations from `supabase/migrations/`
 - ✅ Primary system (`database/migrations/`) preserved
 
-**Migration System**: 
+**Migration System**:
+
 - Primary: `database/migrations/` (numbered format, has execution scripts)
 - Secondary: `supabase/migrations/` (Supabase CLI timestamped format)
 - No conflicts remaining
@@ -124,7 +135,8 @@ function _isWithinTimeframe(date, timeframe) {
 }
 ```
 
-**Recommendation**: 
+**Recommendation**:
+
 - Remove if not planned for use
 - Or move to utility file if needed elsewhere
 
@@ -145,10 +157,12 @@ function _isWithinTimeframe(date, timeframe) {
 **File**: `angular/src/assets/styles/component-styles.scss`
 
 **Issue**: Marked as DEPRECATED with duplicate styles
+
 - Buttons and cards should use `standardized-components.scss`
 - File kept for forms, navigation, modals not yet migrated
 
-**Recommendation**: 
+**Recommendation**:
+
 - Complete migration of remaining components
 - Remove deprecated styles once migration complete
 
@@ -159,15 +173,18 @@ function _isWithinTimeframe(date, timeframe) {
 **File**: `src/unified-sidebar.html`
 
 **Issue**: Marked as DEPRECATED
+
 - Contains inline styles and embedded JavaScript
 - Should use `src/components/organisms/sidebar-navigation.html` instead
 
-**Status**: 
+**Status**:
+
 - Referenced in `src/page-template.html` as a template/reference
 - Actual sidebar code is inline in `page-template.html`
 - Not directly included in any HTML files
 
-**Recommendation**: 
+**Recommendation**:
+
 - Keep as reference template if developers use it
 - Or remove if `page-template.html` is sufficient
 
@@ -178,6 +195,7 @@ function _isWithinTimeframe(date, timeframe) {
 **Location**: `scripts/archive/legacy-neon-scripts/`
 
 **Files**:
+
 - `seedNFLPlayerDatabase.js` - Uses Neon client (project uses Supabase)
 - `seedEliteSprintTrainingDatabase.js` - Uses Neon client
 - `seedCompletePlayerSystem.js` - Uses Neon client
@@ -185,7 +203,8 @@ function _isWithinTimeframe(date, timeframe) {
 
 **Status**: Documented as archived/unused (see `CLEANUP_SUMMARY.md`)
 
-**Recommendation**: 
+**Recommendation**:
+
 - Keep archived if data may be useful
 - Consider updating to Supabase if needed
 - Document clearly that these are archived
@@ -197,10 +216,12 @@ function _isWithinTimeframe(date, timeframe) {
 ### 1. Unused Imports
 
 **Files importing from `src/utils/shared.js`** (need verification):
+
 - Need to check if these files actually use the imports
 - May have unused imports that can be removed
 
 **Files importing from `src/js/utils/shared.js`**:
+
 - `src/js/pages/training-page.js`
 - `src/js/pages/dashboard-page.js`
 - `src/js/pages/settings-page.js`
@@ -217,9 +238,11 @@ function _isWithinTimeframe(date, timeframe) {
 **File**: `scripts/migrate-to-unified-storage.js`
 
 **Issue**: References deprecated storage functions that were removed from `shared.js`
+
 - `saveToStorage`, `getFromStorage`, `removeFromStorage` - REMOVED
 
-**Recommendation**: 
+**Recommendation**:
+
 - Update script if still needed
 - Or remove if migration is complete
 
@@ -232,7 +255,7 @@ function _isWithinTimeframe(date, timeframe) {
   - ✅ Unused Supabase client files (`src/js/utils/supabase-client.js` and `.cjs` - **REMOVED**)
   - ✅ Duplicate migrations from `supabase/migrations/` (**REMOVED**)
 
-- **Dead Code**: 
+- **Dead Code**:
   - 2+ unused functions
   - 1+ deprecated example files
   - 1 deprecated stylesheet (partially)
@@ -313,4 +336,3 @@ grep -r "TODO\|FIXME\|DEPRECATED\|UNUSED" --include="*.js" --include="*.ts" src/
 - Deprecated files may be kept for reference during migration
 - Archived scripts contain valuable data but use outdated tech stack
 - Always verify files are not referenced before removing
-

@@ -9,7 +9,9 @@
 ## 🔴 CRITICAL DUPLICATIONS
 
 ### 1. Supabase Configuration Block (28 files)
+
 **Duplicated Code Pattern:**
+
 ```html
 <!-- Supabase JS SDK from CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -18,13 +20,15 @@
 <script>
   // Set Supabase config in window for production/development
   window._env = {
-    SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
+    SUPABASE_URL: "https://pvziciccwxgftcielknm.supabase.co",
+    SUPABASE_ANON_KEY:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU",
   };
 </script>
 ```
 
 **Affected Files:**
+
 - wellness.html
 - roster.html
 - settings.html
@@ -59,7 +63,9 @@
 ---
 
 ### 2. Standard HTML Head Section (30+ files)
+
 **Duplicated Code Pattern:**
+
 ```html
 <!doctype html>
 <html lang="en">
@@ -79,11 +85,14 @@
     />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
+  </head>
+</html>
 ```
 
 **Note:** A template exists at `src/components/templates/html-head-template.html` but is NOT being used consistently.
 
-**Recommendation:** 
+**Recommendation:**
+
 - Use the existing template via a build process or server-side includes
 - Or create a JavaScript function to inject the head section dynamically
 
@@ -94,22 +103,33 @@
 ### 3. Component Loader Scripts (20+ files each)
 
 #### 3a. Sidebar Loader (20 files)
+
 ```html
 <!-- Sidebar Loader (Dynamic Component) -->
-<script type="module" src="./src/js/components/sidebar-loader.js" defer></script>
+<script
+  type="module"
+  src="./src/js/components/sidebar-loader.js"
+  defer
+></script>
 ```
 
 **Affected Files:** wellness.html, roster.html, settings.html, community.html, qb-throwing-tracker.html, qb-training-schedule.html, qb-assessment-tools.html, tournaments.html, coach-dashboard.html, profile.html, analytics.html, training.html, dashboard.html, workout.html, performance-tracking.html, game-tracker.html, exercise-library.html, coach.html, chat.html
 
 #### 3b. Top Bar Loader (17 files)
+
 ```html
 <!-- Top Bar Loader (Dynamic Component) -->
-<script type="module" src="./src/js/components/top-bar-loader.js" defer></script>
+<script
+  type="module"
+  src="./src/js/components/top-bar-loader.js"
+  defer
+></script>
 ```
 
 **Affected Files:** wellness.html, roster.html, settings.html, community.html, qb-throwing-tracker.html, qb-assessment-tools.html, tournaments.html, profile.html, analytics.html, training.html, dashboard.html, workout.html, performance-tracking.html, game-tracker.html, exercise-library.html, coach.html
 
 #### 3c. Footer Loader (30 files)
+
 ```html
 <!-- Footer Loader (Dynamic Component) -->
 <script type="module" src="./src/js/components/footer-loader.js" defer></script>
@@ -124,6 +144,7 @@
 ### 4. Common Utility Scripts (30+ files each)
 
 #### 4a. Lucide Icons (36 files)
+
 ```html
 <!-- Lucide Icons - Modern icon library similar to Radix UI -->
 <script
@@ -134,11 +155,13 @@
 ```
 
 #### 4b. Icon Helper (34 files)
+
 ```html
 <script src="./src/icon-helper.js" defer></script>
 ```
 
 #### 4c. Theme Switcher (31 files)
+
 ```html
 <script src="./src/theme-switcher.js" defer></script>
 ```
@@ -150,6 +173,7 @@
 ### 5. Navigation Container Patterns (18 files)
 
 #### 5a. Sidebar Container (18 files)
+
 ```html
 <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
 <div data-sidebar-container></div>
@@ -158,6 +182,7 @@
 **Affected Files:** wellness.html, roster.html, settings.html, community.html, qb-throwing-tracker.html, qb-training-schedule.html, qb-assessment-tools.html, tournaments.html, coach-dashboard.html, profile.html, analytics.html, training.html, dashboard.html, performance-tracking.html, game-tracker.html, exercise-library.html, coach.html, chat.html
 
 #### 5b. Top Bar Container (14 files)
+
 ```html
 <!-- Top Bar (Loaded Dynamically) -->
 <div data-topbar-container></div>
@@ -170,7 +195,9 @@
 ---
 
 ### 6. Chatbot Preload Pattern (5 files)
+
 **Duplicated Code Pattern:**
+
 ```html
 <!-- Preload Chatbot Component -->
 <script type="module">
@@ -196,6 +223,7 @@
 ---
 
 ### 7. Font Preconnect Pattern (30+ files)
+
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -208,11 +236,12 @@
 ## 🟢 MEDIUM PRIORITY DUPLICATIONS
 
 ### 8. Dashboard Container Structure (15+ files)
+
 ```html
 <div class="dashboard-container">
   <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
   <div data-sidebar-container></div>
-  
+
   <main class="main-content">
     <!-- Top Bar (Loaded Dynamically) -->
     <div data-topbar-container></div>
@@ -226,6 +255,7 @@
 ---
 
 ### 9. Favicon Pattern (30+ files)
+
 ```html
 <link
   rel="icon"
@@ -238,6 +268,7 @@
 ---
 
 ### 10. Main.js Import Pattern (30+ files)
+
 ```html
 <!-- Universal Components -->
 <script type="module" src="./src/js/main.js"></script>
@@ -249,22 +280,22 @@
 
 ## 📊 DUPLICATION STATISTICS
 
-| Category | Duplication Count | Files Affected | Priority |
-|----------|------------------|----------------|----------|
-| Supabase Config | ~15 lines | 28 files | 🔴 Critical |
-| HTML Head Section | ~20 lines | 30+ files | 🔴 Critical |
-| Sidebar Loader | 1 line | 20 files | 🟡 High |
-| Top Bar Loader | 1 line | 17 files | 🟡 High |
-| Footer Loader | 1 line | 30 files | 🟡 High |
-| Lucide Icons | 3 lines | 36 files | 🟡 High |
-| Icon Helper | 1 line | 34 files | 🟡 High |
-| Theme Switcher | 1 line | 31 files | 🟡 High |
-| Sidebar Container | 1 line | 18 files | 🟡 High |
-| Top Bar Container | 1 line | 14 files | 🟡 High |
-| Chatbot Preload | ~15 lines | 5 files | 🟡 High |
-| Font Preconnect | 2 lines | 30+ files | 🟡 High |
-| Dashboard Container | ~5 lines | 15+ files | 🟢 Medium |
-| Favicon | 3 lines | 30+ files | 🟢 Medium |
+| Category            | Duplication Count | Files Affected | Priority    |
+| ------------------- | ----------------- | -------------- | ----------- |
+| Supabase Config     | ~15 lines         | 28 files       | 🔴 Critical |
+| HTML Head Section   | ~20 lines         | 30+ files      | 🔴 Critical |
+| Sidebar Loader      | 1 line            | 20 files       | 🟡 High     |
+| Top Bar Loader      | 1 line            | 17 files       | 🟡 High     |
+| Footer Loader       | 1 line            | 30 files       | 🟡 High     |
+| Lucide Icons        | 3 lines           | 36 files       | 🟡 High     |
+| Icon Helper         | 1 line            | 34 files       | 🟡 High     |
+| Theme Switcher      | 1 line            | 31 files       | 🟡 High     |
+| Sidebar Container   | 1 line            | 18 files       | 🟡 High     |
+| Top Bar Container   | 1 line            | 14 files       | 🟡 High     |
+| Chatbot Preload     | ~15 lines         | 5 files        | 🟡 High     |
+| Font Preconnect     | 2 lines           | 30+ files      | 🟡 High     |
+| Dashboard Container | ~5 lines          | 15+ files      | 🟢 Medium   |
+| Favicon             | 3 lines           | 30+ files      | 🟢 Medium   |
 
 **Total Estimated Duplicated Lines:** ~500+ lines across all HTML files
 
@@ -273,19 +304,24 @@
 ## 🎯 RECOMMENDED SOLUTIONS
 
 ### Solution 1: Use Existing Head Template
+
 The project already has `src/components/templates/html-head-template.html`. Create a build process or server-side include to use it.
 
 ### Solution 2: Create Shared Script Bundles
+
 - `src/js/bundles/common-head.js` - Loads all common head scripts (Lucide, icon-helper, theme-switcher)
 - `src/js/bundles/common-components.js` - Loads sidebar, topbar, footer loaders
 - `src/js/config/supabase-config.js` - Centralized Supabase configuration
 
 ### Solution 3: Create Layout Templates
+
 - `src/components/templates/dashboard-layout.html` - Already exists, ensure consistent usage
 - `src/components/templates/auth-layout.html` - Already exists, ensure consistent usage
 
 ### Solution 4: Build-Time Template Processing
+
 Use a build tool (e.g., Eleventy, Handlebars, or a simple Node.js script) to:
+
 1. Inject head template into all HTML files
 2. Inject layout templates where appropriate
 3. Bundle common scripts automatically
@@ -362,4 +398,3 @@ Use a build tool (e.g., Eleventy, Handlebars, or a simple Node.js script) to:
 
 **Report Generated:** 2025-01-27  
 **Next Review:** After implementing recommended solutions
-

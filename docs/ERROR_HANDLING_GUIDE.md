@@ -21,10 +21,12 @@ This guide explains the standardized error handling patterns used across the Fla
 ## Architecture
 
 ### Backend (Netlify Functions)
+
 - **Location**: `netlify/functions/utils/error-handler.cjs`
 - **Purpose**: Consistent error responses and logging for all Netlify functions
 
 ### Frontend
+
 - **Location**: `src/js/utils/unified-error-handler.js`
 - **Purpose**: Unified error handling, user notifications, and global error catching
 
@@ -45,7 +47,7 @@ const {
   handleNotFoundError,
   handleAuthenticationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 ```
 
@@ -54,7 +56,7 @@ const {
 ```javascript
 exports.handler = async (event, context) => {
   // Log function call
-  logFunctionCall('MyFunction', event);
+  logFunctionCall("MyFunction", event);
 
   // Handle CORS
   if (event.httpMethod === "OPTIONS") {
@@ -76,7 +78,7 @@ exports.handler = async (event, context) => {
     return createSuccessResponse(data);
   } catch (error) {
     // Handle errors
-    return handleServerError(error, 'MyFunction');
+    return handleServerError(error, "MyFunction");
   }
 };
 ```
@@ -96,15 +98,15 @@ All error responses follow this structure:
 
 ### Available Error Handlers
 
-| Handler | Status Code | Use Case |
-|---------|-------------|----------|
-| `handleAuthenticationError()` | 401 | Missing or invalid token |
-| `handleAuthorizationError()` | 403 | Insufficient permissions |
-| `handleValidationError(errors)` | 400 | Invalid request data |
-| `handleNotFoundError(resource)` | 404 | Resource not found |
-| `handleConflictError(message)` | 409 | Duplicate resource |
-| `handleDatabaseError(error)` | 500 | Database errors |
-| `handleServerError(error)` | 500 | General server errors |
+| Handler                         | Status Code | Use Case                 |
+| ------------------------------- | ----------- | ------------------------ |
+| `handleAuthenticationError()`   | 401         | Missing or invalid token |
+| `handleAuthorizationError()`    | 403         | Insufficient permissions |
+| `handleValidationError(errors)` | 400         | Invalid request data     |
+| `handleNotFoundError(resource)` | 404         | Resource not found       |
+| `handleConflictError(message)`  | 409         | Duplicate resource       |
+| `handleDatabaseError(error)`    | 500         | Database errors          |
+| `handleServerError(error)`      | 500         | General server errors    |
 
 ---
 
@@ -113,7 +115,11 @@ All error responses follow this structure:
 ### Import the Error Handler
 
 ```javascript
-import { errorHandler, AppError, ErrorType } from '../utils/unified-error-handler.js';
+import {
+  errorHandler,
+  AppError,
+  ErrorType,
+} from "../utils/unified-error-handler.js";
 ```
 
 ### Basic Usage
@@ -121,18 +127,21 @@ import { errorHandler, AppError, ErrorType } from '../utils/unified-error-handle
 ```javascript
 // Wrap async operations
 async function loadData() {
-  const result = await errorHandler.safeAsync(async () => {
-    const response = await fetch('/api/data');
-    if (!response.ok) throw new Error('Failed to load data');
-    return response.json();
-  }, {
-    context: 'Load Data',
-    showToUser: true,
-    fallbackMessage: 'Failed to load data. Please try again.'
-  });
+  const result = await errorHandler.safeAsync(
+    async () => {
+      const response = await fetch("/api/data");
+      if (!response.ok) throw new Error("Failed to load data");
+      return response.json();
+    },
+    {
+      context: "Load Data",
+      showToUser: true,
+      fallbackMessage: "Failed to load data. Please try again.",
+    },
+  );
 
   if (result.success) {
-    console.log('Data loaded:', result.data);
+    console.log("Data loaded:", result.data);
   }
 }
 ```
@@ -141,24 +150,24 @@ async function loadData() {
 
 ```javascript
 // Success
-errorHandler.showSuccess('Data saved successfully!');
+errorHandler.showSuccess("Data saved successfully!");
 
 // Error
-errorHandler.showError('Failed to save data');
+errorHandler.showError("Failed to save data");
 
 // Warning
-errorHandler.showWarning('Connection is unstable');
+errorHandler.showWarning("Connection is unstable");
 
 // Info
-errorHandler.showInfo('Processing your request...');
+errorHandler.showInfo("Processing your request...");
 ```
 
 ### Error with Retry
 
 ```javascript
 errorHandler.showErrorWithRetry(
-  'Failed to save changes',
-  () => saveChanges() // Retry callback
+  "Failed to save changes",
+  () => saveChanges(), // Retry callback
 );
 ```
 
@@ -166,9 +175,9 @@ errorHandler.showErrorWithRetry(
 
 ```javascript
 try {
-  const response = await apiClient.post('/endpoint', data);
+  const response = await apiClient.post("/endpoint", data);
 } catch (error) {
-  errorHandler.handleApiError(error, 'Save Data');
+  errorHandler.handleApiError(error, "Save Data");
 }
 ```
 
@@ -176,23 +185,20 @@ try {
 
 ```javascript
 // Show field-level error
-errorHandler.handleValidationError('email', 'Please enter a valid email');
+errorHandler.handleValidationError("email", "Please enter a valid email");
 ```
 
 ### With Retry Logic
 
 ```javascript
-const data = await errorHandler.withRetry(
-  async () => await fetchData(),
-  {
-    maxAttempts: 3,
-    delay: 1000,
-    backoff: 2,
-    onRetry: (error, attempt) => {
-      console.log(`Retry attempt ${attempt}`);
-    }
-  }
-);
+const data = await errorHandler.withRetry(async () => await fetchData(), {
+  maxAttempts: 3,
+  delay: 1000,
+  backoff: 2,
+  onRetry: (error, attempt) => {
+    console.log(`Retry attempt ${attempt}`);
+  },
+});
 ```
 
 ### Custom Error Types
@@ -200,10 +206,10 @@ const data = await errorHandler.withRetry(
 ```javascript
 // Throw custom errors
 throw new AppError(
-  'User not found',
+  "User not found",
   ErrorType.NOT_FOUND,
   ErrorSeverity.WARNING,
-  { userId: 123 }
+  { userId: 123 },
 );
 ```
 
@@ -214,6 +220,7 @@ throw new AppError(
 ### Backend Migration
 
 **Before:**
+
 ```javascript
 try {
   // logic
@@ -221,9 +228,9 @@ try {
     statusCode: 200,
     headers: {
       "Access-Control-Allow-Origin": "*",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ success: true, data })
+    body: JSON.stringify({ success: true, data }),
   };
 } catch (error) {
   console.error("Error:", error);
@@ -231,50 +238,56 @@ try {
     statusCode: 500,
     headers: {
       "Access-Control-Allow-Origin": "*",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ success: false, error: "Internal server error" })
+    body: JSON.stringify({ success: false, error: "Internal server error" }),
   };
 }
 ```
 
 **After:**
+
 ```javascript
-const { createSuccessResponse, handleServerError } = require("./utils/error-handler.cjs");
+const {
+  createSuccessResponse,
+  handleServerError,
+} = require("./utils/error-handler.cjs");
 
 try {
   // logic
   return createSuccessResponse(data);
 } catch (error) {
-  return handleServerError(error, 'FunctionName');
+  return handleServerError(error, "FunctionName");
 }
 ```
 
 ### Frontend Migration
 
 **Before:**
+
 ```javascript
 try {
-  const response = await fetch('/api/data');
+  const response = await fetch("/api/data");
   const data = await response.json();
 } catch (error) {
-  console.error('Failed:', error);
-  logger.error('API Error:', error);
-  this.showNotification('Failed to load data', 'error');
+  console.error("Failed:", error);
+  logger.error("API Error:", error);
+  this.showNotification("Failed to load data", "error");
 }
 ```
 
 **After:**
+
 ```javascript
-import { errorHandler } from '../utils/unified-error-handler.js';
+import { errorHandler } from "../utils/unified-error-handler.js";
 
 const result = await errorHandler.safeAsync(
   async () => {
-    const response = await fetch('/api/data');
-    if (!response.ok) throw new Error('Failed to load');
+    const response = await fetch("/api/data");
+    if (!response.ok) throw new Error("Failed to load");
     return response.json();
   },
-  { context: 'Load Data', showToUser: true }
+  { context: "Load Data", showToUser: true },
 );
 
 if (result.success) {
@@ -289,27 +302,31 @@ if (result.success) {
 ### 1. Always Use Consistent Error Handling
 
 ✅ **Do:**
+
 ```javascript
-return handleServerError(error, 'MyFunction');
+return handleServerError(error, "MyFunction");
 ```
 
 ❌ **Don't:**
+
 ```javascript
 console.error(error);
-return { statusCode: 500, body: JSON.stringify({ error: 'Error' }) };
+return { statusCode: 500, body: JSON.stringify({ error: "Error" }) };
 ```
 
 ### 2. Provide Context
 
 ✅ **Do:**
+
 ```javascript
 errorHandler.handleError(error, {
-  context: 'Save User Profile',
-  showToUser: true
+  context: "Save User Profile",
+  showToUser: true,
 });
 ```
 
 ❌ **Don't:**
+
 ```javascript
 console.error(error);
 ```
@@ -318,20 +335,20 @@ console.error(error);
 
 ```javascript
 // Network errors
-throw new AppError('Connection failed', ErrorType.NETWORK);
+throw new AppError("Connection failed", ErrorType.NETWORK);
 
 // Validation errors
-throw new AppError('Invalid email', ErrorType.VALIDATION);
+throw new AppError("Invalid email", ErrorType.VALIDATION);
 
 // Not found
-throw new AppError('User not found', ErrorType.NOT_FOUND);
+throw new AppError("User not found", ErrorType.NOT_FOUND);
 ```
 
 ### 4. Log Function Calls (Backend)
 
 ```javascript
 exports.handler = async (event, context) => {
-  logFunctionCall('MyFunction', event);
+  logFunctionCall("MyFunction", event);
   // ...
 };
 ```
@@ -339,10 +356,10 @@ exports.handler = async (event, context) => {
 ### 5. Handle Retries for Network Errors
 
 ```javascript
-const data = await errorHandler.withRetry(
-  () => fetchFromAPI(),
-  { maxAttempts: 3, delay: 1000 }
-);
+const data = await errorHandler.withRetry(() => fetchFromAPI(), {
+  maxAttempts: 3,
+  delay: 1000,
+});
 ```
 
 ---
@@ -350,6 +367,7 @@ const data = await errorHandler.withRetry(
 ## Error Types Reference
 
 ### Backend Error Types
+
 - `validation_error` - Invalid request data
 - `authentication_error` - Missing/invalid credentials
 - `authorization_error` - Insufficient permissions
@@ -362,6 +380,7 @@ const data = await errorHandler.withRetry(
 - `unknown_error` - Unclassified error
 
 ### Frontend Error Severity
+
 - `info` - Informational message
 - `warning` - Warning that doesn't block operation
 - `error` - Error that requires attention
@@ -372,31 +391,34 @@ const data = await errorHandler.withRetry(
 ## Testing Error Handling
 
 ### Test Network Errors
+
 ```javascript
 // Simulate network error
-window.dispatchEvent(new Event('offline'));
+window.dispatchEvent(new Event("offline"));
 
 // Test recovery
-window.dispatchEvent(new Event('online'));
+window.dispatchEvent(new Event("online"));
 ```
 
 ### Test Error Notifications
+
 ```javascript
-errorHandler.showError('Test error message');
-errorHandler.showSuccess('Test success message');
-errorHandler.showWarning('Test warning message');
+errorHandler.showError("Test error message");
+errorHandler.showSuccess("Test success message");
+errorHandler.showWarning("Test warning message");
 ```
 
 ### Test Retry Logic
+
 ```javascript
 let attempts = 0;
 const result = await errorHandler.withRetry(
   async () => {
     attempts++;
-    if (attempts < 3) throw new Error('Retry test');
-    return 'Success';
+    if (attempts < 3) throw new Error("Retry test");
+    return "Success";
   },
-  { maxAttempts: 3 }
+  { maxAttempts: 3 },
 );
 ```
 
@@ -405,6 +427,7 @@ const result = await errorHandler.withRetry(
 ## Support
 
 For questions or issues with error handling:
+
 1. Check this documentation
 2. Review existing implementations in `dashboard.cjs` (backend) or `dashboard-page.js` (frontend)
 3. Check the error handler source code for additional methods

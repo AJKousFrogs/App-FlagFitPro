@@ -7,13 +7,13 @@ const {
   createErrorResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 exports.handler = async (event, _context) => {
-  logFunctionCall('Performance-Data', event);
+  logFunctionCall("Performance-Data", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -100,12 +100,12 @@ exports.handler = async (event, _context) => {
         response = await handleExport(userId, queryStringParameters);
         break;
       default:
-        response = createErrorResponse("Endpoint not found", 404, 'not_found');
+        response = createErrorResponse("Endpoint not found", 404, "not_found");
         // Convert to old format for consistency with other handlers
         response = {
           statusCode: response.statusCode,
           body: response.body,
-          headers: response.headers
+          headers: response.headers,
         };
     }
 
@@ -121,7 +121,7 @@ exports.handler = async (event, _context) => {
       name: error.name,
       code: error.code,
     });
-    return handleServerError(error, 'Performance-Data');
+    return handleServerError(error, "Performance-Data");
   }
 };
 
@@ -139,7 +139,11 @@ async function handleMeasurements(method, userId, body, query) {
 
       try {
         // Query from physical_measurements table (create if doesn't exist)
-        const { data: measurements, error, count } = await supabaseAdmin
+        const {
+          data: measurements,
+          error,
+          count,
+        } = await supabaseAdmin
           .from("physical_measurements")
           .select("*", { count: "exact" })
           .eq("user_id", userId)
@@ -147,7 +151,8 @@ async function handleMeasurements(method, userId, body, query) {
           .order("created_at", { ascending: false })
           .range(offset, offset + limit - 1);
 
-        if (error && error.code !== "42P01") { // 42P01 = table doesn't exist
+        if (error && error.code !== "42P01") {
+          // 42P01 = table doesn't exist
           throw error;
         }
 
@@ -231,7 +236,11 @@ async function handleMeasurements(method, userId, body, query) {
               body: JSON.stringify({
                 success: true,
                 id: `temp_${Date.now()}`,
-                data: { ...measurementData, userId, timestamp: new Date().toISOString() },
+                data: {
+                  ...measurementData,
+                  userId,
+                  timestamp: new Date().toISOString(),
+                },
                 note: "Table needs to be created via migration",
               }),
             };
@@ -587,7 +596,8 @@ async function handleSupplements(method, userId, body, query) {
             user_id: userId,
             name: supplementData.name,
             dosage: supplementData.dosage,
-            taken: supplementData.taken !== undefined ? supplementData.taken : true,
+            taken:
+              supplementData.taken !== undefined ? supplementData.taken : true,
             date: supplementData.date || new Date().toISOString().split("T")[0],
             time_of_day: supplementData.timeOfDay,
             notes: supplementData.notes,
@@ -637,7 +647,7 @@ async function handleInjuries(method, userId, body, query) {
   switch (method) {
     case "GET":
       const status = query?.status; // active, recovered, all
-      
+
       // Try Supabase first
       try {
         let queryBuilder = supabaseAdmin
@@ -649,7 +659,11 @@ async function handleInjuries(method, userId, body, query) {
         if (status && status !== "all") {
           queryBuilder = queryBuilder.eq("status", status);
         } else {
-          queryBuilder = queryBuilder.in("status", ["active", "recovering", "monitoring"]);
+          queryBuilder = queryBuilder.in("status", [
+            "active",
+            "recovering",
+            "monitoring",
+          ]);
         }
 
         const { data: injuries, error: getError } = await queryBuilder;
@@ -658,7 +672,7 @@ async function handleInjuries(method, userId, body, query) {
           throw getError;
         }
 
-        const transformed = (injuries || []).map(injury => ({
+        const transformed = (injuries || []).map((injury) => ({
           id: injury.id,
           userId: injury.user_id,
           type: injury.type,
@@ -701,7 +715,7 @@ async function handleInjuries(method, userId, body, query) {
 
     case "POST":
       const injuryData = JSON.parse(body);
-      
+
       // Validate required fields
       if (!injuryData.type || !injuryData.severity || !injuryData.startDate) {
         return {
@@ -795,11 +809,21 @@ async function handleInjuries(method, userId, body, query) {
       // Try Supabase first
       try {
         const updatePayload = {};
-        if (updateData.status) {updatePayload.status = updateData.status;}
-        if (updateData.severity) {updatePayload.severity = parseInt(updateData.severity);}
-        if (updateData.description !== undefined) {updatePayload.description = updateData.description;}
-        if (updateData.recoveryDate) {updatePayload.recovery_date = updateData.recoveryDate;}
-        if (updateData.type) {updatePayload.type = updateData.type;}
+        if (updateData.status) {
+          updatePayload.status = updateData.status;
+        }
+        if (updateData.severity) {
+          updatePayload.severity = parseInt(updateData.severity);
+        }
+        if (updateData.description !== undefined) {
+          updatePayload.description = updateData.description;
+        }
+        if (updateData.recoveryDate) {
+          updatePayload.recovery_date = updateData.recoveryDate;
+        }
+        if (updateData.type) {
+          updatePayload.type = updateData.type;
+        }
         updatePayload.updated_at = new Date().toISOString();
 
         const { data: updatedInjury, error: updateError } = await supabaseAdmin
@@ -876,23 +900,24 @@ async function handleTrends(method, userId, query) {
 
   try {
     // Fetch all data from Supabase for trend analysis
-    const [measurementsResult, performanceTestsResult, wellnessResult] = await Promise.all([
-      supabaseAdmin
-        .from("physical_measurements")
-        .select("*")
-        .eq("user_id", userId)
-        .gte("created_at", startDate.toISOString()),
-      supabaseAdmin
-        .from("athlete_performance_tests")
-        .select("*")
-        .eq("user_id", userId)
-        .gte("test_date", startDate.toISOString().split("T")[0]),
-      supabaseAdmin
-        .from("wellness_data")
-        .select("*")
-        .eq("user_id", userId)
-        .gte("date", startDate.toISOString().split("T")[0]),
-    ]);
+    const [measurementsResult, performanceTestsResult, wellnessResult] =
+      await Promise.all([
+        supabaseAdmin
+          .from("physical_measurements")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("created_at", startDate.toISOString()),
+        supabaseAdmin
+          .from("athlete_performance_tests")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("test_date", startDate.toISOString().split("T")[0]),
+        supabaseAdmin
+          .from("wellness_data")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("date", startDate.toISOString().split("T")[0]),
+      ]);
 
     const measurements = (measurementsResult.data || []).map((m) => ({
       userId: m.user_id,
@@ -961,7 +986,13 @@ async function handleExport(userId, query) {
 
   try {
     // Gather all user data from Supabase
-    const [measurementsResult, performanceTestsResult, wellnessResult, supplementsResult, injuriesResult] = await Promise.all([
+    const [
+      measurementsResult,
+      performanceTestsResult,
+      wellnessResult,
+      supplementsResult,
+      injuriesResult,
+    ] = await Promise.all([
       supabaseAdmin
         .from("physical_measurements")
         .select("*")
@@ -982,10 +1013,7 @@ async function handleExport(userId, query) {
         .select("*")
         .eq("user_id", userId)
         .gte("date", startDate.toISOString().split("T")[0]),
-      supabaseAdmin
-        .from("injuries")
-        .select("*")
-        .eq("user_id", userId),
+      supabaseAdmin.from("injuries").select("*").eq("user_id", userId),
     ]);
 
     const allData = {
@@ -1107,7 +1135,9 @@ function validateMeasurementData(data) {
 }
 
 function calculateMeasurementsSummary(measurements) {
-  if (measurements.length === 0) {return null;}
+  if (measurements.length === 0) {
+    return null;
+  }
 
   const latest = measurements[measurements.length - 1];
   const previous = measurements[measurements.length - 2];
@@ -1154,7 +1184,9 @@ function calculatePerformanceTrends(tests) {
 }
 
 function calculateWellnessAverages(wellness) {
-  if (wellness.length === 0) {return null;}
+  if (wellness.length === 0) {
+    return null;
+  }
 
   const metrics = ["sleep", "energy", "stress", "soreness", "motivation"];
   const averages = {};
@@ -1248,7 +1280,9 @@ function generateRecommendations(_performanceTests, _wellness, _measurements) {
 function calculateTestsSummary(tests) {
   const byType = {};
   tests.forEach((test) => {
-    if (!byType[test.testType]) {byType[test.testType] = [];}
+    if (!byType[test.testType]) {
+      byType[test.testType] = [];
+    }
     byType[test.testType].push(test.result);
   });
 
@@ -1284,7 +1318,8 @@ async function calculateImprovement(testType, currentResult, userId) {
     }
 
     // Skip the most recent (current) one, use the second most recent
-    const previousResult = previousTests[1].best_result || previousTests[1].average_result;
+    const previousResult =
+      previousTests[1].best_result || previousTests[1].average_result;
     const percentChange = (
       ((currentResult - previousResult) / previousResult) *
       100

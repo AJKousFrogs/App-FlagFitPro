@@ -32,7 +32,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     InputTextModule,
     ToastModule,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   providers: [MessageService],
   template: `
@@ -58,7 +58,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                 [class.ng-invalid]="isFieldInvalid('name')"
                 class="w-full"
               />
-              @if (isFieldInvalid('name')) {
+              @if (isFieldInvalid("name")) {
                 <small class="p-error">
                   {{ getFieldError("name") }}
                 </small>
@@ -185,13 +185,13 @@ export class TeamCreateComponent {
 
     try {
       const formData = this.teamForm.value;
-      
+
       // TODO: Call API to create team
       // const response = await this.apiService.createTeam(formData);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       this.messageService.add({
         severity: "success",
         summary: "Team Created",
@@ -213,4 +213,3 @@ export class TeamCreateComponent {
     }
   }
 }
-

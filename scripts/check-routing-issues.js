@@ -1,4 +1,3 @@
- 
 // Comprehensive Routing Issues Checker
 // Checks for incorrect import paths, URLs, API endpoints, and asset references
 

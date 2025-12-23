@@ -1,11 +1,13 @@
 # ✅ Environment Variables Verification Checklist
 
 ## Current Status
+
 All 3 required Supabase variables are present in Netlify. Now we need to verify their values are correct.
 
 ## Step-by-Step Verification
 
 ### 1. Verify SUPABASE_URL
+
 - [ ] Click dropdown arrow next to `SUPABASE_URL`
 - [ ] Value should be: `https://pvziciccwxgftcielknm.supabase.co`
 - [ ] ✅ No trailing slash (`/`)
@@ -15,11 +17,13 @@ All 3 required Supabase variables are present in Netlify. Now we need to verify 
 **If incorrect:** Click "Edit" and update to the correct value.
 
 ### 2. Verify SUPABASE_SERVICE_KEY
+
 - [ ] Click dropdown arrow next to `SUPABASE_SERVICE_KEY`
 - [ ] Value should start with `eyJ...` (JWT token format)
 - [ ] Should be the **service_role** key (not anon key)
 
 **To get correct value:**
+
 1. Go to https://app.supabase.com
 2. Select your project
 3. Go to **Settings** → **API**
@@ -29,11 +33,13 @@ All 3 required Supabase variables are present in Netlify. Now we need to verify 
 **If incorrect:** Click "Edit" and paste the service_role key.
 
 ### 3. Verify SUPABASE_ANON_KEY
+
 - [ ] Click dropdown arrow next to `SUPABASE_ANON_KEY`
 - [ ] Value should start with `eyJ...` (JWT token format)
 - [ ] Should be the **anon public** key
 
 **To get correct value:**
+
 1. Go to https://app.supabase.com
 2. Select your project
 3. Go to **Settings** → **API**
@@ -45,6 +51,7 @@ All 3 required Supabase variables are present in Netlify. Now we need to verify 
 ## After Verifying/Updating Values
 
 ### 4. Trigger New Deploy
+
 **CRITICAL:** Environment variable changes require a new deployment!
 
 1. Go to **Deploys** tab in Netlify
@@ -78,19 +85,25 @@ SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
 ## Common Issues
 
 ### Issue: "Values look correct but still getting 503"
-**Solution:** 
+
+**Solution:**
+
 - Make sure you **redeployed** after setting variables
 - Check function logs for specific error messages
 - Verify Supabase project is active (not paused)
 
 ### Issue: "Can't see the values (they're hidden)"
+
 **Solution:**
+
 - Click the dropdown arrow on each variable
 - Or click "Edit" to see/edit the value
 - Values are hidden by default for security
 
 ### Issue: "Don't know which key is which"
+
 **Solution:**
+
 - **service_role key**: Usually longer, marked as "secret" in Supabase
 - **anon key**: Usually shorter, marked as "public" in Supabase
 - The service_role key has admin privileges
@@ -103,4 +116,3 @@ SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
 3. ✅ Test registration again
 4. ✅ Check function logs if still failing
 5. ✅ Report back with any error messages from logs
-

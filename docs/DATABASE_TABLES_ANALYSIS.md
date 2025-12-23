@@ -16,6 +16,7 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 ## Table Categories
 
 ### Core Application Tables (5)
+
 - `users` - User accounts and profiles
 - `teams` - Team information
 - `user_teams` - User-team relationships
@@ -23,6 +24,7 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 - `user_notification_preferences` - Notification settings
 
 ### Training & Performance (8)
+
 - `training_sessions` - Training session records
 - `training_analytics` - Training analytics data
 - `training_hydration_protocols` - Hydration protocols for training
@@ -33,6 +35,7 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 - `sprint_recovery_protocols` - Recovery protocols for sprint training
 
 ### Positions & Player Management (4)
+
 - `positions` - Player positions
 - `flag_football_positions` - Flag football specific positions
 - `flag_football_performance_levels` - Performance level definitions
@@ -40,6 +43,7 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 - `position_requirements` - Position-specific requirements
 
 ### Analytics & Performance Metrics (5)
+
 - `analytics_events` - Application analytics events
 - `performance_benchmarks` - Performance benchmark data
 - `performance_competencies` - Performance competency definitions
@@ -48,6 +52,7 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 - `training_analytics` - Training-specific analytics
 
 ### Wellness & Health (6)
+
 - `wellness_logs` - Wellness tracking logs
 - `readiness_scores` - Athlete readiness scores
 - `sleep_guidelines` - Sleep guidelines
@@ -56,11 +61,13 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 - `environmental_recovery_protocols` - Environmental recovery protocols
 
 ### Hydration & Research (3)
+
 - `hydration_research_studies` - Hydration research studies
 - `ifaf_hydration_protocols` - IFAF hydration protocols
 - `training_hydration_protocols` - Training hydration protocols
 
 ### Supplements & Compliance (7)
+
 - `supplements` - Supplement catalog
 - `supplement_research` - Supplement research data
 - `supplement_protocols` - Supplement protocols
@@ -70,6 +77,7 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 - `wada_prohibited_substances` - WADA prohibited substances list
 
 ### Budget & Equipment (10)
+
 - `budget_categories` - Budget category definitions
 - `budget_friendly_alternatives` - Budget-friendly product alternatives
 - `budget_nutrition_plans` - Budget-conscious nutrition plans
@@ -83,6 +91,7 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 - `realistic_budget_categories` - Realistic budget categories
 
 ### Competition & Championships (5)
+
 - `ifaf_elo_ratings` - IFAF ELO rating system
 - `ifaf_flag_rankings` - IFAF flag football rankings
 - `nfl_combine_benchmarks` - NFL combine benchmark data
@@ -93,6 +102,7 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 - `world_championship_protocols` - World championship protocols
 
 ### Team & Strategy (5)
+
 - `team_chemistry` - Team chemistry metrics
 - `team_resources` - Team resource management
 - `defensive_schemes` - Defensive scheme definitions
@@ -100,20 +110,24 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 - `sports_crossover_analysis` - Sports crossover analysis
 
 ### Environmental & Protocols (4)
+
 - `altitude_environmental_factors` - Altitude environmental factors
 - `environmental_adjustments` - Environmental adjustment protocols
 - `environmental_recovery_protocols` - Environmental recovery protocols
 - `diy_protocols` - DIY protocol definitions
 
 ### Research & Knowledge (2)
+
 - `creatine_research` - Creatine research data
 - `implementation_steps` - Implementation step definitions
 
 ### Community & Social (2)
+
 - `community_activation_events` - Community activation events
 - `user_behavior` - User behavior tracking
 
 ### Other (5)
+
 - `agility_patterns` - Agility pattern definitions
 - `chatbot_user_context` - Chatbot user context storage
 - `daily_quotes` - Daily motivational quotes
@@ -131,6 +145,7 @@ This document analyzes the tables provided from your Supabase dashboard. The lis
 The following categories of tables exist in your database but are NOT in the provided list:
 
 ### Major Missing Categories:
+
 1. **AI Coach System** (~15 tables)
    - `ai_coaches`, `ai_chat_conversations`, `ai_chat_messages`, etc.
 
@@ -166,21 +181,27 @@ The following categories of tables exist in your database but are NOT in the pro
 ## Recommendations
 
 ### 1. Table Exposure via PostgREST
+
 Many tables in your database are not accessible via the Supabase REST API. Consider:
+
 - Enabling PostgREST for frequently accessed tables
 - Reviewing RLS policies to ensure proper access control
 - Creating views for complex queries
 
 ### 2. Documentation Priority
+
 Focus documentation on the 82 tables in your list as they appear to be:
+
 - Core application tables
 - Frequently accessed tables
 - Tables exposed via your API
 
 ### 3. TypeScript Types
+
 Generate TypeScript types for these 82 tables to ensure type safety in your Angular application.
 
 ### 4. API Endpoints
+
 Ensure REST API endpoints exist for all 82 tables in this list.
 
 ---
@@ -281,4 +302,3 @@ Ensure REST API endpoints exist for all 82 tables in this list.
 ---
 
 **Total: 82 tables**
-

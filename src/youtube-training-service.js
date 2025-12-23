@@ -109,7 +109,9 @@ class YouTubeTrainingService {
   async getTrainingVideos(category, maxResults = 12) {
     // If API key is not configured, return fallback videos immediately
     if (!this.isConfigured()) {
-      logger.debug(`📺 YouTube API key not configured, returning fallback videos for ${category}`);
+      logger.debug(
+        `📺 YouTube API key not configured, returning fallback videos for ${category}`,
+      );
       return this.getFallbackVideos(category);
     }
 
@@ -149,7 +151,9 @@ class YouTubeTrainingService {
   async fetchVideosFromYouTube(category, maxResults) {
     // Check if API key is configured before making API calls
     if (!this.isConfigured()) {
-      logger.debug(`📺 YouTube API key not configured, using fallback videos for ${category}`);
+      logger.debug(
+        `📺 YouTube API key not configured, using fallback videos for ${category}`,
+      );
       throw new Error("YouTube API key not configured");
     }
 
@@ -213,9 +217,7 @@ class YouTubeTrainingService {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       const errorMessage = errorData.error?.message || response.statusText;
-      throw new Error(
-        `YouTube API error: ${response.status} ${errorMessage}`,
-      );
+      throw new Error(`YouTube API error: ${response.status} ${errorMessage}`);
     }
 
     const data = await response.json();
@@ -281,7 +283,9 @@ class YouTubeTrainingService {
     ];
 
     qualityKeywords.forEach((keyword) => {
-      if (title.includes(keyword)) {score += 2;}
+      if (title.includes(keyword)) {
+        score += 2;
+      }
     });
 
     // Prefer more recent videos (within 2 years)
@@ -304,7 +308,9 @@ class YouTubeTrainingService {
     ];
 
     lowQualityIndicators.forEach((indicator) => {
-      if (title.includes(indicator)) {score -= 3;}
+      if (title.includes(indicator)) {
+        score -= 3;
+      }
     });
 
     return score;
@@ -431,7 +437,7 @@ class YouTubeTrainingService {
       url.searchParams.set("key", this.apiKey);
 
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error(`YouTube API error: ${response.status}`);
       }
@@ -467,7 +473,9 @@ class YouTubeTrainingService {
   // Parse YouTube duration format (PT4M13S) to readable format
   parseDuration(duration) {
     const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-    if (!match) {return "Unknown";}
+    if (!match) {
+      return "Unknown";
+    }
 
     const hours = match[1] ? parseInt(match[1]) : 0;
     const minutes = match[2] ? parseInt(match[2]) : 0;

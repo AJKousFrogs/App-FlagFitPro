@@ -154,7 +154,9 @@ declare global {
           <!-- Voice Commands -->
           <div class="voice-controls">
             <p-button
-              [icon]="isListening() ? 'pi pi-microphone' : 'pi pi-microphone-slash'"
+              [icon]="
+                isListening() ? 'pi pi-microphone' : 'pi pi-microphone-slash'
+              "
               [label]="isListening() ? 'Listening...' : 'Voice Command'"
               [severity]="isListening() ? 'success' : 'secondary'"
               [loading]="processingVoice()"
@@ -699,27 +701,25 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
       "decrease intensity": () => this.adjustIntensity(-1),
     };
 
-    const action = Object.keys(commandMap).find((key) =>
-      command.includes(key),
-    );
+    const action = Object.keys(commandMap).find((key) => command.includes(key));
 
     if (action) {
       commandMap[action]();
       this.showMessage(`Executing: ${action}`);
-      } else {
-        // Send to AI for natural language processing
-        this.aiService
-          .processNaturalCommand(command)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: (response) => {
-              this.handleAIResponse(response);
-            },
-            error: () => {
-              this.showMessage("I didn't understand that command. Try again.");
-            },
-          });
-      }
+    } else {
+      // Send to AI for natural language processing
+      this.aiService
+        .processNaturalCommand(command)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (response) => {
+            this.handleAIResponse(response);
+          },
+          error: () => {
+            this.showMessage("I didn't understand that command. Try again.");
+          },
+        });
+    }
 
     this.processingVoice.set(false);
     this.aiStatus.set(this.isListening() ? "listening" : "active");
@@ -765,7 +765,8 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
       {
         id: "2",
         title: "Recovery Session",
-        description: "Light recovery session to optimize tomorrow's performance",
+        description:
+          "Light recovery session to optimize tomorrow's performance",
         expectedImprovement: 10,
         timeRequired: "30 min",
       },
@@ -876,4 +877,3 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
     );
   }
 }
-

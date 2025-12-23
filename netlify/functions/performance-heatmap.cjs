@@ -8,7 +8,7 @@ const {
   createErrorResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -19,7 +19,7 @@ const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 function calculateIntensity(duration, intensityLevel, sessionType) {
   // Base intensity calculation
   const baseIntensity = intensityLevel || 5;
-  
+
   // Adjust based on session type
   const typeMultipliers = {
     speed: 1.2,
@@ -29,10 +29,10 @@ function calculateIntensity(duration, intensityLevel, sessionType) {
     recovery: 0.5,
     technical: 0.8,
   };
-  
+
   const multiplier = typeMultipliers[sessionType] || 1.0;
   const adjustedIntensity = baseIntensity * multiplier;
-  
+
   // Scale to 0-7 range for heatmap
   return Math.min(7, Math.max(0, Math.round(adjustedIntensity)));
 }
@@ -45,7 +45,7 @@ async function getHeatmapData(userId, timeRange) {
     // Calculate date range
     const endDate = new Date();
     const startDate = new Date();
-    
+
     switch (timeRange) {
       case "3months":
         startDate.setMonth(endDate.getMonth() - 3);
@@ -79,7 +79,9 @@ async function getHeatmapData(userId, timeRange) {
     const sessionsByDate = {};
     trainingSessions.forEach((session) => {
       const date = session.session_date || session.completed_at?.split("T")[0];
-      if (!date) {return;}
+      if (!date) {
+        return;
+      }
 
       if (!sessionsByDate[date]) {
         sessionsByDate[date] = [];
@@ -90,7 +92,7 @@ async function getHeatmapData(userId, timeRange) {
     // Generate heatmap cells
     const cells = [];
     const currentDate = new Date(startDate);
-    
+
     while (currentDate <= endDate) {
       const dateStr = currentDate.toISOString().split("T")[0];
       const daySessions = sessionsByDate[dateStr] || [];
@@ -99,18 +101,17 @@ async function getHeatmapData(userId, timeRange) {
         // Calculate aggregate metrics
         const totalDuration = daySessions.reduce(
           (sum, s) => sum + (s.duration_minutes || 0),
-          0
+          0,
         );
-        
-        const avgIntensity = daySessions.reduce(
-          (sum, s) => sum + (s.intensity_level || 5),
-          0
-        ) / daySessions.length;
+
+        const avgIntensity =
+          daySessions.reduce((sum, s) => sum + (s.intensity_level || 5), 0) /
+          daySessions.length;
 
         const intensity = calculateIntensity(
           totalDuration,
           avgIntensity,
-          daySessions[0]?.session_type || "mixed"
+          daySessions[0]?.session_type || "mixed",
         );
 
         // Calculate value (intensity * 10 for display, or total duration for volume)
@@ -153,7 +154,7 @@ function generateMockHeatmapData(timeRange) {
   const cells = [];
   const endDate = new Date();
   const startDate = new Date();
-  
+
   switch (timeRange) {
     case "3months":
       startDate.setMonth(endDate.getMonth() - 3);
@@ -172,15 +173,15 @@ function generateMockHeatmapData(timeRange) {
   while (currentDate <= endDate) {
     const dateStr = currentDate.toISOString().split("T")[0];
     const dayOfWeek = currentDate.getDay();
-    
+
     // Simulate training pattern (more training Mon-Fri, less on weekends)
     const hasTraining = dayOfWeek >= 1 && dayOfWeek <= 5 && Math.random() > 0.3;
-    
+
     if (hasTraining) {
       const intensity = Math.floor(Math.random() * 8); // 0-7
       const sessions = Math.floor(Math.random() * 3) + 1;
       const duration = Math.floor(Math.random() * 90) + 30;
-      
+
       cells.push({
         date: dateStr,
         value: intensity * 10,
@@ -205,7 +206,7 @@ function generateMockHeatmapData(timeRange) {
 }
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Performance-Heatmap', event);
+  logFunctionCall("Performance-Heatmap", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -218,7 +219,11 @@ exports.handler = async (event, context) => {
   try {
     // Only allow GET requests
     if (event.httpMethod !== "GET") {
-      return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
     }
 
     // Check environment variables
@@ -256,7 +261,6 @@ exports.handler = async (event, context) => {
       name: error.name,
       code: error.code,
     });
-    return handleServerError(error, 'Performance-Heatmap');
+    return handleServerError(error, "Performance-Heatmap");
   }
 };
-

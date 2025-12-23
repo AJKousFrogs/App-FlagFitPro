@@ -24,7 +24,7 @@ class KnowledgeBaseService {
     const {
       requireApproval = true,
       includeExperimental = false,
-      minQualityScore = 0.0
+      minQualityScore = 0.0,
     } = options;
 
     // Check cache first (include options in cache key)
@@ -40,7 +40,7 @@ class KnowledgeBaseService {
       const response = await knowledge.search(query, category, 5, {
         requireApproval,
         includeExperimental,
-        minQualityScore
+        minQualityScore,
       });
 
       if (response.success && response.data && response.data.length > 0) {

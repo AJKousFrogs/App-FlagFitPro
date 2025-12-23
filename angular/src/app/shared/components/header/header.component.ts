@@ -18,9 +18,12 @@ import { AvatarModule } from "primeng/avatar";
 import { MenuModule } from "primeng/menu";
 import { BadgeModule } from "primeng/badge";
 import { AuthService } from "../../../core/services/auth.service";
-import { HeaderService, HeaderConfig } from "../../../core/services/header.service";
+import {
+  HeaderService,
+  HeaderConfig,
+} from "../../../core/services/header.service";
 import { MenuItem } from "primeng/api";
-import { LoggerService } from '../../../core/services/logger.service';
+import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
   selector: "app-header",
@@ -32,8 +35,8 @@ import { LoggerService } from '../../../core/services/logger.service';
     InputTextModule,
     AvatarModule,
     MenuModule,
-    BadgeModule
-],
+    BadgeModule,
+  ],
   template: `
     <header class="app-header" [class]="headerClass()">
       <!-- Left Section -->
@@ -45,10 +48,10 @@ import { LoggerService } from '../../../core/services/logger.service';
           (click)="onToggleSidebar()"
           aria-label="Toggle navigation menu"
           aria-expanded="false"
-          >
+        >
           <i class="pi pi-bars"></i>
         </button>
-    
+
         <!-- Logo (conditional) -->
         @if (config().showLogo) {
           <div class="logo-container">
@@ -57,10 +60,10 @@ import { LoggerService } from '../../../core/services/logger.service';
               alt="FlagFit Pro"
               class="logo"
               (error)="onLogoError($event)"
-              />
+            />
           </div>
         }
-    
+
         <!-- Breadcrumbs (conditional) -->
         @if (config().showBreadcrumbs) {
           <nav class="breadcrumbs">
@@ -69,18 +72,14 @@ import { LoggerService } from '../../../core/services/logger.service';
               <i class="pi pi-chevron-right separator"></i>
             }
             @if (currentPage()) {
-              <span class="breadcrumb-item current">{{
-                currentPage()
-              }}</span>
+              <span class="breadcrumb-item current">{{ currentPage() }}</span>
             }
           </nav>
         }
-    
+
         <!-- Search (left position) -->
-        @if (config().searchPosition === 'left') {
-          <div
-            class="search-container"
-            >
+        @if (config().searchPosition === "left") {
+          <div class="search-container">
             <span class="p-input-icon-left search-wrapper">
               <i class="pi pi-search"></i>
               <input
@@ -92,19 +91,17 @@ import { LoggerService } from '../../../core/services/logger.service';
                 (keyup.enter)="onSearch()"
                 class="search-input"
                 aria-label="Search"
-                />
+              />
             </span>
           </div>
         }
       </div>
-    
+
       <!-- Center Section -->
       <div class="header-center">
         <!-- Search (center position) -->
-        @if (config().searchPosition === 'center') {
-          <div
-            class="search-container"
-            >
+        @if (config().searchPosition === "center") {
+          <div class="search-container">
             <span class="p-input-icon-left search-wrapper">
               <i class="pi pi-search"></i>
               <input
@@ -116,19 +113,17 @@ import { LoggerService } from '../../../core/services/logger.service';
                 (keyup.enter)="onSearch()"
                 class="search-input"
                 aria-label="Search"
-                />
+              />
             </span>
           </div>
         }
       </div>
-    
+
       <!-- Right Section -->
       <div class="header-right">
         <!-- Search (right position) -->
-        @if (config().searchPosition === 'right') {
-          <div
-            class="search-container"
-            >
+        @if (config().searchPosition === "right") {
+          <div class="search-container">
             <span class="p-input-icon-left search-wrapper">
               <i class="pi pi-search"></i>
               <input
@@ -140,23 +135,25 @@ import { LoggerService } from '../../../core/services/logger.service';
                 (keyup.enter)="onSearch()"
                 class="search-input"
                 aria-label="Search"
-                />
+              />
             </span>
           </div>
         }
-    
+
         <!-- Notifications -->
         <p-button
           icon="pi pi-bell"
           [text]="true"
           [rounded]="true"
-          [badge]="notificationCount() > 0 ? notificationCount().toString() : undefined"
+          [badge]="
+            notificationCount() > 0 ? notificationCount().toString() : undefined
+          "
           badgeClass="p-badge-danger"
           (onClick)="toggleNotifications()"
           ariaLabel="Notifications"
           class="header-icon-btn"
         ></p-button>
-    
+
         <!-- Settings -->
         <p-button
           icon="pi pi-cog"
@@ -166,7 +163,7 @@ import { LoggerService } from '../../../core/services/logger.service';
           ariaLabel="Settings"
           class="header-icon-btn"
         ></p-button>
-    
+
         <!-- Theme Toggle -->
         <div class="theme-toggle">
           <p-button
@@ -174,26 +171,31 @@ import { LoggerService } from '../../../core/services/logger.service';
             [text]="true"
             [rounded]="true"
             (onClick)="toggleTheme()"
-            [ariaLabel]="isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'"
+            [ariaLabel]="
+              isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
+            "
             class="header-icon-btn"
           ></p-button>
           <span class="theme-label">{{
             isDarkTheme() ? "Dark" : "Light"
           }}</span>
         </div>
-    
+
         <!-- User Menu -->
         <p-menu #userMenu [model]="userMenuItems()" [popup]="true"></p-menu>
         <p-avatar
           [label]="userInitials()"
           shape="circle"
-          [style]="{ 'background-color': 'var(--ds-primary-green)', color: 'var(--color-text-on-primary)' }"
+          [style]="{
+            'background-color': 'var(--ds-primary-green)',
+            color: 'var(--color-text-on-primary)',
+          }"
           (click)="userMenu.toggle($event)"
           class="user-avatar"
         ></p-avatar>
       </div>
     </header>
-    `,
+  `,
   styles: [
     `
       .app-header {
@@ -388,10 +390,10 @@ export class HeaderComponent {
 
   // Angular 21: Use output() signal instead of @Output() EventEmitter
   toggleSidebar = output<void>();
-  
+
   // Angular 21: Use model() for two-way binding (replaces ngModel)
   searchQuery = model("");
-  
+
   notificationCount = signal(0);
   isDarkTheme = signal(false);
   userInitials = signal("JD");
@@ -423,9 +425,9 @@ export class HeaderComponent {
 
   // Angular 21: Use toSignal() for router events instead of subscription
   private navigationEnd$ = this.router.events.pipe(
-    filter((event) => event instanceof NavigationEnd)
+    filter((event) => event instanceof NavigationEnd),
   );
-  
+
   private navigationEnd = toSignal(this.navigationEnd$, { initialValue: null });
 
   constructor() {
@@ -447,7 +449,7 @@ export class HeaderComponent {
     effect(() => {
       const isDark = this.isDarkTheme();
       document.body.classList.toggle("dark-theme", isDark);
-      if (typeof localStorage !== 'undefined') {
+      if (typeof localStorage !== "undefined") {
         localStorage.setItem("theme", isDark ? "dark" : "light");
       }
     });
@@ -530,7 +532,7 @@ export class HeaderComponent {
   }
 
   private loadThemePreference(): void {
-    if (typeof localStorage !== 'undefined') {
+    if (typeof localStorage !== "undefined") {
       const savedTheme = localStorage.getItem("theme");
       const isDark = savedTheme === "dark";
       this.isDarkTheme.set(isDark);
@@ -544,7 +546,8 @@ export class HeaderComponent {
       // Try to extract initials from name
       const nameParts = user.name.trim().split(/\s+/);
       if (nameParts.length >= 2) {
-        const initials = `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`.toUpperCase();
+        const initials =
+          `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`.toUpperCase();
         this.userInitials.set(initials);
       } else {
         this.userInitials.set(nameParts[0][0].toUpperCase());

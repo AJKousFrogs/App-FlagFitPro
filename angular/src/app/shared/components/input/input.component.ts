@@ -1,15 +1,25 @@
-import { Component, input, forwardRef, signal, ChangeDetectionStrategy } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  input,
+  forwardRef,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule,
+} from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 /**
  * Input Component - Angular 21
- * 
+ *
  * A form input component with validation support
  * Uses Angular 21 signals and ControlValueAccessor for form integration
  */
 @Component({
-  selector: 'app-input',
+  selector: "app-input",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule],
@@ -17,8 +27,8 @@ import { CommonModule } from '@angular/common';
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => InputComponent),
-      multi: true
-    }
+      multi: true,
+    },
   ],
   template: `
     <div class="form-group">
@@ -37,88 +47,95 @@ import { CommonModule } from '@angular/common';
         (input)="onChange($event)"
         class="form-control"
         [attr.aria-invalid]="invalid() ? 'true' : null"
-        [attr.aria-describedby]="errorMessage() ? id() + '-error' : null" />
+        [attr.aria-describedby]="errorMessage() ? id() + '-error' : null"
+      />
       @if (helpText() && !errorMessage()) {
         <div class="form-help">{{ helpText() }}</div>
       }
       @if (errorMessage()) {
-        <div [id]="id() + '-error'" class="form-error">{{ errorMessage() }}</div>
+        <div [id]="id() + '-error'" class="form-error">
+          {{ errorMessage() }}
+        </div>
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-    label {
-      font-weight: 600;
-      color: var(--p-text-color);
-      font-size: 0.875rem;
-    }
+      label {
+        font-weight: 600;
+        color: var(--p-text-color);
+        font-size: 0.875rem;
+      }
 
-    .form-control {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid var(--p-surface-border);
-      border-radius: var(--p-border-radius);
-      font-size: 1rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      font-family: inherit;
-    }
+      .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--p-surface-border);
+        border-radius: var(--p-border-radius);
+        font-size: 1rem;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        font-family: inherit;
+      }
 
-    .form-control:focus {
-      outline: none;
-      border-color: var(--p-primary-color);
-      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
-    }
+      .form-control:focus {
+        outline: none;
+        border-color: var(--p-primary-color);
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+      }
 
-    .form-control:disabled {
-      background-color: var(--p-surface-100);
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
+      .form-control:disabled {
+        background-color: var(--p-surface-100);
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
 
-    .form-control.is-invalid {
-      border-color: var(--p-error-color);
-    }
+      .form-control.is-invalid {
+        border-color: var(--p-error-color);
+      }
 
-    .form-control.is-invalid:focus {
-      border-color: var(--p-error-color);
-      box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
-    }
+      .form-control.is-invalid:focus {
+        border-color: var(--p-error-color);
+        box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
+      }
 
-    .form-control.is-valid {
-      border-color: var(--p-success-color, #4caf50);
-    }
+      .form-control.is-valid {
+        border-color: var(--p-success-color, #4caf50);
+      }
 
-    .form-control.is-valid:focus {
-      border-color: var(--p-success-color, #4caf50);
-      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
-    }
+      .form-control.is-valid:focus {
+        border-color: var(--p-success-color, #4caf50);
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+      }
 
-    .form-help {
-      font-size: 0.75rem;
-      color: var(--p-text-color-secondary);
-    }
+      .form-help {
+        font-size: 0.75rem;
+        color: var(--p-text-color-secondary);
+      }
 
-    .form-error {
-      font-size: 0.75rem;
-      color: var(--p-error-color);
-    }
-  `]
+      .form-error {
+        font-size: 0.75rem;
+        color: var(--p-error-color);
+      }
+    `,
+  ],
 })
 export class InputComponent implements ControlValueAccessor {
   // Angular 21: Use input() signals instead of @Input()
   id = input<string>(`input-${Math.random().toString(36).substr(2, 9)}`);
   label = input<string>();
-  type = input<string>('text');
+  type = input<string>("text");
   placeholder = input<string>();
   helpText = input<string>();
   errorMessage = input<string>();
@@ -127,7 +144,7 @@ export class InputComponent implements ControlValueAccessor {
   valid = input<boolean>(false);
 
   // Value signal for ControlValueAccessor
-  value = signal<string>('');
+  value = signal<string>("");
   private onChangeFn = (value: string) => {};
   private onTouchedFn = () => {};
 
@@ -144,7 +161,7 @@ export class InputComponent implements ControlValueAccessor {
 
   // ControlValueAccessor implementation
   writeValue(value: string): void {
-    this.value.set(value || '');
+    this.value.set(value || "");
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -160,4 +177,3 @@ export class InputComponent implements ControlValueAccessor {
     // The template will use disabled() which combines both
   }
 }
-

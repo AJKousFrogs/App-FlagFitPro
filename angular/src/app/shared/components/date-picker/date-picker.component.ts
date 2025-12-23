@@ -1,16 +1,27 @@
-import { Component, input, output, forwardRef, signal, ChangeDetectionStrategy } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { DatePicker } from 'primeng/datepicker';
+import {
+  Component,
+  input,
+  output,
+  forwardRef,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule,
+} from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { DatePicker } from "primeng/datepicker";
 
 /**
  * Date Picker Component - Angular 21
- * 
+ *
  * A wrapper around PrimeNG DatePicker with consistent styling and simplified API
  * Uses Angular 21 signals and ControlValueAccessor for form integration
  */
 @Component({
-  selector: 'app-date-picker',
+  selector: "app-date-picker",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, DatePicker],
@@ -18,8 +29,8 @@ import { DatePicker } from 'primeng/datepicker';
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => DatePickerComponent),
-      multi: true
-    }
+      multi: true,
+    },
   ],
   template: `
     <div class="date-picker-group">
@@ -43,45 +54,52 @@ import { DatePicker } from 'primeng/datepicker';
         (onClear)="onDateChange()"
         (onBlur)="onBlur()"
         [attr.aria-invalid]="invalid() ? 'true' : null"
-        [attr.aria-describedby]="errorMessage() ? id() + '-error' : helpText() ? id() + '-help' : null">
+        [attr.aria-describedby]="
+          errorMessage() ? id() + '-error' : helpText() ? id() + '-help' : null
+        "
+      >
       </p-datepicker>
       @if (helpText() && !errorMessage()) {
         <div [id]="id() + '-help'" class="form-help">{{ helpText() }}</div>
       }
       @if (errorMessage()) {
-        <div [id]="id() + '-error'" class="form-error" role="alert">{{ errorMessage() }}</div>
+        <div [id]="id() + '-error'" class="form-error" role="alert">
+          {{ errorMessage() }}
+        </div>
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .date-picker-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+      .date-picker-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-    :host ::ng-deep .p-datepicker {
-      width: 100%;
-    }
+      :host ::ng-deep .p-datepicker {
+        width: 100%;
+      }
 
-    :host ::ng-deep .p-datepicker-input {
-      width: 100%;
-    }
+      :host ::ng-deep .p-datepicker-input {
+        width: 100%;
+      }
 
-    .form-help {
-      font-size: 0.75rem;
-      color: var(--p-text-color-secondary);
-    }
+      .form-help {
+        font-size: 0.75rem;
+        color: var(--p-text-color-secondary);
+      }
 
-    .form-error {
-      font-size: 0.75rem;
-      color: var(--p-error-color);
-    }
-  `]
+      .form-error {
+        font-size: 0.75rem;
+        color: var(--p-error-color);
+      }
+    `,
+  ],
 })
 export class DatePickerComponent implements ControlValueAccessor {
   // Configuration
@@ -91,47 +109,46 @@ export class DatePickerComponent implements ControlValueAccessor {
   errorMessage = input<string>();
   disabled = input<boolean>(false);
   invalid = input<boolean>(false);
-  placeholder = input<string>('Select date');
-  dateFormat = input<string>('mm/dd/yy');
+  placeholder = input<string>("Select date");
+  dateFormat = input<string>("mm/dd/yy");
   showButtonBar = input<boolean>(true);
   showTime = input<boolean>(false);
-  hourFormat = input<'12' | '24'>('12');
+  hourFormat = input<"12" | "24">("12");
   minDate = input<Date | null>(null);
   maxDate = input<Date | null>(null);
-  
+
   // Value signal
   dateValue = signal<Date | null>(null);
   private onChangeFn = (value: Date | null) => {};
   private onTouchedFn = () => {};
-  
+
   // Events
   changed = output<Date | null>();
-  
+
   onDateChange(): void {
     const value = this.dateValue();
     this.onChangeFn(value);
     this.changed.emit(value);
   }
-  
+
   onBlur(): void {
     this.onTouchedFn();
   }
-  
+
   // ControlValueAccessor implementation
   writeValue(value: Date | null): void {
     this.dateValue.set(value || null);
   }
-  
+
   registerOnChange(fn: (value: Date | null) => void): void {
     this.onChangeFn = fn;
   }
-  
+
   registerOnTouched(fn: () => void): void {
     this.onTouchedFn = fn;
   }
-  
+
   setDisabledState(isDisabled: boolean): void {
     // Handled via disabled input
   }
 }
-

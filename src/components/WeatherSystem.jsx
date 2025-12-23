@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 const WeatherSystem = () => {
   const [currentWeather, setCurrentWeather] = useState(null);
@@ -30,13 +30,13 @@ const WeatherSystem = () => {
     }
 
     try {
-      const response = await fetch('/api/user/location', {
+      const response = await fetch("/api/user/location", {
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setLocation(data.location);
@@ -45,7 +45,7 @@ const WeatherSystem = () => {
         getCurrentPosition();
       }
     } catch (error) {
-      console.error('Error fetching user location:', error);
+      console.error("Error fetching user location:", error);
       getCurrentPosition();
     }
   };
@@ -61,8 +61,9 @@ const WeatherSystem = () => {
 
     // Valid latitude range: -90 to 90
     // Valid longitude range: -180 to 180
-    return latitude >= -90 && latitude <= 90 &&
-           longitude >= -180 && longitude <= 180;
+    return (
+      latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180
+    );
   };
 
   const getCurrentPosition = () => {
@@ -77,19 +78,19 @@ const WeatherSystem = () => {
             setLocation({
               lat,
               lon,
-              name: 'Current Location'
+              name: "Current Location",
             });
           } else {
-            console.error('Invalid coordinates received from geolocation');
+            console.error("Invalid coordinates received from geolocation");
             // Default to a fallback location
-            setLocation({ lat: 40.7128, lon: -74.0060, name: 'New York' });
+            setLocation({ lat: 40.7128, lon: -74.006, name: "New York" });
           }
         },
         (error) => {
-          console.error('Geolocation error:', error);
+          console.error("Geolocation error:", error);
           // Default to a fallback location
-          setLocation({ lat: 40.7128, lon: -74.0060, name: 'New York' });
-        }
+          setLocation({ lat: 40.7128, lon: -74.006, name: "New York" });
+        },
       );
     }
   };
@@ -99,20 +100,20 @@ const WeatherSystem = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch('/api/weather', {
-        method: 'POST',
+      const response = await fetch("/api/weather", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           lat: location.lat,
           lon: location.lon,
           includeForecast: true,
-          includeAlerts: true
-        })
+          includeAlerts: true,
+        }),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setCurrentWeather(data.current);
@@ -121,7 +122,7 @@ const WeatherSystem = () => {
         calculatePerformanceImpact(data.current);
       }
     } catch (error) {
-      console.error('Error fetching weather data:', error);
+      console.error("Error fetching weather data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -135,24 +136,24 @@ const WeatherSystem = () => {
       passing: 0,
       running: 0,
       endurance: 0,
-      injuryRisk: 'Low',
-      recommendations: []
+      injuryRisk: "Low",
+      recommendations: [],
     };
 
     // Temperature impact
     if (weather.temp > 85) {
       impact.endurance -= 15;
-      impact.injuryRisk = 'High';
-      impact.recommendations.push('Extra hydration every 15 minutes');
+      impact.injuryRisk = "High";
+      impact.recommendations.push("Extra hydration every 15 minutes");
     } else if (weather.temp < 40) {
       impact.running -= 10;
-      impact.recommendations.push('Warm up for 20 minutes minimum');
+      impact.recommendations.push("Warm up for 20 minutes minimum");
     }
 
     // Wind impact
     if (weather.windSpeed > 15) {
       impact.passing -= 20;
-      impact.recommendations.push('Adjust passing strategy for wind');
+      impact.recommendations.push("Adjust passing strategy for wind");
     } else if (weather.windSpeed > 10) {
       impact.passing -= 10;
     }
@@ -160,14 +161,14 @@ const WeatherSystem = () => {
     // Humidity impact
     if (weather.humidity > 80) {
       impact.endurance -= 10;
-      impact.recommendations.push('Monitor hydration levels closely');
+      impact.recommendations.push("Monitor hydration levels closely");
     }
 
     // Precipitation impact
-    if (weather.conditions.includes('rain')) {
+    if (weather.conditions.includes("rain")) {
       impact.passing -= 15;
       impact.running -= 5;
-      impact.recommendations.push('Use weather-appropriate equipment');
+      impact.recommendations.push("Use weather-appropriate equipment");
     }
 
     setPerformanceImpact(impact);
@@ -178,20 +179,20 @@ const WeatherSystem = () => {
     if (!user?.token) return;
 
     try {
-      const response = await fetch('/api/user/weather-preferences', {
-        method: 'PUT',
+      const response = await fetch("/api/user/weather-preferences", {
+        method: "PUT",
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(preferences)
+        body: JSON.stringify(preferences),
       });
-      
+
       if (response.ok) {
-        console.log('Weather preferences saved');
+        console.log("Weather preferences saved");
       }
     } catch (error) {
-      console.error('Error saving weather preferences:', error);
+      console.error("Error saving weather preferences:", error);
     }
   };
 
@@ -200,19 +201,19 @@ const WeatherSystem = () => {
     if (!user?.token) return;
 
     try {
-      const response = await fetch('/api/weather/history', {
+      const response = await fetch("/api/weather/history", {
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         return data.history;
       }
     } catch (error) {
-      console.error('Error fetching weather history:', error);
+      console.error("Error fetching weather history:", error);
     }
   };
 
@@ -221,44 +222,44 @@ const WeatherSystem = () => {
     if (!user?.token) return;
 
     try {
-      const response = await fetch('/api/weather/incident', {
-        method: 'POST',
+      const response = await fetch("/api/weather/incident", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(incident)
+        body: JSON.stringify(incident),
       });
-      
+
       if (response.ok) {
-        console.log('Weather incident reported');
+        console.log("Weather incident reported");
       }
     } catch (error) {
-      console.error('Error reporting weather incident:', error);
+      console.error("Error reporting weather incident:", error);
     }
   };
 
   const getRiskLevel = (weather) => {
-    if (!weather) return 'Unknown';
-    
+    if (!weather) return "Unknown";
+
     let risk = 0;
     if (weather.temp > 90 || weather.temp < 35) risk += 3;
     if (weather.windSpeed > 20) risk += 2;
-    if (weather.conditions.includes('thunderstorm')) risk += 3;
-    if (weather.conditions.includes('snow')) risk += 2;
-    
-    if (risk >= 5) return 'High';
-    if (risk >= 3) return 'Medium';
-    return 'Low';
+    if (weather.conditions.includes("thunderstorm")) risk += 3;
+    if (weather.conditions.includes("snow")) risk += 2;
+
+    if (risk >= 5) return "High";
+    if (risk >= 3) return "Medium";
+    return "Low";
   };
 
   const getWeatherIcon = (conditions) => {
-    if (conditions.includes('thunderstorm')) return '⚡';
-    if (conditions.includes('rain')) return '🌧️';
-    if (conditions.includes('snow')) return '❄️';
-    if (conditions.includes('cloud')) return '☁️';
-    if (conditions.includes('clear')) return '☀️';
-    return '🌤️';
+    if (conditions.includes("thunderstorm")) return "⚡";
+    if (conditions.includes("rain")) return "🌧️";
+    if (conditions.includes("snow")) return "❄️";
+    if (conditions.includes("cloud")) return "☁️";
+    if (conditions.includes("clear")) return "☀️";
+    return "🌤️";
   };
 
   if (isLoading) {
@@ -283,10 +284,16 @@ const WeatherSystem = () => {
               {getWeatherIcon(currentWeather.conditions)}
             </div>
             <div className="weather-details">
-              <div className="temperature">{Math.round(currentWeather.temp)}°F</div>
+              <div className="temperature">
+                {Math.round(currentWeather.temp)}°F
+              </div>
               <div className="conditions">{currentWeather.conditions}</div>
-              <div className="wind">💨 {currentWeather.windSpeed}mph {currentWeather.windDirection}</div>
-              <div className="humidity">💧 {currentWeather.humidity}% Humidity</div>
+              <div className="wind">
+                💨 {currentWeather.windSpeed}mph {currentWeather.windDirection}
+              </div>
+              <div className="humidity">
+                💧 {currentWeather.humidity}% Humidity
+              </div>
             </div>
           </div>
 
@@ -295,25 +302,43 @@ const WeatherSystem = () => {
             <div className="impact-metrics">
               <div className="metric">
                 <span>Passing:</span>
-                <span className={performanceImpact.passing >= 0 ? 'positive' : 'negative'}>
-                  {performanceImpact.passing >= 0 ? '+' : ''}{performanceImpact.passing}%
+                <span
+                  className={
+                    performanceImpact.passing >= 0 ? "positive" : "negative"
+                  }
+                >
+                  {performanceImpact.passing >= 0 ? "+" : ""}
+                  {performanceImpact.passing}%
                 </span>
               </div>
               <div className="metric">
                 <span>Running:</span>
-                <span className={performanceImpact.running >= 0 ? 'positive' : 'negative'}>
-                  {performanceImpact.running >= 0 ? '+' : ''}{performanceImpact.running}%
+                <span
+                  className={
+                    performanceImpact.running >= 0 ? "positive" : "negative"
+                  }
+                >
+                  {performanceImpact.running >= 0 ? "+" : ""}
+                  {performanceImpact.running}%
                 </span>
               </div>
               <div className="metric">
                 <span>Endurance:</span>
-                <span className={performanceImpact.endurance >= 0 ? 'positive' : 'negative'}>
-                  {performanceImpact.endurance >= 0 ? '+' : ''}{performanceImpact.endurance}%
+                <span
+                  className={
+                    performanceImpact.endurance >= 0 ? "positive" : "negative"
+                  }
+                >
+                  {performanceImpact.endurance >= 0 ? "+" : ""}
+                  {performanceImpact.endurance}%
                 </span>
               </div>
             </div>
             <div className="risk-level">
-              Risk Level: <span className={`risk-${performanceImpact.injuryRisk.toLowerCase()}`}>
+              Risk Level:{" "}
+              <span
+                className={`risk-${performanceImpact.injuryRisk.toLowerCase()}`}
+              >
                 {performanceImpact.injuryRisk}
               </span>
             </div>
@@ -327,10 +352,14 @@ const WeatherSystem = () => {
           {forecast.slice(0, 4).map((day, index) => (
             <div key={index} className="forecast-item">
               <div className="forecast-time">{day.time}</div>
-              <div className="forecast-icon">{getWeatherIcon(day.conditions)}</div>
+              <div className="forecast-icon">
+                {getWeatherIcon(day.conditions)}
+              </div>
               <div className="forecast-temp">{Math.round(day.temp)}°F</div>
               <div className="forecast-wind">{day.windSpeed}mph</div>
-              <div className={`forecast-risk risk-${getRiskLevel(day).toLowerCase()}`}>
+              <div
+                className={`forecast-risk risk-${getRiskLevel(day).toLowerCase()}`}
+              >
                 {getRiskLevel(day)}
               </div>
             </div>
@@ -366,13 +395,13 @@ const WeatherSystem = () => {
       )}
 
       <div className="weather-actions">
-        <button onClick={() => window.location.href = '/weather/forecast'}>
+        <button onClick={() => (window.location.href = "/weather/forecast")}>
           📊 Extended Forecast
         </button>
-        <button onClick={() => window.location.href = '/weather/history'}>
+        <button onClick={() => (window.location.href = "/weather/history")}>
           📈 Weather History
         </button>
-        <button onClick={() => window.location.href = '/weather/settings'}>
+        <button onClick={() => (window.location.href = "/weather/settings")}>
           ⚙️ Weather Settings
         </button>
       </div>
@@ -380,4 +409,4 @@ const WeatherSystem = () => {
   );
 };
 
-export default WeatherSystem; 
+export default WeatherSystem;

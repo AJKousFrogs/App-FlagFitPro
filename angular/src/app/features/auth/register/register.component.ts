@@ -34,8 +34,8 @@ import { LoggerService } from "../../../core/services/logger.service";
     ButtonModule,
     InputTextModule,
     MessageModule,
-    ToastModule
-],
+    ToastModule,
+  ],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
@@ -47,7 +47,7 @@ import { LoggerService } from "../../../core/services/logger.service";
           </div>
           <h1 class="register-title">Create Your Account</h1>
         </ng-template>
-    
+
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           <div class="p-field mb-4">
             <label for="name" class="p-label">Full Name</label>
@@ -58,14 +58,14 @@ import { LoggerService } from "../../../core/services/logger.service";
               formControlName="name"
               placeholder="Enter your full name"
               [class.ng-invalid]="isFieldInvalid('name')"
-              />
-            @if (isFieldInvalid('name')) {
+            />
+            @if (isFieldInvalid("name")) {
               <small class="p-error">
                 {{ getFieldError("name") }}
               </small>
             }
           </div>
-    
+
           <div class="p-field mb-4">
             <label for="email" class="p-label required">Email</label>
             <input
@@ -76,14 +76,14 @@ import { LoggerService } from "../../../core/services/logger.service";
               placeholder="Enter your email"
               [class.ng-invalid]="isFieldInvalid('email')"
               autocomplete="email"
-              />
-            @if (isFieldInvalid('email')) {
+            />
+            @if (isFieldInvalid("email")) {
               <small class="p-error">
                 {{ getFieldError("email") }}
               </small>
             }
           </div>
-    
+
           <div class="p-field mb-4">
             <label for="password" class="p-label required">Password</label>
             <input
@@ -94,8 +94,8 @@ import { LoggerService } from "../../../core/services/logger.service";
               placeholder="Create a password"
               [class.ng-invalid]="isFieldInvalid('password')"
               autocomplete="new-password"
-              />
-            @if (isFieldInvalid('password')) {
+            />
+            @if (isFieldInvalid("password")) {
               <small class="p-error">
                 {{ getFieldError("password") }}
               </small>
@@ -105,48 +105,48 @@ import { LoggerService } from "../../../core/services/logger.service";
               lowercase, number, and special character.
             </small>
           </div>
-    
+
           <div class="p-field mb-4">
             <label for="confirmPassword" class="p-label required"
               >Confirm Password</label
-              >
-              <input
-                id="confirmPassword"
-                type="password"
-                pInputText
-                formControlName="confirmPassword"
-                placeholder="Confirm your password"
-                [class.ng-invalid]="isFieldInvalid('confirmPassword')"
-                autocomplete="new-password"
-                />
-              @if (isFieldInvalid('confirmPassword')) {
-                <small class="p-error">
-                  {{ getFieldError("confirmPassword") }}
-                </small>
-              }
-            </div>
-    
-            <p-button
-              type="submit"
-              label="Create Account"
-              icon="pi pi-user-plus"
-              [loading]="isLoading()"
-              [disabled]="registerForm.invalid"
-              styleClass="w-full mb-4"
-              >
-            </p-button>
-          </form>
-    
-          <div class="register-divider my-4">
-            <span>Or</span>
-          </div>
-    
-          <a [routerLink]="['/login']" class="register-login-link"
-            >Already have an account? Sign in</a
             >
-          </p-card>
+            <input
+              id="confirmPassword"
+              type="password"
+              pInputText
+              formControlName="confirmPassword"
+              placeholder="Confirm your password"
+              [class.ng-invalid]="isFieldInvalid('confirmPassword')"
+              autocomplete="new-password"
+            />
+            @if (isFieldInvalid("confirmPassword")) {
+              <small class="p-error">
+                {{ getFieldError("confirmPassword") }}
+              </small>
+            }
+          </div>
+
+          <p-button
+            type="submit"
+            label="Create Account"
+            icon="pi pi-user-plus"
+            [loading]="isLoading()"
+            [disabled]="registerForm.invalid"
+            styleClass="w-full mb-4"
+          >
+          </p-button>
+        </form>
+
+        <div class="register-divider my-4">
+          <span>Or</span>
         </div>
-    `,
+
+        <a [routerLink]="['/login']" class="register-login-link"
+          >Already have an account? Sign in</a
+        >
+      </p-card>
+    </div>
+  `,
   styles: [
     `
       .register-page {
@@ -298,8 +298,10 @@ export class RegisterComponent {
     // Check password against leaked password database
     try {
       const password = this.registerForm.value.password;
-      const supabaseUrl = (window as any)._env?.SUPABASE_URL || (window as any)._env?.VITE_SUPABASE_URL;
-      
+      const supabaseUrl =
+        (window as any)._env?.SUPABASE_URL ||
+        (window as any)._env?.VITE_SUPABASE_URL;
+
       if (supabaseUrl) {
         // Get auth token if available
         let supabaseToken = null;
@@ -313,17 +315,17 @@ export class RegisterComponent {
         // Check password via Supabase Edge Function
         const functionUrl = `${supabaseUrl}/functions/v1/enable-leaked-password-protection`;
         const headers: any = {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         };
         if (supabaseToken) {
-          headers['Authorization'] = `Bearer ${supabaseToken}`;
+          headers["Authorization"] = `Bearer ${supabaseToken}`;
         }
 
         const response = await fetch(functionUrl, {
-          method: 'POST',
+          method: "POST",
           headers,
           body: JSON.stringify({
-            action: 'check',
+            action: "check",
             password: password,
           }),
         });
@@ -334,7 +336,9 @@ export class RegisterComponent {
             this.messageService.add({
               severity: "error",
               summary: "Password Security",
-              detail: result.message || "This password has been found in data breaches. Please choose a different password.",
+              detail:
+                result.message ||
+                "This password has been found in data breaches. Please choose a different password.",
             });
             return;
           }
@@ -342,7 +346,10 @@ export class RegisterComponent {
       }
     } catch (leakCheckError) {
       // Fail open - if leak check fails, continue with registration
-      this.logger.warn("Password leak check failed, continuing with registration:", leakCheckError);
+      this.logger.warn(
+        "Password leak check failed, continuing with registration:",
+        leakCheckError,
+      );
     }
 
     this.isLoading.set(true);

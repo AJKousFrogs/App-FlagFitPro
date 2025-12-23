@@ -70,7 +70,9 @@ export class ErrorPrevention {
     const rosterTable = document.querySelector(
       '.roster-table, [data-table="roster"]',
     );
-    if (!rosterTable) {return [];}
+    if (!rosterTable) {
+      return [];
+    }
 
     const emailCells = rosterTable.querySelectorAll('[data-field="email"]');
     return Array.from(emailCells).map((cell) =>
@@ -99,7 +101,9 @@ export class ErrorPrevention {
 
   addCharacterCounter(textarea) {
     const maxLength = parseInt(textarea.getAttribute("maxlength"));
-    if (!maxLength) {return;}
+    if (!maxLength) {
+      return;
+    }
 
     let counter = textarea.parentElement.querySelector(".character-counter");
     if (!counter) {
@@ -123,15 +127,21 @@ export class ErrorPrevention {
     const digits = value.replace(/\D/g, "");
 
     // Format as (XXX) XXX-XXXX
-    if (digits.length <= 3) {return digits;}
-    if (digits.length <= 6) {return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;}
+    if (digits.length <= 3) {
+      return digits;
+    }
+    if (digits.length <= 6) {
+      return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    }
     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
   }
 
   showError(element, message) {
     // Remove existing error
     const existingError = element.parentElement.querySelector(".field-error");
-    if (existingError) {existingError.remove();}
+    if (existingError) {
+      existingError.remove();
+    }
 
     // Add error styling
     element.classList.add("has-error");

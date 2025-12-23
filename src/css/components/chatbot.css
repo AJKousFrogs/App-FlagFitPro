@@ -183,15 +183,21 @@
 }
 
 .chatbot-message.streaming .message-text::after {
-  content: '▊';
+  content: "▊";
   animation: blink 1s infinite;
   color: var(--color-primary);
   margin-left: 2px;
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes messageSlideIn {
@@ -275,7 +281,7 @@
   background: var(--surface-tertiary, #f1f5f9);
   padding: 2px 6px;
   border-radius: var(--radius-sm, 4px);
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 0.9em;
 }
 

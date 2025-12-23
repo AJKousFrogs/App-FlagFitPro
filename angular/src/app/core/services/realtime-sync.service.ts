@@ -21,20 +21,19 @@ export interface Workout {
 export interface SyncConflictResult {
   resolved: Workout;
   conflict: boolean;
-  resolutionStrategy: 'remote' | 'local' | 'merged';
+  resolutionStrategy: "remote" | "local" | "merged";
 }
 
 @Injectable({
   providedIn: "root",
 })
 export class RealtimeSyncService {
-
   /**
    * Handle Supabase realtime updates with conflict detection
    */
   handleWorkoutUpdate(
     payload: RealtimePostgresChangesPayload<Workout>,
-    localState: Workout
+    localState: Workout,
   ): SyncConflictResult {
     const remoteWorkout = payload.new as Workout;
 
@@ -89,7 +88,7 @@ export class RealtimeSyncService {
     // Use remote values for structural data
     const resolved: Workout = {
       ...remote,
-      id: remote.id || local.id
+      id: remote.id || local.id,
     };
 
     // User-entered fields prefer local if local is newer
@@ -116,7 +115,7 @@ export class RealtimeSyncService {
    */
   handleDeletionConflict(
     payload: RealtimePostgresChangesPayload<Workout>,
-    localState: Workout | null
+    localState: Workout | null,
   ): { shouldDelete: boolean; conflict: boolean } {
     // If remote says deleted, always delete (server is source of truth)
     if (payload.eventType === "DELETE") {
@@ -154,7 +153,7 @@ export class RealtimeSyncService {
    */
   getConflictResolutionStrategy(
     local: Workout,
-    remote: Workout
+    remote: Workout,
   ): "remote" | "local" | "merged" {
     const localModified = local.modified_at
       ? new Date(local.modified_at).getTime()
@@ -172,4 +171,3 @@ export class RealtimeSyncService {
     }
   }
 }
-

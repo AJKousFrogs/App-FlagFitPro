@@ -13,7 +13,7 @@
   .main-footer {
     contain: layout style paint;
     will-change: transform;
-    
+
     /* Fallback values for browsers without CSS variable support */
     background: #f8f9fa; /* fallback for var(--surface-secondary) */
     background: var(--surface-secondary);
@@ -31,21 +31,21 @@
     clear: both;
     display: block;
     overflow: visible;
-    
+
     /* Dynamic footer height for PWA safe areas */
     padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
-    
+
     /* Better text rendering */
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    
+
     /* CSS custom properties for theme switching */
     --footer-bg: #f8f9fa;
     --footer-text: #1a1a1a;
     --footer-border: #e5e7eb;
   }
-  
+
   /* PWA-specific adjustments */
   @media (display-mode: standalone) {
     .main-footer {
@@ -55,25 +55,25 @@
       border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
   }
-  
+
   /* High contrast mode support */
   @media (prefers-contrast: high) {
     .main-footer {
       background: #000000;
       border-top: 3px solid #ffffff;
     }
-    
+
     .footer-section a {
       color: #ffffff;
       text-decoration: underline;
     }
-    
+
     .footer-section a:hover {
       background: #ffffff;
       color: #000000;
     }
   }
-  
+
   /* Reduced motion preferences */
   @media (prefers-reduced-motion: reduce) {
     .main-footer *,
@@ -85,7 +85,7 @@
       scroll-behavior: auto !important;
     }
   }
-  
+
   /* System preference detection for theme */
   @media (prefers-color-scheme: light) {
     .main-footer:not([data-theme]) {
@@ -94,7 +94,7 @@
       --footer-border: rgba(0, 0, 0, 0.1);
     }
   }
-  
+
   @media (prefers-color-scheme: dark) {
     .main-footer:not([data-theme]) {
       --footer-bg: #1a1a1a;
@@ -102,21 +102,21 @@
       --footer-border: rgba(255, 255, 255, 0.1);
     }
   }
-  
+
   /* Light theme variables */
   [data-theme="light"] .main-footer {
     --footer-bg: #ffffff;
     --footer-text: #1a1a1a;
     --footer-border: rgba(0, 0, 0, 0.1);
   }
-  
+
   /* Dark theme variables */
   [data-theme="dark"] .main-footer {
     --footer-bg: #1a1a1a;
     --footer-text: #ffffff;
     --footer-border: rgba(255, 255, 255, 0.1);
   }
-  
+
   /* Apply theme variables */
   .main-footer {
     background: var(--footer-bg);
@@ -154,18 +154,18 @@
   .footer-container {
     container-type: inline-size;
   }
-  
+
   @container (max-width: 600px) {
     .footer-content {
       grid-template-columns: 1fr;
       gap: 1.5rem;
     }
-    
+
     .footer-section:first-child {
       text-align: center;
     }
   }
-  
+
   @container (min-width: 1200px) {
     .footer-content {
       grid-template-columns: 3fr 1.5fr 1.5fr 1fr;
@@ -203,18 +203,18 @@
     margin-left: 0;
     margin-right: 0;
   }
-  
+
   /* Responsive: 3 columns on desktop, 2 on tablet, 1 on mobile */
   @media (min-width: 769px) and (max-width: 1024px) {
     .footer-content {
       grid-template-columns: 1fr 1fr;
     }
-    
+
     .footer-section:first-child {
       grid-column: 1 / -1;
     }
   }
-  
+
   @media (max-width: 768px) {
     .footer-content {
       grid-template-columns: 1fr;
@@ -238,7 +238,7 @@
   /* Flexbox gap fallback */
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-  
+
   /* Improved readability on different backgrounds */
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -332,7 +332,7 @@
 
 /* Link hover states with better UX - animated underline */
 .footer-section a::before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: -100%;
@@ -447,10 +447,12 @@
 
 /* Loading skeleton for dynamic content */
 .footer-loading .footer-section {
-  background: linear-gradient(90deg,
-    rgba(255,255,255,0.1) 25%,
-    rgba(255,255,255,0.2) 50%,
-    rgba(255,255,255,0.1) 75%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
   background-size: 200% 100%;
   animation: loading-shimmer 1.5s infinite;
   border-radius: 0.5rem;
@@ -458,8 +460,12 @@
 }
 
 @keyframes loading-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* Error state for failed dynamic content */
@@ -557,7 +563,7 @@
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .footer-section:first-child {
     text-align: center;
   }
@@ -658,7 +664,7 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     -webkit-tap-highlight-color: rgba(16, 201, 107, 0.2);
   }
-  
+
   .footer-section a::before {
     height: 3px; /* Thicker underline on mobile for better visibility */
   }
@@ -681,7 +687,7 @@
 
   /* Scroll indicator */
   .footer-social-scroll::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 50%;
@@ -792,25 +798,25 @@
     page-break-inside: avoid;
     padding-bottom: 1rem;
   }
-  
+
   .footer-section a::after {
     content: " (" attr(href) ")";
     font-size: 0.8em;
     color: #666;
   }
-  
+
   .social-links {
     display: none; /* Hide social icons in print */
   }
-  
+
   .footer-section {
     break-inside: avoid;
   }
-  
+
   .footer-section a::before {
     display: none; /* Hide animated underline in print */
   }
-  
+
   .skip-footer {
     display: none;
   }
@@ -821,13 +827,17 @@
   .footer-hidden {
     transform: translateY(100%);
     opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
   }
-  
+
   .footer-visible {
     transform: translateY(0);
     opacity: 1;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
   }
 }
 

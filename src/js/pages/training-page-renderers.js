@@ -25,7 +25,9 @@ export function renderUserHeader(user) {
  * Render weekly progress stat card
  */
 export function renderWeeklyProgress(stats) {
-  if (!stats) {return;}
+  if (!stats) {
+    return;
+  }
 
   const weeklyProgressValue = document.querySelector(".stat-value");
   if (weeklyProgressValue && weeklyProgressValue.textContent.includes("/")) {
@@ -82,15 +84,25 @@ function renderDayCard(day, scheduleSettings) {
   const dayCard = document.createElement("div");
   dayCard.className = `day-card ${isToday ? "today" : ""} ${isCompleted ? "completed" : ""} ${isGameDay ? "game-day" : ""}`;
   dayCard.setAttribute("role", "listitem");
-  dayCard.setAttribute("aria-label", `${dayName}, ${date.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`);
-  
+  dayCard.setAttribute(
+    "aria-label",
+    `${dayName}, ${date.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`,
+  );
+
   if (isToday) {
     dayCard.setAttribute("aria-current", "date");
   }
 
-  const dateFormatted = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  const statusLabel = isCompleted ? "Completed" : workoutType ? "Scheduled" : "No workout scheduled";
-  
+  const dateFormatted = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+  const statusLabel = isCompleted
+    ? "Completed"
+    : workoutType
+      ? "Scheduled"
+      : "No workout scheduled";
+
   // Build day card HTML (data is from trusted sources, but we sanitize for safety)
   const dayCardHtml = `
         <div class="day-header">
@@ -143,7 +155,7 @@ function renderDayCard(day, scheduleSettings) {
               class="day-action-btn btn ${isCompleted ? "btn-secondary" : "btn-primary"} btn-sm" 
               onclick="startDayWorkout('${workoutType}', '${date.toISOString()}')"
               aria-label="${isCompleted ? "Workout completed" : `Start ${workoutTitle || workoutType} workout`}"
-              ${isCompleted ? 'aria-pressed="true"' : ''}
+              ${isCompleted ? 'aria-pressed="true"' : ""}
             >
                 ${isCompleted ? '<i data-lucide="check" class="icon-16 icon-inline" aria-hidden="true"></i> Completed' : '<i data-lucide="play" class="icon-16 icon-inline" aria-hidden="true"></i> Start'}
             </button>
@@ -155,15 +167,15 @@ function renderDayCard(day, scheduleSettings) {
 
   // Use setSafeContent to sanitize HTML before insertion
   setSafeContent(dayCard, dayCardHtml, true, true);
-  
+
   // Replace onclick attributes with addEventListener
-  const startBtn = dayCard.querySelector('.day-action-btn');
+  const startBtn = dayCard.querySelector(".day-action-btn");
   if (startBtn && workoutType && !isCompleted) {
-    const originalOnclick = startBtn.getAttribute('onclick');
-    startBtn.removeAttribute('onclick');
-    if (originalOnclick && originalOnclick.includes('startDayWorkout')) {
-      startBtn.addEventListener('click', () => {
-        if (typeof window.startDayWorkout === 'function') {
+    const originalOnclick = startBtn.getAttribute("onclick");
+    startBtn.removeAttribute("onclick");
+    if (originalOnclick && originalOnclick.includes("startDayWorkout")) {
+      startBtn.addEventListener("click", () => {
+        if (typeof window.startDayWorkout === "function") {
           window.startDayWorkout(workoutType, date.toISOString());
         }
       });
@@ -182,7 +194,9 @@ export function renderWeeklySchedule(
   viewMode = "detailed",
 ) {
   const scheduleGrid = document.getElementById("weekly-schedule-grid");
-  if (!scheduleGrid) {return;}
+  if (!scheduleGrid) {
+    return;
+  }
 
   // Clear schedule grid using replaceChildren for consistency (faster than innerHTML = "")
   scheduleGrid.replaceChildren();
@@ -196,10 +210,14 @@ export function renderWeeklySchedule(
   const section = document.querySelector(".weekly-schedule-section");
   if (viewMode === "compact") {
     scheduleGrid.classList.add("compact");
-    if (section) {section.classList.add("schedule-view-compact");}
+    if (section) {
+      section.classList.add("schedule-view-compact");
+    }
   } else {
     scheduleGrid.classList.remove("compact");
-    if (section) {section.classList.remove("schedule-view-compact");}
+    if (section) {
+      section.classList.remove("schedule-view-compact");
+    }
   }
 
   // Update toggle button text
@@ -220,7 +238,9 @@ export function renderWeeklySchedule(
  */
 export function renderWorkoutCards() {
   const workoutsSection = document.querySelector(".workouts-section");
-  if (!workoutsSection) {return;}
+  if (!workoutsSection) {
+    return;
+  }
 
   // Workout cards are already in HTML, we just need to ensure they're properly initialized
   // This function can be extended to dynamically generate cards from templates if needed
@@ -243,7 +263,8 @@ export function renderAchievements(recentWorkouts) {
   // Achievements are currently static in HTML
   // This function can be extended to dynamically generate achievements based on workout data
   const achievementsSection = document.querySelector(".achievements-section");
-  if (!achievementsSection) {}
+  if (!achievementsSection) {
+  }
 
   // Future: Generate achievements based on recentWorkouts data
   // For now, achievements remain static in HTML

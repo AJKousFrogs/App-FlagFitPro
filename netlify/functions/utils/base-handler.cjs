@@ -1,6 +1,6 @@
 /**
  * Base Handler Middleware for Netlify Functions
- * 
+ *
  * Provides standardized handling of:
  * - CORS preflight requests
  * - Environment variable validation
@@ -8,12 +8,12 @@
  * - Rate limiting
  * - Authentication
  * - Error handling
- * 
+ *
  * This eliminates ~40 lines of boilerplate from each function file.
- * 
+ *
  * @example
  * const { baseHandler } = require("./utils/base-handler.cjs");
- * 
+ *
  * exports.handler = async (event, context) => {
  *   return baseHandler(event, context, {
  *     functionName: 'fixtures',
@@ -33,14 +33,14 @@ const {
   createErrorResponse,
   handleServerError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./error-handler.cjs");
 const { authenticateRequest } = require("./auth-helper.cjs");
 const { applyRateLimit } = require("./rate-limiter.cjs");
 
 /**
  * Base handler middleware
- * 
+ *
  * @param {object} event - Netlify function event
  * @param {object} context - Netlify function context
  * @param {object} options - Handler options
@@ -55,19 +55,19 @@ const { applyRateLimit } = require("./rate-limiter.cjs");
 async function baseHandler(event, context, options = {}) {
   const {
     functionName,
-    allowedMethods = ['GET'],
-    rateLimitType = 'READ',
+    allowedMethods = ["GET"],
+    rateLimitType = "READ",
     requireAuth = true,
     handler,
-    onAuth = null
+    onAuth = null,
   } = options;
 
   // Validate required options
   if (!functionName) {
-    throw new Error('baseHandler: functionName is required');
+    throw new Error("baseHandler: functionName is required");
   }
-  if (!handler || typeof handler !== 'function') {
-    throw new Error('baseHandler: handler function is required');
+  if (!handler || typeof handler !== "function") {
+    throw new Error("baseHandler: handler function is required");
   }
 
   // Handle CORS preflight
@@ -75,7 +75,7 @@ async function baseHandler(event, context, options = {}) {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: ""
+      body: "",
     };
   }
 
@@ -89,9 +89,9 @@ async function baseHandler(event, context, options = {}) {
     // Validate HTTP method
     if (!allowedMethods.includes(event.httpMethod)) {
       return createErrorResponse(
-        `Method not allowed. Use ${allowedMethods.join(' or ')}.`,
+        `Method not allowed. Use ${allowedMethods.join(" or ")}.`,
         405,
-        'method_not_allowed'
+        "method_not_allowed",
       );
     }
 
@@ -111,7 +111,7 @@ async function baseHandler(event, context, options = {}) {
       userId = auth.user.id;
 
       // Call optional onAuth callback
-      if (onAuth && typeof onAuth === 'function') {
+      if (onAuth && typeof onAuth === "function") {
         await onAuth(userId, event);
       }
     }

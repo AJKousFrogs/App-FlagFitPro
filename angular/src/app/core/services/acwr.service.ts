@@ -30,22 +30,22 @@
  * @version 2.0.0 - Enhanced with evidence-based safeguards
  */
 
-import { Injectable, Signal, computed, signal, inject } from '@angular/core';
-import { 
-  LoadMetrics, 
-  TrainingSession, 
-  ACWRData, 
-  RiskZone, 
+import { Injectable, Signal, computed, signal, inject } from "@angular/core";
+import {
+  LoadMetrics,
+  TrainingSession,
+  ACWRData,
+  RiskZone,
   LoadType,
   ACWRConfig,
   ACWRDataQuality,
   DataQualityLevel,
-  ToleranceDetection
-} from '../models/acwr.models';
-import { EvidenceConfigService } from './evidence-config.service';
+  ToleranceDetection,
+} from "../models/acwr.models";
+import { EvidenceConfigService } from "./evidence-config.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AcwrService {
   private evidenceConfigService = inject(EvidenceConfigService);
@@ -56,7 +56,7 @@ export class AcwrService {
    */
   private getDefaultConfigFromPreset(): ACWRConfig {
     const evidenceConfig = this.evidenceConfigService.getACWRConfig();
-    
+
     return {
       acuteWindowDays: evidenceConfig.acuteWindowDays,
       chronicWindowDays: evidenceConfig.chronicWindowDays,
@@ -66,20 +66,23 @@ export class AcwrService {
         sweetSpotLow: evidenceConfig.thresholds.sweetSpotLow,
         sweetSpotHigh: evidenceConfig.thresholds.sweetSpotHigh,
         dangerHigh: evidenceConfig.thresholds.dangerHigh,
-        maxWeeklyIncreasePercent: evidenceConfig.thresholds.maxWeeklyIncreasePercent,
-        maxWeeklyIncreasePercentConservative: evidenceConfig.thresholds.maxWeeklyIncreasePercentConservative,
+        maxWeeklyIncreasePercent:
+          evidenceConfig.thresholds.maxWeeklyIncreasePercent,
+        maxWeeklyIncreasePercentConservative:
+          evidenceConfig.thresholds.maxWeeklyIncreasePercentConservative,
       },
       minChronicLoad: evidenceConfig.minChronicLoad,
       minDaysForChronic: evidenceConfig.minDaysForChronic,
       minSessionsForChronic: evidenceConfig.minSessionsForChronic,
       dataQuality: {
-        lowConfidenceThreshold: evidenceConfig.dataQuality.lowConfidenceThreshold,
+        lowConfidenceThreshold:
+          evidenceConfig.dataQuality.lowConfidenceThreshold,
         enableQualityFlags: evidenceConfig.dataQuality.enableQualityFlags,
       },
       toleranceDetection: {
         enabled: true,
         consecutiveHighDays: 7,
-        checkFrequency: 'weekly',
+        checkFrequency: "weekly",
       },
       personalization: {
         enabled: false,
@@ -93,7 +96,9 @@ export class AcwrService {
   }
 
   // Current configuration (initialized from evidence preset)
-  private readonly config = signal<ACWRConfig>(this.getDefaultConfigFromPreset());
+  private readonly config = signal<ACWRConfig>(
+    this.getDefaultConfigFromPreset(),
+  );
 
   // Training sessions history (stores last 28+ days)
   private readonly trainingSessions = signal<TrainingSession[]>([]);
@@ -102,7 +107,9 @@ export class AcwrService {
   private readonly currentPlayerId = signal<string | null>(null);
 
   // Historical ACWR data for tolerance detection
-  private readonly historicalACWR = signal<Array<{ date: Date; ratio: number; chronic: number }>>([]);
+  private readonly historicalACWR = signal<
+    Array<{ date: Date; ratio: number; chronic: number }>
+  >([]);
 
   /**
    * Calculate EWMA (Exponentially Weighted Moving Average)
@@ -130,10 +137,12 @@ export class AcwrService {
    * Aggregate daily loads from all session types
    * Combines: technical training + gym + conditioning + games
    */
-  private aggregateDailyLoads(sessions: TrainingSession[]): Map<string, number> {
+  private aggregateDailyLoads(
+    sessions: TrainingSession[],
+  ): Map<string, number> {
     const dailyLoads = new Map<string, number>();
 
-    sessions.forEach(session => {
+    sessions.forEach((session) => {
       const dateKey = this.getDateKey(session.date);
       const currentLoad = dailyLoads.get(dateKey) || 0;
       dailyLoads.set(dateKey, currentLoad + session.load);
@@ -145,7 +154,10 @@ export class AcwrService {
   /**
    * Get loads for last N days
    */
-  private getRecentLoads(dailyLoads: Map<string, number>, days: number): number[] {
+  private getRecentLoads(
+    dailyLoads: Map<string, number>,
+    days: number,
+  ): number[] {
     const loads: number[] = [];
     const today = new Date();
 
@@ -163,7 +175,7 @@ export class AcwrService {
    * Convert date to string key (YYYY-MM-DD)
    */
   private getDateKey(date: Date): string {
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   }
 
   /**
@@ -173,7 +185,7 @@ export class AcwrService {
   public acuteLoad: Signal<number> = computed(() => {
     const sessions = this.trainingSessions();
     const cfg = this.config();
-    
+
     if (sessions.length === 0) return 0;
 
     const dailyLoads = this.aggregateDailyLoads(sessions);
@@ -189,14 +201,18 @@ export class AcwrService {
   public chronicLoad: Signal<number> = computed(() => {
     const sessions = this.trainingSessions();
     const cfg = this.config();
-    
+
     if (sessions.length === 0) return 0;
 
     const dailyLoads = this.aggregateDailyLoads(sessions);
     const loads = this.getRecentLoads(dailyLoads, cfg.chronicWindowDays);
 
-    const calculatedChronic = this.calculateEWMA(loads, cfg.chronicLambda, cfg.chronicWindowDays);
-    
+    const calculatedChronic = this.calculateEWMA(
+      loads,
+      cfg.chronicLambda,
+      cfg.chronicWindowDays,
+    );
+
     // Apply minimum chronic load floor safeguard
     // Prevents inflated ACWR ratios when chronic load is artificially low
     // (e.g., during return from injury or extended time off)
@@ -207,10 +223,14 @@ export class AcwrService {
    * Check if sufficient data exists for reliable ACWR calculation
    * Requires minimum days and sessions as per evidence-based guidelines
    */
-  private hasSufficientData(): { sufficient: boolean; daysWithData: number; sessionsCount: number } {
+  private hasSufficientData(): {
+    sufficient: boolean;
+    daysWithData: number;
+    sessionsCount: number;
+  } {
     const sessions = this.trainingSessions();
     const cfg = this.config();
-    
+
     if (sessions.length === 0) {
       return { sufficient: false, daysWithData: 0, sessionsCount: 0 };
     }
@@ -218,14 +238,16 @@ export class AcwrService {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - cfg.chronicWindowDays);
 
-    const recentSessions = sessions.filter(s => s.date >= cutoffDate);
-    const uniqueDays = new Set(recentSessions.map(s => this.getDateKey(s.date)));
+    const recentSessions = sessions.filter((s) => s.date >= cutoffDate);
+    const uniqueDays = new Set(
+      recentSessions.map((s) => this.getDateKey(s.date)),
+    );
 
     const daysWithData = uniqueDays.size;
     const sessionsCount = recentSessions.length;
 
-    const sufficient = 
-      daysWithData >= cfg.minDaysForChronic && 
+    const sufficient =
+      daysWithData >= cfg.minDaysForChronic &&
       sessionsCount >= cfg.minSessionsForChronic;
 
     return { sufficient, daysWithData, sessionsCount };
@@ -236,30 +258,41 @@ export class AcwrService {
    * Flags low confidence scenarios when data is sparse
    */
   private assessDataQuality(): ACWRDataQuality {
-    const { sufficient, daysWithData, sessionsCount } = this.hasSufficientData();
+    const { sufficient, daysWithData, sessionsCount } =
+      this.hasSufficientData();
     const cfg = this.config();
-    
+
     const issues: string[] = [];
     const recommendations: string[] = [];
 
-    let level: DataQualityLevel = 'high';
+    let level: DataQualityLevel = "high";
     let confidence = 100;
 
     if (!sufficient) {
       if (daysWithData < cfg.minDaysForChronic) {
-        issues.push(`Only ${daysWithData} days of data (minimum ${cfg.minDaysForChronic} days required)`);
-        recommendations.push(`Continue logging sessions for ${cfg.minDaysForChronic - daysWithData} more days`);
+        issues.push(
+          `Only ${daysWithData} days of data (minimum ${cfg.minDaysForChronic} days required)`,
+        );
+        recommendations.push(
+          `Continue logging sessions for ${cfg.minDaysForChronic - daysWithData} more days`,
+        );
         confidence -= 40;
       }
 
       if (sessionsCount < cfg.minSessionsForChronic) {
-        issues.push(`Only ${sessionsCount} sessions in chronic window (minimum ${cfg.minSessionsForChronic} required)`);
-        recommendations.push(`Log more training sessions for reliable ACWR calculation`);
+        issues.push(
+          `Only ${sessionsCount} sessions in chronic window (minimum ${cfg.minSessionsForChronic} required)`,
+        );
+        recommendations.push(
+          `Log more training sessions for reliable ACWR calculation`,
+        );
         confidence -= 30;
       }
 
       if (sessionsCount < cfg.dataQuality.lowConfidenceThreshold) {
-        issues.push(`Sparse data: ${sessionsCount} sessions in ${cfg.chronicWindowDays} days`);
+        issues.push(
+          `Sparse data: ${sessionsCount} sessions in ${cfg.chronicWindowDays} days`,
+        );
         recommendations.push(`ACWR may not be predictive with sparse data`);
         confidence -= 20;
       }
@@ -267,13 +300,13 @@ export class AcwrService {
 
     // Determine quality level
     if (confidence >= 80) {
-      level = 'high';
+      level = "high";
     } else if (confidence >= 60) {
-      level = 'medium';
+      level = "medium";
     } else if (confidence >= 40) {
-      level = 'low';
+      level = "low";
     } else {
-      level = 'insufficient';
+      level = "insufficient";
     }
 
     return {
@@ -282,7 +315,7 @@ export class AcwrService {
       sessionsInChronicWindow: sessionsCount,
       daysWithData,
       issues,
-      recommendations
+      recommendations,
     };
   }
 
@@ -316,51 +349,55 @@ export class AcwrService {
     // Check data sufficiency first
     if (!sufficient || ratio === 0) {
       return {
-        level: 'no-data',
-        color: 'gray',
-        label: 'Insufficient Data',
+        level: "no-data",
+        color: "gray",
+        label: "Insufficient Data",
         description: `Need ${cfg.minDaysForChronic} days and ${cfg.minSessionsForChronic} sessions for reliable ACWR`,
-        recommendation: 'Continue logging sessions - ACWR will be calculated once sufficient data is available'
+        recommendation:
+          "Continue logging sessions - ACWR will be calculated once sufficient data is available",
       };
     }
 
     // Evidence-based thresholds (Gabbett 2016)
     if (ratio < cfg.thresholds.sweetSpotLow) {
       return {
-        level: 'under-training',
-        color: 'orange',
-        label: 'Under-Training',
-        description: 'Player lacks conditioning - chronic load may be insufficient',
-        recommendation: 'Gradually increase training volume by 5-10% per week'
+        level: "under-training",
+        color: "orange",
+        label: "Under-Training",
+        description:
+          "Player lacks conditioning - chronic load may be insufficient",
+        recommendation: "Gradually increase training volume by 5-10% per week",
       };
     }
 
     if (ratio <= cfg.thresholds.sweetSpotHigh) {
       return {
-        level: 'sweet-spot',
-        color: 'green',
-        label: 'Sweet Spot',
-        description: 'Optimal workload - lowest injury risk (Gabbett 2016)',
-        recommendation: 'Maintain current training load'
+        level: "sweet-spot",
+        color: "green",
+        label: "Sweet Spot",
+        description: "Optimal workload - lowest injury risk (Gabbett 2016)",
+        recommendation: "Maintain current training load",
       };
     }
 
     if (ratio <= cfg.thresholds.dangerHigh) {
       return {
-        level: 'elevated-risk',
-        color: 'yellow',
-        label: 'Elevated Risk',
-        description: 'Approaching danger zone - increased injury risk',
-        recommendation: 'Reduce high-intensity sessions by 15-20%, monitor closely'
+        level: "elevated-risk",
+        color: "yellow",
+        label: "Elevated Risk",
+        description: "Approaching danger zone - increased injury risk",
+        recommendation:
+          "Reduce high-intensity sessions by 15-20%, monitor closely",
       };
     }
 
     return {
-      level: 'danger-zone',
-      color: 'red',
-      label: 'Danger Zone',
-      description: 'Highest injury risk - immediate action needed (Gabbett 2016)',
-      recommendation: 'Reduce load by 20-30%, skip sprints, focus on recovery'
+      level: "danger-zone",
+      color: "red",
+      label: "Danger Zone",
+      description:
+        "Highest injury risk - immediate action needed (Gabbett 2016)",
+      recommendation: "Reduce load by 20-30%, skip sprints, focus on recovery",
     };
   });
 
@@ -379,14 +416,14 @@ export class AcwrService {
   }> = computed(() => {
     const sessions = this.trainingSessions();
     const cfg = this.config();
-    
+
     if (sessions.length === 0) {
       return {
         currentWeek: 0,
         previousWeek: 0,
         changePercent: 0,
         isSafe: true,
-        cappedAtMax: false
+        cappedAtMax: false,
       };
     }
 
@@ -397,13 +434,16 @@ export class AcwrService {
     const currentWeek = currentWeekLoads.reduce((sum, load) => sum + load, 0);
     const previousWeek = previousWeekLoads.reduce((sum, load) => sum + load, 0);
 
-    const changePercent = previousWeek === 0 ? 0 :
-      ((currentWeek - previousWeek) / previousWeek) * 100;
+    const changePercent =
+      previousWeek === 0
+        ? 0
+        : ((currentWeek - previousWeek) / previousWeek) * 100;
 
     // Use conservative cap if configured, otherwise use standard cap
-    const maxIncrease = cfg.thresholds.maxWeeklyIncreasePercentConservative ?? 
-                       cfg.thresholds.maxWeeklyIncreasePercent;
-    
+    const maxIncrease =
+      cfg.thresholds.maxWeeklyIncreasePercentConservative ??
+      cfg.thresholds.maxWeeklyIncreasePercent;
+
     const isSafe = changePercent <= maxIncrease;
     const cappedAtMax = changePercent > maxIncrease;
 
@@ -413,9 +453,9 @@ export class AcwrService {
       changePercent: cappedAtMax ? maxIncrease : changePercent,
       isSafe,
       cappedAtMax,
-      warning: !isSafe ?
-        `Weekly load increased by ${changePercent.toFixed(1)}% (max recommended: ${maxIncrease}% per Gabbett 2016)` :
-        undefined
+      warning: !isSafe
+        ? `Weekly load increased by ${changePercent.toFixed(1)}% (max recommended: ${maxIncrease}% per Gabbett 2016)`
+        : undefined,
     };
   });
 
@@ -433,28 +473,35 @@ export class AcwrService {
     }
 
     // Check recent history for consecutive days above danger threshold
-    const recentHistory = history.slice(0, cfg.toleranceDetection.consecutiveHighDays);
-    const daysAboveThreshold = recentHistory.filter(h => h.ratio > cfg.thresholds.dangerHigh).length;
+    const recentHistory = history.slice(
+      0,
+      cfg.toleranceDetection.consecutiveHighDays,
+    );
+    const daysAboveThreshold = recentHistory.filter(
+      (h) => h.ratio > cfg.thresholds.dangerHigh,
+    ).length;
 
     if (daysAboveThreshold >= cfg.toleranceDetection.consecutiveHighDays) {
-      const averageACWR = recentHistory
-        .filter(h => h.ratio > cfg.thresholds.dangerHigh)
-        .reduce((sum, h) => sum + h.ratio, 0) / daysAboveThreshold;
+      const averageACWR =
+        recentHistory
+          .filter((h) => h.ratio > cfg.thresholds.dangerHigh)
+          .reduce((sum, h) => sum + h.ratio, 0) / daysAboveThreshold;
 
       // Check if injury occurred (would need injury data integration)
       const injuryOccurred = false; // TODO: Integrate with injury tracking
 
-      let recommendation: 'maintain' | 'adjust' | 'investigate' = 'investigate';
-      let message = '';
+      let recommendation: "maintain" | "adjust" | "investigate" = "investigate";
+      let message = "";
 
       if (injuryOccurred) {
-        recommendation = 'adjust';
+        recommendation = "adjust";
         message = `Training above ${cfg.thresholds.dangerHigh} ACWR for ${daysAboveThreshold} days preceded injury. Reduce load immediately.`;
       } else {
-        recommendation = 'investigate';
-        message = `Athlete has trained above ${cfg.thresholds.dangerHigh} ACWR for ${daysAboveThreshold} consecutive days without apparent issues. ` +
-                  `This may indicate: (1) Higher individual tolerance, (2) Underestimated chronic load, or (3) Need for personalized thresholds. ` +
-                  `Monitor closely and consider adjusting thresholds if pattern continues.`;
+        recommendation = "investigate";
+        message =
+          `Athlete has trained above ${cfg.thresholds.dangerHigh} ACWR for ${daysAboveThreshold} consecutive days without apparent issues. ` +
+          `This may indicate: (1) Higher individual tolerance, (2) Underestimated chronic load, or (3) Need for personalized thresholds. ` +
+          `Monitor closely and consider adjusting thresholds if pattern continues.`;
       }
 
       return {
@@ -463,7 +510,7 @@ export class AcwrService {
         averageACWRAboveThreshold: averageACWR,
         injuryOccurred,
         recommendation,
-        message
+        message,
       };
     }
 
@@ -485,7 +532,7 @@ export class AcwrService {
       weeklyProgression: this.weeklyProgression(),
       dataQuality,
       toleranceDetection,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
   });
 
@@ -501,7 +548,7 @@ export class AcwrService {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - (cfg.chronicWindowDays + 7));
 
-    const filtered = sessions.filter(s => s.date >= cutoffDate);
+    const filtered = sessions.filter((s) => s.date >= cutoffDate);
 
     // Sort by date (most recent first)
     filtered.sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -515,14 +562,14 @@ export class AcwrService {
       history.unshift({
         date: new Date(),
         ratio: currentData.ratio,
-        chronic: currentData.chronic
+        chronic: currentData.chronic,
       });
-      
+
       // Keep last 30 days of history
       const historyCutoff = new Date();
       historyCutoff.setDate(historyCutoff.getDate() - 30);
-      const filteredHistory = history.filter(h => h.date >= historyCutoff);
-      
+      const filteredHistory = history.filter((h) => h.date >= historyCutoff);
+
       this.historicalACWR.set(filteredHistory);
     }
   }
@@ -531,7 +578,7 @@ export class AcwrService {
    * Add multiple sessions at once
    */
   public addSessions(sessions: TrainingSession[]): void {
-    sessions.forEach(session => this.addSession(session));
+    sessions.forEach((session) => this.addSession(session));
   }
 
   /**
@@ -554,7 +601,7 @@ export class AcwrService {
    */
   public getSessionsInRange(startDate: Date, endDate: Date): TrainingSession[] {
     return this.trainingSessions().filter(
-      session => session.date >= startDate && session.date <= endDate
+      (session) => session.date >= startDate && session.date <= endDate,
     );
   }
 
@@ -562,7 +609,10 @@ export class AcwrService {
    * Calculate predicted load for next session with weekly change cap enforcement
    * Enhanced predictive load management with evidence-based safeguards
    */
-  public predictNextSessionLoad(plannedIntensity: number, plannedDuration: number = 90): {
+  public predictNextSessionLoad(
+    plannedIntensity: number,
+    plannedDuration: number = 90,
+  ): {
     projected: number;
     projectedACWR: number;
     weeklyChangePercent: number;
@@ -584,72 +634,111 @@ export class AcwrService {
     // Project what ACWR would be after adding this session
     const dailyLoads = this.aggregateDailyLoads(this.trainingSessions());
     const recentLoads = this.getRecentLoads(dailyLoads, cfg.acuteWindowDays);
-    const projectedLoads = [estimatedLoad, ...recentLoads.slice(0, cfg.acuteWindowDays - 1)];
-    const projectedAcute = this.calculateEWMA(projectedLoads, cfg.acuteLambda, cfg.acuteWindowDays);
-    
+    const projectedLoads = [
+      estimatedLoad,
+      ...recentLoads.slice(0, cfg.acuteWindowDays - 1),
+    ];
+    const projectedAcute = this.calculateEWMA(
+      projectedLoads,
+      cfg.acuteLambda,
+      cfg.acuteWindowDays,
+    );
+
     // Use chronic load with floor safeguard
     const projectedChronic = Math.max(chronic, cfg.minChronicLoad);
-    const projectedACWR = projectedChronic === 0 ? 0 : projectedAcute / projectedChronic;
+    const projectedACWR =
+      projectedChronic === 0 ? 0 : projectedAcute / projectedChronic;
 
     // Calculate weekly change if this session is added
     const projectedWeeklyLoad = weeklyProg.currentWeek + estimatedLoad;
-    const weeklyChangePercent = weeklyProg.previousWeek === 0 ? 0 :
-      ((projectedWeeklyLoad - weeklyProg.previousWeek) / weeklyProg.previousWeek) * 100;
+    const weeklyChangePercent =
+      weeklyProg.previousWeek === 0
+        ? 0
+        : ((projectedWeeklyLoad - weeklyProg.previousWeek) /
+            weeklyProg.previousWeek) *
+          100;
 
     // Check weekly change cap
-    const maxIncrease = cfg.thresholds.maxWeeklyIncreasePercentConservative ?? 
-                       cfg.thresholds.maxWeeklyIncreasePercent;
+    const maxIncrease =
+      cfg.thresholds.maxWeeklyIncreasePercentConservative ??
+      cfg.thresholds.maxWeeklyIncreasePercent;
     const exceedsWeeklyCap = weeklyChangePercent > maxIncrease;
 
-    let recommendation = '';
-    let adjustments: { suggestedIntensity: number; suggestedDuration: number; reason: string } | undefined;
+    let recommendation = "";
+    let adjustments:
+      | {
+          suggestedIntensity: number;
+          suggestedDuration: number;
+          reason: string;
+        }
+      | undefined;
 
     // First check weekly change cap (takes precedence)
     if (exceedsWeeklyCap) {
       const reductionFactor = maxIncrease / weeklyChangePercent;
-      const suggestedIntensity = Math.max(3, Math.round(plannedIntensity * reductionFactor * 0.9));
-      const suggestedDuration = Math.round(plannedDuration * reductionFactor * 0.9);
-      
-      recommendation = `WEEKLY CAP EXCEEDED: Projected ${weeklyChangePercent.toFixed(1)}% increase exceeds ${maxIncrease}% cap (Gabbett 2016). ` +
-                       `Reduce intensity to ${suggestedIntensity}/10 and duration to ${suggestedDuration} min.`;
-      
+      const suggestedIntensity = Math.max(
+        3,
+        Math.round(plannedIntensity * reductionFactor * 0.9),
+      );
+      const suggestedDuration = Math.round(
+        plannedDuration * reductionFactor * 0.9,
+      );
+
+      recommendation =
+        `WEEKLY CAP EXCEEDED: Projected ${weeklyChangePercent.toFixed(1)}% increase exceeds ${maxIncrease}% cap (Gabbett 2016). ` +
+        `Reduce intensity to ${suggestedIntensity}/10 and duration to ${suggestedDuration} min.`;
+
       adjustments = {
         suggestedIntensity,
         suggestedDuration,
-        reason: `Weekly load increase cap (${maxIncrease}%) would be exceeded`
+        reason: `Weekly load increase cap (${maxIncrease}%) would be exceeded`,
       };
     }
     // Then check ACWR thresholds
     else if (projectedACWR > cfg.thresholds.dangerHigh) {
       const reductionFactor = cfg.thresholds.dangerHigh / projectedACWR;
-      const suggestedIntensity = Math.max(3, Math.round(plannedIntensity * reductionFactor * 0.8));
-      const suggestedDuration = Math.round(plannedDuration * reductionFactor * 0.8);
-      
-      recommendation = `DANGER: Projected ACWR ${projectedACWR.toFixed(2)} exceeds ${cfg.thresholds.dangerHigh} threshold. ` +
-                       `Reduce intensity to ${suggestedIntensity}/10 and duration to ${suggestedDuration} min.`;
-      
+      const suggestedIntensity = Math.max(
+        3,
+        Math.round(plannedIntensity * reductionFactor * 0.8),
+      );
+      const suggestedDuration = Math.round(
+        plannedDuration * reductionFactor * 0.8,
+      );
+
+      recommendation =
+        `DANGER: Projected ACWR ${projectedACWR.toFixed(2)} exceeds ${cfg.thresholds.dangerHigh} threshold. ` +
+        `Reduce intensity to ${suggestedIntensity}/10 and duration to ${suggestedDuration} min.`;
+
       adjustments = {
         suggestedIntensity,
         suggestedDuration,
-        reason: `Projected ACWR (${projectedACWR.toFixed(2)}) exceeds danger threshold (${cfg.thresholds.dangerHigh})`
+        reason: `Projected ACWR (${projectedACWR.toFixed(2)}) exceeds danger threshold (${cfg.thresholds.dangerHigh})`,
       };
     } else if (projectedACWR > cfg.thresholds.sweetSpotHigh) {
       const reductionFactor = cfg.thresholds.sweetSpotHigh / projectedACWR;
-      const suggestedIntensity = Math.max(4, Math.round(plannedIntensity * reductionFactor * 0.9));
-      const suggestedDuration = Math.round(plannedDuration * reductionFactor * 0.9);
-      
-      recommendation = `CAUTION: Projected ACWR ${projectedACWR.toFixed(2)} exceeds sweet spot (${cfg.thresholds.sweetSpotHigh}). ` +
-                       `Consider reducing intensity to ${suggestedIntensity}/10 and duration to ${suggestedDuration} min.`;
-      
+      const suggestedIntensity = Math.max(
+        4,
+        Math.round(plannedIntensity * reductionFactor * 0.9),
+      );
+      const suggestedDuration = Math.round(
+        plannedDuration * reductionFactor * 0.9,
+      );
+
+      recommendation =
+        `CAUTION: Projected ACWR ${projectedACWR.toFixed(2)} exceeds sweet spot (${cfg.thresholds.sweetSpotHigh}). ` +
+        `Consider reducing intensity to ${suggestedIntensity}/10 and duration to ${suggestedDuration} min.`;
+
       adjustments = {
         suggestedIntensity,
         suggestedDuration,
-        reason: `Projected ACWR (${projectedACWR.toFixed(2)}) exceeds sweet spot upper bound`
+        reason: `Projected ACWR (${projectedACWR.toFixed(2)}) exceeds sweet spot upper bound`,
       };
     } else if (projectedACWR < cfg.thresholds.sweetSpotLow) {
-      recommendation = 'SAFE: Projected ACWR is below sweet spot. Can increase intensity if player feels good.';
+      recommendation =
+        "SAFE: Projected ACWR is below sweet spot. Can increase intensity if player feels good.";
     } else {
-      recommendation = 'OPTIMAL: Projected ACWR is within sweet spot (0.8-1.3). Proceed as planned.';
+      recommendation =
+        "OPTIMAL: Projected ACWR is within sweet spot (0.8-1.3). Proceed as planned.";
     }
 
     return {
@@ -657,7 +746,7 @@ export class AcwrService {
       projectedACWR,
       weeklyChangePercent,
       recommendation,
-      adjustments
+      adjustments,
     };
   }
 
@@ -687,13 +776,18 @@ export class AcwrService {
    */
   public getEvidenceInfo(): {
     preset: string;
-    citations: Array<{ authors: string; year: number; title: string; doi?: string }>;
+    citations: Array<{
+      authors: string;
+      year: number;
+      title: string;
+      doi?: string;
+    }>;
     scienceNotes: string;
     coachOverride: string;
   } {
     const preset = this.evidenceConfigService.getActivePreset();
     const acwrConfig = preset.acwr;
-    
+
     return {
       preset: `${preset.name} (${preset.version})`,
       citations: acwrConfig.citations.map((c: any) => ({
@@ -717,11 +811,11 @@ export class AcwrService {
     const cfg = this.config();
 
     // Skip if in danger zone (ACWR > 1.5)
-    if (risk.level === 'danger-zone') return true;
+    if (risk.level === "danger-zone") return true;
 
     // Skip if elevated risk and within 2 days of game
     const daysUntilGame = (gameDay - dayOfWeek + 7) % 7;
-    if (risk.level === 'elevated-risk' && daysUntilGame <= 2) return true;
+    if (risk.level === "elevated-risk" && daysUntilGame <= 2) return true;
 
     // Skip if ACWR exceeds sweet spot upper bound and it's Friday (day before Saturday game)
     if (ratio > cfg.thresholds.sweetSpotHigh && dayOfWeek === 5) return true;
@@ -743,41 +837,48 @@ export class AcwrService {
     const modifications: string[] = [];
 
     // Add data quality warnings if applicable
-    if (dataQuality.level === 'low' || dataQuality.level === 'insufficient') {
-      modifications.push(`⚠️ Low data quality: ${dataQuality.issues.join(', ')}`);
+    if (dataQuality.level === "low" || dataQuality.level === "insufficient") {
+      modifications.push(
+        `⚠️ Low data quality: ${dataQuality.issues.join(", ")}`,
+      );
       modifications.push(`💡 ${dataQuality.recommendations[0]}`);
     }
 
     // Risk-based modifications
-    if (risk.level === 'danger-zone') {
-      modifications.push('🚨 Reduce overall volume by 25-30%');
-      modifications.push('🚫 Skip all sprint sessions');
-      modifications.push('✅ Focus on technique and recovery');
-      modifications.push('📊 Monitor wellness scores daily');
-    } else if (risk.level === 'elevated-risk') {
-      modifications.push('⚠️ Reduce high-intensity work by 15-20%');
-      modifications.push('🏃 Limit sprint volume to 50%');
-      modifications.push('🔄 Add extra recovery day');
+    if (risk.level === "danger-zone") {
+      modifications.push("🚨 Reduce overall volume by 25-30%");
+      modifications.push("🚫 Skip all sprint sessions");
+      modifications.push("✅ Focus on technique and recovery");
+      modifications.push("📊 Monitor wellness scores daily");
+    } else if (risk.level === "elevated-risk") {
+      modifications.push("⚠️ Reduce high-intensity work by 15-20%");
+      modifications.push("🏃 Limit sprint volume to 50%");
+      modifications.push("🔄 Add extra recovery day");
     }
 
     // Weekly progression warnings
     if (!progression.isSafe) {
-      const maxIncrease = cfg.thresholds.maxWeeklyIncreasePercentConservative ?? 
-                         cfg.thresholds.maxWeeklyIncreasePercent;
-      modifications.push(`📈 Weekly load spike: ${progression.changePercent.toFixed(1)}%`);
-      modifications.push('⏸️ Maintain current load, don\'t increase');
-      modifications.push(`🎯 Target: <${maxIncrease}% weekly increase (Gabbett 2016)`);
+      const maxIncrease =
+        cfg.thresholds.maxWeeklyIncreasePercentConservative ??
+        cfg.thresholds.maxWeeklyIncreasePercent;
+      modifications.push(
+        `📈 Weekly load spike: ${progression.changePercent.toFixed(1)}%`,
+      );
+      modifications.push("⏸️ Maintain current load, don't increase");
+      modifications.push(
+        `🎯 Target: <${maxIncrease}% weekly increase (Gabbett 2016)`,
+      );
     }
 
     // Tolerance detection warnings
     const tolerance = this.detectTolerance();
-    if (tolerance?.detected && tolerance.recommendation === 'investigate') {
+    if (tolerance?.detected && tolerance.recommendation === "investigate") {
       modifications.push(`🔍 Tolerance detected: ${tolerance.message}`);
     }
 
     return {
       shouldModify: modifications.length > 0,
-      modifications
+      modifications,
     };
   }
 }

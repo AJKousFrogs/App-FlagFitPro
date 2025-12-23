@@ -24,8 +24,8 @@ export class UndoManager {
    * @param {Function} callback - The function to execute
    */
   registerCallback(name, callback) {
-    if (typeof callback !== 'function') {
-      logger.error('[UndoManager] Callback must be a function');
+    if (typeof callback !== "function") {
+      logger.error("[UndoManager] Callback must be a function");
       return;
     }
     this.callbackRegistry.set(name, callback);
@@ -88,7 +88,7 @@ export class UndoManager {
             } else if (onConfirm) {
               logger.warn(
                 `[UndoManager] Callback '${onConfirm}' not found in registry. ` +
-                `Register it using undoManager.registerCallback('${onConfirm}', yourFunction)`
+                  `Register it using undoManager.registerCallback('${onConfirm}', yourFunction)`,
               );
             }
           } catch (e) {
@@ -169,27 +169,37 @@ export class UndoManager {
     const cancelBtnRef = modal.querySelector(".confirmation-cancel");
 
     confirmBtnRef.addEventListener("click", () => {
-      if (onConfirm) {onConfirm();}
+      if (onConfirm) {
+        onConfirm();
+      }
       this.closeConfirmation(modal);
     });
 
     cancelBtnRef.addEventListener("click", () => {
-      if (onCancel) {onCancel();}
+      if (onCancel) {
+        onCancel();
+      }
       this.closeConfirmation(modal);
     });
 
     overlay.addEventListener("click", () => {
-      if (onCancel) {onCancel();}
+      if (onCancel) {
+        onCancel();
+      }
       this.closeConfirmation(modal);
     });
 
     // Keyboard navigation
     modal.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        if (onCancel) {onCancel();}
+        if (onCancel) {
+          onCancel();
+        }
         this.closeConfirmation(modal);
       } else if (e.key === "Enter" && e.target === modal) {
-        if (onConfirm) {onConfirm();}
+        if (onConfirm) {
+          onConfirm();
+        }
         this.closeConfirmation(modal);
       }
     });
@@ -214,7 +224,9 @@ export class UndoManager {
     }
 
     const handleKeyDown = (e) => {
-      if (e.key !== "Tab") {return;}
+      if (e.key !== "Tab") {
+        return;
+      }
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -304,7 +316,9 @@ export class UndoManager {
     const index = this.actionHistory.findIndex(
       (a) => a.timestamp === action.timestamp,
     );
-    if (index === -1) {return;}
+    if (index === -1) {
+      return;
+    }
 
     // Restore item
     this.restoreItem(action);

@@ -1,6 +1,6 @@
 /**
  * Feature Route Groups
- * 
+ *
  * Groups routes by feature area for better code splitting and organization
  * Each group can be lazy loaded as a unit, reducing bundle size
  */
@@ -78,7 +78,7 @@ export const dashboardRoutes: Routes = [
         (m) => m.DashboardComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: 'high' },
+    data: { preload: true, priority: "high" },
   },
 ];
 
@@ -93,7 +93,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: 'high' },
+    data: { preload: true, priority: "high" },
   },
   {
     path: "workout",
@@ -165,7 +165,7 @@ export const analyticsRoutes: Routes = [
       ),
     canActivate: [authGuard, headerConfigGuard],
     resolve: { prefetch: analyticsPrefetchResolver },
-    data: { preload: true, priority: 'high' },
+    data: { preload: true, priority: "high" },
   },
   {
     path: "analytics/enhanced",
@@ -178,9 +178,9 @@ export const analyticsRoutes: Routes = [
   {
     path: "performance-tracking",
     loadComponent: () =>
-      import(
-        "../../features/performance-tracking/performance-tracking.component"
-      ).then((m) => m.PerformanceTrackingComponent),
+      import("../../features/performance-tracking/performance-tracking.component").then(
+        (m) => m.PerformanceTrackingComponent,
+      ),
     canActivate: [authGuard],
   },
 ];
@@ -196,12 +196,14 @@ export const teamRoutes: Routes = [
         (m) => m.RosterComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: 'high' },
+    data: { preload: true, priority: "high" },
   },
   {
     path: "coach",
     loadComponent: () =>
-      import("../../features/coach/coach.component").then((m) => m.CoachComponent),
+      import("../../features/coach/coach.component").then(
+        (m) => m.CoachComponent,
+      ),
     canActivate: [authGuard],
   },
   {
@@ -337,4 +339,3 @@ export const featureRoutes: Routes = [
     redirectTo: "",
   },
 ];
-

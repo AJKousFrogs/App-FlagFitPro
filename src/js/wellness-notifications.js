@@ -3,11 +3,11 @@
  * Integrates push notifications with wellness tracking
  */
 
-import { logger } from '../logger.js';
-import { setSafeContent } from './utils/shared.js';
+import { logger } from "../logger.js";
+import { setSafeContent } from "./utils/shared.js";
 
-(function() {
-  'use strict';
+(function () {
+  "use strict";
 
   // Get storageService from global window object
   const storageService = window.storageService;
@@ -15,15 +15,19 @@ import { setSafeContent } from './utils/shared.js';
   // Wait for notification manager to be available
   function initWellnessNotifications() {
     if (!window.notificationManager) {
-      logger.debug('[Wellness] Waiting for notification manager...');
+      logger.debug("[Wellness] Waiting for notification manager...");
       setTimeout(initWellnessNotifications, 100);
       return;
     }
 
-    logger.info('[Wellness] Initializing wellness notifications');
+    logger.info("[Wellness] Initializing wellness notifications");
 
     // Check if this is first visit
-    const hasSeenPrompt = storageService.get('wellnessNotificationPromptSeen', null, { usePrefix: false });
+    const hasSeenPrompt = storageService.get(
+      "wellnessNotificationPromptSeen",
+      null,
+      { usePrefix: false },
+    );
 
     if (!hasSeenPrompt) {
       // Show permission prompt after a short delay (better UX)
@@ -44,15 +48,17 @@ import { setSafeContent } from './utils/shared.js';
    */
   async function handleEnableNotifications() {
     if (!window.notificationManager) {
-      logger.warn('[Wellness] Notification manager not available');
+      logger.warn("[Wellness] Notification manager not available");
       return;
     }
 
     const granted = await window.notificationManager.requestPermission();
     if (granted) {
-      logger.info('[Wellness] Notifications enabled');
+      logger.info("[Wellness] Notifications enabled");
       if (storageService) {
-        storageService.set('wellnessNotificationPromptSeen', true, { usePrefix: false });
+        storageService.set("wellnessNotificationPromptSeen", true, {
+          usePrefix: false,
+        });
       }
     }
   }
@@ -64,13 +70,13 @@ import { setSafeContent } from './utils/shared.js';
     const status = window.notificationManager.getPermissionStatus();
 
     // Don't show if already granted or denied
-    if (status.permission !== 'default') {
+    if (status.permission !== "default") {
       return;
     }
 
     // Create prompt modal
-    const modal = document.createElement('div');
-    modal.className = 'notification-prompt-modal';
+    const modal = document.createElement("div");
+    modal.className = "notification-prompt-modal";
     // Build modal HTML (static content, safe)
     const modalHtml = `
       <div class="notification-prompt-overlay"></div>
@@ -105,25 +111,27 @@ import { setSafeContent } from './utils/shared.js';
 
     // Use setSafeContent to sanitize HTML before insertion
     setSafeContent(modal, modalHtml, true, true);
-    
+
     // Replace onclick with addEventListener
-    const enableBtn = modal.querySelector('#enable-notifications');
-    const laterBtn = modal.querySelector('#maybe-later');
-    
+    const enableBtn = modal.querySelector("#enable-notifications");
+    const laterBtn = modal.querySelector("#maybe-later");
+
     if (enableBtn) {
-      enableBtn.addEventListener('click', handleEnableNotifications);
+      enableBtn.addEventListener("click", handleEnableNotifications);
     }
     if (laterBtn) {
-      laterBtn.addEventListener('click', () => {
+      laterBtn.addEventListener("click", () => {
         if (storageService) {
-          storageService.set('wellnessNotificationPromptSeen', true, { usePrefix: false });
+          storageService.set("wellnessNotificationPromptSeen", true, {
+            usePrefix: false,
+          });
         }
         modal.remove();
       });
     }
 
     // Add styles
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       .notification-prompt-modal {
         position: fixed;
@@ -251,13 +259,15 @@ import { setSafeContent } from './utils/shared.js';
     document.body.appendChild(modal);
 
     // Handle enable button
-    document.getElementById('enable-notifications').addEventListener('click', async () => {
-      const granted = await window.notificationManager.requestPermission();
+    document
+      .getElementById("enable-notifications")
+      .addEventListener("click", async () => {
+        const granted = await window.notificationManager.requestPermission();
 
-      if (granted) {
-        // Show success message using setSafeContent
-        const contentEl = modal.querySelector('.notification-prompt-content');
-        const successHtml = `
+        if (granted) {
+          // Show success message using setSafeContent
+          const contentEl = modal.querySelector(".notification-prompt-content");
+          const successHtml = `
           <div class="notification-prompt-icon">✅</div>
           <h3>You're all set!</h3>
           <p>You'll receive daily wellness reminders at 9:00 PM.</p>
@@ -265,34 +275,40 @@ import { setSafeContent } from './utils/shared.js';
             Got it!
           </button>
         `;
-        setSafeContent(contentEl, successHtml, true, true);
-        
-        // Replace onclick with addEventListener
-        const gotItBtn = contentEl.querySelector('.got-it-btn');
-        if (gotItBtn) {
-          gotItBtn.addEventListener('click', () => modal.remove());
+          setSafeContent(contentEl, successHtml, true, true);
+
+          // Replace onclick with addEventListener
+          const gotItBtn = contentEl.querySelector(".got-it-btn");
+          if (gotItBtn) {
+            gotItBtn.addEventListener("click", () => modal.remove());
+          }
+
+          // Auto-close after 2 seconds
+          setTimeout(() => {
+            modal.remove();
+          }, 2000);
+        } else {
+          modal.remove();
         }
 
-        // Auto-close after 2 seconds
-        setTimeout(() => {
-          modal.remove();
-        }, 2000);
-      } else {
-        modal.remove();
-      }
-
-      // Mark as seen
-      storageService.set('wellnessNotificationPromptSeen', 'true', { usePrefix: false });
-    });
+        // Mark as seen
+        storageService.set("wellnessNotificationPromptSeen", "true", {
+          usePrefix: false,
+        });
+      });
 
     // Handle maybe later button
-    document.getElementById('maybe-later').addEventListener('click', () => {
+    document.getElementById("maybe-later").addEventListener("click", () => {
       modal.remove();
-      storageService.set('wellnessNotificationPromptSeen', 'true', { usePrefix: false });
+      storageService.set("wellnessNotificationPromptSeen", "true", {
+        usePrefix: false,
+      });
 
       // Ask again in 7 days
-      const nextPrompt = Date.now() + (7 * 24 * 60 * 60 * 1000);
-      storageService.set('wellnessNotificationNextPrompt', nextPrompt, { usePrefix: false });
+      const nextPrompt = Date.now() + 7 * 24 * 60 * 60 * 1000;
+      storageService.set("wellnessNotificationNextPrompt", nextPrompt, {
+        usePrefix: false,
+      });
     });
   }
 
@@ -303,15 +319,18 @@ import { setSafeContent } from './utils/shared.js';
     // This will integrate with the wellness form
     // For now, we'll listen for custom events
 
-    document.addEventListener('wellnessSubmitted', (event) => {
-      logger.debug('[Wellness] Wellness submitted:', event.detail);
+    document.addEventListener("wellnessSubmitted", (event) => {
+      logger.debug("[Wellness] Wellness submitted:", event.detail);
 
-      if (window.notificationManager && window.notificationManager.isEnabled()) {
+      if (
+        window.notificationManager &&
+        window.notificationManager.isEnabled()
+      ) {
         // Show confirmation notification
-        window.notificationManager.show('Wellness Logged! ✅', {
-          body: 'Your wellness check-in has been recorded successfully.',
-          tag: 'wellness-logged',
-          requireInteraction: false
+        window.notificationManager.show("Wellness Logged! ✅", {
+          body: "Your wellness check-in has been recorded successfully.",
+          tag: "wellness-logged",
+          requireInteraction: false,
         });
 
         // Check for streaks and achievements
@@ -327,25 +346,37 @@ import { setSafeContent } from './utils/shared.js';
     try {
       // Try to use wellness service if available
       let streak = 0;
-      
+
       if (window.wellnessService) {
         streak = await window.wellnessService.getWellnessStreak();
       } else {
         // Fallback to localStorage
-        const wellnessHistory = storageService.get('wellnessHistory', [], { usePrefix: false });
+        const wellnessHistory = storageService.get("wellnessHistory", [], {
+          usePrefix: false,
+        });
         if (wellnessHistory.length > 0) {
           streak = calculateStreak(wellnessHistory);
         }
       }
 
       // Notify on milestone streaks
-      if (streak > 0 && (streak === 7 || streak === 14 || streak === 30 || streak === 60 || streak === 100)) {
-        if (window.notificationManager && window.notificationManager.isEnabled()) {
+      if (
+        streak > 0 &&
+        (streak === 7 ||
+          streak === 14 ||
+          streak === 30 ||
+          streak === 60 ||
+          streak === 100)
+      ) {
+        if (
+          window.notificationManager &&
+          window.notificationManager.isEnabled()
+        ) {
           window.notificationManager.notifyStreak(streak);
         }
       }
     } catch (error) {
-      logger.warn('[Wellness Notifications] Error checking streak:', error);
+      logger.warn("[Wellness Notifications] Error checking streak:", error);
     }
   }
 
@@ -353,18 +384,20 @@ import { setSafeContent } from './utils/shared.js';
    * Calculate wellness streak
    */
   function calculateStreak(history) {
-    if (history.length === 0) {return 0;}
+    if (history.length === 0) {
+      return 0;
+    }
 
     // Sort by date descending
     const sorted = history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     let streak = 0;
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     const currentDate = new Date(today);
 
     for (const entry of sorted) {
-      const entryDate = new Date(entry.date).toISOString().split('T')[0];
-      const expectedDate = currentDate.toISOString().split('T')[0];
+      const entryDate = new Date(entry.date).toISOString().split("T")[0];
+      const expectedDate = currentDate.toISOString().split("T")[0];
 
       if (entryDate === expectedDate) {
         streak++;
@@ -382,13 +415,13 @@ import { setSafeContent } from './utils/shared.js';
    */
   let deferredPrompt;
 
-  window.addEventListener('beforeinstallprompt', (e) => {
+  window.addEventListener("beforeinstallprompt", (e) => {
     // Prevent the mini-infobar from appearing on mobile
     e.preventDefault();
     // Stash the event so it can be triggered later
     deferredPrompt = e;
 
-    logger.info('[PWA] Install prompt available');
+    logger.info("[PWA] Install prompt available");
 
     // Show custom install button
     showInstallButton();
@@ -396,24 +429,24 @@ import { setSafeContent } from './utils/shared.js';
 
   function showInstallButton() {
     // Check if already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      logger.info('[PWA] Already installed');
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      logger.info("[PWA] Already installed");
       return;
     }
 
     // Create install button using DOM methods
-    const installBtn = document.createElement('button');
-    installBtn.className = 'pwa-install-btn';
-    const iconSpan = document.createElement('span');
-    iconSpan.className = 'pwa-install-icon';
-    iconSpan.textContent = '📱';
-    const textSpan = document.createElement('span');
-    textSpan.textContent = 'Install App';
+    const installBtn = document.createElement("button");
+    installBtn.className = "pwa-install-btn";
+    const iconSpan = document.createElement("span");
+    iconSpan.className = "pwa-install-icon";
+    iconSpan.textContent = "📱";
+    const textSpan = document.createElement("span");
+    textSpan.textContent = "Install App";
     installBtn.appendChild(iconSpan);
     installBtn.appendChild(textSpan);
 
     // Add styles
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       .pwa-install-btn {
         position: fixed;
@@ -467,7 +500,7 @@ import { setSafeContent } from './utils/shared.js';
     document.body.appendChild(installBtn);
 
     // Handle install button click
-    installBtn.addEventListener('click', async () => {
+    installBtn.addEventListener("click", async () => {
       if (!deferredPrompt) {
         return;
       }
@@ -480,8 +513,8 @@ import { setSafeContent } from './utils/shared.js';
 
       logger.debug(`[PWA] User response: ${outcome}`);
 
-      if (outcome === 'accepted') {
-        logger.info('[PWA] App installed');
+      if (outcome === "accepted") {
+        logger.info("[PWA] App installed");
         installBtn.remove();
       }
 
@@ -491,11 +524,11 @@ import { setSafeContent } from './utils/shared.js';
   }
 
   // Initialize on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initWellnessNotifications);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initWellnessNotifications);
   } else {
     initWellnessNotifications();
   }
 
-  logger.info('[Wellness] Wellness notifications script loaded');
+  logger.info("[Wellness] Wellness notifications script loaded");
 })();

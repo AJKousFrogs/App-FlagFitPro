@@ -26,7 +26,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="stepper-content">
     <div class="step-panel active">
       <h3>Step 2: Training Goals</h3>
@@ -34,7 +34,7 @@
       <!-- Step content goes here -->
     </div>
   </div>
-  
+
   <div class="stepper-actions">
     <button type="button" class="btn btn-secondary btn-md">Previous</button>
     <button type="button" class="btn btn-primary btn-md">Next</button>
@@ -54,7 +54,7 @@
       </div>
       <div class="step-connector"></div>
     </div>
-    
+
     <div class="stepper-step active">
       <div class="step-marker">2</div>
       <div class="step-content">
@@ -63,7 +63,7 @@
       </div>
       <div class="step-connector"></div>
     </div>
-    
+
     <div class="stepper-step">
       <div class="step-marker">3</div>
       <div class="step-content">
@@ -72,7 +72,7 @@
       </div>
       <div class="step-connector"></div>
     </div>
-    
+
     <div class="stepper-step">
       <div class="step-marker">4</div>
       <div class="step-content">
@@ -87,17 +87,32 @@
 <div class="stepper-container">
   <div class="stepper-header">
     <div class="stepper-steps">
-      <button type="button" class="stepper-step completed" onclick="goToStep(1)" aria-label="Go to step 1">
+      <button
+        type="button"
+        class="stepper-step completed"
+        onclick="goToStep(1)"
+        aria-label="Go to step 1"
+      >
         <div class="step-number">
           <i data-lucide="check" style="width: 16px; height: 16px"></i>
         </div>
         <div class="step-label">Step 1</div>
       </button>
-      <button type="button" class="stepper-step active" onclick="goToStep(2)" aria-label="Go to step 2">
+      <button
+        type="button"
+        class="stepper-step active"
+        onclick="goToStep(2)"
+        aria-label="Go to step 2"
+      >
         <div class="step-number">2</div>
         <div class="step-label">Step 2</div>
       </button>
-      <button type="button" class="stepper-step" onclick="goToStep(3)" aria-label="Go to step 3">
+      <button
+        type="button"
+        class="stepper-step"
+        onclick="goToStep(3)"
+        aria-label="Go to step 3"
+      >
         <div class="step-number">3</div>
         <div class="step-label">Step 3</div>
       </button>
@@ -173,7 +188,7 @@
   }
 
   .stepper-step::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 1.25rem;
     left: calc(50% + 1.25rem);
@@ -290,15 +305,14 @@
 
 <script>
   function goToStep(stepNumber) {
-    console.log('Navigate to step:', stepNumber);
+    console.log("Navigate to step:", stepNumber);
     // Implementation would update active step and content
   }
-  
+
   // Initialize lucide icons
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener("DOMContentLoaded", () => {
     if (window.lucide) {
       window.lucide.createIcons();
     }
   });
 </script>
-

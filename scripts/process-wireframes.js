@@ -5,70 +5,80 @@
  * Processes all wireframes in the Wireframes clean folder and converts them to React components
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Configuration
-const WIREFRAMES_DIR = path.join(__dirname, '..', 'Wireframes clean');
-const OUTPUT_DIR = path.join(__dirname, '..', 'src', 'components', 'wireframes');
-const TEMPLATE_DIR = path.join(__dirname, '..', 'src', 'templates');
+const WIREFRAMES_DIR = path.join(__dirname, "..", "Wireframes clean");
+const OUTPUT_DIR = path.join(
+  __dirname,
+  "..",
+  "src",
+  "components",
+  "wireframes",
+);
+const TEMPLATE_DIR = path.join(__dirname, "..", "src", "templates");
 
 // Wireframe mapping
 const WIREFRAME_MAPPING = {
-  'dashboard-complete-wireframe.html': {
-    name: 'DashboardComplete',
-    route: '/dashboard',
-    description: 'Complete dashboard with all features'
+  "dashboard-complete-wireframe.html": {
+    name: "DashboardComplete",
+    route: "/dashboard",
+    description: "Complete dashboard with all features",
   },
-  'training-complete-wireframe.html': {
-    name: 'TrainingComplete',
-    route: '/training',
-    description: 'Complete training interface'
+  "training-complete-wireframe.html": {
+    name: "TrainingComplete",
+    route: "/training",
+    description: "Complete training interface",
   },
-  'community-complete-wireframe.html': {
-    name: 'CommunityComplete',
-    route: '/community',
-    description: 'Complete community features'
+  "community-complete-wireframe.html": {
+    name: "CommunityComplete",
+    route: "/community",
+    description: "Complete community features",
   },
-  'tournament-complete-wireframe.html': {
-    name: 'TournamentComplete',
-    route: '/tournaments',
-    description: 'Complete tournament management'
+  "tournament-complete-wireframe.html": {
+    name: "TournamentComplete",
+    route: "/tournaments",
+    description: "Complete tournament management",
   },
-  'coach-dashboard-wireframe.html': {
-    name: 'CoachDashboard',
-    route: '/coach/dashboard',
-    description: 'Coach dashboard interface'
+  "coach-dashboard-wireframe.html": {
+    name: "CoachDashboard",
+    route: "/coach/dashboard",
+    description: "Coach dashboard interface",
   },
-  'coach-analytics-wireframe.html': {
-    name: 'CoachAnalytics',
-    route: '/coach/analytics',
-    description: 'Coach analytics interface'
+  "coach-analytics-wireframe.html": {
+    name: "CoachAnalytics",
+    route: "/coach/analytics",
+    description: "Coach analytics interface",
   },
-  'coach-games-wireframe.html': {
-    name: 'CoachGames',
-    route: '/coach/games',
-    description: 'Coach games management'
+  "coach-games-wireframe.html": {
+    name: "CoachGames",
+    route: "/coach/games",
+    description: "Coach games management",
   },
-  'coach-training-wireframe.html': {
-    name: 'CoachTraining',
-    route: '/coach/training',
-    description: 'Coach training interface'
+  "coach-training-wireframe.html": {
+    name: "CoachTraining",
+    route: "/coach/training",
+    description: "Coach training interface",
   },
-  'coach-team-management-wireframe.html': {
-    name: 'CoachTeamManagement',
-    route: '/coach/team-management',
-    description: 'Coach team management interface'
-  }
+  "coach-team-management-wireframe.html": {
+    name: "CoachTeamManagement",
+    route: "/coach/team-management",
+    description: "Coach team management interface",
+  },
 };
 
 // React Component Template
-const REACT_COMPONENT_TEMPLATE = (componentName, description, route) => `import React, { useState, useEffect } from 'react';
+const REACT_COMPONENT_TEMPLATE = (
+  componentName,
+  description,
+  route,
+) => `import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import wireframeIntegrationService from '../services/WireframeIntegrationService';
 import LoadingSpinner from '../LoadingSpinner';
@@ -249,47 +259,48 @@ const INDEX_TEMPLATE = (components) => `/**
  * Auto-generated from wireframe integration
  */
 
-${components.map(comp => `import ${comp.name} from './${comp.name}';`).join('\n')}
+${components.map((comp) => `import ${comp.name} from './${comp.name}';`).join("\n")}
 
 export {
-${components.map(comp => `  ${comp.name}`).join(',\n')}
+${components.map((comp) => `  ${comp.name}`).join(",\n")}
 };
 
 export default {
-${components.map(comp => `  ${comp.name}`).join(',\n')}
+${components.map((comp) => `  ${comp.name}`).join(",\n")}
 };
 `;
 
 // Main processing function
 async function processWireframes() {
   try {
-    console.log('🚀 Starting wireframe processing...');
-    console.log('Current directory:', process.cwd());
-    console.log('Wireframes directory:', WIREFRAMES_DIR);
-    console.log('Output directory:', OUTPUT_DIR);
-    
+    console.log("🚀 Starting wireframe processing...");
+    console.log("Current directory:", process.cwd());
+    console.log("Wireframes directory:", WIREFRAMES_DIR);
+    console.log("Output directory:", OUTPUT_DIR);
+
     // Check if wireframes directory exists
     if (!fs.existsSync(WIREFRAMES_DIR)) {
-      console.error('❌ Wireframes directory does not exist:', WIREFRAMES_DIR);
+      console.error("❌ Wireframes directory does not exist:", WIREFRAMES_DIR);
       return;
     }
-    
+
     // Create output directory if it doesn't exist
     if (!fs.existsSync(OUTPUT_DIR)) {
       fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-      console.log('✅ Created output directory:', OUTPUT_DIR);
+      console.log("✅ Created output directory:", OUTPUT_DIR);
     }
 
     // Get all wireframe files
-    const wireframeFiles = fs.readdirSync(WIREFRAMES_DIR)
-      .filter(file => file.endsWith('.html'))
+    const wireframeFiles = fs
+      .readdirSync(WIREFRAMES_DIR)
+      .filter((file) => file.endsWith(".html"))
       .sort();
 
     console.log(`📁 Found ${wireframeFiles.length} wireframe files:`);
-    wireframeFiles.forEach(file => console.log(`  - ${file}`));
+    wireframeFiles.forEach((file) => console.log(`  - ${file}`));
 
     if (wireframeFiles.length === 0) {
-      console.log('⚠️  No HTML wireframe files found');
+      console.log("⚠️  No HTML wireframe files found");
       return;
     }
 
@@ -304,28 +315,27 @@ async function processWireframes() {
       }
 
       console.log(`\n🔄 Processing ${file}...`);
-      
+
       try {
         // Read wireframe HTML content
         const wireframePath = path.join(WIREFRAMES_DIR, file);
-        const htmlContent = fs.readFileSync(wireframePath, 'utf8');
-        
+        const htmlContent = fs.readFileSync(wireframePath, "utf8");
+
         console.log(`📖 Read ${htmlContent.length} characters from ${file}`);
-        
+
         // Generate React component
         const componentCode = REACT_COMPONENT_TEMPLATE(
           mapping.name,
           mapping.description,
-          mapping.route
+          mapping.route,
         );
-        
+
         // Write component file
         const componentPath = path.join(OUTPUT_DIR, `${mapping.name}.jsx`);
         fs.writeFileSync(componentPath, componentCode);
-        
+
         console.log(`✅ Generated component: ${mapping.name}.jsx`);
         processedComponents.push(mapping);
-        
       } catch (error) {
         console.error(`❌ Error processing ${file}:`, error.message);
       }
@@ -334,71 +344,86 @@ async function processWireframes() {
     // Generate index file
     if (processedComponents.length > 0) {
       const indexContent = INDEX_TEMPLATE(processedComponents);
-      const indexPath = path.join(OUTPUT_DIR, 'index.js');
+      const indexPath = path.join(OUTPUT_DIR, "index.js");
       fs.writeFileSync(indexPath, indexContent);
       console.log(`✅ Generated index file: index.js`);
     }
 
     // Generate route configuration
     generateRouteConfiguration(processedComponents);
-    
+
     // Generate navigation updates
     generateNavigationUpdates(processedComponents);
-    
-    console.log('\n🎉 Wireframe processing completed successfully!');
+
+    console.log("\n🎉 Wireframe processing completed successfully!");
     console.log(`📊 Processed ${processedComponents.length} components`);
     console.log(`📁 Output directory: ${OUTPUT_DIR}`);
-    
+
     // Print next steps
-    console.log('\n📋 Next steps:');
-    console.log('1. Review generated components in src/components/wireframes/');
-    console.log('2. Add routes to your App.jsx if needed');
-    console.log('3. Test components by navigating to /wireframes');
-    console.log('4. Customize components as needed');
-    
+    console.log("\n📋 Next steps:");
+    console.log("1. Review generated components in src/components/wireframes/");
+    console.log("2. Add routes to your App.jsx if needed");
+    console.log("3. Test components by navigating to /wireframes");
+    console.log("4. Customize components as needed");
   } catch (error) {
-    console.error('❌ Error processing wireframes:', error);
-    console.error('Stack trace:', error.stack);
+    console.error("❌ Error processing wireframes:", error);
+    console.error("Stack trace:", error.stack);
     process.exit(1);
   }
 }
 
 // Generate route configuration
 function generateRouteConfiguration(components) {
-  const routesPath = path.join(__dirname, '..', 'src', 'routes', 'wireframe-routes.js');
+  const routesPath = path.join(
+    __dirname,
+    "..",
+    "src",
+    "routes",
+    "wireframe-routes.js",
+  );
   const routesDir = path.dirname(routesPath);
-  
+
   if (!fs.existsSync(routesDir)) {
     fs.mkdirSync(routesDir, { recursive: true });
   }
-  
+
   const routesContent = `/**
  * Wireframe Routes Configuration
  * Auto-generated from wireframe integration
  */
 
-${components.map(comp => `import ${comp.name} from '../components/wireframes/${comp.name}';`).join('\n')}
+${components.map((comp) => `import ${comp.name} from '../components/wireframes/${comp.name}';`).join("\n")}
 
 export const wireframeRoutes = [
-${components.map(comp => `  {
+${components
+  .map(
+    (comp) => `  {
     path: '${comp.route}',
     element: <${comp.name} />,
     name: '${comp.name}',
     description: '${comp.description}'
-  }`).join(',\n')}
+  }`,
+  )
+  .join(",\n")}
 ];
 
 export default wireframeRoutes;
 `;
-  
+
   fs.writeFileSync(routesPath, routesContent);
-  console.log('✅ Generated route configuration: wireframe-routes.js');
+  console.log("✅ Generated route configuration: wireframe-routes.js");
 }
 
 // Generate navigation updates
 function generateNavigationUpdates(components) {
-  const navPath = path.join(__dirname, '..', 'src', 'components', 'WireframeNavigation.jsx');
-  
+  const navPath = path.join(
+    __dirname,
+    "..",
+    "src",
+    "components",
+    "WireframeNavigation.jsx",
+  );
+
   const navContent = `import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/wireframe-design-system.css';
@@ -409,11 +434,15 @@ import '../styles/wireframe-design-system.css';
  */
 const WireframeNavigation = () => {
   const wireframeLinks = [
-${components.map(comp => `    {
+${components
+  .map(
+    (comp) => `    {
       name: '${comp.name}',
       path: '${comp.route}',
       description: '${comp.description}'
-    }`).join(',\n')}
+    }`,
+  )
+  .join(",\n")}
   ];
 
   return (
@@ -443,9 +472,9 @@ ${components.map(comp => `    {
 
 export default WireframeNavigation;
 `;
-  
+
   fs.writeFileSync(navPath, navContent);
-  console.log('✅ Generated navigation component: WireframeNavigation.jsx');
+  console.log("✅ Generated navigation component: WireframeNavigation.jsx");
 }
 
 // Run the script

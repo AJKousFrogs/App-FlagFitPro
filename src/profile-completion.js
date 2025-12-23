@@ -14,9 +14,9 @@ export class ProfileCompletionManager {
   getUserRole() {
     try {
       const user = storageService.get("userData", {}, { usePrefix: false });
-      return user?.role || 'player';
+      return user?.role || "player";
     } catch {
-      return 'player';
+      return "player";
     }
   }
 
@@ -25,13 +25,15 @@ export class ProfileCompletionManager {
     const profile = this.getStoredProfile();
     const role = this.getUserRole();
 
-    if (role === 'coach') {
+    if (role === "coach") {
       // Coaches need: coaching experience level
       const requiredFields = ["coachingExperienceLevel"];
       return requiredFields.some((field) => !profile[field]);
     } else {
       // Players need: at least one position, jerseyNumber, experienceLevel
-      const hasPositions = (Array.isArray(profile.positions) && profile.positions.length > 0) || profile.position;
+      const hasPositions =
+        (Array.isArray(profile.positions) && profile.positions.length > 0) ||
+        profile.position;
       const hasJerseyNumber = profile.jerseyNumber || profile.jersey_number;
       const hasExperienceLevel = profile.experienceLevel;
 
@@ -50,7 +52,9 @@ export class ProfileCompletionManager {
 
   // Show profile completion modal
   showProfileCompletionModal(required = false) {
-    if (this.isActive) {return;}
+    if (this.isActive) {
+      return;
+    }
 
     this.isActive = true;
     const modal = document.createElement("div");
@@ -63,11 +67,15 @@ export class ProfileCompletionManager {
     const storedProfile = this.getStoredProfile();
     const user = storageService.get("userData", {}, { usePrefix: false });
     const role = this.getUserRole();
-    const isCoach = role === 'coach';
+    const isCoach = role === "coach";
 
     // Generate role-specific form fields
-    const roleSpecificFields = isCoach ? this.getCoachFields(storedProfile) : this.getPlayerFields(storedProfile);
-    const physicalStatsSection = !isCoach ? this.getPlayerPhysicalStats(storedProfile) : '';
+    const roleSpecificFields = isCoach
+      ? this.getCoachFields(storedProfile)
+      : this.getPlayerFields(storedProfile);
+    const physicalStatsSection = !isCoach
+      ? this.getPlayerPhysicalStats(storedProfile)
+      : "";
 
     // Build modal HTML string (NOTE: This should be refactored to use DOM methods for better security)
     const modalHTML = `
@@ -172,7 +180,9 @@ export class ProfileCompletionManager {
         const unit = toggle.getAttribute("data-unit");
 
         // Update toggle button styles
-        const fieldToggles = modal.querySelectorAll(`.unit-toggle[data-field="${field}"]`);
+        const fieldToggles = modal.querySelectorAll(
+          `.unit-toggle[data-field="${field}"]`,
+        );
         fieldToggles.forEach((btn) => {
           if (btn.getAttribute("data-unit") === unit) {
             btn.style.background = "#667eea";
@@ -190,8 +200,12 @@ export class ProfileCompletionManager {
         const metricDiv = modal.querySelector(`#${field}-metric`);
 
         if (unit === "imperial") {
-          if (imperialDiv) {imperialDiv.style.display = field === "height" ? "flex" : "block";}
-          if (metricDiv) {metricDiv.style.display = "none";}
+          if (imperialDiv) {
+            imperialDiv.style.display = field === "height" ? "flex" : "block";
+          }
+          if (metricDiv) {
+            metricDiv.style.display = "none";
+          }
 
           // Convert values if present
           if (field === "height") {
@@ -215,8 +229,12 @@ export class ProfileCompletionManager {
             }
           }
         } else {
-          if (imperialDiv) {imperialDiv.style.display = "none";}
-          if (metricDiv) {metricDiv.style.display = "block";}
+          if (imperialDiv) {
+            imperialDiv.style.display = "none";
+          }
+          if (metricDiv) {
+            metricDiv.style.display = "block";
+          }
 
           // Convert values if present
           if (field === "height") {
@@ -266,7 +284,9 @@ export class ProfileCompletionManager {
   }
 
   parseHeight(heightCm) {
-    if (!heightCm) {return { feet: "", inches: "" };}
+    if (!heightCm) {
+      return { feet: "", inches: "" };
+    }
     const totalInches = Math.round(heightCm / 2.54);
     const feet = Math.floor(totalInches / 12);
     const inches = totalInches % 12;
@@ -278,7 +298,9 @@ export class ProfileCompletionManager {
     // Handle positions as array (new) or single value (legacy)
     const positions = Array.isArray(storedProfile.positions)
       ? storedProfile.positions
-      : (storedProfile.position ? [storedProfile.position] : []);
+      : storedProfile.position
+        ? [storedProfile.position]
+        : [];
 
     return `
       <div class="form-group">
@@ -560,7 +582,7 @@ export class ProfileCompletionManager {
     const form = e.target;
     const formData = new FormData(form);
     const role = this.getUserRole();
-    const isCoach = role === 'coach';
+    const isCoach = role === "coach";
 
     // Collect form data (role-aware)
     const profileData = {
@@ -571,9 +593,11 @@ export class ProfileCompletionManager {
 
     if (isCoach) {
       // Coach-specific fields
-      profileData.coachingExperienceLevel = formData.get("coachingExperienceLevel");
+      profileData.coachingExperienceLevel = formData.get(
+        "coachingExperienceLevel",
+      );
       profileData.teamsCoached = formData.get("teamsCoached") || "";
-      
+
       // Collect coaching specialties (checkboxes)
       const specialties = formData.getAll("coachingSpecialties");
       if (specialties.length > 0) {

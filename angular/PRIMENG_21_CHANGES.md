@@ -3,11 +3,13 @@
 ## Component Name Changes
 
 ### Dropdown → Select
+
 - **Old**: `import { DropdownModule } from 'primeng/dropdown'`
 - **New**: `import { SelectModule } from 'primeng/select'`
 - **Template**: `<p-dropdown>` → `<p-select>`
 
-### Chips → Chip  
+### Chips → Chip
+
 - **Old**: `import { ChipsModule } from 'primeng/chips'`
 - **New**: `import { ChipModule } from 'primeng/chip'`
 - **Template**: `<p-chips>` → `<p-chips>` (name stays same, but module changes)
@@ -52,7 +54,7 @@ find src -name "*.ts" -exec sed -i '' '/allowDuplicate/d' {} \;
 ## Manual Updates Required
 
 After running the commands above, you may need to:
+
 1. Update component property bindings if Select API differs from Dropdown
 2. Test all dropdown/select functionality
 3. Verify chip functionality works correctly
-

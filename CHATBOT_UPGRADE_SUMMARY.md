@@ -11,16 +11,19 @@ The FlagFit AI Chatbot has been upgraded with modern features, improved performa
 ### 1. Streaming Responses ✅
 
 **What Changed:**
+
 - Responses now stream word-by-word for a more natural, engaging experience
 - Visual cursor indicator shows when response is being generated
 - Smooth animations during streaming
 
 **Benefits:**
+
 - Better perceived performance
 - More engaging user experience
 - Users see responses appear in real-time
 
 **Implementation:**
+
 - `streamMessage()` method added to chatbot.js
 - Streaming CSS animations added
 - 30ms delay between words for smooth rendering
@@ -30,16 +33,19 @@ The FlagFit AI Chatbot has been upgraded with modern features, improved performa
 ### 2. Enhanced Conversation Context Management ✅
 
 **What Changed:**
+
 - Optimized context window management
 - Automatic context pruning to prevent memory bloat
 - Configurable maximum context messages (default: 10)
 
 **Benefits:**
+
 - Better memory efficiency
 - Prevents context overflow
 - Maintains relevant conversation history
 
 **Implementation:**
+
 - `optimizeContext()` method automatically trims old messages
 - `maxContextMessages` configurable property
 - Context is optimized after each message
@@ -49,21 +55,25 @@ The FlagFit AI Chatbot has been upgraded with modern features, improved performa
 ### 3. Response Caching System ✅
 
 **What Changed:**
+
 - Intelligent caching of responses
 - 5-minute cache timeout
 - Automatic cache invalidation
 
 **Benefits:**
+
 - Faster response times for repeated questions
 - Reduced server load
 - Better performance
 
 **Implementation:**
+
 - `responseCache` Map stores cached responses
 - Cache key based on normalized message text
 - Cache cleared when conversation history is cleared
 
 **Cache Management:**
+
 ```javascript
 // Clear cache manually
 flagFitChatbot.clearCache();
@@ -77,17 +87,20 @@ const stats = flagFitChatbot.getCacheStats();
 ### 4. Enhanced Error Handling with Retry Logic ✅
 
 **What Changed:**
+
 - Automatic retry mechanism (3 attempts)
 - Exponential backoff between retries
 - Better error messages for users
 - Graceful fallback to local responses
 
 **Benefits:**
+
 - More reliable responses
 - Better handling of network issues
 - Improved user experience during failures
 
 **Implementation:**
+
 - `retryAttempts` configurable (default: 3)
 - `retryDelay` with exponential backoff
 - Fallback to local knowledge base on failure
@@ -97,17 +110,20 @@ const stats = flagFitChatbot.getCacheStats();
 ### 5. Performance Optimizations ✅
 
 **What Changed:**
+
 - Input debouncing for future features
 - Lazy loading of services
 - Optimized context management
 - Response caching
 
 **Benefits:**
+
 - Faster response times
 - Reduced memory usage
 - Better scalability
 
 **Implementation:**
+
 - Debounce timer for input events
 - Lazy service initialization
 - Efficient context pruning
@@ -117,7 +133,8 @@ const stats = flagFitChatbot.getCacheStats();
 ### 6. Enhanced Markdown Rendering ✅
 
 **What Changed:**
-- Support for code blocks (```code```)
+
+- Support for code blocks (`code`)
 - Inline code formatting (`code`)
 - Headers (H1, H2, H3)
 - Links [text](url)
@@ -127,11 +144,13 @@ const stats = flagFitChatbot.getCacheStats();
 - Better table support
 
 **Benefits:**
+
 - Richer content formatting
 - Better readability
 - More professional appearance
 
 **Implementation:**
+
 - Enhanced `formatBotMessage()` method
 - CSS styles for code blocks, tables, blockquotes
 - Proper HTML escaping for security
@@ -141,17 +160,20 @@ const stats = flagFitChatbot.getCacheStats();
 ### 7. UI/UX Improvements ✅
 
 **What Changed:**
+
 - Streaming animation with cursor
 - Better message animations
 - Enhanced markdown styling
 - Improved accessibility
 
 **Benefits:**
+
 - More polished interface
 - Better visual feedback
 - Professional appearance
 
 **Implementation:**
+
 - CSS animations for streaming
 - Enhanced message styling
 - Better typography
@@ -191,11 +213,11 @@ const stats = flagFitChatbot.getCacheStats();
 
 ```javascript
 // In chatbot constructor, you can adjust:
-this.maxContextMessages = 10;      // Context window size
+this.maxContextMessages = 10; // Context window size
 this.cacheTimeout = 5 * 60 * 1000; // Cache timeout (5 min)
-this.retryAttempts = 3;            // Retry attempts
-this.retryDelay = 1000;            // Retry delay (ms)
-this.timeoutDuration = 30000;      // Request timeout (30s)
+this.retryAttempts = 3; // Retry attempts
+this.retryDelay = 1000; // Retry delay (ms)
+this.timeoutDuration = 30000; // Request timeout (30s)
 ```
 
 ---
@@ -204,12 +226,12 @@ this.timeoutDuration = 30000;      // Request timeout (30s)
 
 ### Before vs After
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Response Time (cached) | N/A | <50ms | Instant |
-| Context Memory | Unlimited | Max 10 msgs | 50% reduction |
-| Error Recovery | None | 3 retries | 90% success rate |
-| User Experience | Static | Streaming | Much better |
+| Metric                 | Before    | After       | Improvement      |
+| ---------------------- | --------- | ----------- | ---------------- |
+| Response Time (cached) | N/A       | <50ms       | Instant          |
+| Context Memory         | Unlimited | Max 10 msgs | 50% reduction    |
+| Error Recovery         | None      | 3 retries   | 90% success rate |
+| User Experience        | Static    | Streaming   | Much better      |
 
 ---
 
@@ -314,6 +336,7 @@ Potential future improvements:
 ## 📞 Support
 
 For issues or questions about the chatbot upgrades, refer to:
+
 - Code: `src/js/components/chatbot.js`
 - Styles: `src/css/components/chatbot.css`
 - Documentation: See related docs above
@@ -322,4 +345,3 @@ For issues or questions about the chatbot upgrades, refer to:
 
 **Last Updated**: January 2025
 **Version**: 2.0.0
-

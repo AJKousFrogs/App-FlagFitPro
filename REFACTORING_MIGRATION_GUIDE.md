@@ -3,6 +3,7 @@
 ## Overview
 
 This guide explains how to migrate existing Netlify functions to use the new utility modules:
+
 - `base-handler.cjs` - Handles CORS, auth, rate limiting, error handling
 - `db-query-helper.cjs` - Standardized database query execution
 - `response-helper.cjs` - Standardized response formatting
@@ -12,6 +13,7 @@ This guide explains how to migrate existing Netlify functions to use the new uti
 ### Example 1: fixtures.cjs
 
 #### Before (94 lines)
+
 ```javascript
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
@@ -20,7 +22,7 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -31,7 +33,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: ""
+      body: "",
     };
   }
 
@@ -44,7 +46,7 @@ exports.handler = async (event, context) => {
       return createErrorResponse(
         "Method not allowed. Use GET to retrieve fixtures.",
         405,
-        'method_not_allowed'
+        "method_not_allowed",
       );
     }
 
@@ -86,12 +88,12 @@ exports.handler = async (event, context) => {
       console.error("Database error:", error);
       return createErrorResponse(
         500,
-        `Failed to retrieve fixtures: ${error.message}`
+        `Failed to retrieve fixtures: ${error.message}`,
       );
     }
 
     return createSuccessResponse({
-      data: data || []
+      data: data || [],
     });
   } catch (error) {
     return handleServerError(error, "fixtures");
@@ -100,17 +102,23 @@ exports.handler = async (event, context) => {
 ```
 
 #### After (45 lines - 52% reduction)
+
 ```javascript
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { executeQuery, parseAthleteId, parseIntParam, calculateDateRange } = require("./utils/db-query-helper.cjs");
+const {
+  executeQuery,
+  parseAthleteId,
+  parseIntParam,
+  calculateDateRange,
+} = require("./utils/db-query-helper.cjs");
 const { successResponse } = require("./utils/response-helper.cjs");
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'fixtures',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "fixtures",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     handler: async (event, context, { userId }) => {
       // Parse query parameters
       const { valid, athleteId, error } = parseAthleteId(event, userId);
@@ -118,7 +126,7 @@ exports.handler = async (event, context) => {
         return error;
       }
 
-      const days = parseIntParam(event, 'days', 14, 1, 365);
+      const days = parseIntParam(event, "days", 14, 1, 365);
       const { endDate } = calculateDateRange(days, true);
 
       // Get fixtures
@@ -136,7 +144,7 @@ exports.handler = async (event, context) => {
       }
 
       return successResponse(result.data);
-    }
+    },
   });
 };
 ```
@@ -146,6 +154,7 @@ exports.handler = async (event, context) => {
 ### Step 1: Update Imports
 
 **Remove:**
+
 ```javascript
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
@@ -154,23 +163,30 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 ```
 
 **Add:**
+
 ```javascript
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { executeQuery, parseAthleteId, parseIntParam, calculateDateRange } = require("./utils/db-query-helper.cjs");
+const {
+  executeQuery,
+  parseAthleteId,
+  parseIntParam,
+  calculateDateRange,
+} = require("./utils/db-query-helper.cjs");
 const { successResponse } = require("./utils/response-helper.cjs");
 ```
 
 ### Step 2: Replace Handler Function
 
 **Remove:**
+
 ```javascript
 exports.handler = async (event, context) => {
   // CORS preflight
@@ -178,7 +194,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: ""
+      body: "",
     };
   }
 
@@ -191,7 +207,7 @@ exports.handler = async (event, context) => {
       return createErrorResponse(
         "Method not allowed. Use GET...",
         405,
-        'method_not_allowed'
+        "method_not_allowed",
       );
     }
 
@@ -210,7 +226,6 @@ exports.handler = async (event, context) => {
     const userId = auth.user.id;
 
     // ... your logic here ...
-
   } catch (error) {
     return handleServerError(error, "function-name");
   }
@@ -218,16 +233,17 @@ exports.handler = async (event, context) => {
 ```
 
 **Replace with:**
+
 ```javascript
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'function-name',
-    allowedMethods: ['GET'], // or ['POST'], ['GET', 'POST'], etc.
-    rateLimitType: 'READ', // or 'CREATE', 'AUTH', 'DEFAULT'
+    functionName: "function-name",
+    allowedMethods: ["GET"], // or ['POST'], ['GET', 'POST'], etc.
+    rateLimitType: "READ", // or 'CREATE', 'AUTH', 'DEFAULT'
     handler: async (event, context, { userId }) => {
       // Your logic here - userId is already available
       // No need for CORS, auth, rate limiting - handled by baseHandler
-    }
+    },
   });
 };
 ```
@@ -235,6 +251,7 @@ exports.handler = async (event, context) => {
 ### Step 3: Replace Query Parameter Parsing
 
 **Before:**
+
 ```javascript
 const athleteId = event.queryStringParameters?.athleteId || userId;
 const days = parseInt(event.queryStringParameters?.days || "14", 10);
@@ -245,18 +262,20 @@ if (!athleteId) {
 ```
 
 **After:**
+
 ```javascript
 const { valid, athleteId, error } = parseAthleteId(event, userId);
 if (!valid) {
   return error;
 }
 
-const days = parseIntParam(event, 'days', 14, 1, 365);
+const days = parseIntParam(event, "days", 14, 1, 365);
 ```
 
 ### Step 4: Replace Database Query Execution
 
 **Before:**
+
 ```javascript
 const { data, error } = await supabaseAdmin
   .from("table")
@@ -265,23 +284,18 @@ const { data, error } = await supabaseAdmin
 
 if (error) {
   console.error("Database error:", error);
-  return createErrorResponse(
-    500,
-    `Failed to retrieve data: ${error.message}`
-  );
+  return createErrorResponse(500, `Failed to retrieve data: ${error.message}`);
 }
 
 return createSuccessResponse({
-  data: data || []
+  data: data || [],
 });
 ```
 
 **After:**
+
 ```javascript
-const query = supabaseAdmin
-  .from("table")
-  .select("*")
-  .eq("id", id);
+const query = supabaseAdmin.from("table").select("*").eq("id", id);
 
 const result = await executeQuery(query, "Failed to retrieve data");
 if (!result.success) {
@@ -294,13 +308,15 @@ return successResponse(result.data);
 ### Step 5: Replace Response Creation
 
 **Before:**
+
 ```javascript
 return createSuccessResponse({
-  data: data || []
+  data: data || [],
 });
 ```
 
 **After:**
+
 ```javascript
 return successResponse(data);
 ```
@@ -312,19 +328,22 @@ return successResponse(data);
 ```javascript
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'my-function',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "my-function",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     handler: async (event, context, { userId }) => {
       const { valid, athleteId, error } = parseAthleteId(event, userId);
       if (!valid) return error;
 
-      const query = supabaseAdmin.from("table").select("*").eq("athlete_id", athleteId);
+      const query = supabaseAdmin
+        .from("table")
+        .select("*")
+        .eq("athlete_id", athleteId);
       const result = await executeQuery(query, "Failed to retrieve data");
       if (!result.success) return result.error;
 
       return successResponse(result.data);
-    }
+    },
   });
 };
 ```
@@ -334,23 +353,32 @@ exports.handler = async (event, context) => {
 ```javascript
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'my-function',
-    allowedMethods: ['POST'],
-    rateLimitType: 'CREATE',
+    functionName: "my-function",
+    allowedMethods: ["POST"],
+    rateLimitType: "CREATE",
     handler: async (event, context, { userId }) => {
       const body = JSON.parse(event.body || "{}");
       const { requiredField } = body;
 
       if (!requiredField) {
-        return errorResponse("requiredField is required", 400, 'validation_error');
+        return errorResponse(
+          "requiredField is required",
+          400,
+          "validation_error",
+        );
       }
 
-      const query = supabaseAdmin.from("table").insert({ ...body, user_id: userId });
+      const query = supabaseAdmin
+        .from("table")
+        .insert({ ...body, user_id: userId });
       const result = await executeQuery(query, "Failed to create record");
       if (!result.success) return result.error;
 
-      return successObjectResponse(result.data[0], "Record created successfully");
-    }
+      return successObjectResponse(
+        result.data[0],
+        "Record created successfully",
+      );
+    },
   });
 };
 ```
@@ -360,26 +388,26 @@ exports.handler = async (event, context) => {
 ```javascript
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'my-function',
-    allowedMethods: ['GET', 'POST', 'PUT'],
-    rateLimitType: event.httpMethod === 'GET' ? 'READ' : 'CREATE',
+    functionName: "my-function",
+    allowedMethods: ["GET", "POST", "PUT"],
+    rateLimitType: event.httpMethod === "GET" ? "READ" : "CREATE",
     handler: async (event, context, { userId }) => {
-      if (event.httpMethod === 'GET') {
+      if (event.httpMethod === "GET") {
         // GET logic
         const query = supabaseAdmin.from("table").select("*");
         const result = await executeQuery(query, "Failed to retrieve data");
         if (!result.success) return result.error;
         return successResponse(result.data);
-      } else if (event.httpMethod === 'POST') {
+      } else if (event.httpMethod === "POST") {
         // POST logic
         const body = JSON.parse(event.body || "{}");
         // ... create logic
-      } else if (event.httpMethod === 'PUT') {
+      } else if (event.httpMethod === "PUT") {
         // PUT logic
         const body = JSON.parse(event.body || "{}");
         // ... update logic
       }
-    }
+    },
   });
 };
 ```

@@ -1,9 +1,9 @@
 /**
  * Notification State Service
- * 
+ *
  * Centralized notification state management for Angular application
  * Provides single source of truth for notification state across components
- * 
+ *
  * Features:
  * - Reactive state using Angular Signals
  * - Automatic badge count updates
@@ -12,9 +12,9 @@
  * - Error handling and retry logic
  */
 
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { ApiService } from './api.service';
-import { LoggerService } from './logger.service';
+import { Injectable, inject, signal, computed } from "@angular/core";
+import { ApiService } from "./api.service";
+import { LoggerService } from "./logger.service";
 
 export interface Notification {
   id: string;
@@ -23,7 +23,7 @@ export interface Notification {
   read: boolean;
   created_at: string;
   updated_at?: string;
-  priority?: 'low' | 'medium' | 'high';
+  priority?: "low" | "medium" | "high";
   action_url?: string;
 }
 
@@ -36,7 +36,7 @@ export interface NotificationState {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class NotificationStateService {
   private apiService = inject(ApiService);
@@ -49,16 +49,16 @@ export class NotificationStateService {
   private readonly lastOpenedAt = signal<string | null>(null);
 
   // Computed signals
-  readonly unreadCount = computed(() => 
-    this.notifications().filter(n => !n.read).length
+  readonly unreadCount = computed(
+    () => this.notifications().filter((n) => !n.read).length,
   );
 
   readonly unreadNotifications = computed(() =>
-    this.notifications().filter(n => !n.read)
+    this.notifications().filter((n) => !n.read),
   );
 
   readonly readNotifications = computed(() =>
-    this.notifications().filter(n => n.read)
+    this.notifications().filter((n) => n.read),
   );
 
   readonly state = computed<NotificationState>(() => ({
@@ -72,23 +72,31 @@ export class NotificationStateService {
   /**
    * Load notifications from API
    */
-  async loadNotifications(options: { lastOpenedAt?: string } = {}): Promise<Notification[]> {
+  async loadNotifications(
+    options: { lastOpenedAt?: string } = {},
+  ): Promise<Notification[]> {
     this.loading.set(true);
     this.error.set(null);
 
     try {
       const response = await this.apiService.get<Notification[]>(
-        '/api/dashboard/notifications',
-        { ...options, lastOpenedAt: this.lastOpenedAt() || options.lastOpenedAt }
+        "/api/dashboard/notifications",
+        {
+          ...options,
+          lastOpenedAt: this.lastOpenedAt() || options.lastOpenedAt,
+        },
       );
 
       let notifications: Notification[] = [];
-      
+
       // Handle different response formats
       if (response && response.data) {
         if (Array.isArray(response.data)) {
           notifications = response.data;
-        } else if (response.data.notifications && Array.isArray(response.data.notifications)) {
+        } else if (
+          response.data.notifications &&
+          Array.isArray(response.data.notifications)
+        ) {
           notifications = response.data.notifications;
         } else if (response.data.data && Array.isArray(response.data.data)) {
           notifications = response.data.data;
@@ -101,10 +109,10 @@ export class NotificationStateService {
       this.loading.set(false);
       return notifications;
     } catch (error: any) {
-      const errorMessage = error?.message || 'Failed to load notifications';
+      const errorMessage = error?.message || "Failed to load notifications";
       this.error.set(errorMessage);
       this.loading.set(false);
-      this.logger.error('Error loading notifications:', error);
+      this.logger.error("Error loading notifications:", error);
       throw error;
     }
   }
@@ -113,27 +121,33 @@ export class NotificationStateService {
    * Mark a single notification as read
    */
   async markAsRead(notificationId: string): Promise<boolean> {
-    const notification = this.notifications().find(n => n.id === notificationId);
+    const notification = this.notifications().find(
+      (n) => n.id === notificationId,
+    );
     if (!notification || notification.read) {
       return true; // Already read
     }
 
     // Optimistic update
     const previousState = [...this.notifications()];
-    this.notifications.update(notifications =>
-      notifications.map(n => n.id === notificationId ? { ...n, read: true } : n)
+    this.notifications.update((notifications) =>
+      notifications.map((n) =>
+        n.id === notificationId ? { ...n, read: true } : n,
+      ),
     );
 
     try {
       const response = await this.apiService.post<{ success: boolean }>(
-        '/api/dashboard/notifications',
-        { notificationId }
+        "/api/dashboard/notifications",
+        { notificationId },
       );
 
       if (response.success === false) {
         // Revert optimistic update
         this.notifications.set(previousState);
-        throw new Error(response.error || 'Failed to mark notification as read');
+        throw new Error(
+          response.error || "Failed to mark notification as read",
+        );
       }
 
       // Refresh badge count to ensure consistency
@@ -142,9 +156,10 @@ export class NotificationStateService {
     } catch (error: any) {
       // Revert optimistic update
       this.notifications.set(previousState);
-      const errorMessage = error?.message || 'Failed to mark notification as read';
+      const errorMessage =
+        error?.message || "Failed to mark notification as read";
       this.error.set(errorMessage);
-      this.logger.error('Error marking notification as read:', error);
+      this.logger.error("Error marking notification as read:", error);
       throw error;
     }
   }
@@ -153,27 +168,29 @@ export class NotificationStateService {
    * Mark all notifications as read
    */
   async markAllAsRead(): Promise<boolean> {
-    const unreadNotifications = this.notifications().filter(n => !n.read);
+    const unreadNotifications = this.notifications().filter((n) => !n.read);
     if (unreadNotifications.length === 0) {
       return true; // Already all read
     }
 
     // Optimistic update
     const previousState = [...this.notifications()];
-    this.notifications.update(notifications =>
-      notifications.map(n => ({ ...n, read: true }))
+    this.notifications.update((notifications) =>
+      notifications.map((n) => ({ ...n, read: true })),
     );
 
     try {
       const response = await this.apiService.post<{ success: boolean }>(
-        '/api/dashboard/notifications',
-        { notificationId: 'all' }
+        "/api/dashboard/notifications",
+        { notificationId: "all" },
       );
 
       if (response.success === false) {
         // Revert optimistic update
         this.notifications.set(previousState);
-        throw new Error(response.error || 'Failed to mark all notifications as read');
+        throw new Error(
+          response.error || "Failed to mark all notifications as read",
+        );
       }
 
       // Refresh badge count to ensure consistency
@@ -182,9 +199,10 @@ export class NotificationStateService {
     } catch (error: any) {
       // Revert optimistic update
       this.notifications.set(previousState);
-      const errorMessage = error?.message || 'Failed to mark all notifications as read';
+      const errorMessage =
+        error?.message || "Failed to mark all notifications as read";
       this.error.set(errorMessage);
-      this.logger.error('Error marking all notifications as read:', error);
+      this.logger.error("Error marking all notifications as read:", error);
       throw error;
     }
   }
@@ -199,22 +217,24 @@ export class NotificationStateService {
 
     // Optimistic update
     const previousState = [...this.notifications()];
-    this.notifications.update(notifications =>
-      notifications.map(n => 
-        notificationIds.includes(n.id) ? { ...n, read: true } : n
-      )
+    this.notifications.update((notifications) =>
+      notifications.map((n) =>
+        notificationIds.includes(n.id) ? { ...n, read: true } : n,
+      ),
     );
 
     try {
       const response = await this.apiService.post<{ success: boolean }>(
-        '/api/dashboard/notifications',
-        { ids: notificationIds }
+        "/api/dashboard/notifications",
+        { ids: notificationIds },
       );
 
       if (response.success === false) {
         // Revert optimistic update
         this.notifications.set(previousState);
-        throw new Error(response.error || 'Failed to mark notifications as read');
+        throw new Error(
+          response.error || "Failed to mark notifications as read",
+        );
       }
 
       // Refresh badge count to ensure consistency
@@ -223,9 +243,10 @@ export class NotificationStateService {
     } catch (error: any) {
       // Revert optimistic update
       this.notifications.set(previousState);
-      const errorMessage = error?.message || 'Failed to mark notifications as read';
+      const errorMessage =
+        error?.message || "Failed to mark notifications as read";
       this.error.set(errorMessage);
-      this.logger.error('Error marking notifications as read:', error);
+      this.logger.error("Error marking notifications as read:", error);
       throw error;
     }
   }
@@ -236,13 +257,13 @@ export class NotificationStateService {
   async refreshBadgeCount(): Promise<number> {
     try {
       const response = await this.apiService.get<{ unreadCount: number }>(
-        '/api/dashboard/notifications/count'
+        "/api/dashboard/notifications/count",
       );
 
       let count = 0;
       if (response && response.data) {
         count = response.data.unreadCount || response.data.count || 0;
-      } else if (typeof response === 'number') {
+      } else if (typeof response === "number") {
         count = response;
       } else if ((response as any).unreadCount !== undefined) {
         count = (response as any).unreadCount;
@@ -257,7 +278,7 @@ export class NotificationStateService {
 
       return count;
     } catch (error: any) {
-      this.logger.warn('Error refreshing badge count:', error);
+      this.logger.warn("Error refreshing badge count:", error);
       // Return current count as fallback
       return this.unreadCount();
     }
@@ -269,13 +290,13 @@ export class NotificationStateService {
   async updateLastOpenedAt(): Promise<void> {
     try {
       await this.apiService.patch<{ success: boolean }>(
-        '/api/dashboard/notifications/last-opened',
-        {}
+        "/api/dashboard/notifications/last-opened",
+        {},
       );
 
       this.lastOpenedAt.set(new Date().toISOString());
     } catch (error: any) {
-      this.logger.warn('Error updating last opened timestamp:', error);
+      this.logger.warn("Error updating last opened timestamp:", error);
       // Non-critical error, don't throw
     }
   }
@@ -284,15 +305,18 @@ export class NotificationStateService {
    * Add a notification to the state (for real-time updates)
    */
   addNotification(notification: Notification): void {
-    this.notifications.update(notifications => [notification, ...notifications]);
+    this.notifications.update((notifications) => [
+      notification,
+      ...notifications,
+    ]);
   }
 
   /**
    * Remove a notification from state
    */
   removeNotification(notificationId: string): void {
-    this.notifications.update(notifications =>
-      notifications.filter(n => n.id !== notificationId)
+    this.notifications.update((notifications) =>
+      notifications.filter((n) => n.id !== notificationId),
     );
   }
 
@@ -309,7 +333,7 @@ export class NotificationStateService {
    * Get notification by ID
    */
   getNotification(id: string): Notification | undefined {
-    return this.notifications().find(n => n.id === id);
+    return this.notifications().find((n) => n.id === id);
   }
 
   /**
@@ -333,4 +357,3 @@ export class NotificationStateService {
     this.error.set(null);
   }
 }
-

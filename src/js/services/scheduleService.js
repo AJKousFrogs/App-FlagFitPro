@@ -83,23 +83,29 @@ class ScheduleService {
    * @returns {boolean} True if game day
    */
   isGameDay(dayOfWeek, date, scheduleSettings) {
-    if (!scheduleSettings) {return false;}
+    if (!scheduleSettings) {
+      return false;
+    }
 
     // Check for specific dates (from calendar or uploaded schedule)
     if (scheduleSettings.gameDays && Array.isArray(scheduleSettings.gameDays)) {
       const dateStr = date.toISOString().split("T")[0];
-      
+
       // Check if this specific date is a game day
       const isSpecificDate = scheduleSettings.gameDays.some(
-        (gd) => gd.date === dateStr
+        (gd) => gd.date === dateStr,
       );
-      if (isSpecificDate) {return true;}
+      if (isSpecificDate) {
+        return true;
+      }
 
       // Check if this day of week matches recurring game days
       const isRecurringDay = scheduleSettings.gameDays.some(
-        (gd) => gd.dayOfWeek === dayOfWeek && !gd.date
+        (gd) => gd.dayOfWeek === dayOfWeek && !gd.date,
       );
-      if (isRecurringDay) {return true;}
+      if (isRecurringDay) {
+        return true;
+      }
     }
 
     // Legacy: single recurring day
@@ -121,7 +127,9 @@ class ScheduleService {
    * @returns {boolean} True if within daysBefore of a game
    */
   isDaysBeforeGame(date, daysBefore, scheduleSettings) {
-    if (!scheduleSettings?.gameDays) {return false;}
+    if (!scheduleSettings?.gameDays) {
+      return false;
+    }
 
     for (let i = 1; i <= daysBefore; i++) {
       const checkDate = new Date(date);
@@ -130,9 +138,13 @@ class ScheduleService {
       const dateStr = checkDate.toISOString().split("T")[0];
 
       // Check if this future date is a game day
-      if (scheduleSettings.gameDays.some(
-        (gd) => gd.date === dateStr || (gd.dayOfWeek === checkDayOfWeek && !gd.date)
-      )) {
+      if (
+        scheduleSettings.gameDays.some(
+          (gd) =>
+            gd.date === dateStr ||
+            (gd.dayOfWeek === checkDayOfWeek && !gd.date),
+        )
+      ) {
         return true;
       }
     }
@@ -160,20 +172,28 @@ class ScheduleService {
     // Check if there's a game tomorrow (next day)
     const tomorrow = new Date(date);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const hasGameTomorrow = this.isGameDay(tomorrow.getDay(), tomorrow, scheduleSettings);
-    
+    const hasGameTomorrow = this.isGameDay(
+      tomorrow.getDay(),
+      tomorrow,
+      scheduleSettings,
+    );
+
     // Check if there's a game on Saturday (this week)
     const saturday = new Date(date);
     const daysUntilSaturday = (6 - dayOfWeek + 7) % 7;
-    saturday.setDate(saturday.getDate() + (daysUntilSaturday === 0 ? 7 : daysUntilSaturday));
+    saturday.setDate(
+      saturday.getDate() + (daysUntilSaturday === 0 ? 7 : daysUntilSaturday),
+    );
     const hasGameSaturday = this.isGameDay(6, saturday, scheduleSettings);
-    
+
     // Check if there's a game on Sunday (this week)
     const sunday = new Date(date);
     const daysUntilSunday = (0 - dayOfWeek + 7) % 7;
-    sunday.setDate(sunday.getDate() + (daysUntilSunday === 0 ? 7 : daysUntilSunday));
+    sunday.setDate(
+      sunday.getDate() + (daysUntilSunday === 0 ? 7 : daysUntilSunday),
+    );
     const hasGameSunday = this.isGameDay(0, sunday, scheduleSettings);
-    
+
     // Check if game is within 1 day
     const isDayBeforeGame = this.isDaysBeforeGame(date, 1, scheduleSettings);
 
@@ -192,7 +212,8 @@ class ScheduleService {
         workoutTitle = "Light Recovery Session";
         workoutMeta = "⏱️ 30 min • 🔥 Low intensity • Game tomorrow";
         workoutClass = "recovery";
-        adjustmentReason = "Game on Sunday - sprint training skipped on Saturday";
+        adjustmentReason =
+          "Game on Sunday - sprint training skipped on Saturday";
       } else {
         workoutType = "speed";
         workoutTitle = "Sprint Session";
@@ -208,7 +229,8 @@ class ScheduleService {
         workoutTitle = "Light Recovery Session";
         workoutMeta = "⏱️ 30 min • 🔥 Low intensity • Game tomorrow";
         workoutClass = "recovery";
-        adjustmentReason = "Game on Saturday - sprint training skipped on Friday";
+        adjustmentReason =
+          "Game on Saturday - sprint training skipped on Friday";
       } else {
         workoutType = "speed";
         workoutTitle = "Speed Training";
@@ -228,8 +250,12 @@ class ScheduleService {
         // Check if game was yesterday (Saturday)
         const yesterday = new Date(date);
         yesterday.setDate(yesterday.getDate() - 1);
-        const hadGameYesterday = this.isGameDay(yesterday.getDay(), yesterday, scheduleSettings);
-        
+        const hadGameYesterday = this.isGameDay(
+          yesterday.getDay(),
+          yesterday,
+          scheduleSettings,
+        );
+
         if (hadGameYesterday) {
           // Game was yesterday (Saturday) - recovery today
           workoutType = "endurance";

@@ -38,8 +38,8 @@ interface WellnessMetric {
     InputNumberModule,
     MainLayoutComponent,
     PageHeaderComponent,
-    StatsGridComponent
-],
+    StatsGridComponent,
+  ],
   template: `
     <app-main-layout>
       <div class="wellness-page">
@@ -47,17 +47,17 @@ interface WellnessMetric {
           title="Wellness & Recovery"
           subtitle="Track your health, recovery, and wellness metrics"
           icon="pi-heart"
-          >
+        >
           <p-button
             label="Log Check-in"
             icon="pi pi-plus"
             (onClick)="openCheckIn()"
           ></p-button>
         </app-page-header>
-    
+
         <!-- Wellness Metrics -->
         <app-stats-grid [stats]="wellnessStats()"></app-stats-grid>
-    
+
         <!-- Wellness Charts -->
         <div class="charts-grid">
           <p-card class="chart-card">
@@ -72,7 +72,7 @@ interface WellnessMetric {
               ></p-chart>
             }
           </p-card>
-    
+
           <p-card class="chart-card">
             <ng-template pTemplate="header">
               <h3>Recovery Score</h3>
@@ -86,7 +86,7 @@ interface WellnessMetric {
             }
           </p-card>
         </div>
-    
+
         <!-- Daily Check-in -->
         <p-card class="checkin-card">
           <ng-template pTemplate="header">
@@ -132,7 +132,7 @@ interface WellnessMetric {
         </p-card>
       </div>
     </app-main-layout>
-    `,
+  `,
   styles: [
     `
       .wellness-page {
@@ -228,11 +228,12 @@ export class WellnessComponent implements OnInit {
 
   loadWellnessData(): void {
     // Fetch wellness data from service
-    this.wellnessService.getWellnessData('7d').subscribe({
+    this.wellnessService.getWellnessData("7d").subscribe({
       next: (response) => {
         if (response.success && response.data && response.data.length > 0) {
           const latestData = response.data[0];
-          const overallScore = this.wellnessService.getWellnessScore(latestData);
+          const overallScore =
+            this.wellnessService.getWellnessScore(latestData);
           const status = this.wellnessService.getWellnessStatus(overallScore);
 
           // Update stats with real data
@@ -242,7 +243,7 @@ export class WellnessComponent implements OnInit {
               value: latestData.sleep ? `${latestData.sleep}h` : "N/A",
               icon: "pi-moon",
               color: "#3498db",
-              trend: this.calculateTrend(response.data, 'sleep'),
+              trend: this.calculateTrend(response.data, "sleep"),
               trendType: "positive",
             },
             {
@@ -251,34 +252,48 @@ export class WellnessComponent implements OnInit {
               icon: "pi-heart",
               color: status.color,
               trend: status.status,
-              trendType: status.status === 'good' || status.status === 'excellent' ? "positive" : "neutral",
+              trendType:
+                status.status === "good" || status.status === "excellent"
+                  ? "positive"
+                  : "neutral",
             },
             {
               label: "Energy Level",
               value: latestData.energy ? `${latestData.energy}/10` : "N/A",
               icon: "pi-bolt",
               color: "#f1c40f",
-              trend: this.calculateTrend(response.data, 'energy'),
+              trend: this.calculateTrend(response.data, "energy"),
               trendType: "positive",
             },
             {
               label: "Stress Level",
-              value: latestData.stress ? this.getStressLabel(latestData.stress) : "N/A",
+              value: latestData.stress
+                ? this.getStressLabel(latestData.stress)
+                : "N/A",
               icon: "pi-shield",
-              color: latestData.stress && latestData.stress <= 3 ? "#10c96b" : "#f1c40f",
-              trend: latestData.stress && latestData.stress <= 3 ? "Low" : "Moderate",
-              trendType: latestData.stress && latestData.stress <= 3 ? "positive" : "neutral",
+              color:
+                latestData.stress && latestData.stress <= 3
+                  ? "#10c96b"
+                  : "#f1c40f",
+              trend:
+                latestData.stress && latestData.stress <= 3
+                  ? "Low"
+                  : "Moderate",
+              trendType:
+                latestData.stress && latestData.stress <= 3
+                  ? "positive"
+                  : "neutral",
             },
           ]);
 
           // Build chart data from last 7 days
-          const sortedData = [...response.data].sort((a, b) =>
-            new Date(a.date).getTime() - new Date(b.date).getTime()
+          const sortedData = [...response.data].sort(
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
           );
 
-          const labels = sortedData.map(d => {
+          const labels = sortedData.map((d) => {
             const date = new Date(d.date);
-            return date.toLocaleDateString('en-US', { weekday: 'short' });
+            return date.toLocaleDateString("en-US", { weekday: "short" });
           });
 
           this.sleepChartData.set({
@@ -286,7 +301,7 @@ export class WellnessComponent implements OnInit {
             datasets: [
               {
                 label: "Sleep Hours",
-                data: sortedData.map(d => d.sleep || 0),
+                data: sortedData.map((d) => d.sleep || 0),
                 borderColor: "#3498db",
                 backgroundColor: "rgba(52, 152, 219, 0.1)",
               },
@@ -298,7 +313,9 @@ export class WellnessComponent implements OnInit {
             datasets: [
               {
                 label: "Recovery Score",
-                data: sortedData.map(d => Math.round(this.wellnessService.getWellnessScore(d) * 10)),
+                data: sortedData.map((d) =>
+                  Math.round(this.wellnessService.getWellnessScore(d) * 10),
+                ),
                 backgroundColor: "var(--ds-primary-green)",
               },
             ],
@@ -309,7 +326,7 @@ export class WellnessComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.logger.error('Error loading wellness data:', err);
+        this.logger.error("Error loading wellness data:", err);
         this.loadFallbackData();
       },
     });
@@ -356,20 +373,20 @@ export class WellnessComponent implements OnInit {
   }
 
   private calculateTrend(data: any[], metric: string): string {
-    if (data.length < 2) return 'N/A';
+    if (data.length < 2) return "N/A";
     const current = data[0][metric];
     const previous = data[1][metric];
-    if (!current || !previous) return 'N/A';
+    if (!current || !previous) return "N/A";
     const diff = current - previous;
     if (diff > 0) return `+${diff.toFixed(1)} vs yesterday`;
     if (diff < 0) return `${diff.toFixed(1)} vs yesterday`;
-    return 'No change';
+    return "No change";
   }
 
   private getStressLabel(stress: number): string {
-    if (stress <= 3) return 'Low';
-    if (stress <= 6) return 'Moderate';
-    return 'High';
+    if (stress <= 3) return "Low";
+    if (stress <= 6) return "Moderate";
+    return "High";
   }
 
   openCheckIn(): void {
@@ -384,7 +401,7 @@ export class WellnessComponent implements OnInit {
       sleep: this.checkInData.sleepHours,
       energy: this.checkInData.energyLevel,
       mood: this.checkInData.mood,
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split("T")[0],
     };
 
     this.wellnessService.logWellness(wellnessData).subscribe({
@@ -397,7 +414,7 @@ export class WellnessComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.logger.error('Error submitting wellness check-in:', err);
+        this.logger.error("Error submitting wellness check-in:", err);
       },
     });
   }

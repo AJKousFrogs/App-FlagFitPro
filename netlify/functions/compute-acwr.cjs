@@ -9,7 +9,7 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -23,7 +23,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: ""
+      body: "",
     };
   }
 
@@ -38,7 +38,7 @@ exports.handler = async (event, context) => {
       return createErrorResponse(
         "Method not allowed. Use POST to compute ACWR.",
         405,
-        'method_not_allowed'
+        "method_not_allowed",
       );
     }
 
@@ -74,22 +74,21 @@ exports.handler = async (event, context) => {
 
     // Call the stored procedure
     const { data, error } = await supabaseAdmin.rpc("compute_acwr", {
-      athlete: athleteId
+      athlete: athleteId,
     });
 
     if (error) {
       console.error("Database error:", error);
       return createErrorResponse(
         500,
-        `Failed to compute ACWR: ${error.message}`
+        `Failed to compute ACWR: ${error.message}`,
       );
     }
 
     return createSuccessResponse({
-      data: data || []
+      data: data || [],
     });
   } catch (error) {
     return handleServerError(error, "compute-acwr");
   }
 };
-

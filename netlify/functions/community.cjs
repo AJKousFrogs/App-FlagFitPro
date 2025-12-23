@@ -10,7 +10,7 @@ const {
   handleAuthenticationError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -23,7 +23,8 @@ const getCommunityFeed = async (userId, limit = 20) => {
     // SECURITY: Build query with privacy filters
     let query = supabaseAdmin
       .from("posts")
-      .select(`
+      .select(
+        `
         *,
         users:user_id (
           id,
@@ -31,7 +32,8 @@ const getCommunityFeed = async (userId, limit = 20) => {
           name,
           avatar_url
         )
-      `)
+      `,
+      )
       .eq("is_published", true)
       .order("created_at", { ascending: false })
       .limit(limit);
@@ -44,7 +46,7 @@ const getCommunityFeed = async (userId, limit = 20) => {
         .select("team_id")
         .eq("user_id", userId);
 
-      const userTeamIds = teamMemberships?.map(m => m.team_id) || [];
+      const userTeamIds = teamMemberships?.map((m) => m.team_id) || [];
 
       // Get blocked users (both ways)
       const { data: blockedUsers } = await supabaseAdmin
@@ -58,8 +60,8 @@ const getCommunityFeed = async (userId, limit = 20) => {
         .eq("blocked_user_id", userId);
 
       const blockedUserIds = [
-        ...(blockedUsers?.map(b => b.blocked_user_id) || []),
-        ...(blockedBy?.map(b => b.user_id) || [])
+        ...(blockedUsers?.map((b) => b.blocked_user_id) || []),
+        ...(blockedBy?.map((b) => b.user_id) || []),
       ];
 
       // SECURITY: Exclude posts from blocked users
@@ -78,10 +80,12 @@ const getCommunityFeed = async (userId, limit = 20) => {
 
     const { data: posts, error } = await query;
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     // Transform database format to match frontend format
-    return (posts || []).map(post => ({
+    return (posts || []).map((post) => ({
       id: post.id,
       author: post.users?.email || post.user_id,
       authorName: post.users?.name || "Unknown User",
@@ -107,26 +111,30 @@ const getCommunityFeed = async (userId, limit = 20) => {
 const getCommunityLeaderboard = async (category = "overall", limit = 10) => {
   try {
     checkEnvVars();
-    
+
     // Calculate leaderboard from posts and user engagement
     // This aggregates data from posts table
     const { data: leaderboardData, error } = await supabaseAdmin
       .from("posts")
-      .select(`
+      .select(
+        `
         user_id,
         users:user_id (
           id,
           name,
           avatar_url
         )
-      `)
+      `,
+      )
       .eq("is_published", true);
-    
-    if (error) {throw error;}
-    
+
+    if (error) {
+      throw error;
+    }
+
     // Aggregate by user
     const userStats = {};
-    (leaderboardData || []).forEach(post => {
+    (leaderboardData || []).forEach((post) => {
       const userId = post.user_id;
       if (!userStats[userId]) {
         userStats[userId] = {
@@ -143,7 +151,7 @@ const getCommunityLeaderboard = async (category = "overall", limit = 10) => {
       // Points calculation: posts * 10 + likes * 2 + comments * 5
       userStats[userId].points += 10;
     });
-    
+
     // Convert to array and sort by points
     const leaderboard = Object.values(userStats)
       .sort((a, b) => b.points - a.points)
@@ -158,7 +166,7 @@ const getCommunityLeaderboard = async (category = "overall", limit = 10) => {
         losses: 0,
         pointsScored: user.points,
       }));
-    
+
     return leaderboard;
   } catch (error) {
     console.error("Error fetching community leaderboard:", error);
@@ -196,10 +204,19 @@ const createPost = async (userId, postData) => {
     }
 
     // SECURITY: Validate post type
-    const validPostTypes = ["general", "achievement", "question", "announcement", "training", "game"];
+    const validPostTypes = [
+      "general",
+      "achievement",
+      "question",
+      "announcement",
+      "training",
+      "game",
+    ];
     const postType = sanitizedData.post_type || sanitizedData.type || "general";
     if (!validPostTypes.includes(postType)) {
-      throw new Error(`Invalid post type. Must be one of: ${validPostTypes.join(", ")}`);
+      throw new Error(
+        `Invalid post type. Must be one of: ${validPostTypes.join(", ")}`,
+      );
     }
 
     // Insert post into database using supabase-client helper
@@ -235,7 +252,7 @@ const createPost = async (userId, postData) => {
 };
 
 exports.handler = async (event, context) => {
-  logFunctionCall('Community', event);
+  logFunctionCall("Community", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -255,7 +272,8 @@ exports.handler = async (event, context) => {
 
     // SECURITY: Authentication (optional for GET, required for POST)
     let userId = null;
-    const authHeader = event.headers.authorization || event.headers.Authorization;
+    const authHeader =
+      event.headers.authorization || event.headers.Authorization;
 
     if (authHeader && authHeader.startsWith("Bearer ")) {
       const auth = await authenticateRequest(event);
@@ -304,7 +322,9 @@ exports.handler = async (event, context) => {
     if (event.httpMethod === "POST") {
       // SECURITY: Require authentication for all POST operations
       if (!userId) {
-        return handleAuthenticationError("Authentication required to create posts");
+        return handleAuthenticationError(
+          "Authentication required to create posts",
+        );
       }
 
       // Handle like request
@@ -325,18 +345,18 @@ exports.handler = async (event, context) => {
       return createSuccessResponse(newPost, 201, "Post created successfully");
     }
 
-    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   } catch (error) {
     // Handle validation errors
-    if (error.message && (
-      error.message.includes("required") ||
-      error.message.includes("must be") ||
-      error.message.includes("Invalid")
-    )) {
+    if (
+      error.message &&
+      (error.message.includes("required") ||
+        error.message.includes("must be") ||
+        error.message.includes("Invalid"))
+    ) {
       return handleValidationError(error.message);
     }
 
-    return handleServerError(error, 'Community');
+    return handleServerError(error, "Community");
   }
 };
-

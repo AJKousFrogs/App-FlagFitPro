@@ -14,7 +14,7 @@ class ScheduleFileParser {
    */
   async parseFile(file) {
     const fileType = this.getFileType(file.name);
-    
+
     try {
       switch (fileType) {
         case "csv":
@@ -37,9 +37,15 @@ class ScheduleFileParser {
    */
   getFileType(filename) {
     const ext = filename.split(".").pop().toLowerCase();
-    if (ext === "csv") {return "csv";}
-    if (["xlsx", "xls"].includes(ext)) {return "excel";}
-    if (["md", "markdown"].includes(ext)) {return "markdown";}
+    if (ext === "csv") {
+      return "csv";
+    }
+    if (["xlsx", "xls"].includes(ext)) {
+      return "excel";
+    }
+    if (["md", "markdown"].includes(ext)) {
+      return "markdown";
+    }
     return null;
   }
 
@@ -48,15 +54,15 @@ class ScheduleFileParser {
    */
   async parseCSV(file) {
     const text = await file.text();
-    const lines = text.split("\n").filter(line => line.trim());
-    
+    const lines = text.split("\n").filter((line) => line.trim());
+
     if (lines.length === 0) {
       throw new Error("CSV file is empty");
     }
 
     // Parse header
-    const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
-    
+    const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
+
     // Expected columns: date, day, workout_type, workout_title, duration, notes, is_game_day
     const schedule = {
       gameDays: [],
@@ -68,7 +74,7 @@ class ScheduleFileParser {
     for (let i = 1; i < lines.length; i++) {
       const values = this.parseCSVLine(lines[i]);
       const row = {};
-      
+
       headers.forEach((header, index) => {
         row[header] = values[index]?.trim() || "";
       });
@@ -78,11 +84,12 @@ class ScheduleFileParser {
         const date = this.parseDate(row.date);
         if (date) {
           // Check if it's a game day
-          const isGameDay = row.is_game_day?.toLowerCase() === "true" || 
-                          row.is_game_day?.toLowerCase() === "yes" ||
-                          row.game_day?.toLowerCase() === "true" ||
-                          row.game_day?.toLowerCase() === "yes";
-          
+          const isGameDay =
+            row.is_game_day?.toLowerCase() === "true" ||
+            row.is_game_day?.toLowerCase() === "yes" ||
+            row.game_day?.toLowerCase() === "true" ||
+            row.game_day?.toLowerCase() === "yes";
+
           if (isGameDay) {
             schedule.gameDays.push({
               date: date.toISOString().split("T")[0],
@@ -118,7 +125,7 @@ class ScheduleFileParser {
 
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
-      
+
       if (char === '"') {
         inQuotes = !inQuotes;
       } else if (char === "," && !inQuotes) {
@@ -129,7 +136,7 @@ class ScheduleFileParser {
       }
     }
     result.push(current);
-    
+
     return result;
   }
 
@@ -142,7 +149,7 @@ class ScheduleFileParser {
     if (typeof XLSX === "undefined") {
       throw new Error(
         "Excel parsing requires SheetJS library. Please include it in your HTML: " +
-        '<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>'
+          '<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>',
       );
     }
 
@@ -159,22 +166,22 @@ class ScheduleFileParser {
 
     data.forEach((row) => {
       // Try to find date column (case-insensitive)
-      const dateKey = Object.keys(row).find(
-        (key) => key.toLowerCase().includes("date")
+      const dateKey = Object.keys(row).find((key) =>
+        key.toLowerCase().includes("date"),
       );
-      
+
       if (dateKey && row[dateKey]) {
         const date = this.parseDate(row[dateKey]);
         if (date) {
           // Check for game day
-          const gameDayKey = Object.keys(row).find(
-            (key) => key.toLowerCase().includes("game")
+          const gameDayKey = Object.keys(row).find((key) =>
+            key.toLowerCase().includes("game"),
           );
-          const isGameDay = gameDayKey && (
-            row[gameDayKey]?.toString().toLowerCase() === "true" ||
-            row[gameDayKey]?.toString().toLowerCase() === "yes" ||
-            row[gameDayKey]?.toString().toLowerCase() === "1"
-          );
+          const isGameDay =
+            gameDayKey &&
+            (row[gameDayKey]?.toString().toLowerCase() === "true" ||
+              row[gameDayKey]?.toString().toLowerCase() === "yes" ||
+              row[gameDayKey]?.toString().toLowerCase() === "1");
 
           if (isGameDay) {
             schedule.gameDays.push({
@@ -185,10 +192,14 @@ class ScheduleFileParser {
 
           // Add workout
           const workoutTypeKey = Object.keys(row).find(
-            (key) => key.toLowerCase().includes("workout") || key.toLowerCase().includes("type")
+            (key) =>
+              key.toLowerCase().includes("workout") ||
+              key.toLowerCase().includes("type"),
           );
           const workoutTitleKey = Object.keys(row).find(
-            (key) => key.toLowerCase().includes("title") || key.toLowerCase().includes("name")
+            (key) =>
+              key.toLowerCase().includes("title") ||
+              key.toLowerCase().includes("name"),
           );
 
           if (workoutTypeKey || workoutTitleKey) {
@@ -196,7 +207,8 @@ class ScheduleFileParser {
               date: date.toISOString().split("T")[0],
               dayOfWeek: date.getDay(),
               type: row[workoutTypeKey] || "custom",
-              title: row[workoutTitleKey] || row[workoutTypeKey] || "Custom Workout",
+              title:
+                row[workoutTitleKey] || row[workoutTypeKey] || "Custom Workout",
               duration: parseInt(row.duration || row.duration_minutes || 60),
               notes: row.notes || row.description || "",
             });
@@ -214,7 +226,7 @@ class ScheduleFileParser {
   async parseMarkdown(file) {
     const text = await file.text();
     const lines = text.split("\n");
-    
+
     const schedule = {
       gameDays: [],
       workouts: [],
@@ -227,7 +239,7 @@ class ScheduleFileParser {
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
-      
+
       // Detect markdown table
       if (line.startsWith("|") && line.includes("---")) {
         inTable = true;
@@ -246,7 +258,7 @@ class ScheduleFileParser {
           .split("|")
           .map((v) => v.trim())
           .filter((v) => v);
-        
+
         if (values.length === headers.length) {
           const row = {};
           headers.forEach((header, index) => {
@@ -255,21 +267,21 @@ class ScheduleFileParser {
 
           // Parse date
           const dateKey = Object.keys(row).find((k) =>
-            k.toLowerCase().includes("date")
+            k.toLowerCase().includes("date"),
           );
           if (dateKey && row[dateKey]) {
             const date = this.parseDate(row[dateKey]);
             if (date) {
               // Check for game day
               const gameDayKey = Object.keys(row).find((k) =>
-                k.toLowerCase().includes("game")
+                k.toLowerCase().includes("game"),
               );
-              const isGameDay = gameDayKey && (
-                row[gameDayKey]?.toLowerCase() === "true" ||
-                row[gameDayKey]?.toLowerCase() === "yes" ||
-                row[gameDayKey] === "✓" ||
-                row[gameDayKey] === "x"
-              );
+              const isGameDay =
+                gameDayKey &&
+                (row[gameDayKey]?.toLowerCase() === "true" ||
+                  row[gameDayKey]?.toLowerCase() === "yes" ||
+                  row[gameDayKey] === "✓" ||
+                  row[gameDayKey] === "x");
 
               if (isGameDay) {
                 schedule.gameDays.push({
@@ -279,8 +291,10 @@ class ScheduleFileParser {
               }
 
               // Add workout
-              const workoutKey = Object.keys(row).find((k) =>
-                k.toLowerCase().includes("workout") || k.toLowerCase().includes("type")
+              const workoutKey = Object.keys(row).find(
+                (k) =>
+                  k.toLowerCase().includes("workout") ||
+                  k.toLowerCase().includes("type"),
               );
               if (workoutKey && row[workoutKey]) {
                 schedule.workouts.push({
@@ -320,8 +334,10 @@ class ScheduleFileParser {
    * Parse date string in various formats
    */
   parseDate(dateString) {
-    if (!dateString) {return null;}
-    
+    if (!dateString) {
+      return null;
+    }
+
     // Try ISO format (YYYY-MM-DD)
     let date = new Date(dateString);
     if (!isNaN(date.getTime())) {
@@ -379,4 +395,3 @@ class ScheduleFileParser {
 
 // Export singleton instance
 export const scheduleFileParser = new ScheduleFileParser();
-

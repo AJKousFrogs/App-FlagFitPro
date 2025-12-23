@@ -63,16 +63,18 @@ function getSearchHistory() {
  * @param {string} query - Search query to save
  */
 function saveToHistory(query) {
-  if (!query || !query.trim()) {return;}
-  
+  if (!query || !query.trim()) {
+    return;
+  }
+
   try {
     const history = getSearchHistory();
     const normalizedQuery = query.trim().toLowerCase();
-    
+
     // Remove duplicates and add to front
-    const filtered = history.filter(q => q.toLowerCase() !== normalizedQuery);
+    const filtered = history.filter((q) => q.toLowerCase() !== normalizedQuery);
     filtered.unshift(normalizedQuery);
-    
+
     // Limit to max items
     const limited = filtered.slice(0, MAX_HISTORY_ITEMS);
     localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(limited));
@@ -110,26 +112,36 @@ export function getRecentSearches() {
 function levenshteinDistance(str1, str2) {
   const len1 = str1.length;
   const len2 = str2.length;
-  
-  if (len1 === 0) {return len2;}
-  if (len2 === 0) {return len1;}
-  
-  const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
-  
-  for (let i = 0; i <= len1; i++) {matrix[0][i] = i;}
-  for (let j = 0; j <= len2; j++) {matrix[j][0] = j;}
-  
+
+  if (len1 === 0) {
+    return len2;
+  }
+  if (len2 === 0) {
+    return len1;
+  }
+
+  const matrix = Array(len2 + 1)
+    .fill(null)
+    .map(() => Array(len1 + 1).fill(null));
+
+  for (let i = 0; i <= len1; i++) {
+    matrix[0][i] = i;
+  }
+  for (let j = 0; j <= len2; j++) {
+    matrix[j][0] = j;
+  }
+
   for (let j = 1; j <= len2; j++) {
     for (let i = 1; i <= len1; i++) {
       const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
       matrix[j][i] = Math.min(
-        matrix[j][i - 1] + 1,      // deletion
-        matrix[j - 1][i] + 1,      // insertion
-        matrix[j - 1][i - 1] + cost // substitution
+        matrix[j][i - 1] + 1, // deletion
+        matrix[j - 1][i] + 1, // insertion
+        matrix[j - 1][i - 1] + cost, // substitution
       );
     }
   }
-  
+
   return matrix[len2][len1];
 }
 
@@ -141,10 +153,12 @@ function levenshteinDistance(str1, str2) {
  */
 function calculateSimilarity(str1, str2) {
   const maxLen = Math.max(str1.length, str2.length);
-  if (maxLen === 0) {return 1;}
-  
+  if (maxLen === 0) {
+    return 1;
+  }
+
   const distance = levenshteinDistance(str1, str2);
-  return 1 - (distance / maxLen);
+  return 1 - distance / maxLen;
 }
 
 /**
@@ -157,23 +171,23 @@ function calculateSimilarity(str1, str2) {
 function fuzzyMatch(text, query, threshold = 0.7) {
   const normalizedText = normalizeText(text);
   const normalizedQuery = normalizeText(query);
-  
+
   // Exact match
   if (normalizedText === normalizedQuery) {
     return { match: true, score: 1.0, matchedText: text };
   }
-  
+
   // Contains match
   if (normalizedText.includes(normalizedQuery)) {
     return { match: true, score: 0.9, matchedText: text };
   }
-  
+
   // Word-by-word matching
   const textWords = normalizedText.split(/\s+/);
   const queryWords = normalizedQuery.split(/\s+/);
   let bestScore = 0;
   const matchedWords = [];
-  
+
   for (const queryWord of queryWords) {
     for (const textWord of textWords) {
       const similarity = calculateSimilarity(textWord, queryWord);
@@ -183,11 +197,11 @@ function fuzzyMatch(text, query, threshold = 0.7) {
       }
     }
   }
-  
+
   if (bestScore >= threshold) {
     return { match: true, score: bestScore, matchedText: text };
   }
-  
+
   // Fuzzy substring matching
   if (normalizedText.length >= normalizedQuery.length) {
     for (let i = 0; i <= normalizedText.length - normalizedQuery.length; i++) {
@@ -198,7 +212,7 @@ function fuzzyMatch(text, query, threshold = 0.7) {
       }
     }
   }
-  
+
   return { match: false, score: 0, matchedText: null };
 }
 
@@ -214,9 +228,9 @@ function parseQuery(query) {
     terms: [],
     exactPhrases: [],
     excludedTerms: [],
-    hasOperators: false
+    hasOperators: false,
   };
-  
+
   // Extract exact phrases (quoted strings)
   const exactPhraseRegex = /"([^"]+)"/g;
   let match;
@@ -224,10 +238,10 @@ function parseQuery(query) {
     result.exactPhrases.push(match[1].trim());
     result.hasOperators = true;
   }
-  
+
   // Remove exact phrases from query for further processing
   const processedQuery = trimmed.replace(exactPhraseRegex, "");
-  
+
   // Extract excluded terms (prefixed with -)
   const words = processedQuery.split(/\s+/);
   for (const word of words) {
@@ -238,7 +252,7 @@ function parseQuery(query) {
       result.terms.push(word.trim());
     }
   }
-  
+
   return result;
 }
 
@@ -249,17 +263,24 @@ function parseQuery(query) {
  * @returns {string} HTML with highlighted terms
  */
 export function highlightMatches(text, query) {
-  if (!text || !query) {return text;}
-  
+  if (!text || !query) {
+    return text;
+  }
+
   const terms = Array.isArray(query) ? query : [query];
   let highlighted = text;
-  
+
   for (const term of terms) {
-    if (!term || !term.trim()) {continue;}
-    
+    if (!term || !term.trim()) {
+      continue;
+    }
+
     const normalizedTerm = normalizeText(term);
-    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    
+    const regex = new RegExp(
+      `(${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+      "gi",
+    );
+
     // Find matches and highlight them
     highlighted = highlighted.replace(regex, (match) => {
       // Check if already inside a highlight tag
@@ -269,7 +290,7 @@ export function highlightMatches(text, query) {
       return `<mark class="search-highlight">${match}</mark>`;
     });
   }
-  
+
   return highlighted;
 }
 
@@ -278,7 +299,14 @@ const SEARCHABLE_CONTENT = [
   // Training Protocols
   {
     label: "Morning Mobility Routine",
-    keywords: ["morning routine", "morning mobility", "mobility routine", "daily mobility", "morning", "mobility"],
+    keywords: [
+      "morning routine",
+      "morning mobility",
+      "mobility routine",
+      "daily mobility",
+      "morning",
+      "mobility",
+    ],
     type: "protocol",
     url: "training.html#schedule",
     description: "15-minute daily mobility routine with day-specific videos",
@@ -286,7 +314,13 @@ const SEARCHABLE_CONTENT = [
   },
   {
     label: "Universal Warm-Up",
-    keywords: ["warm up", "warmup", "pre-workout", "activation", "universal warm"],
+    keywords: [
+      "warm up",
+      "warmup",
+      "pre-workout",
+      "activation",
+      "universal warm",
+    ],
     type: "protocol",
     url: "training.html#schedule",
     description: "15-20 minute comprehensive warm-up protocol",
@@ -304,7 +338,12 @@ const SEARCHABLE_CONTENT = [
   // Pages
   {
     label: "Training Schedule",
-    keywords: ["training schedule", "schedule", "workout schedule", "training plan"],
+    keywords: [
+      "training schedule",
+      "schedule",
+      "workout schedule",
+      "training plan",
+    ],
     type: "page",
     url: "training.html#schedule",
     description: "View and manage your training schedule",
@@ -384,7 +423,7 @@ async function loadPlayers() {
   const now = Date.now();
 
   // Return cached data if still valid
-  if (playersCache && (now - playersCacheTime) < CACHE_DURATION) {
+  if (playersCache && now - playersCacheTime < CACHE_DURATION) {
     return playersCache;
   }
 
@@ -403,7 +442,12 @@ async function loadPlayers() {
     for (const endpoint of possibleEndpoints) {
       try {
         const response = await apiClient.get(endpoint);
-        const players = response?.data?.players || response?.data || response?.players || response || [];
+        const players =
+          response?.data?.players ||
+          response?.data ||
+          response?.players ||
+          response ||
+          [];
 
         if (Array.isArray(players) && players.length > 0) {
           playersCache = players;
@@ -440,7 +484,9 @@ async function loadPlayers() {
  * @returns {string} Normalized text
  */
 function normalizeText(text) {
-  if (!text) {return "";}
+  if (!text) {
+    return "";
+  }
   return text
     .toLowerCase()
     .normalize("NFD")
@@ -456,14 +502,16 @@ function normalizeText(text) {
  * @returns {Array} Array of search results
  */
 function searchPlayers(query, players, parsedQuery = null) {
-  if (!players || players.length === 0) {return [];}
+  if (!players || players.length === 0) {
+    return [];
+  }
 
   if (!parsedQuery) {
     parsedQuery = parseQuery(query);
   }
 
   const normalizedQuery = normalizeText(query);
-  const queryWords = normalizedQuery.split(/\s+/).filter(w => w.length > 0);
+  const queryWords = normalizedQuery.split(/\s+/).filter((w) => w.length > 0);
   const results = [];
   const fuzzyThreshold = 0.75; // Threshold for fuzzy matching
 
@@ -473,7 +521,9 @@ function searchPlayers(query, players, parsedQuery = null) {
     const matchedTexts = [];
 
     // Get player name (handle different formats)
-    const playerNameRaw = player.name || `${player.firstName || ""} ${player.lastName || ""}`.trim();
+    const playerNameRaw =
+      player.name ||
+      `${player.firstName || ""} ${player.lastName || ""}`.trim();
     const playerName = normalizeText(playerNameRaw);
     const fullName = playerName;
     const firstName = normalizeText(player.firstName || "");
@@ -483,14 +533,18 @@ function searchPlayers(query, players, parsedQuery = null) {
     let shouldExclude = false;
     for (const excludedTerm of parsedQuery.excludedTerms) {
       const normalizedExcluded = normalizeText(excludedTerm);
-      if (playerName.includes(normalizedExcluded) || 
-          firstName.includes(normalizedExcluded) || 
-          lastName.includes(normalizedExcluded)) {
+      if (
+        playerName.includes(normalizedExcluded) ||
+        firstName.includes(normalizedExcluded) ||
+        lastName.includes(normalizedExcluded)
+      ) {
         shouldExclude = true;
         break;
       }
     }
-    if (shouldExclude) {continue;}
+    if (shouldExclude) {
+      continue;
+    }
 
     // Check exact phrases
     let exactPhraseMatch = false;
@@ -513,7 +567,10 @@ function searchPlayers(query, players, parsedQuery = null) {
         matchedTexts.push(query);
       }
       // Name contains query
-      else if (playerName.includes(normalizedQuery) || fullName.includes(normalizedQuery)) {
+      else if (
+        playerName.includes(normalizedQuery) ||
+        fullName.includes(normalizedQuery)
+      ) {
         score += 80;
         matchedFields.push("name");
         matchedTexts.push(query);
@@ -549,7 +606,9 @@ function searchPlayers(query, players, parsedQuery = null) {
     }
 
     // Jersey number match
-    const jersey = String(player.jersey || player.jerseyNumber || "").toLowerCase();
+    const jersey = String(
+      player.jersey || player.jerseyNumber || "",
+    ).toLowerCase();
     if (jersey === normalizedQuery) {
       score += 60;
       matchedFields.push("jersey");
@@ -581,7 +640,11 @@ function searchPlayers(query, players, parsedQuery = null) {
       matchedFields.push("position");
       matchedTexts.push(query);
     } else {
-      const positionMatch = fuzzyMatch(player.position || "", query, fuzzyThreshold);
+      const positionMatch = fuzzyMatch(
+        player.position || "",
+        query,
+        fuzzyThreshold,
+      );
       if (positionMatch.match) {
         score += Math.round(positionMatch.score * 30);
         matchedFields.push("position");
@@ -596,7 +659,11 @@ function searchPlayers(query, players, parsedQuery = null) {
       matchedFields.push("country");
       matchedTexts.push(query);
     } else {
-      const countryMatch = fuzzyMatch(player.country || "", query, fuzzyThreshold);
+      const countryMatch = fuzzyMatch(
+        player.country || "",
+        query,
+        fuzzyThreshold,
+      );
       if (countryMatch.match) {
         score += Math.round(countryMatch.score * 15);
         matchedFields.push("country");
@@ -607,8 +674,13 @@ function searchPlayers(query, players, parsedQuery = null) {
     // If we have a match, add to results
     if (score > 0) {
       results.push({
-        label: player.name || `${player.firstName || ""} ${player.lastName || ""}`.trim() || `Player #${player.jersey || player.jerseyNumber}`,
-        value: player.name || `${player.firstName || ""} ${player.lastName || ""}`.trim(),
+        label:
+          player.name ||
+          `${player.firstName || ""} ${player.lastName || ""}`.trim() ||
+          `Player #${player.jersey || player.jerseyNumber}`,
+        value:
+          player.name ||
+          `${player.firstName || ""} ${player.lastName || ""}`.trim(),
         type: "player",
         url: `/roster.html#player-${player.id || player.jersey || player.jerseyNumber}`,
         description: `${player.position || "Player"}${player.jersey ? ` • #${player.jersey}` : ""}${player.country ? ` • ${player.country}` : ""}`,
@@ -633,7 +705,7 @@ function searchPlayers(query, players, parsedQuery = null) {
  */
 export async function performGlobalSearch(query, options = {}) {
   const { saveToHistory: shouldSaveToHistory = true } = options;
-  
+
   if (!query || !query.trim()) {
     return [];
   }
@@ -646,7 +718,7 @@ export async function performGlobalSearch(query, options = {}) {
   // Parse query for operators
   const parsedQuery = parseQuery(query);
   const normalizedQuery = query.toLowerCase().trim();
-  const queryWords = normalizedQuery.split(/\s+/).filter(w => w.length > 0);
+  const queryWords = normalizedQuery.split(/\s+/).filter((w) => w.length > 0);
   const fuzzyThreshold = 0.75;
 
   const results = [];
@@ -662,14 +734,21 @@ export async function performGlobalSearch(query, options = {}) {
     let shouldExclude = false;
     for (const excludedTerm of parsedQuery.excludedTerms) {
       const normalizedExcluded = normalizeText(excludedTerm);
-      if (normalizeText(item.label).includes(normalizedExcluded) ||
-          item.keywords.some(k => normalizeText(k).includes(normalizedExcluded)) ||
-          (item.description && normalizeText(item.description).includes(normalizedExcluded))) {
+      if (
+        normalizeText(item.label).includes(normalizedExcluded) ||
+        item.keywords.some((k) =>
+          normalizeText(k).includes(normalizedExcluded),
+        ) ||
+        (item.description &&
+          normalizeText(item.description).includes(normalizedExcluded))
+      ) {
         shouldExclude = true;
         break;
       }
     }
-    if (shouldExclude) {continue;}
+    if (shouldExclude) {
+      continue;
+    }
 
     // Check exact phrases
     let exactPhraseMatch = false;
@@ -903,14 +982,18 @@ async function searchTournaments(query, parsedQuery = null) {
       let shouldExclude = false;
       for (const excludedTerm of parsedQuery.excludedTerms) {
         const normalizedExcluded = normalizeText(excludedTerm);
-        if (name.includes(normalizedExcluded) || 
-            location.includes(normalizedExcluded) || 
-            description.includes(normalizedExcluded)) {
+        if (
+          name.includes(normalizedExcluded) ||
+          location.includes(normalizedExcluded) ||
+          description.includes(normalizedExcluded)
+        ) {
           shouldExclude = true;
           break;
         }
       }
-      if (shouldExclude) {continue;}
+      if (shouldExclude) {
+        continue;
+      }
 
       let score = 0;
       const matchedTexts = [];
@@ -926,7 +1009,11 @@ async function searchTournaments(query, parsedQuery = null) {
       }
 
       // Name matching with fuzzy
-      const nameMatch = fuzzyMatch(tournament.name || "", query, fuzzyThreshold);
+      const nameMatch = fuzzyMatch(
+        tournament.name || "",
+        query,
+        fuzzyThreshold,
+      );
       if (nameMatch.match) {
         score += Math.round(nameMatch.score * 60);
         matchedTexts.push(query);
@@ -939,7 +1026,11 @@ async function searchTournaments(query, parsedQuery = null) {
       }
 
       // Location matching
-      const locationMatch = fuzzyMatch(tournament.location || "", query, fuzzyThreshold);
+      const locationMatch = fuzzyMatch(
+        tournament.location || "",
+        query,
+        fuzzyThreshold,
+      );
       if (locationMatch.match) {
         score += Math.round(locationMatch.score * 30);
         matchedTexts.push(query);
@@ -949,7 +1040,11 @@ async function searchTournaments(query, parsedQuery = null) {
       }
 
       // Description matching
-      const descMatch = fuzzyMatch(tournament.description || "", query, fuzzyThreshold);
+      const descMatch = fuzzyMatch(
+        tournament.description || "",
+        query,
+        fuzzyThreshold,
+      );
       if (descMatch.match) {
         score += Math.round(descMatch.score * 20);
         matchedTexts.push(query);
@@ -1007,7 +1102,9 @@ async function searchGames(query, parsedQuery = null) {
     const fuzzyThreshold = 0.75;
 
     for (const game of games) {
-      const opponent = normalizeText(game.opponent || game.awayTeam?.name || game.homeTeam?.name || "");
+      const opponent = normalizeText(
+        game.opponent || game.awayTeam?.name || game.homeTeam?.name || "",
+      );
       const location = normalizeText(game.location || "");
       const date = game.gameDate || game.date || "";
 
@@ -1015,20 +1112,28 @@ async function searchGames(query, parsedQuery = null) {
       let shouldExclude = false;
       for (const excludedTerm of parsedQuery.excludedTerms) {
         const normalizedExcluded = normalizeText(excludedTerm);
-        if (opponent.includes(normalizedExcluded) || 
-            location.includes(normalizedExcluded) || 
-            (date && date.includes(normalizedExcluded))) {
+        if (
+          opponent.includes(normalizedExcluded) ||
+          location.includes(normalizedExcluded) ||
+          (date && date.includes(normalizedExcluded))
+        ) {
           shouldExclude = true;
           break;
         }
       }
-      if (shouldExclude) {continue;}
+      if (shouldExclude) {
+        continue;
+      }
 
       let score = 0;
       const matchedTexts = [];
 
       // Opponent matching with fuzzy
-      const opponentMatch = fuzzyMatch(game.opponent || game.awayTeam?.name || game.homeTeam?.name || "", query, fuzzyThreshold);
+      const opponentMatch = fuzzyMatch(
+        game.opponent || game.awayTeam?.name || game.homeTeam?.name || "",
+        query,
+        fuzzyThreshold,
+      );
       if (opponentMatch.match) {
         score += Math.round(opponentMatch.score * 50);
         matchedTexts.push(query);
@@ -1038,7 +1143,11 @@ async function searchGames(query, parsedQuery = null) {
       }
 
       // Location matching
-      const locationMatch = fuzzyMatch(game.location || "", query, fuzzyThreshold);
+      const locationMatch = fuzzyMatch(
+        game.location || "",
+        query,
+        fuzzyThreshold,
+      );
       if (locationMatch.match) {
         score += Math.round(locationMatch.score * 30);
         matchedTexts.push(query);
@@ -1096,7 +1205,9 @@ async function searchCommunityPosts(query, parsedQuery = null) {
   }
 
   try {
-    const response = await apiClient.get(API_ENDPOINTS.community.feed, { limit: 50 });
+    const response = await apiClient.get(API_ENDPOINTS.community.feed, {
+      limit: 50,
+    });
     const posts = response?.data || response || [];
 
     const normalizedQuery = normalizeText(query);
@@ -1111,12 +1222,17 @@ async function searchCommunityPosts(query, parsedQuery = null) {
       let shouldExclude = false;
       for (const excludedTerm of parsedQuery.excludedTerms) {
         const normalizedExcluded = normalizeText(excludedTerm);
-        if (title.includes(normalizedExcluded) || content.includes(normalizedExcluded)) {
+        if (
+          title.includes(normalizedExcluded) ||
+          content.includes(normalizedExcluded)
+        ) {
           shouldExclude = true;
           break;
         }
       }
-      if (shouldExclude) {continue;}
+      if (shouldExclude) {
+        continue;
+      }
 
       let score = 0;
       const matchedTexts = [];
@@ -1145,7 +1261,11 @@ async function searchCommunityPosts(query, parsedQuery = null) {
       }
 
       // Content matching
-      const contentMatch = fuzzyMatch(post.content || "", query, fuzzyThreshold);
+      const contentMatch = fuzzyMatch(
+        post.content || "",
+        query,
+        fuzzyThreshold,
+      );
       if (contentMatch.match) {
         score += Math.round(contentMatch.score * 20);
         matchedTexts.push(query);
@@ -1177,4 +1297,3 @@ async function searchCommunityPosts(query, parsedQuery = null) {
 
 // Export default function for compatibility
 export default performGlobalSearch;
-

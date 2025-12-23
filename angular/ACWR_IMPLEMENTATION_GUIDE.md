@@ -1,4 +1,5 @@
 # 🏈 ACWR Implementation Guide
+
 ## Acute:Chronic Workload Ratio for Injury Prevention
 
 ---
@@ -39,12 +40,12 @@ This implementation uses **Exponentially Weighted Moving Average (EWMA)** instea
 
 ### Risk Zones
 
-| ACWR Range | Zone | Color | Meaning | Action |
-|------------|------|-------|---------|--------|
-| < 0.80 | Under-Training | 🟠 Orange | Insufficient conditioning | Increase load 5-10% |
-| 0.80-1.30 | Sweet Spot | 🟢 Green | Optimal, lowest injury risk | Maintain |
-| 1.30-1.50 | Elevated Risk | 🟡 Yellow | Caution needed | Reduce intensity |
-| > 1.50 | Danger Zone | 🔴 Red | Highest injury risk | Reduce 20-30%, skip sprints |
+| ACWR Range | Zone           | Color     | Meaning                     | Action                      |
+| ---------- | -------------- | --------- | --------------------------- | --------------------------- |
+| < 0.80     | Under-Training | 🟠 Orange | Insufficient conditioning   | Increase load 5-10%         |
+| 0.80-1.30  | Sweet Spot     | 🟢 Green  | Optimal, lowest injury risk | Maintain                    |
+| 1.30-1.50  | Elevated Risk  | 🟡 Yellow | Caution needed              | Reduce intensity            |
+| > 1.50     | Danger Zone    | 🔴 Red    | Highest injury risk         | Reduce 20-30%, skip sprints |
 
 ---
 
@@ -54,9 +55,9 @@ This implementation uses **Exponentially Weighted Moving Average (EWMA)** instea
 
 ```typescript
 // app.config.ts or module providers
-import { AcwrService } from './core/services/acwr.service';
-import { LoadMonitoringService } from './core/services/load-monitoring.service';
-import { AcwrAlertsService } from './core/services/acwr-alerts.service';
+import { AcwrService } from "./core/services/acwr.service";
+import { LoadMonitoringService } from "./core/services/load-monitoring.service";
+import { AcwrAlertsService } from "./core/services/acwr-alerts.service";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -64,42 +65,40 @@ export const appConfig: ApplicationConfig = {
     LoadMonitoringService,
     AcwrAlertsService,
     // ... other providers
-  ]
+  ],
 };
 ```
 
 ### 2. Log a Training Session (Simple)
 
 ```typescript
-import { Component } from '@angular/core';
-import { LoadMonitoringService } from './core/services/load-monitoring.service';
-import { AcwrService } from './core/services/acwr.service';
+import { Component } from "@angular/core";
+import { LoadMonitoringService } from "./core/services/load-monitoring.service";
+import { AcwrService } from "./core/services/acwr.service";
 
 @Component({
-  selector: 'app-training-log',
-  template: `
-    <button (click)="logSession()">Log Training</button>
-  `
+  selector: "app-training-log",
+  template: ` <button (click)="logSession()">Log Training</button> `,
 })
 export class TrainingLogComponent {
   constructor(
     private loadService: LoadMonitoringService,
-    private acwrService: AcwrService
+    private acwrService: AcwrService,
   ) {}
 
   logSession() {
     // Player rates session 7/10, trained for 90 minutes
     const session = this.loadService.createQuickSession(
-      'player123',
-      'technical',
-      7,  // RPE (1-10)
-      90  // Duration (minutes)
+      "player123",
+      "technical",
+      7, // RPE (1-10)
+      90, // Duration (minutes)
     );
 
     // Load = 7 × 90 = 630 AU
     this.acwrService.addSession(session);
 
-    console.log('Session logged! ACWR:', this.acwrService.acwrRatio());
+    console.log("Session logged! ACWR:", this.acwrService.acwrRatio());
   }
 }
 ```
@@ -109,9 +108,9 @@ export class TrainingLogComponent {
 ```typescript
 const riskZone = this.acwrService.riskZone();
 
-if (riskZone.level === 'danger-zone') {
+if (riskZone.level === "danger-zone") {
   alert(`⚠️ ${riskZone.description}`);
-  console.log('Recommendation:', riskZone.recommendation);
+  console.log("Recommendation:", riskZone.recommendation);
 }
 ```
 
@@ -128,6 +127,7 @@ EWMA_today = λ × Load_today + (1 - λ) × EWMA_yesterday
 ```
 
 **Lambda (λ) Values:**
+
 - **Acute (7-day)**: λ = 0.20 (20% weight to today)
 - **Chronic (28-day)**: λ = 0.05 (5% weight to today)
 
@@ -136,21 +136,25 @@ Higher λ = more sensitive to recent changes
 ### Load Calculation
 
 **Internal Load (Always Required):**
+
 ```
 sRPE × Duration = Workload (AU)
 ```
 
 **Example:**
+
 - Session RPE: 8/10
 - Duration: 100 minutes
 - **Load = 8 × 100 = 800 AU**
 
 **Combined Load (Optional):**
+
 ```
 (External Score × 50%) + (Internal Load × 50%)
 ```
 
 **External Score Components:**
+
 - Distance: 30%
 - Sprint work: 40%
 - Player Load device: 30%
@@ -160,6 +164,7 @@ sRPE × Duration = Workload (AU)
 **40% of injuries** occur when weekly load increases >10%
 
 The system automatically warns when:
+
 ```
 (This Week Load - Last Week Load) / Last Week Load > 10%
 ```
@@ -211,18 +216,18 @@ The system automatically warns when:
 ```typescript
 // Technical training with GPS data
 const external: ExternalLoad = {
-  totalDistance: 8500,      // meters
+  totalDistance: 8500, // meters
   sprintCount: 12,
-  sprintDistance: 450,      // meters
-  playerLoad: 350           // Device metric
+  sprintDistance: 450, // meters
+  playerLoad: 350, // Device metric
 };
 
 const internal: InternalLoad = {
   sessionRPE: 7,
-  duration: 100,            // minutes
-  workload: 700,            // 7 × 100
+  duration: 100, // minutes
+  workload: 700, // 7 × 100
   avgHeartRate: 165,
-  maxHeartRate: 190
+  maxHeartRate: 190,
 };
 
 const wellness: WellnessMetrics = {
@@ -231,16 +236,16 @@ const wellness: WellnessMetrics = {
   muscleSoreness: 6,
   stressLevel: 4,
   energyLevel: 7,
-  mood: 8
+  mood: 8,
 };
 
 const session = this.loadService.createSession(
-  'player123',
-  'technical',
+  "player123",
+  "technical",
   internal,
   external,
   wellness,
-  'Great session, felt strong'
+  "Great session, felt strong",
 );
 
 this.acwrService.addSession(session);
@@ -251,26 +256,26 @@ this.acwrService.addSession(session);
 ```typescript
 // Morning: Gym session
 const gymSession = this.loadService.createQuickSession(
-  'player123',
-  'strength',
-  5,    // RPE
-  60    // minutes
+  "player123",
+  "strength",
+  5, // RPE
+  60, // minutes
 );
 
 // Afternoon: Field work
 const fieldSession = this.loadService.createQuickSession(
-  'player123',
-  'technical',
+  "player123",
+  "technical",
   7,
-  90
+  90,
 );
 
 // Evening: Recovery
 const recoverySession = this.loadService.createQuickSession(
-  'player123',
-  'recovery',
+  "player123",
+  "recovery",
   3,
-  30
+  30,
 );
 
 // Add all sessions
@@ -284,12 +289,12 @@ this.acwrService.addSessions([gymSession, fieldSession, recoverySession]);
 ```typescript
 // Before training, check if player should skip sprints
 const shouldSkip = this.acwrService.shouldSkipSprints(
-  5,  // Today is Friday (0=Sunday, 5=Friday)
-  6   // Game on Saturday
+  5, // Today is Friday (0=Sunday, 5=Friday)
+  6, // Game on Saturday
 );
 
 if (shouldSkip) {
-  console.log('⚠️ SKIP SPRINTS - High ACWR or pre-game day');
+  console.log("⚠️ SKIP SPRINTS - High ACWR or pre-game day");
   // Modify training plan
   this.modifyPlan();
 }
@@ -300,27 +305,27 @@ if (shouldSkip) {
 ```typescript
 // Plan next session
 const plannedSession = {
-  sessionType: 'conditioning',
+  sessionType: "conditioning",
   plannedIntensity: 8,
-  plannedDuration: 90
+  plannedDuration: 90,
 };
 
 // Get prediction
 const prediction = this.acwrService.predictNextSessionLoad(8);
 
-console.log('Projected ACWR:', prediction.projectedACWR);
-console.log('Recommendation:', prediction.recommendation);
+console.log("Projected ACWR:", prediction.projectedACWR);
+console.log("Recommendation:", prediction.recommendation);
 
-if (prediction.projectedACWR > 1.50) {
+if (prediction.projectedACWR > 1.5) {
   // Auto-adjust
   const adjustment = this.alertsService.generateAdjustment(
-    'player123',
-    plannedSession
+    "player123",
+    plannedSession,
   );
 
-  console.log('Original intensity:', adjustment.originalPlan.plannedIntensity);
-  console.log('Adjusted intensity:', adjustment.adjustedPlan.adjustedIntensity);
-  console.log('Modifications:', adjustment.adjustedPlan.modifications);
+  console.log("Original intensity:", adjustment.originalPlan.plannedIntensity);
+  console.log("Adjusted intensity:", adjustment.adjustedPlan.adjustedIntensity);
+  console.log("Modifications:", adjustment.adjustedPlan.modifications);
 }
 ```
 
@@ -336,7 +341,7 @@ console.log(`
   - Average ACWR: ${summary.averageACWR}
 
   Recommendations:
-  ${summary.recommendations.join('\n  ')}
+  ${summary.recommendations.join("\n  ")}
 `);
 ```
 
@@ -348,20 +353,22 @@ console.log(`
 
 ```typescript
 // app.routes.ts
-import { Routes } from '@angular/router';
-import { AcwrDashboardComponent } from './features/acwr-dashboard/acwr-dashboard.component';
+import { Routes } from "@angular/router";
+import { AcwrDashboardComponent } from "./features/acwr-dashboard/acwr-dashboard.component";
 
 export const routes: Routes = [
   {
-    path: 'acwr',
+    path: "acwr",
     component: AcwrDashboardComponent,
-    title: 'Load Monitoring - ACWR'
+    title: "Load Monitoring - ACWR",
   },
   {
-    path: 'performance',
-    loadComponent: () => import('./features/acwr-dashboard/acwr-dashboard.component')
-      .then(m => m.AcwrDashboardComponent)
-  }
+    path: "performance",
+    loadComponent: () =>
+      import("./features/acwr-dashboard/acwr-dashboard.component").then(
+        (m) => m.AcwrDashboardComponent,
+      ),
+  },
 ];
 ```
 
@@ -369,7 +376,7 @@ export const routes: Routes = [
 
 ```typescript
 @Component({
-  selector: 'app-session-form',
+  selector: "app-session-form",
   template: `
     <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()">
       <label>
@@ -387,7 +394,7 @@ export const routes: Routes = [
       <label>
         Session RPE (1-10):
         <input type="range" formControlName="rpe" min="1" max="10" />
-        <span>{{ sessionForm.get('rpe')?.value }}</span>
+        <span>{{ sessionForm.get("rpe")?.value }}</span>
       </label>
 
       <label>
@@ -400,34 +407,36 @@ export const routes: Routes = [
         <textarea formControlName="notes"></textarea>
       </label>
 
-      <button type="submit" [disabled]="!sessionForm.valid">
-        Log Session
-      </button>
+      <button type="submit" [disabled]="!sessionForm.valid">Log Session</button>
     </form>
 
     <div class="preview">
       <p>Estimated Load: {{ estimatedLoad }} AU</p>
-      <p>Projected ACWR: {{ projectedACWR | number:'1.2-2' }}</p>
+      <p>Projected ACWR: {{ projectedACWR | number: "1.2-2" }}</p>
     </div>
-  `
+  `,
 })
 export class SessionFormComponent {
   sessionForm = new FormGroup({
-    sessionType: new FormControl('technical', Validators.required),
-    rpe: new FormControl(6, [Validators.required, Validators.min(1), Validators.max(10)]),
+    sessionType: new FormControl("technical", Validators.required),
+    rpe: new FormControl(6, [
+      Validators.required,
+      Validators.min(1),
+      Validators.max(10),
+    ]),
     duration: new FormControl(90, [Validators.required, Validators.min(15)]),
-    notes: new FormControl('')
+    notes: new FormControl(""),
   });
 
   get estimatedLoad(): number {
-    const rpe = this.sessionForm.get('rpe')?.value || 0;
-    const duration = this.sessionForm.get('duration')?.value || 0;
+    const rpe = this.sessionForm.get("rpe")?.value || 0;
+    const duration = this.sessionForm.get("duration")?.value || 0;
     return rpe * duration;
   }
 
   get projectedACWR(): number {
     const predicted = this.acwrService.predictNextSessionLoad(
-      this.sessionForm.get('rpe')?.value || 0
+      this.sessionForm.get("rpe")?.value || 0,
     );
     return predicted.projectedACWR;
   }
@@ -439,7 +448,7 @@ export class SessionFormComponent {
       values.sessionType,
       values.rpe,
       values.duration,
-      values.notes
+      values.notes,
     );
 
     this.acwrService.addSession(session);
@@ -452,7 +461,7 @@ export class SessionFormComponent {
 
 ```typescript
 // dashboard.component.ts
-import { AcwrDashboardComponent } from '../acwr-dashboard/acwr-dashboard.component';
+import { AcwrDashboardComponent } from "../acwr-dashboard/acwr-dashboard.component";
 
 @Component({
   template: `
@@ -461,7 +470,7 @@ import { AcwrDashboardComponent } from '../acwr-dashboard/acwr-dashboard.compone
       <!-- Other dashboard components -->
     </div>
   `,
-  imports: [AcwrDashboardComponent]
+  imports: [AcwrDashboardComponent],
 })
 export class DashboardComponent {}
 ```
@@ -473,6 +482,7 @@ export class DashboardComponent {}
 ### AcwrService
 
 **Signals (Reactive):**
+
 ```typescript
 acuteLoad: Signal<number>          // 7-day EWMA load
 chronicLoad: Signal<number>        // 28-day EWMA load
@@ -483,6 +493,7 @@ acwrData: Signal<ACWRData>         // Complete data
 ```
 
 **Methods:**
+
 ```typescript
 addSession(session: TrainingSession): void
 addSessions(sessions: TrainingSession[]): void
@@ -558,13 +569,14 @@ generateAdjustment(playerId, plannedSession): TrainingAdjustment
 **Cause:** No training sessions logged
 
 **Solution:**
+
 ```typescript
 // Check sessions
 const sessions = this.acwrService.getSessionsInRange(
-  new Date('2024-01-01'),
-  new Date()
+  new Date("2024-01-01"),
+  new Date(),
 );
-console.log('Sessions:', sessions.length);
+console.log("Sessions:", sessions.length);
 ```
 
 ### Issue: ACWR stuck at same value
@@ -572,6 +584,7 @@ console.log('Sessions:', sessions.length);
 **Cause:** Not adding new sessions
 
 **Solution:** Verify sessions have current dates:
+
 ```typescript
 const session = this.loadService.createQuickSession(...);
 session.date = new Date(); // Ensure current date
@@ -583,15 +596,16 @@ this.acwrService.addSession(session);
 **Cause:** Incorrect calculation options
 
 **Solution:**
+
 ```typescript
 // Check calculation settings
 const options = this.loadService.getCalculationOptions();
-console.log('Options:', options);
+console.log("Options:", options);
 
 // Adjust if needed
 this.loadService.setCalculationOptions({
   includeWellness: true,
-  externalLoadWeight: 0.5
+  externalLoadWeight: 0.5,
 });
 ```
 
@@ -600,6 +614,7 @@ this.loadService.setCalculationOptions({
 **Cause:** Notifications disabled
 
 **Solution:**
+
 ```typescript
 // Enable notifications
 this.alertsService.setNotificationEnabled(true);

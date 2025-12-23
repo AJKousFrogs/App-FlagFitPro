@@ -1,4 +1,3 @@
- 
 // Script to ensure all icons have white/light colors for dark mode
 import fs from "fs";
 import { fileURLToPath } from "url";

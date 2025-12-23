@@ -13,6 +13,7 @@
 ### Duplicated Code Blocks
 
 #### **Block 1: Imports (100% identical)**
+
 ```javascript
 // Lines 5-15 in both files
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
@@ -22,25 +23,27 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 ```
 
 #### **Block 2: CORS Preflight Handler (100% identical)**
+
 ```javascript
 // Lines 21-28 in both files
 if (event.httpMethod === "OPTIONS") {
   return {
     statusCode: 200,
     headers: CORS_HEADERS,
-    body: ""
+    body: "",
   };
 }
 ```
 
 #### **Block 3: Function Setup Pattern (95% identical)**
+
 ```javascript
 // fixtures.cjs lines 30-55
 logFunctionCall("fixtures", event.httpMethod);
@@ -111,11 +114,13 @@ try {
 ```
 
 **Differences:**
+
 - Function name in `logFunctionCall()`: `"fixtures"` vs `"readiness-history"`
 - Error message text: `"retrieve fixtures"` vs `"retrieve readiness history"`
 - readiness-history.cjs has an extra comment about permission verification
 
 #### **Block 4: Query Parameter Validation (100% identical)**
+
 ```javascript
 // Lines 62-64 in fixtures.cjs, lines 63-65 in readiness-history.cjs
 if (!athleteId) {
@@ -124,18 +129,19 @@ if (!athleteId) {
 ```
 
 #### **Block 5: Database Query Error Handling (95% identical)**
+
 ```javascript
 // fixtures.cjs lines 78-84
 if (error) {
   console.error("Database error:", error);
   return createErrorResponse(
     500,
-    `Failed to retrieve fixtures: ${error.message}`
+    `Failed to retrieve fixtures: ${error.message}`,
   );
 }
 
 return createSuccessResponse({
-  data: data || []
+  data: data || [],
 });
 ```
 
@@ -145,19 +151,21 @@ if (error) {
   console.error("Database error:", error);
   return createErrorResponse(
     500,
-    `Failed to retrieve readiness history: ${error.message}`
+    `Failed to retrieve readiness history: ${error.message}`,
   );
 }
 
 return createSuccessResponse({
-  data: data || []
+  data: data || [],
 });
 ```
 
 **Differences:**
+
 - Error message text: `"retrieve fixtures"` vs `"retrieve readiness history"`
 
 #### **Block 6: Error Handler (100% identical)**
+
 ```javascript
 // fixtures.cjs line 90, readiness-history.cjs line 93
 } catch (error) {
@@ -168,11 +176,13 @@ return createSuccessResponse({
 ### Unique Code (12% difference)
 
 **fixtures.cjs unique:**
+
 - Date calculation: `endDate.setDate(endDate.getDate() + days)` (forward-looking)
 - Database query: `fixtures` table with `game_start` filtering
 - Query uses `.or()` for athlete-specific or team-based fixtures
 
 **readiness-history.cjs unique:**
+
 - Date calculation: `startDate.setDate(startDate.getDate() - days)` (backward-looking)
 - Database query: `readiness_scores` table with `day` filtering
 - Selects specific columns: `"day, score, level, suggestion, acwr"`
@@ -185,12 +195,15 @@ return createSuccessResponse({
 ### Duplicated Code Blocks
 
 #### **Block 1: Imports (100% identical)**
+
 Same as above - identical import statements.
 
 #### **Block 2: CORS Preflight Handler (100% identical)**
+
 Same as above - identical CORS handling.
 
 #### **Block 3: Function Setup Pattern (90% identical)**
+
 ```javascript
 // training-metrics.cjs lines 30-57
 logFunctionCall("training-metrics", event.httpMethod);
@@ -228,38 +241,43 @@ try {
 ```
 
 **Differences:**
+
 - Comment style: `// Check environment variables` vs no comment
 - Error message: `"retrieve metrics"` vs `"retrieve fixtures"`
 - training-metrics.cjs has `startDate` parameter parsing (line 62)
 
 #### **Block 4: Database Query Error Handling (95% identical)**
+
 ```javascript
 // training-metrics.cjs lines 82-92
 if (error) {
   console.error("Database error:", error);
   return createErrorResponse(
     500,
-    `Failed to retrieve metrics: ${error.message}`
+    `Failed to retrieve metrics: ${error.message}`,
   );
 }
 
 return createSuccessResponse({
-  data: data || []
+  data: data || [],
 });
 ```
 
 **Differences:**
+
 - Error message: `"retrieve metrics"` vs `"retrieve fixtures"`
 
 ### Unique Code (16% difference)
 
 **training-metrics.cjs unique:**
+
 - Query building pattern: `let query = supabaseAdmin.from("sessions")...`
 - Conditional query building: `if (startDate) { query = query.gte("date", startDate); }`
 - Selects specific columns: `"date, total_volume, high_speed_distance, sprint_count"`
 - Orders by `date` descending
 
 **fixtures.cjs unique:**
+
 - Date calculation with forward-looking logic
 - Uses `.or()` clause for flexible athlete/team filtering
 - Filters by `game_start` timestamp
@@ -271,6 +289,7 @@ return createSuccessResponse({
 ### Duplicated Code Blocks
 
 #### **Block 1: Imports (95% identical)**
+
 ```javascript
 // notifications-create.cjs lines 4-14
 const { db, checkEnvVars } = require("./supabase-client.cjs");
@@ -280,7 +299,7 @@ const {
   handleServerError,
   handleValidationError,
   logFunctionCall,
-  CORS_HEADERS
+  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -292,9 +311,11 @@ const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 ```
 
 **Differences:**
+
 - notifications-create.cjs doesn't import `supabaseAdmin` (not needed)
 
 #### **Block 2: Handler Setup (85% identical)**
+
 ```javascript
 // notifications-create.cjs lines 16-42
 exports.handler = async (event, context) => {
@@ -359,10 +380,12 @@ exports.handler = async (event, context) => {
 ```
 
 **Differences:**
+
 - Function name in `logFunctionCall()`
 - Rate limiting: notifications-create always uses `"CREATE"`, notifications-preferences uses conditional `"READ"` or `"CREATE"`
 
 #### **Block 3: Error Handling Pattern (90% identical)**
+
 ```javascript
 // notifications-create.cjs lines 87-90
 } catch (error) {
@@ -380,11 +403,13 @@ exports.handler = async (event, context) => {
 ```
 
 **Differences:**
+
 - Error message text and function name parameter
 
 ### Unique Code (20% difference)
 
 **notifications-create.cjs unique:**
+
 - Only handles `POST` method
 - Body parsing: `const { type, message, priority } = body;`
 - User preferences check before creating notification
@@ -392,6 +417,7 @@ exports.handler = async (event, context) => {
 - Single database operation: `createNotification()`
 
 **notifications-preferences.cjs unique:**
+
 - Handles `GET`, `POST`, and `PUT` methods
 - Method-specific logic branching
 - Body parsing: `const { preferences } = body;`
@@ -406,7 +432,7 @@ exports.handler = async (event, context) => {
 
 ```javascript
 exports.handler = async (event, context) => {
-  logFunctionCall('FunctionName', event);
+  logFunctionCall("FunctionName", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -418,7 +444,7 @@ exports.handler = async (event, context) => {
 
   try {
     checkEnvVars();
-    
+
     // SECURITY: Apply rate limiting
     const rateLimitResponse = applyRateLimit(event, "READ" | "CREATE");
     if (rateLimitResponse) {
@@ -432,11 +458,10 @@ exports.handler = async (event, context) => {
     }
 
     const userId = auth.user.id;
-    
+
     // ... function-specific logic ...
-    
   } catch (error) {
-    return handleServerError(error, 'FunctionName');
+    return handleServerError(error, "FunctionName");
   }
 };
 ```
@@ -448,14 +473,11 @@ exports.handler = async (event, context) => {
 ```javascript
 if (error) {
   console.error("Database error:", error);
-  return createErrorResponse(
-    500,
-    `Failed to [operation]: ${error.message}`
-  );
+  return createErrorResponse(500, `Failed to [operation]: ${error.message}`);
 }
 
 return createSuccessResponse({
-  data: data || []
+  data: data || [],
 });
 ```
 
@@ -490,10 +512,10 @@ if (!athleteId) {
 async function baseHandler(event, context, options = {}) {
   const {
     functionName,
-    allowedMethods = ['GET'],
-    rateLimitType = 'READ',
+    allowedMethods = ["GET"],
+    rateLimitType = "READ",
     requireAuth = true,
-    handler
+    handler,
   } = options;
 
   // CORS preflight
@@ -514,9 +536,9 @@ async function baseHandler(event, context, options = {}) {
     // Validate HTTP method
     if (!allowedMethods.includes(event.httpMethod)) {
       return createErrorResponse(
-        `Method not allowed. Use ${allowedMethods.join(' or ')}.`,
+        `Method not allowed. Use ${allowedMethods.join(" or ")}.`,
         405,
-        'method_not_allowed'
+        "method_not_allowed",
       );
     }
 
@@ -547,19 +569,20 @@ module.exports = { baseHandler };
 ```
 
 **Usage Example:**
+
 ```javascript
 const { baseHandler } = require("./utils/base-handler.cjs");
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'fixtures',
-    allowedMethods: ['GET'],
-    rateLimitType: 'READ',
+    functionName: "fixtures",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
     handler: async (event, context, { userId }) => {
       // Function-specific logic here
       const athleteId = event.queryStringParameters?.athleteId || userId;
       // ... rest of logic
-    }
+    },
   });
 };
 ```
@@ -576,21 +599,18 @@ exports.handler = async (event, context) => {
  */
 async function executeQuery(queryPromise, errorMessage) {
   const { data, error } = await queryPromise;
-  
+
   if (error) {
     console.error("Database error:", error);
     return {
       success: false,
-      error: createErrorResponse(
-        500,
-        `${errorMessage}: ${error.message}`
-      )
+      error: createErrorResponse(500, `${errorMessage}: ${error.message}`),
     };
   }
 
   return {
     success: true,
-    data: data || []
+    data: data || [],
   };
 }
 
@@ -599,11 +619,11 @@ async function executeQuery(queryPromise, errorMessage) {
  */
 function parseAthleteId(event, userId) {
   const athleteId = event.queryStringParameters?.athleteId || userId;
-  
+
   if (!athleteId) {
     return {
       valid: false,
-      error: handleValidationError("athleteId query parameter is required")
+      error: handleValidationError("athleteId query parameter is required"),
     };
   }
 
@@ -630,7 +650,7 @@ function successResponse(data, message = null) {
 /**
  * Standardized error response wrapper
  */
-function errorResponse(message, statusCode = 500, errorType = 'server_error') {
+function errorResponse(message, statusCode = 500, errorType = "server_error") {
   return createErrorResponse(message, statusCode, errorType);
 }
 
@@ -644,16 +664,19 @@ module.exports = { successResponse, errorResponse };
 ## 6. Impact Summary
 
 ### Current State
+
 - **Total duplicated code:** ~1,940 lines across 48 files
 - **Average duplication per file:** ~40 lines
 - **Maintenance burden:** Changes to security/auth patterns require updates in 40+ files
 
 ### After Refactoring
+
 - **Total duplicated code:** ~0 lines (moved to utilities)
 - **Average duplication per file:** ~0 lines
 - **Maintenance burden:** Changes to security/auth patterns require updates in 1-3 utility files
 
 ### Benefits
+
 1. **Consistency:** All functions use the same security patterns
 2. **Maintainability:** Bug fixes and improvements propagate automatically
 3. **Testability:** Base handler can be unit tested once
@@ -665,12 +688,14 @@ module.exports = { successResponse, errorResponse };
 ## 7. Migration Plan
 
 ### Phase 1: Create Utilities (Week 1)
+
 - [ ] Create `base-handler.cjs`
 - [ ] Create `db-query-helper.cjs`
 - [ ] Create `response-helper.cjs`
 - [ ] Write unit tests for utilities
 
 ### Phase 2: Migrate High-Similarity Files (Week 2)
+
 - [ ] Migrate `fixtures.cjs`
 - [ ] Migrate `readiness-history.cjs`
 - [ ] Migrate `training-metrics.cjs`
@@ -678,11 +703,13 @@ module.exports = { successResponse, errorResponse };
 - [ ] Migrate `notifications-preferences.cjs`
 
 ### Phase 3: Migrate Remaining Files (Week 3-4)
+
 - [ ] Migrate all other GET endpoints
 - [ ] Migrate all POST/PUT endpoints
 - [ ] Update documentation
 
 ### Phase 4: Validation (Week 5)
+
 - [ ] Integration testing
 - [ ] Performance testing
 - [ ] Security audit
@@ -692,16 +719,19 @@ module.exports = { successResponse, errorResponse };
 ## 8. Files Requiring Immediate Attention
 
 ### High Priority (88%+ similarity)
+
 1. `netlify/functions/fixtures.cjs`
 2. `netlify/functions/readiness-history.cjs`
 3. `netlify/functions/training-metrics.cjs`
 
 ### Medium Priority (80%+ similarity)
+
 4. `netlify/functions/notifications-create.cjs`
 5. `netlify/functions/notifications-preferences.cjs`
 6. `netlify/functions/compute-acwr.cjs`
 
 ### Low Priority (60-80% similarity)
+
 - All other Netlify function files
 
 ---
@@ -716,6 +746,7 @@ While there are **no exact duplicates**, there is significant **structural dupli
 - Reduce the risk of bugs from inconsistent implementations
 
 The refactoring is **low-risk** because:
+
 - Utilities can be tested independently
 - Migration can be done incrementally
 - Original functionality remains unchanged

@@ -274,7 +274,10 @@ export class PlayerStatisticsService {
               gamesPlayed > 0 ? aggregated.rushingYards / gamesPlayed : 0,
             completionPercentage:
               aggregated.passAttempts > 0
-                ? this.calculateCompletionPercentage(aggregated.completions, aggregated.passAttempts)
+                ? this.calculateCompletionPercentage(
+                    aggregated.completions,
+                    aggregated.passAttempts,
+                  )
                 : 0,
             dropRate:
               aggregated.targets > 0
@@ -282,7 +285,10 @@ export class PlayerStatisticsService {
                 : 0,
             flagPullSuccessRate:
               aggregated.flagPullAttempts > 0
-                ? this.calculateFlagPullSuccessRate(aggregated.flagPulls, aggregated.flagPullAttempts)
+                ? this.calculateFlagPullSuccessRate(
+                    aggregated.flagPulls,
+                    aggregated.flagPullAttempts,
+                  )
                 : 0,
           };
         }),
@@ -381,7 +387,10 @@ export class PlayerStatisticsService {
               (sum: number, s: any) => sum + s.totalReceivingYards,
               0,
             ),
-            careerDrops: seasonStats.reduce((sum: number, s: any) => sum + s.totalDrops, 0),
+            careerDrops: seasonStats.reduce(
+              (sum: number, s: any) => sum + s.totalDrops,
+              0,
+            ),
             careerRushingAttempts: seasonStats.reduce(
               (sum: number, s: any) => sum + s.totalRushingAttempts,
               0,
@@ -457,12 +466,18 @@ export class PlayerStatisticsService {
   /**
    * Calculate completion percentage using validated calculation service
    */
-  private calculateCompletionPercentage(completions: number, attempts: number): number {
+  private calculateCompletionPercentage(
+    completions: number,
+    attempts: number,
+  ): number {
     try {
-      const result = this.statsCalcService.calculateCompletionPercentage(completions, attempts);
+      const result = this.statsCalcService.calculateCompletionPercentage(
+        completions,
+        attempts,
+      );
       return result.percentage;
     } catch (error) {
-      this.logger.warn('Error calculating completion percentage:', error);
+      this.logger.warn("Error calculating completion percentage:", error);
       return attempts > 0 ? (completions / attempts) * 100 : 0;
     }
   }
@@ -475,7 +490,7 @@ export class PlayerStatisticsService {
       const result = this.statsCalcService.calculateDropRate(drops, targets);
       return result.rate;
     } catch (error) {
-      this.logger.warn('Error calculating drop rate:', error);
+      this.logger.warn("Error calculating drop rate:", error);
       return targets > 0 ? (drops / targets) * 100 : 0;
     }
   }
@@ -483,12 +498,18 @@ export class PlayerStatisticsService {
   /**
    * Calculate flag pull success rate using validated calculation service
    */
-  private calculateFlagPullSuccessRate(successes: number, attempts: number): number {
+  private calculateFlagPullSuccessRate(
+    successes: number,
+    attempts: number,
+  ): number {
     try {
-      const result = this.statsCalcService.calculateFlagPullSuccessRate(successes, attempts);
+      const result = this.statsCalcService.calculateFlagPullSuccessRate(
+        successes,
+        attempts,
+      );
       return result.rate;
     } catch (error) {
-      this.logger.warn('Error calculating flag pull success rate:', error);
+      this.logger.warn("Error calculating flag pull success rate:", error);
       return attempts > 0 ? (successes / attempts) * 100 : 0;
     }
   }

@@ -53,7 +53,7 @@ export class UnitManager {
 
   formatTime(value, preferredUnit = null) {
     const unit = preferredUnit || this.units.time || "minutes";
-    
+
     if (unit === "seconds") {
       return `${Math.round(value)}s`;
     } else {
@@ -68,7 +68,7 @@ export class UnitManager {
 
   formatDistance(value, preferredUnit = null) {
     const unit = preferredUnit || this.units.distance;
-    
+
     if (unit === "metric") {
       if (value >= 1000) {
         return `${(value / 1000).toFixed(2)}km`;
@@ -98,7 +98,9 @@ export class UnitManager {
 
   // Distance conversions (yards, feet, inches, meters, cm, miles)
   convertDistance(value, fromUnit, toUnit) {
-    if (fromUnit === toUnit) {return value;}
+    if (fromUnit === toUnit) {
+      return value;
+    }
 
     // Convert to meters first
     let meters;
@@ -156,7 +158,9 @@ export class UnitManager {
 
   // Time/Duration conversions
   convertTime(value, fromUnit, toUnit) {
-    if (fromUnit === toUnit) {return value;}
+    if (fromUnit === toUnit) {
+      return value;
+    }
 
     if (fromUnit === "seconds" && toUnit === "minutes") {
       return value / 60;
@@ -168,19 +172,23 @@ export class UnitManager {
 
   // Temperature conversions (Fahrenheit ↔ Celsius)
   convertTemperature(value, fromUnit, toUnit) {
-    if (fromUnit === toUnit) {return value;}
+    if (fromUnit === toUnit) {
+      return value;
+    }
 
     if (fromUnit === "fahrenheit" && toUnit === "celsius") {
-      return (value - 32) * 5 / 9;
+      return ((value - 32) * 5) / 9;
     } else if (fromUnit === "celsius" && toUnit === "fahrenheit") {
-      return (value * 9 / 5) + 32;
+      return (value * 9) / 5 + 32;
     }
     return value;
   }
 
   // Weight conversions
   convertWeight(value, fromUnit, toUnit) {
-    if (fromUnit === toUnit) {return value;}
+    if (fromUnit === toUnit) {
+      return value;
+    }
 
     if (fromUnit === "lbs" && toUnit === "kg") {
       return value * 0.453592;
@@ -192,7 +200,9 @@ export class UnitManager {
 
   // Time/Duration conversions
   convertTime(value, fromUnit, toUnit) {
-    if (fromUnit === toUnit) {return value;}
+    if (fromUnit === toUnit) {
+      return value;
+    }
 
     if (fromUnit === "seconds" && toUnit === "minutes") {
       return value / 60;
@@ -204,7 +214,9 @@ export class UnitManager {
 
   // Distance conversions (enhanced for miles/yards/meters)
   convertDistance(value, fromUnit, toUnit) {
-    if (fromUnit === toUnit) {return value;}
+    if (fromUnit === toUnit) {
+      return value;
+    }
 
     // Convert to meters first
     let meters;

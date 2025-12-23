@@ -49,7 +49,10 @@ const getApiBaseUrl = () => {
     // Use current origin - this allows the dev server to proxy or serve functions
     const currentOrigin = window.location.origin;
     const localNetlifyUrl = `${currentOrigin}/.netlify/functions`;
-    logger.debug("Local development - using current origin for Netlify Functions:", localNetlifyUrl);
+    logger.debug(
+      "Local development - using current origin for Netlify Functions:",
+      localNetlifyUrl,
+    );
     return localNetlifyUrl;
   }
 
@@ -95,8 +98,12 @@ export const API_ENDPOINTS = {
     teamChemistry: normalizeEndpoint("/api/dashboard/team-chemistry"),
     notifications: normalizeEndpoint("/api/dashboard/notifications"),
     notificationsCount: normalizeEndpoint("/api/dashboard/notifications/count"),
-    notificationsCreate: normalizeEndpoint("/api/dashboard/notifications/create"),
-    notificationsPreferences: normalizeEndpoint("/api/dashboard/notifications/preferences"),
+    notificationsCreate: normalizeEndpoint(
+      "/api/dashboard/notifications/create",
+    ),
+    notificationsPreferences: normalizeEndpoint(
+      "/api/dashboard/notifications/preferences",
+    ),
     dailyQuote: normalizeEndpoint("/api/dashboard/daily-quote"),
     health: normalizeEndpoint("/api/dashboard/health"),
   },
@@ -141,8 +148,10 @@ export const API_ENDPOINTS = {
   community: {
     feed: normalizeEndpoint("/api/community/feed"),
     createPost: normalizeEndpoint("/api/community/posts"),
-    getComments: (postId) => normalizeEndpoint(`/api/community/posts/${postId}/comments`),
-    likePost: (postId) => normalizeEndpoint(`/api/community/posts/${postId}/like`),
+    getComments: (postId) =>
+      normalizeEndpoint(`/api/community/posts/${postId}/comments`),
+    likePost: (postId) =>
+      normalizeEndpoint(`/api/community/posts/${postId}/like`),
     leaderboard: normalizeEndpoint("/api/community/leaderboard"),
     challenges: normalizeEndpoint("/api/community/challenges"),
     health: normalizeEndpoint("/api/community/health"),
@@ -151,9 +160,12 @@ export const API_ENDPOINTS = {
   // Tournaments endpoints
   tournaments: {
     list: normalizeEndpoint("/api/tournaments"),
-    details: (tournamentId) => normalizeEndpoint(`/api/tournaments/${tournamentId}`),
-    register: (tournamentId) => normalizeEndpoint(`/api/tournaments/${tournamentId}/register`),
-    bracket: (tournamentId) => normalizeEndpoint(`/api/tournaments/${tournamentId}/bracket`),
+    details: (tournamentId) =>
+      normalizeEndpoint(`/api/tournaments/${tournamentId}`),
+    register: (tournamentId) =>
+      normalizeEndpoint(`/api/tournaments/${tournamentId}/register`),
+    bracket: (tournamentId) =>
+      normalizeEndpoint(`/api/tournaments/${tournamentId}/bracket`),
     health: normalizeEndpoint("/api/tournaments/health"),
   },
 
@@ -253,14 +265,20 @@ export class ApiClient {
   // Upgraded to use secureStorage API with AES-GCM encryption
   async getAuthToken() {
     // First, try to use secureStorage API (preferred method)
-    if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+    if (
+      window.secureStorage &&
+      typeof window.secureStorage.getAuthToken === "function"
+    ) {
       try {
         const token = await window.secureStorage.getAuthToken();
         if (token) {
           return token;
         }
       } catch (error) {
-        logger.debug("Secure storage getAuthToken failed, trying fallback:", error);
+        logger.debug(
+          "Secure storage getAuthToken failed, trying fallback:",
+          error,
+        );
       }
     }
 
@@ -296,7 +314,7 @@ export class ApiClient {
     }
 
     // Add CSRF token for state-changing requests (POST, PUT, DELETE, PATCH)
-    const method = (options.method || 'GET').toUpperCase();
+    const method = (options.method || "GET").toUpperCase();
     if (csrfProtection.requiresProtection(method)) {
       const csrfHeaders = csrfProtection.getHeaders();
       Object.assign(config.headers, csrfHeaders);
@@ -317,7 +335,9 @@ export class ApiClient {
         if (response.status === 401) {
           if (isJSON) {
             const errorData = await response.json().catch(() => ({}));
-            const error = new Error(errorData.error || `HTTP ${response.status}`);
+            const error = new Error(
+              errorData.error || `HTTP ${response.status}`,
+            );
             error.status = 401;
             throw error;
           } else {
@@ -326,15 +346,17 @@ export class ApiClient {
             throw error;
           }
         }
-        
+
         // If response is HTML (like a 404 page), don't try to parse as JSON
         if (isHTML) {
-          const error = new Error(`HTTP ${response.status}: Server returned HTML instead of JSON. Endpoint may not exist.`);
+          const error = new Error(
+            `HTTP ${response.status}: Server returned HTML instead of JSON. Endpoint may not exist.`,
+          );
           error.status = response.status;
           error.isHTMLResponse = true;
           throw error;
         }
-        
+
         // Try to parse JSON error response
         if (isJSON) {
           const errorData = await response.json().catch(() => ({}));
@@ -349,23 +371,27 @@ export class ApiClient {
       // For successful responses, check content type before parsing
       if (isHTML) {
         // Server returned HTML instead of JSON - likely a routing issue
-        const error = new Error(`Server returned HTML instead of JSON. Endpoint may not exist: ${endpoint}`);
+        const error = new Error(
+          `Server returned HTML instead of JSON. Endpoint may not exist: ${endpoint}`,
+        );
         error.isHTMLResponse = true;
         throw error;
       }
 
       // Parse JSON response
-      const result = isJSON 
+      const result = isJSON
         ? await response.json()
-        : await response.text().then(text => {
+        : await response.text().then((text) => {
             // Try to parse as JSON anyway (some servers don't set content-type correctly)
             try {
               return JSON.parse(text);
             } catch {
-              throw new Error(`Expected JSON but received: ${text.substring(0, 100)}`);
+              throw new Error(
+                `Expected JSON but received: ${text.substring(0, 100)}`,
+              );
             }
           });
-      
+
       this.activeRequests.delete(requestId);
       return result;
     } catch (error) {
@@ -379,24 +405,35 @@ export class ApiClient {
       }
 
       // Check if this is a development environment
-      const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-      const isNetlifyFunction = endpoint.includes("/.netlify/functions") ||
-                                 endpoint.startsWith("/notifications") ||
-                                 endpoint.startsWith("/dashboard") ||
-                                 endpoint.startsWith("/community") ||
-                                 endpoint.startsWith("/tournaments");
+      const isDev =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+      const isNetlifyFunction =
+        endpoint.includes("/.netlify/functions") ||
+        endpoint.startsWith("/notifications") ||
+        endpoint.startsWith("/dashboard") ||
+        endpoint.startsWith("/community") ||
+        endpoint.startsWith("/tournaments");
 
       // Handle network errors (Failed to fetch)
-      if (error.message === "Failed to fetch" || error.name === "TypeError" || error.message?.includes("Failed to fetch")) {
+      if (
+        error.message === "Failed to fetch" ||
+        error.name === "TypeError" ||
+        error.message?.includes("Failed to fetch")
+      ) {
         const networkError = new Error(`Failed to fetch: ${endpoint}`);
         networkError.isNetworkError = true;
         networkError.isConnectionRefused = true;
 
         // Always log network errors, but at appropriate level
         if (isDev && isNetlifyFunction) {
-          logger.debug(`Network error for ${endpoint} - Netlify Functions may not be running`);
+          logger.debug(
+            `Network error for ${endpoint} - Netlify Functions may not be running`,
+          );
         } else {
-          logger.error(`Network error for ${endpoint} - endpoint may be unavailable`);
+          logger.error(
+            `Network error for ${endpoint} - endpoint may be unavailable`,
+          );
         }
 
         throw networkError;
@@ -423,7 +460,9 @@ export class ApiClient {
 
   // Cancel all active requests for a specific endpoint pattern
   cancelRequestsByPattern(pattern) {
-    if (!this.activeRequests) {return;}
+    if (!this.activeRequests) {
+      return;
+    }
 
     const toCancel = [];
     this.activeRequests.forEach((controller, requestId) => {
@@ -449,7 +488,7 @@ export class ApiClient {
     const {
       useCache = true,
       cacheTTL = NETWORK.CACHE_DURATION_MEDIUM,
-      forceRefresh = false
+      forceRefresh = false,
     } = options;
 
     const queryString = new URLSearchParams(params).toString();
@@ -535,7 +574,7 @@ export class ApiClient {
   // Invalidate cache entries related to an endpoint
   invalidateCache(endpoint) {
     // Extract base endpoint (remove IDs and query params)
-    const baseEndpoint = endpoint.split('?')[0].replace(/\/\d+$/g, '');
+    const baseEndpoint = endpoint.split("?")[0].replace(/\/\d+$/g, "");
     const pattern = `api:${baseEndpoint}`;
 
     cacheService.invalidatePattern(pattern);
@@ -569,7 +608,10 @@ export const dashboard = {
   getTeamChemistry: (userId) =>
     apiClient.get(API_ENDPOINTS.dashboard.teamChemistry, { userId }),
   getNotifications: (userId, options = {}) =>
-    apiClient.get(API_ENDPOINTS.dashboard.notifications, { userId, ...options }),
+    apiClient.get(API_ENDPOINTS.dashboard.notifications, {
+      userId,
+      ...options,
+    }),
   getNotificationCount: () =>
     apiClient.get(API_ENDPOINTS.dashboard.notificationsCount),
   markNotificationAsRead: (notificationId) =>
@@ -577,13 +619,20 @@ export const dashboard = {
   markNotificationsAsRead: (ids) =>
     apiClient.post(API_ENDPOINTS.dashboard.notifications, { ids }),
   markAllNotificationsAsRead: () =>
-    apiClient.post(API_ENDPOINTS.dashboard.notifications, { notificationId: "all" }),
+    apiClient.post(API_ENDPOINTS.dashboard.notifications, {
+      notificationId: "all",
+    }),
   createNotification: (notificationData) =>
-    apiClient.post(API_ENDPOINTS.dashboard.notificationsCreate, notificationData),
+    apiClient.post(
+      API_ENDPOINTS.dashboard.notificationsCreate,
+      notificationData,
+    ),
   getNotificationPreferences: () =>
     apiClient.get(API_ENDPOINTS.dashboard.notificationsPreferences),
   updateNotificationPreferences: (preferences) =>
-    apiClient.post(API_ENDPOINTS.dashboard.notificationsPreferences, { preferences }),
+    apiClient.post(API_ENDPOINTS.dashboard.notificationsPreferences, {
+      preferences,
+    }),
   updateLastOpenedAt: () =>
     apiClient.patch(`${API_ENDPOINTS.dashboard.notifications}/last-opened`),
   getDailyQuote: () => apiClient.get(API_ENDPOINTS.dashboard.dailyQuote),
@@ -652,7 +701,12 @@ export const coach = {
 
 export const knowledge = {
   search: (query, category = null, limit = 5, options = {}) =>
-    apiClient.post(API_ENDPOINTS.knowledge.search, { query, category, limit, options }),
+    apiClient.post(API_ENDPOINTS.knowledge.search, {
+      query,
+      category,
+      limit,
+      options,
+    }),
   getEntry: (topic) => apiClient.get(API_ENDPOINTS.knowledge.entry(topic)),
   searchArticles: (query, categories = [], limit = 10) =>
     apiClient.post(API_ENDPOINTS.knowledge.articles, {

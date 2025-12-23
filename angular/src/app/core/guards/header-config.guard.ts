@@ -7,7 +7,9 @@ import { HeaderService } from "../services/header.service";
  * Configures header settings based on the current route.
  * Uses functional guard pattern (Angular 19 best practice).
  */
-export const headerConfigGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+export const headerConfigGuard: CanActivateFn = (
+  route: ActivatedRouteSnapshot,
+) => {
   const headerService = inject(HeaderService);
   const routePath = route.routeConfig?.path;
 
@@ -30,4 +32,3 @@ export const headerConfigGuard: CanActivateFn = (route: ActivatedRouteSnapshot) 
 
   return true;
 };
-

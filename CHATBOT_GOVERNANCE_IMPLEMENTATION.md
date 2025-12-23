@@ -3,6 +3,7 @@
 ## ✅ Implementation Complete
 
 The chatbot now includes a comprehensive knowledge governance system that:
+
 - **Categorizes knowledge** by approval status (approved, pending, experimental, rejected)
 - **Tracks quality scores** based on research article quality
 - **Shows evidence indicators** in responses
@@ -16,6 +17,7 @@ The chatbot now includes a comprehensive knowledge governance system that:
 ### 1. Database Migration (`040_knowledge_base_governance.sql`)
 
 **New Fields on `knowledge_base_entries`:**
+
 - `approval_status` - 'pending', 'approved', 'rejected', 'experimental'
 - `approval_level` - 'league', 'coach', 'research', 'experimental'
 - `approved_by` - User ID of approver
@@ -25,11 +27,13 @@ The chatbot now includes a comprehensive knowledge governance system that:
 - `source_quality_score` - Quality score (0.0-1.0) based on article quality
 
 **New Table: `knowledge_base_governance_log`**
+
 - Audit trail of all governance actions
 - Tracks who approved/rejected entries and when
 - Stores status changes and notes
 
 **Database Functions:**
+
 - `calculate_source_quality_score()` - Auto-calculates quality score from articles
 - `log_governance_action()` - Logs approval/rejection actions
 - Trigger: Auto-updates quality score when articles change
@@ -37,6 +41,7 @@ The chatbot now includes a comprehensive knowledge governance system that:
 ### 2. Knowledge Base Service Updates (`src/js/services/knowledge-base-service.js`)
 
 **New Features:**
+
 - `searchKnowledgeBase()` now accepts governance options:
   - `requireApproval` - Only return approved entries (default: true)
   - `includeExperimental` - Include experimental entries (default: false)
@@ -45,11 +50,13 @@ The chatbot now includes a comprehensive knowledge governance system that:
 ### 3. Knowledge Search API Updates (`netlify/functions/knowledge-search.cjs`)
 
 **Governance Filters:**
+
 - Filters by `approval_status` (approved, experimental, or all)
 - Filters by `source_quality_score` (minimum threshold)
 - Orders results by approval status, quality score, evidence strength
 
 **Query Options:**
+
 ```javascript
 {
   requireApproval: true,      // Only approved entries
@@ -61,6 +68,7 @@ The chatbot now includes a comprehensive knowledge governance system that:
 ### 4. Response Enhancer Updates (`src/js/utils/response-enhancer.js`)
 
 **New Method: `addEvidenceIndicators()`**
+
 - Adds evidence information footer to responses
 - Shows approval status (✅ League-Approved, 🔬 Experimental, ⏳ Pending)
 - Shows evidence level (🟢 Strong, 🟡 Moderate, 🟠 Limited)
@@ -71,6 +79,7 @@ The chatbot now includes a comprehensive knowledge governance system that:
 ### 5. Chatbot Integration
 
 **Default Behavior:**
+
 - Only shows approved entries by default
 - Excludes experimental entries
 - Minimum quality score: 30%
@@ -182,6 +191,7 @@ Return Response with Evidence Info
 ### Source Quality Score
 
 Calculated automatically based on:
+
 - **Evidence Level** (A=1.0, B=0.75, C=0.5, D=0.25)
 - **Impact Factor** (+0.1 if > 5)
 - **Sample Size** (+0.1 if > 100)
@@ -198,11 +208,11 @@ Score range: 0.0 (lowest) to 1.0 (highest)
 ```sql
 SELECT kbe.*
 FROM knowledge_base_entries kbe
-WHERE 
+WHERE
   (kbe.answer ILIKE '%query%' OR kbe.topic ILIKE '%query%')
   AND kbe.approval_status = 'approved'
   AND (kbe.source_quality_score IS NULL OR kbe.source_quality_score >= 0.3)
-ORDER BY 
+ORDER BY
   kbe.approval_status = 'approved' DESC,
   kbe.source_quality_score DESC NULLS LAST,
   kbe.evidence_strength DESC
@@ -235,6 +245,7 @@ SELECT log_governance_action(
 ### Default Filters
 
 The chatbot uses these default filters:
+
 ```javascript
 {
   requireApproval: true,      // Only approved entries
@@ -246,20 +257,22 @@ The chatbot uses these default filters:
 ### Adjusting Filters
 
 To show experimental entries:
+
 ```javascript
 knowledgeBaseService.searchKnowledgeBase(query, category, {
   requireApproval: true,
-  includeExperimental: true,  // Include experimental
-  minQualityScore: 0.0
+  includeExperimental: true, // Include experimental
+  minQualityScore: 0.0,
 });
 ```
 
 To show all entries (including pending):
+
 ```javascript
 knowledgeBaseService.searchKnowledgeBase(query, category, {
-  requireApproval: false,     // Show all statuses
+  requireApproval: false, // Show all statuses
   includeExperimental: true,
-  minQualityScore: 0.0
+  minQualityScore: 0.0,
 });
 ```
 
@@ -271,7 +284,7 @@ knowledgeBaseService.searchKnowledgeBase(query, category, {
 
 ```sql
 UPDATE knowledge_base_entries
-SET 
+SET
   approval_status = 'approved',
   approval_level = 'research',
   approved_by = 'user_id',
@@ -294,7 +307,7 @@ SELECT log_governance_action(
 
 ```sql
 UPDATE knowledge_base_entries
-SET 
+SET
   approval_status = 'rejected',
   approved_by = 'user_id',
   approved_at = NOW(),
@@ -316,7 +329,7 @@ SELECT log_governance_action(
 
 ```sql
 UPDATE knowledge_base_entries
-SET 
+SET
   approval_status = 'experimental',
   approval_level = 'experimental',
   approved_by = 'user_id',
@@ -340,6 +353,7 @@ SELECT log_governance_action(
 ## Testing Checklist
 
 ### Governance Filtering
+
 - [ ] Only approved entries shown by default
 - [ ] Experimental entries excluded by default
 - [ ] Quality score filter works correctly
@@ -347,6 +361,7 @@ SELECT log_governance_action(
 - [ ] Rejected entries never shown
 
 ### Evidence Indicators
+
 - [ ] Approval status displays correctly
 - [ ] Evidence level displays correctly
 - [ ] Quality score displays correctly
@@ -355,6 +370,7 @@ SELECT log_governance_action(
 - [ ] Indicators only shown for knowledge base entries
 
 ### Quality Score Calculation
+
 - [ ] Quality score calculated from evidence level
 - [ ] Impact factor bonus applied correctly
 - [ ] Sample size bonus applied correctly
@@ -362,6 +378,7 @@ SELECT log_governance_action(
 - [ ] Score capped at 1.0
 
 ### Governance Logging
+
 - [ ] Approval actions logged
 - [ ] Rejection actions logged
 - [ ] Status changes tracked
@@ -372,6 +389,7 @@ SELECT log_governance_action(
 ## Future Enhancements
 
 Potential improvements:
+
 1. **Admin UI** - Web interface for approving/rejecting entries
 2. **Bulk Operations** - Approve/reject multiple entries at once
 3. **Quality Score Manual Override** - Allow manual quality score adjustment
@@ -386,9 +404,11 @@ Potential improvements:
 ## Files Created/Modified
 
 ### New Files
+
 - `database/migrations/040_knowledge_base_governance.sql`
 
 ### Modified Files
+
 - `src/js/services/knowledge-base-service.js` - Added governance options
 - `src/js/utils/response-enhancer.js` - Added evidence indicators
 - `netlify/functions/knowledge-search.cjs` - Added governance filters
@@ -410,11 +430,13 @@ psql $DATABASE_URL
 ```
 
 Or using a migration tool:
+
 ```bash
 psql $DATABASE_URL -f database/migrations/040_knowledge_base_governance.sql
 ```
 
 **Note:** The migration will:
+
 - Set existing entries with strong evidence to 'approved'
 - Set entries with moderate evidence to 'pending'
 - Set other entries to 'experimental'
@@ -425,6 +447,7 @@ psql $DATABASE_URL -f database/migrations/040_knowledge_base_governance.sql
 ## Support
 
 If you encounter issues:
+
 1. Check database migration ran successfully
 2. Verify governance fields exist on `knowledge_base_entries` table
 3. Check API endpoint logs for filter errors
@@ -435,4 +458,3 @@ If you encounter issues:
 
 **Status**: ✅ Ready for Testing
 **Last Updated**: 2025-01-XX
-
