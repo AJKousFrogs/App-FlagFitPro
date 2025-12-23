@@ -286,6 +286,7 @@
 
     <script type="module">
       import { authManager } from "./src/auth-manager.js";
+      import { logger } from "./src/logger.js";
       import { validateEmail } from "./src/js/utils/shared.js";
       import { escapeHtml } from "./src/js/utils/sanitize.js";
       import {
@@ -305,7 +306,7 @@
       // OAuth buttons disabled - using email/password authentication only
       // const oauthButtons = new OAuthButtons('#oauthContainer', {
       //   onRoleSelect: async (provider, role) => {
-      //     console.log(`🔐 OAuth login initiated: ${provider} as ${role}`);
+      //     logger.info(`🔐 OAuth login initiated: ${provider} as ${role}`);
       //     await authManager.signInWithOAuth(provider, role);
       //   }
       // });
@@ -315,7 +316,7 @@
         .addEventListener("submit", async function (e) {
           e.preventDefault();
 
-          console.log("📝 Login form submitted");
+          logger.info("📝 Login form submitted");
 
           const email = document.getElementById("email").value;
           const password = document.getElementById("password").value;
@@ -332,8 +333,8 @@
           updateSubmitButtonState(true);
 
           if (window.location.hostname === "localhost") {
-            console.log("📧 Email entered:", email);
-            console.log("🔑 Password length:", password ? password.length : 0);
+            logger.info("📧 Email entered:", email);
+            logger.info("🔑 Password length:", password ? password.length : 0);
           }
 
           // Validate CSRF token
@@ -365,7 +366,7 @@
             // Only log in development mode
             const isDevelopment = window.location.hostname === "localhost";
             if (isDevelopment) {
-              console.log(
+              logger.info(
                 "📋 Login result:",
                 result.success ? "Success" : "Failed",
               );
@@ -377,7 +378,7 @@
               rateLimiter.recordAttempt(true);
 
               if (isDevelopment) {
-                console.log("✅ Login successful! Redirecting...");
+                logger.info("✅ Login successful! Redirecting...");
               }
 
               // Show manual redirect button as backup after 3 seconds
@@ -421,7 +422,7 @@
             // Only log detailed errors in development
             const isDevelopment = window.location.hostname === "localhost";
             if (isDevelopment) {
-              console.error("❌ Login error:", error.message);
+              logger.error("❌ Login error:", error.message);
             }
           }
         });
@@ -430,7 +431,7 @@
       document
         .getElementById("goDashboard")
         .addEventListener("click", async function () {
-          console.log("🔘 Manual redirect button clicked");
+          logger.info("🔘 Manual redirect button clicked");
 
           // Since this button only appears after successful login, try to redirect directly
           // First check if we have auth data stored (upgraded to use secureStorage)
@@ -464,7 +465,7 @@
 
           if (hasStoredAuth) {
             // We have auth data, redirect directly
-            console.log("✅ Auth data found, redirecting to dashboard...");
+            logger.info("✅ Auth data found, redirecting to dashboard...");
             authManager.redirectToDashboard();
             return;
           }
@@ -486,12 +487,12 @@
             const successMessage = document.getElementById("manualRedirect");
             if (successMessage && successMessage.style.display !== "none") {
               // Login was successful, just redirect anyway
-              console.log(
+              logger.info(
                 "✅ Login successful, redirecting despite auth check...",
               );
               authManager.redirectToDashboard();
             } else {
-              console.error(
+              logger.error(
                 '<i data-lucide="x-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Not authenticated, cannot redirect',
               );
               alert("Please log in first");
@@ -725,8 +726,8 @@
         // Initialize Lucide icons with error suppression
         if (typeof lucide !== "undefined") {
           // Temporarily suppress console errors for missing icons
-          const originalError = console.error;
-          console.error = function (...args) {
+          const originalError = logger.error;
+          logger.error = function (...args) {
             // Suppress Lucide icon not found errors
             if (
               args[0] &&
@@ -875,7 +876,7 @@
             )
             .join("");
         } catch (error) {
-          console.error("Failed to load sponsors:", error);
+          logger.error("Failed to load sponsors:", error);
 
           // Fallback to hardcoded logos using proxy on error
           renderFallbackLogos();

@@ -2,76 +2,10 @@
 import { authManager } from "../../auth-manager.js";
 import { logger } from "../../logger.js";
 import { setSafeContent } from "../utils/shared.js";
+import { playerService } from "../services/player-service.js";
 
-// Sample player data
-const playersData = [
-  {
-    id: 1,
-    name: "Marcus Johnson",
-    position: "Quarterback",
-    number: 12,
-    status: "active",
-    olympicScore: 92,
-    accuracy: "89%",
-    fortyYard: "4.45s",
-    games: 47,
-  },
-  {
-    id: 2,
-    name: "Vince Machi",
-    position: "Wide Receiver",
-    number: 84,
-    status: "active",
-    olympicScore: 88,
-    accuracy: "94%",
-    fortyYard: "4.38s",
-    games: 44,
-  },
-  {
-    id: 3,
-    name: "Sarah Thompson",
-    position: "Defensive Back",
-    number: 21,
-    status: "injured",
-    olympicScore: 85,
-    accuracy: "12",
-    fortyYard: "4.52s",
-    games: 39,
-  },
-  {
-    id: 4,
-    name: "David Martinez",
-    position: "Linebacker",
-    number: 55,
-    status: "rest",
-    olympicScore: 83,
-    accuracy: "87",
-    fortyYard: "4.61s",
-    games: 41,
-  },
-  {
-    id: 5,
-    name: "Emily Chen",
-    position: "Wide Receiver",
-    number: 18,
-    status: "active",
-    olympicScore: 90,
-    accuracy: "91%",
-    fortyYard: "4.41s",
-    games: 35,
-  },
-  {
-    id: 6,
-    name: "Jason Williams",
-    position: "Running Back",
-    number: 28,
-    status: "active",
-    olympicScore: 86,
-    accuracy: "78%",
-    fortyYard: "4.35s",
-    games: 42,
-  },
-];
+// Module state for real data
+let currentPlayersData = [];
 
 async function initCoachDashboard() {
   if (!authManager.isAuthenticated()) {
@@ -79,45 +13,56 @@ async function initCoachDashboard() {
     return;
   }
 
-  // Update coach profile
   const user = authManager.getCurrentUser();
   if (user) {
-    const initials = (user.name || user.email || "CW")
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+    // 1. Update Profile UI
+    updateCoachProfileUI(user);
 
-    // Check if elements exist before updating them
-    const coachAvatar = document.getElementById("coachAvatar");
-    const coachName = document.getElementById("coachName");
-    const userAvatar = document.getElementById("user-avatar");
-
-    if (coachAvatar) {
-      coachAvatar.textContent = initials;
-    }
-    if (coachName) {
-      coachName.textContent =
-        user.name || "Coach " + user.email?.split("@")[0] || "Coach Williams";
-    }
-    if (userAvatar) {
-      userAvatar.textContent = initials;
+    // 2. Fetch REAL players from Supabase
+    try {
+      logger.info("[CoachPage] Fetching live team data...");
+      currentPlayersData = await playerService.getTeamPlayers(user.id);
+      
+      // 3. Render real data
+      loadPlayers();
+      updateTeamStats();
+      logger.success(`[CoachPage] Loaded ${currentPlayersData.length} players from database`);
+    } catch (error) {
+      logger.error("[CoachPage] Failed to load real team data:", error);
     }
   }
+}
 
-  loadPlayers();
-  updateTeamStats();
+function updateCoachProfileUI(user) {
+  const initials = (user.name || user.email || "CW")
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  const coachAvatar = document.getElementById("coachAvatar");
+  const coachName = document.getElementById("coachName");
+  const userAvatar = document.getElementById("user-avatar");
+
+  if (coachAvatar) coachAvatar.textContent = initials;
+  if (coachName) {
+    coachName.textContent = user.name || "Coach " + user.email?.split("@")[0] || "Coach Williams";
+  }
+  if (userAvatar) userAvatar.textContent = initials;
 }
 
 function loadPlayers() {
   const playersGrid = document.getElementById("playersGrid");
   if (playersGrid) {
-    // Build players HTML (createPlayerCard returns HTML string)
-    const playersHtml = playersData
+    if (currentPlayersData.length === 0) {
+      setSafeContent(playersGrid, '<div class="empty-state">No players found in your team database.</div>', true, false);
+      return;
+    }
+
+    const playersHtml = currentPlayersData
       .map((player) => createPlayerCard(player))
       .join("");
-    // Use setSafeContent to sanitize HTML before insertion
     setSafeContent(playersGrid, playersHtml, true, true);
   }
 }
@@ -189,8 +134,8 @@ function createPlayerCard(player) {
 }
 
 function updateTeamStats() {
-  const activeCount = playersData.filter((p) => p.status === "active").length;
-  const availableCount = playersData.filter(
+  const activeCount = currentPlayersData.filter((p) => p.status === "active").length;
+  const availableCount = currentPlayersData.filter(
     (p) => p.status === "active" || p.status === "rest",
   ).length;
 
@@ -198,10 +143,10 @@ function updateTeamStats() {
   const availableToday = document.getElementById("availableToday");
 
   if (activePlayersCount) {
-    activePlayersCount.textContent = playersData.length;
+    activePlayersCount.textContent = currentPlayersData.length;
   }
   if (availableToday) {
-    availableToday.textContent = `${availableCount}/${playersData.length} available today`;
+    availableToday.textContent = `${availableCount}/${currentPlayersData.length} available today`;
   }
 }
 
@@ -224,17 +169,17 @@ function addPlayer() {
 }
 
 function viewPlayerProfile(playerId) {
-  const player = playersData.find((p) => p.id === playerId);
+  const player = currentPlayersData.find((p) => p.id === playerId);
   showPlayerModal("view", player);
 }
 
 function editPlayer(playerId) {
-  const player = playersData.find((p) => p.id === playerId);
+  const player = currentPlayersData.find((p) => p.id === playerId);
   showPlayerModal("edit", player);
 }
 
 function viewPlayerStats(playerId) {
-  const player = playersData.find((p) => p.id === playerId);
+  const player = currentPlayersData.find((p) => p.id === playerId);
   showPlayerStatsModal(player);
 }
 

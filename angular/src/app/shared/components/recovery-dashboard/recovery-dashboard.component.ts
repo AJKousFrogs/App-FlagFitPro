@@ -5,6 +5,7 @@ import {
   signal,
   inject,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -17,10 +18,9 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { Tabs } from "primeng/tabview";
 import { TimelineModule } from "primeng/timeline";
 import { RecoveryService } from "../../../core/services/recovery.service";
-import { firstValueFrom } from "rxjs";
-import { interval, Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { firstValueFrom, timer, Subscription } from "rxjs";
 import { LoggerService } from "../../../core/services/logger.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "app-recovery-dashboard",
@@ -589,8 +589,8 @@ import { LoggerService } from "../../../core/services/logger.service";
 })
 export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   private recoveryService = inject(RecoveryService);
-  private destroy$ = new Subject<void>();
-  private timerInterval?: any;
+  private destroyRef = inject(DestroyRef);
+  private timerSubscription?: Subscription;
   private logger = inject(LoggerService);
 
   recoveryScoreValue = 78;
@@ -618,10 +618,8 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
     }
   }
 
@@ -777,27 +775,29 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   }
 
   private pauseSessionTimer() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = undefined;
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+      this.timerSubscription = undefined;
     }
   }
 
   private resumeSessionTimer() {
-    if (this.timerInterval) return;
+    if (this.timerSubscription) return;
 
-    this.timerInterval = setInterval(() => {
-      if (!this.sessionPaused()) {
-        const remaining = this.timeRemaining();
-        if (remaining > 0) {
-          this.timeRemaining.set(remaining - 1);
-          const progress =
-            ((this.totalTime() - remaining) / this.totalTime()) * 100;
-          this.sessionProgressValue = progress;
-        } else {
-          this.completeSession();
+    this.timerSubscription = timer(0, 1000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (!this.sessionPaused()) {
+          const remaining = this.timeRemaining();
+          if (remaining > 0) {
+            this.timeRemaining.set(remaining - 1);
+            const progress =
+              ((this.totalTime() - remaining) / this.totalTime()) * 100;
+            this.sessionProgressValue = progress;
+          } else {
+            this.completeSession();
+          }
         }
-      }
-    }, 1000);
+      });
   }
 }

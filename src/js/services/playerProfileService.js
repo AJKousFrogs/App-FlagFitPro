@@ -3,162 +3,246 @@
  * Manages player schedules, league commitments, and preferences
  */
 
-import { storageService } from "./storage-service-unified.js";
+import { getSupabase, safeSupabaseQuery } from "./supabase-client.js";
 import { logger } from "../../logger.js";
+import { authManager } from "../../auth-manager.js";
 
 class PlayerProfileService {
+  constructor() {
+    this.supabase = getSupabase();
+  }
+
   /**
-   * Create or update player profile
+   * Create or update player profile in Supabase
    * @param {Object} profile - Player profile data
    */
-  savePlayerProfile(profile) {
-    const profileData = {
-      id: profile.id || this.generatePlayerId(),
-      name: profile.name,
-      jerseyNumber: profile.jerseyNumber,
-      position: profile.position,
-      practices: profile.practices || [],
-      games: profile.games || [],
-      leagueGames: profile.leagueGames || [],
-      preferences: profile.preferences || {},
-      createdAt: profile.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+  async savePlayerProfile(profile) {
+    try {
+      const user = authManager.getCurrentUser();
+      if (!user) throw new Error("User not authenticated");
 
-    // Save to localStorage
-    const profiles = this.getAllProfiles();
-    const existingIndex = profiles.findIndex((p) => p.id === profileData.id);
+      const userId = profile.id || user.id;
 
-    if (existingIndex >= 0) {
-      profiles[existingIndex] = profileData;
-    } else {
-      profiles.push(profileData);
+      // Update user metadata for profile info
+      const { error: authError } = await safeSupabaseQuery(
+        this.supabase.auth.updateUser({
+          data: {
+            name: profile.name,
+            jersey_number: profile.jerseyNumber,
+            position: profile.position,
+            preferences: profile.preferences || {},
+          },
+        }),
+        "PlayerProfile:UpdateMetadata"
+      );
+
+      if (authError) throw authError;
+
+      // Practices and LeagueGames are stored in their respective tables,
+      // handled by addPractice and addLeagueGame methods.
+
+      return {
+        ...profile,
+        id: userId,
+        updatedAt: new Date().toISOString(),
+      };
+    } catch (error) {
+      logger.error("[PlayerProfileService] Error saving profile:", error);
+      throw error;
     }
-
-    storageService.set("playerProfiles", profiles, { usePrefix: false });
-    return profileData;
   }
 
   /**
-   * Get player profile by ID
+   * Get player profile by ID from Supabase
    */
-  getPlayerProfile(playerId) {
-    const profiles = this.getAllProfiles();
-    return profiles.find((p) => p.id === playerId);
+  async getPlayerProfile(playerId) {
+    try {
+      // 1. Get user data from Supabase Auth (metadata contains profile info)
+      const { data: { user }, error: userError } = await safeSupabaseQuery(
+        this.supabase.auth.getUser(playerId),
+        "PlayerProfile:GetUser"
+      );
+
+      if (userError || !user) return null;
+
+      // 2. Get practices from training_sessions
+      const { data: practices, error: practicesError } = await safeSupabaseQuery(
+        this.supabase
+          .from("training_sessions")
+          .select("*")
+          .eq("user_id", playerId),
+        "PlayerProfile:GetPractices"
+      );
+
+      // 3. Get games from games table
+      const { data: games, error: gamesError } = await safeSupabaseQuery(
+        this.supabase
+          .from("games")
+          .select("*")
+          .eq("team_id", user.user_metadata?.team_id || `TEAM_${playerId}`),
+        "PlayerProfile:GetGames"
+      );
+
+      return {
+        id: user.id,
+        name: user.user_metadata?.name || user.email,
+        jerseyNumber: user.user_metadata?.jersey_number,
+        position: user.user_metadata?.position,
+        preferences: user.user_metadata?.preferences || {},
+        practices: practices || [],
+        leagueGames: games || [],
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
+      };
+    } catch (error) {
+      logger.error(`[PlayerProfileService] Error getting profile for ${playerId}:`, error);
+      return null;
+    }
   }
 
   /**
-   * Get all player profiles
+   * Get all player profiles (from team_members)
    */
-  getAllProfiles() {
-    return storageService.get("playerProfiles", [], { usePrefix: false });
+  async getAllProfiles() {
+    try {
+      const user = authManager.getCurrentUser();
+      if (!user) return [];
+
+      const { data: profiles, error } = await safeSupabaseQuery(
+        this.supabase
+          .from("team_members")
+          .select(`
+            user_id,
+            users:user_id (
+              id,
+              email,
+              user_metadata
+            )
+          `)
+          .eq("role", "player"),
+        "PlayerProfile:GetAllProfiles"
+      );
+
+      if (error) throw error;
+
+      return profiles.map(p => ({
+        id: p.users.id,
+        name: p.users.user_metadata?.name || p.users.email,
+        jerseyNumber: p.users.user_metadata?.jersey_number,
+        position: p.users.user_metadata?.position,
+      }));
+    } catch (error) {
+      logger.error("[PlayerProfileService] Error getting all profiles:", error);
+      return [];
+    }
   }
 
   /**
    * Get current active profile
    */
-  getCurrentProfile() {
-    const currentId = storageService.get("currentPlayerId", null, {
-      usePrefix: false,
-    });
-    if (currentId) {
-      return this.getPlayerProfile(currentId);
+  async getCurrentProfile() {
+    const user = authManager.getCurrentUser();
+    if (user) {
+      return this.getPlayerProfile(user.id);
     }
     return null;
   }
 
   /**
-   * Set current active profile
+   * Add practice to player schedule in Supabase
    */
-  setCurrentProfile(playerId) {
-    storageService.set("currentPlayerId", playerId, { usePrefix: false });
-  }
+  async addPractice(playerId, practice) {
+    try {
+      const { data, error } = await safeSupabaseQuery(
+        this.supabase
+          .from("training_sessions")
+          .insert({
+            user_id: playerId,
+            session_date: practice.date,
+            session_type: practice.type || "flag_practice",
+            duration_minutes: practice.duration || 120,
+            intensity_level: practice.intensity || "medium",
+            notes: practice.notes || "",
+          })
+          .select()
+          .single(),
+        "PlayerProfile:AddPractice"
+      );
 
-  /**
-   * Add practice to player schedule
-   */
-  addPractice(playerId, practice) {
-    const profile = this.getPlayerProfile(playerId);
-    if (!profile) {
-      return null;
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      logger.error("[PlayerProfileService] Error adding practice:", error);
+      throw error;
     }
-
-    profile.practices.push({
-      date: practice.date,
-      type: practice.type || "flag_practice",
-      duration: practice.duration || 120,
-      intensity: practice.intensity || "medium",
-      notes: practice.notes || "",
-    });
-
-    return this.savePlayerProfile(profile);
   }
 
   /**
-   * Add league game to player schedule
+   * Add league game to player schedule in Supabase
    */
-  addLeagueGame(playerId, leagueGame) {
-    const profile = this.getPlayerProfile(playerId);
-    if (!profile) {
-      return null;
+  async addLeagueGame(playerId, leagueGame) {
+    try {
+      const { data, error } = await safeSupabaseQuery(
+        this.supabase
+          .from("games")
+          .insert({
+            team_id: `TEAM_${playerId}`, // Default team ID for individual players
+            game_date: leagueGame.date,
+            opponent_team_name: leagueGame.opponent,
+            location: leagueGame.location,
+            tournament_name: leagueGame.league,
+            game_type: "league_game",
+          })
+          .select()
+          .single(),
+        "PlayerProfile:AddLeagueGame"
+      );
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      logger.error("[PlayerProfileService] Error adding league game:", error);
+      throw error;
     }
-
-    profile.leagueGames.push({
-      date: leagueGame.date,
-      league: leagueGame.league,
-      opponent: leagueGame.opponent,
-      location: leagueGame.location,
-      gameDay: leagueGame.gameDay || 1,
-      maxGames: leagueGame.maxGames || 3,
-    });
-
-    return this.savePlayerProfile(profile);
   }
 
   /**
-   * Parse uploaded schedule file and add to profile
+   * Parse uploaded schedule file and add to profile in Supabase
    */
   async parseAndAddSchedule(playerId, file) {
     const { scheduleFileParser } = await import("./scheduleFileParser.js");
 
     try {
       const parsedSchedule = await scheduleFileParser.parseFile(file);
-      const profile = this.getPlayerProfile(playerId);
-
-      if (!profile) {
-        return null;
-      }
-
+      
       // Add game days
       if (parsedSchedule.gameDays) {
-        parsedSchedule.gameDays.forEach((gameDay) => {
-          profile.leagueGames.push({
+        for (const gameDay of parsedSchedule.gameDays) {
+          await this.addLeagueGame(playerId, {
             date: gameDay.date,
             league: "Uploaded Schedule",
             opponent: "",
             location: "",
-            gameDay: 1,
-            maxGames: 3,
           });
-        });
+        }
       }
 
       // Add practices from workouts
       if (parsedSchedule.workouts) {
-        parsedSchedule.workouts.forEach((workout) => {
-          profile.practices.push({
+        for (const workout of parsedSchedule.workouts) {
+          await this.addPractice(playerId, {
             date: workout.date,
             type: this.mapWorkoutTypeToPracticeType(workout.type),
             duration: workout.duration || 120,
             intensity: this.mapWorkoutTypeToIntensity(workout.type),
             notes: workout.notes || "",
           });
-        });
+        }
       }
 
-      return this.savePlayerProfile(profile);
+      return this.getPlayerProfile(playerId);
     } catch (error) {
-      logger.error("Error parsing schedule file:", error);
+      logger.error("[PlayerProfileService] Error parsing schedule file:", error);
       throw error;
     }
   }
@@ -192,74 +276,10 @@ class PlayerProfileService {
   }
 
   /**
-   * Generate unique player ID
+   * Generate unique player ID (Legacy - use Supabase UUIDs now)
    */
   generatePlayerId() {
     return `player_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
-
-  /**
-   * Create example profile for Aljoša Kous
-   */
-  createExampleProfile() {
-    return {
-      id: "aljosa_kous_55",
-      name: "Aljoša Kous",
-      jerseyNumber: 55,
-      position: "WR",
-      practices: [],
-      games: [],
-      leagueGames: [
-        // Austrian League - 5 weeks, one game day, up to 3 games max per game day
-        // Example dates (adjust based on actual schedule)
-        {
-          date: "2026-04-20",
-          league: "Austrian League",
-          opponent: "TBD",
-          location: "Austria",
-          gameDay: 1,
-          maxGames: 3,
-        },
-        {
-          date: "2026-04-27",
-          league: "Austrian League",
-          opponent: "TBD",
-          location: "Austria",
-          gameDay: 1,
-          maxGames: 3,
-        },
-        {
-          date: "2026-05-04",
-          league: "Austrian League",
-          opponent: "TBD",
-          location: "Austria",
-          gameDay: 1,
-          maxGames: 3,
-        },
-        {
-          date: "2026-05-11",
-          league: "Austrian League",
-          opponent: "TBD",
-          location: "Austria",
-          gameDay: 1,
-          maxGames: 3,
-        },
-        {
-          date: "2026-05-18",
-          league: "Austrian League",
-          opponent: "TBD",
-          location: "Austria",
-          gameDay: 1,
-          maxGames: 3,
-        },
-        // Slovenian National League games (add actual dates)
-      ],
-      preferences: {
-        preferredTrainingDays: [1, 3, 5], // Monday, Wednesday, Friday
-        maxTrainingDaysPerWeek: 5,
-        restDayPreference: 0, // Sunday
-      },
-    };
   }
 }
 

@@ -1,7 +1,7 @@
 // Training Program Engine
 // Handles workout progression, phase transitions, and exercise variations
 
-import { WEEKLY_SCHEDULES } from "./training-program-data.js";
+import { WEEKLY_SCHEDULES } from "./data/training/index.js";
 import { logger } from "./logger.js";
 
 export class TrainingProgramEngine {

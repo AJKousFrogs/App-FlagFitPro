@@ -25,7 +25,7 @@ export class ExerciseLibraryPage {
     try {
       // Dynamically import the large exercise library (non-blocking)
       // Add timeout to prevent hanging
-      const importPromise = import("../../training-program-data.js");
+      const importPromise = import("../data/training/index.js");
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(
           () => reject(new Error("Import timeout after 10 seconds")),

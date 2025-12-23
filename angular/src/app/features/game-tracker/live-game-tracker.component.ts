@@ -33,6 +33,7 @@ import { HapticFeedbackService } from "../../core/services/haptic-feedback.servi
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { AuthService } from "../../core/services/auth.service";
+import { timer, Subscription } from "rxjs";
 
 interface Game {
   id: string;
@@ -520,7 +521,7 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   });
   activePlayers = signal<FieldPlayer[]>([]);
 
-  private gameTimer?: NodeJS.Timeout;
+  private gameTimerSubscription?: Subscription;
   private orientationCheck?: NodeJS.Timeout;
 
   constructor() {
@@ -539,9 +540,7 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.gameTimer) {
-      clearInterval(this.gameTimer);
-    }
+    this.stopGameTimer();
     if (this.orientationCheck) {
       clearInterval(this.orientationCheck);
     }
@@ -608,27 +607,30 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   }
 
   private startGameTimer(): void {
-    this.gameTimer = setInterval(() => {
-      const currentTime = this.gameTime();
-      if (currentTime > 0) {
-        this.gameTime.set(currentTime - 1);
-      } else {
-        // Quarter ended
-        const quarter = this.currentQuarter();
-        if (quarter < 4) {
-          this.currentQuarter.set(quarter + 1);
-          this.gameTime.set(1200); // Reset to 20 minutes
+    this.gameTimerSubscription = timer(0, 1000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        const currentTime = this.gameTime();
+        if (currentTime > 0) {
+          this.gameTime.set(currentTime - 1);
         } else {
-          // Game ended
-          this.stopGameTimer();
+          // Quarter ended
+          const quarter = this.currentQuarter();
+          if (quarter < 4) {
+            this.currentQuarter.set(quarter + 1);
+            this.gameTime.set(1200); // Reset to 20 minutes
+          } else {
+            // Game ended
+            this.stopGameTimer();
+          }
         }
-      }
-    }, 1000);
+      });
   }
 
   private stopGameTimer(): void {
-    if (this.gameTimer) {
-      clearInterval(this.gameTimer);
+    if (this.gameTimerSubscription) {
+      this.gameTimerSubscription.unsubscribe();
+      this.gameTimerSubscription = undefined;
     }
   }
 

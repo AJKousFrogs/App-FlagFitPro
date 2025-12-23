@@ -7,7 +7,8 @@
 
 import { spawn } from "child_process";
 import { createServer } from "http";
-import fetch from "node-fetch";
+// Using native fetch (Node.js 18+)
+// import fetch from "node-fetch";
 import PortManager from "./port-manager.js";
 
 class MCPServerManager {

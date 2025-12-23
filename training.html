@@ -48,11 +48,11 @@
           // Ensure chatbot is available globally
           if (module.flagFitChatbot) {
             window.flagFitChatbot = module.flagFitChatbot;
-            console.log("Chatbot loaded successfully");
+            logger.log("Chatbot loaded successfully");
           }
         })
         .catch((error) => {
-          console.warn("Chatbot preload failed:", error);
+          logger.warn("Chatbot preload failed:", error);
         });
     </script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
@@ -1398,7 +1398,12 @@
       import {
         TRAINING_PROGRAM,
         WEEKLY_SCHEDULES,
-      } from "./src/training-program-data.js";
+      } from "./src/data/training/index.js";
+      import { logger } from "./src/logger.js";
+      import {
+        initializeLucideIcons,
+        setSafeContent,
+      } from "./src/js/utils/shared.js";
       import {
         MORNING_MOBILITY_ROUTINE,
         UNIVERSAL_WARMUP,
@@ -1471,7 +1476,7 @@
         if (window.scheduleInitialized) return;
         window.scheduleInitialized = true;
 
-        console.log("Initializing training schedule...");
+        logger.log("Initializing training schedule...");
 
         // Check for URL parameters
         const urlParams = new URLSearchParams(window.location.search);
@@ -1557,7 +1562,7 @@
         const phaseInfoEl = document.getElementById("phaseInfo");
         if (!phaseInfoEl || !phaseData) return;
 
-        phaseInfoEl.innerHTML = `
+        const phaseHtml = `
           <div class="phase-title">${phaseData.title}</div>
           <div class="phase-info-section">
             <strong>Weeks ${phaseData.weeks}</strong> • ${phaseData.dateRange}
@@ -1575,6 +1580,7 @@
             </ul>
           </div>
         `;
+        setSafeContent(phaseInfoEl, phaseHtml, true, false);
       }
 
       function updateWeekForPhase(phase) {
@@ -1672,7 +1678,7 @@
           "Sunday",
         ];
 
-        dayGridEl.innerHTML = days
+        const weeklyScheduleHtml = days
           .map((day, index) => {
             const dayData = weekData.days?.[day];
             if (!dayData) {
@@ -1762,6 +1768,8 @@
           })
           .join("");
 
+        setSafeContent(dayGridEl, weeklyScheduleHtml, true, false);
+
         // Reinitialize icons after rendering
         setTimeout(() => {
           if (window.lucide) {
@@ -1796,7 +1804,7 @@
         const modalBody = document.getElementById("modalBody");
 
         if (!modal || !modalTitle || !modalBody) {
-          console.error("Modal elements not found");
+          logger.error("Modal elements not found");
           return;
         }
 
@@ -1812,7 +1820,7 @@
             protocolData = SUNDAY_RECOVERY_PROTOCOL;
             break;
           default:
-            console.error("Unknown protocol type:", protocolType);
+            logger.error("Unknown protocol type:", protocolType);
             return;
         }
 
@@ -1834,7 +1842,7 @@
           const currentRoutine = protocolData.dailyRoutines[currentDay];
           const videoId = currentRoutine.videoId;
 
-          modalBody.innerHTML = `
+          const protocolHtml = `
             <div class="ai-scheduler-info-section">
               <p class="ai-scheduler-info-text">
                 ${protocolData.description || ""}
@@ -1868,8 +1876,9 @@
               </div>
             </div>
           `;
+          setSafeContent(modalBody, protocolHtml, true, false);
         } else {
-          modalBody.innerHTML = `<p>${protocolData.description || ""}</p>`;
+          setSafeContent(modalBody, `<p>${protocolData.description || ""}</p>`, true, false);
         }
 
         modal.style.display = "block";
@@ -1919,7 +1928,7 @@
         const container = document.getElementById("ai-scheduler-container");
 
         if (!modal || !container) {
-          console.error("AI Scheduler modal elements not found");
+          logger.error("AI Scheduler modal elements not found");
           return;
         }
 

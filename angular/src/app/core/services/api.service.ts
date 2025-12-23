@@ -37,17 +37,21 @@ export class ApiService {
         return window.location.origin + "/.netlify/functions";
       }
 
+      // Check if we're in local development with Netlify Dev (port 8888)
+      // This is the preferred way to access functions locally
       if (hostname === "localhost" && window.location.port === "8888") {
         return "http://localhost:8888/.netlify/functions";
       }
 
-      // For localhost, try to use backend server on port 3001
+      // Default fallback for development: try to use the Netlify Functions on port 8888
+      // even if the frontend is on 4200 (Angular default)
       if (hostname === "localhost" || hostname === "127.0.0.1") {
-        return "http://localhost:3001";
+        this.logger.info("[ApiService] Development mode: targeting Netlify Functions on port 8888");
+        return "http://localhost:8888/.netlify/functions";
       }
     }
 
-    return "http://localhost:3001";
+    return "/.netlify/functions";
   }
 
   private normalizeEndpoint(endpoint: string): string {
@@ -124,10 +128,7 @@ export class ApiService {
         `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
 
-    // Fallback to mock API in development
-    if (this.baseUrl.includes("localhost") || this.baseUrl === "mock://api") {
-      this.logger.debug("API server not available, using mock data");
-    }
+    this.logger.error(`[ApiService] API request failed: ${errorMessage}`);
 
     return throwError(() => new Error(errorMessage));
   };

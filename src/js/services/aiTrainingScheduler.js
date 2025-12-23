@@ -21,7 +21,7 @@
  * - Multiple reviews on team-sport tapering protocols
  */
 
-import { ANNUAL_TRAINING_PROGRAM } from "../../training-program-data.js";
+import { ANNUAL_TRAINING_PROGRAM } from "../data/training/index.js";
 import {
   getAllTournaments,
   getDaysUntilTournament,

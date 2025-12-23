@@ -5,12 +5,15 @@ import {
   signal,
   ChangeDetectionStrategy,
   inject,
+  DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { ApiService } from "../../../core/services/api.service";
+import { timer } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 export interface LiveMetric {
   id: string;
@@ -140,8 +143,9 @@ export interface LiveMetric {
     `,
   ],
 })
-export class LivePerformanceChartComponent implements OnInit, OnDestroy {
+export class LivePerformanceChartComponent implements OnInit {
   private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   liveMetrics = signal<LiveMetric[]>([
     {
@@ -178,23 +182,13 @@ export class LivePerformanceChartComponent implements OnInit, OnDestroy {
     },
   ]);
 
-  private interval?: NodeJS.Timeout;
-
-  ngOnInit(): void {
-    this.startLiveUpdates();
-  }
-
-  ngOnDestroy(): void {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-  }
-
   private startLiveUpdates(): void {
-    // Update metrics every 2 seconds
-    this.interval = setInterval(() => {
-      this.updateMetrics();
-    }, 2000);
+    // Update metrics every 2 seconds using RxJS timer with automatic cleanup
+    timer(0, 2000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.updateMetrics();
+      });
   }
 
   private updateMetrics(): void {

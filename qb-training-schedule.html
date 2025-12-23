@@ -984,25 +984,27 @@
 
     <script type="module">
       import { authManager } from "./src/auth-manager.js";
-      import { QB_TRAINING_PROGRAM } from "./src/qb-training-program-data.js";
+      import { QB_TRAINING_PROGRAM } from "./src/data/qb-training/index.js";
+      import { logger } from "./src/logger.js";
+      import { setSafeContent } from "./src/js/utils/shared.js";
 
       // Initialize page
       document.addEventListener("DOMContentLoaded", async function () {
-        console.log(
+        logger.info(
           '<i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> QB Training Schedule page loading...',
         );
 
         // Check authentication - wait for initialization first
         await authManager.waitForInit();
         if (!authManager.isAuthenticated()) {
-          console.log(
+          logger.info(
             '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User not authenticated, redirecting to login',
           );
           window.location.href = "/login.html";
           return;
         }
 
-        console.log(
+        logger.info(
           '<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User authenticated, loading QB training schedule',
         );
 
@@ -1013,7 +1015,7 @@
       let currentPhase = "foundation";
 
       function initializeQBSchedule() {
-        console.log(
+        logger.info(
           '<i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Initializing QB training schedule...',
         );
 
@@ -1054,7 +1056,7 @@
       }
 
       function loadWeekSchedule(weekNumber) {
-        console.log(
+        logger.info(
           `<i data-lucide="clipboard-list" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Loading QB week ${weekNumber} schedule...`,
         );
 
@@ -1080,7 +1082,7 @@
         // Generate QB-specific weekly schedule
         const weekSchedule = generateQBWeekSchedule(weekNumber, currentPhase);
 
-        dayScheduleEl.innerHTML = weekSchedule
+        const weekScheduleHtml = weekSchedule
           .map((day, index) => {
             const dayNames = [
               "Monday",
@@ -1141,6 +1143,8 @@
             `;
           })
           .join("");
+
+        setSafeContent(dayScheduleEl, weekScheduleHtml, true, false);
 
         if (typeof lucide !== "undefined") {
           lucide.createIcons();
@@ -1269,7 +1273,7 @@
 
       // Global function for tournament simulation
       window.startTournamentSimulation = function () {
-        console.log(
+        logger.info(
           '<i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Starting tournament simulation...',
         );
 

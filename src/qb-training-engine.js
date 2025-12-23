@@ -4,7 +4,7 @@
 import {
   QB_TRAINING_PROGRAM,
   QB_ASSESSMENTS,
-} from "./qb-training-program-data.js";
+} from "./data/qb-training/index.js";
 import { TrainingProgramEngine } from "./training-program-engine.js";
 import { logger } from "./logger.js";
 

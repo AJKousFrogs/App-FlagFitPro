@@ -26,7 +26,7 @@ npm run health:monitor        # Continuous monitoring
 
 ### 2. **Database Health Check** (`db:health`)
 
-Validates Neon PostgreSQL connectivity, schema integrity, and performance.
+Validates Supabase PostgreSQL connectivity, schema integrity, and performance.
 
 **Features:**
 

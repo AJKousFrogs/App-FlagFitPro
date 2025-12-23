@@ -1,5 +1,5 @@
 -- =============================================================================
--- FlagFit Pro - Comprehensive Neon PostgreSQL Database Schema
+-- FlagFit Pro - Comprehensive Supabase PostgreSQL Database Schema
 -- =============================================================================
 -- This schema includes:
 -- 1. Analytics tables for user behavior and performance tracking

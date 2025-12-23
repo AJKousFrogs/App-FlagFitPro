@@ -239,7 +239,7 @@ npm run dev
 
 ### **Phase 4: Database Integration**
 
-1. **Set up Neon database**
+1. **Set up Supabase database**
 2. **Run migrations**
 3. **Switch from mock to real data**
 4. **Test database operations**

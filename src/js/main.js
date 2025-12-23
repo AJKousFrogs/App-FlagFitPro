@@ -20,6 +20,7 @@ import { UniversalMobileNav } from "./components/universal-mobile-nav.js";
 import { UniversalFormValidator } from "./components/universal-form-validator.js";
 import { UniversalChartAccessibility } from "./components/universal-chart-accessibility.js";
 import { UniversalFocusManagement } from "./components/universal-focus-management.js";
+import { utils } from "./utils/shared.js";
 import {
   performGlobalSearch,
   getRecentSearches,
@@ -30,7 +31,7 @@ import {
 // Global application state
 window.FlagFitApp = {
   components: {},
-  utils: {},
+  utils: utils,
   state: {
     initialized: false,
     online: navigator.onLine,

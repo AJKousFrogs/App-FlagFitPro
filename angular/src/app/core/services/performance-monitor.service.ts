@@ -1,6 +1,8 @@
-import { Injectable, inject, signal, computed, effect } from "@angular/core";
+import { Injectable, inject, signal, computed, effect, DestroyRef } from "@angular/core";
 import { MessageService } from "primeng/api";
 import { LoggerService } from "./logger.service";
+import { timer } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 export interface PerformanceMetric {
   label: string;
@@ -19,10 +21,10 @@ export interface PerformanceMetric {
 export class PerformanceMonitorService {
   private messageService = inject(MessageService);
   private logger = inject(LoggerService);
+  private destroyRef = inject(DestroyRef);
 
   metrics = signal<PerformanceMetric[]>([]);
   private performanceObserver?: PerformanceObserver;
-  private metricsInterval?: any;
 
   // Thresholds for performance metrics
   private thresholds = {
@@ -94,21 +96,17 @@ export class PerformanceMonitorService {
       this.logger.warn("PerformanceObserver not fully supported", error);
     }
 
-    // Regular metrics collection
-    this.metricsInterval = setInterval(() => {
-      this.collectMetrics();
-    }, 5000);
-
-    // Initial collection
-    this.collectMetrics();
+    // Regular metrics collection using RxJS timer with automatic cleanup
+    timer(0, 5000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.collectMetrics();
+      });
   }
 
   stopMonitoring(): void {
     if (this.performanceObserver) {
       this.performanceObserver.disconnect();
-    }
-    if (this.metricsInterval) {
-      clearInterval(this.metricsInterval);
     }
   }
 

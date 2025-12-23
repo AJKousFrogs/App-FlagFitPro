@@ -206,6 +206,7 @@
 
     <script type="module">
       import { authManager } from "./src/auth-manager.js";
+      import { logger } from "./src/logger.js";
       import { apiClient } from "./src/api-config.js";
       import { ErrorHandler } from "./src/error-handler.js";
       import { profileCompletionManager } from "./src/profile-completion.js";
@@ -262,7 +263,7 @@
           const user = authManager.getCurrentUser();
 
           if (!user) {
-            console.error("No user found");
+            logger.error("No user found");
             return;
           }
 
@@ -296,7 +297,7 @@
               profileData = { ...profileData, ...response.data };
             }
           } catch (apiError) {
-            console.warn(
+            logger.warn(
               "API profile not available, checking localStorage:",
               apiError,
             );
@@ -309,7 +310,7 @@
             );
             profileData = { ...profileData, ...storedProfile };
           } catch (e) {
-            console.warn("Error reading user_profile from localStorage:", e);
+            logger.warn("Error reading user_profile from localStorage:", e);
           }
 
           // 3. Check userData in localStorage (from registration)
@@ -336,7 +337,7 @@
               profileData.createdAt = userData.createdAt || userData.created_at;
             }
           } catch (e) {
-            console.warn("Error reading userData from localStorage:", e);
+            logger.warn("Error reading userData from localStorage:", e);
           }
 
           // 4. Also check for team_members data (jersey number might be there)
@@ -354,7 +355,7 @@
                 profileData.position = userMemberData.position;
             }
           } catch (e) {
-            console.warn("Error reading team_members from localStorage:", e);
+            logger.warn("Error reading team_members from localStorage:", e);
           }
 
           // Update stats
@@ -431,7 +432,7 @@
             document.getElementById("profileBio").textContent = profileData.bio;
           }
         } catch (error) {
-          console.error("Failed to load profile:", error);
+          logger.error("Failed to load profile:", error);
           ErrorHandler.handleError(error, "Failed to load profile data");
         }
       }

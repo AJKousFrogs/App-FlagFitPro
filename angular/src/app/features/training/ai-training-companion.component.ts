@@ -22,6 +22,7 @@ import { PerformanceMonitorService } from "../../core/services/performance-monit
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { timer } from "rxjs";
 
 interface Insight {
   id: string;
@@ -604,9 +605,6 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopVoiceRecognition();
-    if (this.contextAnalysisInterval) {
-      clearInterval(this.contextAnalysisInterval);
-    }
   }
 
   toggleCompanion(): void {
@@ -726,21 +724,24 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
   }
 
   private startContextAnalysis(): void {
-    this.contextAnalysisInterval = setInterval(() => {
-      this.gatherTrainingContext().then((context) => {
-        this.aiService
-          .analyzeContext(context)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: (insights) => {
-              this.updateInsights(insights);
-            },
-            error: () => {
-              // Silently fail - insights are optional
-            },
-          });
+    // Analyze context every 10 seconds using RxJS timer
+    timer(0, 10000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.gatherTrainingContext().then((context) => {
+          this.aiService
+            .analyzeContext(context)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: (insights) => {
+                this.updateInsights(insights);
+              },
+              error: () => {
+                // Silently fail - insights are optional
+              },
+            });
+        });
       });
-    }, 10000); // Analyze every 10 seconds
   }
 
   private async gatherTrainingContext(): Promise<any> {

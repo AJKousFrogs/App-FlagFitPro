@@ -47,7 +47,7 @@
           }
         })
         .catch((error) => {
-          console.warn("Chatbot preload failed:", error);
+          logger.warn("Chatbot preload failed:", error);
         });
     </script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
@@ -427,9 +427,11 @@
 
     <script type="module">
       import { authManager } from "./src/auth-manager.js";
+      import { logger } from "./src/logger.js";
       import { apiClient, API_ENDPOINTS } from "./src/api-config.js";
       import { PerformanceUtils } from "./src/performance-utils.js";
       import { escapeHtml } from "./src/js/utils/sanitize.js";
+      import { setSafeContent } from "./src/js/utils/shared.js";
       import { AccessibilityUtils } from "./src/accessibility-utils.js";
       import {
         TOURNAMENT_SCHEDULE,
@@ -463,7 +465,7 @@
         // Load API data in background (non-blocking)
         // This allows the page to render immediately with local data
         loadTournaments().catch((error) => {
-          console.warn("Background tournament data update failed:", error);
+          logger.warn("Background tournament data update failed:", error);
           // Page already has local data, so this is non-critical
         });
       }
@@ -534,7 +536,7 @@
 
             // Only use API data if it matches expected structure
             if (!isValidTournamentData) {
-              console.debug(
+              logger.debug(
                 "API returned invalid tournament structure, keeping local data",
               );
               return; // Keep local data, ignore API response
@@ -564,7 +566,7 @@
         } catch (error) {
           // Silently fail - we already have local data displayed
           if (isEmpty) {
-            console.warn(
+            logger.warn(
               "Failed to load tournaments from API, using local data:",
               error,
             );
@@ -633,7 +635,7 @@
 
         // Safety check - ensure grid exists
         if (!grid) {
-          console.error("Tournaments grid element not found");
+          logger.error("Tournaments grid element not found");
           return;
         }
 
@@ -646,14 +648,14 @@
           if (emptyDiv) {
             emptyDiv.style.display = "block";
           }
-          grid.innerHTML = "";
+          setSafeContent(grid, "", false, false);
           return;
         }
 
         // Debug log to verify tournaments are being passed
-        console.debug(`Rendering ${tournaments.length} tournaments`);
+        logger.debug(`Rendering ${tournaments.length} tournaments`);
 
-        grid.innerHTML = tournaments
+        const tournamentsHtml = tournaments
           .map((tournament) => {
             const typeInfo = getTournamentTypeInfo(tournament.type);
             const daysUntil = getDaysUntilTournament(tournament);
@@ -780,22 +782,26 @@
             `;
           })
           .join("");
+
+        setSafeContent(grid, tournamentsHtml, true, false);
+      }
       }
 
       function updateLeaderboard(teams) {
         const leaderboard = document.getElementById("leaderboardList");
 
         if (!teams || teams.length === 0) {
-          leaderboard.innerHTML = `
+          const emptyLeaderboardHtml = `
             <div style="text-align: center; padding: var(--space-8); color: var(--color-text-secondary);">
               <i data-lucide="trophy" style="width: 48px; height: 48px; margin: 0 auto var(--space-4); display: block; opacity: 0.3;"></i>
               <p style="margin: 0;">No rankings available yet</p>
             </div>
           `;
+          setSafeContent(leaderboard, emptyLeaderboardHtml, true, false);
           return;
         }
 
-        leaderboard.innerHTML = teams
+        const leaderboardHtml = teams
           .map((team, index) => {
             const rank = index + 1;
             const rankClass = getRankClass(rank);
@@ -826,7 +832,7 @@
                     </div>
                     <div class="team-info" style="flex: 1; min-width: 0;">
                         <div style="font-size: var(--text-base); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1);">
-                            ${team.name}
+                            ${escapeHtml(team.name)}
                         </div>
                         <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
                             ${team.wins} wins • ${team.losses} ${team.losses === 1 ? "loss" : "losses"} • ${team.pointsScored} points scored
@@ -839,6 +845,8 @@
             `;
           })
           .join("");
+
+        setSafeContent(leaderboard, leaderboardHtml, true, false);
       }
 
       function getStatusColor(status) {
@@ -862,7 +870,7 @@
         // Ensure grid exists before proceeding
         const grid = document.getElementById("tournamentsGrid");
         if (!grid) {
-          console.warn("Tournaments grid not found, retrying...");
+          logger.warn("Tournaments grid not found, retrying...");
           setTimeout(() => switchTab(tab, event), 100);
           return;
         }
@@ -945,7 +953,7 @@
 
             // Only use API data if it matches expected structure
             if (!isValidTournamentData) {
-              console.debug(
+              logger.debug(
                 "API returned invalid tournament structure, keeping local data",
               );
               return; // Keep local data, ignore API response
@@ -968,7 +976,7 @@
           // If API fails or returns empty, keep local data displayed (silent fail)
         } catch (error) {
           // Silently fail - local data is already displayed
-          console.debug(
+          logger.debug(
             "Background tournament update failed, using local data:",
             error,
           );
@@ -998,7 +1006,7 @@
             authManager.showError(response.error || `Failed to ${action}`);
           }
         } catch (error) {
-          console.error("Tournament action failed:", error);
+          logger.error("Tournament action failed:", error);
           authManager.showError(`Failed to ${action} for tournament`);
         } finally {
           authManager.hideLoading();

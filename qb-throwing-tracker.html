@@ -699,8 +699,13 @@
     </div>
 
     <script type="module">
-      import { QB_TRAINING_PROGRAM } from "./src/qb-training-program-data.js";
+      import { QB_TRAINING_PROGRAM } from "./src/data/qb-training/index.js";
       import { qbTrainingEngine } from "./src/qb-training-engine.js";
+      import { logger } from "./src/logger.js";
+      import {
+        initializeLucideIcons,
+        setSafeContent,
+      } from "./src/js/utils/shared.js";
 
       // Session data storage
       let sessionData = loadSessionData();
@@ -867,16 +872,17 @@
         const recentSessions = sessionData.slice(-10).reverse(); // Last 10 sessions, newest first
 
         if (recentSessions.length === 0) {
-          container.innerHTML = `
+          const emptyHtml = `
             <div style="text-align: center; padding: 60px 40px; color: var(--text-secondary);">
               <i data-lucide="clipboard-x" class="icon-64" style="opacity: 0.3; margin-bottom: 16px;"></i>
               <h3 style="margin-top: 24px; color: var(--text-primary); font-size: 1.25rem;">No sessions logged yet</h3>
               <p style="margin-top: 8px;">Start by logging your first throwing session!</p>
             </div>
           `;
-          if (typeof lucide !== "undefined") lucide.createIcons();
+          setSafeContent(container, emptyHtml, true, false);
+          if (typeof lucide !== "undefined") lucide.createIcons(container);
         } else {
-          container.innerHTML = recentSessions
+          const sessionsHtml = recentSessions
             .map((session) => {
               const sessionDate = new Date(session.date);
               return `
@@ -918,7 +924,8 @@
             })
             .join("");
 
-          if (typeof lucide !== "undefined") lucide.createIcons();
+          setSafeContent(container, sessionsHtml, true, false);
+          if (typeof lucide !== "undefined") lucide.createIcons(container);
         }
       }
 
@@ -947,8 +954,7 @@
         ) {
           const warningDiv = document.createElement("div");
           warningDiv.className = "warning-banner";
-          warningDiv.innerHTML =
-            "⚠️ Last session reported arm soreness/pain. Consider rest day and review arm care protocols.";
+          setSafeContent(warningDiv, "⚠️ Last session reported arm soreness/pain. Consider rest day and review arm care protocols.", false, false);
           document
             .querySelector(".container")
             .insertBefore(warningDiv, document.querySelector(".quick-log"));
@@ -967,7 +973,7 @@
             "sessionDuration-unit",
           );
         } catch (error) {
-          console.warn("Failed to load unit toggle helper:", error);
+          logger.warn("Failed to load unit toggle helper:", error);
         }
       });
 

@@ -217,15 +217,20 @@ class AuthManager {
 
     try {
       // First, try to restore Supabase session (this handles persistent sessions)
-      const { getSupabase } = await import("./js/services/supabase-client.js");
+      const { getSupabase, safeSupabaseQuery } = await import(
+        "./js/services/supabase-client.js"
+      );
       const supabase = getSupabase();
 
       if (supabase) {
-        // Get current session from Supabase (this restores persisted sessions)
+        // Get current session from Supabase (this restores persisted sessions) using safeSupabaseQuery
         const {
           data: { session },
           error: sessionError,
-        } = await supabase.auth.getSession();
+        } = await safeSupabaseQuery(
+          supabase.auth.getSession(),
+          "Auth:GetSession",
+        );
 
         if (sessionError) {
           logger.warn("[Auth] Error getting Supabase session:", sessionError);
@@ -380,18 +385,23 @@ class AuthManager {
       const normalizedEmail = email.trim().toLowerCase();
 
       // Import Supabase client
-      const { getSupabase } = await import("./js/services/supabase-client.js");
+      const { getSupabase, safeSupabaseQuery } = await import(
+        "./js/services/supabase-client.js"
+      );
       const supabase = getSupabase();
 
       if (!supabase) {
         throw new Error("Unable to connect to authentication service");
       }
 
-      // Use Supabase Auth sign in with normalized email
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password,
-      });
+      // Use Supabase Auth sign in with normalized email using safeSupabaseQuery
+      const { data, error } = await safeSupabaseQuery(
+        supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password,
+        }),
+        "Auth:Login",
+      );
 
       if (error) {
         this.hideLoading();
@@ -488,27 +498,32 @@ class AuthManager {
       }
 
       // Import Supabase client
-      const { getSupabase } = await import("./js/services/supabase-client.js");
+      const { getSupabase, safeSupabaseQuery } = await import(
+        "./js/services/supabase-client.js"
+      );
       const supabase = getSupabase();
 
       if (!supabase) {
         throw new Error("Unable to connect to authentication service");
       }
 
-      // Use Supabase Auth signup with normalized email
-      const { data, error } = await supabase.auth.signUp({
-        email: normalizedEmail,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/verify-email.html`,
-          data: {
-            name,
-            role: role || "player",
-            first_name: firstName,
-            last_name: lastName || "",
+      // Use Supabase Auth signup with normalized email using safeSupabaseQuery
+      const { data, error } = await safeSupabaseQuery(
+        supabase.auth.signUp({
+          email: normalizedEmail,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/verify-email.html`,
+            data: {
+              name,
+              role: role || "player",
+              first_name: firstName,
+              last_name: lastName || "",
+            },
           },
-        },
-      });
+        }),
+        "Auth:Register",
+      );
 
       if (error) {
         this.hideLoading();
@@ -542,11 +557,16 @@ class AuthManager {
   // Logout user
   async logout() {
     try {
-      const { getSupabase } = await import("./js/services/supabase-client.js");
+      const { getSupabase, safeSupabaseQuery } = await import(
+        "./js/services/supabase-client.js"
+      );
       const supabase = getSupabase();
 
       if (supabase) {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await safeSupabaseQuery(
+          supabase.auth.signOut(),
+          "Auth:Logout",
+        );
         if (error) {
           logger.warn("Logout error:", error);
         }
@@ -571,7 +591,9 @@ class AuthManager {
     try {
       this.showLoading(`Signing in with ${provider}...`);
 
-      const { getSupabase } = await import("./js/services/supabase-client.js");
+      const { getSupabase, safeSupabaseQuery } = await import(
+        "./js/services/supabase-client.js"
+      );
       const supabase = getSupabase();
 
       if (!supabase) {
@@ -582,13 +604,16 @@ class AuthManager {
       localStorage.setItem("pending_oauth_role", role);
 
       // Redirect to OAuth provider
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          scopes: provider === "google" ? "email profile" : undefined,
-        },
-      });
+      const { data, error } = await safeSupabaseQuery(
+        supabase.auth.signInWithOAuth({
+          provider: provider,
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+            scopes: provider === "google" ? "email profile" : undefined,
+          },
+        }),
+        "Auth:OAuth",
+      );
 
       if (error) {
         this.hideLoading();
@@ -645,12 +670,21 @@ class AuthManager {
 
           // If OAuth and role was pending, update user metadata
           if (isOAuth && pendingRole && !session.user.user_metadata?.role) {
-            await supabase.auth.updateUser({
-              data: {
-                role: pendingRole,
-                name: this.user.name,
-              },
-            });
+            const { getSupabase, safeSupabaseQuery } = await import(
+              "./js/services/supabase-client.js"
+            );
+            const supabaseUpdate = getSupabase();
+            if (supabaseUpdate) {
+              await safeSupabaseQuery(
+                supabaseUpdate.auth.updateUser({
+                  data: {
+                    role: pendingRole,
+                    name: this.user.name,
+                  },
+                }),
+                "Auth:UpdateUserMetadata",
+              );
+            }
             localStorage.removeItem("pending_oauth_role");
           }
 
@@ -707,20 +741,25 @@ class AuthManager {
     try {
       this.showLoading("Sending verification email...");
 
-      const { getSupabase } = await import("./js/services/supabase-client.js");
+      const { getSupabase, safeSupabaseQuery } = await import(
+        "./js/services/supabase-client.js"
+      );
       const supabase = getSupabase();
 
       if (!supabase) {
         throw new Error("Unable to connect to authentication service");
       }
 
-      const { error } = await supabase.auth.resend({
-        type: "signup",
-        email: email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/verify-email.html`,
-        },
-      });
+      const { error } = await safeSupabaseQuery(
+        supabase.auth.resend({
+          type: "signup",
+          email: email,
+          options: {
+            emailRedirectTo: `${window.location.origin}/verify-email.html`,
+          },
+        }),
+        "Auth:ResendVerification",
+      );
 
       if (error) {
         this.hideLoading();
@@ -810,15 +849,19 @@ class AuthManager {
 
           // Try to refresh session via Supabase
           try {
-            const { getSupabase } =
-              await import("./js/services/supabase-client.js");
+            const { getSupabase, safeSupabaseQuery } = await import(
+              "./js/services/supabase-client.js"
+            );
             const supabase = getSupabase();
 
             if (supabase) {
               const {
                 data: { session },
                 error: refreshError,
-              } = await supabase.auth.getSession();
+              } = await safeSupabaseQuery(
+                supabase.auth.getSession(),
+                "Auth:RefreshCheck",
+              );
 
               if (session && session.access_token) {
                 // Session refreshed successfully
@@ -866,14 +909,18 @@ class AuthManager {
         // JWT parsing failure - might be a Supabase token (not JWT)
         // Check if we have a valid Supabase session instead
         try {
-          const { getSupabase } =
-            await import("./js/services/supabase-client.js");
+          const { getSupabase, safeSupabaseQuery } = await import(
+            "./js/services/supabase-client.js"
+          );
           const supabase = getSupabase();
 
           if (supabase) {
             const {
               data: { session },
-            } = await supabase.auth.getSession();
+            } = await safeSupabaseQuery(
+              supabase.auth.getSession(),
+              "Auth:CheckSessionFallback",
+            );
             if (session && session.access_token) {
               // Valid Supabase session exists
               this.token = session.access_token;
@@ -899,14 +946,18 @@ class AuthManager {
     // Second check: Try to restore from Supabase session if we don't have local auth
     if (!this.token || !this.user) {
       try {
-        const { getSupabase } =
-          await import("./js/services/supabase-client.js");
+        const { getSupabase, safeSupabaseQuery } = await import(
+          "./js/services/supabase-client.js"
+        );
         const supabase = getSupabase();
 
         if (supabase) {
           const {
             data: { session },
-          } = await supabase.auth.getSession();
+          } = await safeSupabaseQuery(
+            supabase.auth.getSession(),
+            "Auth:RestoreSession",
+          );
           if (session && session.access_token) {
             // Restore session from Supabase
             this.token = session.access_token;

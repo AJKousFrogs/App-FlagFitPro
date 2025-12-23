@@ -173,36 +173,6 @@ export function initModalHandlers() {
   });
 }
 
-window.closeModal = function (modalId) {
-  const modal =
-    document.getElementById(modalId) ||
-    document.querySelector(`[data-modal="${modalId}"]`);
-  if (modal) {
-    modal.classList.add("modal-hidden", "u-display-none");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("modal-open");
-  }
-};
-
-window.openModal = function (modalId) {
-  const modal =
-    document.getElementById(modalId) ||
-    document.querySelector(`[data-modal="${modalId}"]`);
-  if (modal) {
-    modal.classList.remove("modal-hidden", "u-display-none");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.classList.add("modal-open");
-
-    // Focus first focusable element
-    const firstInput = modal.querySelector(
-      'input, button, textarea, select, [tabindex]:not([tabindex="-1"])',
-    );
-    if (firstInput) {
-      firstInput.focus();
-    }
-  }
-};
-
 // ================================================================
 // BUTTON ACTION HANDLERS
 // ================================================================

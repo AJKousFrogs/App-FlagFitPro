@@ -60,7 +60,7 @@ Chain-of-thought reasoning for complex sports decisions.
 ### Tech Stack
 
 - **Frontend**: React 18 + Vite + TypeScript
-- **Database**: Neon PostgreSQL + Drizzle ORM
+- **Database**: Supabase PostgreSQL
 - **UI**: Radix UI + Tailwind CSS + Ant Design
 - **State**: Zustand + React Query
 - **Testing**: Vitest + Testing Library

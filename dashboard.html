@@ -78,19 +78,21 @@
     <script type="module" src="./src/js/main.js"></script>
     <!-- Dashboard Page JavaScript -->
     <script type="module" src="./src/js/pages/dashboard-page.js" defer></script>
+    <script type="module" src="./src/logger.js"></script>
     <!-- Preload Chatbot Component -->
     <script type="module">
+      import { logger } from "./src/logger.js";
       // Preload chatbot for faster access
       import("./src/js/components/chatbot.js")
         .then((module) => {
           // Ensure chatbot is available globally
           if (module.flagFitChatbot) {
             window.flagFitChatbot = module.flagFitChatbot;
-            console.log("Chatbot loaded successfully");
+            logger.info("Chatbot loaded successfully");
           }
         })
         .catch((error) => {
-          console.warn("Chatbot preload failed:", error);
+          logger.warn("Chatbot preload failed:", error);
         });
     </script>
 
@@ -147,6 +149,26 @@
               <p class="text-body-md text-secondary">
                 How are you feeling today?
               </p>
+            </div>
+
+            <!-- Quick Stats Overview -->
+            <div class="stats-grid u-display-grid u-gap-16 u-margin-bottom-24">
+              <div class="stats-card">
+                <span class="stats-label">Sessions</span>
+                <span class="stats-value" id="session-count">0</span>
+              </div>
+              <div class="stats-card">
+                <span class="stats-label">Performance</span>
+                <span class="stats-value" id="performance-score">0</span>
+              </div>
+              <div class="stats-card">
+                <span class="stats-label">Day Streak</span>
+                <span class="stats-value" id="day-streak">0</span>
+              </div>
+              <div class="stats-card">
+                <span class="stats-label">Tournaments</span>
+                <span class="stats-value" id="tournaments-count">0</span>
+              </div>
             </div>
 
             <!-- Date Picker -->
@@ -392,6 +414,46 @@
                 <button type="button" class="btn-start-session">
                   START SESSION
                 </button>
+              </div>
+            </div>
+
+            <!-- Daily Routines: Mobility & Foam Rolling -->
+            <div class="daily-routines-card">
+              <h2 class="section-title">DAILY ROUTINES</h2>
+              <div class="routines-grid">
+                <!-- Morning Mobility -->
+                <div class="routine-item" id="morning-mobility-item">
+                  <div class="routine-icon mobility-icon">
+                    <i data-lucide="stretch-horizontal"></i>
+                  </div>
+                  <div class="routine-content">
+                    <h3 class="routine-name">Morning Mobility</h3>
+                    <p class="routine-focus" id="mobility-focus">Focus: Loading...</p>
+                    <div class="routine-actions">
+                      <button class="btn-view-routine" id="btn-view-mobility">
+                        VIEW ROUTINE
+                      </button>
+                      <span class="routine-duration">15 min</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Foam Rolling -->
+                <div class="routine-item" id="foam-rolling-item">
+                  <div class="routine-icon recovery-icon">
+                    <i data-lucide="radius"></i>
+                  </div>
+                  <div class="routine-content">
+                    <h3 class="routine-name">Foam Rolling</h3>
+                    <p class="routine-focus" id="rolling-focus">Focus: Full Body Recovery</p>
+                    <div class="routine-actions">
+                      <button class="btn-view-routine" id="btn-view-rolling">
+                        VIEW ROUTINE
+                      </button>
+                      <span class="routine-duration">10-15 min</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 

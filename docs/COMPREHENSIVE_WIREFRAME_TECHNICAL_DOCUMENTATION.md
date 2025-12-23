@@ -480,7 +480,7 @@ BREAK TIMELINE STRUCTURE:
 
 ### **10.1 Database Integration**
 
-- **NEON Database**: Primary data storage
+- **Supabase Database**: Primary data storage
 - **Real-time Sync**: Live updates across devices
 - **Offline Support**: Local storage with sync when online
 - **Data Validation**: Input sanitization and type checking

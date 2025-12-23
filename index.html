@@ -265,9 +265,10 @@
     </section>
 
     <script type="module">
+      import { logger } from "./src/logger.js";
       // Add timeout wrapper to prevent page freeze
       const initTimeout = setTimeout(function () {
-        console.warn(
+        logger.warn(
           "Page initialization timeout - forcing page to be responsive",
         );
       }, 10000); // 10 second safety timeout
@@ -285,7 +286,7 @@
           // Clear timeout on successful initialization
           clearTimeout(initTimeout);
         } catch (error) {
-          console.error("Error in DOMContentLoaded handler:", error);
+          logger.error("Error in DOMContentLoaded handler:", error);
           clearTimeout(initTimeout);
         }
       });
@@ -314,18 +315,18 @@
               );
             })
             .then(function () {
-              console.log("All caches cleared");
+              if (typeof logger !== "undefined") logger.info("All caches cleared");
             });
         });
       }
 
       // Basic error tracking
       window.addEventListener("error", function (e) {
-        console.error("Global error:", e.error);
+        if (typeof logger !== "undefined") logger.error("Global error:", e.error);
       });
 
       window.addEventListener("unhandledrejection", function (e) {
-        console.error("Unhandled promise rejection:", e.reason);
+        if (typeof logger !== "undefined") logger.error("Unhandled promise rejection:", e.reason);
       });
 
       // Performance measurement
@@ -334,10 +335,10 @@
           try {
             performance.measure("app-load", "navigationStart");
             const measure = performance.getEntriesByName("app-load")[0];
-            console.log("App load time:", measure.duration + "ms");
+            if (typeof logger !== "undefined") logger.info("App load time:", measure.duration + "ms");
           } catch (e) {
             // Fallback measurement
-            console.log(
+            if (typeof logger !== "undefined") logger.info(
               "Page loaded in:",
               Date.now() - performance.timeOrigin + "ms",
             );
@@ -358,7 +359,7 @@
               );
             })
             .then(function () {
-              console.log("All caches cleared");
+              if (typeof logger !== "undefined") logger.info("All caches cleared");
             });
         };
       }

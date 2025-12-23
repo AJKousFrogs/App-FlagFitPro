@@ -4,8 +4,12 @@ import {
   signal,
   ChangeDetectionStrategy,
   effect,
+  inject,
+  DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { timer, Subscription } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 /**
  * Carousel Component - Angular 21
@@ -215,6 +219,9 @@ import { CommonModule } from "@angular/common";
   ],
 })
 export class CarouselComponent {
+  private destroyRef = inject(DestroyRef);
+  private autoPlaySubscription?: Subscription;
+
   slides = input.required<
     Array<{
       type?: "image" | "content";
@@ -231,7 +238,6 @@ export class CarouselComponent {
   loop = input<boolean>(true);
 
   currentIndex = signal<number>(0);
-  private autoPlayTimer: any;
 
   defaultTemplate = null;
 
@@ -281,15 +287,17 @@ export class CarouselComponent {
 
   private startAutoPlay(): void {
     this.stopAutoPlay();
-    this.autoPlayTimer = setInterval(() => {
-      this.next();
-    }, this.autoPlayInterval());
+    this.autoPlaySubscription = timer(this.autoPlayInterval(), this.autoPlayInterval())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.next();
+      });
   }
 
   private stopAutoPlay(): void {
-    if (this.autoPlayTimer) {
-      clearInterval(this.autoPlayTimer);
-      this.autoPlayTimer = null;
+    if (this.autoPlaySubscription) {
+      this.autoPlaySubscription.unsubscribe();
+      this.autoPlaySubscription = undefined;
     }
   }
 }

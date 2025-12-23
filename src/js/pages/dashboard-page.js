@@ -7,7 +7,9 @@ import { logger } from "../../logger.js";
 import { escapeHtml } from "../utils/sanitize.js";
 import { storageService } from "../services/storage-service-unified.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
-import { initializeLucideIcons } from "../utils/shared.js";
+import { initializeLucideIcons, setSafeContent } from "../utils/shared.js";
+import { trainingEngine } from "../../training-program-engine.js";
+import { MORNING_MOBILITY_ROUTINE, DAILY_FOAM_ROLLING } from "../data/shared-protocols.js";
 
 /**
  * Helper: Set button loading state safely
@@ -1989,6 +1991,12 @@ class DashboardPage {
       // Load training data for selected date
       await this.loadTrainingForDate(dateStr);
 
+      // Load Mobility and Rolling routines for selected date
+      this.updateDailyRoutines(this.selectedDate);
+
+      // Load dashboard overview stats
+      await this.loadDashboardOverview();
+
       // Restore date status first (includes date text)
       this.updateDateStatus();
 
@@ -2286,6 +2294,7 @@ class DashboardPage {
       });
 
       this.updateSupplementsUI();
+      this.updateSupplementRecommendations();
       return hasData;
     } catch (error) {
       logger.error("Failed to load supplements for date:", error);
@@ -2359,6 +2368,35 @@ class DashboardPage {
         }
       } catch (apiError) {
         logger.warn("API unavailable, checking localStorage:", apiError);
+      }
+
+      // Fallback: Check training engine for planned session
+      if (!trainingSession) {
+        try {
+          const daysSinceStart = Math.floor(
+            (this.selectedDate - new Date(trainingEngine.programStartDate)) / (1000 * 60 * 60 * 24),
+          );
+          const calculatedWeek = Math.floor(daysSinceStart / 7) + 1;
+          
+          if (calculatedWeek >= 1 && calculatedWeek <= 14) {
+            const weekData = trainingEngine.getWeekData(calculatedWeek);
+            const dayNameLower = dayName.toLowerCase();
+            const plannedWorkout = weekData.days[dayNameLower];
+            
+            if (plannedWorkout && plannedWorkout.type !== 'rest') {
+              trainingSession = {
+                session_type: plannedWorkout.title || plannedWorkout.type,
+                session_time: plannedWorkout.time || "18:30",
+                duration_minutes: plannedWorkout.duration || 70,
+                coach: plannedWorkout.coach || "Ales Zaksek",
+                date: dateStr,
+                isPlanned: true
+              };
+            }
+          }
+        } catch (engineError) {
+          logger.debug("Could not load training from engine:", engineError);
+        }
       }
 
       // Fallback: Check training plan or schedule for this day of week
@@ -2797,6 +2835,151 @@ class DashboardPage {
       logger.error("Failed to mark injury as recovered:", error);
       this.showNotification("Failed to update injury status.", "error");
     }
+  }
+
+  /**
+   * Update Daily Routines (Mobility & Foam Rolling) based on selected date
+   */
+  updateDailyRoutines(date) {
+    const dayOfWeek = date.getDay();
+    const dayNames = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ];
+    const currentDay = dayNames[dayOfWeek];
+
+    // Update Mobility UI
+    const mobilityFocusEl = document.getElementById("mobility-focus");
+    const mobilityRoutine = MORNING_MOBILITY_ROUTINE.dailyRoutines[currentDay];
+
+    if (mobilityFocusEl && mobilityRoutine) {
+      mobilityFocusEl.textContent = `Focus: ${mobilityRoutine.focus}`;
+    }
+
+    // Foam Rolling is daily, but we can set focus if needed
+    const rollingFocusEl = document.getElementById("rolling-focus");
+    if (rollingFocusEl) {
+      rollingFocusEl.textContent = `Focus: ${DAILY_FOAM_ROLLING.focus}`;
+    }
+
+    // Set up click handlers for view buttons
+    const viewMobilityBtn = document.getElementById("btn-view-mobility");
+    if (viewMobilityBtn) {
+      viewMobilityBtn.onclick = () => {
+        if (mobilityRoutine?.videoUrl) {
+          window.open(mobilityRoutine.videoUrl, "_blank");
+        } else {
+          this.showNotification("Mobility routine details coming soon!", "info");
+        }
+      };
+    }
+
+    const viewRollingBtn = document.getElementById("btn-view-rolling");
+    if (viewRollingBtn) {
+      viewRollingBtn.onclick = () => {
+        if (DAILY_FOAM_ROLLING.videoUrl) {
+          window.open(DAILY_FOAM_ROLLING.videoUrl, "_blank");
+        } else {
+          this.showNotification("Foam rolling details coming soon!", "info");
+        }
+      };
+    }
+  }
+
+  /**
+   * Get recommended supplements based on day and training
+   */
+  getRecommendedSupplements(date) {
+    const dayOfWeek = date.getDay(); // 0 = Sun, 2 = Tue
+    const isTrainingDay = dayOfWeek !== 0 && dayOfWeek !== 3; // Example: Sun, Wed are rest days
+
+    return {
+      "beta-alanine": true, // Daily
+      creatine: true, // Daily
+      protein: true, // Daily
+      "vitamin-d": true, // Daily (Winter)
+      magnesium: true, // Daily (Evening)
+      caffeine: isTrainingDay,
+      nitrate: isTrainingDay,
+      calcium: false, // Periodic
+      iron: false, // Based on blood work
+    };
+  }
+
+  /**
+   * Update supplement recommendations in UI
+   */
+  updateSupplementRecommendations() {
+    const recommendations = this.getRecommendedSupplements(this.selectedDate);
+    const supplementItems = document.querySelectorAll(".supplement-item");
+
+    supplementItems.forEach((item) => {
+      const key = item.getAttribute("data-supplement");
+      const isRecommended = recommendations[key];
+
+      // Add recommended badge if it doesn't exist
+      let badge = item.querySelector(".recommendation-badge");
+      if (isRecommended && !badge) {
+        badge = document.createElement("span");
+        badge.className = "recommendation-badge";
+        badge.textContent = "REC";
+        badge.title = "Recommended for today";
+        item.querySelector(".supplement-name").appendChild(badge);
+      } else if (!isRecommended && badge) {
+        badge.remove();
+      }
+    });
+  }
+
+  /**
+   * Load dashboard overview statistics from API
+   */
+  async loadDashboardOverview() {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.dashboard.overview);
+
+      if (response && response.success && response.data) {
+        this.updateOverviewUI(response.data);
+      }
+    } catch (error) {
+      logger.debug("Failed to load dashboard overview:", error);
+      // Fallback to training engine stats
+      const stats = trainingEngine.getCompletionStats();
+      this.updateOverviewUI({
+        stats: {
+          trainingSessions: stats.completedCount,
+          performanceScore: 85, // Fallback
+          dayStreak: stats.currentStreak,
+          tournaments: 0,
+        },
+      });
+    }
+  }
+
+  /**
+   * Update overview UI elements
+   */
+  updateOverviewUI(data) {
+    const stats = data.stats || {};
+
+    // This assumes we have these elements in the HTML.
+    // If they don't exist, we'll just skip them.
+    const sessionCountEl = document.getElementById("session-count");
+    const performanceScoreEl = document.getElementById("performance-score");
+    const dayStreakEl = document.getElementById("day-streak");
+    const tournamentsEl = document.getElementById("tournaments-count");
+
+    if (sessionCountEl)
+      sessionCountEl.textContent = stats.trainingSessions || 0;
+    if (performanceScoreEl)
+      performanceScoreEl.textContent = stats.performanceScore || 0;
+    if (dayStreakEl) dayStreakEl.textContent = stats.dayStreak || 0;
+    if (tournamentsEl) tournamentsEl.textContent = stats.tournaments || 0;
   }
 }
 

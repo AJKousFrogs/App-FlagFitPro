@@ -3,7 +3,7 @@
  * Handles all wellness data operations with Supabase
  */
 
-import { getSupabase } from "./supabase-client.js";
+import { getSupabase, safeSupabaseQuery } from "./supabase-client.js";
 import { logger } from "../../logger.js";
 import { authManager } from "../../auth-manager.js";
 
@@ -109,23 +109,33 @@ export class WellnessService {
     );
 
     try {
-      // Check if entry exists for this date
-      const { data: existing } = await this.supabase
-        .from("wellness_logs")
-        .select("id")
-        .eq("athlete_id", userId)
-        .eq("log_date", date)
-        .single();
+      // Check if entry exists for this date using safeSupabaseQuery
+      const { data: existing, error: checkError } = await safeSupabaseQuery(
+        this.supabase
+          .from("wellness_logs")
+          .select("id")
+          .eq("athlete_id", userId)
+          .eq("log_date", date)
+          .single(),
+        "Wellness:CheckExisting",
+      );
+
+      if (checkError) {
+        throw checkError;
+      }
 
       let result;
       if (existing) {
-        // Update existing entry
-        const { data, error } = await this.supabase
-          .from("wellness_logs")
-          .update(wellnessEntry)
-          .eq("id", existing.id)
-          .select()
-          .single();
+        // Update existing entry using safeSupabaseQuery
+        const { data, error } = await safeSupabaseQuery(
+          this.supabase
+            .from("wellness_logs")
+            .update(wellnessEntry)
+            .eq("id", existing.id)
+            .select()
+            .single(),
+          "Wellness:Update",
+        );
 
         if (error) {
           throw error;
@@ -133,12 +143,15 @@ export class WellnessService {
         result = this.mapFromWellnessLogs(data);
         logger.success("[Wellness] Updated wellness entry for", date);
       } else {
-        // Insert new entry
-        const { data, error } = await this.supabase
-          .from("wellness_logs")
-          .insert(wellnessEntry)
-          .select()
-          .single();
+        // Insert new entry using safeSupabaseQuery
+        const { data, error } = await safeSupabaseQuery(
+          this.supabase
+            .from("wellness_logs")
+            .insert(wellnessEntry)
+            .select()
+            .single(),
+          "Wellness:Insert",
+        );
 
         if (error) {
           throw error;
@@ -184,15 +197,17 @@ export class WellnessService {
     }
 
     try {
-      const { data, error } = await this.supabase
-        .from("wellness_logs")
-        .select("*")
-        .eq("athlete_id", userId)
-        .eq("log_date", date)
-        .single();
+      const { data, error } = await safeSupabaseQuery(
+        this.supabase
+          .from("wellness_logs")
+          .select("*")
+          .eq("athlete_id", userId)
+          .eq("log_date", date)
+          .single(),
+        "Wellness:Fetch",
+      );
 
-      if (error && error.code !== "PGRST116") {
-        // PGRST116 = no rows returned, which is fine
+      if (error) {
         throw error;
       }
 
@@ -206,7 +221,7 @@ export class WellnessService {
 
       return result;
     } catch (error) {
-      logger.error("[Wellness] Error fetching wellness data:", error);
+      // Error already logged by safeSupabaseQuery
       return null;
     }
   }
@@ -231,13 +246,16 @@ export class WellnessService {
     }
 
     try {
-      const { data, error } = await this.supabase
-        .from("wellness_logs")
-        .select("*")
-        .eq("athlete_id", userId)
-        .gte("log_date", startDate)
-        .lte("log_date", endDate)
-        .order("log_date", { ascending: false });
+      const { data, error } = await safeSupabaseQuery(
+        this.supabase
+          .from("wellness_logs")
+          .select("*")
+          .eq("athlete_id", userId)
+          .gte("log_date", startDate)
+          .lte("log_date", endDate)
+          .order("log_date", { ascending: false }),
+        "Wellness:History",
+      );
 
       if (error) {
         throw error;
@@ -368,15 +386,18 @@ export class WellnessService {
     }
 
     try {
-      const { data, error } = await this.supabase
-        .from("wellness_logs")
-        .select("*")
-        .eq("athlete_id", userId)
-        .order("log_date", { ascending: false })
-        .limit(1)
-        .single();
+      const { data, error } = await safeSupabaseQuery(
+        this.supabase
+          .from("wellness_logs")
+          .select("*")
+          .eq("athlete_id", userId)
+          .order("log_date", { ascending: false })
+          .limit(1)
+          .single(),
+        "Wellness:Latest",
+      );
 
-      if (error && error.code !== "PGRST116") {
+      if (error) {
         throw error;
       }
 
@@ -390,7 +411,7 @@ export class WellnessService {
 
       return result;
     } catch (error) {
-      logger.error("[Wellness] Error fetching latest wellness:", error);
+      // Error already logged by safeSupabaseQuery
       return null;
     }
   }

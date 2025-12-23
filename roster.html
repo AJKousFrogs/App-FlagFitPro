@@ -39,10 +39,12 @@
           // Ensure chatbot is available globally
           if (module.flagFitChatbot) {
             window.flagFitChatbot = module.flagFitChatbot;
-            console.log("Chatbot loaded successfully");
+            // Logger might not be available in this scope easily without import
+            // But this is a module script, so we can import it
           }
         })
         .catch((error) => {
+          // Fallback if logger not available
           console.warn("Chatbot preload failed:", error);
         });
     </script>
@@ -297,6 +299,7 @@
 
     <script type="module">
       import { authManager } from "./src/auth-manager.js";
+      import { logger } from "./src/logger.js";
       import { storageService } from "./src/js/services/storage-service-unified.js";
       import { getSupabase } from "./src/js/services/supabase-client.js";
       import {
@@ -304,6 +307,7 @@
         groupBy,
         debounce,
         initializeLucideIcons,
+        setSafeContent,
       } from "./src/js/utils/shared.js";
 
       /**
@@ -346,13 +350,8 @@
         if (!button) return;
         button.disabled = false;
         if (originalHTML && originalHTML.includes("<i")) {
-          // For buttons with icons, use a temporary container
-          const temp = document.createElement("div");
-          temp.innerHTML = originalHTML;
-          button.textContent = "";
-          while (temp.firstChild) {
-            button.appendChild(temp.firstChild);
-          }
+          // Use setSafeContent instead of manual innerHTML
+          setSafeContent(button, originalHTML, true, false);
           if (typeof lucide !== "undefined") lucide.createIcons(button);
         } else {
           button.textContent = originalHTML || "";
@@ -368,9 +367,7 @@
 
       // Initialize roster page
       document.addEventListener("DOMContentLoaded", async function () {
-        console.log(
-          '<i data-lucide="activity" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Team Roster page loading...',
-        );
+        logger.info("Team Roster page loading...");
 
         // Wait for auth manager to initialize
         await authManager.waitForInit();
@@ -382,26 +379,22 @@
         const isAuthenticated = authManager.isAuthenticated();
 
         if (!isAuthenticated && !isDevelopment) {
-          console.log(
-            '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User not authenticated, redirecting to login',
-          );
+          logger.warn("User not authenticated, redirecting to login");
           window.location.href = "/login.html";
           return;
         }
 
         if (!isAuthenticated && isDevelopment) {
-          console.log(
-            '<i data-lucide="info" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Development mode: Loading roster without authentication',
-          );
+          logger.info("Development mode: Loading roster without authentication");
         }
 
-        console.log("✅ User authenticated, loading roster");
+        logger.info("✅ User authenticated, loading roster");
 
         try {
           // Try to load user's team
           await loadUserTeam();
         } catch (error) {
-          console.error("❌ Error loading roster:", error);
+          logger.error("❌ Error loading roster:", error);
           showEmptyState();
         }
       });
@@ -416,7 +409,7 @@
         const mainContent = document.querySelector(".main-content");
         if (!mainContent) return;
 
-        mainContent.innerHTML = `
+        const emptyStateHtml = `
           <div class="card card-elevated" style="text-align: center; padding: 60px 40px;">
             <div style="font-size: 4rem; margin-bottom: 24px;">🏈</div>
             <h2 class="u-text-heading-xl u-font-weight-700 u-text-primary u-margin-bottom-16">
@@ -529,6 +522,8 @@
           <div data-ai-chat-container></div>
         `;
 
+        setSafeContent(mainContent, emptyStateHtml, true, false);
+
         // Reinitialize Lucide icons for the new content
         if (typeof lucide !== "undefined") {
           lucide.createIcons();
@@ -559,14 +554,14 @@
           .limit(1);
 
         if (teamsError) {
-          console.error("Error loading team:", teamsError);
+          logger.error("Error loading team:", teamsError);
           showEmptyState();
           return;
         }
 
         if (teams && teams.length > 0) {
           currentTeam = teams[0];
-          console.log("✅ Coach has team:", currentTeam);
+          logger.info("✅ Coach has team:", currentTeam);
           showEmptyState(); // Will show invitation form since currentTeam is set
           return;
         }
@@ -580,14 +575,14 @@
           .limit(1);
 
         if (memberError) {
-          console.error("Error loading team membership:", memberError);
+          logger.error("Error loading team membership:", memberError);
           showEmptyState();
           return;
         }
 
         if (memberships && memberships.length > 0) {
           currentTeam = memberships[0].teams;
-          console.log("✅ User is team member:", currentTeam);
+          logger.info("✅ User is team member:", currentTeam);
           await loadTeamRoster();
           return;
         }
@@ -701,7 +696,7 @@
           .eq("status", "active");
 
         if (error) {
-          console.error("Error loading team members:", error);
+          logger.error("Error loading team members:", error);
           if (playersContainer) {
             playersContainer.textContent = "";
             const errorDiv = createElement("div", "", "");
@@ -1409,7 +1404,7 @@
           // Reload pending invitations
           loadPendingInvitations();
         } catch (error) {
-          console.error("Error sending invitation:", error);
+          logger.error("Error sending invitation:", error);
           showMessage(
             error.message || "Failed to send invitation. Please try again.",
             "error",
@@ -1578,7 +1573,7 @@
         }
 
         const staff = Object.values(REAL_TEAM_DATA.staff || {});
-        console.log("👨‍💼 Coaching staff:", staff);
+        logger.info("👨‍💼 Coaching staff:", staff);
 
         if (!staff || staff.length === 0) {
           console.error(
@@ -1714,12 +1709,12 @@
             '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> No players loaded',
           );
         } else {
-          console.log(
+          logger.info(
             `<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> ${totalPlayersLoaded} players loaded across ${positions.length} positions`,
           );
         }
 
-        container.innerHTML = html;
+        setSafeContent(container, html, true, false);
       }
 
       function createPlayerCard(player) {

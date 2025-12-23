@@ -4,7 +4,7 @@
  * Ensures consistency with Angular components and backend filtering
  */
 
-import { API_BASE_URL, API_ENDPOINTS } from "../../api-config.js";
+import { apiClient, API_ENDPOINTS } from "../../api-config.js";
 import { logger } from "../../logger.js";
 import { authManager } from "../../auth-manager.js";
 
@@ -13,31 +13,6 @@ class TrainingApiService {
     this.cache = null;
     this.cacheTimestamp = null;
     this.cacheTTL = 5 * 60 * 1000; // 5 minutes cache
-  }
-
-  /**
-   * Get API endpoint URL
-   */
-  getEndpoint(endpoint) {
-    if (API_BASE_URL.includes("netlify/functions")) {
-      return `${API_BASE_URL}${endpoint}`;
-    }
-    return `${API_BASE_URL}${endpoint}`;
-  }
-
-  /**
-   * Get authentication headers
-   */
-  async getAuthHeaders() {
-    const user = authManager.getCurrentUser();
-    if (!user || !user.access_token) {
-      throw new Error("User not authenticated");
-    }
-
-    return {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${user.access_token}`,
-    };
   }
 
   /**
@@ -70,50 +45,22 @@ class TrainingApiService {
         return [];
       }
 
-      const params = new URLSearchParams();
+      const params = {};
 
-      if (options.startDate) {
-        params.append("startDate", options.startDate);
-      }
+      if (options.startDate) params.startDate = options.startDate;
+      if (options.endDate) params.endDate = options.endDate;
+      if (options.includeUpcoming) params.includeUpcoming = "true";
+      if (options.status) params.status = options.status;
+      if (options.limit) params.limit = options.limit.toString();
 
-      if (options.endDate) {
-        params.append("endDate", options.endDate);
-      }
+      const response = await apiClient.get(API_ENDPOINTS.training.sessions, params);
 
-      if (options.includeUpcoming) {
-        params.append("includeUpcoming", "true");
-      }
-
-      if (options.status) {
-        params.append("status", options.status);
-      }
-
-      if (options.limit) {
-        params.append("limit", options.limit.toString());
-      }
-
-      const queryString = params.toString();
-      const url = `${this.getEndpoint(API_ENDPOINTS.training.sessions)}${queryString ? `?${queryString}` : ""}`;
-
-      const headers = await this.getAuthHeaders();
-
-      const response = await fetch(url, {
-        method: "GET",
-        headers,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      if (!result.success) {
-        throw new Error(result.error || "Failed to fetch training sessions");
+      if (!response.success) {
+        throw new Error(response.error || "Failed to fetch training sessions");
       }
 
       // Transform backend format to frontend format
-      const sessions = (result.data || []).map((session) => ({
+      const sessions = (response.data || []).map((session) => ({
         id: session.id,
         date: session.session_date || session.date,
         type: session.session_type || session.type,
@@ -164,37 +111,17 @@ class TrainingApiService {
         return this.getEmptyStats();
       }
 
-      const params = new URLSearchParams();
+      const params = {};
+      if (options.startDate) params.startDate = options.startDate;
+      if (options.endDate) params.endDate = options.endDate;
 
-      if (options.startDate) {
-        params.append("startDate", options.startDate);
+      const response = await apiClient.get(API_ENDPOINTS.training.statsEnhanced || "/api/training/stats-enhanced", params);
+
+      if (!response.success) {
+        throw new Error(response.error || "Failed to fetch training stats");
       }
 
-      if (options.endDate) {
-        params.append("endDate", options.endDate);
-      }
-
-      const queryString = params.toString();
-      const url = `${this.getEndpoint("/training-stats-enhanced")}${queryString ? `?${queryString}` : ""}`;
-
-      const headers = await this.getAuthHeaders();
-
-      const response = await fetch(url, {
-        method: "GET",
-        headers,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      if (!result.success) {
-        throw new Error(result.error || "Failed to fetch training stats");
-      }
-
-      return result.data || this.getEmptyStats();
+      return response.data || this.getEmptyStats();
     } catch (error) {
       logger.error("Error fetching training stats from API:", error);
       return this.getEmptyStats();

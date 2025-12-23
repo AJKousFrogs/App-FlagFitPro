@@ -376,6 +376,33 @@ export const supabaseHelpers = {
   },
 };
 
+/**
+ * Safely execute a Supabase query with error handling and logging
+ * @param {Promise} queryPromise - The Supabase query promise
+ * @param {string} context - Context for error logging
+ * @returns {Promise<object>} The query result
+ */
+export async function safeSupabaseQuery(queryPromise, context = "Supabase") {
+  try {
+    const result = await queryPromise;
+
+    if (result.error) {
+      logger.error(`[${context}] Query error:`, result.error);
+      // Optional: Specific error handling based on error code
+      if (result.error.code === "PGRST116") {
+        // Single row requested but none found
+        return { data: null, error: null };
+      }
+      return result;
+    }
+
+    return result;
+  } catch (error) {
+    logger.error(`[${context}] Unexpected error:`, error);
+    return { data: null, error };
+  }
+}
+
 // Auto-initialize on import (safe - will return null if config missing)
 // This allows the module to load even if env vars aren't ready yet
 // Client will be initialized when getSupabase() is called

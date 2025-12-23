@@ -78,9 +78,9 @@ export class NutritionService {
       .get<USDAFood[]>(API_ENDPOINTS.nutrition.searchFoods, { query })
       .pipe(
         map((response) => response.data || []),
-        catchError(() => {
-          // Mock data for development
-          return of(this.getMockUSDAFoods(query));
+        catchError((error) => {
+          this.logger.error("[NutritionService] Error searching foods:", error);
+          return of([]); // Return empty array on error instead of mock data
         }),
       );
   }
@@ -93,7 +93,10 @@ export class NutritionService {
       .post<boolean>(API_ENDPOINTS.nutrition.addFood, { food })
       .pipe(
         map((response) => response.success || false),
-        catchError(() => of(false)),
+        catchError((error) => {
+          this.logger.error("[NutritionService] Error adding food:", error);
+          return of(false);
+        }),
       );
   }
 
@@ -105,9 +108,9 @@ export class NutritionService {
       .get<NutritionGoal[]>(API_ENDPOINTS.nutrition.goals)
       .pipe(
         map((response) => response.data || []),
-        catchError(() => {
-          // Mock data for development
-          return of(this.getMockNutritionGoals());
+        catchError((error) => {
+          this.logger.error("[NutritionService] Error fetching goals:", error);
+          return of([]);
         }),
       );
   }
@@ -125,9 +128,9 @@ export class NutritionService {
           timestamp: new Date(meal.timestamp),
         }));
       }),
-      catchError(() => {
-        // Mock data for development
-        return of(this.getMockMeals());
+      catchError((error) => {
+        this.logger.error("[NutritionService] Error fetching today's meals:", error);
+        return of([]);
       }),
     );
   }
@@ -140,9 +143,9 @@ export class NutritionService {
       .get<AINutritionSuggestion[]>(API_ENDPOINTS.nutrition.aiSuggestions)
       .pipe(
         map((response) => response.data || []),
-        catchError(() => {
-          // Mock data for development
-          return of(this.getMockAISuggestions());
+        catchError((error) => {
+          this.logger.error("[NutritionService] Error fetching AI suggestions:", error);
+          return of([]);
         }),
       );
   }
@@ -155,9 +158,9 @@ export class NutritionService {
       .get<PerformanceInsight[]>(API_ENDPOINTS.nutrition.performanceInsights)
       .pipe(
         map((response) => response.data || []),
-        catchError(() => {
-          // Mock data for development
-          return of(this.getMockPerformanceInsights());
+        catchError((error) => {
+          this.logger.error("[NutritionService] Error fetching performance insights:", error);
+          return of([]);
         }),
       );
   }
@@ -182,193 +185,5 @@ export class NutritionService {
     };
 
     return sources[nutrient.toLowerCase()] || ["Various foods"];
-  }
-
-  // Mock data methods for development
-  private getMockUSDAFoods(query: string): USDAFood[] {
-    const mockFoods: USDAFood[] = [
-      {
-        fdcId: 1,
-        description: "Grilled Chicken Breast",
-        foodCategory: "Poultry",
-        energy: 165,
-        protein: 31,
-        carbohydrates: 0,
-        fat: 3.6,
-      },
-      {
-        fdcId: 2,
-        description: "Salmon, Atlantic, cooked",
-        foodCategory: "Fish",
-        energy: 206,
-        protein: 22,
-        carbohydrates: 0,
-        fat: 12,
-      },
-      {
-        fdcId: 3,
-        description: "Greek Yogurt, plain",
-        foodCategory: "Dairy",
-        energy: 59,
-        protein: 10,
-        carbohydrates: 3.6,
-        fat: 0.4,
-      },
-    ];
-
-    return mockFoods.filter((food) =>
-      food.description.toLowerCase().includes(query.toLowerCase()),
-    );
-  }
-
-  private getMockNutritionGoals(): NutritionGoal[] {
-    return [
-      {
-        nutrient: "Protein",
-        current: 120,
-        target: 150,
-        unit: "g",
-        priority: "high",
-      },
-      {
-        nutrient: "Carbohydrates",
-        current: 180,
-        target: 250,
-        unit: "g",
-        priority: "medium",
-      },
-      {
-        nutrient: "Fat",
-        current: 45,
-        target: 65,
-        unit: "g",
-        priority: "medium",
-      },
-      {
-        nutrient: "Fiber",
-        current: 18,
-        target: 30,
-        unit: "g",
-        priority: "high",
-      },
-      {
-        nutrient: "Vitamin C",
-        current: 60,
-        target: 90,
-        unit: "mg",
-        priority: "low",
-      },
-      {
-        nutrient: "Calcium",
-        current: 800,
-        target: 1000,
-        unit: "mg",
-        priority: "high",
-      },
-    ];
-  }
-
-  private getMockMeals(): Meal[] {
-    return [
-      {
-        id: "1",
-        type: "Breakfast",
-        timestamp: new Date("2024-01-15T08:00:00"),
-        totalCalories: 450,
-        carbs: 45,
-        protein: 25,
-        fat: 15,
-        foods: [
-          {
-            name: "Greek Yogurt",
-            amount: 200,
-            unit: "g",
-            calories: 118,
-            nutrients: { protein: 20, carbs: 7.2 },
-          },
-          {
-            name: "Berries",
-            amount: 150,
-            unit: "g",
-            calories: 85,
-            nutrients: { carbs: 20, fiber: 5 },
-          },
-        ],
-      },
-      {
-        id: "2",
-        type: "Lunch",
-        timestamp: new Date("2024-01-15T13:00:00"),
-        totalCalories: 650,
-        carbs: 60,
-        protein: 45,
-        fat: 20,
-        foods: [
-          {
-            name: "Grilled Chicken Breast",
-            amount: 150,
-            unit: "g",
-            calories: 248,
-            nutrients: { protein: 46.5 },
-          },
-          {
-            name: "Brown Rice",
-            amount: 100,
-            unit: "g",
-            calories: 111,
-            nutrients: { carbs: 23, fiber: 1.8 },
-          },
-        ],
-      },
-    ];
-  }
-
-  private getMockAISuggestions(): AINutritionSuggestion[] {
-    return [
-      {
-        name: "Salmon",
-        benefit: "High Omega-3 for recovery",
-        priority: "high",
-        food: {
-          fdcId: 2,
-          description: "Salmon, Atlantic, cooked",
-          energy: 206,
-          protein: 22,
-        },
-        reason: "Your recovery metrics suggest increased omega-3 intake",
-      },
-      {
-        name: "Spinach",
-        benefit: "Iron for energy",
-        priority: "medium",
-        food: {
-          fdcId: 4,
-          description: "Spinach, raw",
-          energy: 23,
-          iron: 2.7,
-        },
-        reason: "Your iron levels are below optimal",
-      },
-    ];
-  }
-
-  private getMockPerformanceInsights(): PerformanceInsight[] {
-    return [
-      {
-        type: "positive",
-        icon: "pi pi-check-circle",
-        title: "Excellent Protein Intake",
-        description:
-          "Your protein consumption today supports optimal muscle recovery and growth.",
-      },
-      {
-        type: "warning",
-        icon: "pi pi-exclamation-triangle",
-        title: "Low Fiber Intake",
-        description:
-          "Consider adding more fiber-rich foods to improve digestion and satiety.",
-        actionLabel: "View High-Fiber Foods",
-      },
-    ];
   }
 }

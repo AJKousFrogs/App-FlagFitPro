@@ -733,7 +733,10 @@
       import { authManager } from "./src/auth-manager.js";
       import { logger } from "./src/logger.js";
       import { wellnessService } from "./src/js/services/wellness-service.js";
-      import { initializeLucideIcons } from "./src/js/utils/shared.js";
+      import {
+        initializeLucideIcons,
+        setSafeContent,
+      } from "./src/js/utils/shared.js";
 
       /**
        * Helper: Set button loading state safely
@@ -788,12 +791,8 @@
         if (!button) return;
         button.disabled = false;
         if (originalHTML && originalHTML.includes("<i")) {
-          const temp = document.createElement("div");
-          temp.innerHTML = originalHTML;
-          button.textContent = "";
-          while (temp.firstChild) {
-            button.appendChild(temp.firstChild);
-          }
+          // Use setSafeContent instead of manual innerHTML
+          setSafeContent(button, originalHTML, true, false);
           if (typeof lucide !== "undefined") lucide.createIcons(button);
         } else {
           button.textContent = originalHTML || "";

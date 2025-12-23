@@ -5,6 +5,7 @@ import {
   signal,
   inject,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonModule } from "primeng/button";
@@ -12,6 +13,8 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { MessageModule } from "primeng/message";
 import { FileUploadModule } from "primeng/fileupload";
 import { HttpClient } from "@angular/common/http";
+import { timer } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 export interface UploadedFile {
   name: string;
@@ -309,6 +312,7 @@ export interface UploadedFile {
 })
 export class FileUploadComponent {
   private http = inject(HttpClient);
+  private destroyRef = inject(DestroyRef);
 
   // Configuration
   label = input<string>("Drop files here or click to browse");
@@ -462,30 +466,28 @@ export class FileUploadComponent {
         formData.append("files", file.file);
       });
 
-      // Simulate upload progress
-      const progressInterval = setInterval(() => {
-        const current = this.uploadProgress();
-        if (current < 90) {
-          this.uploadProgress.set(current + 10);
-        }
-      }, 200);
-
-      // In real implementation, use HttpClient with progress tracking
-      // const response = await this.http.post(this.uploadUrl()!, formData, {
-      //   reportProgress: true,
-      //   observe: 'events'
-      // }).toPromise();
+      // Simulate upload progress with RxJS timer
+      const progressSub = timer(0, 200)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          const current = this.uploadProgress();
+          if (current < 90) {
+            this.uploadProgress.set(current + 10);
+          }
+        });
 
       // Simulate completion
-      setTimeout(() => {
-        clearInterval(progressInterval);
-        this.uploadProgress.set(100);
-        const urls = files.map((f) => `https://example.com/uploads/${f.name}`);
-        files.forEach((f, i) => {
-          f.url = urls[i];
+      timer(2000)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          progressSub.unsubscribe();
+          this.uploadProgress.set(100);
+          const urls = files.map((f) => `https://example.com/uploads/${f.name}`);
+          files.forEach((f, i) => {
+            f.url = urls[i];
+          });
+          this.uploadComplete.emit({ files, urls });
         });
-        this.uploadComplete.emit({ files, urls });
-      }, 2000);
     } catch (error) {
       this.uploadProgress.set(0);
       this.errorMessage.set(

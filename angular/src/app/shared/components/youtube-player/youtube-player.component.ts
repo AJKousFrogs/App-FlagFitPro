@@ -8,10 +8,13 @@ import {
   ViewChild,
   inject,
   effect,
+  DestroyRef,
+  input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
+import { timer, Subscription } from "rxjs";
 
 declare var YT: any;
 
@@ -136,6 +139,7 @@ declare var YT: any;
   ],
 })
 export class YoutubePlayerComponent implements OnInit, OnDestroy {
+  private destroyRef = inject(DestroyRef);
   // Angular 21: Use input() signal instead of @Input() with signal assignment
   videoId = input.required<string>();
   width = input<number>(640);
@@ -163,7 +167,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   currentTime = signal<number>(0);
 
   private player: any = null;
-  private checkInterval: any = null;
+  private timeTrackingSubscription: Subscription | null = null;
 
   constructor() {
     // Watch for videoId changes and reload player
@@ -180,8 +184,8 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.checkInterval) {
-      clearInterval(this.checkInterval);
+    if (this.timeTrackingSubscription) {
+      this.timeTrackingSubscription.unsubscribe();
     }
     if (this.player) {
       try {
@@ -308,11 +312,11 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   }
 
   private startTimeTracking(): void {
-    if (this.checkInterval) {
-      clearInterval(this.checkInterval);
+    if (this.timeTrackingSubscription) {
+      this.timeTrackingSubscription.unsubscribe();
     }
 
-    this.checkInterval = setInterval(() => {
+    this.timeTrackingSubscription = timer(0, 1000).subscribe(() => {
       if (this.player && this.playerReady()) {
         try {
           const current = this.player.getCurrentTime();
@@ -321,7 +325,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
           // Ignore errors
         }
       }
-    }, 1000);
+    });
   }
 
   togglePlay(): void {

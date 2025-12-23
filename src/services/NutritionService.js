@@ -1,5 +1,7 @@
-import UserModel from "../database/models/User.js";
 import { logger } from "../logger.js";
+import { safeQuery } from "../../routes/utils/query-helper.js";
+import { ActivityLevelCalculator, CalorieMatchEvaluator } from "../utils/RuleEngine.js";
+import { POSITION_MULTIPLIERS } from "../config/thresholds.js";
 
 class NutritionService {
   constructor(database) {
@@ -7,7 +9,7 @@ class NutritionService {
   }
 
   // Validate userId to prevent SQL injection
-  static validateUserId(userId) {
+  validateUserId(userId) {
     // Ensure userId is a positive integer
     const parsed = parseInt(userId, 10);
     if (isNaN(parsed) || parsed <= 0 || parsed > 2147483647) {
@@ -17,18 +19,14 @@ class NutritionService {
   }
 
   // Calculate personalized nutrition targets based on user profile and training
-  static async calculateNutritionTargets(userId) {
+  async calculateNutritionTargets(userId) {
     try {
       // Validate userId before using in queries
       userId = this.validateUserId(userId);
 
-      const user = await UserModel.findById(userId);
-      if (!user) {
-        throw new Error("User not found");
-      }
-
       // Get user's physical stats and training data
-      const userStats = await this.db.query(
+      const userStats = await safeQuery(
+        this.db,
         `
         SELECT
           height_cm, weight_kg, body_fat_percentage, position,
@@ -37,9 +35,15 @@ class NutritionService {
         WHERE id = $1
       `,
         [userId],
+        "NutritionService",
       );
 
-      const trainingLoad = await this.db.query(
+      if (userStats.rows.length === 0) {
+        throw new Error("User not found");
+      }
+
+      const trainingLoad = await safeQuery(
+        this.db,
         `
         SELECT 
           AVG(duration_minutes) as avg_duration,
@@ -50,6 +54,7 @@ class NutritionService {
           AND session_date >= CURRENT_DATE - INTERVAL '7 days'
       `,
         [userId],
+        "NutritionService",
       );
 
       const { height_cm, weight_kg, position, birth_date, gender } =
@@ -66,13 +71,11 @@ class NutritionService {
       const bmr = this.calculateBMR(weight_kg, height_cm, age, gender);
 
       // Activity factor using data-driven approach
-      const { ActivityLevelCalculator } = require("../utils/RuleEngine");
       const activityLevel =
         ActivityLevelCalculator.getActivityLevel(sessions_per_week);
       const activityFactor = activityLevel.multiplier;
 
       // Position-specific adjustments using centralized config
-      const { POSITION_MULTIPLIERS } = require("../config/thresholds");
       const positionData = POSITION_MULTIPLIERS[position];
       const positionMultiplier = positionData ? positionData.nutrition : 1.0;
       const dailyCalories = Math.round(
@@ -116,7 +119,7 @@ class NutritionService {
   }
 
   // Save nutrition targets for a user
-  static async saveNutritionTargets(
+  async saveNutritionTargets(
     userId,
     teamId,
     targets,
@@ -149,22 +152,27 @@ class NutritionService {
         RETURNING *
       `;
 
-      const result = await this.db.query(query, [
-        userId,
-        teamId,
-        targets.daily_calories_target,
-        targets.daily_calories_min,
-        targets.daily_calories_max,
-        targets.protein_target,
-        targets.carbs_target,
-        targets.fat_target,
-        targets.fiber_target,
-        targets.water_target,
-        targets.training_day_calorie_bonus,
-        targets.training_day_carb_bonus,
-        goal,
-        targets.calculated_by,
-      ]);
+      const result = await safeQuery(
+        this.db,
+        query,
+        [
+          userId,
+          teamId,
+          targets.daily_calories_target,
+          targets.daily_calories_min,
+          targets.daily_calories_max,
+          targets.protein_target,
+          targets.carbs_target,
+          targets.fat_target,
+          targets.fiber_target,
+          targets.water_target,
+          targets.training_day_calorie_bonus,
+          targets.training_day_carb_bonus,
+          goal,
+          targets.calculated_by,
+        ],
+        "NutritionService",
+      );
 
       return result.rows[0];
     } catch (error) {
@@ -174,7 +182,7 @@ class NutritionService {
   }
 
   // Log a meal for a user
-  static async logMeal(mealData) {
+  async logMeal(mealData) {
     try {
       const {
         userId,
@@ -214,29 +222,35 @@ class NutritionService {
         RETURNING *
       `;
 
-      const mealResult = await this.db.query(mealQuery, [
-        userId,
-        teamId,
-        date,
-        mealType,
-        mealTime,
-        totalCalories.toFixed(2),
-        totalProtein.toFixed(2),
-        totalCarbs.toFixed(2),
-        totalFat.toFixed(2),
-        trainingSessionId,
-        satisfactionRating,
-        energyLevelAfter,
-        notes,
-        loggedVia,
-      ]);
+      const mealResult = await safeQuery(
+        this.db,
+        mealQuery,
+        [
+          userId,
+          teamId,
+          date,
+          mealType,
+          mealTime,
+          totalCalories.toFixed(2),
+          totalProtein.toFixed(2),
+          totalCarbs.toFixed(2),
+          totalFat.toFixed(2),
+          trainingSessionId,
+          satisfactionRating,
+          energyLevelAfter,
+          notes,
+          loggedVia,
+        ],
+        "NutritionService",
+      );
 
       const mealId = mealResult.rows[0].id;
 
       // Insert individual foods
       for (const food of foods) {
         const multiplier = food.quantity / 100;
-        await this.db.query(
+        await safeQuery(
+          this.db,
           `
           INSERT INTO user_meal_foods (
             user_meal_id, food_item_id, quantity, serving_description,
@@ -253,6 +267,7 @@ class NutritionService {
             (food.carbs_per_100g * multiplier).toFixed(2),
             (food.fat_per_100g * multiplier).toFixed(2),
           ],
+          "NutritionService",
         );
       }
 
@@ -264,7 +279,7 @@ class NutritionService {
   }
 
   // Get daily nutrition summary
-  static async getDailyNutritionSummary(userId, date) {
+  async getDailyNutritionSummary(userId, date) {
     try {
       // Validate userId
       userId = this.validateUserId(userId);
@@ -282,7 +297,12 @@ class NutritionService {
         WHERE user_id = $1 AND date = $2
       `;
 
-      const nutritionResult = await this.db.query(query, [userId, date]);
+      const nutritionResult = await safeQuery(
+        this.db,
+        query,
+        [userId, date],
+        "NutritionService",
+      );
 
       // Get hydration data
       const hydrationQuery = `
@@ -291,10 +311,12 @@ class NutritionService {
         WHERE user_id = $1 AND date = $2
       `;
 
-      const hydrationResult = await this.db.query(hydrationQuery, [
-        userId,
-        date,
-      ]);
+      const hydrationResult = await safeQuery(
+        this.db,
+        hydrationQuery,
+        [userId, date],
+        "NutritionService",
+      );
 
       // Get targets
       const targetsQuery = `
@@ -306,7 +328,12 @@ class NutritionService {
         LIMIT 1
       `;
 
-      const targetsResult = await this.db.query(targetsQuery, [userId, date]);
+      const targetsResult = await safeQuery(
+        this.db,
+        targetsQuery,
+        [userId, date],
+        "NutritionService",
+      );
 
       const nutrition = nutritionResult.rows[0];
       const hydration = hydrationResult.rows[0];
@@ -360,7 +387,7 @@ class NutritionService {
   }
 
   // Generate meal recommendations based on targets and preferences
-  static async generateMealRecommendations(
+  async generateMealRecommendations(
     userId,
     mealType,
     targetCalories,
@@ -372,7 +399,12 @@ class NutritionService {
 
       // Get user's position for position-specific recommendations
       const userQuery = `SELECT position FROM users WHERE id = $1`;
-      const userResult = await this.db.query(userQuery, [userId]);
+      const userResult = await safeQuery(
+        this.db,
+        userQuery,
+        [userId],
+        "NutritionService",
+      );
       const position = userResult.rows[0]?.position;
 
       // Build base query for meal templates
@@ -409,7 +441,12 @@ class NutritionService {
       }
       params.push(position?.toLowerCase());
 
-      const result = await this.db.query(query, params);
+      const result = await safeQuery(
+        this.db,
+        query,
+        params,
+        "NutritionService",
+      );
 
       // Enhance recommendations with timing and context
       const recommendations = result.rows.map((template) => ({
@@ -433,7 +470,7 @@ class NutritionService {
     }
   }
 
-  static generateRecommendationReason(template, targetCalories, position) {
+  generateRecommendationReason(template, targetCalories, position) {
     const reasons = [];
 
     if (
@@ -458,7 +495,7 @@ class NutritionService {
     return reasons.length > 0 ? reasons.join(", ") : "Good nutritional balance";
   }
 
-  static getTimingGuidance(mealType) {
+  getTimingGuidance(mealType) {
     const guidance = {
       pre_workout: "Eat 2-3 hours before training for optimal energy",
       post_workout: "Consume within 30 minutes after training for recovery",
@@ -471,9 +508,8 @@ class NutritionService {
     return guidance[mealType] || "Enjoy as part of your balanced diet";
   }
 
-  static getCalorieMatchRating(templateCalories, targetCalories) {
+  getCalorieMatchRating(templateCalories, targetCalories) {
     // Use CalorieMatchEvaluator with guard clauses
-    const { CalorieMatchEvaluator } = require("../utils/RuleEngine");
     const evaluation = CalorieMatchEvaluator.evaluate(
       templateCalories,
       targetCalories,
@@ -482,7 +518,7 @@ class NutritionService {
   }
 
   // BMR calculation strategy - polymorphic approach
-  static calculateBMR(weight_kg, height_cm, age, gender) {
+  calculateBMR(weight_kg, height_cm, age, gender) {
     // Guard clause for invalid inputs
     if (!weight_kg || !height_cm || !age) {
       throw new Error("Invalid input for BMR calculation");
@@ -504,7 +540,7 @@ class NutritionService {
   }
 
   // Search for food items in database
-  static async searchFoodItems(searchTerm, category = null, limit = 20) {
+  async searchFoodItems(searchTerm, category = null, limit = 20) {
     try {
       let query = `
         SELECT 
@@ -519,7 +555,8 @@ class NutritionService {
         )
       `;
 
-      const params = [`%${searchTerm}%`];
+      const params = [];
+      params.push(`%${searchTerm}%`);
 
       if (category) {
         query += ` AND category = $${params.length + 1}`;
@@ -535,7 +572,12 @@ class NutritionService {
 
       params.push(limit);
 
-      const result = await this.db.query(query, params);
+      const result = await safeQuery(
+        this.db,
+        query,
+        params,
+        "NutritionService",
+      );
       return result.rows;
     } catch (error) {
       logger.error("Error searching food items:", error);
@@ -544,4 +586,4 @@ class NutritionService {
   }
 }
 
-module.exports = NutritionService;
+export default NutritionService;

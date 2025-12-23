@@ -14,189 +14,123 @@ class GameStatsService {
   constructor() {
     this.storageKey = "flagfit_games";
     this.currentGameKey = "flagfit_current_game";
-    // Use backend in production/staging, localStorage in development
-    this.useBackend =
-      window.location.hostname !== "localhost" &&
-      window.location.hostname !== "127.0.0.1";
+    // Real data enforcement: Always use backend/Supabase
+    this.useBackend = true;
   }
 
   /**
-   * Save a game to backend (with localStorage fallback)
+   * Save a game to Supabase
    * @param {Object} game - Game object to save
    * @returns {Promise<boolean>} Success status
    */
   async saveGame(game) {
-    // Always save to localStorage as backup
     try {
-      let games = await this.getAllGames();
-      // Ensure games is an array
-      if (!Array.isArray(games)) {
-        logger.warn("getAllGames() did not return an array, using empty array");
-        games = [];
-      }
-      const existingIndex = games.findIndex((g) => g.gameId === game.gameId);
+      // 1. Prepare game data for API
+      const gameData = {
+        teamId:
+          game.teamId ||
+          `TEAM_${storageService.get("userId", "", { usePrefix: false })}`,
+        opponentName: game.opponentName,
+        gameDate: game.gameDate,
+        gameTime: game.gameTime,
+        location: game.location,
+        isHomeGame: game.isHomeGame,
+        weather: game.weather,
+        temperature: game.temperature,
+        fieldConditions: game.fieldConditions,
+        teamScore: game.teamScore || 0,
+        opponentScore: game.opponentScore || 0,
+      };
 
-      if (existingIndex >= 0) {
-        games[existingIndex] = {
-          ...games[existingIndex],
-          ...game,
-          updatedAt: new Date().toISOString(),
-        };
+      let response;
+      if (game.gameId && game.gameId.startsWith("GAME_")) {
+        // Update existing game
+        response = await apiClient.put(
+          API_ENDPOINTS.games.update(game.gameId),
+          gameData,
+        );
       } else {
-        games.push({
-          ...game,
-          createdAt: game.createdAt || new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
+        // Create new game
+        response = await apiClient.post(API_ENDPOINTS.games.create, gameData);
       }
 
-      storageService.set(this.storageKey, games, { usePrefix: false });
-      storageService.set(this.currentGameKey, game, { usePrefix: false });
+      if (response.success) {
+        // Update local game object with backend game_id if it was new
+        if (response.data && response.data.game_id) {
+          game.gameId = response.data.game_id;
+        }
+        // Cache current game locally for UI responsiveness during active session
+        storageService.set(this.currentGameKey, game, { usePrefix: false });
+        return true;
+      }
+      return false;
     } catch (error) {
-      logger.error("Error saving to localStorage:", error);
+      logger.error("[GameStatsService] Error saving game to Supabase:", error);
+      throw error;
     }
-
-    // Try to save to backend
-    if (this.useBackend) {
-      try {
-        const token = storageService.get("authToken", null, {
-          usePrefix: false,
-        });
-        if (!token) {
-          logger.warn("No auth token, skipping backend save");
-          return true; // Saved to localStorage
-        }
-
-        // Prepare game data for API
-        const gameData = {
-          teamId:
-            game.teamId ||
-            `TEAM_${storageService.get("userId", "", { usePrefix: false })}`,
-          opponentName: game.opponentName,
-          gameDate: game.gameDate,
-          gameTime: game.gameTime,
-          location: game.location,
-          isHomeGame: game.isHomeGame,
-          weather: game.weather,
-          temperature: game.temperature,
-          fieldConditions: game.fieldConditions,
-          teamScore: game.teamScore || 0,
-          opponentScore: game.opponentScore || 0,
-        };
-
-        let response;
-        if (game.gameId && game.gameId.startsWith("GAME_")) {
-          // Update existing game
-          response = await apiClient.put(
-            API_ENDPOINTS.games.update(game.gameId),
-            gameData,
-          );
-        } else {
-          // Create new game
-          response = await apiClient.post(API_ENDPOINTS.games.create, gameData);
-        }
-
-        if (response.success) {
-          // Update local game with backend game_id
-          if (response.data && response.data.game_id) {
-            game.gameId = response.data.game_id;
-            storageService.set(this.currentGameKey, game, { usePrefix: false });
-          }
-          return true;
-        }
-      } catch (error) {
-        logger.error("Error saving game to backend:", error);
-        // Continue with localStorage version
-      }
-    }
-
-    return true; // Saved to localStorage at least
   }
 
   /**
-   * Get a specific game by ID
+   * Get a specific game by ID from Supabase
    * @param {string} gameId - Game ID
-   * @returns {Object|null} Game object or null
+   * @returns {Promise<Object|null>} Game object or null
    */
-  getGame(gameId) {
+  async getGame(gameId) {
     try {
-      const games = this.getAllGames({ forceSync: true });
-      if (!Array.isArray(games)) {
-        return null;
+      const response = await apiClient.get(API_ENDPOINTS.games.get(gameId));
+      if (response.success && response.data) {
+        return this._transformBackendGame(response.data);
       }
-      return games.find((g) => g.gameId === gameId) || null;
+      return null;
     } catch (error) {
-      logger.error("Error getting game:", error);
+      logger.error(`[GameStatsService] Error getting game ${gameId}:`, error);
       return null;
     }
   }
 
   /**
-   * Get all games from backend (with localStorage fallback)
-   * @param {Object} options - Options for loading games
-   * @param {boolean} options.forceSync - Force synchronous localStorage-only read
-   * @returns {Promise<Array>|Array} Array of game objects
+   * Get all games from Supabase
+   * @returns {Promise<Array>} Array of game objects
    */
-  async getAllGames(options = { forceSync: false }) {
-    // Synchronous localStorage-only mode (for backward compatibility)
-    if (options.forceSync) {
-      try {
-        return storageService.get(this.storageKey, [], { usePrefix: false });
-      } catch (error) {
-        logger.error("Error loading games from localStorage:", error);
-        return [];
-      }
-    }
-
-    // Try backend first
-    if (this.useBackend) {
-      try {
-        const token = storageService.get("authToken", null, {
-          usePrefix: false,
-        });
-        if (token) {
-          const response = await apiClient.get(API_ENDPOINTS.games.list);
-          if (response.success && response.data) {
-            // Transform backend data to frontend format
-            const games = response.data.map((g) => ({
-              gameId: g.game_id,
-              teamId: g.team_id,
-              opponentName: g.opponent_team_name,
-              gameDate: g.game_date,
-              gameTime: g.game_time,
-              location: g.location,
-              isHomeGame: g.is_home_game,
-              weather: g.weather_conditions,
-              temperature: g.temperature,
-              fieldConditions: g.field_conditions,
-              teamScore: g.team_score || 0,
-              opponentScore: g.opponent_score || 0,
-              createdAt: g.created_at,
-              updatedAt: g.updated_at,
-            }));
-
-            // Sync to localStorage
-            storageService.set(this.storageKey, games, { usePrefix: false });
-            return games;
-          }
-        }
-      } catch (error) {
-        logger.error("Error loading games from backend:", error);
-        // Fall through to localStorage
-      }
-    }
-
-    // Fallback to localStorage
+  async getAllGames() {
     try {
-      return storageService.get(this.storageKey, [], { usePrefix: false });
+      const response = await apiClient.get(API_ENDPOINTS.games.list);
+      if (response.success && response.data) {
+        // Transform backend data to frontend format
+        return response.data.map((g) => this._transformBackendGame(g));
+      }
+      return [];
     } catch (error) {
-      logger.error("Error loading games from localStorage:", error);
+      logger.error("[GameStatsService] Error loading games from Supabase:", error);
       return [];
     }
   }
 
   /**
-   * Get current active game
+   * Internal helper to transform backend game format to frontend format
+   */
+  _transformBackendGame(g) {
+    return {
+      gameId: g.game_id || g.id,
+      teamId: g.team_id,
+      opponentName: g.opponent_team_name || g.opponentName,
+      gameDate: g.game_date || g.gameDate,
+      gameTime: g.game_time || g.gameTime,
+      location: g.location,
+      isHomeGame: g.is_home_game || g.isHomeGame,
+      weather: g.weather_conditions || g.weather,
+      temperature: g.temperature,
+      fieldConditions: g.field_conditions || g.fieldConditions,
+      teamScore: g.team_score || g.teamScore || 0,
+      opponentScore: g.opponent_score || g.opponentScore || 0,
+      plays: g.plays || [],
+      createdAt: g.created_at || g.createdAt,
+      updatedAt: g.updated_at || g.updatedAt,
+    };
+  }
+
+  /**
+   * Get current active game from local cache (transient)
    * @returns {Object|null} Current game or null
    */
   getCurrentGame() {
@@ -205,279 +139,114 @@ class GameStatsService {
         usePrefix: false,
       });
     } catch (error) {
-      logger.error("Error loading current game:", error);
+      logger.error("[GameStatsService] Error loading current game from cache:", error);
       return null;
     }
   }
 
   /**
-   * Delete a game
+   * Delete a game from Supabase
    * @param {string} gameId - Game ID to delete
-   * @returns {boolean} Success status
+   * @returns {Promise<boolean>} Success status
    */
-  deleteGame(gameId) {
+  async deleteGame(gameId) {
     try {
-      const games = this.getAllGames({ forceSync: true });
-      if (!Array.isArray(games)) {
-        logger.warn("getAllGames() did not return an array in deleteGame");
-        return false;
+      const response = await apiClient.delete(API_ENDPOINTS.games.update(gameId));
+      if (response.success) {
+        // Clear current game if it's the one being deleted
+        const current = this.getCurrentGame();
+        if (current && current.gameId === gameId) {
+          storageService.remove(this.currentGameKey, { usePrefix: false });
+        }
+        return true;
       }
-      const filteredGames = games.filter((g) => g.gameId !== gameId);
-      storageService.set(this.storageKey, filteredGames, { usePrefix: false });
-      return true;
+      return false;
     } catch (error) {
-      logger.error("Error deleting game:", error);
+      logger.error(`[GameStatsService] Error deleting game ${gameId}:`, error);
       return false;
     }
   }
 
   /**
-   * Get games for a specific date range
+   * Get games for a specific date range from Supabase
    * @param {Date} startDate - Start date
    * @param {Date} endDate - End date
-   * @returns {Array} Filtered games
+   * @returns {Promise<Array>} Filtered games
    */
-  getGamesByDateRange(startDate, endDate) {
-    const games = this.getAllGames({ forceSync: true });
-    if (!Array.isArray(games)) {
-      logger.warn(
-        "getAllGames() did not return an array in getGamesByDateRange",
-      );
+  async getGamesByDateRange(startDate, endDate) {
+    try {
+      const games = await this.getAllGames();
+      return games.filter((game) => {
+        const gameDate = new Date(game.gameDate);
+        return gameDate >= startDate && gameDate <= endDate;
+      });
+    } catch (error) {
+      logger.error("[GameStatsService] Error getting games by date range:", error);
       return [];
     }
-    return games.filter((game) => {
-      const gameDate = new Date(game.gameDate);
-      return gameDate >= startDate && gameDate <= endDate;
-    });
   }
 
   /**
    * Calculate player statistics across all games
-   * Uses centralized backend endpoint for consistent, date-filtered stats
-   * Falls back to local calculation if backend is unavailable
+   * Uses centralized Supabase endpoint for consistent, date-filtered stats
    * @param {string} playerId - Player ID
    * @param {Object} options - Options for fetching stats
-   * @returns {Promise<Object>|Object} Player statistics
-   */
-  async getPlayerStats(playerId, options = {}) {
-    // Try backend first for consistent, date-filtered stats
-    if (this.useBackend && !options.forceLocal) {
-      try {
-        const token = storageService.get("authToken", null, {
-          usePrefix: false,
-        });
-        if (token) {
-          const params = new URLSearchParams();
-          if (options.season) {
-            params.append("season", options.season);
-          }
-          if (options.teamId) {
-            params.append("teamId", options.teamId);
-          }
-
-          const url = `${API_ENDPOINTS.playerStats.aggregated}?playerId=${playerId}${params.toString() ? "&" + params.toString() : ""}`;
-          const response = await apiClient.get(url);
-
-          if (response.success && response.data) {
-            // Transform backend format to frontend format
-            return {
-              gamesPlayed: response.data.gamesPlayed || 0,
-              passAttempts: response.data.passAttempts || 0,
-              completions: response.data.completions || 0,
-              passingYards: response.data.passingYards || 0,
-              touchdowns: response.data.touchdowns || 0,
-              interceptions: response.data.interceptions || 0,
-              completionPercentage: response.data.completionPercentage || 0,
-              avgYardsPerAttempt: response.data.avgYardsPerAttempt || 0,
-              targets: response.data.targets || 0,
-              receptions: response.data.receptions || 0,
-              receivingYards: response.data.receivingYards || 0,
-              drops: response.data.drops || 0,
-              dropRate: response.data.dropRate || 0,
-              rushingAttempts: response.data.rushingAttempts || 0,
-              rushingYards: response.data.rushingYards || 0,
-              flagPullAttempts: response.data.flagPullAttempts || 0,
-              flagPulls: response.data.flagPulls || 0,
-              flagPullSuccessRate: response.data.flagPullSuccessRate || 0,
-              missedFlagPulls: response.data.missedFlagPulls || 0,
-              totalPlays: response.data.totalPlays || 0,
-              totalYards: response.data.totalYards || 0,
-            };
-          }
-        }
-      } catch (error) {
-        logger.warn(
-          "Error fetching stats from backend, falling back to local calculation:",
-          error,
-        );
-        // Fall through to local calculation
-      }
-    }
-
-    // Fallback to local calculation (for backward compatibility)
-    const games = this.getAllGames({ forceSync: true });
-    const stats = {
-      gamesPlayed: 0,
-      // Passing stats
-      passAttempts: 0,
-      completions: 0,
-      passingYards: 0,
-      touchdowns: 0,
-      interceptions: 0,
-      completionPercentage: 0,
-      badThrows: 0,
-      // Receiving stats
-      targets: 0,
-      receptions: 0,
-      receivingYards: 0,
-      drops: 0,
-      dropRate: 0,
-      // Rushing stats
-      rushingAttempts: 0,
-      rushingYards: 0,
-      // Defensive stats
-      flagPullAttempts: 0,
-      flagPulls: 0,
-      flagPullSuccessRate: 0,
-      missedFlagPulls: 0,
-    };
-
-    games.forEach((game) => {
-      if (!game.plays) {
-        return;
-      }
-
-      let playerInGame = false;
-
-      game.plays.forEach((play) => {
-        // Check if player was involved in this play
-        const isQB = play.quarterbackId === playerId;
-        const isReceiver = play.receiverId === playerId;
-        const isBallCarrier = play.ballCarrierId === playerId;
-        const isDefender = play.defenderId === playerId;
-
-        if (isQB || isReceiver || isBallCarrier || isDefender) {
-          playerInGame = true;
-        }
-
-        // Passing stats
-        if (isQB && play.playType === "pass") {
-          stats.passAttempts++;
-          if (play.outcome === "completion") {
-            stats.completions++;
-          }
-          if (play.outcome === "interception") {
-            stats.interceptions++;
-          }
-          if (
-            play.throwAccuracy === "bad" ||
-            play.throwAccuracy === "terrible"
-          ) {
-            stats.badThrows++;
-          }
-          // You could track yards here if added to play data
-        }
-
-        // Receiving stats
-        if (isReceiver && play.playType === "pass") {
-          stats.targets++;
-          if (play.outcome === "completion") {
-            stats.receptions++;
-          }
-          if (play.isDrop) {
-            stats.drops++;
-          }
-        }
-
-        // Rushing stats
-        if (isBallCarrier && play.playType === "run") {
-          stats.rushingAttempts++;
-          stats.rushingYards += play.yardsGained || 0;
-        }
-
-        // Defensive stats
-        if (isDefender && play.playType === "flag_pull") {
-          stats.flagPullAttempts++;
-          if (play.isSuccessful) {
-            stats.flagPulls++;
-          } else {
-            stats.missedFlagPulls++;
-          }
-        }
-      });
-
-      if (playerInGame) {
-        stats.gamesPlayed++;
-      }
-    });
-
-    // Calculate percentages
-    if (stats.passAttempts > 0) {
-      stats.completionPercentage = (
-        (stats.completions / stats.passAttempts) *
-        100
-      ).toFixed(1);
-    }
-
-    if (stats.targets > 0) {
-      stats.dropRate = ((stats.drops / stats.targets) * 100).toFixed(1);
-    }
-
-    if (stats.flagPullAttempts > 0) {
-      stats.flagPullSuccessRate = (
-        (stats.flagPulls / stats.flagPullAttempts) *
-        100
-      ).toFixed(1);
-    }
-
-    return stats;
-  }
-
-  /**
-   * Get player stats for a specific date range
-   * Uses centralized backend endpoint
-   * @param {string} playerId - Player ID
-   * @param {Date} startDate - Start date
-   * @param {Date} endDate - End date
    * @returns {Promise<Object>} Player statistics
    */
-  async getPlayerStatsByDateRange(playerId, startDate, endDate) {
-    if (this.useBackend) {
-      try {
-        const token = storageService.get("authToken", null, {
-          usePrefix: false,
-        });
-        if (token) {
-          const params = new URLSearchParams({
-            playerId,
-            startDate: startDate.toISOString().split("T")[0],
-            endDate: endDate.toISOString().split("T")[0],
-          });
+  async getPlayerStats(playerId, options = {}) {
+    try {
+      const params = {};
+      if (options.season) params.season = options.season;
+      if (options.teamId) params.teamId = options.teamId;
 
-          const response = await apiClient.get(
-            `${API_ENDPOINTS.playerStats.dateRange}?${params.toString()}`,
-          );
+      const response = await apiClient.get(API_ENDPOINTS.playerStats.aggregated, {
+        playerId,
+        ...params
+      });
 
-          if (response.success && response.data) {
-            return response.data;
-          }
-        }
-      } catch (error) {
-        logger.error("Error fetching stats by date range:", error);
-        throw error;
+      if (response.success && response.data) {
+        // Transform backend format to frontend format
+        return {
+          gamesPlayed: response.data.gamesPlayed || 0,
+          passAttempts: response.data.passAttempts || 0,
+          completions: response.data.completions || 0,
+          passingYards: response.data.passingYards || 0,
+          touchdowns: response.data.touchdowns || 0,
+          interceptions: response.data.interceptions || 0,
+          completionPercentage: response.data.completionPercentage || 0,
+          avgYardsPerAttempt: response.data.avgYardsPerAttempt || 0,
+          targets: response.data.targets || 0,
+          receptions: response.data.receptions || 0,
+          receivingYards: response.data.receivingYards || 0,
+          drops: response.data.drops || 0,
+          dropRate: response.data.dropRate || 0,
+          rushingAttempts: response.data.rushingAttempts || 0,
+          rushingYards: response.data.rushingYards || 0,
+          flagPullAttempts: response.data.flagPullAttempts || 0,
+          flagPulls: response.data.flagPulls || 0,
+          flagPullSuccessRate: response.data.flagPullSuccessRate || 0,
+          missedFlagPulls: response.data.missedFlagPulls || 0,
+          totalPlays: response.data.totalPlays || 0,
+          totalYards: response.data.totalYards || 0,
+        };
       }
+      return this._getEmptyPlayerStats();
+    } catch (error) {
+      logger.error("[GameStatsService] Error fetching player stats:", error);
+      return this._getEmptyPlayerStats();
     }
+  }
 
-    // Fallback to local calculation
-    const games = this.getGamesByDateRange(startDate, endDate);
-    const stats = {
-      gamesPlayed: games.length,
+  _getEmptyPlayerStats() {
+    return {
+      gamesPlayed: 0,
       passAttempts: 0,
       completions: 0,
       passingYards: 0,
       touchdowns: 0,
       interceptions: 0,
       completionPercentage: 0,
+      avgYardsPerAttempt: 0,
       targets: 0,
       receptions: 0,
       receivingYards: 0,
@@ -489,340 +258,237 @@ class GameStatsService {
       flagPulls: 0,
       flagPullSuccessRate: 0,
       missedFlagPulls: 0,
+      totalPlays: 0,
+      totalYards: 0,
     };
-
-    games.forEach((game) => {
-      if (!game.plays) {
-        return;
-      }
-      game.plays.forEach((play) => {
-        // Aggregate stats (same logic as getPlayerStats)
-        if (play.quarterbackId === playerId && play.playType === "pass") {
-          stats.passAttempts++;
-          if (play.outcome === "completion") {
-            stats.completions++;
-          }
-          if (play.outcome === "interception") {
-            stats.interceptions++;
-          }
-        }
-        if (play.receiverId === playerId && play.playType === "pass") {
-          stats.targets++;
-          if (play.outcome === "completion") {
-            stats.receptions++;
-          }
-          if (play.isDrop) {
-            stats.drops++;
-          }
-        }
-        if (play.ballCarrierId === playerId && play.playType === "run") {
-          stats.rushingAttempts++;
-          stats.rushingYards += play.yardsGained || 0;
-        }
-        if (play.defenderId === playerId && play.playType === "flag_pull") {
-          stats.flagPullAttempts++;
-          if (play.isSuccessful) {
-            stats.flagPulls++;
-          } else {
-            stats.missedFlagPulls++;
-          }
-        }
-      });
-    });
-
-    // Calculate percentages
-    if (stats.passAttempts > 0) {
-      stats.completionPercentage = Number(
-        ((stats.completions / stats.passAttempts) * 100).toFixed(1),
-      );
-    }
-    if (stats.targets > 0) {
-      stats.dropRate = Number(((stats.drops / stats.targets) * 100).toFixed(1));
-    }
-    if (stats.flagPullAttempts > 0) {
-      stats.flagPullSuccessRate = Number(
-        ((stats.flagPulls / stats.flagPullAttempts) * 100).toFixed(1),
-      );
-    }
-
-    return stats;
   }
 
   /**
-   * Get drop analysis for a player
+   * Get drop analysis for a player from Supabase
    * @param {string} playerId - Player ID
-   * @returns {Object} Drop analysis
+   * @returns {Promise<Object>} Drop analysis
    */
-  getPlayerDropAnalysis(playerId) {
-    const games = this.getAllGames({ forceSync: true });
-    if (!Array.isArray(games)) {
-      logger.warn(
-        "getAllGames() did not return an array in getPlayerDropAnalysis",
-      );
-      return { totalDrops: 0, dropRate: 0, drops: [] };
-    }
-    const drops = [];
+  async getPlayerDropAnalysis(playerId) {
+    try {
+      const games = await this.getAllGames();
+      const drops = [];
 
-    games.forEach((game) => {
-      if (!game.plays) {
-        return;
-      }
+      games.forEach((game) => {
+        if (!game.plays) return;
 
-      game.plays.forEach((play) => {
-        if (play.receiverId === playerId && play.isDrop) {
-          drops.push({
-            gameId: game.gameId,
-            gameDate: game.gameDate,
-            opponent: game.opponentName,
-            playNumber: play.playNumber,
-            quarter: play.quarter,
-            routeType: play.routeType,
-            dropSeverity: play.dropSeverity,
-            dropReason: play.dropReason,
-            throwAccuracy: play.throwAccuracy,
-          });
-        }
+        game.plays.forEach((play) => {
+          if (play.receiverId === playerId && play.isDrop) {
+            drops.push({
+              gameId: game.gameId,
+              gameDate: game.gameDate,
+              opponent: game.opponentName,
+              playNumber: play.playNumber,
+              quarter: play.quarter,
+              routeType: play.routeType,
+              dropSeverity: play.dropSeverity,
+              dropReason: play.dropReason,
+              throwAccuracy: play.throwAccuracy,
+            });
+          }
+        });
       });
-    });
 
-    // Analyze drop patterns
-    const severityCounts = {};
-    const reasonCounts = {};
-    const routeCounts = {};
+      // Analyze drop patterns
+      const severityCounts = {};
+      const reasonCounts = {};
+      const routeCounts = {};
 
-    drops.forEach((drop) => {
-      // Count by severity
-      severityCounts[drop.dropSeverity] =
-        (severityCounts[drop.dropSeverity] || 0) + 1;
+      drops.forEach((drop) => {
+        severityCounts[drop.dropSeverity] = (severityCounts[drop.dropSeverity] || 0) + 1;
+        reasonCounts[drop.dropReason] = (reasonCounts[drop.dropReason] || 0) + 1;
+        routeCounts[drop.routeType] = (routeCounts[drop.routeType] || 0) + 1;
+      });
 
-      // Count by reason
-      reasonCounts[drop.dropReason] = (reasonCounts[drop.dropReason] || 0) + 1;
-
-      // Count by route
-      routeCounts[drop.routeType] = (routeCounts[drop.routeType] || 0) + 1;
-    });
-
-    return {
-      totalDrops: drops.length,
-      drops: drops,
-      bySeverity: severityCounts,
-      byReason: reasonCounts,
-      byRoute: routeCounts,
-      mostCommonReason: this.getMostCommon(reasonCounts),
-      mostCommonRoute: this.getMostCommon(routeCounts),
-    };
+      return {
+        totalDrops: drops.length,
+        drops: drops,
+        bySeverity: severityCounts,
+        byReason: reasonCounts,
+        byRoute: routeCounts,
+        mostCommonReason: this.getMostCommon(reasonCounts),
+        mostCommonRoute: this.getMostCommon(routeCounts),
+      };
+    } catch (error) {
+      logger.error("[GameStatsService] Error analyzing drops:", error);
+      return { totalDrops: 0, drops: [] };
+    }
   }
 
   /**
-   * Get flag pull analysis for a defender
+   * Get flag pull analysis for a defender from Supabase
    * @param {string} playerId - Player ID (defender)
-   * @returns {Object} Flag pull analysis
+   * @returns {Promise<Object>} Flag pull analysis
    */
-  getDefenderFlagPullAnalysis(playerId) {
-    const games = this.getAllGames({ forceSync: true });
-    if (!Array.isArray(games)) {
-      logger.warn(
-        "getAllGames() did not return an array in getDefenderFlagPullAnalysis",
-      );
-      return { successRate: 0, attempts: [] };
-    }
-    const attempts = [];
+  async getDefenderFlagPullAnalysis(playerId) {
+    try {
+      const games = await this.getAllGames();
+      const attempts = [];
 
-    games.forEach((game) => {
-      if (!game.plays) {
-        return;
-      }
+      games.forEach((game) => {
+        if (!game.plays) return;
 
-      game.plays.forEach((play) => {
-        if (play.defenderId === playerId && play.playType === "flag_pull") {
-          attempts.push({
-            gameId: game.gameId,
-            gameDate: game.gameDate,
-            opponent: game.opponentName,
-            playNumber: play.playNumber,
-            quarter: play.quarter,
-            isSuccessful: play.isSuccessful,
-            missReason: play.missReason,
-          });
+        game.plays.forEach((play) => {
+          if (play.defenderId === playerId && play.playType === "flag_pull") {
+            attempts.push({
+              gameId: game.gameId,
+              gameDate: game.gameDate,
+              opponent: game.opponentName,
+              playNumber: play.playNumber,
+              quarter: play.quarter,
+              isSuccessful: play.isSuccessful,
+              missReason: play.missReason,
+            });
+          }
+        });
+      });
+
+      const successful = attempts.filter((a) => a.isSuccessful).length;
+      const missed = attempts.filter((a) => !a.isSuccessful).length;
+
+      const missReasons = {};
+      attempts.forEach((attempt) => {
+        if (!attempt.isSuccessful && attempt.missReason) {
+          missReasons[attempt.missReason] = (missReasons[attempt.missReason] || 0) + 1;
         }
       });
-    });
 
-    const successful = attempts.filter((a) => a.isSuccessful).length;
-    const missed = attempts.filter((a) => !a.isSuccessful).length;
-
-    // Analyze miss reasons
-    const missReasons = {};
-    attempts.forEach((attempt) => {
-      if (!attempt.isSuccessful && attempt.missReason) {
-        missReasons[attempt.missReason] =
-          (missReasons[attempt.missReason] || 0) + 1;
-      }
-    });
-
-    return {
-      totalAttempts: attempts.length,
-      successful: successful,
-      missed: missed,
-      successRate:
-        attempts.length > 0
-          ? ((successful / attempts.length) * 100).toFixed(1)
-          : 0,
-      attempts: attempts,
-      missReasons: missReasons,
-      mostCommonMissReason: this.getMostCommon(missReasons),
-    };
+      return {
+        totalAttempts: attempts.length,
+        successful: successful,
+        missed: missed,
+        successRate: attempts.length > 0 ? ((successful / attempts.length) * 100).toFixed(1) : 0,
+        attempts: attempts,
+        missReasons: missReasons,
+        mostCommonMissReason: this.getMostCommon(missReasons),
+      };
+    } catch (error) {
+      logger.error("[GameStatsService] Error analyzing flag pulls:", error);
+      return { totalAttempts: 0, attempts: [] };
+    }
   }
 
   /**
-   * Get QB accuracy analysis
+   * Get QB accuracy analysis from Supabase
    * @param {string} playerId - Player ID (QB)
-   * @returns {Object} QB accuracy analysis
+   * @returns {Promise<Object>} QB accuracy analysis
    */
-  getQBAccuracyAnalysis(playerId) {
-    const games = this.getAllGames({ forceSync: true });
-    if (!Array.isArray(games)) {
-      logger.warn(
-        "getAllGames() did not return an array in getPlayerThrowAnalysis",
-      );
+  async getQBAccuracyAnalysis(playerId) {
+    try {
+      const games = await this.getAllGames();
+      const throws = [];
+
+      games.forEach((game) => {
+        if (!game.plays) return;
+
+        game.plays.forEach((play) => {
+          if (play.quarterbackId === playerId && play.playType === "pass") {
+            throws.push({
+              gameId: game.gameId,
+              gameDate: game.gameDate,
+              opponent: game.opponentName,
+              playNumber: play.playNumber,
+              quarter: play.quarter,
+              routeType: play.routeType,
+              outcome: play.outcome,
+              throwAccuracy: play.throwAccuracy,
+              isDrop: play.isDrop,
+            });
+          }
+        });
+      });
+
+      const byRoute = {};
+      throws.forEach((t) => {
+        if (!byRoute[t.routeType]) {
+          byRoute[t.routeType] = {
+            attempts: 0,
+            completions: 0,
+            incompletions: 0,
+            drops: 0,
+            badThrows: 0,
+          };
+        }
+
+        byRoute[t.routeType].attempts++;
+        if (t.outcome === "completion") byRoute[t.routeType].completions++;
+        else byRoute[t.routeType].incompletions++;
+        if (t.isDrop) byRoute[t.routeType].drops++;
+        if (t.throwAccuracy === "bad" || t.throwAccuracy === "terrible") {
+          byRoute[t.routeType].badThrows++;
+        }
+      });
+
+      Object.keys(byRoute).forEach((route) => {
+        const data = byRoute[route];
+        if (data.attempts > 0) {
+          data.completionPercentage = ((data.completions / data.attempts) * 100).toFixed(1);
+          data.badThrowRate = ((data.badThrows / data.attempts) * 100).toFixed(1);
+        }
+      });
+
+      return {
+        totalThrows: throws.length,
+        throws: throws,
+        byRoute: byRoute,
+      };
+    } catch (error) {
+      logger.error("[GameStatsService] Error analyzing QB accuracy:", error);
       return { totalThrows: 0, throws: [] };
     }
-    const throws = [];
-
-    games.forEach((game) => {
-      if (!game.plays) {
-        return;
-      }
-
-      game.plays.forEach((play) => {
-        if (play.quarterbackId === playerId && play.playType === "pass") {
-          throws.push({
-            gameId: game.gameId,
-            gameDate: game.gameDate,
-            opponent: game.opponentName,
-            playNumber: play.playNumber,
-            quarter: play.quarter,
-            routeType: play.routeType,
-            outcome: play.outcome,
-            throwAccuracy: play.throwAccuracy,
-            isDrop: play.isDrop,
-          });
-        }
-      });
-    });
-
-    // Analyze by route type
-    const byRoute = {};
-    throws.forEach((t) => {
-      if (!byRoute[t.routeType]) {
-        byRoute[t.routeType] = {
-          attempts: 0,
-          completions: 0,
-          incompletions: 0,
-          drops: 0,
-          badThrows: 0,
-        };
-      }
-
-      byRoute[t.routeType].attempts++;
-      if (t.outcome === "completion") {
-        byRoute[t.routeType].completions++;
-      }
-      if (t.outcome !== "completion") {
-        byRoute[t.routeType].incompletions++;
-      }
-      if (t.isDrop) {
-        byRoute[t.routeType].drops++;
-      }
-      if (t.throwAccuracy === "bad" || t.throwAccuracy === "terrible") {
-        byRoute[t.routeType].badThrows++;
-      }
-    });
-
-    // Calculate completion % by route
-    Object.keys(byRoute).forEach((route) => {
-      const data = byRoute[route];
-      if (data.attempts > 0) {
-        data.completionPercentage = (
-          (data.completions / data.attempts) *
-          100
-        ).toFixed(1);
-        data.badThrowRate = ((data.badThrows / data.attempts) * 100).toFixed(1);
-      }
-    });
-
-    return {
-      totalThrows: throws.length,
-      throws: throws,
-      byRoute: byRoute,
-    };
   }
 
   /**
-   * Get team statistics for a game
+   * Get team statistics for a game from Supabase
    * @param {string} gameId - Game ID
-   * @returns {Object} Team statistics
+   * @returns {Promise<Object|null>} Team statistics
    */
-  getTeamStats(gameId) {
-    const game = this.getGame(gameId);
+  async getTeamStats(gameId) {
+    try {
+      const game = await this.getGame(gameId);
+      if (!game || !game.plays) return null;
 
-    if (!game || !game.plays) {
-      return null;
-    }
+      const stats = {
+        totalPlays: game.plays.length,
+        passAttempts: 0,
+        completions: 0,
+        incompletions: 0,
+        drops: 0,
+        interceptions: 0,
+        rushingAttempts: 0,
+        totalYards: 0,
+        flagPullAttempts: 0,
+        flagPulls: 0,
+      };
 
-    const stats = {
-      totalPlays: game.plays.length,
-      passAttempts: 0,
-      completions: 0,
-      incompletions: 0,
-      drops: 0,
-      interceptions: 0,
-      rushingAttempts: 0,
-      totalYards: 0,
-      flagPullAttempts: 0,
-      flagPulls: 0,
-    };
+      game.plays.forEach((play) => {
+        if (play.playType === "pass") {
+          stats.passAttempts++;
+          if (play.outcome === "completion") stats.completions++;
+          else stats.incompletions++;
+          if (play.isDrop) stats.drops++;
+          if (play.outcome === "interception") stats.interceptions++;
+        } else if (play.playType === "run") {
+          stats.rushingAttempts++;
+          stats.totalYards += play.yardsGained || 0;
+        } else if (play.playType === "flag_pull") {
+          stats.flagPullAttempts++;
+          if (play.isSuccessful) stats.flagPulls++;
+        }
+      });
 
-    game.plays.forEach((play) => {
-      if (play.playType === "pass") {
-        stats.passAttempts++;
-        if (play.outcome === "completion") {
-          stats.completions++;
-        } else {
-          stats.incompletions++;
-        }
-        if (play.isDrop) {
-          stats.drops++;
-        }
-        if (play.outcome === "interception") {
-          stats.interceptions++;
-        }
-      } else if (play.playType === "run") {
-        stats.rushingAttempts++;
-        stats.totalYards += play.yardsGained || 0;
-      } else if (play.playType === "flag_pull") {
-        stats.flagPullAttempts++;
-        if (play.isSuccessful) {
-          stats.flagPulls++;
-        }
-      }
-    });
-
-    // Calculate percentages using validated calculation service
-    if (stats.passAttempts > 0) {
-      try {
-        const completionResult =
-          statisticsCalculationService.calculateCompletionPercentage(
-            stats.completions,
-            stats.passAttempts,
-          );
+      // Calculate percentages using validated calculation service
+      if (stats.passAttempts > 0) {
+        const completionResult = statisticsCalculationService.calculateCompletionPercentage(
+          stats.completions,
+          stats.passAttempts,
+        );
         stats.completionPercentage = completionResult.percentage.toFixed(1);
-      } catch (error) {
-        logger.warn("Error calculating completion percentage:", error);
-        stats.completionPercentage = "0.0";
-      }
 
-      try {
         const dropRateResult = statisticsCalculationService.calculateDropRate(
           stats.drops,
           stats.passAttempts,
@@ -830,30 +496,22 @@ class GameStatsService {
         stats.dropRate = dropRateResult.rate.toFixed(1);
         stats.dropRateSeverity = dropRateResult.severity;
         stats.dropRateRecommendation = dropRateResult.recommendation;
-      } catch (error) {
-        logger.warn("Error calculating drop rate:", error);
-        stats.dropRate = "0.0";
       }
-    }
 
-    if (stats.flagPullAttempts > 0) {
-      try {
-        const flagPullResult =
-          statisticsCalculationService.calculateFlagPullSuccessRate(
-            stats.flagPulls,
-            stats.flagPullAttempts,
-          );
+      if (stats.flagPullAttempts > 0) {
+        const flagPullResult = statisticsCalculationService.calculateFlagPullSuccessRate(
+          stats.flagPulls,
+          stats.flagPullAttempts,
+        );
         stats.flagPullSuccessRate = flagPullResult.rate.toFixed(1);
-        stats.flagPullConfidence95 = flagPullResult.confidence95;
-        stats.flagPullSampleSizeAdequate = flagPullResult.sampleSizeAdequate;
         stats.defensiveGrade = flagPullResult.defensiveGrade;
-      } catch (error) {
-        logger.warn("Error calculating flag pull success rate:", error);
-        stats.flagPullSuccessRate = "0.0";
       }
-    }
 
-    return stats;
+      return stats;
+    } catch (error) {
+      logger.error("[GameStatsService] Error calculating team stats:", error);
+      return null;
+    }
   }
 
   /**

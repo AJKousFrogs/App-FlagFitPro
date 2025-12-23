@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { useStandardReducer } from "../hooks/useReducer";
+import { authManager } from "../auth-manager.js";
+import { logger } from "../logger.js";
 
 // Action types
 const AUTH_ACTIONS = {
@@ -23,7 +25,7 @@ const initialState = {
   user: null,
   token: null,
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true, // Start with loading while we check auth
   error: null,
 };
 
@@ -55,7 +57,18 @@ const authReducer = (state, action) => {
       return {
         ...state,
         user: action.payload.user,
+        token: action.payload.token,
         isAuthenticated: true,
+        isLoading: false,
+        error: null,
+      };
+
+    case AUTH_ACTIONS.CHECK_AUTH_FAILURE:
+      return {
+        ...state,
+        user: null,
+        token: null,
+        isAuthenticated: false,
         isLoading: false,
         error: null,
       };
@@ -84,41 +97,27 @@ export const AuthProvider = ({ children }) => {
     authReducer,
   );
 
-  // Token refresh mechanism
+  // Synchronize state with AuthManager changes
   useEffect(() => {
-    let refreshInterval;
-
-    const setupTokenRefresh = () => {
-      // Refresh token every 20 hours (assuming 24h expiry)
-      const REFRESH_INTERVAL = 20 * 60 * 60 * 1000; // 20 hours in ms
-
-      refreshInterval = setInterval(async () => {
-        if (state.isAuthenticated && state.token) {
-          try {
-            const { authService } = await import("../services/auth.service");
-            const refreshedData = await authService.refreshToken(state.token);
-            if (refreshedData) {
-              actions.loginSuccess(refreshedData);
-            }
-          } catch (error) {
-            console.error("Token refresh failed:", error);
-            // If refresh fails, log out the user
-            actions.logout();
-          }
-        }
-      }, REFRESH_INTERVAL);
+    const handleLogin = (user) => {
+      actions.loginSuccess({ 
+        user, 
+        token: authManager.getToken() 
+      });
     };
 
-    if (state.isAuthenticated) {
-      setupTokenRefresh();
-    }
+    const handleLogout = () => {
+      actions.logout();
+    };
+
+    authManager.onLogin(handleLogin);
+    authManager.onLogout(handleLogout);
 
     return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
-      }
+      // AuthManager doesn't currently support removing callbacks, 
+      // but in a real app you'd want to handle this.
     };
-  }, [state.isAuthenticated, state.token, actions]);
+  }, [actions]);
 
   // Check authentication status on mount
   useEffect(() => {
@@ -127,13 +126,16 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         actions.checkAuthStart();
-        const { authService } = await import("../services/auth.service");
-        const user = await authService.getCurrentUser();
+        
+        // Wait for AuthManager to initialize and check session
+        await authManager.waitForInit();
+        const isAuthenticated = await authManager.checkAuthentication();
+        const user = authManager.getCurrentUser();
+        const token = authManager.getToken();
 
-        // Only update state if component is still mounted
         if (isMounted) {
-          if (user) {
-            actions.checkAuthSuccess({ user });
+          if (isAuthenticated && user) {
+            actions.checkAuthSuccess({ user, token });
           } else {
             actions.checkAuthFailure("No authenticated user found");
           }
@@ -147,7 +149,6 @@ export const AuthProvider = ({ children }) => {
 
     checkAuth();
 
-    // Cleanup function to prevent state updates after unmount
     return () => {
       isMounted = false;
     };
@@ -155,26 +156,17 @@ export const AuthProvider = ({ children }) => {
 
   // Login function
   const login = React.useCallback(
-    async (credentials) => {
+    async (email, password) => {
       try {
-        console.log("AuthContext: Starting login process");
         actions.loginStart();
-        const { authService } = await import("../services/auth.service");
-        const result = await authService.login(credentials);
-        console.log(
-          "AuthContext: Login service returned result, calling loginSuccess",
-        );
-        actions.loginSuccess(result);
-        console.log(
-          "AuthContext: LoginSuccess called, new auth state should be:",
-          {
-            isAuthenticated: true,
-            user: result.user?.email,
-          },
-        );
-        return result;
+        const result = await authManager.login(email, password);
+        if (result.success) {
+          // State is updated via handleLogin callback in useEffect
+          return result;
+        } else {
+          throw new Error(result.error || "Login failed");
+        }
       } catch (error) {
-        console.error("AuthContext: Login failed:", error.message);
         actions.loginFailure(error.message);
         throw error;
       }
@@ -187,10 +179,14 @@ export const AuthProvider = ({ children }) => {
     async (userData) => {
       try {
         actions.registerStart();
-        const { authService } = await import("../services/auth.service");
-        const result = await authService.register(userData);
-        actions.registerSuccess(result);
-        return result;
+        const result = await authManager.register(userData);
+        if (result.success) {
+          // If registration auto-logs in, state is updated via handleLogin
+          // If not, we stay logged out
+          return result;
+        } else {
+          throw new Error(result.error || "Registration failed");
+        }
       } catch (error) {
         actions.registerFailure(error.message);
         throw error;
@@ -202,58 +198,58 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = React.useCallback(async () => {
     try {
-      const { authService } = await import("../services/auth.service");
-      await authService.logout();
-      actions.logout();
+      await authManager.logout();
+      // State is updated via handleLogout callback in useEffect
     } catch (error) {
-      console.error("Logout error:", error);
-      // Still clear local state even if server logout fails
+      logger.error("Logout error:", error);
       actions.logout();
     }
-  }, [actions]); // Add actions dependency
+  }, [actions]);
 
   // Update profile function
   const updateProfile = React.useCallback(
     async (profileData) => {
       try {
         actions.updateProfileStart();
-        const { authService } = await import("../services/auth.service");
-        const result = await authService.updateProfile(profileData);
-        actions.updateProfileSuccess(result);
-        return result;
+        const result = await authManager.updateProfile(profileData);
+        if (result.success) {
+          actions.updateProfileSuccess(result);
+          return result;
+        } else {
+          throw new Error(result.error || "Profile update failed");
+        }
       } catch (error) {
         actions.updateProfileFailure(error.message);
         throw error;
       }
     },
     [actions],
-  ); // Add actions dependency
+  );
 
   // Clear error function
   const clearError = React.useCallback(() => {
     actions.clearError();
-  }, [actions]); // Add actions dependency
+  }, [actions]);
 
-  const value = React.useMemo(() => {
-    console.log("AuthContext: Current state update:", {
-      isAuthenticated: state.isAuthenticated,
-      isLoading: state.isLoading,
-      hasUser: !!state.user,
-      userEmail: state.user?.email,
-      error: state.error,
-    });
-
-    return {
-      ...state,
-      login,
-      register,
-      logout,
-      updateProfile,
-      clearError,
-    };
-  }, [state, login, register, logout, updateProfile, clearError]);
+  const value = React.useMemo(() => ({
+    ...state,
+    login,
+    register,
+    logout,
+    updateProfile,
+    clearError,
+  }), [state, login, register, logout, updateProfile, clearError]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+// Custom hook to use auth context
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };
 
 // Custom hook to use auth context
