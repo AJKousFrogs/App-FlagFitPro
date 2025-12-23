@@ -99,9 +99,7 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
                 <div>
                   <div class="font-semibold">{{ selectedFile()?.name }}</div>
                   <div class="text-sm text-text-secondary">
-                    {{
-                      (selectedFile()?.size || 0) / 1024 | number: "1.0-0"
-                    }}
+                    {{ (selectedFile()?.size || 0) / 1024 | number: "1.0-0" }}
                     KB
                   </div>
                 </div>

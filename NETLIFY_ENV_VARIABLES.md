@@ -193,6 +193,7 @@ SENDGRID_API_KEY=SG.xxxxx...
    - Should see: `✅ Supabase credentials loaded`
 
 3. **Test an Endpoint:**
+
    ```bash
    curl https://your-site.netlify.app/api/health
    ```

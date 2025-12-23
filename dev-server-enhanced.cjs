@@ -71,11 +71,9 @@ app.all("/.netlify/functions/:functionName", async (req, res) => {
     const functionModule = require(functionPath);
 
     if (!functionModule.handler) {
-      res
-        .status(500)
-        .json({
-          error: `Function '${functionName}' does not export a handler`,
-        });
+      res.status(500).json({
+        error: `Function '${functionName}' does not export a handler`,
+      });
       return;
     }
 

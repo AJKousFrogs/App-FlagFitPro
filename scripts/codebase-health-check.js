@@ -119,13 +119,11 @@ class CodebaseHealthCheck {
             if (!this.functions.has(funcName)) {
               this.functions.set(funcName, []);
             }
-            this.functions
-              .get(funcName)
-              .push({
-                file: filename,
-                type: fileType,
-                line: this.getLineNumber(content, match),
-              });
+            this.functions.get(funcName).push({
+              file: filename,
+              type: fileType,
+              line: this.getLineNumber(content, match),
+            });
           }
         });
       }
