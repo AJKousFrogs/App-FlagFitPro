@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Apply RLS Policies for users and implementation_steps tables
--- Run this script in your Neon DB / Supabase SQL Editor to fix linter errors
+-- Run this script in your Supabase SQL Editor to fix linter errors
 -- ============================================================================
 --
 -- UPGRADES:

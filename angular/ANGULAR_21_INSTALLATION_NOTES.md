@@ -6,34 +6,6 @@ The following packages were successfully installed:
 
 - `@angular/youtube-player@^21.0.0` - Official Angular YouTube player component
 
-## ⚠️ Angular Fire Compatibility Issue
-
-**Angular Fire (@angular/fire) is NOT installed** due to compatibility:
-
-- Angular Fire version 18.0.1 requires Angular 18
-- Current Angular version: 21.0.3
-- **Status**: Waiting for Angular Fire release compatible with Angular 21
-
-### Workaround Options
-
-1. **Use Firebase SDK directly** (recommended for now):
-
-   ```bash
-   npm install firebase
-   ```
-
-   Then use Firebase SDK directly without Angular Fire wrapper.
-
-2. **Wait for Angular Fire update**: Check for updates:
-
-   ```bash
-   npm view @angular/fire versions
-   ```
-
-3. **Use Supabase** (already installed):
-   - The project already uses Supabase (`@supabase/supabase-js`)
-   - This is a Firebase alternative and is fully compatible
-
 ## 📦 Installed Packages
 
 All Angular 21 core packages are installed and compatible:
@@ -76,14 +48,12 @@ Two YouTube player components are available:
    import { YoutubePlayerOfficialComponent } from "@app/shared/components/youtube-player/youtube-player-official.component";
    ```
 
-3. **For Firebase** (when needed):
-   - Option A: Use Firebase SDK directly
-   - Option B: Wait for Angular Fire Angular 21 compatibility
-   - Option C: Continue using Supabase (recommended)
+3. **Use Supabase** (recommended):
+   - The project uses Supabase (`@supabase/supabase-js`)
+   - Fully compatible with Angular 21
 
 ## 📝 Notes
 
-- Installation used `--legacy-peer-deps` flag due to Angular Fire compatibility issue
-- All other dependencies installed successfully
+- All dependencies installed successfully
 - No vulnerabilities found
 - Application is ready to use with Angular 21 features

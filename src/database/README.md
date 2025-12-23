@@ -11,13 +11,6 @@ The application uses **Supabase** for all database operations:
 - **Configuration**: See `src/js/config/supabase-config.js`
 - **Client Setup**: See `src/js/services/supabase-client.js`
 
-## Legacy Files
-
-The old `connection.js` file (which supported Neon DB and PocketBase) has been archived to:
-`scripts/archive/legacy-neon-scripts/database-connection-manager.js`
-
-It is no longer used in the application.
-
 ## Using Supabase
 
 ```javascript

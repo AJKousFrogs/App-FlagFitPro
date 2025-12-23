@@ -24,24 +24,14 @@
 
 - ✅ Changed "Neon Database" to "Supabase Database" in health check services
 
-### 2. Legacy Scripts Removed/Archived
+### 2. Legacy Scripts Removed
 
-#### Removed (One-time Migration Scripts)
+#### Removed
 
 - `scripts/migrate-neon-to-supabase.js` - Migration completed, no longer needed
 - `scripts/create-supabase-schema.js` - Schema generation script
 - `scripts/create-supabase-schema-fixed.js` - Fixed schema generation script
-
-#### Archived (Potentially Useful but Outdated)
-
-Moved to `scripts/archive/legacy-neon-scripts/`:
-
-- `seedNFLPlayerDatabase.js` - NFL player comparison data (uses Neon client)
-- `seedEliteSprintTrainingDatabase.js` - Elite sprint training workouts (uses Neon client)
-- `seedCompletePlayerSystem.js` - Player archetypes data (uses Neon client)
-- `database-health-check.js` - Database health checker (uses Neon client)
-
-**Note**: These archived scripts contain useful data but use `@neondatabase/serverless`. They can be updated to use Supabase if needed in the future.
+- Legacy Neon DB and PocketBase scripts - Deleted completely to avoid confusion
 
 ### 3. Documentation Updated
 
@@ -105,15 +95,6 @@ The project now only references:
 
 ---
 
-## 📁 Archive Location
-
-Legacy scripts with useful data but outdated tech:
-
-- `scripts/archive/legacy-neon-scripts/`
-- Includes README explaining how to update them to Supabase if needed
-
----
-
 ## ✅ Verification
 
 All active configuration files, scripts, and documentation now only reference:
@@ -123,18 +104,7 @@ All active configuration files, scripts, and documentation now only reference:
 - Node.js
 - Current tech stack
 
-No references to Neon DB or PocketBase remain in active development files.
-
----
-
-## 🔄 Future Considerations
-
-If you need to use archived seed scripts:
-
-1. Update them to use Supabase client instead of Neon
-2. Replace `neon()` calls with `createClient()` from `@supabase/supabase-js`
-3. Move them back to `scripts/` if needed
-4. Add them to `package.json` scripts if you want regular use
+No references to Neon DB, PocketBase, or Firebase remain in the codebase.
 
 ---
 

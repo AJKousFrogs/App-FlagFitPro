@@ -1,6 +1,0 @@
--- Data for table: training_analytics
--- Generated: 2025-12-01T20:59:18.416Z
-
-INSERT INTO training_analytics (id, user_id, session_id, training_type, duration_minutes, exercises_completed, difficulty_level, performance_score, goals_achieved, personal_best, improvement_percentage, weather_conditions, location_type, equipment_used, created_at) VALUES (1, 'user_123', NULL, 'agility', 30, 8, NULL, '85.50', 0, FALSE, NULL, NULL, NULL, NULL, '2025-07-31T20:09:56.176Z');
-INSERT INTO training_analytics (id, user_id, session_id, training_type, duration_minutes, exercises_completed, difficulty_level, performance_score, goals_achieved, personal_best, improvement_percentage, weather_conditions, location_type, equipment_used, created_at) VALUES (2, 'user_456', NULL, 'passing', 25, 6, NULL, '92.30', 0, FALSE, NULL, NULL, NULL, NULL, '2025-07-31T20:09:56.176Z');
-INSERT INTO training_analytics (id, user_id, session_id, training_type, duration_minutes, exercises_completed, difficulty_level, performance_score, goals_achieved, personal_best, improvement_percentage, weather_conditions, location_type, equipment_used, created_at) VALUES (3, 'user_789', NULL, 'catching', 20, 5, NULL, '78.90', 0, FALSE, NULL, NULL, NULL, NULL, '2025-07-31T20:09:56.176Z');

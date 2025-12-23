@@ -2,7 +2,7 @@
   "name": "flagfit-pro-fresh-start",
   "version": "1.0.0",
   "type": "module",
-  "description": "FlagFit Pro - Angular 19 + PrimeNG training platform (Primary: Angular 19 + PrimeNG, Legacy: vanilla HTML/CSS/JS)",
+  "description": "FlagFit Pro - Angular 21 + PrimeNG training platform (Primary: Angular 21 + PrimeNG, Legacy: vanilla HTML/CSS/JS)",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",

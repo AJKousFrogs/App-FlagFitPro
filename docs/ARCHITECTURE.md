@@ -202,8 +202,7 @@ A comprehensive flag football management platform that prioritizes **player safe
     "nodejs": "Runtime environment"
   },
   "file_handling": {
-    "supabase_storage": "Supabase Storage",
-    "firebase_storage": "^11.10.0 (optional)"
+    "supabase_storage": "Supabase Storage"
   }
 }
 ```
@@ -223,10 +222,6 @@ A comprehensive flag football management platform that prioritizes **player safe
   "communication": {
     "nodemailer": "^7.0.11",
     "emailjs": "EmailJS integration (optional)"
-  },
-  "firebase": {
-    "@angular/fire": "^21.0.0-rc.0",
-    "firebase": "^11.10.0"
   }
 }
 ```
@@ -241,7 +236,6 @@ A comprehensive flag football management platform that prioritizes **player safe
     "webcam": "WebRTC API integration"
   },
   "analytics": {
-    "@angular/fire/analytics": "Firebase Analytics",
     "custom_analytics": "Custom tracking service"
   },
   "performance": {

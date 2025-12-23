@@ -10,7 +10,7 @@
 -- PREREQUISITES:
 -- - Supabase Auth schema must be initialized
 -- - This script requires direct access to auth.users table
--- - For Neon DB, ensure Supabase Auth is properly configured
+-- - For Supabase, ensure Supabase Auth is properly configured
 --
 -- USAGE:
 -- Run this script after schema.sql to create test accounts

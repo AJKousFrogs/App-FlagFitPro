@@ -3,7 +3,7 @@
 -- Required for Netlify Functions auth flow
 -- ============================================================================
 -- This script creates core authentication tables with RLS policies
--- Run this script in your Neon DB / Supabase SQL Editor
+-- Run this script in your Supabase SQL Editor
 -- ============================================================================
 
 -- ============================================================================

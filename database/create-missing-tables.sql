@@ -3,7 +3,7 @@
 -- ============================================================================
 -- This script creates the tables that are referenced in the API routes
 -- Includes RLS policies for security
--- Run this script in your Neon DB / Supabase SQL Editor
+-- Run this script in your Supabase SQL Editor
 -- ============================================================================
 
 -- Team Chemistry Table

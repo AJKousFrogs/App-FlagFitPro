@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Apply RLS Policies for missing tables
--- Run this script in your Neon DB / Supabase SQL Editor to fix linter errors
+-- Run this script in your Supabase SQL Editor to fix linter errors
 -- ============================================================================
 --
 -- This script addresses the following linter errors:

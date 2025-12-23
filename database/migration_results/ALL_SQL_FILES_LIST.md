@@ -127,13 +127,12 @@
     - **Status**: Needs to be run
 
 30. ✅ `database/migrations/046_fix_acwr_baseline_checks_supabase.sql`
-    - Fix ACWR calculation with baseline checks (Supabase version)
+    - Fix ACWR calculation with baseline checks
     - **Status**: Needs to be run
-    - **Note**: Use `_supabase.sql` version for Supabase
 
-31. ⚠️ `database/migrations/046_fix_acwr_baseline_checks.sql`
-    - Fix ACWR calculation (Neon DB version)
-    - **Status**: Skip - use Supabase version instead
+31. ✅ `database/migrations/046_fix_acwr_baseline_checks.sql`
+    - Fix ACWR calculation
+    - **Status**: Needs to be run
 
 32. ✅ `database/migrations/create-injuries-table.sql`
     - Injuries table creation
@@ -243,9 +242,7 @@ supabase db push --file database/migrations/001_base_tables.sql
 
 1. **Run in Order**: Migrations should be run in numerical order (001, 025, 026, etc.)
 
-2. **Supabase vs Neon**:
-   - Use `*_supabase.sql` files for Supabase (uses `auth.users`)
-   - Regular files may use `users` table (Neon DB format)
+2. **Database**: Standard migrations use the `users` table.
 
 3. **Idempotent**: Most migrations are idempotent (safe to run multiple times)
 

@@ -37,5 +37,4 @@ Migrations should be run in numerical order:
 ## Notes
 
 - All migrations are idempotent (safe to run multiple times)
-- Use `*_supabase.sql` versions for Supabase (uses `auth.users`)
-- Use regular versions for Neon DB (uses `users`)
+- Standard migrations use the `users` table

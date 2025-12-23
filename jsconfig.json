@@ -15,5 +15,5 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*", "routes/**/*", "scripts/**/*", "*.js", "*.html"],
-  "exclude": ["node_modules", "dist", ".netlify", "drizzle", "database", "docs"]
+  "exclude": ["node_modules", "dist", ".netlify", "database", "docs"]
 }

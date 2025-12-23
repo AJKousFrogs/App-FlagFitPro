@@ -193,53 +193,6 @@ export class MyComponent {
 
 ---
 
-### 8. **Angular Fire** ✅
-
-**File**: `angular/src/app/core/config/firebase.config.ts`
-
-**New Configuration**: Created Firebase configuration provider for Angular 21
-
-**Features**:
-
-- Modular Firebase imports
-- Support for Auth, Firestore, Storage, Functions, Analytics
-- Environment-based configuration
-- Type-safe providers
-
-**Usage in app.config.ts**:
-
-```typescript
-import { provideFirebase } from "./core/config/firebase.config";
-import { environment } from "../environments/environment";
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    ...provideFirebase(environment.firebase),
-    // ... other providers
-  ],
-};
-```
-
-**Dependencies Added**:
-
-- `@angular/fire@^18.0.1`
-- `firebase@^11.0.1`
-
-**Note**: To use Firebase, add your configuration to `environment.ts`:
-
-```typescript
-export const environment = {
-  firebase: {
-    apiKey: "your-api-key",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project-id",
-    // ... other config
-  },
-};
-```
-
----
-
 ### 9. **Tailwind CSS** ✅
 
 **Status**: Already compatible with Angular 21
@@ -299,8 +252,6 @@ export const environment = {
 
 ```json
 {
-  "@angular/fire": "^18.0.1",
-  "firebase": "^11.0.1",
   "ngx-youtube-player": "^18.0.0"
 }
 ```
@@ -325,16 +276,12 @@ export const environment = {
    npm install
    ```
 
-2. **Configure Firebase** (if using):
-   - Add Firebase config to `src/environments/environment.ts`
-   - Update `app.config.ts` to include Firebase providers
-
-3. **Test Components**:
+2. **Test Components**:
    - Test drag-and-drop component
    - Test YouTube player component
    - Test signal form example
 
-4. **Update Existing Components** (optional):
+3. **Update Existing Components** (optional):
    - Consider migrating more directives to use signal inputs/outputs
    - Consider using signal-based forms where appropriate
 
@@ -345,7 +292,6 @@ export const environment = {
 - [Angular 21 Release Notes](https://github.com/angular/angular/releases/tag/21.0.0)
 - [Angular Signals Guide](https://angular.dev/guide/signals)
 - [Angular CDK Drag-Drop](https://angular.dev/guide/drag-drop)
-- [Angular Fire Documentation](https://firebase.google.com/docs/web/setup)
 - [YouTube IFrame API](https://developers.google.com/youtube/iframe_api_reference)
 
 ---
@@ -359,7 +305,6 @@ export const environment = {
 - [x] Drag and drop component created
 - [x] Dependency injection verified (using inject())
 - [x] No NgModules found (standalone components only)
-- [x] Angular Fire configuration created
 - [x] Tailwind CSS verified compatible
 - [x] YouTube player component created
 - [x] Package.json updated with new dependencies

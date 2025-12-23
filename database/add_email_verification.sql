@@ -2,7 +2,7 @@
 -- Add Email Verification Support to Users Table
 -- ============================================================================
 -- This migration adds email verification columns and helper functions
--- Run this script in your Neon DB / Supabase SQL Editor
+-- Run this script in your Supabase SQL Editor
 -- ============================================================================
 
 -- Add email verification columns to users table

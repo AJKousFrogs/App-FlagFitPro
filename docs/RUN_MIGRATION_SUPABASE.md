@@ -1,8 +1,6 @@
 # Running Migration 046 on Supabase
 
-**Issue**: Migration was accidentally run on Neon DB instead of Supabase.
-
-**Solution**: Run the migration on Supabase using one of these methods:
+Run the migration on Supabase using one of these methods:
 
 ---
 
@@ -17,7 +15,7 @@
 7. Click **Run** (or press Cmd+Enter)
 8. Wait for completion
 
-**Note**: The migration has been fixed to use `users` table instead of `auth.users` for Neon DB compatibility, but it will work fine on Supabase too.
+**Note**: The migration has been fixed to use `users` table instead of `auth.users` for standard Supabase setups.
 
 ---
 
@@ -75,15 +73,9 @@ AND column_name = 'baseline_days';
 
 ---
 
-## Important Note
-
-The migration was already run on Neon DB, but since you're using Supabase as your primary database, you need to run it on Supabase as well. The migration is idempotent (safe to run multiple times), so running it again won't cause issues.
-
----
-
 ## What Was Fixed in the Migration
 
-1. Changed `auth.users` → `users` (for Neon compatibility, but works on Supabase too)
+1. Changed `auth.users` → `users` (compatible with standard Supabase setups)
 2. Fixed `current_date` variable name conflict → `calc_date`
 3. Added `workout_logs` table creation if it doesn't exist
 4. Added `load_monitoring` table creation if it doesn't exist
