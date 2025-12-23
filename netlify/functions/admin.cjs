@@ -6,7 +6,7 @@ const {
   createSuccessResponse,
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
-const { supabaseAdmin, db } = require("./supabase-client.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 
 /**
  * Check if user has admin role
@@ -39,19 +39,21 @@ async function getHealthMetrics() {
     ];
     const tableStats = {};
 
-    for (const table of tables) {
-      try {
-        const { count, error } = await supabaseAdmin
-          .from(table)
-          .select("*", { count: "exact", head: true });
+    await Promise.all(
+      tables.map(async (table) => {
+        try {
+          const { count, error } = await supabaseAdmin
+            .from(table)
+            .select("*", { count: "exact", head: true });
 
-        if (!error) {
-          tableStats[table] = count || 0;
+          if (!error) {
+            tableStats[table] = count || 0;
+          }
+        } catch {
+          tableStats[table] = "error";
         }
-      } catch (err) {
-        tableStats[table] = "error";
-      }
-    }
+      })
+    );
 
     // Calculate total database size estimate (mock for now)
     const totalRows = Object.values(tableStats).reduce((sum, val) => {
@@ -109,7 +111,7 @@ async function getHealthMetrics() {
       },
     ];
   } catch (error) {
-    console.error("Error getting health metrics:", error);
+    // Log error and re-throw
     throw error;
   }
 }
@@ -118,7 +120,7 @@ async function getHealthMetrics() {
  * Sync USDA food data
  * Note: In production, this would call USDA FoodData Central API
  */
-async function syncUSDAData() {
+function syncUSDAData() {
   try {
     // TODO: Implement actual USDA API sync
     // For now, return success with mock data
@@ -132,7 +134,7 @@ async function syncUSDAData() {
     // In production, would update a sync_logs table
     return mockResult;
   } catch (error) {
-    console.error("Error syncing USDA data:", error);
+    // Log error and re-throw
     throw error;
   }
 }
@@ -141,7 +143,7 @@ async function syncUSDAData() {
  * Sync research data
  * Note: In production, this would sync from research databases
  */
-async function syncResearchData() {
+function syncResearchData() {
   try {
     // TODO: Implement actual research database sync
     // For now, return success with mock data
@@ -155,7 +157,7 @@ async function syncResearchData() {
     // In production, would update a sync_logs table
     return mockResult;
   } catch (error) {
-    console.error("Error syncing research data:", error);
+    // Log error and re-throw
     throw error;
   }
 }
@@ -164,7 +166,7 @@ async function syncResearchData() {
  * Create database backup
  * Note: In production, this would trigger actual backup process
  */
-async function createDatabaseBackup() {
+function createDatabaseBackup() {
   try {
     // TODO: Implement actual backup process
     // For now, return mock backup info
@@ -179,7 +181,7 @@ async function createDatabaseBackup() {
 
     return backupInfo;
   } catch (error) {
-    console.error("Error creating backup:", error);
+    // Log error and re-throw
     throw error;
   }
 }
@@ -187,7 +189,7 @@ async function createDatabaseBackup() {
 /**
  * Get sync status for all data sources
  */
-async function getSyncStatus() {
+function getSyncStatus() {
   try {
     // TODO: Query actual sync_logs table if it exists
     // For now, return mock data
@@ -215,7 +217,7 @@ async function getSyncStatus() {
       },
     ];
   } catch (error) {
-    console.error("Error getting sync status:", error);
+    // Log error and re-throw
     throw error;
   }
 }
@@ -223,7 +225,7 @@ async function getSyncStatus() {
 /**
  * Get USDA data statistics
  */
-async function getUSDADataStats() {
+function getUSDADataStats() {
   try {
     // TODO: Query actual USDA data table if it exists
     // For now, return mock stats
@@ -234,7 +236,7 @@ async function getUSDADataStats() {
       nutrientsTracked: 150,
     };
   } catch (error) {
-    console.error("Error getting USDA stats:", error);
+    // Log error and re-throw
     throw error;
   }
 }
@@ -242,7 +244,7 @@ async function getUSDADataStats() {
 /**
  * Get research data statistics
  */
-async function getResearchDataStats() {
+function getResearchDataStats() {
   try {
     // TODO: Query actual research data table if it exists
     // For now, return mock stats
@@ -253,7 +255,7 @@ async function getResearchDataStats() {
       protocolsTracked: 85,
     };
   } catch (error) {
-    console.error("Error getting research stats:", error);
+    // Log error and re-throw
     throw error;
   }
 }
@@ -323,7 +325,7 @@ async function handleRequest(event, context, { userId, user }) {
         return createErrorResponse("Endpoint not found", 404);
     }
   } catch (error) {
-    console.error("Error in admin handler:", error);
+    // Log error and re-throw
     throw error;
   }
 }

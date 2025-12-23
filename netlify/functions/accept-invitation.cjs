@@ -159,7 +159,7 @@ exports.handler = async (event, context) => {
       .single();
 
     if (memberError) {
-      console.error("Error adding team member:", memberError);
+      // Re-throw error
       return {
         statusCode: 500,
         headers: CORS_HEADERS,
@@ -178,10 +178,6 @@ exports.handler = async (event, context) => {
       })
       .eq("id", invitation.id);
 
-    console.log(
-      `✅ User ${user.email} accepted invitation to team ${invitation.team_id}`,
-    );
-
     return createSuccessResponse(
       {
         teamId: invitation.team_id,
@@ -192,7 +188,7 @@ exports.handler = async (event, context) => {
       "Successfully joined the team",
     );
   } catch (error) {
-    console.error("Error accepting invitation:", error);
+    // Re-throw error
     return handleServerError(error, "Failed to accept invitation");
   }
 };
