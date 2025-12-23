@@ -54,8 +54,6 @@
     "type-check": "cd angular && npm run type-check",
     "start:api": "node server.js",
     "health:check": "node scripts/comprehensive-health-check.js",
-    "build": "cd angular && npm run build",
-    "build:production": "cd angular && npm run build",
     "clean": "rm -rf dist coverage .playwright angular/dist",
     "clean:all": "rm -rf dist coverage .playwright angular/dist node_modules/.cache",
     "deploy": "./deploy-to-netlify.sh",
