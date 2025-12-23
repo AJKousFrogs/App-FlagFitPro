@@ -59,24 +59,26 @@ Chain-of-thought reasoning for complex sports decisions.
 
 ### Tech Stack
 
-- **Frontend**: React 18 + Vite + TypeScript
-- **Database**: Supabase PostgreSQL
-- **UI**: Radix UI + Tailwind CSS + Ant Design
-- **State**: Zustand + React Query
-- **Testing**: Vitest + Testing Library
+- **Frontend**: Angular 21 + PrimeNG 21 + TypeScript
+- **Database**: Supabase PostgreSQL (ONLY database - no NEON DB, no PocketBase)
+- **UI**: PrimeNG 21 Components + SCSS + Design Tokens
+- **State**: Angular Signals + RxJS
+- **Testing**: Angular Testing Utilities + Vitest + Playwright E2E
 - **Optimization**: DatabaseConnectionManager (93% memory reduction)
 - **Data Science**: Evidence-based research integration (156 studies, 3,847 participants)
 - **Health Monitoring**: 99/100 codebase health score with automated monitoring
 
 ### Key Features
 
+- **Angular 21 Application**: Modern standalone components with Signals
+- **PrimeNG 21 UI**: Professional component library with comprehensive theming
 - AI Coaching System with MCP integration (87.4% prediction accuracy)
 - Comprehensive nutrition tracking with USDA integration
 - Recovery monitoring and recommendations
 - Performance analytics with predictive insights (78% injury prevention rate)
 - Training schedule management
 - Player leaderboards and community features
-- Real-time streaming analytics pipeline (GPS/wearable ready)
+- Real-time streaming analytics pipeline (GPS/wearable ready) via Supabase Realtime
 - Evidence-based training recommendations with 2024-2025 research
 - Flag football-specific optimization (73% agility focus)
 
@@ -141,24 +143,28 @@ npm run mcp:logs
 ## File Structure
 
 ```
-src/
-├── components/           # Reusable React components
-│   ├── AICoachMessage.jsx                    # Enhanced with MCP reasoning
-│   ├── NutritionPerformanceAnalytics.jsx     # Uses Context7 research
-│   ├── InjuryRiskAssessment.jsx              # Sequential thinking integration
-│   └── AdvancedAnalyticsDashboard.jsx        # Research-backed analytics
-├── services/            # API and business logic
-│   ├── AICoachService.js                     # MCP-enhanced coaching
-│   ├── NutritionService.js                   # Context7 nutrition research
-│   ├── RecoveryService.js                    # Evidence-based protocols
-│   ├── AdvancedPredictionEngine.js           # ML models with 87.4% accuracy
-│   ├── DataScienceModels.js                  # Comprehensive analytics engine
-│   ├── DatabaseConnectionManager.js          # Optimized connection pooling
-│   └── EvidenceBasedRecommendationEngine.js  # Research integration
-├── utils/               # Helper functions and utilities
-│   └── CommonFunctions.js                    # Consolidated utility functions
-├── pages/               # Main application pages
-└── hooks/               # Custom React hooks
+angular/src/app/
+├── core/                         # Core Angular services, guards, interceptors
+│   ├── services/
+│   │   ├── supabase.service.ts               # Supabase client service
+│   │   ├── auth.service.ts                   # Authentication service
+│   │   ├── ai.service.ts                     # MCP-enhanced coaching
+│   │   ├── nutrition.service.ts              # Context7 nutrition research
+│   │   └── performance-data.service.ts       # Analytics engine
+│   ├── guards/
+│   └── interceptors/
+├── shared/                       # Shared Angular components
+│   └── components/
+│       ├── header/
+│       ├── sidebar/
+│       └── layout/
+└── features/                     # Feature modules (standalone components)
+    ├── auth/                     # Login, Register, Reset Password
+    ├── dashboard/                # Main dashboard
+    ├── training/                 # Training management
+    ├── analytics/                # Performance analytics
+    ├── wellness/                 # Wellness tracking
+    └── ...                       # Other features
 
 database/
 ├── migrations/          # Database schema migrations (48 files)

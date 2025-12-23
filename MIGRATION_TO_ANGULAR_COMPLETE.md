@@ -252,7 +252,7 @@ All pages now have equivalent Angular components:
 - Legacy URLs will automatically redirect to Angular routes
 - No breaking changes for existing users
 - All Angular components were already built and tested
-- Database (NEON DB) configuration unchanged
+- Database (Supabase) configuration unchanged
 - API endpoints remain functional
 
 ---
@@ -262,6 +262,14 @@ All pages now have equivalent Angular components:
 **Your frontend is now 100% Angular 21!**
 
 No more React, no more vanilla HTML duplicates, no more maintenance headaches. Just pure, modern Angular 21 + PrimeNG 21 goodness.
+
+---
+
+**Your Stack:**
+- **Frontend:** Angular 21 + PrimeNG 21
+- **Database & Auth:** Supabase (ONLY)
+- **Deployment:** Netlify
+- **API:** Express.js + Netlify Functions
 
 ---
 

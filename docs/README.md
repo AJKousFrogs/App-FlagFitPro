@@ -16,9 +16,9 @@ The Flag Football Training App is a comprehensive training platform that combine
 
 ### 🛠 Technology Stack
 
-**PRIMARY STACK: Angular 21 + PrimeNG 21**
+**PRIMARY STACK: Angular 21 + PrimeNG 21 + Supabase**
 
-- **Frontend Framework**: Angular 21 (Standalone Components, Zoneless)
+- **Frontend Framework**: Angular 21 (Standalone Components, Signals, Zoneless)
 - **UI Component Library**: PrimeNG 21
 - **Icons**: PrimeIcons 7.0
 - **Charts**: Chart.js 4.5.1 (via PrimeNG Charts)
@@ -27,11 +27,12 @@ The Flag Football Training App is a comprehensive training platform that combine
 - **Styling**: SCSS with CSS Custom Properties (Design Tokens)
 - **Build**: Angular CLI 21.0.4 with ESBuild
 - **Backend**: Node.js + Express 5.2.1 + Netlify Functions
-- **Database**: Supabase PostgreSQL (managed PostgreSQL with RLS)
+- **Database**: Supabase PostgreSQL (ONLY database - managed PostgreSQL with RLS)
 - **Authentication**: Supabase Auth + JWT with Angular Guards & Interceptors
+- **Real-Time**: Supabase Realtime subscriptions (GPS/wearable ready)
+- **Storage**: Supabase Storage for file management
 - **AI/ML**: Transformer models, ensemble methods, LSTM networks
 - **Data Science**: Evidence-based research integration (156 studies)
-- **Real-Time**: Supabase Realtime subscriptions (GPS/wearable ready)
 - **Testing**: Angular Testing Utilities + Vitest + Playwright E2E
 - **Performance**: Advanced monitoring + code splitting + health checks
 - **Security**: AES-256 encryption + CSRF protection + input validation
@@ -74,11 +75,14 @@ The Flag Football Training App is a comprehensive training platform that combine
 
 <div align="center">
 
-| Frontend        | Backend | Database            | Analytics             |
-| --------------- | ------- | ------------------- | --------------------- |
-| Angular 21      | Node.js | Supabase PostgreSQL | AI/ML Models          |
-| PrimeNG 21      | Express | Supabase RLS        | Chart.js              |
-| Angular Signals | Netlify | Supabase Realtime   | Sports Analytics APIs |
+| Frontend        | Backend         | Database & Services | Analytics             |
+| --------------- | --------------- | ------------------- | --------------------- |
+| Angular 21      | Node.js         | Supabase PostgreSQL | AI/ML Models          |
+| PrimeNG 21      | Express         | Supabase Auth       | Chart.js              |
+| Angular Signals | Netlify Functions | Supabase Realtime | Sports Analytics APIs |
+| TypeScript      | JWT Auth        | Supabase Storage    | Evidence-Based Research |
+
+**NOTE**: Supabase is the ONLY database system. No NEON DB, no PocketBase, no other databases.
 
 </div>
 
@@ -373,10 +377,11 @@ Comprehensive documentation available in `/docs/`:
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 1. Follow the architecture guidelines in `CLAUDE.md`
-2. Use React functional components with hooks
-3. Use Supabase for all database operations (authentication, database, storage)
-4. Write tests for new features
-5. Follow the existing code style
+2. Use Angular 21 standalone components with Signals
+3. Use PrimeNG 21 components for UI
+4. Use Supabase for all database operations (authentication, database, storage, realtime)
+5. Write tests for new features (Angular Testing Utilities + Vitest)
+6. Follow the existing code style and Angular 21 best practices
 
 ## 📄 License
 

@@ -49,12 +49,15 @@ export class DashboardComponent {
 
 ### **Technology Stack**
 
-- **Framework**: Angular 19 (Standalone Components)
-- **UI Library**: PrimeNG 19+ with comprehensive component suite
+- **Framework**: Angular 21 (Standalone Components, Signals, Zoneless)
+- **UI Library**: PrimeNG 21 with comprehensive component suite
 - **Build System**: Angular CLI with ESBuild for fast builds
 - **Type Safety**: TypeScript with strict type checking
 - **State Management**: Angular Signals + RxJS for reactive state
-- **UI Components**: PrimeNG components + Custom design system
+- **Database**: Supabase PostgreSQL (ONLY database - no NEON, no PocketBase)
+- **Real-Time**: Supabase Realtime subscriptions
+- **Authentication**: Supabase Auth with JWT
+- **UI Components**: PrimeNG 21 components + Custom design system
 - **Styling**: SCSS with CSS Custom Properties (Design Tokens)
 - **Testing**: Angular Testing Utilities + Vitest + Playwright E2E
 
@@ -95,25 +98,29 @@ angular/src/app/
 // Supabase Realtime integration for live updates
 @Injectable({ providedIn: 'root' })
 export class RealtimeSyncService {
-  private supabase = inject(SupabaseClient);
+  private supabase = inject(SupabaseService);
 
   subscribeToUpdates(userId: string): Observable<any> {
-    return this.supabase
-      .channel(`athletes:${userId}`)
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'performance_metrics' },
-        (payload) => {
-          // Handle Olympic qualification updates
-          // Process team chemistry changes
-          // Update performance metrics
-        }
-      )
-      .subscribe();
+    return new Observable((observer) => {
+      const channel = this.supabase.getClient()
+        .channel(`athletes:${userId}`)
+        .on('postgres_changes',
+          { event: '*', schema: 'public', table: 'performance_metrics' },
+          (payload) => {
+            // Handle Olympic qualification updates
+            // Process team chemistry changes
+            // Update performance metrics
+            observer.next(payload);
+          }
+        )
+        .subscribe();
 
-    setSocket(ws);
-    return () => ws.close();
-  }, [userId]);
-};
+      return () => {
+        channel.unsubscribe();
+      };
+    });
+  }
+}
 ```
 
 #### **Performance Optimization**
@@ -497,9 +504,12 @@ testing:
 | --------------- | ------------------------------------------------------- | --------------------------- |
 | Node.js         | JavaScript ecosystem consistency, excellent performance | Python Django, Ruby Rails   |
 | Express         | Lightweight, flexible, extensive middleware ecosystem   | Fastify, Koa.js, NestJS     |
-| PostgreSQL      | ACID compliance, JSONB support, excellent performance   | MongoDB, MySQL, CockroachDB |
-| Supabase Client | Type-safe queries, excellent PostgreSQL integration     | Prisma, TypeORM, Sequelize  |
+| Supabase        | Complete backend platform with PostgreSQL, auth, realtime, storage | Firebase, AWS Amplify |
+| PostgreSQL      | ACID compliance, JSONB support, excellent performance (via Supabase) | MongoDB, MySQL, NEON DB |
+| Supabase Client | Type-safe queries, RLS, excellent PostgreSQL integration | Prisma, TypeORM, Sequelize  |
 | Redis           | High-performance caching and session management         | Memcached, DynamoDB         |
+
+**NOTE**: Supabase is the ONLY database platform used. No NEON DB, no PocketBase.
 
 ## Future Architecture Considerations
 

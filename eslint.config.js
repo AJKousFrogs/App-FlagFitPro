@@ -12,7 +12,6 @@ export default [
       "**/*.tsx",
       "supabase-types.ts",
       "Wireframes clean/**",
-      "**/*.jsx", // JSX files - handled separately or by React tooling
     ],
   },
   {

@@ -1,10 +1,10 @@
 # Development Best Practices
 
-## 🚀 Development Server Management
+## 🚀 Development Server Management (Angular 21)
 
 ### Keep Development Server Running
 
-- **DO**: Keep `npm run dev` running while coding
+- **DO**: Keep `npm run dev` running while coding (in the `angular/` directory)
 - **WHY**: Hot Module Replacement (HMR) provides instant feedback
 - **BENEFIT**: Changes appear immediately without manual refresh
 
@@ -16,11 +16,10 @@ Stop and restart the development server **only** when:
 
 - **Adding new dependencies** - `npm install` or `yarn add`
 - **Changing configuration files**:
-  - `vite.config.js`
+  - `angular.json`
   - `package.json`
   - `.env` files
   - `tsconfig.json`
-- **Installing new Vite plugins**
 - **Changing environment variables**
 
 #### ⚠️ **Sometimes Restart Required:**
@@ -32,11 +31,11 @@ Stop and restart the development server **only** when:
 
 #### ✅ **No Restart Needed:**
 
-- Editing React components (`.jsx`, `.tsx`)
-- Modifying CSS/SCSS files
-- Updating JavaScript/TypeScript files
+- Editing Angular components (`.ts`)
+- Modifying SCSS files
+- Updating TypeScript files
 - Adding new components or pages
-- Changing props or state
+- Changing component properties or state
 
 ## 📁 File System Best Practices
 
