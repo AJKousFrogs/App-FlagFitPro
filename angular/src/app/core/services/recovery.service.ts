@@ -1,7 +1,8 @@
-import { Injectable, inject } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Injectable, inject, computed } from "@angular/core";
+import { Observable, of, from } from "rxjs";
 import { map, catchError } from "rxjs/operators";
-import { ApiService, API_ENDPOINTS } from "./api.service";
+import { SupabaseService } from "./supabase.service";
+import { LoggerService } from "./logger.service";
 
 export interface RecoveryMetric {
   name: string;
@@ -64,76 +65,229 @@ export interface ResearchInsight {
   providedIn: "root",
 })
 export class RecoveryService {
-  private apiService = inject(ApiService);
+  private supabaseService = inject(SupabaseService);
+  private logger = inject(LoggerService);
+  
+  // Get current user ID reactively
+  private userId = computed(() => this.supabaseService.userId());
 
   /**
-   * Get current recovery metrics
+   * Get current recovery metrics from wellness data
+   * Calculates recovery score based on latest wellness entry
    */
   getRecoveryMetrics(): Observable<RecoveryData> {
-    return this.apiService
-      .get<RecoveryData>(API_ENDPOINTS.recovery.metrics)
-      .pipe(
-        map((response) => response.data || this.getMockRecoveryData()),
-        catchError(() => of(this.getMockRecoveryData())),
-      );
+    const userId = this.userId();
+    
+    if (!userId) {
+      this.logger.warn("[Recovery] No user logged in, using mock data");
+      return of(this.getMockRecoveryData());
+    }
+
+    return from(
+      (async () => {
+        // Get latest wellness entry
+        const { data, error } = await this.supabaseService.client
+          .from("wellness_entries")
+          .select("*")
+          .eq("athlete_id", userId)
+          .order("date", { ascending: false })
+          .limit(1)
+          .single();
+
+        if (error || !data) {
+          this.logger.warn("[Recovery] No wellness data, using mock");
+          return this.getMockRecoveryData();
+        }
+
+        // Calculate recovery metrics from wellness data
+        const sleepQuality = data.sleep_quality || 5;
+        const energyLevel = data.energy_level || 5;
+        const stressLevel = data.stress_level || 5;
+        const soreness = data.muscle_soreness || 5;
+
+        // Overall score (0-100)
+        const overallScore = Math.round(
+          ((sleepQuality + energyLevel + (10 - stressLevel) + (10 - soreness)) / 40) * 100
+        );
+
+        return {
+          overallScore,
+          metrics: [
+            {
+              name: "Sleep Quality",
+              value: sleepQuality,
+              unit: "/10",
+              percentage: sleepQuality * 10,
+              icon: "pi pi-moon",
+              color: sleepQuality >= 7 ? "#10c96b" : sleepQuality >= 5 ? "#f1c40f" : "#e74c3c",
+            },
+            {
+              name: "Energy Level",
+              value: energyLevel,
+              unit: "/10",
+              percentage: energyLevel * 10,
+              icon: "pi pi-bolt",
+              color: energyLevel >= 7 ? "#10c96b" : energyLevel >= 5 ? "#f1c40f" : "#e74c3c",
+            },
+            {
+              name: "Muscle Soreness",
+              value: soreness,
+              unit: "/10",
+              percentage: (10 - soreness) * 10, // Invert: lower soreness = better
+              icon: "pi pi-exclamation-circle",
+              color: soreness <= 3 ? "#10c96b" : soreness <= 6 ? "#f1c40f" : "#e74c3c",
+            },
+            {
+              name: "Stress Level",
+              value: stressLevel,
+              unit: "/10",
+              percentage: (10 - stressLevel) * 10, // Invert: lower stress = better
+              icon: "pi pi-info-circle",
+              color: stressLevel <= 3 ? "#10c96b" : stressLevel <= 6 ? "#f1c40f" : "#e74c3c",
+            },
+          ],
+        };
+      })(),
+    ).pipe(
+      catchError((error) => {
+        this.logger.error("[Recovery] Error fetching metrics:", error);
+        return of(this.getMockRecoveryData());
+      }),
+    );
   }
 
   /**
    * Get recommended recovery protocols based on current metrics
+   * Returns mock protocols for now (can be stored in database later)
    */
   getRecommendedProtocols(): Observable<RecoveryProtocol[]> {
-    return this.apiService
-      .get<RecoveryProtocol[]>(API_ENDPOINTS.recovery.protocols)
-      .pipe(
-        map((response) => response.data || []),
-        catchError(() => of(this.getMockProtocols())),
-      );
+    // For now, return mock protocols
+    // TODO: Store protocols in recovery_protocols table
+    return of(this.getMockProtocols());
   }
 
   /**
-   * Start a recovery session
+   * Start a recovery session and save to database
    */
   startRecoverySession(
     protocol: RecoveryProtocol,
   ): Observable<RecoverySession> {
-    return this.apiService
-      .post<RecoverySession>(API_ENDPOINTS.recovery.startSession, {
-        protocolId: protocol.id,
-      })
-      .pipe(
-        map((response) => {
-          const session = response.data || this.createMockSession(protocol);
-          return {
-            ...session,
-            startTime: new Date(session.startTime),
-          };
-        }),
-        catchError(() => of(this.createMockSession(protocol))),
-      );
+    const userId = this.userId();
+    
+    if (!userId) {
+      this.logger.error("[Recovery] Cannot start session: No user logged in");
+      return of(this.createMockSession(protocol));
+    }
+
+    return from(
+      (async () => {
+        const { data, error } = await this.supabaseService.client
+          .from("recovery_sessions")
+          .insert({
+            athlete_id: userId,
+            protocol_id: protocol.id,
+            protocol_name: protocol.name,
+            started_at: new Date().toISOString(),
+            duration_planned: protocol.duration,
+            status: "in_progress",
+          })
+          .select()
+          .single();
+
+        if (error) {
+          this.logger.error("[Recovery] Error starting session:", error);
+          throw error;
+        }
+
+        this.logger.success("[Recovery] Session started:", data.id);
+
+        return {
+          id: data.id,
+          protocol,
+          startTime: new Date(data.started_at),
+          duration: protocol.duration * 60,
+          progress: 0,
+          paused: false,
+        };
+      })(),
+    ).pipe(
+      catchError((error) => {
+        this.logger.error("[Recovery] Failed to start session:", error);
+        return of(this.createMockSession(protocol));
+      }),
+    );
   }
 
   /**
    * Complete current recovery session
    */
-  completeRecoverySession(): Observable<boolean> {
-    return this.apiService
-      .post<boolean>(API_ENDPOINTS.recovery.completeSession, {})
-      .pipe(
-        map((response) => response.success || false),
-        catchError(() => of(false)),
-      );
+  completeRecoverySession(sessionId: string): Observable<boolean> {
+    const userId = this.userId();
+    
+    if (!userId) {
+      this.logger.error("[Recovery] Cannot complete session: No user logged in");
+      return of(false);
+    }
+
+    return from(
+      this.supabaseService.client
+        .from("recovery_sessions")
+        .update({
+          status: "completed",
+          completed_at: new Date().toISOString(),
+        })
+        .eq("id", sessionId)
+        .eq("athlete_id", userId),
+    ).pipe(
+      map(({ error }) => {
+        if (error) {
+          this.logger.error("[Recovery] Error completing session:", error);
+          return false;
+        }
+        this.logger.success("[Recovery] Session completed:", sessionId);
+        return true;
+      }),
+      catchError((error) => {
+        this.logger.error("[Recovery] Failed to complete session:", error);
+        return of(false);
+      }),
+    );
   }
 
   /**
    * Stop current recovery session
    */
-  stopRecoverySession(): Observable<boolean> {
-    return this.apiService
-      .post<boolean>(API_ENDPOINTS.recovery.stopSession, {})
-      .pipe(
-        map((response) => response.success || false),
-        catchError(() => of(false)),
-      );
+  stopRecoverySession(sessionId: string): Observable<boolean> {
+    const userId = this.userId();
+    
+    if (!userId) {
+      this.logger.error("[Recovery] Cannot stop session: No user logged in");
+      return of(false);
+    }
+
+    return from(
+      this.supabaseService.client
+        .from("recovery_sessions")
+        .update({
+          status: "stopped",
+          stopped_at: new Date().toISOString(),
+        })
+        .eq("id", sessionId)
+        .eq("athlete_id", userId),
+    ).pipe(
+      map(({ error }) => {
+        if (error) {
+          this.logger.error("[Recovery] Error stopping session:", error);
+          return false;
+        }
+        this.logger.success("[Recovery] Session stopped:", sessionId);
+        return true;
+      }),
+      catchError((error) => {
+        this.logger.error("[Recovery] Failed to stop session:", error);
+        return of(false);
+      }),
+    );
   }
 
   /**

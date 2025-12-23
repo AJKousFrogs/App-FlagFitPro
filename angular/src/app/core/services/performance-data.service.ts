@@ -1,7 +1,8 @@
-import { Injectable, inject } from "@angular/core";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { ApiService, API_ENDPOINTS } from "./api.service";
+import { Injectable, inject, computed } from "@angular/core";
+import { Observable, from, of } from "rxjs";
+import { map, catchError } from "rxjs/operators";
+import { SupabaseService } from "./supabase.service";
+import { LoggerService } from "./logger.service";
 
 // Physical Measurements Interfaces
 export interface PhysicalMeasurement {
@@ -82,7 +83,11 @@ export interface TrendsData {
   providedIn: "root",
 })
 export class PerformanceDataService {
-  private apiService = inject(ApiService);
+  private supabaseService = inject(SupabaseService);
+  private logger = inject(LoggerService);
+  
+  // Get current user ID reactively
+  private userId = computed(() => this.supabaseService.userId());
 
   // Physical Measurements
   getMeasurements(
@@ -94,25 +99,126 @@ export class PerformanceDataService {
     summary: MeasurementsSummary;
     pagination: any;
   }> {
-    return this.apiService
-      .get(API_ENDPOINTS.performanceData.measurements, {
-        timeframe,
-        page,
-        limit,
-      })
-      .pipe(
-        map(
-          (response) =>
-            response.data || { data: [], summary: {}, pagination: {} },
-        ),
-      );
+    const userId = this.userId();
+    
+    if (!userId) {
+      this.logger.warn("[Performance] No user logged in");
+      return of({ data: [], summary: {}, pagination: {} });
+    }
+
+    const days = this.parseTimeframeToDays(timeframe);
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+
+    return from(
+      (async () => {
+        const { data, error } = await this.supabaseService.client
+          .from("physical_measurements")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("measured_at", cutoffDate.toISOString())
+          .order("measured_at", { ascending: false })
+          .range((page - 1) * limit, page * limit - 1);
+
+        if (error) {
+          this.logger.error("[Performance] Error fetching measurements:", error);
+          throw error;
+        }
+
+        const measurements: PhysicalMeasurement[] = (data || []).map((m: any) => ({
+          id: m.id,
+          userId: m.user_id,
+          weight: m.weight_kg,
+          height: m.height_cm,
+          bodyFat: m.body_fat_percentage,
+          muscleMass: m.muscle_mass_kg,
+          notes: m.notes,
+          timestamp: m.measured_at,
+        }));
+
+        const summary: MeasurementsSummary = {};
+        if (measurements.length > 0) {
+          summary.latest = measurements[0];
+          if (measurements.length > 1) {
+            const previous = measurements[1];
+            summary.changes = {
+              weight: `${(measurements[0].weight - previous.weight).toFixed(1)} kg`,
+              bodyFat: measurements[0].bodyFat && previous.bodyFat 
+                ? `${(measurements[0].bodyFat - previous.bodyFat).toFixed(1)}%`
+                : undefined,
+            };
+          }
+        }
+
+        return {
+          data: measurements,
+          summary,
+          pagination: { page, limit, total: data?.length || 0 },
+        };
+      })(),
+    ).pipe(
+      catchError((error) => {
+        this.logger.error("[Performance] Failed to fetch measurements:", error);
+        return of({ data: [], summary: {}, pagination: {} });
+      }),
+    );
   }
 
   logMeasurement(measurement: Partial<PhysicalMeasurement>): Observable<any> {
-    return this.apiService.post(
-      API_ENDPOINTS.performanceData.measurements,
-      measurement,
+    const userId = this.userId();
+    
+    if (!userId) {
+      this.logger.error("[Performance] Cannot log measurement: No user logged in");
+      return of({ success: false });
+    }
+
+    return from(
+      this.supabaseService.client
+        .from("physical_measurements")
+        .insert({
+          user_id: userId,
+          weight_kg: measurement.weight,
+          height_cm: measurement.height,
+          body_fat_percentage: measurement.bodyFat,
+          muscle_mass_kg: measurement.muscleMass,
+          notes: measurement.notes,
+          measured_at: measurement.timestamp || new Date().toISOString(),
+        })
+        .select()
+        .single(),
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          this.logger.error("[Performance] Error logging measurement:", error);
+          return { success: false, error };
+        }
+        this.logger.success("[Performance] Measurement logged:", data.id);
+        return { success: true, data };
+      }),
+      catchError((error) => {
+        this.logger.error("[Performance] Failed to log measurement:", error);
+        return of({ success: false, error: error.message });
+      }),
     );
+  }
+
+  /**
+   * Parse timeframe string to days
+   */
+  private parseTimeframeToDays(timeframe: string): number {
+    const match = timeframe.match(/^(\d+)([dmyw])$/);
+    if (!match) return 180; // Default 6 months
+    
+    const [, num, unit] = match;
+    const value = parseInt(num, 10);
+    
+    switch (unit) {
+      case "d": return value;
+      case "w": return value * 7;
+      case "m": return value * 30;
+      case "y": return value * 365;
+      default: return 180;
+    }
   }
 
   // Supplements
@@ -120,28 +226,100 @@ export class PerformanceDataService {
     data: Supplement[];
     compliance: SupplementCompliance;
   }> {
-    return this.apiService
-      .get(API_ENDPOINTS.performanceData.supplements, { timeframe })
-      .pipe(
-        map(
-          (response) =>
-            response.data || {
-              data: [],
-              compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 },
-            },
-        ),
-      );
+    const userId = this.userId();
+    
+    if (!userId) {
+      return of({ data: [], compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 } });
+    }
+
+    const days = this.parseTimeframeToDays(timeframe);
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+
+    return from(
+      (async () => {
+        const { data, error } = await this.supabaseService.client
+          .from("supplement_logs")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("date", cutoffDate.toISOString().split("T")[0])
+          .order("date", { ascending: false });
+
+        if (error) {
+          this.logger.error("[Performance] Error fetching supplements:", error);
+          throw error;
+        }
+
+        const supplements: Supplement[] = (data || []).map((s: any) => ({
+          id: s.id,
+          userId: s.user_id,
+          name: s.supplement_name,
+          dosage: s.dosage,
+          taken: s.taken,
+          date: s.date,
+          timeOfDay: s.time_of_day,
+          notes: s.notes,
+          timestamp: s.created_at,
+        }));
+
+        // Calculate compliance
+        const totalLogs = supplements.length;
+        const takenLogs = supplements.filter(s => s.taken).length;
+        const complianceRate = totalLogs > 0 ? Math.round((takenLogs / totalLogs) * 100) : 0;
+
+        return {
+          data: supplements,
+          compliance: {
+            complianceRate,
+            totalDays: days,
+            missedDays: totalLogs - takenLogs,
+          },
+        };
+      })(),
+    ).pipe(
+      catchError((error) => {
+        this.logger.error("[Performance] Failed to fetch supplements:", error);
+        return of({ data: [], compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 } });
+      }),
+    );
   }
 
   logSupplement(supplement: Partial<Supplement>): Observable<any> {
-    return this.apiService.post(API_ENDPOINTS.performanceData.supplements, {
-      name: supplement.name,
-      dosage: supplement.dosage,
-      taken: supplement.taken !== undefined ? supplement.taken : true,
-      date: supplement.date || new Date().toISOString().split("T")[0],
-      timeOfDay: supplement.timeOfDay,
-      notes: supplement.notes,
-    });
+    const userId = this.userId();
+    
+    if (!userId) {
+      this.logger.error("[Performance] Cannot log supplement: No user logged in");
+      return of({ success: false });
+    }
+
+    return from(
+      this.supabaseService.client
+        .from("supplement_logs")
+        .insert({
+          user_id: userId,
+          supplement_name: supplement.name,
+          dosage: supplement.dosage,
+          taken: supplement.taken !== undefined ? supplement.taken : true,
+          date: supplement.date || new Date().toISOString().split("T")[0],
+          time_of_day: supplement.timeOfDay,
+          notes: supplement.notes,
+        })
+        .select()
+        .single(),
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          this.logger.error("[Performance] Error logging supplement:", error);
+          return { success: false, error };
+        }
+        this.logger.success("[Performance] Supplement logged:", data.id);
+        return { success: true, data };
+      }),
+      catchError((error) => {
+        this.logger.error("[Performance] Failed to log supplement:", error);
+        return of({ success: false, error: error.message });
+      }),
+    );
   }
 
   // Performance Tests
@@ -154,55 +332,128 @@ export class PerformanceDataService {
     summary: any;
     pagination: any;
   }> {
-    const params: any = { timeframe };
-    if (testType) {
-      params.testType = testType;
+    const userId = this.userId();
+    
+    if (!userId) {
+      return of({ data: [], trends: {}, summary: {}, pagination: {} });
     }
 
-    return this.apiService
-      .get(API_ENDPOINTS.performanceData.performanceTests, params)
-      .pipe(
-        map(
-          (response) =>
-            response.data || {
-              data: [],
-              trends: {},
-              summary: {},
-              pagination: {},
-            },
-        ),
-      );
+    const days = this.parseTimeframeToDays(timeframe);
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+
+    return from(
+      (async () => {
+        let query = this.supabaseService.client
+          .from("performance_tests")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("test_date", cutoffDate.toISOString());
+
+        if (testType) {
+          query = query.eq("test_type", testType);
+        }
+
+        const { data, error } = await query.order("test_date", { ascending: false });
+
+        if (error) {
+          this.logger.error("[Performance] Error fetching tests:", error);
+          throw error;
+        }
+
+        const tests: PerformanceTest[] = (data || []).map((t: any) => ({
+          id: t.id,
+          userId: t.user_id,
+          testType: t.test_type,
+          result: t.result_value,
+          target: t.target_value,
+          timestamp: t.test_date,
+          conditions: t.conditions,
+        }));
+
+        // Calculate basic trends
+        const trends: any = {};
+        const summary: any = { totalTests: tests.length };
+
+        return {
+          data: tests,
+          trends,
+          summary,
+          pagination: { total: tests.length },
+        };
+      })(),
+    ).pipe(
+      catchError((error) => {
+        this.logger.error("[Performance] Failed to fetch tests:", error);
+        return of({ data: [], trends: {}, summary: {}, pagination: {} });
+      }),
+    );
   }
 
   logPerformanceTest(test: Partial<PerformanceTest>): Observable<any> {
-    return this.apiService.post(
-      API_ENDPOINTS.performanceData.performanceTests,
-      {
-        testType: test.testType,
-        result: test.result,
-        date: test.timestamp || new Date().toISOString(),
-        conditions: test.conditions || {},
-      },
+    const userId = this.userId();
+    
+    if (!userId) {
+      this.logger.error("[Performance] Cannot log test: No user logged in");
+      return of({ success: false });
+    }
+
+    return from(
+      this.supabaseService.client
+        .from("performance_tests")
+        .insert({
+          user_id: userId,
+          test_type: test.testType,
+          result_value: test.result,
+          target_value: test.target,
+          test_date: test.timestamp || new Date().toISOString(),
+          conditions: test.conditions || {},
+        })
+        .select()
+        .single(),
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          this.logger.error("[Performance] Error logging test:", error);
+          return { success: false, error };
+        }
+        this.logger.success("[Performance] Test logged:", data.id);
+        return { success: true, data };
+      }),
+      catchError((error) => {
+        this.logger.error("[Performance] Failed to log test:", error);
+        return of({ success: false, error: error.message });
+      }),
     );
   }
 
   // Trends Analysis
   getTrends(timeframe: string = "12m"): Observable<TrendsData> {
-    return this.apiService
-      .get<TrendsData>(API_ENDPOINTS.performanceData.trends, { timeframe })
-      .pipe(
-        map(
-          (response) =>
-            response.data || {
-              performance: {},
-              body_composition: { trend: "insufficient_data", changes: null },
-              wellness: { trend: "insufficient_data", trends: {} },
-              correlations: {},
-              insights: [],
-              recommendations: [],
-            },
-        ),
-      );
+    const userId = this.userId();
+    
+    if (!userId) {
+      return of({
+        performance: {},
+        body_composition: { trend: "insufficient_data", changes: null },
+        wellness: { trend: "insufficient_data", trends: {} },
+        correlations: {},
+        insights: [],
+        recommendations: [],
+      });
+    }
+
+    // This is a complex analysis that could be implemented as a Supabase function
+    // For now, return basic structure
+    this.logger.warn("[Performance] Trends analysis is simplified - consider implementing as DB function");
+    
+    return of({
+      performance: {},
+      body_composition: { trend: "insufficient_data", changes: null },
+      wellness: { trend: "insufficient_data", trends: {} },
+      correlations: {},
+      insights: ["Track more data to see trends"],
+      recommendations: ["Log workouts, wellness, and measurements regularly"],
+    });
   }
 
   // Data Export
@@ -210,10 +461,9 @@ export class PerformanceDataService {
     timeframe: string = "12m",
     format: "json" | "csv" = "json",
   ): Observable<any> {
-    return this.apiService.get(API_ENDPOINTS.performanceData.export, {
-      timeframe,
-      format,
-    });
+    this.logger.warn("[Performance] Export feature not yet implemented for Supabase");
+    // TODO: Implement data export by fetching all tables and formatting
+    return of({ success: false, message: "Export feature coming soon" });
   }
 
   // Utility Methods

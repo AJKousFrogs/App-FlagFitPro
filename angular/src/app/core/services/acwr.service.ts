@@ -30,7 +30,7 @@
  * @version 2.0.0 - Enhanced with evidence-based safeguards
  */
 
-import { Injectable, Signal, computed, signal, inject } from "@angular/core";
+import { Injectable, Signal, computed, signal, inject, effect } from "@angular/core";
 import {
   LoadMetrics,
   TrainingSession,
@@ -43,12 +43,20 @@ import {
   ToleranceDetection,
 } from "../models/acwr.models";
 import { EvidenceConfigService } from "./evidence-config.service";
+import { SupabaseService } from "./supabase.service";
+import { LoggerService } from "./logger.service";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 @Injectable({
   providedIn: "root",
 })
 export class AcwrService {
   private evidenceConfigService = inject(EvidenceConfigService);
+  private supabaseService = inject(SupabaseService);
+  private logger = inject(LoggerService);
+  
+  // Realtime subscription channel
+  private realtimeChannel: RealtimeChannel | null = null;
 
   /**
    * Convert evidence config to ACWRConfig format
@@ -110,6 +118,23 @@ export class AcwrService {
   private readonly historicalACWR = signal<
     Array<{ date: Date; ratio: number; chronic: number }>
   >([]);
+
+  constructor() {
+    // Auto-load and subscribe to workout logs when user logs in
+    effect(() => {
+      const userId = this.supabaseService.userId();
+      if (userId) {
+        this.logger.info("[ACWR] User authenticated, loading training data...");
+        this.setPlayer(userId);
+        this.loadPlayerSessions(userId);
+        this.subscribeToWorkoutLogs(userId);
+      } else {
+        this.logger.debug("[ACWR] No user authenticated");
+        this.unsubscribeFromWorkoutLogs();
+        this.clearSessions();
+      }
+    });
+  }
 
   /**
    * Calculate EWMA (Exponentially Weighted Moving Average)
@@ -880,5 +905,232 @@ export class AcwrService {
       shouldModify: modifications.length > 0,
       modifications,
     };
+  }
+
+  /**
+   * Load player training sessions from database
+   * Fetches workout logs for the last 35 days (chronic window + buffer)
+   */
+  private async loadPlayerSessions(userId: string): Promise<void> {
+    try {
+      const cfg = this.config();
+      const daysToLoad = cfg.chronicWindowDays + 7; // Extra buffer
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - daysToLoad);
+
+      this.logger.debug(`[ACWR] Loading ${daysToLoad} days of training data...`);
+
+      const { data: workoutLogs, error } = await this.supabaseService.client
+        .from("workout_logs")
+        .select(`
+          id,
+          player_id,
+          session_id,
+          completed_at,
+          rpe,
+          duration_minutes,
+          notes,
+          load_monitoring (
+            daily_load,
+            acute_load,
+            chronic_load,
+            acwr,
+            injury_risk_level
+          )
+        `)
+        .eq("player_id", userId)
+        .gte("completed_at", cutoffDate.toISOString())
+        .order("completed_at", { ascending: false });
+
+      if (error) {
+        this.logger.error("[ACWR] Error loading workout logs:", error);
+        return;
+      }
+
+      if (!workoutLogs || workoutLogs.length === 0) {
+        this.logger.info("[ACWR] No workout logs found for player");
+        return;
+      }
+
+      // Convert workout logs to TrainingSession format
+      const sessions: TrainingSession[] = workoutLogs.map((log: any) => ({
+        playerId: log.player_id,
+        date: new Date(log.completed_at),
+        sessionType: this.inferSessionType(log),
+        metrics: {
+          type: "internal",
+          internal: {
+            sessionRPE: log.rpe || 5,
+            duration: log.duration_minutes || 60,
+            workload: (log.rpe || 5) * (log.duration_minutes || 60),
+          },
+          calculatedLoad: (log.rpe || 5) * (log.duration_minutes || 60),
+        },
+        load: (log.rpe || 5) * (log.duration_minutes || 60),
+        notes: log.notes,
+        completed: true,
+        modifiedFromPlan: false,
+      }));
+
+      this.addSessions(sessions);
+      this.logger.success(`[ACWR] Loaded ${sessions.length} training sessions`);
+
+      // Load historical ACWR for tolerance detection
+      if (workoutLogs[0]?.load_monitoring) {
+        const history = workoutLogs
+          .filter((log: any) => log.load_monitoring?.acwr)
+          .map((log: any) => ({
+            date: new Date(log.completed_at),
+            ratio: log.load_monitoring.acwr,
+            chronic: log.load_monitoring.chronic_load,
+          }));
+        this.historicalACWR.set(history);
+      }
+    } catch (error) {
+      this.logger.error("[ACWR] Failed to load player sessions:", error);
+    }
+  }
+
+  /**
+   * Subscribe to realtime workout log updates
+   */
+  private subscribeToWorkoutLogs(userId: string): void {
+    if (this.realtimeChannel) {
+      this.logger.debug("[ACWR] Unsubscribing from previous channel");
+      this.unsubscribeFromWorkoutLogs();
+    }
+
+    this.logger.info(`[ACWR] Subscribing to realtime updates for player ${userId}`);
+
+    this.realtimeChannel = this.supabaseService.client
+      .channel(`workout_logs:${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "workout_logs",
+          filter: `player_id=eq.${userId}`,
+        },
+        (payload) => {
+          this.logger.info("[ACWR] New workout log received", payload.new);
+          const log = payload.new as any;
+
+          const session: TrainingSession = {
+            playerId: log.player_id,
+            date: new Date(log.completed_at),
+            sessionType: this.inferSessionType(log),
+            metrics: {
+              type: "internal",
+              internal: {
+                sessionRPE: log.rpe || 5,
+                duration: log.duration_minutes || 60,
+                workload: (log.rpe || 5) * (log.duration_minutes || 60),
+              },
+              calculatedLoad: (log.rpe || 5) * (log.duration_minutes || 60),
+            },
+            load: (log.rpe || 5) * (log.duration_minutes || 60),
+            notes: log.notes,
+            completed: true,
+            modifiedFromPlan: false,
+          };
+
+          this.addSession(session);
+          this.logger.success("[ACWR] Training session added from realtime update");
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "workout_logs",
+          filter: `player_id=eq.${userId}`,
+        },
+        (payload) => {
+          this.logger.info("[ACWR] Workout log updated", payload.new);
+          // Reload sessions to update calculations
+          this.loadPlayerSessions(userId);
+        },
+      )
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          this.logger.success("[ACWR] Realtime subscription active");
+        } else if (status === "CHANNEL_ERROR") {
+          this.logger.error("[ACWR] Realtime subscription error");
+        } else if (status === "CLOSED") {
+          this.logger.debug("[ACWR] Realtime subscription closed");
+        }
+      });
+  }
+
+  /**
+   * Unsubscribe from realtime updates
+   */
+  private unsubscribeFromWorkoutLogs(): void {
+    if (this.realtimeChannel) {
+      this.supabaseService.client.removeChannel(this.realtimeChannel);
+      this.realtimeChannel = null;
+      this.logger.debug("[ACWR] Unsubscribed from realtime updates");
+    }
+  }
+
+  /**
+   * Infer session type from workout log data
+   */
+  private inferSessionType(log: any): "game" | "sprint" | "technical" | "conditioning" | "strength" | "recovery" {
+    // Try to infer from notes or session_id
+    // For now, default to technical
+    const notes = (log.notes || "").toLowerCase();
+    
+    if (notes.includes("game") || notes.includes("match")) {
+      return "game";
+    } else if (notes.includes("sprint") || notes.includes("speed")) {
+      return "sprint";
+    } else if (notes.includes("strength") || notes.includes("gym") || notes.includes("weights")) {
+      return "strength";
+    } else if (notes.includes("conditioning") || notes.includes("cardio")) {
+      return "conditioning";
+    } else if (notes.includes("recovery") || notes.includes("rest")) {
+      return "recovery";
+    }
+    
+    return "technical";
+  }
+
+  /**
+   * Save ACWR data back to database (for analytics/reporting)
+   * Note: The database trigger already calculates ACWR, but this can be used
+   * for storing additional computed metrics or overrides
+   */
+  public async saveACWRToDatabase(userId: string): Promise<void> {
+    const acwrData = this.acwrData();
+    
+    if (acwrData.ratio === 0) {
+      this.logger.debug("[ACWR] Skipping save - insufficient data");
+      return;
+    }
+
+    try {
+      const { error } = await this.supabaseService.client
+        .from("load_monitoring")
+        .upsert({
+          player_id: userId,
+          date: new Date().toISOString().split("T")[0],
+          daily_load: Math.round(acwrData.acute), // Current day's load estimate
+          acute_load: acwrData.acute,
+          chronic_load: acwrData.chronic,
+          acwr: acwrData.ratio,
+          injury_risk_level: acwrData.riskZone.label,
+        });
+
+      if (error) {
+        this.logger.error("[ACWR] Error saving to database:", error);
+      } else {
+        this.logger.debug("[ACWR] Saved to database successfully");
+      }
+    } catch (error) {
+      this.logger.error("[ACWR] Failed to save ACWR data:", error);
+    }
   }
 }

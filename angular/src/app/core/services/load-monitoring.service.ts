@@ -5,14 +5,15 @@
  * - External load (GPS, wearables, distance, sprints)
  * - Internal load (sRPE, heart rate, wellness)
  * - Load calculations and aggregation
+ * - Database persistence to workout_logs table
  *
  * Integrates with ACWR service for injury prevention
  *
  * @author FlagFit Pro Team
- * @version 1.0.0
+ * @version 2.0.0 - Added database integration
  */
 
-import { Injectable, signal, computed, Signal } from "@angular/core";
+import { Injectable, signal, computed, Signal, inject } from "@angular/core";
 import {
   LoadMetrics,
   ExternalLoad,
@@ -22,11 +23,19 @@ import {
   SessionType,
   LoadCalculationOptions,
 } from "../models/acwr.models";
+import { SupabaseService } from "./supabase.service";
+import { LoggerService } from "./logger.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class LoadMonitoringService {
+  private supabaseService = inject(SupabaseService);
+  private logger = inject(LoggerService);
+  
+  // Get current user ID reactively
+  private userId = computed(() => this.supabaseService.userId());
+  
   // Current session being tracked
   private currentSession = signal<Partial<TrainingSession> | null>(null);
 
@@ -193,7 +202,7 @@ export class LoadMonitoringService {
   }
 
   /**
-   * Create a training session record
+   * Create a training session record and save to database
    *
    * @param playerId - Player ID
    * @param sessionType - Type of training
@@ -201,19 +210,19 @@ export class LoadMonitoringService {
    * @param external - Optional external load
    * @param wellness - Optional wellness data
    * @param notes - Optional session notes
-   * @returns Complete training session object
+   * @returns Complete training session object with database ID
    */
-  public createSession(
+  public async createSession(
     playerId: string,
     sessionType: SessionType,
     internal: InternalLoad,
     external?: ExternalLoad,
     wellness?: WellnessMetrics,
     notes?: string,
-  ): TrainingSession {
+  ): Promise<TrainingSession> {
     const metrics = this.calculateCombinedLoad(internal, external, wellness);
 
-    return {
+    const session: TrainingSession = {
       playerId,
       date: new Date(),
       sessionType,
@@ -223,32 +232,71 @@ export class LoadMonitoringService {
       completed: true,
       modifiedFromPlan: false,
     };
+
+    // Save to database
+    try {
+      const userId = this.userId();
+      if (!userId) {
+        this.logger.error("[LoadMonitoring] Cannot save session: No user logged in");
+        return session;
+      }
+
+      const { data, error } = await this.supabaseService.client
+        .from("workout_logs")
+        .insert({
+          player_id: playerId,
+          session_id: null, // Can be linked to training_sessions if available
+          completed_at: session.date.toISOString(),
+          rpe: internal.sessionRPE,
+          duration_minutes: internal.duration,
+          notes: notes || null,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        this.logger.error("[LoadMonitoring] Error saving workout log:", error);
+        throw error;
+      }
+
+      this.logger.success("[LoadMonitoring] Workout log saved:", data.id);
+      
+      // Note: Database trigger will automatically calculate ACWR in load_monitoring table
+      
+      return {
+        ...session,
+        id: data.id,
+      };
+    } catch (error) {
+      this.logger.error("[LoadMonitoring] Failed to save session:", error);
+      return session;
+    }
   }
 
   /**
-   * Quick session creation using sRPE only
+   * Quick session creation using sRPE only and save to database
    * Ideal for coaches who want simple input
    *
    * @param playerId - Player ID
    * @param sessionType - Training type
    * @param rpe - Rating 1-10
    * @param duration - Minutes
-   * @returns Training session
+   * @returns Training session with database ID
    *
    * @example
    * // Player did 100-minute technical session, rated 7/10
-   * createQuickSession('player123', 'technical', 7, 100)
-   * // Result: Load = 700 AU
+   * await createQuickSession('player123', 'technical', 7, 100)
+   * // Result: Load = 700 AU, saved to database
    */
-  public createQuickSession(
+  public async createQuickSession(
     playerId: string,
     sessionType: SessionType,
     rpe: number,
     duration: number,
     notes?: string,
-  ): TrainingSession {
+  ): Promise<TrainingSession> {
     const internal = this.calculateInternalLoad(rpe, duration);
-    return this.createSession(
+    return await this.createSession(
       playerId,
       sessionType,
       internal,

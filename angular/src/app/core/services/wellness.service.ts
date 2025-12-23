@@ -1,8 +1,9 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { Observable } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { Observable, from, of } from "rxjs";
+import { map, tap, catchError } from "rxjs/operators";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { ApiService, API_ENDPOINTS } from "./api.service";
+import { SupabaseService } from "./supabase.service";
+import { LoggerService } from "./logger.service";
 
 export interface WellnessData {
   id?: number;
@@ -46,7 +47,11 @@ export interface WellnessResponse {
   providedIn: "root",
 })
 export class WellnessService {
-  private apiService = inject(ApiService);
+  private supabaseService = inject(SupabaseService);
+  private logger = inject(LoggerService);
+  
+  // Get current user ID reactively
+  private userId = computed(() => this.supabaseService.userId());
 
   // UI State: Use signals instead of BehaviorSubject
   private readonly _wellnessData = signal<WellnessData[]>([]);
@@ -66,51 +71,205 @@ export class WellnessService {
   /**
    * Get wellness data for a specific timeframe
    * @param timeframe - Time range (e.g., '7d', '30d', '3m')
-   * Returns Observable for complex async work (API calls)
+   * Returns Observable using direct Supabase queries
    */
   getWellnessData(timeframe: string = "30d"): Observable<WellnessResponse> {
-    return this.apiService
-      .get<WellnessResponse>(API_ENDPOINTS.performanceData.wellness, {
-        timeframe,
-      })
-      .pipe(
-        map((response) => response.data || { success: false, data: [] }),
-        tap((wellnessResponse) => {
-          if (wellnessResponse.success && wellnessResponse.data) {
-            // Update signals (UI state) from async operation
-            this._wellnessData.set(wellnessResponse.data);
-            if (wellnessResponse.averages) {
-              this._averages.set(wellnessResponse.averages);
-            }
-          }
-        }),
-      );
+    const userId = this.userId();
+    
+    if (!userId) {
+      this.logger.warn("[Wellness] Cannot fetch data: No user logged in");
+      return of({ success: false, data: [] });
+    }
+
+    // Parse timeframe to days
+    const days = this.parseTimeframe(timeframe);
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+
+    return from(
+      (async () => {
+        const { data, error } = await this.supabaseService.client
+          .from("wellness_entries")
+          .select("*")
+          .eq("athlete_id", userId)
+          .gte("date", cutoffDate.toISOString().split("T")[0])
+          .order("date", { ascending: false });
+
+        if (error) {
+          this.logger.error("[Wellness] Error fetching data:", error);
+          throw error;
+        }
+
+        const wellnessData: WellnessData[] = (data || []).map((entry: any) => ({
+          id: entry.id,
+          userId: entry.athlete_id,
+          date: entry.date,
+          sleep: entry.sleep_quality,
+          energy: entry.energy_level,
+          stress: entry.stress_level,
+          soreness: entry.muscle_soreness,
+          motivation: entry.motivation_level,
+          mood: entry.mood,
+          hydration: entry.hydration_level,
+          notes: entry.notes,
+          timestamp: entry.created_at,
+        }));
+
+        // Calculate averages
+        const averages = this.calculateAverages(wellnessData);
+
+        // Update signals
+        this._wellnessData.set(wellnessData);
+        this._averages.set(averages);
+
+        return {
+          success: true,
+          data: wellnessData,
+          averages,
+        };
+      })(),
+    ).pipe(
+      catchError((error) => {
+        this.logger.error("[Wellness] Failed to fetch data:", error);
+        return of({ success: false, data: [] });
+      }),
+    );
+  }
+
+  /**
+   * Parse timeframe string to number of days
+   */
+  private parseTimeframe(timeframe: string): number {
+    const match = timeframe.match(/^(\d+)([dmyw])$/);
+    if (!match) return 30; // Default to 30 days
+
+    const [, num, unit] = match;
+    const value = parseInt(num, 10);
+
+    switch (unit) {
+      case "d":
+        return value;
+      case "w":
+        return value * 7;
+      case "m":
+        return value * 30;
+      case "y":
+        return value * 365;
+      default:
+        return 30;
+    }
+  }
+
+  /**
+   * Calculate averages from wellness data
+   */
+  private calculateAverages(data: WellnessData[]): WellnessAverages {
+    if (data.length === 0) {
+      return {};
+    }
+
+    const sums = {
+      sleep: 0,
+      energy: 0,
+      stress: 0,
+      soreness: 0,
+      motivation: 0,
+      mood: 0,
+      hydration: 0,
+    };
+    const counts = { ...sums };
+
+    data.forEach((entry) => {
+      if (entry.sleep !== undefined) {
+        sums.sleep += entry.sleep;
+        counts.sleep++;
+      }
+      if (entry.energy !== undefined) {
+        sums.energy += entry.energy;
+        counts.energy++;
+      }
+      if (entry.stress !== undefined) {
+        sums.stress += entry.stress;
+        counts.stress++;
+      }
+      if (entry.soreness !== undefined) {
+        sums.soreness += entry.soreness;
+        counts.soreness++;
+      }
+      if (entry.motivation !== undefined) {
+        sums.motivation += entry.motivation;
+        counts.motivation++;
+      }
+      if (entry.mood !== undefined) {
+        sums.mood += entry.mood;
+        counts.mood++;
+      }
+      if (entry.hydration !== undefined) {
+        sums.hydration += entry.hydration;
+        counts.hydration++;
+      }
+    });
+
+    return {
+      sleep: counts.sleep > 0 ? Math.round((sums.sleep / counts.sleep) * 10) / 10 : undefined,
+      energy: counts.energy > 0 ? Math.round((sums.energy / counts.energy) * 10) / 10 : undefined,
+      stress: counts.stress > 0 ? Math.round((sums.stress / counts.stress) * 10) / 10 : undefined,
+      soreness: counts.soreness > 0 ? Math.round((sums.soreness / counts.soreness) * 10) / 10 : undefined,
+      motivation: counts.motivation > 0 ? Math.round((sums.motivation / counts.motivation) * 10) / 10 : undefined,
+      mood: counts.mood > 0 ? Math.round((sums.mood / counts.mood) * 10) / 10 : undefined,
+      hydration: counts.hydration > 0 ? Math.round((sums.hydration / counts.hydration) * 10) / 10 : undefined,
+    };
   }
 
   /**
    * Log wellness entry for today or specific date
+   * Saves directly to Supabase wellness_entries table
    */
   logWellness(data: Partial<WellnessData>): Observable<any> {
+    const userId = this.userId();
+    
+    if (!userId) {
+      this.logger.error("[Wellness] Cannot log entry: No user logged in");
+      return of({ success: false, error: "Not authenticated" });
+    }
+
     const wellnessEntry = {
+      athlete_id: userId,
       date: data.date || new Date().toISOString().split("T")[0],
-      sleep: data.sleep,
-      energy: data.energy,
-      stress: data.stress,
-      soreness: data.soreness,
-      motivation: data.motivation,
+      sleep_quality: data.sleep,
+      energy_level: data.energy,
+      stress_level: data.stress,
+      muscle_soreness: data.soreness,
+      motivation_level: data.motivation,
       mood: data.mood,
-      hydration: data.hydration,
+      hydration_level: data.hydration,
       notes: data.notes,
     };
 
-    return this.apiService
-      .post(API_ENDPOINTS.performanceData.wellness, wellnessEntry)
-      .pipe(
-        tap(() => {
-          // Refresh wellness data after successful post
-          this.getWellnessData("30d").subscribe();
-        }),
-      );
+    return from(
+      this.supabaseService.client
+        .from("wellness_entries")
+        .insert(wellnessEntry)
+        .select()
+        .single(),
+    ).pipe(
+      map(({ data: insertedData, error }) => {
+        if (error) {
+          this.logger.error("[Wellness] Error logging entry:", error);
+          throw error;
+        }
+        this.logger.success("[Wellness] Entry logged:", insertedData.id);
+        return { success: true, data: insertedData };
+      }),
+      tap(() => {
+        // Refresh wellness data after successful post
+        this.getWellnessData("30d").subscribe();
+      }),
+      catchError((error) => {
+        this.logger.error("[Wellness] Failed to log entry:", error);
+        return of({ success: false, error: error.message });
+      }),
+    );
   }
 
   /**
