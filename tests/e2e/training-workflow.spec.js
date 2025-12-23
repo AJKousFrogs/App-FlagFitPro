@@ -136,9 +136,15 @@ test.describe("Training Workflow", () => {
     await page.click("#start-session-btn");
 
     // Complete all exercises quickly
+    // Need to use a while loop with await to check visibility status
+    // eslint-disable-next-line no-await-in-loop
     while (await page.locator("#next-exercise-btn").isVisible()) {
+      // eslint-disable-next-line no-await-in-loop
       await page.click("#complete-set-btn");
-      if (await page.locator("#next-exercise-btn").isVisible()) {
+      // eslint-disable-next-line no-await-in-loop
+      const stillVisible = await page.locator("#next-exercise-btn").isVisible();
+      if (stillVisible) {
+        // eslint-disable-next-line no-await-in-loop
         await page.click("#next-exercise-btn");
       }
     }

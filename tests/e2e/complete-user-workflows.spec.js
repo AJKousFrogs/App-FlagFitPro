@@ -109,12 +109,11 @@ test.describe("Complete User Workflows - End-to-End Tests", () => {
           }),
         });
       } else if (url.includes("/api/ai/coach/ask") && method === "POST") {
-        const requestData = JSON.parse(route.request().postData() || "{}");
         route.fulfill({
           status: 200,
           body: JSON.stringify({
             response: {
-              answer: `Based on your question "${requestData.question}", I recommend focusing on technique refinement and progressive overload.`,
+              answer: "Based on your question, I recommend focusing on technique refinement and progressive overload.",
               confidence: 0.92,
               recommendations: [
                 {

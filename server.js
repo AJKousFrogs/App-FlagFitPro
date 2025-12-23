@@ -174,7 +174,7 @@ app.get("/api/dashboard/overview", (req, res) => {
 });
 
 // Dashboard endpoint - API only (Angular handles the page)
-app.get("/dashboard", (req, res) => {
+app.get("/dashboard", (req, res, next) => {
   // Check if it's an API request (has Accept header for JSON)
   const acceptHeader = req.headers.accept || "";
   if (acceptHeader.includes("application/json")) {

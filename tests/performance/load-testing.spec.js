@@ -47,27 +47,33 @@ class PerformanceTestRunner {
 
       // Execute scenario requests
       for (const scenarioStep of scenario.scenarios) {
+        const requests = [];
         for (let i = 0; i < scenarioStep.weight; i++) {
           for (const request of scenarioStep.requests) {
-            try {
-              const requestStart = performance.now();
-              await this.makeRequest(request);
-              const requestEnd = performance.now();
+            requests.push((async () => {
+              try {
+                const requestStart = performance.now();
+                await this.makeRequest(request);
+                const requestEnd = performance.now();
 
-              userMetrics.requests.push({
-                endpoint: request,
-                responseTime: requestEnd - requestStart,
-                timestamp: requestEnd,
-              });
-            } catch (error) {
-              userMetrics.errors.push({
-                endpoint: request,
-                error: error.message,
-                timestamp: performance.now(),
-              });
-            }
+                userMetrics.requests.push({
+                  endpoint: request,
+                  responseTime: requestEnd - requestStart,
+                  timestamp: requestEnd,
+                });
+              } catch (error) {
+                userMetrics.errors.push({
+                  endpoint: request,
+                  error: error.message,
+                  timestamp: performance.now(),
+                });
+              }
+            })());
           }
         }
+        // Await all requests for this scenario step (needs sequential processing per scenario)
+        // eslint-disable-next-line no-await-in-loop
+        await Promise.all(requests);
       }
     } catch (error) {
       userMetrics.errors.push({
@@ -428,31 +434,41 @@ describe("Performance and Load Testing", () => {
       const userCounts = [100, 250, 500, 750, 1000];
       const results = [];
 
-      for (const userCount of userCounts) {
+      // Run tests sequentially but avoid await in direct loop
+      const runTest = async (userCount) => {
         const scenario = createLoadTestScenario(userCount, 60);
         scenario.acceptanceCriteria.averageResponseTime = 2000; // Very lenient
         scenario.acceptanceCriteria.errorRate = 10;
 
         try {
           const result = await performanceRunner.runLoadTest(scenario);
-          results.push({
+          return {
             userCount,
             avgResponseTime: result.responseTime.average,
             errorRate: result.summary.errorRate,
             throughput: result.summary.throughput,
             passed: result.acceptance.passed,
-          });
-
-          // Stop if error rate becomes too high
-          if (result.summary.errorRate > 15) {
-            break;
-          }
+          };
         } catch (error) {
-          results.push({
+          return {
             userCount,
             error: error.message,
             passed: false,
-          });
+          };
+        }
+      };
+
+      // Need to run tests sequentially to detect breaking point
+      for (const userCount of userCounts) {
+        // eslint-disable-next-line no-await-in-loop
+        const result = await runTest(userCount);
+        results.push(result);
+
+        // Stop if error rate becomes too high
+        if (result.errorRate && result.errorRate > 15) {
+          break;
+        }
+        if (!result.passed) {
           break;
         }
       }

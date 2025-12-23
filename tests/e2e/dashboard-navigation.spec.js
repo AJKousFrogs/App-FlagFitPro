@@ -135,12 +135,15 @@ test.describe("Dashboard Navigation and Core Features", () => {
     const activities = page.locator(".activity-item");
     const activityCount = await activities.count();
 
+    // Create promises array to avoid await in loop
+    const checkPromises = [];
     for (let i = 0; i < Math.min(activityCount, 3); i++) {
       const activity = activities.nth(i);
-      await expect(activity).toBeVisible();
-      await expect(activity.locator(".activity-type")).toBeVisible();
-      await expect(activity.locator(".activity-time")).toBeVisible();
+      checkPromises.push(expect(activity).toBeVisible());
+      checkPromises.push(expect(activity.locator(".activity-type")).toBeVisible());
+      checkPromises.push(expect(activity.locator(".activity-time")).toBeVisible());
     }
+    await Promise.all(checkPromises);
 
     // Test activity filtering
     await page.selectOption("#activity-filter", "training");
