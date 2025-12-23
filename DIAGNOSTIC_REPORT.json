@@ -1,0 +1,235 @@
+{
+  "timestamp": "2025-12-23T12:19:50.632Z",
+  "environment": "development",
+  "healthCheck": {
+    "timestamp": "2025-12-23T12:19:50.633Z",
+    "overallHealth": 83,
+    "categories": {
+      "dependencies": {
+        "score": 80,
+        "issues": [
+          "Missing critical dependency: react"
+        ],
+        "status": "good"
+      },
+      "tests": {
+        "score": 30,
+        "issues": [
+          "Tests failed to run or completed with errors"
+        ],
+        "status": "critical",
+        "metrics": {
+          "unit_files": 5,
+          "integration_files": 5,
+          "e2e_files": 5
+        }
+      },
+      "security": {
+        "score": 60,
+        "issues": [
+          "Debug/demo code found in: ./src/auth-manager.js"
+        ],
+        "status": "warning"
+      },
+      "codeQuality": {
+        "score": 93.33333333333333,
+        "issues": [],
+        "status": "good",
+        "metrics": {
+          "coreFiles": 4,
+          "documentation": 2,
+          "configuration": 2
+        }
+      },
+      "configuration": {
+        "score": 100,
+        "issues": [],
+        "status": "good"
+      },
+      "performance": {
+        "score": 87.5,
+        "issues": [],
+        "status": "good",
+        "metrics": {
+          "nodeModulesSize": "19MB"
+        }
+      },
+      "documentation": {
+        "score": 88.33333333333333,
+        "issues": [],
+        "status": "good",
+        "metrics": {
+          "readmeLength": 11230,
+          "docFiles": 52
+        }
+      },
+      "database": {
+        "score": 100,
+        "issues": [],
+        "status": "good",
+        "metrics": {
+          "queryTime": "597ms",
+          "connected": true,
+          "responseTime": 597,
+          "tablesFound": 3,
+          "totalTables": 3,
+          "migrations": 36
+        }
+      },
+      "api": {
+        "score": 90,
+        "issues": [
+          "Missing critical function: auth-login.cjs"
+        ],
+        "status": "good",
+        "metrics": {
+          "functionsFound": 53,
+          "criticalFunctions": 2
+        }
+      },
+      "environment": {
+        "score": 100,
+        "issues": [],
+        "status": "good",
+        "metrics": {
+          "requiredVars": 2,
+          "totalRequired": 2,
+          "recommendedVars": 3,
+          "totalRecommended": 3
+        }
+      }
+    },
+    "criticalIssues": [
+      "Test suite execution failed"
+    ],
+    "warnings": [
+      "Sensitive file found: .env (ensure it's in .gitignore)",
+      "Sensitive file found: .env.local (ensure it's in .gitignore)",
+      "Debug code found in 1 production files"
+    ],
+    "recommendations": [
+      "✅ Good: Minor improvements needed",
+      "Consider performance optimizations"
+    ]
+  },
+  "featureValidation": {
+    "timestamp": "2025-12-23T12:22:36.629Z",
+    "environment": "development",
+    "validationResults": {
+      "authentication": {
+        "score": 100,
+        "tests": {
+          "authManagerExists": true,
+          "jwtValidation": {},
+          "demoModeSecurity": {},
+          "rbac": {},
+          "sessionManagement": {}
+        },
+        "issues": []
+      },
+      "database": {
+        "score": 95,
+        "tests": {
+          "connectionPooling": true,
+          "queryPerformance": {
+            "averageQueryTime": 61,
+            "score": 30
+          },
+          "migrations": {
+            "complete": true,
+            "count": 36
+          },
+          "schemaIntegrity": true
+        },
+        "issues": [],
+        "metrics": {
+          "memoryReduction": 90
+        }
+      },
+      "ai": {
+        "score": 100,
+        "tests": {
+          "modelValidation": true,
+          "realTimeProcessing": true,
+          "evidenceBasedRecommendations": true
+        },
+        "issues": [],
+        "metrics": {
+          "predictionAccuracy": 87.4
+        }
+      },
+      "olympic": {
+        "score": 0,
+        "tests": {
+          "ifafIntegration": false,
+          "la28Timeline": false,
+          "europeanChampionship": false,
+          "worldRanking": false
+        },
+        "issues": []
+      },
+      "performance": {
+        "score": 85,
+        "tests": {},
+        "issues": [],
+        "metrics": {
+          "pageLoadTime": 2000,
+          "bundleSize": 697,
+          "memoryUsage": {
+            "efficient": true,
+            "usage": "Estimated based on code patterns",
+            "optimizations": 2
+          },
+          "lighthouseScore": 85
+        }
+      },
+      "research": {
+        "score": 0,
+        "tests": {
+          "evidenceBasedAlgorithms": false,
+          "flagFootballOptimization": false
+        },
+        "issues": [
+          "Research integration claim unvalidated: 0 studies"
+        ],
+        "metrics": {
+          "studiesCount": 0
+        }
+      },
+      "accessibility": {
+        "score": 125,
+        "tests": {
+          "wcagCompliance": {
+            "score": 60,
+            "level": "AA"
+          },
+          "keyboardNavigation": true,
+          "screenReader": true,
+          "colorContrast": true
+        },
+        "issues": []
+      }
+    },
+    "overallScore": 72,
+    "criticalIssues": [
+      "Research: Study count claim not validated"
+    ],
+    "recommendations": [
+      "Good foundation but needs refinement for Olympic level"
+    ]
+  },
+  "overallStatus": "good",
+  "recommendations": [
+    "🔒 Security: Address security vulnerabilities and review configuration",
+    "🧪 Testing: Improve test coverage and fix failing tests"
+  ],
+  "criticalIssues": [
+    "[Health] Test suite execution failed",
+    "[Features] Research: Study count claim not validated"
+  ],
+  "warnings": [
+    "[Health] Sensitive file found: .env (ensure it's in .gitignore)",
+    "[Health] Sensitive file found: .env.local (ensure it's in .gitignore)",
+    "[Health] Debug code found in 1 production files"
+  ]
+}
