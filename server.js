@@ -5,6 +5,7 @@
 import express from "express";
 import path from "path";
 import cors from "cors";
+import fs from "fs";
 import { rateLimit } from "express-rate-limit";
 import { fileURLToPath } from "url";
 
@@ -43,9 +44,9 @@ app.use(
   }),
 );
 
-// Serve static files from the root directory
+// Serve Angular build files
 app.use(
-  express.static(".", {
+  express.static("angular/dist/flagfit-pro/browser", {
     setHeaders: (res, path) => {
       // Set proper MIME types
       if (path.endsWith(".js")) {
@@ -56,6 +57,17 @@ app.use(
         res.setHeader("Content-Type", "text/html");
       }
     },
+    dotfiles: "ignore",
+    etag: true,
+    lastModified: true,
+    maxAge: "1h",
+  }),
+);
+
+// Serve root-level assets (for legacy support during transition)
+app.use(
+  "/src",
+  express.static("src", {
     dotfiles: "ignore",
     etag: true,
     lastModified: true,
@@ -161,7 +173,7 @@ app.get("/api/dashboard/overview", (req, res) => {
   });
 });
 
-// Also handle /dashboard endpoint for backward compatibility
+// Dashboard endpoint - API only (Angular handles the page)
 app.get("/dashboard", (req, res) => {
   // Check if it's an API request (has Accept header for JSON)
   const acceptHeader = req.headers.accept || "";
@@ -180,8 +192,8 @@ app.get("/dashboard", (req, res) => {
       },
     });
   } else {
-    // Serve HTML page
-    res.sendFile(path.join(__dirname, "dashboard.html"));
+    // Let Angular handle the route (fall through to catch-all)
+    next();
   }
 });
 
@@ -497,14 +509,16 @@ app.post("/.netlify/functions/notifications-preferences", (req, res) => {
   });
 });
 
-// Catch-all route for SPA routing
+// Catch-all route for Angular SPA routing
 app.get("*", (req, res) => {
-  // If requesting an HTML file, serve it directly
-  if (req.path.endsWith(".html") || req.path === "/") {
-    const htmlFile = req.path === "/" ? "index.html" : req.path.substring(1);
-    res.sendFile(path.join(__dirname, htmlFile));
+  // Serve Angular app's index.html for all routes
+  const angularIndexPath = path.join(__dirname, "angular/dist/flagfit-pro/browser/index.html");
+  
+  // Check if Angular build exists, otherwise serve root index.html
+  if (fs.existsSync(angularIndexPath)) {
+    res.sendFile(angularIndexPath);
   } else {
-    // For other routes, serve index.html (SPA behavior)
+    // Fallback to root index.html (redirect page)
     res.sendFile(path.join(__dirname, "index.html"));
   }
 });

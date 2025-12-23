@@ -1,6 +1,6 @@
 [build]
-  command = "npm ci && npm run build"
-  publish = "."
+  command = "cd angular && npm ci && npm run build"
+  publish = "angular/dist/flagfit-pro/browser"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -663,7 +663,7 @@
 
 # ============================================================================
 # SPA FALLBACK (200 Rewrite)
-# All non-asset, non-API paths → /index.html for Angular Router
+# All non-asset, non-API paths → Angular index.html for Angular Router
 # Netlify automatically excludes /api/* and static assets
 # ============================================================================
 [[redirects]]
