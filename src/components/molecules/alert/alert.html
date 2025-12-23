@@ -1,0 +1,82 @@
+<!-- 
+    Alert Component - FlagFit Pro
+    
+    Usage: Copy this snippet for status messages and notifications
+    Variants: alert-info, alert-success, alert-warning, alert-error
+    CSS: src/css/components/alert.css
+-->
+
+<!-- Info Alert -->
+<div class="alert alert-info" role="alert">
+  <i data-lucide="info" style="width: 20px; height: 20px; flex-shrink: 0"></i>
+  <div>
+    <strong>Information</strong>
+    <p style="margin: 0; margin-top: 4px">This is an informational message.</p>
+  </div>
+</div>
+
+<!-- Success Alert -->
+<div class="alert alert-success" role="alert">
+  <i
+    data-lucide="check-circle"
+    style="width: 20px; height: 20px; flex-shrink: 0"
+  ></i>
+  <div>
+    <strong>Success!</strong>
+    <p style="margin: 0; margin-top: 4px">
+      Your action was completed successfully.
+    </p>
+  </div>
+</div>
+
+<!-- Warning Alert -->
+<div class="alert alert-warning" role="alert">
+  <i
+    data-lucide="alert-triangle"
+    style="width: 20px; height: 20px; flex-shrink: 0"
+  ></i>
+  <div>
+    <strong>Warning</strong>
+    <p style="margin: 0; margin-top: 4px">
+      Please review this information carefully.
+    </p>
+  </div>
+</div>
+
+<!-- Error Alert -->
+<div class="alert alert-error" role="alert">
+  <i
+    data-lucide="alert-circle"
+    style="width: 20px; height: 20px; flex-shrink: 0"
+  ></i>
+  <div>
+    <strong>Error</strong>
+    <p style="margin: 0; margin-top: 4px">
+      Something went wrong. Please try again.
+    </p>
+  </div>
+</div>
+
+<!-- Dismissible Alert -->
+<div class="alert alert-info" role="alert">
+  <i data-lucide="info" style="width: 20px; height: 20px; flex-shrink: 0"></i>
+  <div style="flex: 1">
+    <strong>Dismissible Alert</strong>
+    <p style="margin: 0; margin-top: 4px">This alert can be dismissed.</p>
+  </div>
+  <button
+    type="button"
+    class="alert-close"
+    aria-label="Close alert"
+    onclick="this.parentElement.remove()"
+  >
+    <i data-lucide="x" style="width: 18px; height: 18px"></i>
+  </button>
+</div>
+
+<!-- Simple Alert (No Icon) -->
+<div class="alert alert-info" role="alert">
+  <div>
+    <p style="margin: 0">Simple alert message without icon.</p>
+  </div>
+</div>

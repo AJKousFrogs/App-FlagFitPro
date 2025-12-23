@@ -1,0 +1,140 @@
+<!-- 
+    Dashboard Layout Template - FlagFit Pro
+    
+    Usage: Copy this structure for dashboard pages
+    Combines navigation sidebar, header, and main content area
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Dashboard</title>
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+
+    <!-- Lucide Icons -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    >
+      <script src="./src/icon-helper.js">
+    </script>
+    <script src="./src/theme-switcher.js"></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Navigation Sidebar -->
+      <!-- Include: src/components/organisms/navigation-sidebar/navigation-sidebar.html -->
+      <nav class="sidebar" role="navigation" aria-label="Main navigation">
+        <div class="sidebar-header">
+          <a
+            href="/dashboard"
+            class="sidebar-logo"
+            aria-label="FlagFit Pro Home"
+          >
+            <i
+              data-lucide="activity"
+              style="width: 24px; height: 24px; color: white"
+            ></i>
+          </a>
+          <h2 class="sidebar-title">FlagFit Pro</h2>
+        </div>
+        <ul class="sidebar-nav" role="list">
+          <li role="listitem">
+            <a
+              href="/dashboard"
+              class="sidebar-link active"
+              aria-current="page"
+            >
+              <i data-lucide="home" style="width: 20px; height: 20px"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <!-- More nav items... -->
+        </ul>
+      </nav>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        <!-- Dashboard Header -->
+        <!-- Include: src/components/organisms/dashboard-header/dashboard-header.html -->
+        <header class="dashboard-header">
+          <div class="header-left">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Welcome back, Coach!</p>
+          </div>
+          <div class="header-right">
+            <!-- Search, notifications, user menu -->
+          </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="content-area">
+          <!-- Stats Grid -->
+          <div class="stats-grid">
+            <!-- Include: src/components/molecules/card/card.html -->
+            <div class="card">
+              <div class="card-header">
+                <span class="stat-title">
+                  <i
+                    data-lucide="activity"
+                    style="width: 16px; height: 16px"
+                  ></i>
+                  Training Sessions
+                </span>
+              </div>
+              <div class="card-body">
+                <div class="stat-value">24</div>
+                <div class="stat-change positive">
+                  <span
+                    ><i
+                      data-lucide="trending-up"
+                      style="width: 16px; height: 16px"
+                    ></i
+                  ></span>
+                  <span>+12% from last week</span>
+                </div>
+              </div>
+            </div>
+            <!-- More stat cards... -->
+          </div>
+
+          <!-- Charts Section -->
+          <div class="charts-section">
+            <!-- Include: src/components/organisms/performance-chart/performance-chart.html -->
+            <div class="performance-chart-card card">
+              <div class="card-header">
+                <h3>Performance Trends</h3>
+              </div>
+              <div class="card-body">
+                <canvas id="performance-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Initialize icons
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+      }
+    </script>
+  </body>
+</html>
+
+<!-- 
+    Layout Structure:
+    - .dashboard-container - Main wrapper
+    - .sidebar - Navigation sidebar (fixed)
+    - .main-content - Main content area (with margin for sidebar)
+    - .dashboard-header - Page header
+    - .content-area - Page content
+    - .stats-grid - Grid for stat cards
+    - .charts-section - Charts container
+-->

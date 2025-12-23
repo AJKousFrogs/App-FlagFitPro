@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to FlagFit Pro!</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <link rel="stylesheet" href="./src/css/onboarding.css" />
+
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
+
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .onboarding-step {
+        display: none;
+        animation: fadeInSlide 0.4s ease-out;
+      }
+
+      .onboarding-step.active {
+        display: block;
+      }
+
+      .onboarding-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 700px;
+        width: 90%;
+        padding: 50px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .onboarding-progress-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: #f0f0f0;
+        border-radius: 20px 20px 0 0;
+      }
+
+      .onboarding-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transition: width 0.4s ease;
+        border-radius: 20px 20px 0 0;
+      }
+
+      .step-indicator {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 30px;
+      }
+
+      .step-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        transition: all 0.3s ease;
+      }
+
+      .step-dot.active {
+        width: 24px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .step-dot.completed {
+        background: #667eea;
+      }
+
+      .welcome-emoji {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        animation: bounce 0.8s ease;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+        line-height: 1.6;
+      }
+
+      .feature-list {
+        text-align: left;
+        margin: 30px 0;
+        padding: 0 20px;
+      }
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+        font-size: 1rem;
+        color: #444;
+        padding: 12px;
+        border-radius: 8px;
+        transition: background 0.2s ease;
+      }
+
+      .feature-item:hover {
+        background: #f8f9fa;
+      }
+
+      .feature-icon {
+        font-size: 2rem;
+        margin-right: 15px;
+        min-width: 40px;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 40px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 16px 40px;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 150px;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-secondary {
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .btn-secondary:hover {
+        background: #e0e0e0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .btn-outline {
+        background: transparent;
+        border: 2px solid #667eea;
+        color: #667eea;
+      }
+
+      .btn-outline:hover {
+        background: #667eea;
+        color: white;
+      }
+
+      .role-confirmation {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin: 30px 0;
+        flex-wrap: wrap;
+      }
+
+      .role-card {
+        flex: 1;
+        min-width: 200px;
+        padding: 30px 20px;
+        border: 3px solid #e0e0e0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+      }
+
+      .role-card:hover {
+        border-color: #667eea;
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+      }
+
+      .role-card.selected {
+        border-color: #667eea;
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.1) 0%,
+          rgba(118, 75, 162, 0.1) 100%
+        );
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .role-card-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+      }
+
+      .role-card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+      }
+
+      .role-card-desc {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.5;
+      }
+
+      .team-setup-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .team-option {
+        padding: 25px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+      }
+
+      .team-option:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+      }
+
+      .team-option-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+      }
+
+      .team-option-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+      }
+
+      .team-option-desc {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.5;
+      }
+
+      .skip-link {
+        color: #999;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-top: 20px;
+        display: inline-block;
+        transition: color 0.2s ease;
+      }
+
+      .skip-link:hover {
+        color: #667eea;
+      }
+
+      @keyframes fadeInSlide {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .onboarding-container {
+          padding: 30px 20px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .welcome-emoji {
+          font-size: 4rem;
+        }
+
+        .role-confirmation {
+          flex-direction: column;
+        }
+
+        .role-card {
+          min-width: 100%;
+        }
+
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="onboarding-container">
+      <div class="onboarding-progress-container">
+        <div class="onboarding-progress-bar" id="progressBar"></div>
+      </div>
+
+      <!-- Step 1: Welcome -->
+      <div class="onboarding-step active" id="step1">
+        <div class="step-indicator">
+          <span class="step-dot active"></span>
+          <span class="step-dot"></span>
+          <span class="step-dot"></span>
+          <span class="step-dot"></span>
+          <span class="step-dot"></span>
+        </div>
+        <div class="welcome-emoji">🏈</div>
+        <h1 class="text-heading-2xl text-primary">Welcome to FlagFit Pro!</h1>
+        <p class="subtitle text-body-lg text-secondary" id="userName">
+          Hi there! Let's get you started on your flag football journey.
+        </p>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-icon">📊</span>
+            <span
+              >Track your performance and progress with detailed analytics</span
+            >
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🏃</span>
+            <span
+              >Follow personalized training plans tailored to your goals</span
+            >
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">👥</span>
+            <span>Connect with teams and join the flag football community</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🏆</span>
+            <span>Compete in tournaments and showcase your skills</span>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button
+            class="btn"
+            data-action="onboarding-next"
+            aria-label="Start onboarding"
+          >
+            Let's Get Started!
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Role Confirmation -->
+      <div class="onboarding-step" id="step2">
+        <div class="step-indicator">
+          <span class="step-dot completed"></span>
+          <span class="step-dot active"></span>
+          <span class="step-dot"></span>
+          <span class="step-dot"></span>
+          <span class="step-dot"></span>
+        </div>
+        <div class="welcome-emoji">👋</div>
+        <h1 class="text-heading-2xl text-primary">Confirm Your Role</h1>
+        <p class="subtitle text-body-md text-secondary">
+          We see you're registered as a
+          <strong class="text-emphasis" id="currentRole">player</strong>. Is
+          this correct?
+        </p>
+
+        <div class="role-confirmation">
+          <div
+            class="role-card"
+            data-role="player"
+            data-action="select-role"
+            data-role-value="player"
+            role="button"
+            tabindex="0"
+            aria-label="Select player role"
+          >
+            <div class="role-card-icon">🏈</div>
+            <div
+              class="role-card-title text-heading-md text-primary font-semibold"
+            >
+              Player
+            </div>
+            <div class="role-card-desc">
+              Track performance, join teams, and train to improve your skills
+            </div>
+          </div>
+          <div
+            class="role-card"
+            data-role="coach"
+            data-action="select-role"
+            data-role-value="coach"
+            role="button"
+            tabindex="0"
+            aria-label="Select coach role"
+          >
+            <div class="role-card-icon">👔</div>
+            <div
+              class="role-card-title text-heading-md text-primary font-semibold"
+            >
+              Coach
+            </div>
+            <div class="role-card-desc">
+              Manage teams, create training plans, and track player progress
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button
+            class="btn btn-secondary"
+            data-action="onboarding-previous"
+            aria-label="Go to previous step"
+          >
+            Back
+          </button>
+          <button
+            class="btn"
+            data-action="onboarding-next"
+            id="continueRoleBtn"
+            aria-label="Continue to next step"
+          >
+            Continue
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Profile Completion -->
+      <div class="onboarding-step" id="step3">
+        <div class="step-indicator">
+          <span class="step-dot completed"></span>
+          <span class="step-dot completed"></span>
+          <span class="step-dot active"></span>
+          <span class="step-dot"></span>
+          <span class="step-dot"></span>
+        </div>
+        <div class="welcome-emoji">📝</div>
+        <h1 class="text-heading-2xl text-primary">Complete Your Profile</h1>
+        <p class="subtitle text-body-md text-secondary">
+          Let's set up your profile to personalize your experience
+        </p>
+
+        <div id="profileFormContainer" class="profile-form-container">
+          <p class="profile-form-text">
+            We'll complete your profile in the next step...
+          </p>
+        </div>
+
+        <div class="btn-group">
+          <button
+            class="btn btn-secondary"
+            data-action="onboarding-previous"
+            aria-label="Go to previous step"
+          >
+            Back
+          </button>
+          <button
+            class="btn"
+            data-action="show-profile-completion"
+            aria-label="Complete your profile"
+          >
+            Complete Profile
+          </button>
+          <button
+            class="btn btn-outline"
+            data-action="skip-profile"
+            aria-label="Skip profile completion"
+          >
+            Skip for Now
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 4: Team Setup -->
+      <div class="onboarding-step" id="step4">
+        <div class="step-indicator">
+          <span class="step-dot completed"></span>
+          <span class="step-dot completed"></span>
+          <span class="step-dot completed"></span>
+          <span class="step-dot active"></span>
+          <span class="step-dot"></span>
+        </div>
+        <div class="welcome-emoji" id="teamStepIcon">👥</div>
+        <h1 id="teamStepTitle" class="text-heading-2xl text-primary">
+          Join or Create a Team
+        </h1>
+        <p class="subtitle text-body-md text-secondary" id="teamStepDesc">
+          Connect with other players and coaches to get the most out of FlagFit
+          Pro
+        </p>
+
+        <div class="team-setup-options" id="teamOptions">
+          <!-- Options will be populated based on role -->
+        </div>
+
+        <div class="btn-group">
+          <button
+            class="btn btn-secondary"
+            data-action="onboarding-previous"
+            aria-label="Go to previous step"
+          >
+            Back
+          </button>
+          <button
+            class="btn"
+            data-action="onboarding-next"
+            aria-label="Continue to next step"
+          >
+            Continue
+          </button>
+          <a href="/dashboard.html" class="skip-link">Skip for Now</a>
+        </div>
+      </div>
+
+      <!-- Step 5: Completion -->
+      <div class="onboarding-step" id="step5">
+        <div class="step-indicator">
+          <span class="step-dot completed"></span>
+          <span class="step-dot completed"></span>
+          <span class="step-dot completed"></span>
+          <span class="step-dot completed"></span>
+          <span class="step-dot active"></span>
+        </div>
+        <div class="welcome-emoji">🎉</div>
+        <h1 class="text-heading-2xl text-primary">You're All Set!</h1>
+        <p class="subtitle text-body-lg text-secondary">
+          Welcome to FlagFit Pro! You're ready to start your flag football
+          journey.
+        </p>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-icon">✨</span>
+            <span>Explore your personalized dashboard</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">📚</span>
+            <span>Check out training programs and drills</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">💡</span>
+            <span>Press <kbd>?</kbd> for keyboard shortcuts</span>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button
+            class="btn"
+            data-action="complete-onboarding"
+            aria-label="Complete onboarding and go to dashboard"
+          >
+            Go to Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { authManager } from "./src/auth-manager.js";
+      import { storageService } from "./src/js/services/storage-service-unified.js";
+
+      let currentStep = 1;
+      const totalSteps = 5;
+      let selectedRole = "player";
+      let onboardingData = {
+        role: null,
+        profileCompleted: false,
+        teamSetup: false,
+      };
+
+      // Load saved progress
+      function loadProgress() {
+        const saved = storageService.get("onboardingProgress", null, {
+          usePrefix: false,
+        });
+        if (saved) {
+          currentStep = saved.step || 1;
+          selectedRole = saved.role || "player";
+          onboardingData = { ...onboardingData, ...saved.data };
+        }
+      }
+
+      // Save progress
+      function saveProgress() {
+        storageService.set(
+          "onboardingProgress",
+          {
+            step: currentStep,
+            role: selectedRole,
+            data: onboardingData,
+          },
+          { usePrefix: false },
+        );
+      }
+
+      // Initialize
+      async function init() {
+        await authManager.waitForInit();
+        const user = authManager.getCurrentUser();
+
+        if (user) {
+          const firstName =
+            user.user_metadata?.first_name ||
+            user.user_metadata?.name?.split(" ")[0] ||
+            "there";
+          document.getElementById("userName").textContent =
+            `Hi ${firstName}! Let's get you started on your flag football journey.`;
+
+          // Get user role
+          selectedRole = user.user_metadata?.role || user.role || "player";
+          document.getElementById("currentRole").textContent = selectedRole;
+
+          // Update role card selection
+          updateRoleSelection(selectedRole);
+        }
+
+        loadProgress();
+        showStep(currentStep);
+        updateTeamStep();
+      }
+
+      function showStep(step) {
+        // Hide all steps
+        document.querySelectorAll(".onboarding-step").forEach((s) => {
+          s.classList.remove("active");
+        });
+
+        // Show current step
+        const stepElement = document.getElementById(`step${step}`);
+        if (stepElement) {
+          stepElement.classList.add("active");
+        }
+
+        // Update progress bar
+        const progress = (step / totalSteps) * 100;
+        document.getElementById("progressBar").style.width = `${progress}%`;
+
+        // Update step indicators
+        updateStepIndicators(step);
+
+        // Save progress
+        saveProgress();
+      }
+
+      function updateStepIndicators(current) {
+        const indicators = document.querySelectorAll(".step-indicator");
+        indicators.forEach((indicator) => {
+          const dots = indicator.querySelectorAll(".step-dot");
+          dots.forEach((dot, index) => {
+            dot.classList.remove("active", "completed");
+            if (index + 1 === current) {
+              dot.classList.add("active");
+            } else if (index + 1 < current) {
+              dot.classList.add("completed");
+            }
+          });
+        });
+      }
+
+      function nextStep() {
+        if (currentStep < totalSteps) {
+          currentStep++;
+          showStep(currentStep);
+        }
+      }
+
+      function previousStep() {
+        if (currentStep > 1) {
+          currentStep--;
+          showStep(currentStep);
+        }
+      }
+
+      function selectRole(role) {
+        selectedRole = role;
+        onboardingData.role = role;
+
+        // Update UI
+        updateRoleSelection(role);
+        document.getElementById("currentRole").textContent = role;
+
+        // Update team step
+        updateTeamStep();
+
+        saveProgress();
+      }
+
+      function updateRoleSelection(role) {
+        document.querySelectorAll(".role-card").forEach((card) => {
+          card.classList.remove("selected");
+          if (card.dataset.role === role) {
+            card.classList.add("selected");
+          }
+        });
+      }
+
+      function updateTeamStep() {
+        const isCoach = selectedRole === "coach";
+        const teamStepIcon = document.getElementById("teamStepIcon");
+        const teamStepTitle = document.getElementById("teamStepTitle");
+        const teamStepDesc = document.getElementById("teamStepDesc");
+        const teamOptions = document.getElementById("teamOptions");
+
+        if (isCoach) {
+          teamStepIcon.textContent = "👔";
+          teamStepTitle.textContent = "Create Your First Team";
+          teamStepDesc.textContent =
+            "Set up a team to start managing players and training sessions";
+          teamOptions.innerHTML = `
+          <div class="team-option" data-navigate-to="/team-create.html" role="button" tabindex="0" aria-label="Create new team">
+            <div class="team-option-icon">➕</div>
+            <div class="team-option-title text-heading-md text-primary font-semibold">Create New Team</div>
+            <div class="team-option-desc">Set up a new team and start inviting players</div>
+          </div>
+          <div class="team-option" data-action="onboarding-next" role="button" tabindex="0" aria-label="Skip team creation for now">
+            <div class="team-option-icon">⏭️</div>
+            <div class="team-option-title text-heading-md text-primary font-semibold">Do This Later</div>
+            <div class="team-option-desc">You can create a team anytime from your dashboard</div>
+          </div>
+        `;
+        } else {
+          teamStepIcon.textContent = "👥";
+          teamStepTitle.textContent = "Join a Team";
+          teamStepDesc.textContent =
+            "Connect with teams to track group performance and participate in tournaments";
+          teamOptions.innerHTML = `
+          <div class="team-option" data-navigate-to="/roster.html" role="button" tabindex="0" aria-label="Browse teams">
+            <div class="team-option-icon">🔍</div>
+            <div class="team-option-title text-heading-md text-primary font-semibold">Browse Teams</div>
+            <div class="team-option-desc">Find and join public teams in your area</div>
+          </div>
+          <div class="team-option" data-navigate-to="/roster.html" role="button" tabindex="0" aria-label="Join team with code">
+            <div class="team-option-icon">🔑</div>
+            <div class="team-option-title text-heading-md text-primary font-semibold">Join with Code</div>
+            <div class="team-option-desc">Use a team code from your coach</div>
+          </div>
+          <div class="team-option" data-action="onboarding-next" role="button" tabindex="0" aria-label="Skip team joining for now">
+            <div class="team-option-icon">⏭️</div>
+            <div class="team-option-title text-heading-md text-primary font-semibold">Do This Later</div>
+            <div class="team-option-desc">You can join teams anytime from your dashboard</div>
+          </div>
+        `;
+        }
+      }
+
+      async function showProfileCompletion() {
+        try {
+          const { profileCompletionManager } =
+            await import("./src/profile-completion.js");
+          profileCompletionManager.showProfileCompletionModal(true);
+          onboardingData.profileCompleted = true;
+          saveProgress();
+        } catch (error) {
+          console.error("Error loading profile completion:", error);
+          // Fallback: redirect to profile page
+          window.location.href = "/profile.html";
+        }
+      }
+
+      function skipProfile() {
+        onboardingData.profileCompleted = false;
+        saveProgress();
+        nextStep();
+      }
+
+      async function completedOnboarding() {
+        const user = authManager.getCurrentUser();
+        if (user) {
+          try {
+            const { getSupabase } =
+              await import("./src/js/services/supabase-client.js");
+            const supabase = getSupabase();
+
+            if (supabase) {
+              await supabase.auth.updateUser({
+                data: {
+                  onboarding_completed: true,
+                  onboarding_completed_at: new Date().toISOString(),
+                },
+              });
+            }
+          } catch (error) {
+            console.error("Error updating onboarding status:", error);
+          }
+        }
+
+        // Clear progress data
+        storageService.remove("onboardingProgress", { usePrefix: false });
+        storageService.set("onboardingCompleted", "true", { usePrefix: false });
+        storageService.set(
+          "onboardingCompletedDate",
+          new Date().toISOString(),
+          { usePrefix: false },
+        );
+
+        // Redirect to dashboard
+        window.location.href = "/dashboard.html";
+      }
+
+      // Make functions globally available
+      window.nextStep = nextStep;
+      window.previousStep = previousStep;
+      window.selectRole = selectRole;
+      window.showProfileCompletion = showProfileCompletion;
+      window.skipProfile = skipProfile;
+      window.completedOnboarding = completedOnboarding;
+
+      // Initialize on load
+      init();
+    </script>
+  </body>
+</html>

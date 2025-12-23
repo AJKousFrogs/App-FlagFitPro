@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Coach</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Inline styles replacement utilities -->
+    <link
+      rel="stylesheet"
+      href="./src/css/utilities/inline-styles-replacement.css"
+    />
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js" defer></script>
+
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
+  </head>
+  <body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+      <span>☰</span>
+    </button>
+
+    <div class="dashboard-container">
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+
+      <main class="main-content">
+        <!-- Top Bar (Loaded Dynamically) -->
+        <div data-topbar-container></div>
+
+        <!-- Page Title Section (Hero) -->
+        <div class="hero-section" class="u-margin-bottom-16">
+          <div class="hero-card">
+            <h1 class="hero-main-title" class="u-margin-bottom-8">
+              Team Management Dashboard
+            </h1>
+            <p class="u-margin-0 text-secondary">
+              Manage your team roster, track chemistry, and optimize Olympic
+              readiness
+            </p>
+          </div>
+        </div>
+        <!-- Team Overview Cards -->
+        <div class="coach-overview">
+          <div class="overview-card">
+            <div class="card-header">
+              <span class="card-title">Active Players</span>
+              <div
+                class="card-icon"
+                style="
+                  background: rgba(16, 185, 129, 0.1);
+                  color: var(--accent-green);
+                "
+              >
+                <i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+            </div>
+            <div class="card-metric" id="activePlayersCount">12</div>
+            <p class="card-description">Full roster strength</p>
+            <div class="card-trend positive">
+              <span
+                ><i
+                  data-lucide="check-circle"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span id="availableToday">10/12 available today</span>
+            </div>
+          </div>
+
+          <div class="overview-card">
+            <div class="card-header">
+              <span class="card-title">Team Chemistry</span>
+              <div
+                class="card-icon"
+                style="
+                  background: rgba(16, 201, 107, 0.1);
+                  color: var(--primary-solid);
+                "
+              >
+                <i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+            </div>
+            <div class="card-metric" id="teamChemistryScore">
+              8.4<span
+                style="font-size: var(--font-size-lg); color: var(--text-muted)"
+                >/10</span
+              >
+            </div>
+            <p class="card-description">Overall cohesion rating</p>
+            <div class="card-trend positive">
+              <span
+                ><i
+                  data-lucide="bar-chart-3"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span>+0.3 this week</span>
+            </div>
+          </div>
+
+          <div class="overview-card">
+            <div class="card-header">
+              <span class="card-title">Olympic Readiness</span>
+              <div
+                class="card-icon"
+                style="
+                  background: rgba(245, 158, 11, 0.1);
+                  color: var(--warning-yellow);
+                "
+              >
+                <i
+                  data-lucide="trophy"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+            </div>
+            <div class="card-metric" id="olympicReadiness">78%</div>
+            <p class="card-description">LA28 preparation level</p>
+            <div class="card-trend positive">
+              <span
+                ><i
+                  data-lucide="target"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span>Target: 85% by Dec</span>
+            </div>
+          </div>
+
+          <div class="overview-card">
+            <div class="card-header">
+              <span class="card-title">World Ranking</span>
+              <div
+                class="card-icon"
+                style="
+                  background: rgba(137, 195, 0, 0.1);
+                  color: var(--secondary-500);
+                "
+              >
+                🌍
+              </div>
+            </div>
+            <div class="card-metric" id="worldRanking">#6</div>
+            <p class="card-description">Current global position</p>
+            <div class="card-trend positive">
+              <span>⬆️</span>
+              <span>Up from #8</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Player Management Section -->
+        <div class="team-section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span
+                ><i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              Player Roster Management
+            </h2>
+            <button class="btn btn-primary btn-md" onclick="addPlayer()">
+              Add Player
+            </button>
+          </div>
+
+          <div class="players-grid" id="playersGrid">
+            <!-- Players will be dynamically loaded here -->
+          </div>
+        </div>
+
+        <!-- Team Chemistry Analysis -->
+        <div class="team-section chemistry-section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span
+                ><i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              Team Chemistry Management
+            </h2>
+            <button class="btn btn-primary btn-md" onclick="runAIAnalysis()">
+              AI Analysis
+            </button>
+          </div>
+
+          <div class="chemistry-grid">
+            <div class="chemistry-card">
+              <span class="chemistry-score">9.1/10</span>
+              <div class="chemistry-label">Communication</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 91%"></div>
+              </div>
+              <div class="chemistry-trend">
+                <span
+                  ><i
+                    data-lucide="bar-chart-3"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      display: inline-block;
+                      vertical-align: middle;
+                      color: var(--icon-color-primary);
+                      stroke: var(--icon-color-primary);
+                    "
+                  ></i
+                ></span>
+                <span>Excellent</span>
+              </div>
+            </div>
+
+            <div class="chemistry-card">
+              <span class="chemistry-score">8.7/10</span>
+              <div class="chemistry-label">Trust</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 87%"></div>
+              </div>
+              <div class="chemistry-trend">
+                <span
+                  ><i
+                    data-lucide="users"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      display: inline-block;
+                      vertical-align: middle;
+                      color: var(--icon-color-primary);
+                      stroke: var(--icon-color-primary);
+                    "
+                  ></i
+                ></span>
+                <span>Strong</span>
+              </div>
+            </div>
+
+            <div class="chemistry-card">
+              <span class="chemistry-score">7.9/10</span>
+              <div class="chemistry-label">Coordination</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 79%"></div>
+              </div>
+              <div class="chemistry-trend">
+                <span
+                  ><i
+                    data-lucide="zap"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      display: inline-block;
+                      vertical-align: middle;
+                      color: var(--icon-color-primary);
+                      stroke: var(--icon-color-primary);
+                    "
+                  ></i
+                ></span>
+                <span>Good</span>
+              </div>
+            </div>
+
+            <div class="chemistry-card">
+              <span class="chemistry-score">8.2/10</span>
+              <div class="chemistry-label">Leadership</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 82%"></div>
+              </div>
+              <div class="chemistry-trend">
+                <span>👑</span>
+                <span>Solid</span>
+              </div>
+            </div>
+          </div>
+
+          <h4>
+            <i
+              data-lucide="bot"
+              style="
+                width: 16px;
+                height: 16px;
+                display: inline-block;
+                vertical-align: middle;
+                color: var(--icon-color-primary);
+                stroke: var(--icon-color-primary);
+              "
+            ></i>
+            AI Team Building Recommendations
+          </h4>
+          <div class="feature-list">
+            <div class="feature-item">
+              <span class="feature-icon"
+                ><i
+                  data-lucide="check-circle"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span
+                >Team chemistry is healthy - no immediate intervention
+                needed</span
+              >
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon"
+                ><i
+                  data-lucide="lightbulb"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span
+                >Suggestion: Pair Marcus Johnson with newer players for
+                mentorship</span
+              >
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon"
+                ><i
+                  data-lucide="target"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span
+                >Focus area: Improve coordination through specialized
+                drills</span
+              >
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon"
+                ><i
+                  data-lucide="bar-chart-3"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span>Next analysis: Scheduled for next Monday</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="./src/js/pages/coach-page.js"></script>
+
+    <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>

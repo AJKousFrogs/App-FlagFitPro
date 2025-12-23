@@ -1,0 +1,150 @@
+/* ================================================================
+   FORM COMPONENT - FlagFit Pro
+   ================================================================ */
+
+.form-group {
+  margin-bottom: var(--space-4);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+}
+
+.form-label.required::after {
+  content: " *";
+  color: var(--color-status-error);
+}
+
+.form-input {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(
+    135deg,
+    var(--surface-primary) 0%,
+    var(--surface-secondary) 100%
+  );
+  color: var(--color-text-on-surface);
+  font-size: var(--text-base);
+  line-height: var(--line-height-normal);
+  transition: var(--transition);
+  min-height: 48px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  font-family: var(--font-family);
+}
+
+.form-input:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-border-strong);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.15),
+    0 3px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.form-input:focus {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-color: var(--color-border-focus);
+  background: var(--surface-primary);
+  box-shadow:
+    0 0 0 3px var(--color-brand-primary-light),
+    0 6px 16px rgba(var(--primitive-primary-rgb), 0.2),
+    0 3px 8px rgba(var(--primitive-primary-rgb), 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.form-input:disabled {
+  background: var(--surface-tertiary);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+  filter: grayscale(0.2);
+}
+
+.form-input.error {
+  border-color: var(--color-border-error);
+}
+
+.form-input.error:focus {
+  border-color: var(--color-border-error);
+  box-shadow: 0 0 0 3px var(--color-status-error-light);
+}
+
+.form-input.success {
+  border-color: var(--color-status-success);
+  background: var(--surface-primary);
+}
+
+.form-input.success:focus {
+  border-color: var(--color-status-success);
+  box-shadow: 0 0 0 3px var(--color-status-success-light);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: var(--space-12);
+  appearance: none;
+}
+
+.form-help {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-tertiary);
+}
+
+.form-error {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-status-error);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.form-success {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-status-success);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.form-success::before {
+  content: "✓";
+  color: var(--color-status-success);
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.form-hint {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-tertiary);
+}

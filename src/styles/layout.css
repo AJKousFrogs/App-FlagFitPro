@@ -1,0 +1,510 @@
+/* ====== LAYOUT STYLES - FLAGFIT PRO ====== */
+
+@import "./tokens.css";
+
+/* ========================================
+   APP LAYOUT
+   ======================================== */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-primary);
+}
+
+/* ========================================
+   HEADER LAYOUT
+   ======================================== */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--surface-primary);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-6);
+  max-width: var(--container-2xl);
+  margin: 0 auto;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.header-brand:hover {
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+
+.header-logo {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+/* ========================================
+   MAIN CONTENT LAYOUT
+   ======================================== */
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Allow flex item to shrink */
+}
+
+.page-container {
+  flex: 1;
+  max-width: var(--container-2xl);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+  width: 100%;
+}
+
+.page-header {
+  margin-bottom: var(--space-8);
+}
+
+.page-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.page-description {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  max-width: 60ch;
+}
+
+/* ========================================
+   DASHBOARD LAYOUT
+   ======================================== */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.dashboard-section {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+  box-shadow: var(--card-shadow);
+  transition: var(--transition-all);
+  cursor: grab;
+}
+
+.dashboard-section:hover {
+  box-shadow: var(--card-hover-shadow);
+  transform: translateY(-2px);
+}
+
+.dashboard-section.dragging {
+  opacity: 0.7;
+  transform: rotate(2deg) scale(1.02);
+  box-shadow: var(--shadow-lg);
+  cursor: grabbing;
+  z-index: 1000;
+}
+
+.dashboard-section.drag-over {
+  border-color: var(--brand-primary);
+  background: var(--brand-primary-alpha-10);
+  transform: scale(1.02);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.section-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+}
+
+.drag-handle {
+  color: var(--text-muted);
+  cursor: grab;
+  font-size: var(--font-size-lg);
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-all);
+}
+
+.drag-handle:hover {
+  color: var(--brand-primary);
+  background-color: var(--brand-primary-alpha-10);
+}
+
+/* ========================================
+   TRAINING LAYOUT
+   ======================================== */
+
+.training-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+}
+
+.training-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.training-category {
+  text-align: center;
+  padding: var(--space-6);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  transition: var(--transition-all);
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text-secondary);
+}
+
+.training-category:hover {
+  color: var(--text-primary);
+  border-color: var(--brand-primary);
+  box-shadow: var(--card-hover-shadow);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.training-category-icon {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--space-3);
+}
+
+.training-category-name {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-1);
+}
+
+.training-category-progress {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+/* ========================================
+   WEEKLY SCHEDULE LAYOUT
+   ======================================== */
+
+.weekly-schedule {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  margin-bottom: var(--space-6);
+}
+
+.schedule-header {
+  padding: var(--space-6);
+  background: var(--surface-secondary);
+  border-bottom: 1px solid var(--border-primary);
+  text-align: center;
+}
+
+.schedule-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border-primary);
+}
+
+.schedule-day {
+  background: var(--surface-primary);
+  min-height: 120px;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+}
+
+.schedule-day-header {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  text-align: center;
+}
+
+.schedule-day.today {
+  background: var(--brand-primary-alpha-10);
+}
+
+.schedule-day.today .schedule-day-header {
+  color: var(--brand-primary);
+}
+
+/* ========================================
+   DRAGGABLE TRAINING ITEMS
+   ======================================== */
+
+.training-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.training-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  transition: var(--transition-all);
+  cursor: grab;
+}
+
+.training-item:hover {
+  border-color: var(--brand-primary);
+  box-shadow: var(--card-hover-shadow);
+}
+
+.training-item.dragging {
+  opacity: 0.7;
+  transform: rotate(1deg) scale(1.02);
+  cursor: grabbing;
+  z-index: 1000;
+}
+
+.training-item.drag-over {
+  border-color: var(--brand-primary);
+  background: var(--brand-primary-alpha-10);
+  transform: scale(1.02);
+}
+
+.training-item:active {
+  cursor: grabbing;
+}
+
+.training-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.training-day-label {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.training-activity {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-1);
+}
+
+.training-time {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.training-priority {
+  flex-shrink: 0;
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+}
+
+/* ========================================
+   STATS AND METRICS LAYOUT
+   ======================================== */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.stat-card {
+  text-align: center;
+  padding: var(--space-6);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  transition: var(--transition-all);
+}
+
+.stat-card:hover {
+  box-shadow: var(--card-hover-shadow);
+  transform: translateY(-2px);
+}
+
+.stat-value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--brand-primary);
+  margin-bottom: var(--space-2);
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ========================================
+   FOOTER LAYOUT
+   ======================================== */
+
+.app-footer {
+  background: var(--surface-secondary);
+  border-top: 1px solid var(--border-primary);
+  padding: var(--space-8) 0;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: var(--container-2xl);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  text-align: center;
+}
+
+.footer-text {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .training-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-day {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .page-container {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .training-categories {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .training-item {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-3);
+  }
+
+  .section-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .drag-handle {
+    order: -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-brand {
+    font-size: var(--font-size-lg);
+  }
+
+  .page-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .training-categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+  .app-header,
+  .app-footer,
+  .drag-handle {
+    display: none !important;
+  }
+
+  .dashboard-section,
+  .training-item,
+  .stat-card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+}

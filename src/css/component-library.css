@@ -1,0 +1,370 @@
+/* ================================================================
+   COMPONENT LIBRARY SHOWCASE STYLES - FlagFit Pro
+   Styles for the component library documentation page
+   ================================================================ */
+
+.component-library {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  background: var(--surface-secondary);
+}
+
+/* Navigation Sidebar */
+.library-sidebar {
+  background: var(--surface-primary);
+  border-right: 1px solid var(--color-border-secondary);
+  padding: var(--spacing-component-lg);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.library-sidebar h1 {
+  font-size: var(--typography-heading-md-size);
+  font-weight: var(--typography-heading-md-weight);
+  margin: 0 0 var(--spacing-component-lg) 0;
+  color: var(--color-brand-primary);
+  border-bottom: 2px solid var(--color-brand-primary);
+  padding-bottom: var(--spacing-component-md);
+}
+
+.library-sidebar h2 {
+  font-size: var(--typography-heading-sm-size);
+  font-weight: var(--typography-heading-sm-weight);
+  margin: var(--spacing-component-lg) 0 var(--spacing-component-md) 0;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+}
+
+.library-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-component-lg) 0;
+}
+
+.library-sidebar li {
+  margin-bottom: var(--spacing-component-xs);
+}
+
+.library-sidebar a {
+  display: block;
+  padding: var(--spacing-component-sm) var(--spacing-component-md);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-component-md);
+  transition: all var(--motion-duration-fast) var(--motion-easing-productive);
+  font-size: var(--typography-body-sm-size);
+}
+
+.library-sidebar a:hover {
+  background: var(--surface-secondary);
+  color: var(--color-brand-primary);
+  transform: translateX(4px);
+}
+
+.library-sidebar a.active {
+  background: var(--color-brand-primary-subtle);
+  color: var(--color-brand-primary);
+  font-weight: var(--typography-label-md-weight);
+}
+
+/* Main Content Area */
+.library-main {
+  padding: var(--spacing-layout-lg);
+  overflow-y: auto;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.library-section {
+  margin-bottom: var(--spacing-layout-xl);
+}
+
+.library-section h2 {
+  font-size: var(--typography-heading-xl-size);
+  font-weight: var(--typography-heading-xl-weight);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-component-lg) 0;
+  padding-bottom: var(--spacing-component-md);
+  border-bottom: 2px solid var(--color-border-secondary);
+}
+
+.library-section p {
+  color: var(--color-text-secondary);
+  font-size: var(--typography-body-md-size);
+  line-height: var(--typography-body-md-line-height);
+  margin-bottom: var(--spacing-component-lg);
+}
+
+/* Component Demo Container */
+.component-demo {
+  background: var(--surface-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-component-xl);
+  padding: var(--spacing-component-lg);
+  margin-bottom: var(--spacing-component-lg);
+  box-shadow: var(--elevation-low);
+  transition: box-shadow var(--motion-duration-normal)
+    var(--motion-easing-productive);
+}
+
+.component-demo:hover {
+  box-shadow: var(--elevation-medium);
+}
+
+.component-demo h3 {
+  font-size: var(--typography-heading-md-size);
+  font-weight: var(--typography-heading-md-weight);
+  margin: 0 0 var(--spacing-component-md) 0;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-component-sm);
+}
+
+.component-demo h3::before {
+  content: "";
+  width: 4px;
+  height: 24px;
+  background: var(--color-brand-primary);
+  border-radius: 2px;
+}
+
+/* Demo Area */
+.demo-area {
+  background: var(--surface-secondary);
+  padding: var(--spacing-component-lg);
+  border-radius: var(--radius-component-lg);
+  margin-bottom: var(--spacing-component-md);
+  border: 1px dashed var(--color-border-secondary);
+}
+
+.demo-area h4 {
+  width: 100%;
+  margin: 0 0 var(--spacing-component-md) 0;
+  font-size: var(--typography-label-md-size);
+  font-weight: var(--typography-label-md-weight);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+}
+
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-component-md);
+  align-items: center;
+  margin-bottom: var(--spacing-component-md);
+}
+
+.demo-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Code Snippet */
+.code-snippet {
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-component-lg);
+  margin-bottom: var(--spacing-component-md);
+  overflow: hidden;
+}
+
+.code-snippet summary {
+  cursor: pointer;
+  color: var(--color-brand-primary);
+  font-weight: var(--typography-label-md-weight);
+  padding: var(--spacing-component-md);
+  background: var(--surface-primary);
+  user-select: none;
+  transition: background var(--motion-duration-fast)
+    var(--motion-easing-productive);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-component-sm);
+}
+
+.code-snippet summary::before {
+  content: "▶";
+  font-size: 0.75rem;
+  transition: transform var(--motion-duration-fast)
+    var(--motion-easing-productive);
+}
+
+.code-snippet[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.code-snippet summary:hover {
+  background: var(--surface-secondary);
+}
+
+.code-snippet pre {
+  background: var(--primitive-neutral-900);
+  color: var(--primitive-neutral-100);
+  padding: var(--spacing-component-lg);
+  margin: 0;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  font-family:
+    "SF Mono", "Monaco", "Inconsolata", "Fira Code", "Consolas", monospace;
+}
+
+.code-snippet code {
+  font-family: inherit;
+  color: inherit;
+}
+
+.code-snippet .copy-btn {
+  position: absolute;
+  top: var(--spacing-component-md);
+  right: var(--spacing-component-md);
+  padding: var(--spacing-component-xs) var(--spacing-component-sm);
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-primary);
+  border: none;
+  border-radius: var(--radius-component-sm);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: var(--typography-label-md-weight);
+  transition: all var(--motion-duration-fast) var(--motion-easing-productive);
+}
+
+.code-snippet .copy-btn:hover {
+  background: var(--color-brand-primary-hover);
+  transform: translateY(-1px);
+}
+
+.code-snippet .copy-btn:active {
+  transform: translateY(0);
+}
+
+.code-snippet pre {
+  position: relative;
+}
+
+/* Component Documentation */
+.component-docs {
+  background: var(--surface-secondary);
+  padding: var(--spacing-component-md);
+  border-radius: var(--radius-component-lg);
+  border-left: 4px solid var(--color-brand-primary);
+  margin-top: var(--spacing-component-md);
+}
+
+.component-docs h4 {
+  margin: 0 0 var(--spacing-component-sm) 0;
+  font-size: var(--typography-heading-sm-size);
+  font-weight: var(--typography-heading-sm-weight);
+  color: var(--color-text-primary);
+}
+
+.component-docs ul,
+.component-docs ol {
+  margin: 0;
+  padding-left: var(--spacing-component-lg);
+}
+
+.component-docs li {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-component-xs);
+  font-size: var(--typography-body-sm-size);
+  line-height: var(--typography-body-sm-line-height);
+}
+
+.component-docs code {
+  background: var(--surface-primary);
+  padding: 2px 6px;
+  border-radius: var(--radius-component-sm);
+  font-size: 0.875em;
+  color: var(--color-brand-primary);
+  font-family: "SF Mono", monospace;
+}
+
+.component-docs table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--spacing-component-sm);
+}
+
+.component-docs th,
+.component-docs td {
+  padding: var(--spacing-component-sm);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border-secondary);
+  font-size: var(--typography-body-sm-size);
+}
+
+.component-docs th {
+  font-weight: var(--typography-label-md-weight);
+  color: var(--color-text-primary);
+  background: var(--surface-primary);
+}
+
+.component-docs td {
+  color: var(--color-text-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .component-library {
+    grid-template-columns: 240px 1fr;
+  }
+
+  .library-main {
+    padding: var(--spacing-component-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .component-library {
+    grid-template-columns: 1fr;
+  }
+
+  .library-sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-secondary);
+    position: relative;
+    max-height: 300px;
+  }
+
+  .library-main {
+    padding: var(--spacing-component-md);
+  }
+
+  .demo-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Scrollbar Styling */
+.library-sidebar::-webkit-scrollbar,
+.library-main::-webkit-scrollbar {
+  width: 8px;
+}
+
+.library-sidebar::-webkit-scrollbar-track,
+.library-main::-webkit-scrollbar-track {
+  background: var(--surface-secondary);
+}
+
+.library-sidebar::-webkit-scrollbar-thumb,
+.library-main::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: 4px;
+}
+
+.library-sidebar::-webkit-scrollbar-thumb:hover,
+.library-main::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-primary);
+}

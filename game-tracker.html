@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Game Tracker</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Component CSS -->
+    <link rel="stylesheet" href="./src/css/components/sidebar.css" />
+    <link rel="stylesheet" href="./src/css/components/header.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/game-tracker.css" />
+    <!-- Lucide Icons -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Game Tracker Page JavaScript -->
+    <script
+      type="module"
+      src="./src/js/pages/game-tracker-page.js"
+      defer
+    ></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js" defer></script>
+
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+
+      <!-- Sidebar overlay for mobile -->
+      <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+      <!-- Main content area -->
+      <main class="main-content" id="main-content">
+        <!-- Top Bar (Loaded Dynamically) -->
+        <div data-topbar-container></div>
+
+        <!-- Page content -->
+        <div class="content-area">
+          <!-- Page Header -->
+          <div class="page-header">
+            <div class="page-header-content">
+              <div class="page-title-section">
+                <h1 class="page-title">
+                  <i
+                    data-lucide="clipboard-list"
+                    class="icon-28 icon-inline"
+                  ></i>
+                  Game Tracker
+                </h1>
+                <p class="page-subtitle">
+                  Track every play, drop, flag pull, and performance metric
+                </p>
+              </div>
+              <div class="page-actions">
+                <button class="btn btn-secondary" id="view-games-btn">
+                  <i data-lucide="list" class="icon-16"></i>
+                  View Games
+                </button>
+                <button class="btn btn-primary" id="new-game-btn">
+                  <i data-lucide="plus" class="icon-16"></i>
+                  New Game
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Game Setup Section -->
+          <div class="card" id="game-setup-section">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i data-lucide="settings" class="icon-20 icon-inline"></i>
+                Game Setup
+              </h2>
+            </div>
+            <div class="card-content">
+              <form id="game-setup-form">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="game-date">Game Date</label>
+                    <input
+                      type="date"
+                      id="game-date"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="game-time">Game Time</label>
+                    <input type="time" id="game-time" class="form-control" />
+                  </div>
+                  <div class="form-group">
+                    <label for="opponent-name">Opponent Team</label>
+                    <input
+                      type="text"
+                      id="opponent-name"
+                      class="form-control"
+                      placeholder="Blue Devils"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="location">Location</label>
+                    <input
+                      type="text"
+                      id="location"
+                      class="form-control"
+                      placeholder="Home Field"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="home-away">Home/Away</label>
+                    <select id="home-away" class="form-control">
+                      <option value="home">Home</option>
+                      <option value="away">Away</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="weather">Weather Conditions</label>
+                    <select id="weather" class="form-control">
+                      <option value="">Select weather</option>
+                      <option value="clear">Clear</option>
+                      <option value="partly_cloudy">Partly Cloudy</option>
+                      <option value="cloudy">Cloudy</option>
+                      <option value="light_rain">Light Rain</option>
+                      <option value="rain">Rain</option>
+                      <option value="windy">Windy</option>
+                      <option value="hot">Hot (85°F+)</option>
+                      <option value="cold">Cold (50°F-)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="temperature">Temperature</label>
+                    <!-- Unit Toggle -->
+                    <div
+                      class="unit-toggle-group"
+                      style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem"
+                    >
+                      <button
+                        type="button"
+                        class="unit-toggle-btn unit-toggle-active"
+                        data-unit="fahrenheit"
+                        id="temperature-unit-fahrenheit"
+                        style="
+                          flex: 1;
+                          padding: 0.5rem 1rem;
+                          border: 2px solid var(--color-brand-primary, #10c96b);
+                          background: var(--color-brand-primary, #10c96b);
+                          color: white;
+                          border-radius: 0.5rem;
+                          cursor: pointer;
+                          font-weight: 600;
+                          font-size: 0.875rem;
+                          transition: all 0.2s;
+                        "
+                      >
+                        Fahrenheit (°F)
+                      </button>
+                      <button
+                        type="button"
+                        class="unit-toggle-btn"
+                        data-unit="celsius"
+                        id="temperature-unit-celsius"
+                        style="
+                          flex: 1;
+                          padding: 0.5rem 1rem;
+                          border: 2px solid
+                            var(--color-border-secondary, #e5e7eb);
+                          background: white;
+                          color: var(--color-text-secondary, #6b7280);
+                          border-radius: 0.5rem;
+                          cursor: pointer;
+                          font-weight: 600;
+                          font-size: 0.875rem;
+                          transition: all 0.2s;
+                        "
+                      >
+                        Celsius (°C)
+                      </button>
+                    </div>
+                    <div class="input-group">
+                      <input
+                        type="number"
+                        id="temperature"
+                        name="temperature"
+                        class="form-control"
+                        placeholder="Enter temperature in Fahrenheit"
+                        step="0.1"
+                      />
+                      <span class="input-suffix" id="temperature-unit-label"
+                        >°F</span
+                      >
+                    </div>
+                    <input
+                      type="hidden"
+                      id="temperature-unit"
+                      name="temperatureUnit"
+                      value="fahrenheit"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="field-conditions">Field Conditions</label>
+                    <select id="field-conditions" class="form-control">
+                      <option value="dry">Dry</option>
+                      <option value="wet">Wet</option>
+                      <option value="muddy">Muddy</option>
+                      <option value="indoor">Indoor</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">
+                    <i data-lucide="play" class="icon-16"></i>
+                    Start Game Tracking
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Live Game Tracking Section (Hidden until game starts) -->
+          <div class="card" id="live-tracking-section" style="display: none">
+            <div class="card-header">
+              <div class="card-header-content">
+                <h2 class="card-title">
+                  <i data-lucide="radio" class="icon-20 icon-inline"></i>
+                  <span id="game-title">Live Tracking</span>
+                </h2>
+                <div class="game-score">
+                  <div class="score-input-group">
+                    <label>Our Score:</label>
+                    <input
+                      type="number"
+                      id="team-score"
+                      class="score-input"
+                      value="0"
+                      min="0"
+                    />
+                  </div>
+                  <span class="score-separator">-</span>
+                  <div class="score-input-group">
+                    <label>Opponent:</label>
+                    <input
+                      type="number"
+                      id="opponent-score"
+                      class="score-input"
+                      value="0"
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-secondary" id="end-game-btn">
+                <i data-lucide="square" class="icon-16"></i>
+                End Game
+              </button>
+            </div>
+
+            <div class="card-content">
+              <!-- Quick Stats Summary -->
+              <div class="quick-stats-grid">
+                <div class="stat-box">
+                  <div class="stat-label">Total Plays</div>
+                  <div class="stat-value" id="total-plays">0</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-label">Completions</div>
+                  <div class="stat-value" id="total-completions">0</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-label">Drops</div>
+                  <div class="stat-value stat-value-danger" id="total-drops">
+                    0
+                  </div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-label">Flag Pulls</div>
+                  <div
+                    class="stat-value stat-value-success"
+                    id="total-flag-pulls"
+                  >
+                    0
+                  </div>
+                </div>
+              </div>
+
+              <!-- Play Entry Form -->
+              <div class="play-entry-container">
+                <h3 class="section-title">
+                  <i data-lucide="plus-circle" class="icon-18 icon-inline"></i>
+                  Track Play
+                </h3>
+
+                <form id="play-entry-form">
+                  <!-- Play Context -->
+                  <div class="form-section">
+                    <h4 class="form-section-title">Play Context</h4>
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label for="quarter">Quarter</label>
+                        <select id="quarter" class="form-control" required>
+                          <option value="1">Q1</option>
+                          <option value="2">Q2</option>
+                          <option value="3">Q3</option>
+                          <option value="4">Q4</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="down">Down</label>
+                        <select id="down" class="form-control" required>
+                          <option value="1">1st</option>
+                          <option value="2">2nd</option>
+                          <option value="3">3rd</option>
+                          <option value="4">4th</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="distance">Distance</label>
+                        <!-- Unit Toggle -->
+                        <div
+                          class="unit-toggle-group"
+                          style="
+                            display: flex;
+                            gap: 0.5rem;
+                            margin-bottom: 0.75rem;
+                          "
+                        >
+                          <button
+                            type="button"
+                            class="unit-toggle-btn unit-toggle-active"
+                            data-unit="imperial"
+                            id="distance-unit-imperial"
+                            style="
+                              flex: 1;
+                              padding: 0.5rem 1rem;
+                              border: 2px solid
+                                var(--color-brand-primary, #10c96b);
+                              background: var(--color-brand-primary, #10c96b);
+                              color: white;
+                              border-radius: 0.5rem;
+                              cursor: pointer;
+                              font-weight: 600;
+                              font-size: 0.875rem;
+                              transition: all 0.2s;
+                            "
+                          >
+                            Yards
+                          </button>
+                          <button
+                            type="button"
+                            class="unit-toggle-btn"
+                            data-unit="metric"
+                            id="distance-unit-metric"
+                            style="
+                              flex: 1;
+                              padding: 0.5rem 1rem;
+                              border: 2px solid
+                                var(--color-border-secondary, #e5e7eb);
+                              background: white;
+                              color: var(--color-text-secondary, #6b7280);
+                              border-radius: 0.5rem;
+                              cursor: pointer;
+                              font-weight: 600;
+                              font-size: 0.875rem;
+                              transition: all 0.2s;
+                            "
+                          >
+                            Meters
+                          </button>
+                        </div>
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            id="distance"
+                            name="distance"
+                            class="form-control"
+                            placeholder="Enter distance in yards"
+                            min="1"
+                            step="0.1"
+                            required
+                          />
+                          <span class="input-suffix" id="distance-unit-label"
+                            >yds</span
+                          >
+                        </div>
+                        <input
+                          type="hidden"
+                          id="distance-unit"
+                          name="distanceUnit"
+                          value="imperial"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="yard-line">Yard Line</label>
+                        <input
+                          type="number"
+                          id="yard-line"
+                          class="form-control"
+                          placeholder="50"
+                          min="1"
+                          max="100"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Play Type -->
+                  <div class="form-section">
+                    <h4 class="form-section-title">Play Type</h4>
+                    <div class="play-type-buttons">
+                      <button
+                        type="button"
+                        class="play-type-btn"
+                        data-type="pass"
+                      >
+                        <i data-lucide="move" class="icon-20"></i>
+                        Pass Play
+                      </button>
+                      <button
+                        type="button"
+                        class="play-type-btn"
+                        data-type="run"
+                      >
+                        <i data-lucide="zap" class="icon-20"></i>
+                        Run Play
+                      </button>
+                      <button
+                        type="button"
+                        class="play-type-btn"
+                        data-type="flag_pull"
+                      >
+                        <i data-lucide="flag" class="icon-20"></i>
+                        Flag Pull
+                      </button>
+                      <button
+                        type="button"
+                        class="play-type-btn"
+                        data-type="other"
+                      >
+                        <i data-lucide="more-horizontal" class="icon-20"></i>
+                        Other
+                      </button>
+                    </div>
+                    <input type="hidden" id="play-type" required />
+                  </div>
+
+                  <!-- Pass Play Details (Conditional) -->
+                  <div
+                    class="form-section"
+                    id="pass-play-section"
+                    style="display: none"
+                  >
+                    <h4 class="form-section-title">Pass Play Details</h4>
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label for="quarterback">Quarterback</label>
+                        <select
+                          id="quarterback"
+                          class="form-control player-select"
+                        >
+                          <option value="">Select QB</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="receiver">Receiver</label>
+                        <select
+                          id="receiver"
+                          class="form-control player-select"
+                        >
+                          <option value="">Select Receiver</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="route-type">Route Type</label>
+                        <select id="route-type" class="form-control">
+                          <option value="">Select route</option>
+                          <option value="slant">Slant</option>
+                          <option value="out">Out</option>
+                          <option value="in">In</option>
+                          <option value="post">Post</option>
+                          <option value="corner">Corner</option>
+                          <option value="go">Go</option>
+                          <option value="comeback">Comeback</option>
+                          <option value="screen">Screen</option>
+                          <option value="flat">Flat</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="route-depth">Route Depth</label>
+                        <!-- Unit Toggle -->
+                        <div
+                          class="unit-toggle-group"
+                          style="
+                            display: flex;
+                            gap: 0.5rem;
+                            margin-bottom: 0.75rem;
+                          "
+                        >
+                          <button
+                            type="button"
+                            class="unit-toggle-btn unit-toggle-active"
+                            data-unit="imperial"
+                            id="route-depth-unit-imperial"
+                            style="
+                              flex: 1;
+                              padding: 0.5rem 1rem;
+                              border: 2px solid
+                                var(--color-brand-primary, #10c96b);
+                              background: var(--color-brand-primary, #10c96b);
+                              color: white;
+                              border-radius: 0.5rem;
+                              cursor: pointer;
+                              font-weight: 600;
+                              font-size: 0.875rem;
+                              transition: all 0.2s;
+                            "
+                          >
+                            Yards
+                          </button>
+                          <button
+                            type="button"
+                            class="unit-toggle-btn"
+                            data-unit="metric"
+                            id="route-depth-unit-metric"
+                            style="
+                              flex: 1;
+                              padding: 0.5rem 1rem;
+                              border: 2px solid
+                                var(--color-border-secondary, #e5e7eb);
+                              background: white;
+                              color: var(--color-text-secondary, #6b7280);
+                              border-radius: 0.5rem;
+                              cursor: pointer;
+                              font-weight: 600;
+                              font-size: 0.875rem;
+                              transition: all 0.2s;
+                            "
+                          >
+                            Meters
+                          </button>
+                        </div>
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            id="route-depth"
+                            name="routeDepth"
+                            class="form-control"
+                            placeholder="Enter route depth in yards"
+                            min="0"
+                            step="0.1"
+                          />
+                          <span class="input-suffix" id="route-depth-unit-label"
+                            >yds</span
+                          >
+                        </div>
+                        <input
+                          type="hidden"
+                          id="route-depth-unit"
+                          name="routeDepthUnit"
+                          value="imperial"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Pass Outcome Buttons -->
+                    <div class="outcome-section">
+                      <label class="outcome-label">Outcome:</label>
+                      <div class="outcome-buttons">
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-success"
+                          data-outcome="completion"
+                        >
+                          <i data-lucide="check-circle" class="icon-18"></i>
+                          Completion
+                        </button>
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-danger"
+                          data-outcome="drop"
+                        >
+                          <i data-lucide="x-circle" class="icon-18"></i>
+                          Drop
+                        </button>
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-warning"
+                          data-outcome="incompletion"
+                        >
+                          <i data-lucide="circle" class="icon-18"></i>
+                          Incompletion
+                        </button>
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-danger"
+                          data-outcome="interception"
+                        >
+                          <i data-lucide="alert-triangle" class="icon-18"></i>
+                          Interception
+                        </button>
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-info"
+                          data-outcome="defended"
+                        >
+                          <i data-lucide="shield" class="icon-18"></i>
+                          Defended
+                        </button>
+                      </div>
+                      <input type="hidden" id="pass-outcome" />
+                    </div>
+
+                    <!-- Drop Analysis (Conditional on drop) -->
+                    <div id="drop-analysis-section" style="display: none">
+                      <div class="form-grid">
+                        <div class="form-group">
+                          <label for="drop-severity">Drop Severity</label>
+                          <select id="drop-severity" class="form-control">
+                            <option value="">Select severity</option>
+                            <option value="unforgivable">
+                              Unforgivable (Easy catch)
+                            </option>
+                            <option value="should_catch">Should Catch</option>
+                            <option value="difficult">Difficult</option>
+                            <option value="contested">Contested</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="drop-reason">Drop Reason</label>
+                          <select id="drop-reason" class="form-control">
+                            <option value="">Select reason</option>
+                            <option value="hands">Hands issue</option>
+                            <option value="body_catch_attempt">
+                              Body catch attempt
+                            </option>
+                            <option value="distraction">Distraction</option>
+                            <option value="defender_contact">
+                              Defender contact
+                            </option>
+                            <option value="sun">Sun in eyes</option>
+                            <option value="wind">Wind</option>
+                            <option value="looked_upfield_early">
+                              Looked upfield early
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Throw Quality -->
+                    <div class="form-group">
+                      <label for="throw-accuracy">Throw Accuracy</label>
+                      <select id="throw-accuracy" class="form-control">
+                        <option value="">Select accuracy</option>
+                        <option value="perfect">Perfect</option>
+                        <option value="good">Good</option>
+                        <option value="catchable">Catchable</option>
+                        <option value="bad">Bad</option>
+                        <option value="terrible">Terrible</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Run Play Details (Conditional) -->
+                  <div
+                    class="form-section"
+                    id="run-play-section"
+                    style="display: none"
+                  >
+                    <h4 class="form-section-title">Run Play Details</h4>
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label for="ball-carrier">Ball Carrier</label>
+                        <select
+                          id="ball-carrier"
+                          class="form-control player-select"
+                        >
+                          <option value="">Select player</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="yards-gained">Yards Gained</label>
+                        <input
+                          type="number"
+                          id="yards-gained"
+                          class="form-control"
+                          placeholder="5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Flag Pull Details (Conditional) -->
+                  <div
+                    class="form-section"
+                    id="flag-pull-section"
+                    style="display: none"
+                  >
+                    <h4 class="form-section-title">Flag Pull Details</h4>
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label for="defender">Defender</label>
+                        <select
+                          id="defender"
+                          class="form-control player-select"
+                        >
+                          <option value="">Select defender</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="carrier">Ball Carrier</label>
+                        <select id="carrier" class="form-control player-select">
+                          <option value="">Select carrier</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Flag Pull Outcome -->
+                    <div class="outcome-section">
+                      <label class="outcome-label">Outcome:</label>
+                      <div class="outcome-buttons">
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-success"
+                          data-flag-outcome="success"
+                        >
+                          <i data-lucide="check" class="icon-18"></i>
+                          Successful Pull
+                        </button>
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-danger"
+                          data-flag-outcome="miss"
+                        >
+                          <i data-lucide="x" class="icon-18"></i>
+                          Missed Pull
+                        </button>
+                      </div>
+                      <input type="hidden" id="flag-pull-outcome" />
+                    </div>
+
+                    <!-- Miss Analysis (Conditional) -->
+                    <div id="miss-analysis-section" style="display: none">
+                      <div class="form-group">
+                        <label for="miss-reason">Miss Reason</label>
+                        <select id="miss-reason" class="form-control">
+                          <option value="">Select reason</option>
+                          <option value="missed_grab">Missed grab</option>
+                          <option value="faked_out">Faked out</option>
+                          <option value="out_of_position">
+                            Out of position
+                          </option>
+                          <option value="fell_down">Fell down</option>
+                          <option value="too_slow">Too slow</option>
+                          <option value="wrong_angle">
+                            Wrong pursuit angle
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Play Notes -->
+                  <div class="form-section">
+                    <div class="form-group">
+                      <label for="play-notes">Play Notes (Optional)</label>
+                      <textarea
+                        id="play-notes"
+                        class="form-control"
+                        rows="2"
+                        placeholder="Add any additional details about this play..."
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Submit Button -->
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                      <i data-lucide="save" class="icon-18"></i>
+                      Save Play
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      id="reset-play-btn"
+                    >
+                      <i data-lucide="rotate-ccw" class="icon-18"></i>
+                      Reset
+                    </button>
+                  </div>
+                </form>
+
+                <!-- Recent Plays List -->
+                <div class="recent-plays-container">
+                  <h3 class="section-title">
+                    <i data-lucide="clock" class="icon-18 icon-inline"></i>
+                    Recent Plays
+                  </h3>
+                  <div id="recent-plays-list" class="recent-plays-list">
+                    <div class="empty-state">
+                      <i data-lucide="clipboard" class="icon-48"></i>
+                      <p>No plays tracked yet. Start tracking plays above!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Game List Section (Initially hidden) -->
+          <div class="card" id="game-list-section" style="display: none">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i data-lucide="list" class="icon-20 icon-inline"></i>
+                Recent Games
+              </h2>
+              <button class="btn btn-secondary" id="back-to-tracker-btn">
+                <i data-lucide="arrow-left" class="icon-16"></i>
+                Back to Tracker
+              </button>
+            </div>
+            <div class="card-content">
+              <div id="games-list" class="games-list">
+                <div class="empty-state">
+                  <i data-lucide="calendar" class="icon-48"></i>
+                  <p>No games tracked yet</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Unit Toggle Helper -->
+    <script type="module">
+      import { setupUnitToggle } from "./src/js/utils/unit-toggle-helper.js";
+
+      // Initialize unit toggles
+      document.addEventListener("DOMContentLoaded", () => {
+        setupUnitToggle(
+          "distance",
+          "distance",
+          "distance-unit-label",
+          "distance-unit",
+        );
+        setupUnitToggle(
+          "distance",
+          "route-depth",
+          "route-depth-unit-label",
+          "route-depth-unit",
+        );
+      });
+    </script>
+  </body>
+</html>

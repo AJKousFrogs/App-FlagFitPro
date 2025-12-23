@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Exercise Library</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <!-- Preconnect to external resources for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/exercise-library.css" />
+    <link rel="stylesheet" href="./src/css/components/pagination.css" />
+
+    <!-- Preconnect to jsdelivr for faster icon loading -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
+
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js" defer></script>
+
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar - Icon Only -->
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+
+      <!-- Top Bar (Loaded Dynamically) -->
+      <div data-topbar-container></div>
+
+      <main class="main-content">
+        <!-- Header -->
+        <div class="header-section">
+          <h1>📚 Exercise Library</h1>
+          <p>
+            Comprehensive guide to all exercises in your training program with
+            detailed instructions, progressions, and safety notes.
+          </p>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number" id="totalExercises">47</div>
+              <div class="stat-label">Total Exercises</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="categoriesCount">8</div>
+              <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="progressionsCount">156</div>
+              <div class="stat-label">Progressions</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="safetyNotesCount">89</div>
+              <div class="stat-label">Safety Notes</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="search-filter-section">
+          <div class="search-bar">
+            <span class="search-icon"
+              ><i
+                data-lucide="search"
+                style="
+                  width: 16px;
+                  height: 16px;
+                  display: inline-block;
+                  vertical-align: middle;
+                  color: var(--icon-color-primary);
+                  stroke: var(--icon-color-primary);
+                "
+              ></i
+            ></span>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search exercises by name, muscle, or equipment..."
+              id="exerciseSearch"
+            />
+          </div>
+
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">
+              All Exercises
+            </button>
+            <button class="filter-tab" data-filter="Posterior Chain">
+              Posterior Chain
+            </button>
+            <button class="filter-tab" data-filter="Plyometric">
+              Plyometric
+            </button>
+            <button class="filter-tab" data-filter="Sprint">Sprint</button>
+            <button class="filter-tab" data-filter="Strength">Strength</button>
+            <button class="filter-tab" data-filter="Core">Core</button>
+            <button class="filter-tab" data-filter="Recovery">Recovery</button>
+            <button class="filter-tab" data-filter="Agility">Agility</button>
+          </div>
+        </div>
+
+        <!-- Exercise Grid -->
+        <div class="exercise-grid" id="exerciseGrid">
+          <!-- Exercises will be populated by JavaScript -->
+        </div>
+      </main>
+    </div>
+
+    <!-- Exercise Detail Modal -->
+    <div class="exercise-modal" id="exerciseModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h2 id="modalExerciseTitle"></h2>
+            <div id="modalExerciseCategory"></div>
+          </div>
+          <button class="modal-close" id="modalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+          <!-- Exercise details will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      // Show loading state immediately
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Show loading indicator
+        const exerciseGrid = document.getElementById("exerciseGrid");
+        if (exerciseGrid) {
+          exerciseGrid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12);">
+              <div style="font-size: 2rem; margin-bottom: var(--space-4);">⏳</div>
+              <h3>Loading Exercise Library...</h3>
+              <p>Please wait while we load the exercise data</p>
+            </div>
+          `;
+        }
+
+        console.log("📚 Exercise Library page loading...");
+
+        try {
+          // Import modules with error handling
+          const authModule = await import("./src/auth-manager.js");
+          const { authManager } = authModule;
+
+          // Wait for auth manager to initialize (with timeout)
+          await authManager.waitForInit(5000);
+
+          // Check authentication
+          if (!authManager.isAuthenticated()) {
+            console.log(
+              '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User not authenticated, redirecting to login',
+            );
+            window.location.href = "/login.html";
+            return;
+          }
+
+          console.log(
+            '<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User authenticated, loading exercise library',
+          );
+
+          // Import exercise library page module
+          const exerciseModule =
+            await import("./src/js/pages/exercise-library-page.js");
+          const { exerciseLibraryPage } = exerciseModule;
+
+          // Initialize optimized exercise library page
+          exerciseLibraryPage.initialize();
+
+          // Cleanup on page unload
+          window.addEventListener("beforeunload", () => {
+            exerciseLibraryPage.cleanup();
+          });
+        } catch (error) {
+          console.error("Failed to load exercise library:", error);
+          if (exerciseGrid) {
+            exerciseGrid.innerHTML = `
+              <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-error);">
+                <div style="font-size: 2rem; margin-bottom: var(--space-4);">❌</div>
+                <h3>Failed to load exercise library</h3>
+                <p>${error.message || "Please refresh the page or try again later"}</p>
+                <button data-action="reload-page" aria-label="Reload exercise library page" style="margin-top: var(--space-4); padding: var(--space-2) var(--space-4); background: var(--color-brand-primary); color: white; border: none; border-radius: var(--radius-md); cursor: pointer;">
+                  Reload Page
+                </button>
+              </div>
+            `;
+          }
+        }
+      });
+
+      // Global function for opening exercise modal
+      window.openExerciseModal = function (exerciseName) {
+        const library =
+          window.COMPLETE_EXERCISE_LIBRARY || COMPLETE_EXERCISE_LIBRARY;
+        const exercise = library[exerciseName];
+        if (!exercise) return;
+
+        const modal = document.getElementById("exerciseModal");
+        const modalTitle = document.getElementById("modalExerciseTitle");
+        const modalCategory = document.getElementById("modalExerciseCategory");
+        const modalBody = document.getElementById("modalBody");
+
+        modalTitle.textContent = exerciseName;
+        modalCategory.innerHTML = `<span class="exercise-category">${exercise.category}</span>`;
+
+        modalBody.innerHTML = `
+                <!-- Exercise Video/Animation Placeholder -->
+                <div class="exercise-video" style="margin-bottom: var(--space-6);">
+                    ${getExerciseIcon(exercise.category)}
+                    <div style="position: absolute; bottom: var(--space-2); right: var(--space-2); background: rgba(0,0,0,0.7); color: var(--color-text-primary); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-xs);">
+                        Video Coming Soon
+                    </div>
+                </div>
+
+                <!-- Muscles & Equipment -->
+                <div style="margin-bottom: var(--space-6);">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+                        <div>
+                            <h4 style="margin-bottom: var(--space-2);">Primary Muscles</h4>
+                            <div class="muscle-tags">
+                                ${exercise.primaryMuscles
+                                  .map(
+                                    (muscle) =>
+                                      `<span class="muscle-tag primary">${muscle}</span>`,
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: var(--space-2);">Equipment Needed</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                ${exercise.equipment.map((item) => `<li>• ${item}</li>`).join("")}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Setup -->
+                <div class="instruction-section">
+                    <h3 class="instruction-title"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Setup</h3>
+                    <p>${exercise.setup}</p>
+                </div>
+
+                <!-- Execution -->
+                <div class="instruction-section">
+                    <h3 class="instruction-title"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Execution</h3>
+                    <ol class="instruction-list">
+                        ${exercise.execution.map((step) => `<li>${step}</li>`).join("")}
+                    </ol>
+                </div>
+
+                <!-- Coaching Cues -->
+                <div class="coaching-tips">
+                    <div class="coaching-title">
+                        <span><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
+                        <span>Coaching Cues</span>
+                    </div>
+                    <ul style="margin: 0; padding-left: var(--space-4);">
+                        ${exercise.coaching.map((cue) => `<li>${cue}</li>`).join("")}
+                    </ul>
+                </div>
+
+                <!-- Progressions -->
+                ${
+                  exercise.progressions
+                    ? `
+                    <div class="instruction-section">
+                        <h3 class="instruction-title"><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Progressions</h3>
+                        <div class="progressions-grid">
+                            ${exercise.progressions
+                              .map(
+                                (progression, index) => `
+                                <div class="progression-card">
+                                    <div class="progression-level">Level ${index + 1}</div>
+                                    <div>${progression}</div>
+                                </div>
+                            `,
+                              )
+                              .join("")}
+                        </div>
+                    </div>
+                `
+                    : ""
+                }
+
+                <!-- Safety Notes -->
+                ${
+                  exercise.safetyNotes
+                    ? `
+                    <div class="safety-notes">
+                        <div class="safety-title">
+                            <span>⚠️</span>
+                            <span>Safety Notes</span>
+                        </div>
+                        <ul style="margin: 0; padding-left: var(--space-4);">
+                            ${exercise.safetyNotes.map((note) => `<li>${note}</li>`).join("")}
+                        </ul>
+                    </div>
+                `
+                    : ""
+                }
+
+                <!-- Secondary Muscles -->
+                ${
+                  exercise.secondaryMuscles.length > 0
+                    ? `
+                    <div style="margin-top: var(--space-6);">
+                        <h4>Secondary Muscles</h4>
+                        <div class="muscle-tags">
+                            ${exercise.secondaryMuscles
+                              .map(
+                                (muscle) =>
+                                  `<span class="muscle-tag">${muscle}</span>`,
+                              )
+                              .join("")}
+                        </div>
+                    </div>
+                `
+                    : ""
+                }
+            `;
+
+        modal.style.display = "block";
+        document.body.style.overflow = "hidden";
+      };
+
+      // Modal close functionality
+      document
+        .getElementById("modalClose")
+        .addEventListener("click", function () {
+          closeModal();
+        });
+
+      document
+        .getElementById("exerciseModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            closeModal();
+          }
+        });
+
+      function closeModal() {
+        document.getElementById("exerciseModal").style.display = "none";
+        document.body.style.overflow = "auto";
+      }
+
+      // Keyboard navigation
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          closeModal();
+        }
+      });
+    </script>
+
+    <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>

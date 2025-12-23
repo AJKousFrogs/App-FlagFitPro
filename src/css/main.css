@@ -1,0 +1,239 @@
+/* ================================================================
+   MAIN CSS ENTRY POINT - FlagFit Pro
+   Uses CSS Cascade Layers (@layer) for explicit specificity control
+   ================================================================ */
+
+/* ================================================================
+   CASCADE LAYERS - Explicit priority order
+   Lower layers have lower specificity priority
+   ================================================================ */
+
+@layer reset, base, tokens, breakpoints, theme, layout, gradients, components, components-modern, state, animations, utilities, hooks;
+
+/* ================================================================
+   LAYER 1: BASE (includes reset)
+   Base element styles, resets, typography defaults
+   ================================================================ */
+@import url("./base.css") layer(base);
+
+/* ================================================================
+   LAYER 3: TOKENS
+   Design tokens (CSS variables) - foundation for everything
+   ================================================================ */
+@import url("./tokens.css") layer(tokens);
+@import url("./z-index-system.css") layer(tokens);
+@import url("./body-classes.css") layer(base);
+
+/* ================================================================
+   LAYER 4: BREAKPOINTS
+   Centralized breakpoint definitions
+   ================================================================ */
+@import url("./breakpoints.css") layer(breakpoints);
+
+/* ================================================================
+   LAYER 5: THEME
+   Theme overrides (light, dark, high-contrast)
+   ================================================================ */
+@import url("./themes/light.css") layer(theme);
+@import url("./themes/dark.css") layer(theme);
+@import url("./themes/high-contrast.css") layer(theme);
+
+/* ================================================================
+   LAYER 6: LAYOUT
+   Page structure and grid systems
+   ================================================================ */
+@import url("./layout.css") layer(layout);
+@import url("./layout-modern.css") layer(layout);
+
+/* ================================================================
+   LAYER 6.2: PAGE-SPECIFIC STYLES
+   Shared page styles (auth pages, etc.)
+   ================================================================ */
+@import url("./pages/auth.css") layer(layout);
+
+/* ================================================================
+   LAYER 6.5: GRADIENTS
+   Gradient utilities
+   ================================================================ */
+@import url("./gradients.css") layer(gradients);
+
+/* ================================================================
+   LAYER 7: COMPONENTS
+   Component-specific styles
+   ================================================================ */
+@import url("./components/button.css") layer(components);
+@import url("./components/footer.css") layer(components);
+@import url("./components/card.css") layer(components);
+@import url("./components/badge.css") layer(components);
+@import url("./components/form.css") layer(components);
+@import url("./components/universal-form-validation.css") layer(components);
+@import url("./components/modal.css") layer(components);
+@import url("./components/alert.css") layer(components);
+@import url("./components/header.css") layer(components);
+@import url("./components/sidebar.css") layer(components);
+@import url("./components/universal-mobile-nav.css") layer(components);
+@import url("./components/universal-loading-states.css") layer(components);
+@import url("./components/universal-touch-targets.css") layer(components);
+@import url("./components/universal-focus-management.css") layer(components);
+@import url("./components/theme-toggle.css") layer(components);
+@import url("./components/community.css") layer(components);
+@import url("./components/post.css") layer(components);
+@import url("./components/sidebar-widgets.css") layer(components);
+@import url("./components/ai-chat-bubble.css") layer(components);
+
+/* ================================================================
+   LAYER 7.5: COMPONENTS MODERN
+   Modern component styles (hero sections, charts, etc.)
+   ================================================================ */
+@import url("./components-modern.css") layer(components-modern);
+
+/* ================================================================
+   LAYER 7.6: UX ENHANCEMENTS
+   Onboarding, help system, loading states, undo, shortcuts
+   ================================================================ */
+@import url("./onboarding.css") layer(components-modern);
+@import url("./profile-completion.css") layer(components-modern);
+@import url("./help-system.css") layer(components-modern);
+@import url("./loading-states.css") layer(components-modern);
+@import url("./recently-viewed.css") layer(components-modern);
+@import url("./field-error.css") layer(components-modern);
+@import url("./brand-contrast-fix.css") layer(components-modern);
+
+/* ================================================================
+   LAYER 8: STATE
+   Dynamic states (.is-*, .has-*)
+   ================================================================ */
+@import url("./state.css") layer(state);
+
+/* ================================================================
+   LAYER 9: ANIMATIONS
+   Keyframes and transition utilities
+   ================================================================ */
+@import url("./animations.css") layer(animations);
+
+/* ================================================================
+   LAYER 10: UTILITIES
+   Helper classes (.u-*) - highest specificity
+   ================================================================ */
+@import url("./utilities.css") layer(utilities);
+@import url("./inline-styles-extracted.css") layer(utilities);
+
+/* ================================================================
+   LAYER 10.5: RESPONSIVE FIXES
+   Global responsive fixes for mobile, tablet, and desktop alignment
+   ================================================================ */
+@import url("./responsive-fixes.css") layer(utilities);
+
+/* ================================================================
+   LAYER 11: HOOKS
+   JavaScript hooks (.js-*) - no styles
+   ================================================================ */
+@import url("./hooks.css") layer(hooks);
+
+/* ================================================================
+   LEGACY COMPATIBILITY
+   Backward compatibility classes (moved to layout.css but kept here for migration)
+   ================================================================ */
+
+/* Legacy container classes - use .l-container instead */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-layout-md);
+}
+
+.container-sm {
+  max-width: 640px;
+}
+
+.container-md {
+  max-width: 768px;
+}
+
+.container-lg {
+  max-width: 1024px;
+}
+
+.container-xl {
+  max-width: 1280px;
+}
+
+.container-2xl {
+  max-width: 1536px;
+}
+
+/* Legacy grid class - use .l-grid instead */
+.grid {
+  display: grid;
+  gap: var(--spacing-component-md);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Icon Styles */
+i[data-lucide],
+svg.lucide {
+  vertical-align: middle;
+  color: var(--color-brand-primary);
+  width: 1.5em;
+  height: 1.5em;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Ensure all Lucide SVG icons inherit color and have proper stroke */
+i[data-lucide] svg,
+svg.lucide,
+[data-lucide] svg,
+i[data-lucide] > svg {
+  stroke: currentColor !important;
+  fill: none !important;
+  color: inherit;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Ensure icons inherit color from parent */
+.nav-item-icon svg,
+.header-icon svg,
+.sidebar-logo svg,
+.search-icon svg,
+.mobile-menu-toggle svg {
+  stroke: currentColor !important;
+  fill: none !important;
+  color: inherit;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Global rule for all Lucide SVG elements */
+svg.lucide,
+[data-lucide] svg,
+i[data-lucide] svg {
+  stroke: currentColor !important;
+  fill: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Chart Styles */
+.chart-bar {
+  background: var(--chart-bar-bg);
+  border-radius: var(--radius-component-lg);
+  height: 24px;
+  margin-bottom: var(--spacing-component-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-bar-fill {
+  background: var(--chart-bar-fill);
+  height: 100%;
+  border-radius: var(--radius-component-lg);
+  transition: width var(--motion-duration-normal)
+    var(--motion-easing-productive);
+}

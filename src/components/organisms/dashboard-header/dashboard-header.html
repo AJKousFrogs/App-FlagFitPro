@@ -1,0 +1,71 @@
+<!-- 
+    Dashboard Header Component - FlagFit Pro
+    
+    Usage: Copy this snippet for dashboard page headers
+    Includes page title, actions, and user menu
+-->
+
+<header class="dashboard-header">
+  <div class="header-left">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Welcome back, Coach!</p>
+  </div>
+
+  <div class="header-right">
+    <!-- Search Bar -->
+    <div class="search-bar" style="max-width: 300px">
+      <i
+        data-lucide="search"
+        style="width: 20px; height: 20px; color: var(--color-text-secondary)"
+      ></i>
+      <input type="search" class="search-input" placeholder="Search..." />
+    </div>
+
+    <!-- Notifications -->
+    <button class="btn btn-tertiary btn-sm" aria-label="Notifications">
+      <i data-lucide="bell" style="width: 20px; height: 20px"></i>
+      <span
+        class="badge badge-error badge-sm"
+        style="position: absolute; top: -4px; right: -4px"
+        >3</span
+      >
+    </button>
+
+    <!-- User Menu -->
+    <div class="user-menu">
+      <button
+        class="user-menu-trigger"
+        aria-label="User menu"
+        aria-expanded="false"
+      >
+        <img
+          src="/path/to/avatar.jpg"
+          alt="User avatar"
+          class="user-avatar"
+          style="width: 32px; height: 32px; border-radius: 50%"
+        />
+        <span class="user-name">John Doe</span>
+        <i data-lucide="chevron-down" style="width: 16px; height: 16px"></i>
+      </button>
+      <ul class="user-menu-dropdown" role="menu" style="display: none">
+        <li role="menuitem"><a href="/profile">Profile</a></li>
+        <li role="menuitem"><a href="/settings">Settings</a></li>
+        <li role="separator"></li>
+        <li role="menuitem"><a href="/logout">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- 
+    CSS Classes Required:
+    - .dashboard-header - Main container
+    - .header-left - Left section (title)
+    - .header-right - Right section (actions)
+    - .page-title - Main heading
+    - .page-subtitle - Subheading
+    - .user-menu - User menu container
+    - .user-menu-trigger - Menu button
+    - .user-avatar - Avatar image
+    - .user-menu-dropdown - Dropdown menu
+-->

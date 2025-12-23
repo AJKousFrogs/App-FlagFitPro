@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Dashboard</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#089949" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
+
+    <!-- Apple Touch Icons -->
+    <link
+      rel="apple-touch-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+
+    <!-- Microsoft Tile -->
+    <meta name="msapplication-TileColor" content="#089949" />
+    <meta
+      name="msapplication-TileImage"
+      content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Component CSS -->
+    <link rel="stylesheet" href="./src/css/components/sidebar.css" />
+    <link rel="stylesheet" href="./src/css/components/header.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/dashboard.css" />
+    <!-- Inline styles replacement utilities -->
+    <link
+      rel="stylesheet"
+      href="./src/css/utilities/inline-styles-replacement.css"
+    />
+    <!-- Chatbot Component Styles -->
+    <link rel="stylesheet" href="./src/css/components/chatbot.css" />
+
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
+
+    <!-- Lucide Icons -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Dashboard Page JavaScript -->
+    <script type="module" src="./src/js/pages/dashboard-page.js" defer></script>
+    <script type="module" src="./src/logger.js"></script>
+    <!-- Preload Chatbot Component -->
+    <script type="module">
+      import { logger } from "./src/logger.js";
+      // Preload chatbot for faster access
+      import("./src/js/components/chatbot.js")
+        .then((module) => {
+          // Ensure chatbot is available globally
+          if (module.flagFitChatbot) {
+            window.flagFitChatbot = module.flagFitChatbot;
+            logger.info("Chatbot loaded successfully");
+          }
+        })
+        .catch((error) => {
+          logger.warn("Chatbot preload failed:", error);
+        });
+    </script>
+
+    <!-- PWA Notification Manager -->
+    <script type="module" src="./src/js/notification-manager.js" defer></script>
+    <!-- Achievements System -->
+    <script type="module" src="./src/js/achievements-service.js" defer></script>
+    <script src="./src/js/achievements-widget.js" defer></script>
+    <script src="./src/js/achievements-integration.js" defer></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+    <!-- Notification Panel Loader (Dynamic Component) -->
+    <script
+      type="module"
+      src="./src/js/components/notification-panel-loader.js"
+      defer
+    ></script>
+    <!-- AI Chat Bubble Loader (Dynamic Component) -->
+    <script
+      type="module"
+      src="./src/js/components/ai-chat-bubble-loader.js"
+      defer
+    ></script>
+  </head>
+  <body class="page-dashboard">
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link" aria-label="Skip to main content"
+      >Skip to main content</a
+    >
+    <div class="dashboard-container">
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+
+      <main
+        id="main-content"
+        class="main-content flex-1 min-w-0 overflow-x-hidden overflow-y-auto bg-surface-primary min-h-screen transition-bg"
+      >
+        <!-- Top Bar (Loaded Dynamically) -->
+        <div data-topbar-container></div>
+
+        <!-- Player Dashboard Content -->
+        <div class="dashboard-main-layout">
+          <!-- Center: Main Dashboard -->
+          <div class="dashboard-center">
+            <!-- Greeting -->
+            <div class="dashboard-greeting">
+              <h1 id="userGreeting" class="text-heading-2xl text-primary">
+                👋 Hello, there!
+              </h1>
+              <p class="text-body-md text-secondary">
+                How are you feeling today?
+              </p>
+            </div>
+
+            <!-- Quick Stats Overview -->
+            <div class="stats-grid u-display-grid u-gap-16 u-margin-bottom-24">
+              <div class="stats-card">
+                <span class="stats-label">Sessions</span>
+                <span class="stats-value" id="session-count">0</span>
+              </div>
+              <div class="stats-card">
+                <span class="stats-label">Performance</span>
+                <span class="stats-value" id="performance-score">0</span>
+              </div>
+              <div class="stats-card">
+                <span class="stats-label">Day Streak</span>
+                <span class="stats-value" id="day-streak">0</span>
+              </div>
+              <div class="stats-card">
+                <span class="stats-label">Tournaments</span>
+                <span class="stats-value" id="tournaments-count">0</span>
+              </div>
+            </div>
+
+            <!-- Date Picker -->
+            <div class="date-picker-container">
+              <div class="date-picker-header">
+                <button
+                  class="date-nav-btn"
+                  id="prev-day-btn"
+                  aria-label="Previous day"
+                  title="Previous day"
+                >
+                  <i data-lucide="chevron-left" class="icon-20"></i>
+                </button>
+                <div class="date-picker-wrapper">
+                  <input
+                    type="date"
+                    id="dashboard-date-picker"
+                    class="date-picker-input"
+                    aria-label="Select date"
+                    class="date-picker-input-overlay"
+                  />
+                  <span
+                    id="date-picker-display"
+                    class="date-picker-display date-picker-display-overlay"
+                    >dd.mm.yyyy</span
+                  >
+                  <button
+                    class="date-today-btn"
+                    id="today-btn"
+                    title="Go to today"
+                  >
+                    Today
+                  </button>
+                </div>
+                <button
+                  class="date-nav-btn"
+                  id="next-day-btn"
+                  aria-label="Next day"
+                  title="Next day"
+                >
+                  <i data-lucide="chevron-right" class="icon-20"></i>
+                </button>
+              </div>
+              <div class="date-status" id="date-status">
+                <span class="date-indicator today-indicator" id="date-indicator"
+                  >Today</span
+                >
+                <span class="date-info" id="date-info"></span>
+              </div>
+            </div>
+
+            <!-- Wellness Quick Check-in -->
+            <div class="wellness-checkin-card">
+              <h2 class="section-title">WELLNESS QUICK CHECK-IN</h2>
+              <div class="wellness-metrics">
+                <div class="wellness-metric">
+                  <label for="energy-slider">Energy (1–10):</label>
+                  <div class="slider-container">
+                    <input
+                      type="range"
+                      id="energy-slider"
+                      min="1"
+                      max="10"
+                      value="6"
+                      class="wellness-slider"
+                    />
+                    <span class="slider-value">6</span>
+                  </div>
+                </div>
+                <div class="wellness-metric">
+                  <label for="sleep-slider">Sleep (1–10):</label>
+                  <div class="slider-container">
+                    <input
+                      type="range"
+                      id="sleep-slider"
+                      min="1"
+                      max="10"
+                      value="7"
+                      class="wellness-slider"
+                    />
+                    <span class="slider-value">7</span>
+                  </div>
+                </div>
+                <div class="wellness-metric">
+                  <label for="mood-slider">Mood (1–10):</label>
+                  <div class="slider-container">
+                    <input
+                      type="range"
+                      id="mood-slider"
+                      min="1"
+                      max="10"
+                      value="4"
+                      class="wellness-slider"
+                    />
+                    <span class="slider-value">4</span>
+                  </div>
+                </div>
+                <div class="wellness-metric">
+                  <label for="training-load-slider">Load (1–10):</label>
+                  <div class="slider-container">
+                    <input
+                      type="range"
+                      id="training-load-slider"
+                      min="1"
+                      max="10"
+                      value="7"
+                      class="wellness-slider"
+                    />
+                    <span class="slider-value">7</span>
+                  </div>
+                </div>
+              </div>
+              <button class="btn-submit-checkin">Submit</button>
+            </div>
+
+            <!-- Injury Tracking Section -->
+            <div class="injury-tracking-card">
+              <h2 class="section-title">
+                <i data-lucide="alert-triangle" class="icon-20 icon-inline"></i>
+                INJURY TRACKING
+              </h2>
+              <p class="injury-description section-description">
+                Log any injuries or pain to help adjust your training schedule
+                and recovery plan.
+              </p>
+
+              <!-- Active Injuries Display -->
+              <div id="active-injuries-list" class="active-injuries-list"></div>
+
+              <!-- Injury Form -->
+              <div class="injury-form-container">
+                <button
+                  type="button"
+                  class="btn-add-injury"
+                  id="btn-add-injury"
+                  aria-label="Add new injury"
+                >
+                  <i data-lucide="plus" class="icon-16 icon-inline"></i>
+                  Add Injury / Pain Report
+                </button>
+
+                <form id="injury-form" class="injury-form hidden">
+                  <div class="form-group">
+                    <label for="injury-type">Injury Type / Body Part:</label>
+                    <select id="injury-type" name="injuryType" required>
+                      <option value="">Select body part...</option>
+                      <option value="ankle">Ankle</option>
+                      <option value="knee">Knee</option>
+                      <option value="hamstring">Hamstring</option>
+                      <option value="quadriceps">Quadriceps</option>
+                      <option value="calf">Calf</option>
+                      <option value="shoulder">Shoulder</option>
+                      <option value="elbow">Elbow</option>
+                      <option value="wrist">Wrist</option>
+                      <option value="back">Back</option>
+                      <option value="neck">Neck</option>
+                      <option value="hip">Hip</option>
+                      <option value="groin">Groin</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="injury-severity">Severity (1–10):</label>
+                    <div class="severity-container">
+                      <input
+                        type="range"
+                        id="injury-severity"
+                        name="severity"
+                        min="1"
+                        max="10"
+                        value="5"
+                        class="severity-slider"
+                        required
+                      />
+                      <span class="severity-value">5</span>
+                    </div>
+                    <div class="severity-labels">
+                      <span>Mild</span>
+                      <span>Moderate</span>
+                      <span>Severe</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="injury-description">Description:</label>
+                    <textarea
+                      id="injury-description"
+                      name="description"
+                      rows="3"
+                      placeholder="Describe the injury, when it occurred, and any relevant details..."
+                      required
+                    ></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="injury-status">Status:</label>
+                    <select id="injury-status" name="status" required>
+                      <option value="active">
+                        Active (Currently affecting training)
+                      </option>
+                      <option value="recovering">Recovering (Improving)</option>
+                      <option value="monitoring">
+                        Monitoring (Minor, watching closely)
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="injury-date">Date Started:</label>
+                    <input
+                      type="date"
+                      id="injury-date"
+                      name="startDate"
+                      required
+                    />
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn-submit-injury">
+                      <i data-lucide="save" class="icon-16 icon-inline"></i>
+                      Save Injury Report
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-cancel-injury"
+                      id="btn-cancel-injury"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Today's Training -->
+            <div class="todays-training-card">
+              <h2 class="section-title">TODAY'S TRAINING</h2>
+              <div class="training-details">
+                <div class="training-time">🕒 Loading...</div>
+                <div class="training-info">Coach: Loading...</div>
+                <div class="training-info">Duration: Loading...</div>
+                <button type="button" class="btn-start-session">
+                  START SESSION
+                </button>
+              </div>
+            </div>
+
+            <!-- Daily Routines: Mobility & Foam Rolling -->
+            <div class="daily-routines-card">
+              <h2 class="section-title">DAILY ROUTINES</h2>
+              <div class="routines-grid">
+                <!-- Morning Mobility -->
+                <div class="routine-item" id="morning-mobility-item">
+                  <div class="routine-icon mobility-icon">
+                    <i data-lucide="stretch-horizontal"></i>
+                  </div>
+                  <div class="routine-content">
+                    <h3 class="routine-name">Morning Mobility</h3>
+                    <p class="routine-focus" id="mobility-focus">
+                      Focus: Loading...
+                    </p>
+                    <div class="routine-actions">
+                      <button class="btn-view-routine" id="btn-view-mobility">
+                        VIEW ROUTINE
+                      </button>
+                      <span class="routine-duration">15 min</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Foam Rolling -->
+                <div class="routine-item" id="foam-rolling-item">
+                  <div class="routine-icon recovery-icon">
+                    <i data-lucide="radius"></i>
+                  </div>
+                  <div class="routine-content">
+                    <h3 class="routine-name">Foam Rolling</h3>
+                    <p class="routine-focus" id="rolling-focus">
+                      Focus: Full Body Recovery
+                    </p>
+                    <div class="routine-actions">
+                      <button class="btn-view-routine" id="btn-view-rolling">
+                        VIEW ROUTINE
+                      </button>
+                      <span class="routine-duration">10-15 min</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Week Overview -->
+            <div class="week-overview-section">
+              <h2 class="section-title">WEEK OVERVIEW</h2>
+              <div class="week-days-overview">
+                <span class="day-item completed">M ●</span>
+                <span class="day-item completed">T ●</span>
+                <span class="day-item today">W ✔</span>
+                <span class="day-item scheduled">T ○</span>
+                <span class="day-item scheduled">F ○</span>
+                <span class="day-item scheduled">S ○</span>
+                <span class="day-item scheduled">S ○</span>
+              </div>
+            </div>
+
+            <!-- Upcoming -->
+            <div class="upcoming-section">
+              <h2 class="section-title">UPCOMING</h2>
+              <ul class="upcoming-list">
+                <li class="upcoming-item">Tue 18:30 Speed & Cuts</li>
+                <li class="upcoming-item">Thu 19:00 Strength</li>
+                <li class="upcoming-item">Sat 10:00 Conditioning</li>
+              </ul>
+            </div>
+
+            <!-- Achievements Widget -->
+            <div
+              id="achievements-widget-container"
+              class="u-margin-top-30"
+            ></div>
+          </div>
+
+          <!-- Right: Quick Sidebar -->
+          <div class="dashboard-right-sidebar">
+            <!-- Supplements -->
+            <div class="supplements-card">
+              <h3 class="card-title">SUPPLEMENTS</h3>
+              <div class="supplements-list">
+                <!-- Supplements in alphabetical order -->
+                <div class="supplement-item" data-supplement="beta-alanine">
+                  <span class="supplement-name">Beta-Alanine</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input" />
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="supplement-item" data-supplement="caffeine">
+                  <span class="supplement-name">Caffeine</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input" />
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="supplement-item" data-supplement="calcium">
+                  <span class="supplement-name">Calcium</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input" />
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="supplement-item" data-supplement="creatine">
+                  <span class="supplement-name">Creatine Monohydrate</span>
+                  <label class="supplement-toggle">
+                    <input
+                      type="checkbox"
+                      class="supplement-toggle-input"
+                      checked
+                    />
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="supplement-item" data-supplement="iron">
+                  <span class="supplement-name">Iron</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input" />
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="supplement-item" data-supplement="magnesium">
+                  <span class="supplement-name">Magnesium</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input" />
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="supplement-item" data-supplement="nitrate">
+                  <span class="supplement-name">Nitrate (Beetroot)</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input" />
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="supplement-item" data-supplement="protein">
+                  <span class="supplement-name">Protein</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input" />
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="supplement-item" data-supplement="vitamin-d">
+                  <span class="supplement-name">Vitamin D</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input" />
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Chat Floating Bubble (Loaded Dynamically) -->
+            <div data-ai-chat-container></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Notification Panel (Loaded Dynamically) -->
+    <div data-notification-panel-container></div>
+
+    <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>

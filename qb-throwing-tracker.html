@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QB Throwing Volume & Velocity Tracker - FlagFit Pro</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/qb-throwing-tracker.css" />
+
+    <!-- Lucide Icons - Modern icon library -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script
+      type="module"
+      src="./src/js/components/common-loaders.js"
+      defer
+    ></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
+    <!-- AI Chat Bubble Loader (Dynamic Component) -->
+    <script
+      type="module"
+      src="./src/js/components/ai-chat-bubble-loader.js"
+      defer
+    ></script>
+
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js" defer></script>
+
+    <!-- Supabase JS SDK from CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
+      defer
+    ></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+      <!-- Top Bar (Loaded Dynamically) -->
+      <div data-topbar-container></div>
+
+      <main class="main-content u-flex-1 u-min-width-0 u-bg-primary">
+        <!-- Page Header -->
+        <div class="card card-elevated">
+          <div class="card-body">
+            <div
+              class="u-text-body-sm u-text-secondary u-margin-bottom-4"
+              style="line-height: 1.4; font-weight: 500"
+            >
+              <span>QB Development</span>
+              <span style="margin: 0 var(--space-1, 4px); opacity: 0.5">•</span>
+              <span>Throwing Tracker</span>
+            </div>
+            <h1
+              class="u-text-heading-xl u-font-weight-700 u-text-primary u-margin-bottom-8 u-display-flex u-align-center u-gap-8"
+            >
+              <i
+                data-lucide="bar-chart-3"
+                class="icon-24"
+                style="color: var(--color-brand-primary)"
+              ></i>
+              Throwing Volume & Velocity Tracker
+            </h1>
+            <p class="text-body-md text-secondary leading-relaxed">
+              Track your progress toward the 320-throw tournament challenge
+            </p>
+          </div>
+        </div>
+
+        <!-- Tournament Preparation Progress -->
+        <div
+          class="card card-elevated u-margin-top-24"
+          style="
+            background: linear-gradient(
+              135deg,
+              var(--color-brand-primary) 0%,
+              var(--color-brand-secondary) 100%
+            );
+            color: white;
+          "
+        >
+          <div class="card-body" style="padding: 32px">
+            <h3
+              class="u-text-heading-lg u-margin-bottom-24 u-display-flex u-align-center u-gap-8"
+              style="color: white"
+            >
+              <i data-lucide="trophy" class="icon-24" style="color: white"></i>
+              Tournament Preparation Progress
+            </h3>
+            <div
+              class="u-display-grid u-gap-16"
+              style="
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              "
+            >
+              <div
+                class="u-text-center u-padding-16 u-radius-md"
+                style="background: rgba(255, 255, 255, 0.1)"
+              >
+                <div
+                  class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4"
+                  id="currentWeekVolume"
+                  style="color: white"
+                >
+                  0
+                </div>
+                <div
+                  class="u-text-body-sm"
+                  style="color: rgba(255, 255, 255, 0.9)"
+                >
+                  This Week's Throws
+                </div>
+              </div>
+              <div
+                class="u-text-center u-padding-16 u-radius-md"
+                style="background: rgba(255, 255, 255, 0.1)"
+              >
+                <div
+                  class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4"
+                  id="totalThrows"
+                  style="color: white"
+                >
+                  0
+                </div>
+                <div
+                  class="u-text-body-sm"
+                  style="color: rgba(255, 255, 255, 0.9)"
+                >
+                  Total Program Throws
+                </div>
+              </div>
+              <div
+                class="u-text-center u-padding-16 u-radius-md"
+                style="background: rgba(255, 255, 255, 0.1)"
+              >
+                <div
+                  class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4"
+                  id="peakVelocity"
+                  style="color: white"
+                >
+                  --
+                </div>
+                <div
+                  class="u-text-body-sm"
+                  style="color: rgba(255, 255, 255, 0.9)"
+                >
+                  Peak Velocity (mph)
+                </div>
+              </div>
+              <div
+                class="u-text-center u-padding-16 u-radius-md"
+                style="background: rgba(255, 255, 255, 0.1)"
+              >
+                <div
+                  class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4"
+                  id="tournamentReadiness"
+                  style="color: white"
+                >
+                  0%
+                </div>
+                <div
+                  class="u-text-body-sm"
+                  style="color: rgba(255, 255, 255, 0.9)"
+                >
+                  Tournament Readiness
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Session Logging -->
+        <div class="card u-margin-top-24">
+          <div class="card-header">
+            <h3
+              class="card-title u-display-flex u-align-center u-gap-8 u-margin-0"
+            >
+              <i
+                data-lucide="plus-circle"
+                class="icon-20"
+                style="color: var(--color-brand-primary)"
+              ></i>
+              Log Throwing Session
+            </h3>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Session Type</label>
+                <select class="form-select" id="sessionType">
+                  <option value="mechanics">Mechanics Focus</option>
+                  <option value="velocity">Velocity Development</option>
+                  <option value="endurance">Endurance Training</option>
+                  <option value="simulation">Tournament Simulation</option>
+                  <option value="warmup">Warmup/Light</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Total Throws</label>
+                <input
+                  type="number"
+                  class="form-input"
+                  id="totalThrowsInput"
+                  placeholder="Number of throws"
+                  min="0"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Session Duration</label>
+                <!-- Unit Toggle -->
+                <div
+                  class="unit-toggle-group"
+                  style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem"
+                >
+                  <button
+                    type="button"
+                    class="unit-toggle-btn unit-toggle-active"
+                    data-unit="minutes"
+                    id="sessionDuration-unit-minutes"
+                    style="
+                      flex: 1;
+                      padding: 0.5rem 1rem;
+                      border: 2px solid var(--color-brand-primary, #10c96b);
+                      background: var(--color-brand-primary, #10c96b);
+                      color: white;
+                      border-radius: 0.5rem;
+                      cursor: pointer;
+                      font-weight: 600;
+                      font-size: 0.875rem;
+                      transition: all 0.2s;
+                    "
+                  >
+                    Minutes
+                  </button>
+                  <button
+                    type="button"
+                    class="unit-toggle-btn"
+                    data-unit="seconds"
+                    id="sessionDuration-unit-seconds"
+                    style="
+                      flex: 1;
+                      padding: 0.5rem 1rem;
+                      border: 2px solid var(--color-border-secondary, #e5e7eb);
+                      background: white;
+                      color: var(--color-text-secondary, #6b7280);
+                      border-radius: 0.5rem;
+                      cursor: pointer;
+                      font-weight: 600;
+                      font-size: 0.875rem;
+                      transition: all 0.2s;
+                    "
+                  >
+                    Seconds
+                  </button>
+                </div>
+                <div class="input-group">
+                  <input
+                    type="number"
+                    class="form-input"
+                    id="sessionDuration"
+                    name="sessionDuration"
+                    placeholder="Enter duration in minutes"
+                    min="0"
+                    step="1"
+                  />
+                  <span class="input-suffix" id="sessionDuration-unit-label"
+                    >min</span
+                  >
+                </div>
+                <input
+                  type="hidden"
+                  id="sessionDuration-unit"
+                  name="durationUnit"
+                  value="minutes"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Peak Velocity (mph)</label>
+                <input
+                  type="number"
+                  class="form-input"
+                  id="peakVelocityInput"
+                  placeholder="Peak velocity"
+                  step="0.1"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Average Velocity (mph)</label>
+                <input
+                  type="number"
+                  class="form-input"
+                  id="avgVelocityInput"
+                  placeholder="Average velocity"
+                  step="0.1"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Accuracy % (optional)</label>
+                <input
+                  type="number"
+                  class="form-input"
+                  id="accuracyInput"
+                  placeholder="Accuracy %"
+                  min="0"
+                  max="100"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Fatigue Level (1-10)</label>
+                <select class="form-select" id="fatigueLevel">
+                  <option value="1">1 - No fatigue</option>
+                  <option value="2">2 - Very light</option>
+                  <option value="3">3 - Light</option>
+                  <option value="4">4 - Moderate</option>
+                  <option value="5">5 - Some fatigue</option>
+                  <option value="6">6 - Noticeable</option>
+                  <option value="7">7 - Significant</option>
+                  <option value="8">8 - Heavy</option>
+                  <option value="9">9 - Very heavy</option>
+                  <option value="10">10 - Exhausted</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Arm Feel</label>
+                <select class="form-select" id="armFeel">
+                  <option value="excellent">Excellent</option>
+                  <option value="good">Good</option>
+                  <option value="fair">Fair</option>
+                  <option value="sore">Sore</option>
+                  <option value="pain">Pain (Stop Training)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Weather Conditions</label>
+                <select class="form-select" id="weatherConditions">
+                  <option value="indoor">Indoor</option>
+                  <option value="calm">Calm Outdoor</option>
+                  <option value="breezy">Breezy</option>
+                  <option value="windy">Windy</option>
+                  <option value="cold">Cold</option>
+                  <option value="hot">Hot</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Session Notes</label>
+              <textarea
+                class="form-input"
+                id="sessionNotes"
+                rows="3"
+                placeholder="Notes about mechanics, improvements, concerns, etc."
+              ></textarea>
+            </div>
+
+            <div class="u-display-flex u-gap-12" style="margin-top: 24px">
+              <button
+                class="btn btn-primary"
+                data-action="log-session"
+                aria-label="Log throwing session"
+              >
+                <i
+                  data-lucide="save"
+                  class="icon-18"
+                  style="margin-right: 8px"
+                ></i>
+                Log Session
+              </button>
+              <button
+                class="btn btn-secondary"
+                data-action="start-quick-session"
+                aria-label="Start guided throwing session"
+              >
+                <i
+                  data-lucide="play-circle"
+                  class="icon-18"
+                  style="margin-right: 8px"
+                ></i>
+                Start Guided Session
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Tracking -->
+        <div class="card u-margin-top-24">
+          <div class="card-header">
+            <h3
+              class="card-title u-display-flex u-align-center u-gap-8 u-margin-0"
+            >
+              <i
+                data-lucide="trending-up"
+                class="icon-20"
+                style="color: var(--color-brand-primary)"
+              ></i>
+              Weekly Progress
+            </h3>
+          </div>
+          <div class="card-body">
+            <div class="u-margin-bottom-20">
+              <div class="u-display-flex u-justify-between u-margin-bottom-8">
+                <span class="u-font-weight-600 u-text-primary"
+                  >Weekly Volume Goal</span
+                >
+                <span
+                  class="u-font-weight-600 u-text-primary"
+                  id="volumeProgressText"
+                  >0 / 0 throws</span
+                >
+              </div>
+              <div
+                class="u-width-full u-radius-sm u-overflow-hidden"
+                style="height: 12px; background: var(--color-border-secondary)"
+              >
+                <div
+                  class="u-height-full u-radius-sm"
+                  id="volumeProgressBar"
+                  style="
+                    width: 0%;
+                    transition: width 0.3s ease;
+                    background: linear-gradient(90deg, #43e97b, #38f9d7);
+                  "
+                ></div>
+              </div>
+            </div>
+
+            <div class="u-margin-bottom-20">
+              <div class="u-display-flex u-justify-between u-margin-bottom-8">
+                <span class="u-font-weight-600 u-text-primary"
+                  >Velocity Development</span
+                >
+                <span
+                  class="u-font-weight-600 u-text-primary"
+                  id="velocityProgressText"
+                  >0 mph gain</span
+                >
+              </div>
+              <div
+                class="u-width-full u-radius-sm u-overflow-hidden"
+                style="height: 12px; background: var(--color-border-secondary)"
+              >
+                <div
+                  class="u-height-full u-radius-sm"
+                  id="velocityProgressBar"
+                  style="
+                    width: 0%;
+                    transition: width 0.3s ease;
+                    background: linear-gradient(
+                      90deg,
+                      var(--color-brand-primary),
+                      var(--color-brand-secondary)
+                    );
+                  "
+                ></div>
+              </div>
+            </div>
+
+            <div class="u-margin-bottom-0">
+              <div class="u-display-flex u-justify-between u-margin-bottom-8">
+                <span class="u-font-weight-600 u-text-primary"
+                  >Tournament Readiness (320 throws)</span
+                >
+                <span
+                  class="u-font-weight-600 u-text-primary"
+                  id="tournamentProgressText"
+                  >0%</span
+                >
+              </div>
+              <div
+                class="u-width-full u-radius-sm u-overflow-hidden"
+                style="height: 12px; background: var(--color-border-secondary)"
+              >
+                <div
+                  class="u-height-full u-radius-sm"
+                  id="tournamentProgressBar"
+                  style="
+                    width: 0%;
+                    transition: width 0.3s ease;
+                    background: linear-gradient(
+                      90deg,
+                      var(--color-brand-primary),
+                      var(--color-brand-secondary)
+                    );
+                  "
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div
+          class="u-display-grid u-gap-24 u-margin-top-24"
+          style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))"
+        >
+          <!-- Volume Tracking -->
+          <div class="card">
+            <div class="card-header">
+              <h3
+                class="card-title u-display-flex u-align-center u-gap-12 u-margin-0"
+              >
+                <div
+                  class="u-display-flex u-align-center u-justify-center u-radius-md"
+                  style="
+                    width: 40px;
+                    height: 40px;
+                    background: linear-gradient(
+                      135deg,
+                      #43e97b 0%,
+                      #38f9d7 100%
+                    );
+                  "
+                >
+                  <i
+                    data-lucide="bar-chart-3"
+                    class="icon-20"
+                    style="color: white"
+                  ></i>
+                </div>
+                Volume Tracking
+              </h3>
+            </div>
+            <div class="card-body">
+              <div
+                class="u-padding-24 u-radius-md u-margin-bottom-16"
+                id="volumeChart"
+                style="
+                  background: var(--surface-secondary);
+                  min-height: 200px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: var(--text-secondary);
+                "
+              >
+                <div class="u-text-center">
+                  <i
+                    data-lucide="bar-chart-3"
+                    class="icon-48"
+                    style="opacity: 0.3; margin-bottom: 12px"
+                  ></i>
+                  <p>Volume progression chart will be displayed here</p>
+                </div>
+              </div>
+              <div class="form-group">
+                <label
+                  class="form-label u-display-block u-margin-bottom-4 u-font-weight-600"
+                  >Week to Display</label
+                >
+                <select
+                  class="form-select"
+                  id="weekSelector"
+                  data-action="update-charts"
+                  aria-label="Select date range to update charts"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border: 2px solid var(--color-border-secondary);
+                    border-radius: 8px;
+                    font-size: 0.95rem;
+                    background: var(--surface-primary);
+                    color: var(--text-primary);
+                  "
+                >
+                  <option value="current">Current Week</option>
+                  <option value="last4">Last 4 Weeks</option>
+                  <option value="all">All Program</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Velocity Tracking -->
+          <div class="card">
+            <div class="card-header">
+              <h3
+                class="card-title u-display-flex u-align-center u-gap-12 u-margin-0"
+              >
+                <div
+                  class="u-display-flex u-align-center u-justify-center u-radius-md"
+                  style="
+                    width: 40px;
+                    height: 40px;
+                    background: linear-gradient(
+                      135deg,
+                      var(--color-brand-primary) 0%,
+                      var(--color-brand-secondary) 100%
+                    );
+                  "
+                >
+                  <i data-lucide="zap" class="icon-20" style="color: white"></i>
+                </div>
+                Velocity Progression
+              </h3>
+            </div>
+            <div class="card-body">
+              <div
+                class="u-padding-24 u-radius-md u-margin-bottom-16"
+                id="velocityChart"
+                style="
+                  background: var(--surface-secondary);
+                  min-height: 200px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: var(--text-secondary);
+                "
+              >
+                <div class="u-text-center">
+                  <i
+                    data-lucide="trending-up"
+                    class="icon-48"
+                    style="opacity: 0.3; margin-bottom: 12px"
+                  ></i>
+                  <p>Velocity progression chart will be displayed here</p>
+                </div>
+              </div>
+              <div class="u-text-body-sm u-text-secondary">
+                <strong>Target:</strong> 8-15 mph gain over 14 weeks
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Sessions -->
+        <div class="card u-margin-top-24">
+          <div class="card-header">
+            <h3
+              class="card-title u-display-flex u-align-center u-gap-8 u-margin-0"
+            >
+              <i
+                data-lucide="clipboard-list"
+                class="icon-20"
+                style="color: var(--color-brand-primary)"
+              ></i>
+              Recent Sessions
+            </h3>
+          </div>
+          <div class="card-body">
+            <div id="sessionLogContainer">
+              <!-- Sessions will be dynamically loaded here -->
+            </div>
+
+            <button
+              class="btn btn-secondary"
+              data-action="load-more"
+              data-load-more-fn="loadMoreSessions"
+              aria-label="Load more throwing sessions"
+              style="width: 100%; margin-top: 24px"
+            >
+              <i
+                data-lucide="chevron-down"
+                class="icon-18"
+                style="margin-right: 8px"
+              ></i>
+              Load More Sessions
+            </button>
+          </div>
+        </div>
+
+        <!-- AI Chat Floating Bubble (Loaded Dynamically) -->
+        <div data-ai-chat-container></div>
+      </main>
+    </div>
+
+    <script type="module">
+      import { QB_TRAINING_PROGRAM } from "./src/data/qb-training/index.js";
+      import { qbTrainingEngine } from "./src/qb-training-engine.js";
+      import { logger } from "./src/logger.js";
+      import {
+        initializeLucideIcons,
+        setSafeContent,
+      } from "./src/js/utils/shared.js";
+
+      // Session data storage
+      let sessionData = loadSessionData();
+      let currentWeek = getCurrentWeek();
+      let currentPhase = getCurrentPhase();
+
+      function loadSessionData() {
+        const saved = localStorage.getItem("flagfit_qb_sessions");
+        return saved ? JSON.parse(saved) : [];
+      }
+
+      function saveSessionData() {
+        localStorage.setItem(
+          "flagfit_qb_sessions",
+          JSON.stringify(sessionData),
+        );
+      }
+
+      function getCurrentWeek() {
+        const startDate = new Date(QB_TRAINING_PROGRAM.programInfo.startDate);
+        const currentDate = new Date();
+        const daysDiff = Math.floor(
+          (currentDate - startDate) / (1000 * 60 * 60 * 24),
+        );
+        return Math.max(1, Math.min(14, Math.floor(daysDiff / 7) + 1));
+      }
+
+      function getCurrentPhase() {
+        if (currentWeek <= 4) return "foundation";
+        if (currentWeek <= 8) return "strength";
+        if (currentWeek <= 12) return "power";
+        return "competition";
+      }
+
+      // Initialize dashboard
+      function initializeDashboard() {
+        updateDashboardStats();
+        updateProgressBars();
+        loadRecentSessions();
+        updateCharts();
+
+        // Check for arm care warnings
+        checkArmCareStatus();
+      }
+
+      function updateDashboardStats() {
+        const weekData = getWeekData(currentWeek);
+        const totalThrows = getTotalThrows();
+        const peakVel = getPeakVelocity();
+        const readiness = calculateTournamentReadiness();
+
+        document.getElementById("currentWeekVolume").textContent =
+          weekData.totalThrows;
+        document.getElementById("totalThrows").textContent = totalThrows;
+        document.getElementById("peakVelocity").textContent = peakVel
+          ? peakVel + " mph"
+          : "--";
+        document.getElementById("tournamentReadiness").textContent =
+          readiness + "%";
+      }
+
+      function getWeekData(week) {
+        const weekSessions = sessionData.filter(
+          (session) => session.week === week,
+        );
+        return {
+          totalThrows: weekSessions.reduce(
+            (sum, session) => sum + session.totalThrows,
+            0,
+          ),
+          sessionCount: weekSessions.length,
+          avgVelocity: calculateAverage(
+            weekSessions.map((s) => s.avgVelocity).filter((v) => v),
+          ),
+          peakVelocity: Math.max(
+            ...weekSessions.map((s) => s.peakVelocity).filter((v) => v),
+            0,
+          ),
+        };
+      }
+
+      function getTotalThrows() {
+        return sessionData.reduce(
+          (sum, session) => sum + session.totalThrows,
+          0,
+        );
+      }
+
+      function getPeakVelocity() {
+        const velocities = sessionData
+          .map((s) => s.peakVelocity)
+          .filter((v) => v);
+        return velocities.length > 0 ? Math.max(...velocities) : null;
+      }
+
+      function calculateTournamentReadiness() {
+        const weekData = getWeekData(currentWeek);
+        const targetVolume = getTargetVolumeForWeek(currentWeek);
+        const volumeReadiness = Math.min(
+          100,
+          (weekData.totalThrows / targetVolume) * 100,
+        );
+
+        const velocityGain = calculateVelocityGain();
+        const velocityReadiness = Math.min(100, (velocityGain / 10) * 100); // Target 10 mph gain
+
+        return Math.round((volumeReadiness + velocityReadiness) / 2);
+      }
+
+      function getTargetVolumeForWeek(week) {
+        const phaseVolumes = {
+          foundation: 150,
+          strength: 375,
+          power: 575,
+          competition: 300,
+        };
+        return phaseVolumes[getCurrentPhase()];
+      }
+
+      function calculateVelocityGain() {
+        const baseline = getBaselineVelocity();
+        const peak = getPeakVelocity();
+        return peak && baseline ? peak - baseline : 0;
+      }
+
+      function getBaselineVelocity() {
+        // Get earliest velocity reading
+        const velocities = sessionData
+          .map((s) => s.peakVelocity)
+          .filter((v) => v);
+        return velocities.length > 0 ? Math.min(...velocities) : null;
+      }
+
+      function updateProgressBars() {
+        const weekData = getWeekData(currentWeek);
+        const targetVolume = getTargetVolumeForWeek(currentWeek);
+        const volumePercent = Math.min(
+          100,
+          (weekData.totalThrows / targetVolume) * 100,
+        );
+
+        document.getElementById("volumeProgressText").textContent =
+          `${weekData.totalThrows} / ${targetVolume} throws`;
+        document.getElementById("volumeProgressBar").style.width =
+          volumePercent + "%";
+
+        const velocityGain = calculateVelocityGain();
+        const velocityPercent = Math.min(100, (velocityGain / 15) * 100); // Target 15 mph max gain
+
+        document.getElementById("velocityProgressText").textContent =
+          `+${velocityGain.toFixed(1)} mph gain`;
+        document.getElementById("velocityProgressBar").style.width =
+          velocityPercent + "%";
+
+        const tournamentReadiness = calculateTournamentReadiness();
+        document.getElementById("tournamentProgressText").textContent =
+          tournamentReadiness + "%";
+        document.getElementById("tournamentProgressBar").style.width =
+          tournamentReadiness + "%";
+      }
+
+      function loadRecentSessions() {
+        const container = document.getElementById("sessionLogContainer");
+        const recentSessions = sessionData.slice(-10).reverse(); // Last 10 sessions, newest first
+
+        if (recentSessions.length === 0) {
+          const emptyHtml = `
+            <div style="text-align: center; padding: 60px 40px; color: var(--text-secondary);">
+              <i data-lucide="clipboard-x" class="icon-64" style="opacity: 0.3; margin-bottom: 16px;"></i>
+              <h3 style="margin-top: 24px; color: var(--text-primary); font-size: 1.25rem;">No sessions logged yet</h3>
+              <p style="margin-top: 8px;">Start by logging your first throwing session!</p>
+            </div>
+          `;
+          setSafeContent(container, emptyHtml, true, false);
+          if (typeof lucide !== "undefined") lucide.createIcons(container);
+        } else {
+          const sessionsHtml = recentSessions
+            .map((session) => {
+              const sessionDate = new Date(session.date);
+              return `
+                <div class="card card-interactive" style="margin-bottom: 16px;">
+                  <div class="card-body">
+                    <div class="u-display-flex u-justify-between u-align-center u-margin-bottom-12">
+                      <div>
+                        <div class="u-font-weight-600 u-text-primary u-text-heading-md">${sessionDate.toLocaleDateString()}</div>
+                        <div class="u-text-body-sm u-text-secondary">Week ${session.week}</div>
+                      </div>
+                      <span class="badge badge-primary" style="padding: 6px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 500;">${formatSessionType(session.type)}</span>
+                    </div>
+                    <div class="u-display-grid u-gap-12" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); margin-bottom: 12px;">
+                      <div class="u-text-center u-padding-8 u-radius-md" style="background: var(--surface-secondary);">
+                        <div class="u-font-weight-700 u-text-heading-md u-text-primary">${session.totalThrows}</div>
+                        <div class="u-text-body-xs u-text-secondary u-margin-top-2">Throws</div>
+                      </div>
+                      <div class="u-text-center u-padding-8 u-radius-md" style="background: var(--surface-secondary);">
+                        <div class="u-font-weight-700 u-text-heading-md u-text-primary">${session.peakVelocity || "--"}</div>
+                        <div class="u-text-body-xs u-text-secondary u-margin-top-2">Peak MPH</div>
+                      </div>
+                      <div class="u-text-center u-padding-8 u-radius-md" style="background: var(--surface-secondary);">
+                        <div class="u-font-weight-700 u-text-heading-md u-text-primary">${session.accuracy || "--"}%</div>
+                        <div class="u-text-body-xs u-text-secondary u-margin-top-2">Accuracy</div>
+                      </div>
+                      <div class="u-text-center u-padding-8 u-radius-md" style="background: var(--surface-secondary);">
+                        <div class="u-font-weight-700 u-text-heading-md u-text-primary">${session.duration}</div>
+                        <div class="u-text-body-xs u-text-secondary u-margin-top-2">Minutes</div>
+                      </div>
+                      <div class="u-text-center u-padding-8 u-radius-md" style="background: var(--surface-secondary);">
+                        <div class="u-font-weight-700 u-text-heading-md u-text-primary">${session.fatigueLevel}/10</div>
+                        <div class="u-text-body-xs u-text-secondary u-margin-top-2">Fatigue</div>
+                      </div>
+                    </div>
+                    ${session.notes ? `<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-border-secondary); font-style: italic; color: var(--text-secondary);">"${session.notes}"</div>` : ""}
+                  </div>
+                </div>
+              `;
+            })
+            .join("");
+
+          setSafeContent(container, sessionsHtml, true, false);
+          if (typeof lucide !== "undefined") lucide.createIcons(container);
+        }
+      }
+
+      function formatSessionType(type) {
+        const types = {
+          mechanics: "Mechanics",
+          velocity: "Velocity",
+          endurance: "Endurance",
+          simulation: "Tournament Sim",
+          warmup: "Warmup",
+        };
+        return types[type] || type;
+      }
+
+      function calculateAverage(numbers) {
+        return numbers.length > 0
+          ? numbers.reduce((sum, num) => sum + num, 0) / numbers.length
+          : 0;
+      }
+
+      function checkArmCareStatus() {
+        const lastSession = sessionData[sessionData.length - 1];
+        if (
+          lastSession &&
+          (lastSession.armFeel === "sore" || lastSession.armFeel === "pain")
+        ) {
+          const warningDiv = document.createElement("div");
+          warningDiv.className = "warning-banner";
+          setSafeContent(
+            warningDiv,
+            "⚠️ Last session reported arm soreness/pain. Consider rest day and review arm care protocols.",
+            false,
+            false,
+          );
+          document
+            .querySelector(".container")
+            .insertBefore(warningDiv, document.querySelector(".quick-log"));
+        }
+      }
+
+      // Initialize unit toggles
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          const { setupUnitToggle } =
+            await import("./src/js/utils/unit-toggle-helper.js");
+          setupUnitToggle(
+            "time",
+            "sessionDuration",
+            "sessionDuration-unit-label",
+            "sessionDuration-unit",
+          );
+        } catch (error) {
+          logger.warn("Failed to load unit toggle helper:", error);
+        }
+      });
+
+      // Session logging function
+      window.logSession = function () {
+        const sessionType = document.getElementById("sessionType").value;
+        const totalThrows =
+          parseInt(document.getElementById("totalThrowsInput").value) || 0;
+        const durationUnit =
+          document.getElementById("sessionDuration-unit")?.value || "minutes";
+        const durationValue =
+          parseFloat(document.getElementById("sessionDuration").value) || 0;
+        // Convert to minutes for storage if needed
+        const duration =
+          durationUnit === "seconds" ? durationValue / 60 : durationValue;
+        const peakVelocity =
+          parseFloat(document.getElementById("peakVelocityInput").value) ||
+          null;
+        const avgVelocity =
+          parseFloat(document.getElementById("avgVelocityInput").value) || null;
+        const accuracy =
+          parseInt(document.getElementById("accuracyInput").value) || null;
+        const fatigueLevel = parseInt(
+          document.getElementById("fatigueLevel").value,
+        );
+        const armFeel = document.getElementById("armFeel").value;
+        const weather = document.getElementById("weatherConditions").value;
+        const notes = document.getElementById("sessionNotes").value;
+
+        if (totalThrows === 0) {
+          alert("Please enter the number of throws for this session.");
+          return;
+        }
+
+        if (armFeel === "pain") {
+          if (
+            !confirm(
+              "You reported pain during this session. Are you sure you want to log this? Consider consulting with a medical professional.",
+            )
+          ) {
+            return;
+          }
+        }
+
+        const session = {
+          date: new Date().toISOString(),
+          week: currentWeek,
+          phase: currentPhase,
+          type: sessionType,
+          totalThrows: totalThrows,
+          duration: duration,
+          peakVelocity: peakVelocity,
+          avgVelocity: avgVelocity,
+          accuracy: accuracy,
+          fatigueLevel: fatigueLevel,
+          armFeel: armFeel,
+          weather: weather,
+          notes: notes,
+        };
+
+        sessionData.push(session);
+        saveSessionData();
+
+        // Clear form
+        document.getElementById("totalThrowsInput").value = "";
+        document.getElementById("sessionDuration").value = "";
+        document.getElementById("peakVelocityInput").value = "";
+        document.getElementById("avgVelocityInput").value = "";
+        document.getElementById("accuracyInput").value = "";
+        document.getElementById("sessionNotes").value = "";
+
+        // Update displays
+        updateDashboardStats();
+        updateProgressBars();
+        loadRecentSessions();
+
+        alert("Session logged successfully!");
+      };
+
+      window.startQuickSession = function () {
+        alert(
+          "Guided session feature coming soon! This will walk you through warm-up, main session, and cool-down with real-time tracking.",
+        );
+      };
+
+      window.updateCharts = function () {
+        // Chart update logic would go here
+        // For now, placeholder
+      };
+
+      window.loadMoreSessions = function () {
+        alert("Load more sessions feature coming soon!");
+      };
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", initializeDashboard);
+    </script>
+
+    <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>
