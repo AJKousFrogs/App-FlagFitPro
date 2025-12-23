@@ -32,16 +32,19 @@ Time: 5 seconds
 **Status**: 1 HIGH SEVERITY ISSUE (Non-blocking)
 
 ### Issue Found:
+
 - **Package**: `jws` (< 3.2.3) in `netlify-cli`
 - **Severity**: High
 - **Issue**: Improperly Verifies HMAC Signature
 - **Location**: `node_modules/netlify-cli/node_modules/jws`
 
 ### Attempted Fix:
+
 - Ran `npm audit fix` - Issue persists (nested dependency in netlify-cli)
 - Your postinstall script already attempts to fix this
 
 ### Recommendation:
+
 - **Not blocking** - This is a nested dependency in netlify-cli development tool
 - Monitor for netlify-cli updates that will fix this
 - Does not affect production Angular app
@@ -68,11 +71,13 @@ Vulnerabilities: 0
 **Status**: SUCCESS
 
 ### Build Output:
+
 - **Build Time**: 4.3 seconds
 - **Initial Bundle**: 641.26 kB (raw) / 158.53 kB (gzipped)
 - **Lazy Chunks**: 55+ lazy-loaded chunks for optimal performance
 
 ### Bundle Breakdown (Initial):
+
 ```
 chunk-PD4QC3S7.js    221.17 kB → 63.45 kB   (PrimeNG)
 chunk-VH4PRFVW.js    173.16 kB → 38.87 kB   (Core)
@@ -82,6 +87,7 @@ main-Y3DECWBX.js      11.41 kB →  2.90 kB   (Bootstrap)
 ```
 
 ### Lazy-Loaded Routes:
+
 ```
 training-component    109.20 kB → 23.93 kB
 analytics-component    44.21 kB → 10.37 kB
@@ -92,6 +98,7 @@ chat-component        22.39 kB →  5.66 kB
 ```
 
 ### Performance Metrics:
+
 - ✅ Excellent gzip compression ratio (~75% reduction)
 - ✅ Lazy loading implemented for all major routes
 - ✅ Code splitting working effectively
@@ -104,13 +111,16 @@ chat-component        22.39 kB →  5.66 kB
 **Status**: FIXED
 
 ### Issues Found:
+
 - Duplicate `build` script keys (lines 13 and 57)
 - Duplicate `build:production` script keys (lines 14 and 58)
 
 ### Resolution:
+
 ✅ Removed duplicate entries from package.json
 
 **Before**:
+
 ```json
 "build": "cd angular && npm run build",           // line 13
 "build:production": "cd angular && npm run build", // line 14
@@ -120,6 +130,7 @@ chat-component        22.39 kB →  5.66 kB
 ```
 
 **After**:
+
 ```json
 "build": "cd angular && npm run build",           // line 13 (kept)
 "build:production": "cd angular && npm run build", // line 14 (kept)
@@ -141,6 +152,7 @@ chat-component        22.39 kB →  5.66 kB
 ## 7. 📊 Cleanup Impact Summary
 
 ### Dependencies Removed:
+
 ```
 ❌ @vitejs/plugin-react
 ❌ @vitest/coverage-v8
@@ -159,6 +171,7 @@ chat-component        22.39 kB →  5.66 kB
 ```
 
 ### Space Saved:
+
 - **Before**: ~2.5GB node_modules (estimated)
 - **After**: ~1.8GB node_modules
 - **Saved**: ~700MB of legacy dependencies
@@ -170,6 +183,7 @@ chat-component        22.39 kB →  5.66 kB
 **Location**: `angular/dist/flagfit-pro/`
 
 ### Structure:
+
 ```
 angular/dist/flagfit-pro/
 ├── browser/           # Client-side bundle
@@ -183,24 +197,25 @@ angular/dist/flagfit-pro/
 
 ## 9. 🎯 System Health Status
 
-| Component | Status | Details |
-|-----------|--------|---------|
-| Root Dependencies | ✅ PASS | 1,428 packages, 336 removed |
-| Angular Dependencies | ✅ PASS | 1,039 packages, 0 vulnerabilities |
-| Angular Build | ✅ PASS | 4.3s build, 158KB initial gzip |
-| Package Configuration | ✅ PASS | Duplicates removed |
-| ESLint Config | ✅ PASS | Valid configuration |
-| Security (Angular) | ✅ PASS | No vulnerabilities |
-| Security (Root) | ⚠️ WARN | 1 nested jws issue (non-blocking) |
-| Bundle Size | ✅ PASS | Excellent compression |
-| Lazy Loading | ✅ PASS | 55+ lazy chunks |
-| Code Splitting | ✅ PASS | Optimal splitting |
+| Component             | Status  | Details                           |
+| --------------------- | ------- | --------------------------------- |
+| Root Dependencies     | ✅ PASS | 1,428 packages, 336 removed       |
+| Angular Dependencies  | ✅ PASS | 1,039 packages, 0 vulnerabilities |
+| Angular Build         | ✅ PASS | 4.3s build, 158KB initial gzip    |
+| Package Configuration | ✅ PASS | Duplicates removed                |
+| ESLint Config         | ✅ PASS | Valid configuration               |
+| Security (Angular)    | ✅ PASS | No vulnerabilities                |
+| Security (Root)       | ⚠️ WARN | 1 nested jws issue (non-blocking) |
+| Bundle Size           | ✅ PASS | Excellent compression             |
+| Lazy Loading          | ✅ PASS | 55+ lazy chunks                   |
+| Code Splitting        | ✅ PASS | Optimal splitting                 |
 
 ---
 
 ## 10. 📋 Next Steps
 
 ### Immediate (Completed ✅):
+
 - ✅ Install root dependencies
 - ✅ Install Angular dependencies
 - ✅ Verify Angular build
@@ -208,6 +223,7 @@ angular/dist/flagfit-pro/
 - ✅ Check security status
 
 ### Ready to Test:
+
 ```bash
 # Start Angular dev server
 cd angular && npm start
@@ -220,6 +236,7 @@ npm run dev:full
 ```
 
 ### Recommended Actions:
+
 1. **Test the application** - Verify all features work
 2. **Run E2E tests** - `npm run test:e2e`
 3. **Check Angular linting** - `cd angular && npm run lint`
@@ -233,6 +250,7 @@ npm run dev:full
 **Overall Status**: ✅ SYSTEM HEALTHY
 
 The cleanup was successful:
+
 - ✅ 336 legacy packages removed
 - ✅ Angular builds successfully
 - ✅ Zero vulnerabilities in Angular
@@ -247,11 +265,13 @@ Your Angular 21 + Supabase stack is **clean, optimized, and ready for developmen
 ## 📊 Performance Summary
 
 **Initial Load**:
+
 - Raw: 641.26 kB
 - Gzipped: 158.53 kB ✅ Excellent!
 - Compression: 75.3%
 
-**Lazy Routes**: 
+**Lazy Routes**:
+
 - Training: 23.93 kB gzipped
 - Analytics: 10.37 kB gzipped
 - Dashboard: 9.18 kB gzipped
@@ -259,4 +279,3 @@ Your Angular 21 + Supabase stack is **clean, optimized, and ready for developmen
 - Chat: 5.66 kB gzipped
 
 **Verdict**: Performance is excellent for a feature-rich sports training platform! 🏆
-

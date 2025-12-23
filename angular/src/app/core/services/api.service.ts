@@ -46,7 +46,9 @@ export class ApiService {
       // Default fallback for development: try to use the Netlify Functions on port 8888
       // even if the frontend is on 4200 (Angular default)
       if (hostname === "localhost" || hostname === "127.0.0.1") {
-        this.logger.info("[ApiService] Development mode: targeting Netlify Functions on port 8888");
+        this.logger.info(
+          "[ApiService] Development mode: targeting Netlify Functions on port 8888",
+        );
         return "http://localhost:8888/.netlify/functions";
       }
     }

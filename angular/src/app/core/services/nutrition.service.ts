@@ -1,8 +1,9 @@
-import { Injectable, inject, computed } from "@angular/core";
+import { Injectable, inject, computed, signal, effect } from "@angular/core";
 import { Observable, of, from } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { RealtimeService } from "./realtime.service";
 
 export interface NutritionGoal {
   nutrient: string;
@@ -71,20 +72,214 @@ export interface PerformanceInsight {
 export class NutritionService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  
+  private realtimeService = inject(RealtimeService);
+
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
 
+  // State signals
+  private readonly _todaysMeals = signal<Meal[]>([]);
+  private readonly _nutritionGoals = signal<NutritionGoal[]>([]);
+  readonly todaysMeals = this._todaysMeals.asReadonly();
+  readonly nutritionGoals = this._nutritionGoals.asReadonly();
+
+  // Computed signals
+  readonly totalCaloriesToday = computed(() =>
+    this._todaysMeals().reduce((sum, meal) => sum + meal.totalCalories, 0),
+  );
+  readonly totalProteinToday = computed(() =>
+    this._todaysMeals().reduce((sum, meal) => sum + meal.protein, 0),
+  );
+  readonly totalCarbsToday = computed(() =>
+    this._todaysMeals().reduce((sum, meal) => sum + meal.carbs, 0),
+  );
+  readonly totalFatToday = computed(() =>
+    this._todaysMeals().reduce((sum, meal) => sum + meal.fat, 0),
+  );
+
+  constructor() {
+    // Set up realtime subscription when user logs in/out
+    effect(() => {
+      const userId = this.userId();
+
+      if (userId) {
+        this.logger.info(
+          "[Nutrition] User logged in, setting up realtime subscriptions",
+        );
+        this.loadTodaysNutrition();
+        this.subscribeToNutritionUpdates(userId);
+      } else {
+        this.logger.info("[Nutrition] User logged out, cleaning up");
+        this._todaysMeals.set([]);
+        this._nutritionGoals.set([]);
+        this.realtimeService.unsubscribe("nutrition_logs");
+        this.realtimeService.unsubscribe("nutrition_goals");
+      }
+    });
+  }
+
   /**
-   * Search USDA FoodData Central database
-   * Note: This still needs to go through a backend API for USDA API key security
-   * TODO: Create Supabase Edge Function for USDA API calls
+   * Load today's nutrition data
    */
-  searchUSDAFoods(query: string): Observable<USDAFood[]> {
-    this.logger.warn("[Nutrition] USDA search requires backend API - not yet migrated");
-    // For now, return empty array
-    // This should be implemented as a Supabase Edge Function
-    return of([]);
+  private loadTodaysNutrition(): void {
+    this.getTodaysMeals().subscribe({
+      next: (meals) => {
+        this._todaysMeals.set(meals);
+        this.logger.success("[Nutrition] Loaded today's meals");
+      },
+      error: (error) => {
+        this.logger.error("[Nutrition] Failed to load meals:", error);
+      },
+    });
+
+    this.getDailyNutritionGoals().subscribe({
+      next: (goals) => {
+        this._nutritionGoals.set(goals);
+        this.logger.success("[Nutrition] Loaded nutrition goals");
+      },
+      error: (error) => {
+        this.logger.error("[Nutrition] Failed to load goals:", error);
+      },
+    });
+  }
+
+  /**
+   * Subscribe to realtime nutrition updates
+   */
+  private subscribeToNutritionUpdates(userId: string): void {
+    const today = new Date().toISOString().split("T")[0];
+
+    // Subscribe to nutrition logs
+    this.realtimeService.subscribe("nutrition_logs", `user_id=eq.${userId}`, {
+      onInsert: (payload) => {
+        const logDate =
+          payload.new.log_date ||
+          new Date(payload.new.logged_at).toISOString().split("T")[0];
+        if (logDate === today) {
+          this.logger.info("[Nutrition] New food logged via realtime");
+          this.refreshTodaysMeals();
+        }
+      },
+      onUpdate: (payload) => {
+        const logDate =
+          payload.new.log_date ||
+          new Date(payload.new.logged_at).toISOString().split("T")[0];
+        if (logDate === today) {
+          this.logger.info("[Nutrition] Food log updated via realtime");
+          this.refreshTodaysMeals();
+        }
+      },
+      onDelete: (payload) => {
+        this.logger.info("[Nutrition] Food log deleted via realtime");
+        this.refreshTodaysMeals();
+      },
+    });
+
+    // Subscribe to nutrition goals
+    this.realtimeService.subscribe("nutrition_goals", `user_id=eq.${userId}`, {
+      onInsert: () => {
+        this.logger.info("[Nutrition] New goal added via realtime");
+        this.refreshGoals();
+      },
+      onUpdate: () => {
+        this.logger.info("[Nutrition] Goal updated via realtime");
+        this.refreshGoals();
+      },
+      onDelete: () => {
+        this.logger.info("[Nutrition] Goal deleted via realtime");
+        this.refreshGoals();
+      },
+    });
+  }
+
+  /**
+   * Refresh today's meals
+   */
+  private refreshTodaysMeals(): void {
+    this.getTodaysMeals().subscribe({
+      next: (meals) => this._todaysMeals.set(meals),
+      error: (error) =>
+        this.logger.error("[Nutrition] Error refreshing meals:", error),
+    });
+  }
+
+  /**
+   * Refresh nutrition goals
+   */
+  private refreshGoals(): void {
+    this.getDailyNutritionGoals().subscribe({
+      next: (goals) => this._nutritionGoals.set(goals),
+      error: (error) =>
+        this.logger.error("[Nutrition] Error refreshing goals:", error),
+    });
+  }
+
+  /**
+   * Search food database using Edamam API (900K+ foods, FREE)
+   * Includes USDA data + branded foods (McDonald's, Starbucks, etc.)
+   * Uses Supabase Edge Function to proxy requests to Edamam API
+   */
+  searchUSDAFoods(
+    query: string,
+    pageSize: number = 25,
+    pageNumber: number = 1,
+  ): Observable<USDAFood[]> {
+    if (!query || query.trim().length === 0) {
+      return of([]);
+    }
+
+    return from(
+      this.supabaseService.client.functions.invoke("search-foods-edamam", {
+        body: {
+          query: query.trim(),
+          pageSize,
+          pageNumber,
+        },
+      }),
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          this.logger.error("[Nutrition] Food search error:", error);
+          return [];
+        }
+
+        if (!data || !data.success) {
+          this.logger.warn("[Nutrition] Food search returned no results");
+          return [];
+        }
+
+        this.logger.info(
+          `[Nutrition] Found ${data.data.length} foods for "${query}" (via Edamam)`,
+        );
+        return this.transformEdamamResults(data.data);
+      }),
+      catchError((error) => {
+        this.logger.error("[Nutrition] Food search failed:", error);
+        return of([]);
+      }),
+    );
+  }
+
+  /**
+   * Transform Edamam results to USDAFood format
+   */
+  private transformEdamamResults(foods: any[]): USDAFood[] {
+    return foods.map((food) => ({
+      fdcId: food.fdcId,
+      description: food.description,
+      foodCategory: food.dataType,
+      energy: food.nutrients?.calories || 0,
+      protein: food.nutrients?.protein || 0,
+      carbohydrates: food.nutrients?.carbohydrates || 0,
+      fat: food.nutrients?.fat || 0,
+      fiber: food.nutrients?.fiber || 0,
+      sugars: food.nutrients?.sugar || 0,
+      sodium: food.nutrients?.sodium || 0,
+      // Additional Edamam data
+      image: food.image,
+      brandOwner: food.brandOwner,
+      ingredients: food.foodContentsLabel,
+    }));
   }
 
   /**
@@ -93,7 +288,7 @@ export class NutritionService {
    */
   addFoodToCurrentMeal(food: USDAFood | any): Observable<boolean> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.error("[Nutrition] Cannot add food: No user logged in");
       return of(false);
@@ -148,7 +343,7 @@ export class NutritionService {
    */
   getDailyNutritionGoals(): Observable<NutritionGoal[]> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.warn("[Nutrition] No user logged in, using defaults");
       return of(this.getDefaultGoals());
@@ -210,10 +405,34 @@ export class NutritionService {
    */
   private getDefaultGoals(): NutritionGoal[] {
     return [
-      { nutrient: "Calories", current: 0, target: 2500, unit: "kcal", priority: "high" },
-      { nutrient: "Protein", current: 0, target: 150, unit: "g", priority: "high" },
-      { nutrient: "Carbs", current: 0, target: 300, unit: "g", priority: "medium" },
-      { nutrient: "Fat", current: 0, target: 80, unit: "g", priority: "medium" },
+      {
+        nutrient: "Calories",
+        current: 0,
+        target: 2500,
+        unit: "kcal",
+        priority: "high",
+      },
+      {
+        nutrient: "Protein",
+        current: 0,
+        target: 150,
+        unit: "g",
+        priority: "high",
+      },
+      {
+        nutrient: "Carbs",
+        current: 0,
+        target: 300,
+        unit: "g",
+        priority: "medium",
+      },
+      {
+        nutrient: "Fat",
+        current: 0,
+        target: 80,
+        unit: "g",
+        priority: "medium",
+      },
     ];
   }
 
@@ -222,7 +441,7 @@ export class NutritionService {
    */
   getTodaysMeals(): Observable<Meal[]> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.warn("[Nutrition] No user logged in");
       return of([]);
@@ -256,26 +475,40 @@ export class NutritionService {
         }, {});
 
         // Convert to Meal[] format
-        return Object.entries(mealsByType).map(([type, logs]: [string, any]) => ({
-          id: type,
-          type,
-          timestamp: new Date(logs[0].logged_at),
-          totalCalories: logs.reduce((sum: number, log: any) => sum + (log.calories || 0), 0),
-          carbs: logs.reduce((sum: number, log: any) => sum + (log.carbohydrates || 0), 0),
-          protein: logs.reduce((sum: number, log: any) => sum + (log.protein || 0), 0),
-          fat: logs.reduce((sum: number, log: any) => sum + (log.fat || 0), 0),
-          foods: logs.map((log: any) => ({
-            name: log.food_name,
-            amount: 1,
-            unit: "serving",
-            calories: log.calories || 0,
-            nutrients: {
-              protein: log.protein || 0,
-              carbohydrates: log.carbohydrates || 0,
-              fat: log.fat || 0,
-            },
-          })),
-        }));
+        return Object.entries(mealsByType).map(
+          ([type, logs]: [string, any]) => ({
+            id: type,
+            type,
+            timestamp: new Date(logs[0].logged_at),
+            totalCalories: logs.reduce(
+              (sum: number, log: any) => sum + (log.calories || 0),
+              0,
+            ),
+            carbs: logs.reduce(
+              (sum: number, log: any) => sum + (log.carbohydrates || 0),
+              0,
+            ),
+            protein: logs.reduce(
+              (sum: number, log: any) => sum + (log.protein || 0),
+              0,
+            ),
+            fat: logs.reduce(
+              (sum: number, log: any) => sum + (log.fat || 0),
+              0,
+            ),
+            foods: logs.map((log: any) => ({
+              name: log.food_name,
+              amount: 1,
+              unit: "serving",
+              calories: log.calories || 0,
+              nutrients: {
+                protein: log.protein || 0,
+                carbohydrates: log.carbohydrates || 0,
+                fat: log.fat || 0,
+              },
+            })),
+          }),
+        );
       }),
       catchError((error) => {
         this.logger.error("[Nutrition] Failed to fetch meals:", error);
@@ -290,7 +523,9 @@ export class NutritionService {
    * TODO: Implement via Supabase Edge Function with OpenAI
    */
   getAINutritionSuggestions(): Observable<AINutritionSuggestion[]> {
-    this.logger.warn("[Nutrition] AI suggestions require backend - not yet implemented");
+    this.logger.warn(
+      "[Nutrition] AI suggestions require backend - not yet implemented",
+    );
     return of([]);
   }
 
@@ -300,7 +535,7 @@ export class NutritionService {
    */
   getPerformanceInsights(): Observable<PerformanceInsight[]> {
     const userId = this.userId();
-    
+
     if (!userId) {
       return of([]);
     }
@@ -324,8 +559,12 @@ export class NutritionService {
         const insights: PerformanceInsight[] = [];
 
         // Calculate averages
-        const avgCalories = data.reduce((sum, log: any) => sum + (log.calories || 0), 0) / data.length;
-        const avgProtein = data.reduce((sum, log: any) => sum + (log.protein || 0), 0) / data.length;
+        const avgCalories =
+          data.reduce((sum, log: any) => sum + (log.calories || 0), 0) /
+          data.length;
+        const avgProtein =
+          data.reduce((sum, log: any) => sum + (log.protein || 0), 0) /
+          data.length;
 
         // Generate insights
         if (avgCalories < 2000) {
@@ -353,7 +592,8 @@ export class NutritionService {
             type: "positive",
             icon: "pi pi-check-circle",
             title: "Good Nutrition Balance",
-            description: "Your nutrition is well-balanced. Keep up the great work!",
+            description:
+              "Your nutrition is well-balanced. Keep up the great work!",
           });
         }
 

@@ -287,7 +287,10 @@ export class CarouselComponent {
 
   private startAutoPlay(): void {
     this.stopAutoPlay();
-    this.autoPlaySubscription = timer(this.autoPlayInterval(), this.autoPlayInterval())
+    this.autoPlaySubscription = timer(
+      this.autoPlayInterval(),
+      this.autoPlayInterval(),
+    )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.next();

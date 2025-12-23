@@ -10,6 +10,7 @@
 ### Investigation Results:
 
 **Checked for dependencies:**
+
 - ✅ `server.js` - No imports from `src/`
 - ✅ `routes/*.js` - No imports from `src/`
 - ✅ `netlify/functions/*.cjs` - Only 1 file uses `src/email-service.js`
@@ -21,6 +22,7 @@
 ## 🗑️ Phase 2 Deletions Executed
 
 ### Root-Level JS Files Deleted (39 files):
+
 ```
 ❌ src/accessibility-fixes.js
 ❌ src/accessibility-utils.js
@@ -63,6 +65,7 @@
 ```
 
 ### Directories Deleted (6 directories):
+
 ```
 ❌ src/services/        (4 JS files - BackupService, LoadManagement, Nutrition, auth.service)
 ❌ src/config/          (2 JS files - environment.js, thresholds.js)
@@ -86,12 +89,14 @@
 ## 📊 Results
 
 ### Before Phase 2:
+
 ```
 src/ directory:  120 files
 Size:            2.2 MB
 ```
 
 ### After Phase 2:
+
 ```
 src/ directory:  15 files
 Size:            612 KB
@@ -104,12 +109,14 @@ Space saved:     ~1.6 MB
 ## ✅ What Remains in `src/` (15 files)
 
 ### Files Kept (Used by Netlify function):
+
 ```
 ✅ src/email-service.js    → Used by netlify/functions/auth-reset-password.cjs
 ✅ src/logger.js            → Dependency of email-service.js (minimal version created)
 ```
 
 ### Data Files Kept (Optional - may delete later):
+
 ```
 src/data/
 ├── qb-training/            (6 JS files - QB training data)
@@ -136,6 +143,7 @@ src/data/
 ## ✅ Verification
 
 ### Angular Build Status:
+
 ```
 ✅ BUILD SUCCESSFUL
 ⏱️  Time: 4.0 seconds
@@ -144,6 +152,7 @@ src/data/
 ```
 
 ### Email Service Status:
+
 ```
 ✅ email-service.js loads correctly
 ✅ logger.js created (minimal version)
@@ -156,11 +165,11 @@ src/data/
 
 ### Total Cleanup Across Both Phases:
 
-| Metric | Before | After | Removed |
-|--------|---------|--------|---------|
+| Metric            | Before     | After    | Removed    |
+| ----------------- | ---------- | -------- | ---------- |
 | **Files in src/** | 350+ files | 15 files | ~336 files |
-| **Size of src/** | ~15 MB | 612 KB | ~14.4 MB |
-| **Reduction** | 100% | 4.3% | **95.7%!** |
+| **Size of src/**  | ~15 MB     | 612 KB   | ~14.4 MB   |
+| **Reduction**     | 100%       | 4.3%     | **95.7%!** |
 
 ---
 
@@ -168,14 +177,14 @@ src/data/
 
 ### Everything Removed Today:
 
-| Item | Removed | Saved |
-|------|---------|-------|
-| React/Vite packages | 336 packages | ~700 MB |
-| node_modules.old/ | 1 directory | 582 MB |
-| Markdown docs | 40 files | ~500 KB |
-| **Phase 1 code** | **230 files** | **~8 MB** |
-| **Phase 2 code** | **106 files** | **~6 MB** |
-| **TOTAL** | **712+ items** | **~1.3 GB!** |
+| Item                | Removed        | Saved        |
+| ------------------- | -------------- | ------------ |
+| React/Vite packages | 336 packages   | ~700 MB      |
+| node_modules.old/   | 1 directory    | 582 MB       |
+| Markdown docs       | 40 files       | ~500 KB      |
+| **Phase 1 code**    | **230 files**  | **~8 MB**    |
+| **Phase 2 code**    | **106 files**  | **~6 MB**    |
+| **TOTAL**           | **712+ items** | **~1.3 GB!** |
 
 ---
 
@@ -199,18 +208,21 @@ src/
 ### Investigate `src/data/` directory:
 
 These files contain static training and QB data:
+
 - Annual training programs
 - Exercise libraries
-- Nutrition guidelines  
+- Nutrition guidelines
 - QB assessments
 - Weekly schedules
 
 **Questions**:
+
 1. Is this data used by Angular app?
 2. Should it be moved to `angular/src/assets/data/`?
 3. Or deleted if duplicated in database?
 
 **Recommendation**: Check if these are referenced in Angular:
+
 ```bash
 grep -r "src/data" angular/src/
 ```
@@ -224,12 +236,14 @@ If not used → Can delete and save another 550 KB.
 ### Project Size Reduction:
 
 **Before All Cleanup:**
+
 - Total size: ~4-5 GB
 - Dependencies: 2,764 packages
 - src/ directory: 350+ files (15 MB)
 - Documentation: 78 MD files
 
 **After Phase 1 + Phase 2:**
+
 - Total size: ~1.5 GB ✅
 - Dependencies: 1,428 packages ✅
 - src/ directory: 15 files (612 KB) ✅
@@ -242,6 +256,7 @@ If not used → Can delete and save another 550 KB.
 ## ✅ Success Metrics
 
 **Files Removed Today**: 712+ items
+
 - 336 npm packages
 - 582 MB node_modules.old
 - 40 markdown files
@@ -270,4 +285,3 @@ If not used → Can delete and save another 550 KB.
 From 350+ files (15 MB) → 15 files (612 KB)
 
 **Angular 21 + Supabase stack is pristine and production-ready!** 🚀
-

@@ -10,6 +10,7 @@
 Successfully eliminated all duplicate HTML files and migrated to **pure Angular 21 + PrimeNG 21** architecture.
 
 ### **Before Migration:**
+
 - ❌ Dual frontend: Angular 21 + Vanilla HTML/CSS/JS
 - ❌ 31+ duplicate HTML pages
 - ❌ React components (.jsx files)
@@ -17,6 +18,7 @@ Successfully eliminated all duplicate HTML files and migrated to **pure Angular 
 - ❌ Inconsistent routing
 
 ### **After Migration:**
+
 - ✅ Pure Angular 21 + PrimeNG 21
 - ✅ Single source of truth
 - ✅ Zero React dependencies
@@ -28,6 +30,7 @@ Successfully eliminated all duplicate HTML files and migrated to **pure Angular 
 ## 🗑️ **Files Deleted (31 HTML pages + React components)**
 
 ### **Authentication Pages (5)**
+
 - ✅ `login.html` → Angular: `/login`
 - ✅ `register.html` → Angular: `/register`
 - ✅ `reset-password.html` → Angular: `/reset-password`
@@ -35,6 +38,7 @@ Successfully eliminated all duplicate HTML files and migrated to **pure Angular 
 - ✅ `onboarding.html` → Angular: `/onboarding`
 
 ### **Main Application Pages (8)**
+
 - ✅ `dashboard.html` → Angular: `/dashboard`
 - ✅ `profile.html` → Angular: `/profile`
 - ✅ `settings.html` → Angular: `/settings`
@@ -45,6 +49,7 @@ Successfully eliminated all duplicate HTML files and migrated to **pure Angular 
 - ✅ `game-tracker.html` → Angular: `/game-tracker`
 
 ### **Training Pages (9)**
+
 - ✅ `training.html` → Angular: `/training`
 - ✅ `workout.html` → Angular: `/workout`
 - ✅ `exercise-library.html` → Angular: `/exercise-library`
@@ -56,26 +61,31 @@ Successfully eliminated all duplicate HTML files and migrated to **pure Angular 
 - ✅ `wellness.html` → Angular: `/wellness`
 
 ### **Analytics Pages (3)**
+
 - ✅ `analytics.html` → Angular: `/analytics`
 - ✅ `analytics-dashboard.html` → Angular: `/analytics`
 - ✅ `enhanced-analytics.html` → Angular: `/analytics/enhanced`
 - ✅ `performance-tracking.html` → Angular: `/performance-tracking`
 
 ### **Coach Pages (2)**
+
 - ✅ `coach.html` → Angular: `/coach`
 - ✅ `coach-dashboard.html` → Angular: `/coach/dashboard`
 
 ### **Team Management (2)**
+
 - ✅ `team-create.html` → Angular: `/team/create`
 - ✅ `accept-invitation.html` → Angular: `/accept-invitation`
 
 ### **Utility Files (4)**
+
 - ✅ `test-icons.html` (testing utility)
 - ✅ `clear-cache.html` (cache utility)
 - ✅ `component-library.html` (showcase)
 - ✅ `update-roster-data.html` (data utility)
 
 ### **React Components Deleted (16 files)**
+
 - ✅ `src/contexts/AuthContext.jsx`
 - ✅ `src/pages/LoginPage.jsx`
 - ✅ `src/examples/TrainingRecommendationExample.jsx`
@@ -98,6 +108,7 @@ Successfully eliminated all duplicate HTML files and migrated to **pure Angular 
 ## 📦 **Dependencies Cleaned**
 
 ### **Removed from package.json:**
+
 ```json
 // React dependencies (removed)
 "@types/react": "^18.3.12",
@@ -113,23 +124,27 @@ Successfully eliminated all duplicate HTML files and migrated to **pure Angular 
 ## 🔧 **Configuration Updates**
 
 ### **1. server.js**
+
 - ✅ Now serves Angular build from `angular/dist/flagfit-pro/browser/`
 - ✅ Catch-all route redirects to Angular SPA
 - ✅ API routes preserved for backend functionality
 
 ### **2. netlify.toml**
+
 - ✅ Build command: `cd angular && npm ci && npm run build`
 - ✅ Publish directory: `angular/dist/flagfit-pro/browser`
 - ✅ All legacy HTML redirects (301) point to Angular routes
 - ✅ SPA fallback configured
 
 ### **3. package.json**
+
 - ✅ Updated description: "Angular 21 + PrimeNG training platform"
 - ✅ `npm start` → runs Angular dev server
 - ✅ `npm run build` → builds Angular production
 - ✅ All React dependencies removed
 
 ### **4. index.html (New)**
+
 - ✅ Created redirect page to Angular app
 - ✅ Fallback for users accessing root URL
 - ✅ Auto-redirects to `angular/dist/flagfit-pro/browser/index.html`
@@ -139,21 +154,26 @@ Successfully eliminated all duplicate HTML files and migrated to **pure Angular 
 ## 🎨 **Files Kept**
 
 ### **Angular Application (Primary)**
+
 - ✅ `angular/` - Complete Angular 21 + PrimeNG 21 app
 - ✅ All 30+ Angular components matching deleted HTML pages
 - ✅ Full routing, guards, services, and state management
 
 ### **Wireframes (Reference)**
+
 - ✅ `Wireframes clean/*.html` (10 files) - Design documentation
 
 ### **Component Templates (Reusable)**
+
 - ✅ `src/components/**/*.html` - Atomic design system components
 - ✅ These are reusable templates, not pages
 
 ### **Test Files**
+
 - ✅ `tests/html-tests/*.html` (3 files) - Testing utilities
 
 ### **Auth Callback**
+
 - ✅ `auth/callback.html` - OAuth callback handler
 
 ---
@@ -161,6 +181,7 @@ Successfully eliminated all duplicate HTML files and migrated to **pure Angular 
 ## 🚀 **How to Run**
 
 ### **Development:**
+
 ```bash
 # Start Angular dev server
 npm start
@@ -178,6 +199,7 @@ npm run dev:api
 ```
 
 ### **Production Build:**
+
 ```bash
 # Build Angular app
 npm run build
@@ -188,6 +210,7 @@ npm run build:production
 ```
 
 ### **Deploy to Netlify:**
+
 ```bash
 npm run deploy
 # or use Netlify CLI
@@ -200,23 +223,23 @@ netlify deploy --prod
 
 All pages now have equivalent Angular components:
 
-| Route | Angular Component | Status |
-|-------|-------------------|--------|
-| `/` | `LandingComponent` | ✅ Complete |
-| `/login` | `LoginComponent` | ✅ Complete |
-| `/register` | `RegisterComponent` | ✅ Complete |
-| `/dashboard` | `DashboardComponent` | ✅ Complete |
-| `/training` | `TrainingComponent` | ✅ Complete |
-| `/analytics` | `AnalyticsComponent` | ✅ Complete |
-| `/roster` | `RosterComponent` | ✅ Complete |
-| `/tournaments` | `TournamentsComponent` | ✅ Complete |
-| `/community` | `CommunityComponent` | ✅ Complete |
-| `/wellness` | `WellnessComponent` | ✅ Complete |
-| `/coach` | `CoachComponent` | ✅ Complete |
-| `/game-tracker` | `GameTrackerComponent` | ✅ Complete |
-| `/profile` | `ProfileComponent` | ✅ Complete |
-| `/settings` | `SettingsComponent` | ✅ Complete |
-| **+ 16 more routes** | All components ready | ✅ Complete |
+| Route                | Angular Component      | Status      |
+| -------------------- | ---------------------- | ----------- |
+| `/`                  | `LandingComponent`     | ✅ Complete |
+| `/login`             | `LoginComponent`       | ✅ Complete |
+| `/register`          | `RegisterComponent`    | ✅ Complete |
+| `/dashboard`         | `DashboardComponent`   | ✅ Complete |
+| `/training`          | `TrainingComponent`    | ✅ Complete |
+| `/analytics`         | `AnalyticsComponent`   | ✅ Complete |
+| `/roster`            | `RosterComponent`      | ✅ Complete |
+| `/tournaments`       | `TournamentsComponent` | ✅ Complete |
+| `/community`         | `CommunityComponent`   | ✅ Complete |
+| `/wellness`          | `WellnessComponent`    | ✅ Complete |
+| `/coach`             | `CoachComponent`       | ✅ Complete |
+| `/game-tracker`      | `GameTrackerComponent` | ✅ Complete |
+| `/profile`           | `ProfileComponent`     | ✅ Complete |
+| `/settings`          | `SettingsComponent`    | ✅ Complete |
+| **+ 16 more routes** | All components ready   | ✅ Complete |
 
 ---
 
@@ -266,6 +289,7 @@ No more React, no more vanilla HTML duplicates, no more maintenance headaches. J
 ---
 
 **Your Stack:**
+
 - **Frontend:** Angular 21 + PrimeNG 21
 - **Database & Auth:** Supabase (ONLY)
 - **Deployment:** Netlify
@@ -274,7 +298,7 @@ No more React, no more vanilla HTML duplicates, no more maintenance headaches. J
 ---
 
 **For questions or issues, refer to:**
+
 - `angular/README.md` - Angular app documentation
 - `angular/ANGULAR_21_MIGRATION.md` - Angular 21 features
 - `angular/PRIMENG_21_CHANGES.md` - PrimeNG 21 updates
-

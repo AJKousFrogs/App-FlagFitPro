@@ -1,8 +1,9 @@
-import { Injectable, inject, computed } from "@angular/core";
+import { Injectable, inject, computed, signal, effect } from "@angular/core";
 import { Observable, from, of } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { RealtimeService } from "./realtime.service";
 
 // Physical Measurements Interfaces
 export interface PhysicalMeasurement {
@@ -85,9 +86,260 @@ export interface TrendsData {
 export class PerformanceDataService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  
+  private realtimeService = inject(RealtimeService);
+
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
+
+  // State signals
+  private readonly _recentMeasurements = signal<PhysicalMeasurement[]>([]);
+  private readonly _recentTests = signal<PerformanceTest[]>([]);
+  private readonly _todaysSupplements = signal<Supplement[]>([]);
+
+  readonly recentMeasurements = this._recentMeasurements.asReadonly();
+  readonly recentTests = this._recentTests.asReadonly();
+  readonly todaysSupplements = this._todaysSupplements.asReadonly();
+
+  // Computed signals
+  readonly latestMeasurement = computed(() => {
+    const measurements = this._recentMeasurements();
+    return measurements.length > 0 ? measurements[0] : null;
+  });
+  readonly supplementComplianceToday = computed(() => {
+    const supplements = this._todaysSupplements();
+    if (supplements.length === 0) return 100;
+    const taken = supplements.filter((s) => s.taken).length;
+    return Math.round((taken / supplements.length) * 100);
+  });
+
+  constructor() {
+    // Set up realtime subscription when user logs in/out
+    effect(() => {
+      const userId = this.userId();
+
+      if (userId) {
+        this.logger.info(
+          "[PerformanceData] User logged in, setting up realtime subscriptions",
+        );
+        this.loadRecentData();
+        this.subscribeToPerformanceUpdates(userId);
+      } else {
+        this.logger.info("[PerformanceData] User logged out, cleaning up");
+        this._recentMeasurements.set([]);
+        this._recentTests.set([]);
+        this._todaysSupplements.set([]);
+        this.realtimeService.unsubscribe("physical_measurements");
+        this.realtimeService.unsubscribe("performance_tests");
+        this.realtimeService.unsubscribe("supplement_logs");
+      }
+    });
+  }
+
+  /**
+   * Load recent performance data
+   */
+  private loadRecentData(): void {
+    const userId = this.userId();
+    if (!userId) return;
+
+    // Load recent measurements
+    this.getMeasurements("3m", 1, 10).subscribe({
+      next: (response) => {
+        this._recentMeasurements.set(response.data);
+        this.logger.success("[PerformanceData] Loaded recent measurements");
+      },
+      error: (error) => {
+        this.logger.error(
+          "[PerformanceData] Failed to load measurements:",
+          error,
+        );
+      },
+    });
+
+    // Load recent tests
+    this.getPerformanceTests("3m").subscribe({
+      next: (response) => {
+        this._recentTests.set(response.data);
+        this.logger.success("[PerformanceData] Loaded recent tests");
+      },
+      error: (error) => {
+        this.logger.error("[PerformanceData] Failed to load tests:", error);
+      },
+    });
+
+    // Load today's supplements
+    this.getSupplements("1d").subscribe({
+      next: (response) => {
+        this._todaysSupplements.set(response.data);
+        this.logger.success("[PerformanceData] Loaded today's supplements");
+      },
+      error: (error) => {
+        this.logger.error(
+          "[PerformanceData] Failed to load supplements:",
+          error,
+        );
+      },
+    });
+  }
+
+  /**
+   * Subscribe to realtime performance data updates
+   */
+  private subscribeToPerformanceUpdates(userId: string): void {
+    const today = new Date().toISOString().split("T")[0];
+
+    // Subscribe to physical measurements
+    this.realtimeService.subscribe(
+      "physical_measurements",
+      `user_id=eq.${userId}`,
+      {
+        onInsert: (payload) => {
+          this.logger.info("[PerformanceData] New measurement via realtime");
+          const measurement = this.transformMeasurement(payload.new);
+          const current = this._recentMeasurements();
+          this._recentMeasurements.set([measurement, ...current.slice(0, 9)]);
+        },
+        onUpdate: (payload) => {
+          this.logger.info(
+            "[PerformanceData] Measurement updated via realtime",
+          );
+          const measurement = this.transformMeasurement(payload.new);
+          const current = this._recentMeasurements();
+          const index = current.findIndex((m) => m.id === measurement.id);
+          if (index !== -1) {
+            const updated = [...current];
+            updated[index] = measurement;
+            this._recentMeasurements.set(updated);
+          }
+        },
+        onDelete: (payload) => {
+          this.logger.info(
+            "[PerformanceData] Measurement deleted via realtime",
+          );
+          const current = this._recentMeasurements();
+          this._recentMeasurements.set(
+            current.filter((m) => m.id !== payload.old.id),
+          );
+        },
+      },
+    );
+
+    // Subscribe to performance tests
+    this.realtimeService.subscribe(
+      "performance_tests",
+      `user_id=eq.${userId}`,
+      {
+        onInsert: (payload) => {
+          this.logger.info("[PerformanceData] New test via realtime");
+          const test = this.transformTest(payload.new);
+          const current = this._recentTests();
+          this._recentTests.set([test, ...current]);
+        },
+        onUpdate: (payload) => {
+          this.logger.info("[PerformanceData] Test updated via realtime");
+          const test = this.transformTest(payload.new);
+          const current = this._recentTests();
+          const index = current.findIndex((t) => t.id === test.id);
+          if (index !== -1) {
+            const updated = [...current];
+            updated[index] = test;
+            this._recentTests.set(updated);
+          }
+        },
+        onDelete: (payload) => {
+          this.logger.info("[PerformanceData] Test deleted via realtime");
+          const current = this._recentTests();
+          this._recentTests.set(current.filter((t) => t.id !== payload.old.id));
+        },
+      },
+    );
+
+    // Subscribe to supplement logs
+    this.realtimeService.subscribe("supplement_logs", `user_id=eq.${userId}`, {
+      onInsert: (payload) => {
+        const logDate = payload.new.date;
+        if (logDate === today) {
+          this.logger.info("[PerformanceData] New supplement log via realtime");
+          const supplement = this.transformSupplement(payload.new);
+          const current = this._todaysSupplements();
+          this._todaysSupplements.set([...current, supplement]);
+        }
+      },
+      onUpdate: (payload) => {
+        const logDate = payload.new.date;
+        if (logDate === today) {
+          this.logger.info(
+            "[PerformanceData] Supplement log updated via realtime",
+          );
+          const supplement = this.transformSupplement(payload.new);
+          const current = this._todaysSupplements();
+          const index = current.findIndex((s) => s.id === supplement.id);
+          if (index !== -1) {
+            const updated = [...current];
+            updated[index] = supplement;
+            this._todaysSupplements.set(updated);
+          }
+        }
+      },
+      onDelete: (payload) => {
+        this.logger.info(
+          "[PerformanceData] Supplement log deleted via realtime",
+        );
+        const current = this._todaysSupplements();
+        this._todaysSupplements.set(
+          current.filter((s) => s.id !== payload.old.id),
+        );
+      },
+    });
+  }
+
+  /**
+   * Transform database measurement to PhysicalMeasurement
+   */
+  private transformMeasurement(data: any): PhysicalMeasurement {
+    return {
+      id: data.id,
+      userId: data.user_id,
+      weight: data.weight_kg,
+      height: data.height_cm,
+      bodyFat: data.body_fat_percentage,
+      muscleMass: data.muscle_mass_kg,
+      notes: data.notes,
+      timestamp: data.measured_at,
+    };
+  }
+
+  /**
+   * Transform database test to PerformanceTest
+   */
+  private transformTest(data: any): PerformanceTest {
+    return {
+      id: data.id,
+      userId: data.user_id,
+      testType: data.test_name,
+      result: data.result_value,
+      target: data.target_value,
+      timestamp: data.performed_at,
+      conditions: data.test_conditions,
+    };
+  }
+
+  /**
+   * Transform database supplement to Supplement
+   */
+  private transformSupplement(data: any): Supplement {
+    return {
+      id: data.id,
+      userId: data.user_id,
+      name: data.supplement_name,
+      dosage: data.dosage,
+      taken: data.taken,
+      date: data.date,
+      timeOfDay: data.time_of_day,
+      notes: data.notes,
+      timestamp: data.created_at,
+    };
+  }
 
   // Physical Measurements
   getMeasurements(
@@ -100,7 +352,7 @@ export class PerformanceDataService {
     pagination: any;
   }> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.warn("[Performance] No user logged in");
       return of({ data: [], summary: {}, pagination: {} });
@@ -121,20 +373,25 @@ export class PerformanceDataService {
           .range((page - 1) * limit, page * limit - 1);
 
         if (error) {
-          this.logger.error("[Performance] Error fetching measurements:", error);
+          this.logger.error(
+            "[Performance] Error fetching measurements:",
+            error,
+          );
           throw error;
         }
 
-        const measurements: PhysicalMeasurement[] = (data || []).map((m: any) => ({
-          id: m.id,
-          userId: m.user_id,
-          weight: m.weight_kg,
-          height: m.height_cm,
-          bodyFat: m.body_fat_percentage,
-          muscleMass: m.muscle_mass_kg,
-          notes: m.notes,
-          timestamp: m.measured_at,
-        }));
+        const measurements: PhysicalMeasurement[] = (data || []).map(
+          (m: any) => ({
+            id: m.id,
+            userId: m.user_id,
+            weight: m.weight_kg,
+            height: m.height_cm,
+            bodyFat: m.body_fat_percentage,
+            muscleMass: m.muscle_mass_kg,
+            notes: m.notes,
+            timestamp: m.measured_at,
+          }),
+        );
 
         const summary: MeasurementsSummary = {};
         if (measurements.length > 0) {
@@ -143,9 +400,10 @@ export class PerformanceDataService {
             const previous = measurements[1];
             summary.changes = {
               weight: `${(measurements[0].weight - previous.weight).toFixed(1)} kg`,
-              bodyFat: measurements[0].bodyFat && previous.bodyFat 
-                ? `${(measurements[0].bodyFat - previous.bodyFat).toFixed(1)}%`
-                : undefined,
+              bodyFat:
+                measurements[0].bodyFat && previous.bodyFat
+                  ? `${(measurements[0].bodyFat - previous.bodyFat).toFixed(1)}%`
+                  : undefined,
             };
           }
         }
@@ -166,9 +424,11 @@ export class PerformanceDataService {
 
   logMeasurement(measurement: Partial<PhysicalMeasurement>): Observable<any> {
     const userId = this.userId();
-    
+
     if (!userId) {
-      this.logger.error("[Performance] Cannot log measurement: No user logged in");
+      this.logger.error(
+        "[Performance] Cannot log measurement: No user logged in",
+      );
       return of({ success: false });
     }
 
@@ -208,16 +468,21 @@ export class PerformanceDataService {
   private parseTimeframeToDays(timeframe: string): number {
     const match = timeframe.match(/^(\d+)([dmyw])$/);
     if (!match) return 180; // Default 6 months
-    
+
     const [, num, unit] = match;
     const value = parseInt(num, 10);
-    
+
     switch (unit) {
-      case "d": return value;
-      case "w": return value * 7;
-      case "m": return value * 30;
-      case "y": return value * 365;
-      default: return 180;
+      case "d":
+        return value;
+      case "w":
+        return value * 7;
+      case "m":
+        return value * 30;
+      case "y":
+        return value * 365;
+      default:
+        return 180;
     }
   }
 
@@ -227,9 +492,12 @@ export class PerformanceDataService {
     compliance: SupplementCompliance;
   }> {
     const userId = this.userId();
-    
+
     if (!userId) {
-      return of({ data: [], compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 } });
+      return of({
+        data: [],
+        compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 },
+      });
     }
 
     const days = this.parseTimeframeToDays(timeframe);
@@ -264,8 +532,9 @@ export class PerformanceDataService {
 
         // Calculate compliance
         const totalLogs = supplements.length;
-        const takenLogs = supplements.filter(s => s.taken).length;
-        const complianceRate = totalLogs > 0 ? Math.round((takenLogs / totalLogs) * 100) : 0;
+        const takenLogs = supplements.filter((s) => s.taken).length;
+        const complianceRate =
+          totalLogs > 0 ? Math.round((takenLogs / totalLogs) * 100) : 0;
 
         return {
           data: supplements,
@@ -279,16 +548,21 @@ export class PerformanceDataService {
     ).pipe(
       catchError((error) => {
         this.logger.error("[Performance] Failed to fetch supplements:", error);
-        return of({ data: [], compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 } });
+        return of({
+          data: [],
+          compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 },
+        });
       }),
     );
   }
 
   logSupplement(supplement: Partial<Supplement>): Observable<any> {
     const userId = this.userId();
-    
+
     if (!userId) {
-      this.logger.error("[Performance] Cannot log supplement: No user logged in");
+      this.logger.error(
+        "[Performance] Cannot log supplement: No user logged in",
+      );
       return of({ success: false });
     }
 
@@ -333,7 +607,7 @@ export class PerformanceDataService {
     pagination: any;
   }> {
     const userId = this.userId();
-    
+
     if (!userId) {
       return of({ data: [], trends: {}, summary: {}, pagination: {} });
     }
@@ -354,7 +628,9 @@ export class PerformanceDataService {
           query = query.eq("test_type", testType);
         }
 
-        const { data, error } = await query.order("test_date", { ascending: false });
+        const { data, error } = await query.order("test_date", {
+          ascending: false,
+        });
 
         if (error) {
           this.logger.error("[Performance] Error fetching tests:", error);
@@ -392,7 +668,7 @@ export class PerformanceDataService {
 
   logPerformanceTest(test: Partial<PerformanceTest>): Observable<any> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.error("[Performance] Cannot log test: No user logged in");
       return of({ success: false });
@@ -430,7 +706,7 @@ export class PerformanceDataService {
   // Trends Analysis
   getTrends(timeframe: string = "12m"): Observable<TrendsData> {
     const userId = this.userId();
-    
+
     if (!userId) {
       return of({
         performance: {},
@@ -444,8 +720,10 @@ export class PerformanceDataService {
 
     // This is a complex analysis that could be implemented as a Supabase function
     // For now, return basic structure
-    this.logger.warn("[Performance] Trends analysis is simplified - consider implementing as DB function");
-    
+    this.logger.warn(
+      "[Performance] Trends analysis is simplified - consider implementing as DB function",
+    );
+
     return of({
       performance: {},
       body_composition: { trend: "insufficient_data", changes: null },
@@ -461,7 +739,9 @@ export class PerformanceDataService {
     timeframe: string = "12m",
     format: "json" | "csv" = "json",
   ): Observable<any> {
-    this.logger.warn("[Performance] Export feature not yet implemented for Supabase");
+    this.logger.warn(
+      "[Performance] Export feature not yet implemented for Supabase",
+    );
     // TODO: Implement data export by fetching all tables and formatting
     return of({ success: false, message: "Export feature coming soon" });
   }

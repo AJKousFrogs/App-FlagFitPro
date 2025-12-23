@@ -1,8 +1,9 @@
-import { Injectable, inject, computed } from "@angular/core";
+import { Injectable, inject, computed, signal, effect } from "@angular/core";
 import { Observable, of, from } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { RealtimeService } from "./realtime.service";
 
 export interface RecoveryMetric {
   name: string;
@@ -67,9 +68,169 @@ export interface ResearchInsight {
 export class RecoveryService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  
+  private realtimeService = inject(RealtimeService);
+
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
+
+  // State signals for recovery sessions
+  private readonly _activeSessions = signal<RecoverySession[]>([]);
+  readonly activeSessions = this._activeSessions.asReadonly();
+
+  constructor() {
+    // Set up realtime subscription when user logs in/out
+    effect(() => {
+      const userId = this.userId();
+
+      if (userId) {
+        this.logger.info(
+          "[Recovery] User logged in, setting up realtime subscriptions",
+        );
+        this.loadActiveSessions(userId);
+        this.subscribeToSessionUpdates(userId);
+      } else {
+        this.logger.info("[Recovery] User logged out, cleaning up");
+        this._activeSessions.set([]);
+        this.realtimeService.unsubscribe("recovery_sessions");
+      }
+    });
+  }
+
+  /**
+   * Load active recovery sessions from database
+   */
+  private async loadActiveSessions(userId: string): Promise<void> {
+    try {
+      const { data, error } = await this.supabaseService.client
+        .from("recovery_sessions")
+        .select(
+          `
+          *,
+          protocol:recovery_protocols(*)
+        `,
+        )
+        .eq("athlete_id", userId)
+        .in("status", ["in_progress", "paused"])
+        .order("start_time", { ascending: false });
+
+      if (error) {
+        this.logger.error("[Recovery] Error loading active sessions:", error);
+        return;
+      }
+
+      const sessions = (data || []).map(this.transformSession.bind(this));
+      this._activeSessions.set(sessions);
+      this.logger.success(
+        `[Recovery] Loaded ${sessions.length} active sessions`,
+      );
+    } catch (error) {
+      this.logger.error("[Recovery] Failed to load active sessions:", error);
+    }
+  }
+
+  /**
+   * Subscribe to realtime recovery session updates
+   */
+  private subscribeToSessionUpdates(userId: string): void {
+    this.realtimeService.subscribe(
+      "recovery_sessions",
+      `athlete_id=eq.${userId}`,
+      {
+        onInsert: async (payload) => {
+          this.logger.info("[Recovery] New session received via realtime");
+          const session = await this.fetchSessionWithProtocol(payload.new.id);
+          if (session) {
+            const current = this._activeSessions();
+            this._activeSessions.set([session, ...current]);
+          }
+        },
+        onUpdate: async (payload) => {
+          this.logger.info("[Recovery] Session updated via realtime");
+          const session = await this.fetchSessionWithProtocol(payload.new.id);
+          if (session) {
+            const current = this._activeSessions();
+            const index = current.findIndex((s) => s.id === session.id);
+
+            if (index !== -1) {
+              const updated = [...current];
+              updated[index] = session;
+              this._activeSessions.set(updated);
+            } else if (session.progress < 100) {
+              // New active session
+              this._activeSessions.set([session, ...current]);
+            }
+          }
+        },
+        onDelete: (payload) => {
+          this.logger.info("[Recovery] Session deleted via realtime");
+          const current = this._activeSessions();
+          const filtered = current.filter((s) => s.id !== payload.old.id);
+          this._activeSessions.set(filtered);
+        },
+      },
+    );
+  }
+
+  /**
+   * Fetch session with protocol details
+   */
+  private async fetchSessionWithProtocol(
+    sessionId: string,
+  ): Promise<RecoverySession | null> {
+    try {
+      const { data, error } = await this.supabaseService.client
+        .from("recovery_sessions")
+        .select(
+          `
+          *,
+          protocol:recovery_protocols(*)
+        `,
+        )
+        .eq("id", sessionId)
+        .single();
+
+      if (error || !data) {
+        return null;
+      }
+
+      return this.transformSession(data);
+    } catch (error) {
+      this.logger.error("[Recovery] Error fetching session:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Transform database session to RecoverySession
+   */
+  private transformSession(data: any): RecoverySession {
+    return {
+      id: data.id,
+      protocol: this.transformProtocol(data.protocol),
+      startTime: new Date(data.start_time),
+      duration: data.duration_minutes,
+      progress: data.progress_percentage || 0,
+      paused: data.is_paused || false,
+    };
+  }
+
+  /**
+   * Transform database protocol to RecoveryProtocol
+   */
+  private transformProtocol(data: any): RecoveryProtocol {
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      category: data.category,
+      duration: data.duration_minutes,
+      priority: data.priority as "high" | "medium" | "low",
+      evidenceLevel: data.evidence_level,
+      studyCount: data.study_count || 0,
+      benefits: data.benefits || [],
+      steps: data.steps || [],
+    };
+  }
 
   /**
    * Get current recovery metrics from wellness data
@@ -77,7 +238,7 @@ export class RecoveryService {
    */
   getRecoveryMetrics(): Observable<RecoveryData> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.warn("[Recovery] No user logged in, using mock data");
       return of(this.getMockRecoveryData());
@@ -107,7 +268,9 @@ export class RecoveryService {
 
         // Overall score (0-100)
         const overallScore = Math.round(
-          ((sleepQuality + energyLevel + (10 - stressLevel) + (10 - soreness)) / 40) * 100
+          ((sleepQuality + energyLevel + (10 - stressLevel) + (10 - soreness)) /
+            40) *
+            100,
         );
 
         return {
@@ -119,7 +282,12 @@ export class RecoveryService {
               unit: "/10",
               percentage: sleepQuality * 10,
               icon: "pi pi-moon",
-              color: sleepQuality >= 7 ? "#10c96b" : sleepQuality >= 5 ? "#f1c40f" : "#e74c3c",
+              color:
+                sleepQuality >= 7
+                  ? "#10c96b"
+                  : sleepQuality >= 5
+                    ? "#f1c40f"
+                    : "#e74c3c",
             },
             {
               name: "Energy Level",
@@ -127,7 +295,12 @@ export class RecoveryService {
               unit: "/10",
               percentage: energyLevel * 10,
               icon: "pi pi-bolt",
-              color: energyLevel >= 7 ? "#10c96b" : energyLevel >= 5 ? "#f1c40f" : "#e74c3c",
+              color:
+                energyLevel >= 7
+                  ? "#10c96b"
+                  : energyLevel >= 5
+                    ? "#f1c40f"
+                    : "#e74c3c",
             },
             {
               name: "Muscle Soreness",
@@ -135,7 +308,12 @@ export class RecoveryService {
               unit: "/10",
               percentage: (10 - soreness) * 10, // Invert: lower soreness = better
               icon: "pi pi-exclamation-circle",
-              color: soreness <= 3 ? "#10c96b" : soreness <= 6 ? "#f1c40f" : "#e74c3c",
+              color:
+                soreness <= 3
+                  ? "#10c96b"
+                  : soreness <= 6
+                    ? "#f1c40f"
+                    : "#e74c3c",
             },
             {
               name: "Stress Level",
@@ -143,7 +321,12 @@ export class RecoveryService {
               unit: "/10",
               percentage: (10 - stressLevel) * 10, // Invert: lower stress = better
               icon: "pi pi-info-circle",
-              color: stressLevel <= 3 ? "#10c96b" : stressLevel <= 6 ? "#f1c40f" : "#e74c3c",
+              color:
+                stressLevel <= 3
+                  ? "#10c96b"
+                  : stressLevel <= 6
+                    ? "#f1c40f"
+                    : "#e74c3c",
             },
           ],
         };
@@ -173,7 +356,7 @@ export class RecoveryService {
     protocol: RecoveryProtocol,
   ): Observable<RecoverySession> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.error("[Recovery] Cannot start session: No user logged in");
       return of(this.createMockSession(protocol));
@@ -223,9 +406,11 @@ export class RecoveryService {
    */
   completeRecoverySession(sessionId: string): Observable<boolean> {
     const userId = this.userId();
-    
+
     if (!userId) {
-      this.logger.error("[Recovery] Cannot complete session: No user logged in");
+      this.logger.error(
+        "[Recovery] Cannot complete session: No user logged in",
+      );
       return of(false);
     }
 
@@ -259,7 +444,7 @@ export class RecoveryService {
    */
   stopRecoverySession(sessionId: string): Observable<boolean> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.error("[Recovery] Cannot stop session: No user logged in");
       return of(false);

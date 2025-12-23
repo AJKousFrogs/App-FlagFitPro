@@ -5,6 +5,7 @@ Use this checklist to safely deploy the migrated services to production.
 ## Pre-Deployment (Development/Staging)
 
 ### ✅ Step 1: Database Migration
+
 - [ ] Review `database/migrations/051_add_service_migration_tables.sql`
 - [ ] Backup current database
 - [ ] Run migration on staging environment
@@ -17,6 +18,7 @@ Use this checklist to safely deploy the migrated services to production.
   - [ ] `performance_tests`
 
 **Command:**
+
 ```bash
 # Via Supabase CLI
 supabase db push
@@ -26,18 +28,20 @@ psql -h [staging-host] -U postgres -f database/migrations/051_add_service_migrat
 ```
 
 ### ✅ Step 2: Verify RLS Policies
+
 - [ ] Check RLS is enabled on all 6 tables
 - [ ] Test that users can only see their own data
 - [ ] Test INSERT, UPDATE, DELETE permissions
 - [ ] Verify policy performance (should use indexes)
 
 **SQL Check:**
+
 ```sql
 -- Verify RLS enabled
-SELECT schemaname, tablename, rowsecurity 
-FROM pg_tables 
+SELECT schemaname, tablename, rowsecurity
+FROM pg_tables
 WHERE tablename IN (
-  'wellness_entries', 'recovery_sessions', 
+  'wellness_entries', 'recovery_sessions',
   'nutrition_logs', 'nutrition_goals',
   'supplement_logs', 'performance_tests'
 );
@@ -46,23 +50,26 @@ WHERE tablename IN (
 ```
 
 ### ✅ Step 3: Verify Indexes
+
 - [ ] Check all indexes were created
 - [ ] Run EXPLAIN ANALYZE on common queries
 - [ ] Verify query plans use indexes
 
 **SQL Check:**
+
 ```sql
-SELECT tablename, indexname 
-FROM pg_indexes 
+SELECT tablename, indexname
+FROM pg_indexes
 WHERE tablename IN (
   'wellness_entries', 'recovery_sessions',
-  'nutrition_logs', 'nutrition_goals', 
+  'nutrition_logs', 'nutrition_goals',
   'supplement_logs', 'performance_tests'
 )
 ORDER BY tablename, indexname;
 ```
 
 ### ✅ Step 4: Code Review
+
 - [ ] Review all 7 migrated service files
 - [ ] Verify no references to `ApiService` remain
 - [ ] Check error handling is comprehensive
@@ -70,6 +77,7 @@ ORDER BY tablename, indexname;
 - [ ] Confirm all methods return correct types
 
 **Files to Review:**
+
 1. `angular/src/app/core/services/wellness.service.ts`
 2. `angular/src/app/core/services/recovery.service.ts`
 3. `angular/src/app/core/services/nutrition.service.ts`
@@ -79,12 +87,14 @@ ORDER BY tablename, indexname;
 7. `angular/src/app/core/services/load-monitoring.service.ts`
 
 ### ✅ Step 5: Linting & Type Checking
+
 - [ ] Run ESLint: `npm run lint`
 - [ ] Fix any linting errors
 - [ ] Run TypeScript check: `npm run build`
 - [ ] Verify no type errors
 
 **Commands:**
+
 ```bash
 cd angular
 npm run lint
@@ -94,6 +104,7 @@ npm run build
 ### ✅ Step 6: Local Testing
 
 #### Wellness Service
+
 - [ ] Log wellness entry
 - [ ] Fetch wellness data (7d, 30d, 3m)
 - [ ] Verify averages calculation
@@ -101,6 +112,7 @@ npm run build
 - [ ] Test recommendations
 
 #### Recovery Service
+
 - [ ] Fetch recovery metrics
 - [ ] Start recovery session
 - [ ] Complete recovery session
@@ -108,6 +120,7 @@ npm run build
 - [ ] Verify session persistence
 
 #### Nutrition Service
+
 - [ ] Log food entry
 - [ ] Fetch today's meals
 - [ ] Get nutrition goals
@@ -115,6 +128,7 @@ npm run build
 - [ ] Verify performance insights
 
 #### Performance Data Service
+
 - [ ] Log physical measurement
 - [ ] Fetch measurements with timeframe
 - [ ] Log supplement
@@ -123,6 +137,7 @@ npm run build
 - [ ] Fetch tests by type
 
 #### ACWR Service (Critical!)
+
 - [ ] Verify historical data loads
 - [ ] Test real-time subscriptions
 - [ ] Add new session
@@ -130,12 +145,14 @@ npm run build
 - [ ] Check risk zone detection
 
 #### Load Monitoring Service
+
 - [ ] Create session with load data
 - [ ] Verify session persists to DB
 - [ ] Check load calculations
 - [ ] Test wellness factor integration
 
 #### Training Data Service
+
 - [ ] Fetch training sessions
 - [ ] Create training session
 - [ ] Update training session
@@ -143,6 +160,7 @@ npm run build
 - [ ] Get training stats
 
 ### ✅ Step 7: Integration Testing
+
 - [ ] Test cross-service interactions (ACWR ↔ Load Monitoring)
 - [ ] Verify real-time updates work
 - [ ] Test with multiple user accounts
@@ -150,6 +168,7 @@ npm run build
 - [ ] Test error scenarios (network failures, invalid data)
 
 ### ✅ Step 8: Performance Testing
+
 - [ ] Measure query response times
 - [ ] Test with realistic data volumes (100+ records)
 - [ ] Check memory usage in browser
@@ -157,11 +176,13 @@ npm run build
 - [ ] Test concurrent user sessions
 
 **Targets:**
+
 - Simple queries: < 100ms
 - Complex aggregations: < 300ms
 - Real-time latency: < 500ms
 
 ### ✅ Step 9: Security Testing
+
 - [ ] Test authentication edge cases (expired token, no token)
 - [ ] Verify RLS prevents unauthorized access
 - [ ] Test SQL injection protection (Supabase handles this)
@@ -169,6 +190,7 @@ npm run build
 - [ ] Verify no API keys exposed in code
 
 ### ✅ Step 10: Documentation Review
+
 - [ ] Read `MIGRATION_PROGRESS_REPORT.md`
 - [ ] Review `MIGRATION_CONTINUATION_SUMMARY.md`
 - [ ] Check `QUICK_REFERENCE_MIGRATION.md`
@@ -189,6 +211,7 @@ npm run build
 - [ ] Verify indexes created
 
 **Command:**
+
 ```bash
 # Backup first!
 pg_dump -h [prod-host] -U postgres -d postgres > backup_$(date +%Y%m%d).sql
@@ -198,6 +221,7 @@ psql -h [prod-host] -U postgres -d postgres -f database/migrations/051_add_servi
 ```
 
 ### ✅ Step 12: Smoke Test Production
+
 - [ ] Deploy Angular app to production
 - [ ] Test login/logout
 - [ ] Log one wellness entry
@@ -208,6 +232,7 @@ psql -h [prod-host] -U postgres -d postgres -f database/migrations/051_add_servi
 - [ ] Verify data appears correctly
 
 ### ✅ Step 13: Monitor Production
+
 - [ ] Check Supabase dashboard for errors
 - [ ] Monitor query performance metrics
 - [ ] Watch for RLS policy violations
@@ -215,6 +240,7 @@ psql -h [prod-host] -U postgres -d postgres -f database/migrations/051_add_servi
 - [ ] Monitor user reports/feedback
 
 **Monitoring Checklist (First 24 hours):**
+
 - [ ] Hour 1: Check every 15 minutes
 - [ ] Hour 2-4: Check hourly
 - [ ] Hour 5-24: Check every 4 hours
@@ -225,12 +251,14 @@ psql -h [prod-host] -U postgres -d postgres -f database/migrations/051_add_servi
 If critical issues occur:
 
 1. **Quick Rollback:**
+
    ```bash
    # Revert to previous Angular deployment
    # Keep new tables but stop using them
    ```
 
 2. **Database Rollback:**
+
    ```sql
    -- Only if absolutely necessary
    DROP TABLE IF EXISTS wellness_entries CASCADE;
@@ -249,12 +277,14 @@ If critical issues occur:
 ## Post-Deployment
 
 ### ✅ Step 15: Deprecate Old Endpoints (After 1 Week)
+
 - [ ] Identify Netlify Functions no longer used
 - [ ] Add deprecation warnings
 - [ ] Monitor for any remaining calls
 - [ ] Remove deprecated functions after 2 weeks
 
 **Functions to Deprecate:**
+
 - `/api/wellness` (GET, POST)
 - `/api/recovery/metrics`
 - `/api/recovery/sessions`
@@ -265,6 +295,7 @@ If critical issues occur:
 - `/api/performance/tests`
 
 ### ✅ Step 16: Optimization
+
 - [ ] Review slow query logs
 - [ ] Add indexes if needed
 - [ ] Consider materialized views for complex aggregations
@@ -272,6 +303,7 @@ If critical issues occur:
 - [ ] Add database functions for complex calculations
 
 ### ✅ Step 17: Documentation Update
+
 - [ ] Update API documentation
 - [ ] Update team wiki/confluence
 - [ ] Create runbook for common issues
@@ -293,32 +325,38 @@ Migration is successful when:
 ## Emergency Contacts
 
 **Database Issues:**
+
 - Supabase Support: [dashboard]
 - Team DBA: [contact]
 
 **Application Issues:**
+
 - Lead Developer: [contact]
 - DevOps: [contact]
 
 **User Impact:**
+
 - Product Manager: [contact]
 - Customer Support: [contact]
 
 ## Metrics to Track
 
 ### Performance Metrics
+
 - [ ] Average query response time
 - [ ] 95th percentile response time
 - [ ] Error rate
 - [ ] Database connection pool usage
 
 ### Business Metrics
+
 - [ ] User engagement (wellness logs per day)
 - [ ] Feature adoption (recovery sessions started)
 - [ ] Data completeness (% of users logging data)
 - [ ] User satisfaction (support tickets, feedback)
 
 ### Cost Metrics
+
 - [ ] Netlify Function invocations (should decrease)
 - [ ] Supabase database size
 - [ ] Supabase bandwidth usage
@@ -327,17 +365,20 @@ Migration is successful when:
 ## Sign-Off
 
 ### Development Team
-- [ ] Lead Developer: _________________ Date: _______
-- [ ] QA Engineer: _________________ Date: _______
-- [ ] DevOps: _________________ Date: _______
+
+- [ ] Lead Developer: ********\_******** Date: **\_\_\_**
+- [ ] QA Engineer: ********\_******** Date: **\_\_\_**
+- [ ] DevOps: ********\_******** Date: **\_\_\_**
 
 ### Product Team
-- [ ] Product Manager: _________________ Date: _______
-- [ ] UX Designer: _________________ Date: _______
+
+- [ ] Product Manager: ********\_******** Date: **\_\_\_**
+- [ ] UX Designer: ********\_******** Date: **\_\_\_**
 
 ### Stakeholders
-- [ ] Tech Lead: _________________ Date: _______
-- [ ] CTO: _________________ Date: _______
+
+- [ ] Tech Lead: ********\_******** Date: **\_\_\_**
+- [ ] CTO: ********\_******** Date: **\_\_\_**
 
 ---
 
@@ -358,4 +399,3 @@ _____________________________________________
 **Status:** 📋 Ready for Deployment  
 **Version:** 1.0  
 **Last Updated:** December 23, 2024
-

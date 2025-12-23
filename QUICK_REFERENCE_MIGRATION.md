@@ -4,15 +4,15 @@
 
 ### Services Now Using Direct Supabase (No API Calls)
 
-| Service | Status | Tables Used | Real-time |
-|---------|--------|-------------|-----------|
-| `training-data.service.ts` | ✅ | `training_sessions` | Yes |
-| `acwr.service.ts` | ✅ | `workout_logs` | Yes |
-| `load-monitoring.service.ts` | ✅ | `workout_logs` | No |
-| `wellness.service.ts` | ✅ | `wellness_entries` | No |
-| `recovery.service.ts` | ✅ | `wellness_entries`, `recovery_sessions` | No |
-| `nutrition.service.ts` | ⚠️ | `nutrition_logs`, `nutrition_goals` | No |
-| `performance-data.service.ts` | ✅ | `physical_measurements`, `supplement_logs`, `performance_tests` | No |
+| Service                       | Status | Tables Used                                                     | Real-time |
+| ----------------------------- | ------ | --------------------------------------------------------------- | --------- |
+| `training-data.service.ts`    | ✅     | `training_sessions`                                             | Yes       |
+| `acwr.service.ts`             | ✅     | `workout_logs`                                                  | Yes       |
+| `load-monitoring.service.ts`  | ✅     | `workout_logs`                                                  | No        |
+| `wellness.service.ts`         | ✅     | `wellness_entries`                                              | No        |
+| `recovery.service.ts`         | ✅     | `wellness_entries`, `recovery_sessions`                         | No        |
+| `nutrition.service.ts`        | ⚠️     | `nutrition_logs`, `nutrition_goals`                             | No        |
+| `performance-data.service.ts` | ✅     | `physical_measurements`, `supplement_logs`, `performance_tests` | No        |
 
 ⚠️ = Partially migrated (some features need Edge Functions)
 
@@ -58,9 +58,14 @@ Quick smoke test after deploying:
 
 ```typescript
 // 1. Test wellness logging
-wellnessService.logWellness({
-  sleep: 8, energy: 7, stress: 3, soreness: 4
-}).subscribe();
+wellnessService
+  .logWellness({
+    sleep: 8,
+    energy: 7,
+    stress: 3,
+    soreness: 4,
+  })
+  .subscribe();
 
 // 2. Test recovery session
 recoveryService.startRecoverySession(protocol).subscribe();
@@ -69,39 +74,50 @@ recoveryService.startRecoverySession(protocol).subscribe();
 nutritionService.addFoodToCurrentMeal(food).subscribe();
 
 // 4. Test performance test
-performanceDataService.logPerformanceTest({
-  testType: '40YardDash', result: 4.8
-}).subscribe();
+performanceDataService
+  .logPerformanceTest({
+    testType: "40YardDash",
+    result: 4.8,
+  })
+  .subscribe();
 ```
 
 ## 🐛 Common Issues & Fixes
 
 ### Issue: RLS Policy Violation
+
 ```
 Error: new row violates row-level security policy
 ```
+
 **Fix:** User not authenticated. Check `auth.uid()` is set.
 
 ### Issue: Table Not Found
+
 ```
 Error: relation "wellness_entries" does not exist
 ```
+
 **Fix:** Run migration SQL: `supabase db push`
 
 ### Issue: Missing Data
+
 ```
 Returns empty array but data exists
 ```
+
 **Fix:** Check RLS policies match column names (`user_id` vs `athlete_id`)
 
 ## 📈 Performance Tips
 
 1. **Use Computed Signals** for reactive user ID:
+
    ```typescript
    private userId = computed(() => this.supabaseService.userId());
    ```
 
 2. **Add Indexes** for frequent queries:
+
    ```sql
    CREATE INDEX idx_table_user_date ON table(user_id, created_at DESC);
    ```
@@ -109,38 +125,40 @@ Returns empty array but data exists
 3. **Batch Queries** when possible:
    ```typescript
    const { data } = await this.supabaseService.client
-     .from('table')
-     .select('*, related_table(*)')  // Join in one query
+     .from("table")
+     .select("*, related_table(*)"); // Join in one query
    ```
 
 ## 🔄 Real-time Subscriptions
 
 Currently enabled for:
+
 - ACWR Service → `workout_logs` table
 
 To add real-time to other tables:
 
 ```typescript
 this.realtimeService.createSubscription(
-  'my_channel',
-  'table_name',
+  "my_channel",
+  "table_name",
   `user_id=eq.${userId}`,
   (event) => {
     // Handle INSERT, UPDATE, DELETE
-  }
+  },
 );
 ```
 
 ## 📚 Documentation Links
 
 - **Full Report:** `MIGRATION_PROGRESS_REPORT.md`
-- **How-to Guide:** `angular/MIGRATION_GUIDE.md`  
+- **How-to Guide:** `angular/MIGRATION_GUIDE.md`
 - **This Session:** `MIGRATION_CONTINUATION_SUMMARY.md`
 - **Database Schema:** `database/migrations/051_add_service_migration_tables.sql`
 
 ## 🎯 Next Services to Migrate
 
 Priority order:
+
 1. `analytics.service.ts` (tracking)
 2. `algorithm.service.ts` (recommendations)
 3. `periodization.service.ts` (planning)
@@ -150,22 +168,27 @@ Priority order:
 ## ⚡ Quick Win: Before vs After
 
 **Before (Netlify Function):**
+
 ```typescript
-this.apiService.get(API_ENDPOINTS.wellness)
-  .pipe(map(response => response.data))
+this.apiService
+  .get(API_ENDPOINTS.wellness)
+  .pipe(map((response) => response.data));
 ```
+
 - ❌ 800-1200ms response time
 - ❌ Cold starts
 - ❌ Network errors
 - ❌ API rate limits
 
 **After (Direct Supabase):**
+
 ```typescript
 this.supabaseService.client
-  .from('wellness_entries')
-  .select('*')
-  .eq('athlete_id', userId)
+  .from("wellness_entries")
+  .select("*")
+  .eq("athlete_id", userId);
 ```
+
 - ✅ 200-400ms response time (3x faster)
 - ✅ No cold starts
 - ✅ Database reliability
@@ -175,9 +198,10 @@ this.supabaseService.client
 ## 🔐 Environment Variables
 
 No changes needed! Services use existing:
+
 ```typescript
-environment.supabase.url
-environment.supabase.anonKey
+environment.supabase.url;
+environment.supabase.anonKey;
 ```
 
 These are injected by `SupabaseService` automatically.
@@ -204,4 +228,3 @@ These are injected by `SupabaseService` automatically.
 ---
 
 **TL;DR:** Run `supabase db push`, test locally, deploy. Services are 3x faster now! 🚀
-

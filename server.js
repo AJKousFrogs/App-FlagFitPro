@@ -512,8 +512,11 @@ app.post("/.netlify/functions/notifications-preferences", (req, res) => {
 // Catch-all route for Angular SPA routing
 app.get("*", (req, res) => {
   // Serve Angular app's index.html for all routes
-  const angularIndexPath = path.join(__dirname, "angular/dist/flagfit-pro/browser/index.html");
-  
+  const angularIndexPath = path.join(
+    __dirname,
+    "angular/dist/flagfit-pro/browser/index.html",
+  );
+
   // Check if Angular build exists, otherwise serve root index.html
   if (fs.existsSync(angularIndexPath)) {
     res.sendFile(angularIndexPath);

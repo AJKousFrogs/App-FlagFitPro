@@ -4,10 +4,7 @@
     "module": "ESNext",
     "lib": ["ES2022"],
     "moduleResolution": "node",
-    "typeRoots": [
-      "./node_modules/@types",
-      "./angular/node_modules/@types"
-    ],
+    "typeRoots": ["./node_modules/@types", "./angular/node_modules/@types"],
     "types": ["node"],
     "strict": true,
     "esModuleInterop": true,

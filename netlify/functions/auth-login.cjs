@@ -116,4 +116,3 @@ exports.handler = async (event, context) => {
     return handleServerError(error, "Auth-Login");
   }
 };
-

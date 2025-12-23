@@ -75,9 +75,7 @@
         "evidenceBasedAlgorithms": false,
         "flagFootballOptimization": false
       },
-      "issues": [
-        "Research integration claim unvalidated: 0 studies"
-      ],
+      "issues": ["Research integration claim unvalidated: 0 studies"],
       "metrics": {
         "studiesCount": 0
       }
@@ -97,10 +95,6 @@
     }
   },
   "overallScore": 72,
-  "criticalIssues": [
-    "Research: Study count claim not validated"
-  ],
-  "recommendations": [
-    "Good foundation but needs refinement for Olympic level"
-  ]
+  "criticalIssues": ["Research: Study count claim not validated"],
+  "recommendations": ["Good foundation but needs refinement for Olympic level"]
 }

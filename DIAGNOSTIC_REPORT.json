@@ -7,16 +7,12 @@
     "categories": {
       "dependencies": {
         "score": 80,
-        "issues": [
-          "Missing critical dependency: react"
-        ],
+        "issues": ["Missing critical dependency: react"],
         "status": "good"
       },
       "tests": {
         "score": 30,
-        "issues": [
-          "Tests failed to run or completed with errors"
-        ],
+        "issues": ["Tests failed to run or completed with errors"],
         "status": "critical",
         "metrics": {
           "unit_files": 5,
@@ -26,9 +22,7 @@
       },
       "security": {
         "score": 60,
-        "issues": [
-          "Debug/demo code found in: ./src/auth-manager.js"
-        ],
+        "issues": ["Debug/demo code found in: ./src/auth-manager.js"],
         "status": "warning"
       },
       "codeQuality": {
@@ -78,9 +72,7 @@
       },
       "api": {
         "score": 90,
-        "issues": [
-          "Missing critical function: auth-login.cjs"
-        ],
+        "issues": ["Missing critical function: auth-login.cjs"],
         "status": "good",
         "metrics": {
           "functionsFound": 53,
@@ -99,9 +91,7 @@
         }
       }
     },
-    "criticalIssues": [
-      "Test suite execution failed"
-    ],
+    "criticalIssues": ["Test suite execution failed"],
     "warnings": [
       "Sensitive file found: .env (ensure it's in .gitignore)",
       "Sensitive file found: .env.local (ensure it's in .gitignore)",
@@ -189,9 +179,7 @@
           "evidenceBasedAlgorithms": false,
           "flagFootballOptimization": false
         },
-        "issues": [
-          "Research integration claim unvalidated: 0 studies"
-        ],
+        "issues": ["Research integration claim unvalidated: 0 studies"],
         "metrics": {
           "studiesCount": 0
         }
@@ -211,9 +199,7 @@
       }
     },
     "overallScore": 72,
-    "criticalIssues": [
-      "Research: Study count claim not validated"
-    ],
+    "criticalIssues": ["Research: Study count claim not validated"],
     "recommendations": [
       "Good foundation but needs refinement for Olympic level"
     ]

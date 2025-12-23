@@ -188,14 +188,16 @@ test.describe("User Authentication Flow", () => {
     // Check all passwords and collect promises to avoid await in loop
     const checkPromises = [];
     for (const password of weakPasswords) {
-      checkPromises.push((async () => {
-        await page.fill("#password", password);
-        await page.fill("#confirmPassword", password);
+      checkPromises.push(
+        (async () => {
+          await page.fill("#password", password);
+          await page.fill("#confirmPassword", password);
 
-        // Check if password strength indicator shows weak
-        const strengthIndicator = page.locator("#password-strength");
-        await expect(strengthIndicator).toContainText(/weak|invalid/i);
-      })());
+          // Check if password strength indicator shows weak
+          const strengthIndicator = page.locator("#password-strength");
+          await expect(strengthIndicator).toContainText(/weak|invalid/i);
+        })(),
+      );
     }
     await Promise.all(checkPromises);
 

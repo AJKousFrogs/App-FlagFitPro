@@ -1,9 +1,10 @@
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { Observable, from, of } from "rxjs";
 import { map, tap, catchError } from "rxjs/operators";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { RealtimeService } from "./realtime.service";
 
 export interface WellnessData {
   id?: number;
@@ -49,7 +50,8 @@ export interface WellnessResponse {
 export class WellnessService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  
+  private realtimeService = inject(RealtimeService);
+
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
 
@@ -68,6 +70,25 @@ export class WellnessService {
     return data.length > 0 ? data[0] : null;
   });
 
+  constructor() {
+    // Set up realtime subscription when user logs in/out
+    effect(() => {
+      const userId = this.userId();
+
+      if (userId) {
+        this.logger.info(
+          "[Wellness] User logged in, setting up realtime subscription",
+        );
+        this.loadWellnessData();
+        this.subscribeToWellnessUpdates(userId);
+      } else {
+        this.logger.info("[Wellness] User logged out, cleaning up");
+        this.clearCache();
+        this.realtimeService.unsubscribe("wellness_entries");
+      }
+    });
+  }
+
   /**
    * Get wellness data for a specific timeframe
    * @param timeframe - Time range (e.g., '7d', '30d', '3m')
@@ -75,7 +96,7 @@ export class WellnessService {
    */
   getWellnessData(timeframe: string = "30d"): Observable<WellnessResponse> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.warn("[Wellness] Cannot fetch data: No user logged in");
       return of({ success: false, data: [] });
@@ -211,13 +232,34 @@ export class WellnessService {
     });
 
     return {
-      sleep: counts.sleep > 0 ? Math.round((sums.sleep / counts.sleep) * 10) / 10 : undefined,
-      energy: counts.energy > 0 ? Math.round((sums.energy / counts.energy) * 10) / 10 : undefined,
-      stress: counts.stress > 0 ? Math.round((sums.stress / counts.stress) * 10) / 10 : undefined,
-      soreness: counts.soreness > 0 ? Math.round((sums.soreness / counts.soreness) * 10) / 10 : undefined,
-      motivation: counts.motivation > 0 ? Math.round((sums.motivation / counts.motivation) * 10) / 10 : undefined,
-      mood: counts.mood > 0 ? Math.round((sums.mood / counts.mood) * 10) / 10 : undefined,
-      hydration: counts.hydration > 0 ? Math.round((sums.hydration / counts.hydration) * 10) / 10 : undefined,
+      sleep:
+        counts.sleep > 0
+          ? Math.round((sums.sleep / counts.sleep) * 10) / 10
+          : undefined,
+      energy:
+        counts.energy > 0
+          ? Math.round((sums.energy / counts.energy) * 10) / 10
+          : undefined,
+      stress:
+        counts.stress > 0
+          ? Math.round((sums.stress / counts.stress) * 10) / 10
+          : undefined,
+      soreness:
+        counts.soreness > 0
+          ? Math.round((sums.soreness / counts.soreness) * 10) / 10
+          : undefined,
+      motivation:
+        counts.motivation > 0
+          ? Math.round((sums.motivation / counts.motivation) * 10) / 10
+          : undefined,
+      mood:
+        counts.mood > 0
+          ? Math.round((sums.mood / counts.mood) * 10) / 10
+          : undefined,
+      hydration:
+        counts.hydration > 0
+          ? Math.round((sums.hydration / counts.hydration) * 10) / 10
+          : undefined,
     };
   }
 
@@ -227,7 +269,7 @@ export class WellnessService {
    */
   logWellness(data: Partial<WellnessData>): Observable<any> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.error("[Wellness] Cannot log entry: No user logged in");
       return of({ success: false, error: "Not authenticated" });
@@ -429,6 +471,81 @@ export class WellnessService {
     }
 
     return recommendations;
+  }
+
+  /**
+   * Load wellness data from database
+   */
+  private loadWellnessData(): void {
+    this.getWellnessData("30d").subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.logger.success("[Wellness] Loaded wellness data from database");
+        }
+      },
+      error: (error) => {
+        this.logger.error("[Wellness] Failed to load wellness data:", error);
+      },
+    });
+  }
+
+  /**
+   * Subscribe to realtime wellness updates
+   */
+  private subscribeToWellnessUpdates(userId: string): void {
+    this.realtimeService.subscribe(
+      "wellness_entries",
+      `athlete_id=eq.${userId}`,
+      {
+        onInsert: (payload) => {
+          this.logger.info("[Wellness] New entry received via realtime");
+          const newEntry = this.transformEntry(payload.new);
+          const current = this._wellnessData();
+          this._wellnessData.set([newEntry, ...current]);
+          this._averages.set(this.calculateAverages([newEntry, ...current]));
+        },
+        onUpdate: (payload) => {
+          this.logger.info("[Wellness] Entry updated via realtime");
+          const updatedEntry = this.transformEntry(payload.new);
+          const current = this._wellnessData();
+          const index = current.findIndex((e) => e.id === updatedEntry.id);
+
+          if (index !== -1) {
+            const updated = [...current];
+            updated[index] = updatedEntry;
+            this._wellnessData.set(updated);
+            this._averages.set(this.calculateAverages(updated));
+          }
+        },
+        onDelete: (payload) => {
+          this.logger.info("[Wellness] Entry deleted via realtime");
+          const current = this._wellnessData();
+          const filtered = current.filter((e) => e.id !== payload.old.id);
+          this._wellnessData.set(filtered);
+          this._averages.set(this.calculateAverages(filtered));
+        },
+      },
+    );
+  }
+
+  /**
+   * Transform database entry to WellnessData
+   */
+  private transformEntry(entry: any): WellnessData {
+    return {
+      id: entry.id,
+      userId: entry.athlete_id,
+      date: entry.date,
+      sleep: entry.sleep_quality,
+      energy: entry.energy_level,
+      stress: entry.stress_level,
+      soreness: entry.muscle_soreness,
+      motivation: entry.motivation_level,
+      mood: entry.mood,
+      hydration: entry.hydration_level,
+      notes: entry.notes,
+      timestamp: entry.created_at,
+    };
   }
 
   /**

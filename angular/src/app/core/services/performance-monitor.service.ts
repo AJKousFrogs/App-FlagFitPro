@@ -1,4 +1,11 @@
-import { Injectable, inject, signal, computed, effect, DestroyRef } from "@angular/core";
+import {
+  Injectable,
+  inject,
+  signal,
+  computed,
+  effect,
+  DestroyRef,
+} from "@angular/core";
 import { MessageService } from "primeng/api";
 import { LoggerService } from "./logger.service";
 import { timer } from "rxjs";

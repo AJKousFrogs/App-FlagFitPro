@@ -50,25 +50,27 @@ class PerformanceTestRunner {
         const requests = [];
         for (let i = 0; i < scenarioStep.weight; i++) {
           for (const request of scenarioStep.requests) {
-            requests.push((async () => {
-              try {
-                const requestStart = performance.now();
-                await this.makeRequest(request);
-                const requestEnd = performance.now();
+            requests.push(
+              (async () => {
+                try {
+                  const requestStart = performance.now();
+                  await this.makeRequest(request);
+                  const requestEnd = performance.now();
 
-                userMetrics.requests.push({
-                  endpoint: request,
-                  responseTime: requestEnd - requestStart,
-                  timestamp: requestEnd,
-                });
-              } catch (error) {
-                userMetrics.errors.push({
-                  endpoint: request,
-                  error: error.message,
-                  timestamp: performance.now(),
-                });
-              }
-            })());
+                  userMetrics.requests.push({
+                    endpoint: request,
+                    responseTime: requestEnd - requestStart,
+                    timestamp: requestEnd,
+                  });
+                } catch (error) {
+                  userMetrics.errors.push({
+                    endpoint: request,
+                    error: error.message,
+                    timestamp: performance.now(),
+                  });
+                }
+              })(),
+            );
           }
         }
         // Await all requests for this scenario step (needs sequential processing per scenario)

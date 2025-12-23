@@ -9,7 +9,8 @@
 
 **Finding**: Large amount of obsolete vanilla HTML/CSS/JS code still exists in `src/` directory that is **NOT used by Angular**.
 
-**Impact**: 
+**Impact**:
+
 - ~350+ files in `src/` directory
 - Est. 10-15 MB of unused code
 - Confusion for developers
@@ -22,14 +23,16 @@
 ## ✅ What Angular Actually Uses
 
 ### Angular Does NOT import from `src/`:
+
 ```bash
 # Verified by grep - ZERO matches:
 src/components  ❌ Not used
-src/css         ❌ Not used  
+src/css         ❌ Not used
 src/js          ❌ Not used
 ```
 
 ### Angular Uses Its Own:
+
 - ✅ `angular/src/app/` - All Angular components
 - ✅ `angular/src/assets/` - Static assets
 - ✅ `angular/src/styles.scss` - Global styles
@@ -46,6 +49,7 @@ src/js          ❌ Not used
 **Status**: ❌ **OBSOLETE** - Angular has PrimeNG components
 
 #### Contents:
+
 ```
 src/components/
 ├── atoms/          ❌ 24 files - Badge, Button, Input, etc.
@@ -55,12 +59,14 @@ src/components/
 ```
 
 **Why Delete**:
+
 - Vanilla HTML templates for atomic design
 - Replaced by Angular components + PrimeNG
 - Not imported or used anywhere
 - Angular has its own component library
 
 **Angular Equivalents**:
+
 - Atoms → PrimeNG primitives (Button, Input, etc.)
 - Molecules → Custom Angular components
 - Organisms → Angular feature components
@@ -75,6 +81,7 @@ src/components/
 **Status**: ❌ **MOSTLY OBSOLETE** - Angular uses SCSS + PrimeNG
 
 #### Contents:
+
 ```
 src/css/
 ├── components/      ❌ 27 CSS files
@@ -86,12 +93,14 @@ src/css/
 ```
 
 **Why Delete**:
+
 - Written for vanilla HTML pages (deleted)
 - Angular uses SCSS and component styles
 - PrimeNG provides theme system
 - Not imported by Angular
 
 **Angular Equivalents**:
+
 - `angular/src/styles.scss` - Global styles
 - Component-scoped styles in `.component.ts` files
 - PrimeNG theme CSS
@@ -105,22 +114,25 @@ src/css/
 **Status**: ❌ **OBSOLETE** - Angular has TypeScript services
 
 #### Contents:
+
 ```
 src/js/
 ├── components/      ❌ 23 JS files
-├── pages/           ❌ 10 JS files  
+├── pages/           ❌ 10 JS files
 ├── services/        ❌ 19 JS files
 ├── utils/           ❌ 19 JS files
 └── main.js          ❌ Entry point
 ```
 
 **Why Delete**:
+
 - Written for vanilla HTML pages
 - Angular has equivalent TypeScript services
 - Not imported by Angular
 - Duplicate functionality
 
 **Angular Equivalents**:
+
 - `angular/src/app/core/services/` - TypeScript services
 - `angular/src/app/shared/` - Shared utilities
 - Component logic in `.component.ts` files
@@ -134,6 +146,7 @@ src/js/
 **Status**: ⚠️ **MIXED** - Some may be used by API server
 
 #### Files to DELETE (Used by old HTML):
+
 ```
 ❌ src/auth-manager.js           → angular/core/services/auth.service.ts
 ❌ src/chart-manager.js          → angular: Chart.js + PrimeNG
@@ -152,6 +165,7 @@ src/js/
 ```
 
 #### Files to KEEP (May be used by API):
+
 ```
 ✅ src/api-client.js              → Used by server.js?
 ✅ src/api-config.js              → API configuration
@@ -167,12 +181,14 @@ src/js/
 ### 5. **Legacy HTML Files**
 
 #### Keep ONLY:
+
 ```
 ✅ index.html              → Root redirect to Angular
 ✅ auth/callback.html      → OAuth callback (may be needed)
 ```
 
 #### Can Delete:
+
 ```
 ❌ src/unified-sidebar.html
 ❌ src/page-template.html
@@ -199,7 +215,7 @@ These files in `src/` MIGHT be used by `server.js` or Netlify functions:
 
 ```
 ❓ src/api-client.js
-❓ src/api-config.js  
+❓ src/api-config.js
 ❓ src/dashboard-api.js
 ❓ src/performance-api.js
 ❓ src/services/BackupService.js
@@ -218,6 +234,7 @@ These files in `src/` MIGHT be used by `server.js` or Netlify functions:
 ## 📊 Estimated Cleanup Impact
 
 ### Space Savings:
+
 ```
 src/components/      ~3 MB
 src/css/             ~2 MB
@@ -228,6 +245,7 @@ Total:               ~11 MB
 ```
 
 ### File Count:
+
 ```
 Before:  ~350 files in src/
 After:   ~20 files in src/ (API services only)
@@ -280,6 +298,7 @@ grep -r "src/email-service" server.js routes/ netlify/
 ### Phase 3: Move What's Needed (OPTIONAL)
 
 If API services are used:
+
 ```bash
 # Create server-side directory
 mkdir -p server/services
@@ -344,6 +363,7 @@ Everything else → DELETE
 ## 🎉 Expected Result
 
 **Before:**
+
 ```
 src/
 ├── 350+ files
@@ -352,6 +372,7 @@ src/
 ```
 
 **After:**
+
 ```
 src/
 ├── ~10-20 files
@@ -364,4 +385,3 @@ src/
 ---
 
 **Status**: Ready to clean Phase 1 (100% safe deletions) ✅
-

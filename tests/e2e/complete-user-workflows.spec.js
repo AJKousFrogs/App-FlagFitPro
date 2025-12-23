@@ -113,7 +113,8 @@ test.describe("Complete User Workflows - End-to-End Tests", () => {
           status: 200,
           body: JSON.stringify({
             response: {
-              answer: "Based on your question, I recommend focusing on technique refinement and progressive overload.",
+              answer:
+                "Based on your question, I recommend focusing on technique refinement and progressive overload.",
               confidence: 0.92,
               recommendations: [
                 {

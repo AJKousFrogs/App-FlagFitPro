@@ -30,7 +30,14 @@
  * @version 2.0.0 - Enhanced with evidence-based safeguards
  */
 
-import { Injectable, Signal, computed, signal, inject, effect } from "@angular/core";
+import {
+  Injectable,
+  Signal,
+  computed,
+  signal,
+  inject,
+  effect,
+} from "@angular/core";
 import {
   LoadMetrics,
   TrainingSession,
@@ -54,7 +61,7 @@ export class AcwrService {
   private evidenceConfigService = inject(EvidenceConfigService);
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  
+
   // Realtime subscription channel
   private realtimeChannel: RealtimeChannel | null = null;
 
@@ -918,11 +925,14 @@ export class AcwrService {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - daysToLoad);
 
-      this.logger.debug(`[ACWR] Loading ${daysToLoad} days of training data...`);
+      this.logger.debug(
+        `[ACWR] Loading ${daysToLoad} days of training data...`,
+      );
 
       const { data: workoutLogs, error } = await this.supabaseService.client
         .from("workout_logs")
-        .select(`
+        .select(
+          `
           id,
           player_id,
           session_id,
@@ -937,7 +947,8 @@ export class AcwrService {
             acwr,
             injury_risk_level
           )
-        `)
+        `,
+        )
         .eq("player_id", userId)
         .gte("completed_at", cutoffDate.toISOString())
         .order("completed_at", { ascending: false });
@@ -1000,7 +1011,9 @@ export class AcwrService {
       this.unsubscribeFromWorkoutLogs();
     }
 
-    this.logger.info(`[ACWR] Subscribing to realtime updates for player ${userId}`);
+    this.logger.info(
+      `[ACWR] Subscribing to realtime updates for player ${userId}`,
+    );
 
     this.realtimeChannel = this.supabaseService.client
       .channel(`workout_logs:${userId}`)
@@ -1036,7 +1049,9 @@ export class AcwrService {
           };
 
           this.addSession(session);
-          this.logger.success("[ACWR] Training session added from realtime update");
+          this.logger.success(
+            "[ACWR] Training session added from realtime update",
+          );
         },
       )
       .on(
@@ -1078,23 +1093,35 @@ export class AcwrService {
   /**
    * Infer session type from workout log data
    */
-  private inferSessionType(log: any): "game" | "sprint" | "technical" | "conditioning" | "strength" | "recovery" {
+  private inferSessionType(
+    log: any,
+  ):
+    | "game"
+    | "sprint"
+    | "technical"
+    | "conditioning"
+    | "strength"
+    | "recovery" {
     // Try to infer from notes or session_id
     // For now, default to technical
     const notes = (log.notes || "").toLowerCase();
-    
+
     if (notes.includes("game") || notes.includes("match")) {
       return "game";
     } else if (notes.includes("sprint") || notes.includes("speed")) {
       return "sprint";
-    } else if (notes.includes("strength") || notes.includes("gym") || notes.includes("weights")) {
+    } else if (
+      notes.includes("strength") ||
+      notes.includes("gym") ||
+      notes.includes("weights")
+    ) {
       return "strength";
     } else if (notes.includes("conditioning") || notes.includes("cardio")) {
       return "conditioning";
     } else if (notes.includes("recovery") || notes.includes("rest")) {
       return "recovery";
     }
-    
+
     return "technical";
   }
 
@@ -1105,7 +1132,7 @@ export class AcwrService {
    */
   public async saveACWRToDatabase(userId: string): Promise<void> {
     const acwrData = this.acwrData();
-    
+
     if (acwrData.ratio === 0) {
       this.logger.debug("[ACWR] Skipping save - insufficient data");
       return;

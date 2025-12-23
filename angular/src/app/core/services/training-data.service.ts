@@ -55,7 +55,7 @@ export interface TrainingSessionsOptions {
 export class TrainingDataService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  
+
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
 
@@ -68,7 +68,7 @@ export class TrainingDataService {
     options?: TrainingSessionsOptions,
   ): Observable<TrainingSession[]> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.warn("Cannot fetch training sessions: No user logged in");
       return of([]);
@@ -125,7 +125,7 @@ export class TrainingDataService {
    */
   getTrainingSession(id: string): Observable<TrainingSession | null> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.warn("Cannot fetch training session: No user logged in");
       return of(null);
@@ -165,7 +165,7 @@ export class TrainingDataService {
     session: Omit<TrainingSession, "id" | "created_at" | "updated_at">,
   ): Observable<TrainingSession | null> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.error("Cannot create training session: No user logged in");
       return of(null);
@@ -205,14 +205,19 @@ export class TrainingDataService {
     updates: Partial<TrainingSession>,
   ): Observable<TrainingSession | null> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.error("Cannot update training session: No user logged in");
       return of(null);
     }
 
     // Remove fields that shouldn't be updated
-    const { id: _, created_at: __, user_id: ___, ...updateData } = updates as any;
+    const {
+      id: _,
+      created_at: __,
+      user_id: ___,
+      ...updateData
+    } = updates as any;
 
     return from(
       this.supabaseService.client
@@ -244,7 +249,7 @@ export class TrainingDataService {
    */
   deleteTrainingSession(id: string): Observable<boolean> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.error("Cannot delete training session: No user logged in");
       return of(false);
@@ -281,7 +286,7 @@ export class TrainingDataService {
     endDate?: string;
   }): Observable<TrainingStats | null> {
     const userId = this.userId();
-    
+
     if (!userId) {
       this.logger.warn("Cannot fetch training stats: No user logged in");
       return of(this.getEmptyStats());
@@ -360,8 +365,10 @@ export class TrainingDataService {
         const weekly_sessions = weeklySessions.length;
         const weekly_avg_intensity =
           weekly_sessions > 0
-            ? weeklySessions.reduce((sum, s) => sum + (s.intensity_level || 0), 0) /
-              weekly_sessions
+            ? weeklySessions.reduce(
+                (sum, s) => sum + (s.intensity_level || 0),
+                0,
+              ) / weekly_sessions
             : 0;
 
         // Try to get ACWR data from load_monitoring table

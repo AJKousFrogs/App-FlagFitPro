@@ -482,7 +482,9 @@ export class FileUploadComponent {
         .subscribe(() => {
           progressSub.unsubscribe();
           this.uploadProgress.set(100);
-          const urls = files.map((f) => `https://example.com/uploads/${f.name}`);
+          const urls = files.map(
+            (f) => `https://example.com/uploads/${f.name}`,
+          );
           files.forEach((f, i) => {
             f.url = urls[i];
           });

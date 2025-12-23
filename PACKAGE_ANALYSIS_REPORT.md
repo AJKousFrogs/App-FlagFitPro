@@ -19,6 +19,7 @@
 Your Angular package.json is **properly configured** and uses the correct dependencies for Angular 21 + PrimeNG 21:
 
 #### **Dependencies** (Production) - ✅ ALL CORRECT
+
 ```json
 {
   "@angular/animations": "^21.0.3",      ✅ Angular 21
@@ -43,6 +44,7 @@ Your Angular package.json is **properly configured** and uses the correct depend
 ---
 
 #### **DevDependencies** - ⚠️ Vitest is INTENTIONAL (Not a problem)
+
 ```json
 {
   "@angular-devkit/build-angular": "^21.0.3",  ✅ Angular CLI
@@ -56,6 +58,7 @@ Your Angular package.json is **properly configured** and uses the correct depend
 ```
 
 **About Vitest**:
+
 - ✅ **This is INTENTIONAL and CORRECT**
 - Angular team is **actively using Vitest** for component testing
 - Vitest is **faster** than Jasmine/Karma (10x+ faster)
@@ -63,6 +66,7 @@ Your Angular package.json is **properly configured** and uses the correct depend
 - Your test setup confirms this: `src/test-setup.ts` uses Angular TestBed with Vitest
 
 **Evidence**:
+
 ```typescript
 // angular/src/test-setup.ts
 import { TestBed } from "@angular/core/testing";
@@ -80,12 +84,14 @@ import { describe, it, expect, beforeEach } from "vitest";
 **Status**: 🗑️ **OBSOLETE - SAFE TO DELETE**
 
 #### Problem:
+
 - **Size**: 582 MB of disk space
 - **Location**: `/Users/aljosakous/Documents/GitHub/app-new-flag/node_modules.old/`
 - **Contains**: Old Babel, Vite, React, Tailwind dependencies
 - **Status**: Completely unused after cleanup
 
 #### What's Inside:
+
 ```
 node_modules.old/
 ├── @babel/core/              ❌ Not needed (Angular uses TypeScript)
@@ -97,10 +103,13 @@ node_modules.old/
 ```
 
 #### Why It Exists:
+
 This is a backup directory, likely created during package updates or as a safety backup.
 
 #### Safe to Delete:
+
 ✅ **YES - Completely safe**
+
 - Current `node_modules/` has all needed dependencies
 - Angular app builds successfully without it
 - Wasting 582 MB of disk space
@@ -114,11 +123,13 @@ This is a backup directory, likely created during package updates or as a safety
 **Status**: ❌ **OBSOLETE - Part of node_modules.old/**
 
 #### What This File Is:
+
 - Part of Babel's configuration system
 - Used by React/JSX compilation
 - Parses package.json files for Babel config
 
 #### Why You Don't Need It:
+
 1. ❌ **No React** - You removed all React components
 2. ❌ **No Babel** - Angular uses TypeScript compiler
 3. ❌ **No Vite** - Angular CLI handles builds
@@ -143,6 +154,7 @@ url:
 **Recommendation**: Remove `VITE_` prefix references (legacy from Vite setup)
 
 ### Should Be:
+
 ```typescript
 url:
   (typeof window !== "undefined" && (window as any)._env?.SUPABASE_URL) ||
@@ -159,6 +171,7 @@ anonKey:
 ### Immediate (High Priority)
 
 #### 1. Delete `node_modules.old/` Directory
+
 ```bash
 cd /Users/aljosakous/Documents/GitHub/app-new-flag
 rm -rf node_modules.old/
@@ -171,18 +184,20 @@ rm -rf node_modules.old/
 ---
 
 #### 2. Clean Environment Variable References
+
 Update `angular/src/environments/environment.ts` and `environment.prod.ts`:
 
 **Remove these lines**:
+
 ```typescript
-(window as any)._env?.VITE_SUPABASE_URL
-(window as any)._env?.VITE_SUPABASE_ANON_KEY
+(window as any)._env?.VITE_SUPABASE_URL(window as any)._env
+  ?.VITE_SUPABASE_ANON_KEY;
 ```
 
 **Keep only**:
+
 ```typescript
-(window as any)._env?.SUPABASE_URL
-(window as any)._env?.SUPABASE_ANON_KEY
+(window as any)._env?.SUPABASE_URL(window as any)._env?.SUPABASE_ANON_KEY;
 ```
 
 ---
@@ -190,6 +205,7 @@ Update `angular/src/environments/environment.ts` and `environment.prod.ts`:
 ### Optional (Nice to Have)
 
 #### 3. Add Test Coverage Script
+
 Your Angular package.json has vitest but no coverage script:
 
 ```json
@@ -198,7 +214,7 @@ Your Angular package.json has vitest but no coverage script:
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"  // ← Add this
+    "test:coverage": "vitest run --coverage" // ← Add this
   }
 }
 ```
@@ -211,21 +227,22 @@ Your Angular package.json has vitest but no coverage script:
 
 #### ✅ Correctly Different:
 
-| Root | Angular | Reason |
-|------|---------|--------|
-| No Angular deps | Angular 21 | Root is for API/scripts only |
-| Express 5.2.1 | Express 5.2.1 | Shared for SSR |
-| No PrimeNG | PrimeNG 21 | UI library for Angular only |
-| No Vitest | Vitest 4.0.15 | Angular testing only |
-| Playwright 1.48.2 | - | E2E tests run from root |
-| ESLint 9.19.0 | - | Linting for vanilla JS |
-| - | Angular CLI | Angular dev tools |
+| Root              | Angular       | Reason                       |
+| ----------------- | ------------- | ---------------------------- |
+| No Angular deps   | Angular 21    | Root is for API/scripts only |
+| Express 5.2.1     | Express 5.2.1 | Shared for SSR               |
+| No PrimeNG        | PrimeNG 21    | UI library for Angular only  |
+| No Vitest         | Vitest 4.0.15 | Angular testing only         |
+| Playwright 1.48.2 | -             | E2E tests run from root      |
+| ESLint 9.19.0     | -             | Linting for vanilla JS       |
+| -                 | Angular CLI   | Angular dev tools            |
 
 ---
 
 ## ✅ Final Verdict
 
 ### What's CORRECT ✅
+
 1. ✅ Angular package.json has **zero** React/Vite/Tailwind deps
 2. ✅ Using Angular 21 consistently across all packages
 3. ✅ Vitest is **intentional** and **recommended** for Angular 21
@@ -234,11 +251,13 @@ Your Angular package.json has vitest but no coverage script:
 6. ✅ All version numbers aligned (Angular 21.0.x)
 
 ### What Should Be FIXED ⚠️
+
 1. ⚠️ Delete `node_modules.old/` (582 MB wasted)
 2. ⚠️ Remove `VITE_` prefix from environment variables (legacy)
 3. ⚠️ Optional: Add `test:coverage` script
 
 ### What's SAFE TO IGNORE ℹ️
+
 1. ℹ️ Babel references in `node_modules.old/` - will be deleted
 2. ℹ️ Vitest in Angular - this is **correct** and **modern**
 3. ℹ️ Different deps in root vs Angular - this is **intentional**
@@ -272,4 +291,3 @@ ls -lh angular/dist/flagfit-pro/browser/*.js
 ```
 
 **Status after cleanup**: 100% Angular 21 + Supabase + 582 MB disk space freed! 🎯
-

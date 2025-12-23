@@ -32,10 +32,10 @@ import { LoggerService } from "./logger.service";
 export class LoadMonitoringService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  
+
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
-  
+
   // Current session being tracked
   private currentSession = signal<Partial<TrainingSession> | null>(null);
 
@@ -237,7 +237,9 @@ export class LoadMonitoringService {
     try {
       const userId = this.userId();
       if (!userId) {
-        this.logger.error("[LoadMonitoring] Cannot save session: No user logged in");
+        this.logger.error(
+          "[LoadMonitoring] Cannot save session: No user logged in",
+        );
         return session;
       }
 
@@ -260,9 +262,9 @@ export class LoadMonitoringService {
       }
 
       this.logger.success("[LoadMonitoring] Workout log saved:", data.id);
-      
+
       // Note: Database trigger will automatically calculate ACWR in load_monitoring table
-      
+
       return {
         ...session,
         id: data.id,

@@ -140,8 +140,12 @@ test.describe("Dashboard Navigation and Core Features", () => {
     for (let i = 0; i < Math.min(activityCount, 3); i++) {
       const activity = activities.nth(i);
       checkPromises.push(expect(activity).toBeVisible());
-      checkPromises.push(expect(activity.locator(".activity-type")).toBeVisible());
-      checkPromises.push(expect(activity.locator(".activity-time")).toBeVisible());
+      checkPromises.push(
+        expect(activity.locator(".activity-type")).toBeVisible(),
+      );
+      checkPromises.push(
+        expect(activity.locator(".activity-time")).toBeVisible(),
+      );
     }
     await Promise.all(checkPromises);
 

@@ -52,7 +52,7 @@ async function getHealthMetrics() {
         } catch {
           tableStats[table] = "error";
         }
-      })
+      }),
     );
 
     // Calculate total database size estimate (mock for now)

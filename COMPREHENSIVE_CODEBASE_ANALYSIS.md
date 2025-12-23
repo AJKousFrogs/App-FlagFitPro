@@ -1,4 +1,5 @@
 # 🔍 Comprehensive Codebase Analysis Report
+
 ## FlagFit Pro - Angular 21 + Supabase Platform
 
 **Analysis Date:** December 23, 2025  
@@ -27,22 +28,24 @@
 
 **Key Findings:**
 
-| Category | Status | Priority | Issue Count |
-|----------|--------|----------|-------------|
-| Supabase Integration | 🟡 **Partial** | 🔴 HIGH | 3 critical |
-| ACWR System | 🟢 **Complete** | 🟢 LOW | 0 |
-| Service Architecture | 🟡 **Needs Consolidation** | 🟡 MEDIUM | 5 areas |
-| Training Module | 🟡 **75% Complete** | 🟡 MEDIUM | 3 features |
-| API Architecture | 🔴 **Dual System** | 🔴 HIGH | 1 major |
-| Code Quality | 🟡 **Acceptable** | 🟢 LOW | 716 warnings |
+| Category             | Status                     | Priority  | Issue Count  |
+| -------------------- | -------------------------- | --------- | ------------ |
+| Supabase Integration | 🟡 **Partial**             | 🔴 HIGH   | 3 critical   |
+| ACWR System          | 🟢 **Complete**            | 🟢 LOW    | 0            |
+| Service Architecture | 🟡 **Needs Consolidation** | 🟡 MEDIUM | 5 areas      |
+| Training Module      | 🟡 **75% Complete**        | 🟡 MEDIUM | 3 features   |
+| API Architecture     | 🔴 **Dual System**         | 🔴 HIGH   | 1 major      |
+| Code Quality         | 🟡 **Acceptable**          | 🟢 LOW    | 716 warnings |
 
 ### 🎯 Primary Concern
 
 **DUAL BACKEND ARCHITECTURE** - The codebase has **TWO competing backend patterns**:
+
 1. ✅ **Supabase Client-Side** (Angular services → Supabase directly)
 2. ⚠️ **Netlify Functions Layer** (Angular → Express → Supabase)
 
 This causes:
+
 - **Code duplication** (62 Netlify functions replicating Supabase operations)
 - **Inconsistent patterns** (some services use Supabase directly, others use API)
 - **Maintenance overhead** (must update logic in 2 places)
@@ -59,6 +62,7 @@ This causes:
 **Status:** ✅ **Production-Ready**
 
 **Strengths:**
+
 ```typescript
 // ✅ Modern Angular 21 signals-based implementation
 private readonly _currentUser = signal<User | null>(null);
@@ -75,6 +79,7 @@ if (!environment.supabase.url || !environment.supabase.anonKey) {
 ```
 
 **Features:**
+
 - ✅ Signals-based reactive state (zoneless-compatible)
 - ✅ Auto-initializes auth state on startup
 - ✅ Listens for auth state changes
@@ -83,6 +88,7 @@ if (!environment.supabase.url || !environment.supabase.anonKey) {
 - ✅ Proper dependency injection
 
 **Configuration:**
+
 ```typescript
 // environment.ts
 url: (window as any)._env?.SUPABASE_URL || "",
@@ -99,12 +105,12 @@ anonKey: (window as any)._env?.SUPABASE_ANON_KEY || "",
 
 **Currently Only 4 Services Use Supabase Client:**
 
-| Service | Status | Usage Pattern | Assessment |
-|---------|--------|---------------|------------|
-| `auth.service.ts` | ✅ Perfect | Uses `SupabaseService.signIn/signUp/signOut` | Correct pattern |
-| `realtime.service.ts` | ✅ Perfect | Uses `supabase.client.channel()` for subscriptions | Correct pattern |
-| `game-stats.service.ts` | ✅ Good | Uses `supabase.client.from()` for queries | Correct pattern |
-| `register.component.ts` | ⚠️ Direct | Imports `SupabaseService` but also uses API | Mixed pattern |
+| Service                 | Status     | Usage Pattern                                      | Assessment      |
+| ----------------------- | ---------- | -------------------------------------------------- | --------------- |
+| `auth.service.ts`       | ✅ Perfect | Uses `SupabaseService.signIn/signUp/signOut`       | Correct pattern |
+| `realtime.service.ts`   | ✅ Perfect | Uses `supabase.client.channel()` for subscriptions | Correct pattern |
+| `game-stats.service.ts` | ✅ Good    | Uses `supabase.client.from()` for queries          | Correct pattern |
+| `register.component.ts` | ⚠️ Direct  | Imports `SupabaseService` but also uses API        | Mixed pattern   |
 
 ---
 
@@ -136,7 +142,7 @@ export class LoadMonitoringService {
   // NO SUPABASE INTEGRATION!
   // NO API CALLS!
   // PURE CALCULATION SERVICE ONLY
-  
+
   public calculateInternalLoad(sessionRPE: number, duration: number) { ... }
   public calculateExternalLoad(external: ExternalLoad) { ... }
   public createSession(playerId: string, sessionType: SessionType, ...) {
@@ -149,18 +155,19 @@ export class LoadMonitoringService {
 **Problem:** The `LoadMonitoringService` calculates loads but **never persists them** to the database!
 
 **Expected Behavior:**
+
 ```typescript
 // What it SHOULD do:
 public async createSession(...): Promise<TrainingSession> {
   const metrics = this.calculateCombinedLoad(...);
-  
+
   // SAVE TO SUPABASE
   const { data, error } = await this.supabase.client
     .from('workout_logs')
     .insert({ player_id, session_type, load: metrics.calculatedLoad, rpe, duration })
     .select()
     .single();
-    
+
   return data;
 }
 ```
@@ -180,6 +187,7 @@ getTrainingSessions(): Observable<TrainingSession[]> {
 **Problem:** Goes through Netlify Functions instead of querying Supabase directly.
 
 **Recommendation:**
+
 ```typescript
 // Direct Supabase pattern (better):
 getTrainingSessions(): Observable<TrainingSession[]> {
@@ -199,6 +207,7 @@ getTrainingSessions(): Observable<TrainingSession[]> {
 ```
 
 **Benefits:**
+
 - ✅ Removes network hop (faster)
 - ✅ RLS automatically enforced
 - ✅ Real-time subscriptions possible
@@ -228,13 +237,13 @@ subscribeToTrainingSessions(callback: RealtimeCallback): () => void {
 
 ### 📊 Supabase Integration Score: **4/10** ⚠️
 
-| Aspect | Score | Notes |
-|--------|-------|-------|
-| Core Service Quality | 10/10 | Excellent implementation |
-| Auth Integration | 10/10 | Perfect Supabase Auth usage |
-| Realtime Integration | 10/10 | Perfect channels implementation |
-| Data Services Integration | 2/10 | Only game-stats uses Supabase queries |
-| Environment Setup | 3/10 | Missing production config |
+| Aspect                    | Score | Notes                                 |
+| ------------------------- | ----- | ------------------------------------- |
+| Core Service Quality      | 10/10 | Excellent implementation              |
+| Auth Integration          | 10/10 | Perfect Supabase Auth usage           |
+| Realtime Integration      | 10/10 | Perfect channels implementation       |
+| Data Services Integration | 2/10  | Only game-stats uses Supabase queries |
+| Environment Setup         | 3/10  | Missing production config             |
 
 ---
 
@@ -271,6 +280,7 @@ The ACWR system is **exceptionally well-designed** and follows sports science be
 **Key Features:**
 
 1. **Evidence-Based Thresholds (Gabbett 2016)**
+
    ```typescript
    thresholds: {
      sweetSpotLow: 0.8,
@@ -281,6 +291,7 @@ The ACWR system is **exceptionally well-designed** and follows sports science be
    ```
 
 2. **Data Quality Assessment**
+
    ```typescript
    private assessDataQuality(): ACWRDataQuality {
      level: 'high' | 'medium' | 'low' | 'insufficient',
@@ -291,6 +302,7 @@ The ACWR system is **exceptionally well-designed** and follows sports science be
    ```
 
 3. **Tolerance Detection**
+
    ```typescript
    private detectTolerance(): ToleranceDetection | undefined {
      // Detects athletes repeatedly training above thresholds without injury
@@ -299,6 +311,7 @@ The ACWR system is **exceptionally well-designed** and follows sports science be
    ```
 
 4. **Weekly Progression Caps**
+
    ```typescript
    public weeklyProgression: Signal<{
      changePercent: number,
@@ -333,7 +346,8 @@ public addSession(session: TrainingSession): void {
 }
 ```
 
-**Missing:** 
+**Missing:**
+
 - ❌ No automatic loading from `load_monitoring` table
 - ❌ No subscription to realtime updates
 - ❌ No saving calculated ACWR back to database
@@ -346,10 +360,10 @@ public addSession(session: TrainingSession): void {
 ```typescript
 // acwr.service.ts - NEEDS THIS:
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class AcwrService {
   private supabase = inject(SupabaseService);
-  
+
   constructor() {
     // Auto-load player sessions on init
     effect(() => {
@@ -360,33 +374,37 @@ export class AcwrService {
       }
     });
   }
-  
+
   private async loadPlayerSessions(userId: string) {
     const { data, error } = await this.supabase.client
-      .from('workout_logs')
-      .select('*, load_monitoring(*)')
-      .eq('player_id', userId)
-      .gte('completed_at', this.get28DaysAgo())
-      .order('completed_at', { ascending: false });
-      
+      .from("workout_logs")
+      .select("*, load_monitoring(*)")
+      .eq("player_id", userId)
+      .gte("completed_at", this.get28DaysAgo())
+      .order("completed_at", { ascending: false });
+
     if (data) {
-      const sessions = data.map(log => this.mapToTrainingSession(log));
+      const sessions = data.map((log) => this.mapToTrainingSession(log));
       this.addSessions(sessions);
     }
   }
-  
+
   private subscribeToWorkoutLogs(userId: string) {
     this.supabase.client
       .channel(`workout_logs_${userId}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'workout_logs',
-        filter: `player_id=eq.${userId}`
-      }, (payload) => {
-        const session = this.mapToTrainingSession(payload.new);
-        this.addSession(session);
-      })
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "workout_logs",
+          filter: `player_id=eq.${userId}`,
+        },
+        (payload) => {
+          const session = this.mapToTrainingSession(payload.new);
+          this.addSession(session);
+        },
+      )
       .subscribe();
   }
 }
@@ -396,14 +414,14 @@ export class AcwrService {
 
 ### 📊 ACWR System Score: **8/10** 🟢
 
-| Aspect | Score | Notes |
-|--------|-------|-------|
-| Database Schema | 10/10 | Perfect trigger-based ACWR calculation |
-| Service Logic | 10/10 | World-class evidence-based implementation |
-| Data Quality Checks | 10/10 | Comprehensive safeguards |
-| Predictive Features | 10/10 | Advanced load management |
-| Database Integration | **0/10** | ❌ **NOT CONNECTED TO DATABASE** |
-| Realtime Updates | **0/10** | ❌ **NO SUBSCRIPTIONS** |
+| Aspect               | Score    | Notes                                     |
+| -------------------- | -------- | ----------------------------------------- |
+| Database Schema      | 10/10    | Perfect trigger-based ACWR calculation    |
+| Service Logic        | 10/10    | World-class evidence-based implementation |
+| Data Quality Checks  | 10/10    | Comprehensive safeguards                  |
+| Predictive Features  | 10/10    | Advanced load management                  |
+| Database Integration | **0/10** | ❌ **NOT CONNECTED TO DATABASE**          |
+| Realtime Updates     | **0/10** | ❌ **NO SUBSCRIPTIONS**                   |
 
 **Overall:** The ACWR system is **conceptually perfect** but **functionally incomplete** without database integration.
 
@@ -417,13 +435,13 @@ export class AcwrService {
 
 ### 1. Training Services (5 Services - 🔴 OVERLAPPING)
 
-| Service | Purpose | Lines | Overlaps With |
-|---------|---------|-------|---------------|
-| `training-data.service.ts` | CRUD operations | 249 | `training-plan`, `training-metrics` |
-| `training-metrics.service.ts` | Metrics calculations | ~300 | `training-stats-calculation` |
-| `training-stats-calculation.service.ts` | Stats calculations | ~400 | `training-metrics`, `statistics-calculation` |
-| `training-plan.service.ts` | Training plan generation | ~350 | `training-data` |
-| `dataset-generator.service.ts` | Mock data generation | ~200 | Testing only |
+| Service                                 | Purpose                  | Lines | Overlaps With                                |
+| --------------------------------------- | ------------------------ | ----- | -------------------------------------------- |
+| `training-data.service.ts`              | CRUD operations          | 249   | `training-plan`, `training-metrics`          |
+| `training-metrics.service.ts`           | Metrics calculations     | ~300  | `training-stats-calculation`                 |
+| `training-stats-calculation.service.ts` | Stats calculations       | ~400  | `training-metrics`, `statistics-calculation` |
+| `training-plan.service.ts`              | Training plan generation | ~350  | `training-data`                              |
+| `dataset-generator.service.ts`          | Mock data generation     | ~200  | Testing only                                 |
 
 **Recommendation:** **CONSOLIDATE INTO 2 SERVICES**
 
@@ -444,11 +462,11 @@ export class AcwrService {
 
 ### 2. ACWR Services (3 Services - 🟢 GOOD SEPARATION)
 
-| Service | Purpose | Assessment |
-|---------|---------|------------|
-| `acwr.service.ts` | Core ACWR calculations | ✅ Perfect |
+| Service                      | Purpose                    | Assessment         |
+| ---------------------------- | -------------------------- | ------------------ |
+| `acwr.service.ts`            | Core ACWR calculations     | ✅ Perfect         |
 | `load-monitoring.service.ts` | Multi-metric load tracking | ✅ Good separation |
-| `acwr-alerts.service.ts` | Alert generation | ✅ Good separation |
+| `acwr-alerts.service.ts`     | Alert generation           | ✅ Good separation |
 
 **Status:** ✅ **Well-architected** - Keep as-is, just add database integration.
 
@@ -456,12 +474,12 @@ export class AcwrService {
 
 ### 3. Performance Services (4 Services - 🟡 SOME OVERLAP)
 
-| Service | Purpose | Overlap Level |
-|---------|---------|---------------|
-| `performance-data.service.ts` | CRUD for performance data | 🟢 None |
-| `performance-monitor.service.ts` | Real-time monitoring | 🟡 Slight overlap with `performance-data` |
-| `player-statistics.service.ts` | Player stats aggregation | 🟡 Could merge with `statistics-calculation` |
-| `statistics-calculation.service.ts` | General stats calculations | 🟡 Generic utility service |
+| Service                             | Purpose                    | Overlap Level                                |
+| ----------------------------------- | -------------------------- | -------------------------------------------- |
+| `performance-data.service.ts`       | CRUD for performance data  | 🟢 None                                      |
+| `performance-monitor.service.ts`    | Real-time monitoring       | 🟡 Slight overlap with `performance-data`    |
+| `player-statistics.service.ts`      | Player stats aggregation   | 🟡 Could merge with `statistics-calculation` |
+| `statistics-calculation.service.ts` | General stats calculations | 🟡 Generic utility service                   |
 
 **Recommendation:** **CONSOLIDATE INTO 2 SERVICES**
 
@@ -474,11 +492,11 @@ export class AcwrService {
 
 ### 4. Wellness & Recovery (3 Services - 🟢 GOOD)
 
-| Service | Purpose | Assessment |
-|---------|---------|------------|
-| `wellness.service.ts` | Wellness check-ins | ✅ Good |
-| `recovery.service.ts` | Recovery protocols | ✅ Good |
-| `readiness.service.ts` | Readiness score calculation | ✅ Good |
+| Service                | Purpose                     | Assessment |
+| ---------------------- | --------------------------- | ---------- |
+| `wellness.service.ts`  | Wellness check-ins          | ✅ Good    |
+| `recovery.service.ts`  | Recovery protocols          | ✅ Good    |
+| `readiness.service.ts` | Readiness score calculation | ✅ Good    |
 
 **Status:** ✅ **Well-separated concerns** - Keep as-is.
 
@@ -486,8 +504,8 @@ export class AcwrService {
 
 ### 5. Data Services (2 Services - ⚠️ UNCLEAR PURPOSE)
 
-| Service | Purpose | Issue |
-|---------|---------|-------|
+| Service                          | Purpose             | Issue                              |
+| -------------------------------- | ------------------- | ---------------------------------- |
 | `data/dashboard-data.service.ts` | Dashboard mock data | ⚠️ Should be removed in production |
 | `data/analytics-data.service.ts` | Analytics mock data | ⚠️ Should be removed in production |
 
@@ -497,26 +515,26 @@ export class AcwrService {
 
 ### 6. Core Services (Good)
 
-| Service | Purpose | Status |
-|---------|---------|--------|
-| `auth.service.ts` | Authentication | ✅ Perfect |
-| `supabase.service.ts` | Database client | ✅ Perfect |
-| `api.service.ts` | HTTP client | ⚠️ Should be deprecated |
-| `logger.service.ts` | Logging | ✅ Good |
-| `realtime.service.ts` | Realtime subscriptions | ✅ Perfect |
-| `realtime-sync.service.ts` | Data sync | 🟡 Overlaps with `realtime` |
+| Service                    | Purpose                | Status                      |
+| -------------------------- | ---------------------- | --------------------------- |
+| `auth.service.ts`          | Authentication         | ✅ Perfect                  |
+| `supabase.service.ts`      | Database client        | ✅ Perfect                  |
+| `api.service.ts`           | HTTP client            | ⚠️ Should be deprecated     |
+| `logger.service.ts`        | Logging                | ✅ Good                     |
+| `realtime.service.ts`      | Realtime subscriptions | ✅ Perfect                  |
+| `realtime-sync.service.ts` | Data sync              | 🟡 Overlaps with `realtime` |
 
 ---
 
 ### 📊 Service Architecture Score: **6/10** 🟡
 
-| Aspect | Score | Issue |
-|--------|-------|-------|
-| Service Count | 5/10 | Too many (37 services) |
-| Separation of Concerns | 7/10 | Good intent, some overlap |
-| Code Duplication | 4/10 | Training services overlap heavily |
-| Naming Clarity | 8/10 | Names are descriptive |
-| Database Integration | 3/10 | Most use API instead of Supabase |
+| Aspect                 | Score | Issue                             |
+| ---------------------- | ----- | --------------------------------- |
+| Service Count          | 5/10  | Too many (37 services)            |
+| Separation of Concerns | 7/10  | Good intent, some overlap         |
+| Code Duplication       | 4/10  | Training services overlap heavily |
+| Naming Clarity         | 8/10  | Names are descriptive             |
+| Database Integration   | 3/10  | Most use API instead of Supabase  |
 
 ---
 
@@ -527,6 +545,7 @@ export class AcwrService {
 ### ✅ Completed Components
 
 #### 1. Core Training Page (`training.component.ts`)
+
 - ✅ Hero section
 - ✅ Stats grid display
 - ✅ Training builder integration
@@ -535,6 +554,7 @@ export class AcwrService {
 - ✅ Pull-to-refresh functionality
 
 #### 2. Training Builder (`training-builder.component.ts`)
+
 - ✅ Session type selection
 - ✅ Duration input
 - ✅ Intensity picker (1-10)
@@ -543,6 +563,7 @@ export class AcwrService {
 - ✅ Form validation
 
 #### 3. Supporting Services
+
 - ✅ `training-data.service.ts` (API integration)
 - ✅ `training-metrics.service.ts` (calculations)
 - ✅ `training-stats-calculation.service.ts` (stats)
@@ -553,6 +574,7 @@ export class AcwrService {
 ### 🔴 Missing Components
 
 #### 1. Training Session Detail View ❌
+
 - **Missing:** Individual session detail page
 - **Needed:** `/training/session/:id` route
 - **Features Required:**
@@ -562,6 +584,7 @@ export class AcwrService {
   - Edit/delete actions
 
 #### 2. Training Plan View ❌
+
 - **Missing:** Structured training plan display
 - **Needed:** `/training/plan` route
 - **Features Required:**
@@ -571,6 +594,7 @@ export class AcwrService {
   - Integration with `training_programs` table
 
 #### 3. Exercise Library ❌
+
 - **Partial:** `exercise-library.component.ts` exists (75 lines)
 - **Status:** Stub implementation
 - **Missing:**
@@ -580,6 +604,7 @@ export class AcwrService {
   - Exercise detail view
 
 #### 4. Training History ❌
+
 - **Missing:** Historical session view
 - **Needed:** `/training/history` route
 - **Features Required:**
@@ -589,6 +614,7 @@ export class AcwrService {
   - Export functionality
 
 #### 5. QB Training Tools 🟡 **PARTIALLY COMPLETE**
+
 - ✅ `qb-throwing-tracker.component.ts` exists
 - ✅ `qb-assessment-tools.component.ts` exists
 - ✅ `qb-training-schedule.component.ts` exists
@@ -601,19 +627,19 @@ export class AcwrService {
 
 #### Training Tables Available (From Schema):
 
-| Table | Purpose | Frontend Integration |
-|-------|---------|---------------------|
-| `training_programs` | Annual QB programs | ❌ Not used |
-| `training_phases` | Mesocycles | ❌ Not used |
-| `training_weeks` | Microcycles | ❌ Not used |
-| `training_sessions` | Individual sessions | 🟡 Via API only |
-| `session_exercises` | Exercise assignments | ❌ Not used |
-| `exercises` | Exercise library | ❌ Not used |
-| `workout_logs` | Completed workouts | ⚠️ Partially via API |
-| `exercise_logs` | Exercise performance | ❌ Not used |
-| `load_monitoring` | ACWR tracking | ❌ Not used |
-| `position_specific_metrics` | QB throwing volume | ❌ Not used |
-| `training_videos` | Video library | ❌ Not used |
+| Table                       | Purpose              | Frontend Integration |
+| --------------------------- | -------------------- | -------------------- |
+| `training_programs`         | Annual QB programs   | ❌ Not used          |
+| `training_phases`           | Mesocycles           | ❌ Not used          |
+| `training_weeks`            | Microcycles          | ❌ Not used          |
+| `training_sessions`         | Individual sessions  | 🟡 Via API only      |
+| `session_exercises`         | Exercise assignments | ❌ Not used          |
+| `exercises`                 | Exercise library     | ❌ Not used          |
+| `workout_logs`              | Completed workouts   | ⚠️ Partially via API |
+| `exercise_logs`             | Exercise performance | ❌ Not used          |
+| `load_monitoring`           | ACWR tracking        | ❌ Not used          |
+| `position_specific_metrics` | QB throwing volume   | ❌ Not used          |
+| `training_videos`           | Video library        | ❌ Not used          |
 
 **Only 2 of 13 tables are being used!** ⚠️
 
@@ -621,16 +647,16 @@ export class AcwrService {
 
 ### 📊 Training Module Score: **4/10** 🟡
 
-| Feature Area | Completion | Database Integration | Score |
-|--------------|------------|---------------------|-------|
-| Basic Training Log | 90% | Via API | 7/10 |
-| Training Builder | 95% | Via API | 8/10 |
-| Session Details | 10% | None | 1/10 |
-| Training Plans | 5% | None | 0/10 |
-| Exercise Library | 20% | None | 2/10 |
-| Training History | 30% | Partial | 3/10 |
-| QB-Specific Tools | 40% | None | 3/10 |
-| Video Integration | 0% | None | 0/10 |
+| Feature Area       | Completion | Database Integration | Score |
+| ------------------ | ---------- | -------------------- | ----- |
+| Basic Training Log | 90%        | Via API              | 7/10  |
+| Training Builder   | 95%        | Via API              | 8/10  |
+| Session Details    | 10%        | None                 | 1/10  |
+| Training Plans     | 5%         | None                 | 0/10  |
+| Exercise Library   | 20%        | None                 | 2/10  |
+| Training History   | 30%        | Partial              | 3/10  |
+| QB-Specific Tools  | 40%        | None                 | 3/10  |
+| Video Integration  | 0%         | None                 | 0/10  |
 
 ---
 
@@ -686,24 +712,24 @@ export class AcwrService {
 
 **Categories:**
 
-| Category | Count | Purpose | Redundancy |
-|----------|-------|---------|------------|
-| Training | 8 | Training CRUD + stats | 🔴 HIGH - Can be direct Supabase |
-| Analytics | 5 | Performance analytics | 🟡 MEDIUM - Complex aggregations |
-| Wellness | 3 | Wellness check-ins | 🔴 HIGH - Simple CRUD |
-| Recovery | 1 | Recovery protocols | 🔴 HIGH - Simple CRUD |
-| Nutrition | 1 | Nutrition tracking | 🔴 HIGH - Simple CRUD |
-| Performance | 5 | Performance metrics | 🟡 MEDIUM |
-| Auth | 3 | Auth operations | 🟢 LOW - Complex logic |
-| Admin | 1 | Admin operations | 🟢 LOW - Server-side only |
-| Community | 1 | Social features | 🟡 MEDIUM |
-| Coach | 1 | Coach dashboard | 🟡 MEDIUM |
-| Dashboard | 1 | Dashboard data | 🟡 MEDIUM |
-| Notifications | 4 | Notification system | 🟢 LOW - Complex logic |
-| Tournaments | 1 | Tournament management | 🟡 MEDIUM |
-| Teams | 2 | Team operations | 🟡 MEDIUM |
-| Games | 1 | Game tracking | 🟡 MEDIUM |
-| Other | 24 | Various utilities | 🟡 MIXED |
+| Category      | Count | Purpose               | Redundancy                       |
+| ------------- | ----- | --------------------- | -------------------------------- |
+| Training      | 8     | Training CRUD + stats | 🔴 HIGH - Can be direct Supabase |
+| Analytics     | 5     | Performance analytics | 🟡 MEDIUM - Complex aggregations |
+| Wellness      | 3     | Wellness check-ins    | 🔴 HIGH - Simple CRUD            |
+| Recovery      | 1     | Recovery protocols    | 🔴 HIGH - Simple CRUD            |
+| Nutrition     | 1     | Nutrition tracking    | 🔴 HIGH - Simple CRUD            |
+| Performance   | 5     | Performance metrics   | 🟡 MEDIUM                        |
+| Auth          | 3     | Auth operations       | 🟢 LOW - Complex logic           |
+| Admin         | 1     | Admin operations      | 🟢 LOW - Server-side only        |
+| Community     | 1     | Social features       | 🟡 MEDIUM                        |
+| Coach         | 1     | Coach dashboard       | 🟡 MEDIUM                        |
+| Dashboard     | 1     | Dashboard data        | 🟡 MEDIUM                        |
+| Notifications | 4     | Notification system   | 🟢 LOW - Complex logic           |
+| Tournaments   | 1     | Tournament management | 🟡 MEDIUM                        |
+| Teams         | 2     | Team operations       | 🟡 MEDIUM                        |
+| Games         | 1     | Game tracking         | 🟡 MEDIUM                        |
+| Other         | 24    | Various utilities     | 🟡 MIXED                         |
 
 ---
 
@@ -712,23 +738,25 @@ export class AcwrService {
 Example of duplicated logic:
 
 #### Netlify Function (`training-sessions.cjs`):
+
 ```javascript
 // 62 lines of code
-const { supabaseAdmin, checkEnvVars } = require('./supabase-client.cjs');
+const { supabaseAdmin, checkEnvVars } = require("./supabase-client.cjs");
 
 async function getTrainingSessions(userId, options) {
   checkEnvVars();
   const { data, error } = await supabaseAdmin
-    .from('training_sessions')
-    .select('*')
-    .eq('user_id', userId)
-    .order('session_date', { ascending: false });
-  
+    .from("training_sessions")
+    .select("*")
+    .eq("user_id", userId)
+    .order("session_date", { ascending: false });
+
   return { data, error };
 }
 ```
 
 #### Should Be in Angular (`training.service.ts`):
+
 ```typescript
 // 10 lines of code
 getTrainingSessions(): Observable<TrainingSession[]> {
@@ -744,7 +772,8 @@ getTrainingSessions(): Observable<TrainingSession[]> {
 }
 ```
 
-**Result:** 
+**Result:**
+
 - ❌ 62 lines vs 10 lines
 - ❌ Extra network hop (latency)
 - ❌ Netlify function invocation cost
@@ -755,26 +784,26 @@ getTrainingSessions(): Observable<TrainingSession[]> {
 
 ### ✅ **When to Use Netlify Functions:**
 
-| Use Case | Why | Example |
-|----------|-----|---------|
-| Complex aggregations | Multi-table joins, heavy calculations | Analytics summaries |
-| Admin operations | Requires service role key | User management |
-| External API calls | OpenAI, USDA, Weather APIs | AI coach responses |
-| Email sending | Server-side only | Password reset emails |
-| Scheduled tasks | Cron jobs | Daily notifications |
-| Rate limiting | Server-side logic | API throttling |
+| Use Case             | Why                                   | Example               |
+| -------------------- | ------------------------------------- | --------------------- |
+| Complex aggregations | Multi-table joins, heavy calculations | Analytics summaries   |
+| Admin operations     | Requires service role key             | User management       |
+| External API calls   | OpenAI, USDA, Weather APIs            | AI coach responses    |
+| Email sending        | Server-side only                      | Password reset emails |
+| Scheduled tasks      | Cron jobs                             | Daily notifications   |
+| Rate limiting        | Server-side logic                     | API throttling        |
 
 ---
 
 ### ❌ **When NOT to Use Netlify Functions:**
 
-| Operation | Why Not | Better Approach |
-|-----------|---------|-----------------|
-| Simple CRUD | Unnecessary hop | Direct Supabase queries |
-| User-scoped queries | RLS handles it | `from('table').select().eq('user_id', userId)` |
-| Real-time data | Not supported | Supabase Realtime channels |
-| Read operations | Extra latency | Direct client queries |
-| Session management | Supabase Auth handles it | `supabase.auth.*` methods |
+| Operation           | Why Not                  | Better Approach                                |
+| ------------------- | ------------------------ | ---------------------------------------------- |
+| Simple CRUD         | Unnecessary hop          | Direct Supabase queries                        |
+| User-scoped queries | RLS handles it           | `from('table').select().eq('user_id', userId)` |
+| Real-time data      | Not supported            | Supabase Realtime channels                     |
+| Read operations     | Extra latency            | Direct client queries                          |
+| Session management  | Supabase Auth handles it | `supabase.auth.*` methods                      |
 
 ---
 
@@ -806,8 +835,8 @@ getTrainingSessions(): Observable<TrainingSession[]> {
    │   ✅ RLS policies active  │
    │   ✅ Real-time enabled    │
    └───────────────────────────┘
-   
-   
+
+
    ┌────────────────────────────┐
    │ Netlify Functions (Minimal)│
    │ ONLY for:                  │
@@ -823,14 +852,14 @@ getTrainingSessions(): Observable<TrainingSession[]> {
 
 ### 📊 Architecture Score: **3/10** 🔴
 
-| Aspect | Score | Issue |
-|--------|-------|-------|
-| Consistency | 2/10 | Mixed patterns everywhere |
-| Performance | 4/10 | Unnecessary API layer |
-| Maintainability | 3/10 | Duplicate logic in 2 places |
-| Security | 6/10 | RLS bypassed in functions |
-| Cost Efficiency | 3/10 | High Netlify function usage |
-| Real-time Support | 2/10 | Limited by API layer |
+| Aspect            | Score | Issue                       |
+| ----------------- | ----- | --------------------------- |
+| Consistency       | 2/10  | Mixed patterns everywhere   |
+| Performance       | 4/10  | Unnecessary API layer       |
+| Maintainability   | 3/10  | Duplicate logic in 2 places |
+| Security          | 6/10  | RLS bypassed in functions   |
+| Cost Efficiency   | 3/10  | High Netlify function usage |
+| Real-time Support | 2/10  | Limited by API layer        |
 
 ---
 
@@ -844,14 +873,14 @@ getTrainingSessions(): Observable<TrainingSession[]> {
 
 **Error Breakdown:**
 
-| Error Type | Count | Severity | Auto-Fixable |
-|------------|-------|----------|--------------|
-| `no-console` | ~250 | ⚠️ Warning | ✅ Yes |
-| `no-unused-vars` | ~180 | ⚠️ Warning | ✅ Yes |
-| `require-await` | ~45 | ⚠️ Warning | ⚠️ Manual |
-| `no-await-in-loop` | ~12 | ⚠️ Warning | ⚠️ Manual |
-| Unused eslint-disable | ~50 | ⚠️ Warning | ✅ Yes |
-| Other | ~179 | ⚠️ Warning | 🟡 Mixed |
+| Error Type            | Count | Severity   | Auto-Fixable |
+| --------------------- | ----- | ---------- | ------------ |
+| `no-console`          | ~250  | ⚠️ Warning | ✅ Yes       |
+| `no-unused-vars`      | ~180  | ⚠️ Warning | ✅ Yes       |
+| `require-await`       | ~45   | ⚠️ Warning | ⚠️ Manual    |
+| `no-await-in-loop`    | ~12   | ⚠️ Warning | ⚠️ Manual    |
+| Unused eslint-disable | ~50   | ⚠️ Warning | ✅ Yes       |
+| Other                 | ~179  | ⚠️ Warning | 🟡 Mixed     |
 
 ---
 
@@ -863,15 +892,16 @@ getTrainingSessions(): Observable<TrainingSession[]> {
 
 ```javascript
 // ❌ Bad (all over Netlify functions):
-console.log('User logged in:', userId);
-console.error('Error:', error);
+console.log("User logged in:", userId);
+console.error("Error:", error);
 
 // ✅ Good (Angular pattern):
-this.logger.info('User logged in:', userId);
-this.logger.error('Error:', error);
+this.logger.info("User logged in:", userId);
+this.logger.error("Error:", error);
 ```
 
-**Recommendation:** 
+**Recommendation:**
+
 - Replace with proper logger in functions
 - Already have `LoggerService` in Angular (use it!)
 
@@ -880,6 +910,7 @@ this.logger.error('Error:', error);
 #### 2. Unused Variables (180+ instances)
 
 **Examples:**
+
 ```javascript
 // netlify/functions/admin.cjs:9
 const db = require('./db'); // ❌ Never used
@@ -892,6 +923,7 @@ let totalSessions = 0; // ❌ Assigned but never read
 ```
 
 **Recommendation:** Auto-fix with:
+
 ```bash
 npx eslint . --fix
 ```
@@ -901,6 +933,7 @@ npx eslint . --fix
 #### 3. Async Without Await (45+ instances)
 
 **Examples:**
+
 ```javascript
 // netlify/functions/admin.cjs:121
 async function syncUSDAData() {
@@ -918,6 +951,7 @@ async function syncUSDAData() {
 #### 4. Await in Loop (12 instances)
 
 **Examples:**
+
 ```javascript
 // netlify/functions/coach.cjs:26
 for (const player of players) {
@@ -927,7 +961,7 @@ for (const player of players) {
 }
 
 // ✅ Better (parallel):
-const statsPromises = players.map(p => getPlayerStats(p.id));
+const statsPromises = players.map((p) => getPlayerStats(p.id));
 const results = await Promise.all(statsPromises);
 ```
 
@@ -946,14 +980,14 @@ const results = await Promise.all(statsPromises);
 
 ### 📊 Code Quality Score: **7/10** 🟢
 
-| Aspect | Score | Notes |
-|--------|-------|-------|
-| TypeScript Compilation | 10/10 | ✅ Clean build |
-| ESLint Warnings | 5/10 | 716 warnings (mostly minor) |
-| Code Organization | 8/10 | Good structure |
-| Naming Conventions | 9/10 | Clear, consistent names |
-| Comments/Documentation | 7/10 | Some services well-documented |
-| Type Safety | 9/10 | Excellent TypeScript usage |
+| Aspect                 | Score | Notes                         |
+| ---------------------- | ----- | ----------------------------- |
+| TypeScript Compilation | 10/10 | ✅ Clean build                |
+| ESLint Warnings        | 5/10  | 716 warnings (mostly minor)   |
+| Code Organization      | 8/10  | Good structure                |
+| Naming Conventions     | 9/10  | Clear, consistent names       |
+| Comments/Documentation | 7/10  | Some services well-documented |
+| Type Safety            | 9/10  | Excellent TypeScript usage    |
 
 ---
 
@@ -962,12 +996,14 @@ const results = await Promise.all(statsPromises);
 ### Priority 1: 🔴 **CRITICAL (Within 1 Week)**
 
 #### 1. **Unify Backend Architecture**
+
 - **Problem:** Dual backend (Supabase + Netlify) causes duplication
 - **Action:** Migrate 80% of Netlify functions to direct Supabase calls
 - **Timeline:** 2-3 days
 - **Impact:** 🔴 HIGH - Affects all features
 
 **Keep Only These Functions:**
+
 - `admin.cjs` (admin operations)
 - `send-email.cjs` (email sending)
 - `knowledge-search.cjs` (external AI API)
@@ -975,6 +1011,7 @@ const results = await Promise.all(statsPromises);
 - `notifications-create.cjs` (system notifications)
 
 **Migrate to Direct Supabase:**
+
 - All training functions (8 files)
 - All wellness functions (3 files)
 - All recovery functions (1 file)
@@ -984,12 +1021,14 @@ const results = await Promise.all(statsPromises);
 ---
 
 #### 2. **Connect ACWR Service to Database**
+
 - **Problem:** ACWR service has NO database integration
 - **Action:** Add Supabase queries + realtime subscriptions
 - **Timeline:** 1 day
 - **Impact:** 🔴 HIGH - Core safety feature unusable
 
 **Required Changes:**
+
 ```typescript
 // Add to acwr.service.ts:
 - loadPlayerSessions(userId: string)
@@ -1001,23 +1040,25 @@ const results = await Promise.all(statsPromises);
 ---
 
 #### 3. **Connect Load Monitoring to Database**
+
 - **Problem:** Load monitoring calculates but doesn't save
 - **Action:** Add database persistence
 - **Timeline:** 1 day
 - **Impact:** 🔴 HIGH - Data loss
 
 **Required Changes:**
+
 ```typescript
 // load-monitoring.service.ts:
 public async createSession(...): Promise<TrainingSession> {
   // Calculate metrics
   const metrics = this.calculateCombinedLoad(...);
-  
+
   // Save to database
   const { data } = await this.supabase.client
     .from('workout_logs')
     .insert({ ... });
-    
+
   return data;
 }
 ```
@@ -1025,20 +1066,22 @@ public async createSession(...): Promise<TrainingSession> {
 ---
 
 #### 4. **Fix Environment Variable Configuration**
+
 - **Problem:** Production build has no Supabase credentials
 - **Action:** Add Angular file replacement for environment
 - **Timeline:** 2 hours
 - **Impact:** 🔴 HIGH - App won't work in production
 
 **Required Files:**
+
 ```typescript
 // angular/src/environments/environment.prod.ts
 export const environment = {
   production: true,
   supabase: {
-    url: process.env['SUPABASE_URL']!,
-    anonKey: process.env['SUPABASE_ANON_KEY']!
-  }
+    url: process.env["SUPABASE_URL"]!,
+    anonKey: process.env["SUPABASE_ANON_KEY"]!,
+  },
 };
 ```
 
@@ -1059,6 +1102,7 @@ export const environment = {
 ### Priority 2: 🟡 **HIGH (Within 2 Weeks)**
 
 #### 5. **Complete Training Module Integration**
+
 - Connect all 13 training tables to Angular services
 - Build training plan visualization
 - Complete exercise library
@@ -1070,6 +1114,7 @@ export const environment = {
 ---
 
 #### 6. **Consolidate Overlapping Services**
+
 - Merge 5 training services → 2 services
 - Merge 4 performance services → 2 services
 - Delete mock data services
@@ -1079,6 +1124,7 @@ export const environment = {
 ---
 
 #### 7. **Clean Up Linting Warnings**
+
 ```bash
 # Auto-fix 500+ warnings:
 npx eslint . --fix
@@ -1096,6 +1142,7 @@ npx eslint . --fix
 ### Priority 3: 🟢 **MEDIUM (Within 1 Month)**
 
 #### 8. **Add Comprehensive Testing**
+
 - Unit tests for ACWR calculations (critical)
 - Integration tests for Supabase services
 - E2E tests for training workflows
@@ -1105,6 +1152,7 @@ npx eslint . --fix
 ---
 
 #### 9. **Optimize Bundle Size**
+
 - Implement lazy loading for all feature modules
 - Remove unused dependencies
 - Analyze bundle with webpack-bundle-analyzer
@@ -1114,6 +1162,7 @@ npx eslint . --fix
 ---
 
 #### 10. **Documentation Update**
+
 - Update README with Supabase-first architecture
 - Document which functions remain vs migrated
 - Add API documentation for remaining functions
@@ -1127,18 +1176,21 @@ npx eslint . --fix
 ### Week 1: Critical Fixes
 
 **Day 1-2:** Unify Backend Architecture
+
 - [ ] Create migration plan (list all functions to migrate)
 - [ ] Migrate training services to direct Supabase
 - [ ] Test RLS policies work correctly
 - [ ] Update environment configuration
 
 **Day 3:** Database Integration
+
 - [ ] Connect ACWR service to `load_monitoring` table
 - [ ] Connect Load Monitoring to `workout_logs` table
 - [ ] Add realtime subscriptions
 - [ ] Test end-to-end flow
 
 **Day 4-5:** Testing & Validation
+
 - [ ] Test ACWR calculations with real data
 - [ ] Verify RLS policies
 - [ ] Test auth flows
@@ -1149,18 +1201,21 @@ npx eslint . --fix
 ### Week 2: Feature Completion
 
 **Day 1-3:** Training Module
+
 - [ ] Complete exercise library integration
 - [ ] Build training plan view
 - [ ] Add training history
 - [ ] Connect QB tools to database
 
 **Day 4:** Service Consolidation
+
 - [ ] Merge training services
 - [ ] Merge performance services
 - [ ] Delete mock services
 - [ ] Update imports
 
 **Day 5:** Code Quality
+
 - [ ] Run `eslint --fix`
 - [ ] Fix async/await issues
 - [ ] Replace console with logger
@@ -1171,12 +1226,14 @@ npx eslint . --fix
 ### Week 3-4: Polish & Optimization
 
 **Week 3:**
+
 - [ ] Add unit tests for critical services
 - [ ] Add integration tests
 - [ ] E2E test coverage
 - [ ] Performance optimization
 
 **Week 4:**
+
 - [ ] Bundle size optimization
 - [ ] Documentation updates
 - [ ] Final testing
@@ -1186,14 +1243,14 @@ npx eslint . --fix
 
 ## 📊 Final Scores Summary
 
-| Category | Current Score | Target Score | Priority |
-|----------|---------------|--------------|----------|
-| Supabase Integration | 4/10 | 9/10 | 🔴 CRITICAL |
-| ACWR System | 8/10 | 10/10 | 🔴 CRITICAL |
-| Service Architecture | 6/10 | 9/10 | 🟡 HIGH |
-| Training Module | 4/10 | 9/10 | 🟡 HIGH |
-| API Architecture | 3/10 | 9/10 | 🔴 CRITICAL |
-| Code Quality | 7/10 | 9/10 | 🟢 MEDIUM |
+| Category             | Current Score | Target Score | Priority    |
+| -------------------- | ------------- | ------------ | ----------- |
+| Supabase Integration | 4/10          | 9/10         | 🔴 CRITICAL |
+| ACWR System          | 8/10          | 10/10        | 🔴 CRITICAL |
+| Service Architecture | 6/10          | 9/10         | 🟡 HIGH     |
+| Training Module      | 4/10          | 9/10         | 🟡 HIGH     |
+| API Architecture     | 3/10          | 9/10         | 🔴 CRITICAL |
+| Code Quality         | 7/10          | 9/10         | 🟢 MEDIUM   |
 
 **Overall Codebase Health:** **5.3/10** ⚠️
 
@@ -1255,6 +1312,5 @@ npx eslint . --fix
 
 **Report End**
 
-*Generated: December 23, 2025*  
-*Next Review: After implementing Priority 1 fixes*
-
+_Generated: December 23, 2025_  
+_Next Review: After implementing Priority 1 fixes_
