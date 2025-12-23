@@ -1,8 +1,9 @@
 # 🔄 Supabase Migration Guide
+
 ## From Netlify Functions API Layer to Direct Supabase Queries
 
-**Date:** December 23, 2025  
-**Status:** In Progress  
+**Date:** December 23, 2025
+**Status:** In Progress
 **Completed:** 3 of 26 services migrated
 
 ---
