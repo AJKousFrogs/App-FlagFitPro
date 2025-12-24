@@ -135,8 +135,8 @@ export class AcwrAlertsService {
 
     const alert: LoadAlert = {
       id: this.generateAlertId(),
-      playerId: "current-player", // TODO: Get from context
-      playerName: "Current Player", // TODO: Get from player service
+      playerId: "current-player", // See issue #26 - Get player context from auth
+      playerName: "Current Player", // See issue #27 - Get player name from auth
       timestamp: new Date(),
       acknowledged: false,
       ...alertData,
@@ -170,7 +170,7 @@ export class AcwrAlertsService {
    * Send in-app notification
    */
   private sendNotification(alert: LoadAlert): void {
-    // TODO: Integrate with your notification system
+    // See issue #23 - Integrate ACWR alerts with notification system
     this.logger.info("🔔 Alert:", alert.message);
 
     // Could trigger browser notification
@@ -188,7 +188,7 @@ export class AcwrAlertsService {
    * Notify coach of critical alert
    */
   private notifyCoach(alert: LoadAlert): void {
-    // TODO: Send email/SMS to coach
+    // See issue #24 - Implement email/SMS coach alerts
     this.logger.info("📧 Notifying coach of critical alert:", alert.message);
 
     // Could trigger:

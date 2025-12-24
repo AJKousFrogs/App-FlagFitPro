@@ -380,6 +380,9 @@ export class TrainingDataService {
           .limit(1)
           .single();
 
+        // Calculate current streak (consecutive days with sessions)
+        const current_streak = this.calculateCurrentStreak(sessions);
+
         return {
           total_sessions,
           total_duration,
@@ -388,7 +391,7 @@ export class TrainingDataService {
           sessions_this_month,
           total_load: Math.round(total_load),
           avg_load: Math.round(avg_load),
-          current_streak: 0, // TODO: Calculate streak
+          current_streak,
           acwr: loadData?.acwr || undefined,
           acute_load: loadData?.acute_load || undefined,
           chronic_load: loadData?.chronic_load || undefined,
@@ -405,6 +408,75 @@ export class TrainingDataService {
         return of(this.getEmptyStats());
       }),
     );
+  }
+
+  /**
+   * Calculate current training streak (consecutive days with sessions)
+   * @param sessions - Array of training sessions sorted by date
+   * @returns Number of consecutive days with at least one session
+   */
+  private calculateCurrentStreak(
+    sessions: Array<{ session_date: string }>,
+  ): number {
+    if (!sessions || sessions.length === 0) {
+      return 0;
+    }
+
+    // Sort sessions by date descending (most recent first)
+    const sortedSessions = [...sessions].sort(
+      (a, b) =>
+        new Date(b.session_date).getTime() -
+        new Date(a.session_date).getTime(),
+    );
+
+    // Get unique dates (in case multiple sessions per day)
+    const uniqueDates = [
+      ...new Set(
+        sortedSessions.map((s) =>
+          new Date(s.session_date).toISOString().split("T")[0],
+        ),
+      ),
+    ].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+
+    if (uniqueDates.length === 0) {
+      return 0;
+    }
+
+    // Check if there's a session today or yesterday (allow 1 day grace)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const mostRecentDate = new Date(uniqueDates[0]);
+    mostRecentDate.setHours(0, 0, 0, 0);
+
+    // If most recent session is more than 1 day old, streak is broken
+    if (mostRecentDate < yesterday) {
+      return 0;
+    }
+
+    // Count consecutive days
+    let streak = 0;
+    let expectedDate = new Date(uniqueDates[0]);
+
+    for (const dateStr of uniqueDates) {
+      const currentDate = new Date(dateStr);
+      currentDate.setHours(0, 0, 0, 0);
+
+      // Check if this date matches expected date
+      if (currentDate.getTime() === expectedDate.getTime()) {
+        streak++;
+        // Move expected date back one day
+        expectedDate = new Date(currentDate);
+        expectedDate.setDate(expectedDate.getDate() - 1);
+      } else {
+        // Streak broken
+        break;
+      }
+    }
+
+    return streak;
   }
 
   /**

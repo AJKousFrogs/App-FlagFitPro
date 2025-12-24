@@ -22,6 +22,7 @@ import {
   HeaderService,
   HeaderConfig,
 } from "../../../core/services/header.service";
+import { NotificationStateService } from "../../../core/services/notification-state.service";
 import { MenuItem } from "primeng/api";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -385,6 +386,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 export class HeaderComponent {
   private authService = inject(AuthService);
   private headerService = inject(HeaderService);
+  private notificationService = inject(NotificationStateService);
   private router = inject(Router);
   private logger = inject(LoggerService);
 
@@ -463,13 +465,13 @@ export class HeaderComponent {
     if (this.searchQuery().trim()) {
       // Implement search logic
       this.logger.debug("Searching for:", this.searchQuery());
-      // TODO: Navigate to search results or trigger search service
+      // See issue #19 - Implement global search functionality
     }
   }
 
   toggleNotifications(): void {
     // Toggle notifications panel
-    // TODO: Implement notifications panel toggle
+    // See issue #20 - Implement notifications panel toggle
     this.logger.debug("Toggle notifications");
   }
 
@@ -559,8 +561,8 @@ export class HeaderComponent {
   }
 
   private loadNotifications(): void {
-    // TODO: Load actual notification count from service
-    // For now, set a mock value
-    this.notificationCount.set(3);
+    // Load actual notification count from service
+    const count = this.notificationService.unreadCount();
+    this.notificationCount.set(count);
   }
 }

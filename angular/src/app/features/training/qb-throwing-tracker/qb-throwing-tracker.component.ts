@@ -153,7 +153,7 @@ export class QbThrowingTrackerComponent implements OnInit {
   }
 
   async loadStats(): Promise<void> {
-    // TODO: Load weekly throwing stats
+    // See issue #9 - Implement QB throwing tracker API (load weekly stats)
     this.weeklyStats.set({
       totalThrows: 245,
       avgCompletion: 78,
@@ -161,7 +161,7 @@ export class QbThrowingTrackerComponent implements OnInit {
   }
 
   async saveSession(): Promise<void> {
-    // TODO: Save throwing session
+    // See issue #9 - Implement QB throwing tracker API (save session)
     this.logger.debug("Save session:", this.sessionData);
   }
 }

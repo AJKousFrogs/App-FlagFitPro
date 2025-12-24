@@ -538,8 +538,12 @@ export class AcwrService {
           .filter((h) => h.ratio > cfg.thresholds.dangerHigh)
           .reduce((sum, h) => sum + h.ratio, 0) / daysAboveThreshold;
 
-      // Check if injury occurred (would need injury data integration)
-      const injuryOccurred = false; // TODO: Integrate with injury tracking
+      // Check if injury occurred during this high-load period
+      const injuryOccurred = await this.checkForRecentInjury(
+        playerId,
+        recentHistory[recentHistory.length - 1]?.date,
+        recentHistory[0]?.date,
+      );
 
       let recommendation: "maintain" | "adjust" | "investigate" = "investigate";
       let message = "";
@@ -1177,6 +1181,43 @@ export class AcwrService {
       }
     } catch (error) {
       this.logger.error("[ACWR] Failed to save ACWR data:", error);
+    }
+  }
+
+  /**
+   * Check if player had an injury during a specific date range
+   * @param playerId - Player ID to check
+   * @param startDate - Start date of the period (ISO string)
+   * @param endDate - End date of the period (ISO string)
+   * @returns Promise<boolean> - True if injury occurred during period
+   */
+  private async checkForRecentInjury(
+    playerId: string,
+    startDate: string | undefined,
+    endDate: string | undefined,
+  ): Promise<boolean> {
+    if (!startDate || !endDate) {
+      return false;
+    }
+
+    try {
+      const { data, error } = await this.supabaseService.client
+        .from("injury_tracking")
+        .select("injury_date")
+        .eq("player_id", playerId)
+        .gte("injury_date", startDate)
+        .lte("injury_date", endDate)
+        .limit(1);
+
+      if (error) {
+        this.logger.warn("[ACWR] Error checking injury history:", error);
+        return false;
+      }
+
+      return (data && data.length > 0) || false;
+    } catch (error) {
+      this.logger.warn("[ACWR] Failed to check injury history:", error);
+      return false;
     }
   }
 }

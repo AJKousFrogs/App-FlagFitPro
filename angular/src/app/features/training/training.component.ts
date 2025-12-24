@@ -715,7 +715,7 @@ export class TrainingComponent implements OnInit {
       summary: "Workout Completed",
       detail: `${workout.title} marked as complete`,
     });
-    // TODO: Update workout status in backend
+    // See issue #6 - Implement workout status update API
   }
 
   postponeWorkout(workout: Workout): void {
@@ -724,7 +724,7 @@ export class TrainingComponent implements OnInit {
       summary: "Workout Postponed",
       detail: `${workout.title} has been postponed`,
     });
-    // TODO: Update workout status in backend
+    // See issue #6 - Implement workout status update API
   }
 
   refreshTrainingData(): void {

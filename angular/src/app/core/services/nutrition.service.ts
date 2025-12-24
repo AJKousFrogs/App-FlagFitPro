@@ -1,5 +1,5 @@
 import { Injectable, inject, computed, signal, effect } from "@angular/core";
-import { Observable, of, from } from "rxjs";
+import { Observable, of, from, forkJoin } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
@@ -388,45 +388,47 @@ export class NutritionService {
       return of(this.getDefaultGoals());
     }
 
-    return from(
-      this.supabaseService.client
-        .from("nutrition_goals")
-        .select("*")
-        .eq("user_id", userId)
-        .single(),
-    ).pipe(
-      map(({ data, error }) => {
-        if (error || !data) {
-          return this.getDefaultGoals();
-        }
+    // Get both goals and today's logs
+    return forkJoin({
+      goals: from(
+        this.supabaseService.client
+          .from("nutrition_goals")
+          .select("*")
+          .eq("user_id", userId)
+          .single(),
+      ),
+      todayLogs: this.getTodaysNutritionTotals(userId),
+    }).pipe(
+      map(({ goals, todayLogs }) => {
+        const goalsData = goals.data;
 
-        // Convert database format to NutritionGoal[]
+        // Convert database format to NutritionGoal[] with current values
         return [
           {
             nutrient: "Calories",
-            current: 0, // TODO: Calculate from today's logs
-            target: data.calories_target || 2500,
+            current: todayLogs.calories,
+            target: goalsData?.calories_target || 2500,
             unit: "kcal",
             priority: "high" as "high" | "low" | "medium",
           },
           {
             nutrient: "Protein",
-            current: 0,
-            target: data.protein_target || 150,
+            current: todayLogs.protein,
+            target: goalsData?.protein_target || 150,
             unit: "g",
             priority: "high" as "high" | "low" | "medium",
           },
           {
             nutrient: "Carbs",
-            current: 0,
-            target: data.carbs_target || 300,
+            current: todayLogs.carbs,
+            target: goalsData?.carbs_target || 300,
             unit: "g",
             priority: "medium" as "high" | "low" | "medium",
           },
           {
             nutrient: "Fat",
-            current: 0,
-            target: data.fat_target || 80,
+            current: todayLogs.fat,
+            target: goalsData?.fat_target || 80,
             unit: "g",
             priority: "medium" as "high" | "low" | "medium",
           },
@@ -435,6 +437,47 @@ export class NutritionService {
       catchError((error) => {
         this.logger.error("[Nutrition] Error fetching goals:", error);
         return of(this.getDefaultGoals());
+      }),
+    );
+  }
+
+  /**
+   * Get today's nutrition totals from logs
+   */
+  private getTodaysNutritionTotals(
+    userId: string,
+  ): Observable<{ calories: number; protein: number; carbs: number; fat: number }> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split("T")[0];
+
+    return from(
+      this.supabaseService.client
+        .from("nutrition_logs")
+        .select("calories, protein, carbs, fat")
+        .eq("user_id", userId)
+        .gte("logged_at", `${todayStr}T00:00:00`)
+        .lte("logged_at", `${todayStr}T23:59:59`),
+    ).pipe(
+      map(({ data, error }) => {
+        if (error || !data || data.length === 0) {
+          return { calories: 0, protein: 0, carbs: 0, fat: 0 };
+        }
+
+        // Sum up all entries for today
+        return data.reduce(
+          (totals, log) => ({
+            calories: totals.calories + (log.calories || 0),
+            protein: totals.protein + (log.protein || 0),
+            carbs: totals.carbs + (log.carbs || 0),
+            fat: totals.fat + (log.fat || 0),
+          }),
+          { calories: 0, protein: 0, carbs: 0, fat: 0 },
+        );
+      }),
+      catchError(() => {
+        // Return zeros on error
+        return of({ calories: 0, protein: 0, carbs: 0, fat: 0 });
       }),
     );
   }
@@ -559,7 +602,8 @@ export class NutritionService {
   /**
    * Get AI-powered nutrition suggestions
    * Note: This requires AI API integration
-   * TODO: Implement via Supabase Edge Function with OpenAI
+   * See issue #25 - Implement OpenAI nutrition AI assistant
+   * Requires: Supabase Edge Function, OpenAI API key, budget approval
    */
   getAINutritionSuggestions(): Observable<AINutritionSuggestion[]> {
     this.logger.warn(

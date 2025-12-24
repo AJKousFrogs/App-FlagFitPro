@@ -153,7 +153,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
 
   async loadAnalytics(): Promise<void> {
     try {
-      // TODO: Call API to load enhanced analytics
+      // See issue #11 - Implement enhanced analytics API
       // const response = await this.apiService.getEnhancedAnalytics();
 
       // Mock chart data
@@ -182,7 +182,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
   }
 
   exportReport(): void {
-    // TODO: Implement report export
+    // See issue #13 - Implement report export API (PDF with charts)
     this.logger.debug("Export report");
   }
 }

@@ -816,7 +816,7 @@ export class PerformanceDataService {
     this.logger.warn(
       "[Performance] Export feature not yet implemented for Supabase",
     );
-    // TODO: Implement data export by fetching all tables and formatting
+    // See issue #12 - Implement performance data export API (CSV, JSON, PDF)
     return of({ success: false, message: "Export feature coming soon" });
   }
 

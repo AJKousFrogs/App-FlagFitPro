@@ -391,7 +391,7 @@ export class RecoveryService {
    */
   getRecommendedProtocols(): Observable<RecoveryProtocol[]> {
     // For now, return mock protocols
-    // TODO: Store protocols in recovery_protocols table
+    // See issue #22 - Migrate recovery protocols to dedicated table
     return of(this.getMockProtocols());
   }
 

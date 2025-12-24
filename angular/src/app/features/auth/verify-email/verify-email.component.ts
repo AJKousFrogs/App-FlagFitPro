@@ -183,7 +183,7 @@ export class VerifyEmailComponent implements OnInit {
     this.verificationError.set(undefined);
 
     try {
-      // TODO: Call API to verify email token
+      // See issue #1 - Implement email verification API endpoint
       // const response = await this.apiService.verifyEmail(token);
 
       // Simulate API call
@@ -214,7 +214,7 @@ export class VerifyEmailComponent implements OnInit {
     this.isResending.set(true);
 
     try {
-      // TODO: Call API to resend verification email
+      // See issue #2 - Implement resend verification email API
       // await this.apiService.resendVerificationEmail();
 
       // Simulate API call

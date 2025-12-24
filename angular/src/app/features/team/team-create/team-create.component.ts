@@ -186,7 +186,7 @@ export class TeamCreateComponent {
     try {
       const formData = this.teamForm.value;
 
-      // TODO: Call API to create team
+      // See issue #3 - Implement team creation API
       // const response = await this.apiService.createTeam(formData);
 
       // Simulate API call

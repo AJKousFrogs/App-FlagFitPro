@@ -78,7 +78,7 @@ export class EvidenceConfigService {
    * Log preset change (for analytics/calibration)
    */
   private logPresetChange(presetId: string): void {
-    // TODO: Implement logging to backend
+    // See issue #21 - Implement backend logging service
     this.logger.info(`[EvidenceConfig] Preset changed to: ${presetId}`);
   }
 }

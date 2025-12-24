@@ -187,7 +187,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
   async loadSuggestions(): Promise<void> {
     try {
-      // TODO: Call API to load AI suggestions
+      // See issue #10 - Implement AI training scheduler API (load suggestions)
       // const response = await this.apiService.getAITrainingSuggestions();
 
       // Mock suggestions
@@ -215,7 +215,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
   }
 
   applySuggestion(suggestionId: string): void {
-    // TODO: Apply suggestion
+    // See issue #10 - Implement AI training scheduler API (apply suggestion)
     const suggestions = this.suggestions();
     const index = suggestions.findIndex((s) => s.id === suggestionId);
     if (index > -1) {
@@ -225,7 +225,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
   }
 
   dismissSuggestion(suggestionId: string): void {
-    // TODO: Dismiss suggestion
+    // See issue #10 - Implement AI training scheduler API (dismiss suggestion)
     const suggestions = this.suggestions().filter((s) => s.id !== suggestionId);
     this.suggestions.set(suggestions);
   }

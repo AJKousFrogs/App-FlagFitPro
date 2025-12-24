@@ -699,8 +699,8 @@ export class TrainingBuilderComponent {
     this.aiService
       .getTrainingSuggestions({
         userId: user.id,
-        recentPerformance: [], // TODO: Load from API
-        upcomingGames: [], // TODO: Load from API
+        recentPerformance: [], // See issue #14 - Load recent performance API
+        upcomingGames: [], // See issue #14 - Load upcoming games API
       })
       .pipe(takeUntilDestroyed())
       .subscribe({

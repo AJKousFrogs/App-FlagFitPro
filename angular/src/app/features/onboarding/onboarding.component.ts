@@ -306,7 +306,7 @@ export class OnboardingComponent implements OnInit {
     this.isCompleting.set(true);
 
     try {
-      // TODO: Call API to save onboarding data
+      // See issue #5 - Implement onboarding data persistence API
       // await this.apiService.completeOnboarding(this.onboardingData);
 
       // Simulate API call

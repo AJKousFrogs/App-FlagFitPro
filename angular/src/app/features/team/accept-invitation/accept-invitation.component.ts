@@ -197,7 +197,7 @@ export class AcceptInvitationComponent implements OnInit {
 
   async loadInvitation(tokenOrId: string): Promise<void> {
     try {
-      // TODO: Call API to load invitation data
+      // See issue #4 - Implement team invitation API (load invitation data)
       // const response = await this.apiService.getInvitation(tokenOrId);
 
       // Simulate API call
@@ -226,7 +226,7 @@ export class AcceptInvitationComponent implements OnInit {
     this.isProcessing.set(true);
 
     try {
-      // TODO: Call API to accept invitation
+      // See issue #4 - Implement team invitation API (accept invitation)
       // await this.apiService.acceptInvitation(this.invitationData()!.invitationId);
 
       // Simulate API call
@@ -262,7 +262,7 @@ export class AcceptInvitationComponent implements OnInit {
     this.isProcessing.set(true);
 
     try {
-      // TODO: Call API to decline invitation
+      // See issue #4 - Implement team invitation API (decline invitation)
       // await this.apiService.declineInvitation(this.invitationData()!.invitationId);
 
       // Simulate API call

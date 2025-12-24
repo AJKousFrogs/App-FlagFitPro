@@ -279,7 +279,7 @@ export class InteractiveSkillsRadarComponent {
   }
 
   startSkillDrill(subSkill: SubSkill): void {
-    // TODO: Implement skill drill functionality
+    // See issue #18 - Implement skill drill functionality with video demos
     this.logger.debug(`Starting drill for: ${subSkill.name}`);
     // This could navigate to a training page or open a modal
   }

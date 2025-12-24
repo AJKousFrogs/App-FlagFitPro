@@ -580,17 +580,17 @@ export class AcwrDashboardComponent implements OnInit {
   }
 
   public logSession(): void {
-    // TODO: Open session logging modal
+    // See issue #15 - Implement ACWR session logging modal
     this.logger.debug("Open session logging form");
   }
 
   public viewHistory(): void {
-    // TODO: Navigate to history page
+    // See issue #16 - Implement ACWR history navigation
     this.logger.debug("Navigate to load history");
   }
 
   public downloadReport(): void {
-    // TODO: Generate PDF report
+    // See issue #17 - Implement PDF report generation
     this.logger.debug("Generate ACWR report");
   }
 }

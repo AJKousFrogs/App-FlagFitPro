@@ -8,6 +8,7 @@ import {
 
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { DatePicker } from "primeng/datepicker";
@@ -169,6 +170,7 @@ interface TrainingSession {
 })
 export class TrainingScheduleComponent implements OnInit {
   private apiService = inject(ApiService);
+  private router = inject(Router);
   private logger = inject(LoggerService);
 
   selectedDate = signal<Date>(new Date());
@@ -180,7 +182,7 @@ export class TrainingScheduleComponent implements OnInit {
 
   async loadSessions(): Promise<void> {
     try {
-      // TODO: Call API to load training sessions
+      // See issue #8 - Implement training schedule API
       // const response = await this.apiService.getTrainingSessions();
 
       // Mock data
@@ -211,8 +213,15 @@ export class TrainingScheduleComponent implements OnInit {
   }
 
   createNewSession(): void {
-    // TODO: Open modal or navigate to session creation
-    this.logger.debug("Create new session");
+    // Navigate to training form for session creation
+    // Pre-fill with selected date if available
+    const selectedDateStr = this.selectedDate()?.toISOString().split("T")[0];
+    this.router.navigate(["/training/smart-form"], {
+      queryParams: selectedDateStr ? { date: selectedDateStr } : {},
+    });
+    this.logger.debug("Navigating to session creation form", {
+      date: selectedDateStr,
+    });
   }
 
   getStatusSeverity(
