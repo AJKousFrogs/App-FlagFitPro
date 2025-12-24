@@ -4,6 +4,7 @@
  */
 
 import { workoutService } from "../services/workoutService.js";
+import { setSafeContent } from "../utils/shared.js";
 
 /**
  * Render user header with name
@@ -32,7 +33,7 @@ export function renderWeeklyProgress(stats) {
   if (weeklyProgressValue && weeklyProgressValue.textContent.includes("/")) {
     const currentProgress = Math.min(stats.sessionsCompleted, 7);
     const progressPercent = Math.round((currentProgress / 7) * 100);
-    weeklyProgressValue.innerHTML = `${currentProgress}<span class="u-text-body-lg u-text-secondary">/7</span>`;
+    setSafeContent(weeklyProgressValue, `${currentProgress}<span class="u-text-body-lg u-text-secondary">/7</span>`, true, true);
 
     // Update progress bar
     const statCard = weeklyProgressValue.closest(".stat-card");
@@ -75,7 +76,7 @@ function renderDayCard(day, scheduleSettings) {
 
   const dayCard = document.createElement("div");
   dayCard.className = `day-card ${isToday ? "today" : ""} ${isCompleted ? "completed" : ""} ${isGameDay ? "game-day" : ""}`;
-  dayCard.innerHTML = `
+  setSafeContent(dayCard, `
         <div class="day-header">
             <div>
                 <div class="day-name">${dayName}</div>
@@ -125,7 +126,7 @@ function renderDayCard(day, scheduleSettings) {
         `
             : ""
         }
-    `;
+    `, true, true);
 
   return dayCard;
 }

@@ -1,4 +1,5 @@
 import { logger } from '../logger.js';
+import { setSafeContent } from './utils/shared.js';
 
 /**
  * FlagFit Pro - Achievements Widget
@@ -36,7 +37,7 @@ import { logger } from '../logger.js';
     // Create widget HTML
     const widget = document.createElement("div");
     widget.className = "achievements-widget";
-    widget.innerHTML = `
+    setSafeContent(widget, `
       <div class="achievements-header">
         <div class="achievements-title">
           <h3>🏆 Achievements</h3>
@@ -64,7 +65,7 @@ import { logger } from '../logger.js';
           View All Achievements
         </button>
       </div>
-    `;
+    `, true, true);
 
     // Add styles
     addAchievementsStyles();
@@ -375,7 +376,7 @@ import { logger } from '../logger.js';
     // Create modal
     const modal = document.createElement("div");
     modal.className = "achievements-modal";
-    modal.innerHTML = `
+    setSafeContent(modal, `
       <div class="achievements-modal-overlay" onclick="this.parentElement.remove()"></div>
       <div class="achievements-modal-content">
         <div class="modal-header">
@@ -430,7 +431,7 @@ import { logger } from '../logger.js';
           })
           .join("")}
       </div>
-    `;
+    `, true, true);
 
     // Add modal styles
     const modalStyles = document.createElement("style");
