@@ -651,7 +651,9 @@ export class UnifiedErrorHandler {
           `[Retry] Attempt ${attempt}/${maxAttempts} failed, retrying in ${currentDelay}ms...`,
         );
 
-        await new Promise((resolve) => setTimeout(resolve, currentDelay));
+        await new Promise((resolve) => {
+          setTimeout(resolve, currentDelay);
+        });
         currentDelay *= backoff;
       }
     }

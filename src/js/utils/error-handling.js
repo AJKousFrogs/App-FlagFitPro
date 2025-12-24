@@ -187,7 +187,9 @@ export async function withRetry(operation, options = {}) {
       );
 
       // Wait before retrying
-      await new Promise((resolve) => setTimeout(resolve, currentDelay));
+      await new Promise((resolve) => {
+        setTimeout(resolve, currentDelay);
+      });
 
       // Increase delay for next attempt (exponential backoff)
       currentDelay *= backoff;

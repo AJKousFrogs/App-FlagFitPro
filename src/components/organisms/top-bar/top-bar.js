@@ -8,13 +8,8 @@ import { logger } from '../../../logger.js';
 (function () {
   "use strict";
 
-  // Logger fallback - use window.logger if available, otherwise console
-  const logger = window.logger || {
-    error: (...args) => logger.error(...args),
-    warn: (...args) => logger.warn(...args),
-    info: (...args) => console.info(...args),
-    debug: (...args) => logger.debug(...args),
-  };
+  // Logger is imported at the top of the file
+  // No fallback needed - logger module handles this
 
   // Global function stubs (can be overridden by other scripts)
   // main.js will override this with the real implementation

@@ -3,14 +3,6 @@ import { logger } from '../../logger.js';
 // FlagFit AI Chatbot Component
 // Provides intelligent responses about sports psychology, nutrition, speed training, injuries, recovery, etc.
 
-// Logger fallback - use window.logger if available, otherwise console
-const logger = window.logger || {
-  error: (...args) => logger.error(...args),
-  warn: (...args) => logger.warn(...args),
-  info: (...args) => console.info(...args),
-  debug: (...args) => logger.debug(...args),
-};
-
 class FlagFitChatbot {
   constructor() {
     this.messages = [];
@@ -854,9 +846,9 @@ class FlagFitChatbot {
     try {
       const response = await Promise.race([
         this.getResponse(message),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Timeout")), this.timeoutDuration),
-        ),
+        new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("Timeout")), this.timeoutDuration);
+        }),
       ]);
 
       clearInterval(progressInterval);
@@ -894,9 +886,9 @@ class FlagFitChatbot {
         try {
           const fallbackResponse = await Promise.race([
             this.getLocalResponse(null, message, message.toLowerCase()),
-            new Promise((_, reject) =>
-              setTimeout(() => reject(new Error("Timeout")), 5000),
-            ),
+            new Promise((_, reject) => {
+              setTimeout(() => reject(new Error("Timeout")), 5000);
+            }),
           ]);
           this.hideErrorMessage();
           this.addMessage("bot", fallbackResponse);

@@ -65,7 +65,9 @@ describe("Performance Utils - Comprehensive Tests", () => {
   describe("Execution Time Measurement", () => {
     it("should measure function execution time accurately", async () => {
       const testFunction = async () => {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise((resolve) => {
+          setTimeout(resolve, 100);
+        });
         return "test result";
       };
 
@@ -137,12 +139,12 @@ describe("Performance Utils - Comprehensive Tests", () => {
     it("should track multiple nested measurements", async () => {
       const nestedFunction = async () => {
         // Simulate nested operations
-        const step1 = await new Promise((resolve) =>
-          setTimeout(() => resolve("step1"), 50),
-        );
-        const step2 = await new Promise((resolve) =>
-          setTimeout(() => resolve("step2"), 30),
-        );
+        const step1 = await new Promise((resolve) => {
+          setTimeout(() => resolve("step1"), 50);
+        });
+        const step2 = await new Promise((resolve) => {
+          setTimeout(() => resolve("step2"), 30);
+        });
         return { step1, step2 };
       };
 

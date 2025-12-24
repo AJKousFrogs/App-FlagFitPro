@@ -3,13 +3,6 @@ import { logger } from '../../logger.js';
 // Personalization Service
 // Enriches chatbot questions with user profile data (body metrics, injuries, training schedule, position)
 
-const logger = window.logger || {
-  error: (...args) => logger.error(...args),
-  warn: (...args) => logger.warn(...args),
-  info: (...args) => console.info(...args),
-  debug: (...args) => logger.debug(...args),
-};
-
 class PersonalizationService {
   constructor(userId) {
     this.userId = userId;
