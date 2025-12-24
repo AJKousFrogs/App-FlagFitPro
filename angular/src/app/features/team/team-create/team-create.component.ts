@@ -15,10 +15,10 @@ import {
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { ToastService } from "../../../core/services/toast.service";
 
 @Component({
   selector: "app-team-create",
@@ -34,7 +34,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     MainLayoutComponent,
     PageHeaderComponent,
   ],
-  providers: [MessageService],
   template: `
     <p-toast></p-toast>
     <app-main-layout>
@@ -149,7 +148,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 export class TeamCreateComponent {
   private router = inject(Router);
   private fb = inject(FormBuilder);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
 
   isSubmitting = signal(false);
 
@@ -192,22 +191,15 @@ export class TeamCreateComponent {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Team Created",
-        detail: `${formData.name} has been created successfully!`,
-      });
+      this.toastService.success(`${formData.name} has been created successfully!`);
 
       // Redirect to roster page
       setTimeout(() => {
         this.router.navigate(["/roster"]);
       }, 1000);
     } catch (error) {
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: error.message || "Failed to create team. Please try again.",
-      });
+      const message = error instanceof Error ? error.message : "Failed to create team. Please try again.";
+      this.toastService.error(message);
     } finally {
       this.isSubmitting.set(false);
     }

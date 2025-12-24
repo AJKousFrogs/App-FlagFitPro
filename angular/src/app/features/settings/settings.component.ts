@@ -16,7 +16,7 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 import { ToastModule } from "primeng/toast";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -37,7 +37,7 @@ import { AuthService } from "../../core/services/auth.service";
     MainLayoutComponent,
     PageHeaderComponent,
   ],
-  providers: [MessageService],
+  
   template: `
     <p-toast></p-toast>
     <app-main-layout>
@@ -285,7 +285,7 @@ import { AuthService } from "../../core/services/auth.service";
 export class SettingsComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
 
   profileForm!: FormGroup;
   notificationForm!: FormGroup;
@@ -350,10 +350,6 @@ export class SettingsComponent implements OnInit {
     };
 
     // Save settings via API - implementation pending
-    this.messageService.add({
-      severity: "success",
-      summary: "Success",
-      detail: "Settings saved successfully!",
-    });
+    this.toastService.success("Settings saved successfully!");
   }
 }

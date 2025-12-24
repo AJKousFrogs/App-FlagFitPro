@@ -13,8 +13,8 @@ import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { StepsModule } from "primeng/steps";
-import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
+import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -39,7 +39,6 @@ interface OnboardingStep {
     MainLayoutComponent,
     PageHeaderComponent,
   ],
-  providers: [MessageService],
   template: `
     <p-toast></p-toast>
     <app-main-layout>
@@ -230,7 +229,7 @@ interface OnboardingStep {
 })
 export class OnboardingComponent implements OnInit {
   private router = inject(Router);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
 
   currentStep = signal(0);
   isCompleting = signal(false);
@@ -312,22 +311,15 @@ export class OnboardingComponent implements OnInit {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Welcome!",
-        detail: "Your profile has been set up successfully.",
-      });
+      this.toastService.success("Your profile has been set up successfully.", "Welcome!");
 
       // Redirect to dashboard
       setTimeout(() => {
         this.router.navigate(["/dashboard"]);
       }, 1000);
     } catch (error) {
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: error.message || "Failed to complete setup. Please try again.",
-      });
+      const message = error instanceof Error ? error.message : "Failed to complete setup. Please try again.";
+      this.toastService.error(message);
     } finally {
       this.isCompleting.set(false);
     }

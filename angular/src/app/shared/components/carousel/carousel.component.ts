@@ -67,7 +67,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
           [disabled]="!canGoPrevious()"
           aria-label="Previous slide"
         >
-          <i class="pi pi-chevron-left"></i>
+          <i class="pi pi-chevron-left" aria-hidden="true"></i>
         </button>
         <button
           type="button"
@@ -76,7 +76,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
           [disabled]="!canGoNext()"
           aria-label="Next slide"
         >
-          <i class="pi pi-chevron-right"></i>
+          <i class="pi pi-chevron-right" aria-hidden="true"></i>
         </button>
       }
 

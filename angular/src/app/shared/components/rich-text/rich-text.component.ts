@@ -51,7 +51,7 @@ import { CommonModule } from "@angular/common";
             (click)="executeCommand('bold')"
             aria-label="Bold"
           >
-            <i class="pi pi-bold"></i>
+            <i class="pi pi-bold" aria-hidden="true"></i>
           </button>
           <button
             type="button"
@@ -60,7 +60,7 @@ import { CommonModule } from "@angular/common";
             (click)="executeCommand('italic')"
             aria-label="Italic"
           >
-            <i class="pi pi-italic"></i>
+            <i class="pi pi-italic" aria-hidden="true"></i>
           </button>
           <button
             type="button"
@@ -69,7 +69,7 @@ import { CommonModule } from "@angular/common";
             (click)="executeCommand('underline')"
             aria-label="Underline"
           >
-            <i class="pi pi-underline"></i>
+            <i class="pi pi-underline" aria-hidden="true"></i>
           </button>
           <div class="toolbar-separator"></div>
           <button
@@ -79,7 +79,7 @@ import { CommonModule } from "@angular/common";
             (click)="executeCommand('insertUnorderedList')"
             aria-label="Bullet list"
           >
-            <i class="pi pi-list"></i>
+            <i class="pi pi-list" aria-hidden="true"></i>
           </button>
           <button
             type="button"
@@ -88,7 +88,7 @@ import { CommonModule } from "@angular/common";
             (click)="executeCommand('insertOrderedList')"
             aria-label="Numbered list"
           >
-            <i class="pi pi-list-ordered"></i>
+            <i class="pi pi-list-ordered" aria-hidden="true"></i>
           </button>
           <div class="toolbar-separator"></div>
           <button
@@ -97,7 +97,7 @@ import { CommonModule } from "@angular/common";
             (click)="createLink()"
             aria-label="Insert link"
           >
-            <i class="pi pi-link"></i>
+            <i class="pi pi-link" aria-hidden="true"></i>
           </button>
           <button
             type="button"
@@ -105,7 +105,7 @@ import { CommonModule } from "@angular/common";
             (click)="executeCommand('formatBlock', 'h2')"
             aria-label="Heading"
           >
-            <i class="pi pi-heading"></i>
+            <i class="pi pi-heading" aria-hidden="true"></i>
           </button>
         </div>
         <div

@@ -11,7 +11,7 @@
  * @version 1.0.0
  */
 
-import { Component, computed, signal, OnInit, inject } from "@angular/core";
+import { Component, computed, signal, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AcwrService } from "../../core/services/acwr.service";
 import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
@@ -26,6 +26,7 @@ import {
 @Component({
   selector: "app-acwr-dashboard",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
     <div class="acwr-dashboard">

@@ -10,15 +10,14 @@ import { Router, RouterModule, ActivatedRoute } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { MessageModule } from "primeng/message";
-import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
+import { ToastService } from "../../../core/services/toast.service";
 
 @Component({
   selector: "app-accept-invitation",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule, CardModule, ButtonModule, MessageModule, ToastModule],
-  providers: [MessageService],
   template: `
     <p-toast></p-toast>
     <div class="accept-invitation-page">
@@ -167,7 +166,7 @@ import { ToastModule } from "primeng/toast";
 export class AcceptInvitationComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
 
   isLoading = signal(true);
   isProcessing = signal(false);
@@ -234,23 +233,15 @@ export class AcceptInvitationComponent implements OnInit {
 
       this.isAccepted.set(true);
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Invitation Accepted",
-        detail: `You've joined ${this.teamName()}!`,
-      });
+      this.toastService.success(`You've joined ${this.teamName()}!`, "Invitation Accepted");
 
       // Redirect to roster after 2 seconds
       setTimeout(() => {
         this.router.navigate(["/roster"]);
       }, 2000);
     } catch (error) {
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail:
-          error instanceof Error ? error.message : "Failed to accept invitation. Please try again.",
-      });
+      const message = error instanceof Error ? error.message : "Failed to accept invitation. Please try again.";
+      this.toastService.error(message);
     } finally {
       this.isProcessing.set(false);
     }
@@ -268,23 +259,15 @@ export class AcceptInvitationComponent implements OnInit {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      this.messageService.add({
-        severity: "info",
-        summary: "Invitation Declined",
-        detail: "You have declined the team invitation.",
-      });
+      this.toastService.info("You have declined the team invitation.", "Invitation Declined");
 
       // Redirect to dashboard
       setTimeout(() => {
         this.router.navigate(["/dashboard"]);
       }, 1000);
     } catch (error) {
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail:
-          error instanceof Error ? error.message : "Failed to decline invitation. Please try again.",
-      });
+      const message = error instanceof Error ? error.message : "Failed to decline invitation. Please try again.";
+      this.toastService.error(message);
     } finally {
       this.isProcessing.set(false);
     }

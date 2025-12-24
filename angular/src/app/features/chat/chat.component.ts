@@ -10,6 +10,7 @@ import {
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
+import { ScrollingModule } from "@angular/cdk/scrolling";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
@@ -47,6 +48,7 @@ interface Channel {
     AvatarModule,
     BadgeModule,
     ScrollPanelModule,
+    ScrollingModule,
     MainLayoutComponent,
   ],
   template: `
@@ -114,11 +116,12 @@ interface Channel {
             </p-card>
           </div>
 
-          <!-- Messages Area -->
+          <!-- Messages Area with Virtual Scrolling -->
           <div class="messages-area">
-            <p-scrollPanel
-              #scrollPanel
-              styleClass="messages-scroll"
+            <cdk-virtual-scroll-viewport
+              #scrollViewport
+              itemSize="80"
+              class="messages-scroll"
               [style]="{ height: 'calc(100vh - 200px)' }"
             >
               <div class="messages-list">
@@ -151,7 +154,7 @@ interface Channel {
                   </div>
                 }
               </div>
-            </p-scrollPanel>
+            </cdk-virtual-scroll-viewport>
 
             <!-- Message Input -->
             <div class="message-input-container">
@@ -280,6 +283,12 @@ interface Channel {
 
       .messages-scroll {
         flex: 1;
+        width: 100%;
+      }
+
+      /* Virtual scroll viewport styling */
+      ::ng-deep .cdk-virtual-scroll-content-wrapper {
+        width: 100%;
       }
 
       .messages-list {
@@ -287,6 +296,7 @@ interface Channel {
         display: flex;
         flex-direction: column;
         gap: var(--space-4);
+        min-height: 100%;
       }
 
       .message {
@@ -353,7 +363,7 @@ interface Channel {
   ],
 })
 export class ChatComponent implements OnInit, AfterViewInit {
-  @ViewChild("scrollPanel") scrollPanel!: ElementRef;
+  @ViewChild("scrollViewport") scrollViewport!: ElementRef;
 
   newMessage = "";
   currentChannel = signal<Channel>({

@@ -10,7 +10,7 @@ import { Router, RouterModule, ActivatedRoute } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { MessageModule } from "primeng/message";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { ToastModule } from "primeng/toast";
 
 @Component({
@@ -18,7 +18,7 @@ import { ToastModule } from "primeng/toast";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule, CardModule, ButtonModule, MessageModule, ToastModule],
-  providers: [MessageService],
+  
   template: `
     <p-toast></p-toast>
     <div class="verify-email-page">
@@ -163,7 +163,7 @@ import { ToastModule } from "primeng/toast";
 export class VerifyEmailComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
 
   isVerifying = signal(false);
   isVerified = signal(false);
@@ -192,11 +192,7 @@ export class VerifyEmailComponent implements OnInit {
       this.isVerified.set(true);
       this.isVerifying.set(false);
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Email Verified",
-        detail: "Your email has been verified successfully!",
-      });
+      this.toastService.success("Your email has been verified successfully!", "Email Verified");
 
       // Redirect to dashboard after 2 seconds
       setTimeout(() => {
@@ -220,20 +216,10 @@ export class VerifyEmailComponent implements OnInit {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Email Sent",
-        detail: "Verification email has been sent. Please check your inbox.",
-      });
+      this.toastService.success("Verification email has been sent. Please check your inbox.", "Email Sent");
     } catch (error) {
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail:
-          error instanceof Error
-            ? error.message
-            : "Failed to send verification email. Please try again.",
-      });
+      const message = error instanceof Error ? error.message : "Failed to send verification email. Please try again.";
+      this.toastService.error(message);
     } finally {
       this.isResending.set(false);
     }

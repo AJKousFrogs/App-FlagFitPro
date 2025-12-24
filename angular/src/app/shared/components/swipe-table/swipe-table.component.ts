@@ -65,14 +65,14 @@ import { ButtonModule } from "primeng/button";
                   (click)="editRow(row)"
                   aria-label="Edit row"
                 >
-                  <i class="pi pi-pencil"></i>
+                  <i class="pi pi-pencil" aria-hidden="true"></i>
                 </button>
                 <button
                   class="action-btn delete"
                   (click)="deleteRow(row)"
                   aria-label="Delete row"
                 >
-                  <i class="pi pi-trash"></i>
+                  <i class="pi pi-trash" aria-hidden="true"></i>
                 </button>
               </div>
             </td>

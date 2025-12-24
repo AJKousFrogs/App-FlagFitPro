@@ -16,12 +16,17 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
-import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AuthService } from "../../../core/services/auth.service";
+import { ToastService } from "../../../core/services/toast.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import {
+  getFormControlError,
+  isFormControlInvalid,
+  markFormGroupTouched,
+} from "../../../shared/utils/form.utils";
 
 @Component({
   selector: "app-register",
@@ -36,7 +41,6 @@ import { LoggerService } from "../../../core/services/logger.service";
     MessageModule,
     ToastModule,
   ],
-  providers: [MessageService],
   template: `
     <p-toast></p-toast>
     <div class="register-page">
@@ -222,7 +226,7 @@ export class RegisterComponent {
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
   private logger = inject(LoggerService);
 
   registerForm: FormGroup;
@@ -265,33 +269,18 @@ export class RegisterComponent {
   }
 
   isFieldInvalid(fieldName: string): boolean {
-    const field = this.registerForm.get(fieldName);
-    return !!(field && field.invalid && field.touched);
+    const control = this.registerForm.get(fieldName);
+    return isFormControlInvalid(control!);
   }
 
   getFieldError(fieldName: string): string {
-    const field = this.registerForm.get(fieldName);
-    if (field?.hasError("required")) {
-      return `${fieldName} is required`;
-    }
-    if (field?.hasError("email")) {
-      return "Please enter a valid email address";
-    }
-    if (field?.hasError("minlength")) {
-      return "Password must be at least 8 characters";
-    }
-    if (field?.hasError("pattern")) {
-      return "Password must contain uppercase, lowercase, number, and special character";
-    }
-    if (field?.hasError("passwordMismatch")) {
-      return "Passwords do not match";
-    }
-    return "";
+    const control = this.registerForm.get(fieldName);
+    return getFormControlError(control!) || "";
   }
 
   async onSubmit(): Promise<void> {
     if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
+      markFormGroupTouched(this.registerForm);
       return;
     }
 
@@ -365,27 +354,15 @@ export class RegisterComponent {
       .subscribe({
         next: (response) => {
           if (response.success) {
-            this.messageService.add({
-              severity: "success",
-              summary: "Success",
-              detail: "Account created successfully!",
-            });
+            this.toastService.success("Account created successfully!");
             this.router.navigate(["/dashboard"]);
           } else {
-            this.messageService.add({
-              severity: "error",
-              summary: "Error",
-              detail: response.error || "Registration failed",
-            });
+            this.toastService.error(response.error || "Registration failed");
           }
           this.isLoading.set(false);
         },
         error: (error) => {
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: error.message || "Registration failed. Please try again.",
-          });
+          this.toastService.error(error.message || "Registration failed. Please try again.");
           this.isLoading.set(false);
         },
       });

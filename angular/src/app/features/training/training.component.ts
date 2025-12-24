@@ -11,7 +11,7 @@ import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { ToastModule } from "primeng/toast";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { TrainingBuilderComponent } from "../../shared/components/training-builder/training-builder.component";
@@ -523,7 +523,7 @@ interface Workout {
 export class TrainingComponent implements OnInit {
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
   private headerService = inject(HeaderService);
 
   userName = signal("Alex");
@@ -680,11 +680,7 @@ export class TrainingComponent implements OnInit {
 
   startWorkout(workout: Workout): void {
     // Start workout - implementation pending
-    this.messageService.add({
-      severity: "info",
-      summary: "Starting Workout",
-      detail: `Starting ${workout.title}`,
-    });
+    this.toastService.info(`Starting ${workout.title}`);
   }
 
   onSwipeRight(event: SwipeEvent, workout: Workout): void {
@@ -710,20 +706,12 @@ export class TrainingComponent implements OnInit {
   }
 
   markWorkoutComplete(workout: Workout): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Workout Completed",
-      detail: `${workout.title} marked as complete`,
-    });
+    this.toastService.success(`${workout.title} marked as complete`);
     // See issue #6 - Implement workout status update API
   }
 
   postponeWorkout(workout: Workout): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Workout Postponed",
-      detail: `${workout.title} has been postponed`,
-    });
+    this.toastService.info(`${workout.title} has been postponed`);
     // See issue #6 - Implement workout status update API
   }
 
@@ -733,11 +721,7 @@ export class TrainingComponent implements OnInit {
 
     setTimeout(() => {
       this.isRefreshing.set(false);
-      this.messageService.add({
-        severity: "success",
-        summary: "Refreshed",
-        detail: "Training data has been refreshed",
-      });
+      this.toastService.success("Training data has been refreshed");
     }, 1000);
   }
 

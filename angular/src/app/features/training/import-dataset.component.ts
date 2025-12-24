@@ -1,11 +1,11 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, signal, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { Textarea } from "primeng/textarea";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 import { ToastModule } from "primeng/toast";
 import { TrainingMetricsService } from "../../core/services/training-metrics.service";
 import { WearableParserService } from "../../core/services/wearable-parser.service";
@@ -15,6 +15,7 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
 @Component({
   selector: "app-import-dataset",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule,
@@ -24,7 +25,7 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
     MessageModule,
     ToastModule,
   ],
-  providers: [MessageService],
+  
   template: `
     <p-toast></p-toast>
     <div
@@ -292,7 +293,7 @@ export class ImportDatasetComponent {
   private metricsService = inject(TrainingMetricsService);
   private wearableParser = inject(WearableParserService);
   private datasetGenerator = inject(DatasetGeneratorService);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
 
   // Angular 21: Use model() signals for two-way binding instead of ngModel
   athleteId = signal("");
@@ -326,12 +327,7 @@ export class ImportDatasetComponent {
   async parseAndImport() {
     const file = this.selectedFile();
     if (!file || !this.athleteId()) {
-      this.messageService.add(
-        ErrorHandlerUtil.createValidationError(
-          "file and Athlete ID",
-          "Please select a file and enter Athlete ID",
-        ),
-      );
+      this.toastService.warn("Please select a file and enter Athlete ID");
       return;
     }
 
@@ -350,11 +346,7 @@ export class ImportDatasetComponent {
           success: true,
           metrics: result.metrics,
         });
-        this.messageService.add(
-          ErrorHandlerUtil.createSuccessMessage(
-            "File parsed and imported successfully!",
-          ),
-        );
+        this.toastService.success("File parsed and imported successfully!");
         this.selectedFile.set(null);
       } else {
         throw new Error("Import failed");
@@ -368,9 +360,7 @@ export class ImportDatasetComponent {
         success: false,
         error: errorMessage,
       });
-      this.messageService.add(
-        ErrorHandlerUtil.createErrorMessage(errorMessage, "Import Failed"),
-      );
+      this.toastService.error(errorMessage, "Import Failed");
     } finally {
       this.isLoading.set(false);
     }
@@ -378,9 +368,7 @@ export class ImportDatasetComponent {
 
   async generateAndImport() {
     if (!this.athleteId()) {
-      this.messageService.add(
-        ErrorHandlerUtil.createValidationError("Athlete ID"),
-      );
+      this.toastService.warn("Please enter an Athlete ID");
       return;
     }
 
@@ -403,11 +391,7 @@ export class ImportDatasetComponent {
           success: true,
           metrics: result.metrics,
         });
-        this.messageService.add(
-          ErrorHandlerUtil.createSuccessMessage(
-            "Test dataset generated and imported!",
-          ),
-        );
+        this.toastService.success("Test dataset generated and imported!");
       } else {
         throw new Error("Import failed");
       }
@@ -420,9 +404,7 @@ export class ImportDatasetComponent {
         success: false,
         error: errorMessage,
       });
-      this.messageService.add(
-        ErrorHandlerUtil.createErrorMessage(errorMessage, "Import Failed"),
-      );
+      this.toastService.error(errorMessage, "Import Failed");
     } finally {
       this.isLoading.set(false);
     }
@@ -432,11 +414,8 @@ export class ImportDatasetComponent {
     const athleteId = this.athleteId();
     const jsonText = this.jsonText();
     if (!athleteId || !jsonText.trim()) {
-      this.messageService.add(
-        ErrorHandlerUtil.createValidationError(
-          "Athlete ID and Dataset JSON",
-          "Please fill in both Athlete ID and Dataset JSON",
-        ),
+      this.toastService.warn(
+        "Please fill in both Athlete ID and Dataset JSON"
       );
       return;
     }
@@ -463,11 +442,7 @@ export class ImportDatasetComponent {
           success: true,
           metrics: result.metrics,
         });
-        this.messageService.add(
-          ErrorHandlerUtil.createSuccessMessage(
-            "Dataset imported successfully!",
-          ),
-        );
+        this.toastService.success("Dataset imported successfully!");
         // Clear form
         this.jsonText.set("");
       } else {
@@ -482,9 +457,7 @@ export class ImportDatasetComponent {
         success: false,
         error: errorMessage,
       });
-      this.messageService.add(
-        ErrorHandlerUtil.createErrorMessage(errorMessage, "Import Failed"),
-      );
+      this.toastService.error(errorMessage, "Import Failed");
     } finally {
       this.isLoading.set(false);
     }

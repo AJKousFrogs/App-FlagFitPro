@@ -5,6 +5,7 @@ import {
   inject,
   signal,
   computed,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -28,6 +29,7 @@ interface DayPlan {
 @Component({
   selector: "app-microcycle-planner",
   standalone: true,
+  changeDetectionStrategy: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, TrafficLightRiskComponent],
   template: `
     <div

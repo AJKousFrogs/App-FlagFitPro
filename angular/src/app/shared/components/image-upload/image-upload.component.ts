@@ -84,7 +84,7 @@ export interface ImageUploadResult {
                 (click)="removeImage()"
                 aria-label="Remove image"
               >
-                <i class="pi pi-times"></i>
+                <i class="pi pi-times" aria-hidden="true"></i>
               </button>
             }
           </div>

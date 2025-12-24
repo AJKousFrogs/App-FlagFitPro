@@ -5,6 +5,7 @@ import {
   signal,
   computed,
   input,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -25,6 +26,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
 @Component({
   selector: "app-goal-based-planner",
   standalone: true,
+  changeDetectionStrategy: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,

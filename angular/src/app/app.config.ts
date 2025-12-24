@@ -16,9 +16,11 @@ import { MessageService } from "primeng/api";
 import { routes } from "./app.routes";
 import { authInterceptor } from "./core/interceptors/auth.interceptor";
 import { errorInterceptor } from "./core/interceptors/error.interceptor";
+import { cacheInterceptor } from "./core/interceptors/cache.interceptor";
 import { AcwrService } from "./core/services/acwr.service";
 import { LoadMonitoringService } from "./core/services/load-monitoring.service";
 import { AcwrAlertsService } from "./core/services/acwr-alerts.service";
+import { CoreWebVitalsService } from "./core/services/core-web-vitals.service";
 import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.strategy";
 
 export const appConfig: ApplicationConfig = {
@@ -43,11 +45,14 @@ export const appConfig: ApplicationConfig = {
     ),
     // Note: No provideAnimations() - PrimeNG v21 migrated to native CSS animations
     // Benefits: 80+ KB bundle savings, hardware acceleration, 60+ FPS
-    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+    provideHttpClient(
+      withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor])
+    ),
     MessageService,
     AcwrService,
     LoadMonitoringService,
     AcwrAlertsService,
+    CoreWebVitalsService,
     AuthAwarePreloadStrategy, // Register the preloading strategy
   ],
 };

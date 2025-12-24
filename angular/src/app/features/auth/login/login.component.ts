@@ -20,10 +20,10 @@ import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { CheckboxModule } from "primeng/checkbox";
 import { MessageModule } from "primeng/message";
-import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AuthService } from "../../../core/services/auth.service";
+import { ToastService } from "../../../core/services/toast.service";
 import {
   getFormControlError,
   isFormControlInvalid,
@@ -44,7 +44,6 @@ import {
     MessageModule,
     ToastModule,
   ],
-  providers: [MessageService],
   template: `
     <p-toast></p-toast>
     <div class="login-page">
@@ -226,7 +225,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
 
   loginForm: FormGroup;
   isLoading = signal(false);
@@ -318,27 +317,15 @@ export class LoginComponent {
       .subscribe({
         next: (response: { success?: boolean; error?: string }) => {
           if (response.success) {
-            this.messageService.add({
-              severity: "success",
-              summary: "Success",
-              detail: "Login successful!",
-            });
+            this.toastService.success("Login successful!");
             this.router.navigate(["/dashboard"]);
           } else {
-            this.messageService.add({
-              severity: "error",
-              summary: "Error",
-              detail: response.error || "Invalid email or password",
-            });
+            this.toastService.error(response.error || "Invalid email or password");
           }
           this.isLoading.set(false);
         },
         error: (error: Error) => {
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: error.message || "Login failed. Please try again.",
-          });
+          this.toastService.error(error.message || "Login failed. Please try again.");
           this.isLoading.set(false);
         },
       });

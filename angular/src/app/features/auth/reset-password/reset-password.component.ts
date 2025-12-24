@@ -16,8 +16,8 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
-import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
+import { ToastService } from "../../../core/services/toast.service";
 
 @Component({
   selector: "app-reset-password",
@@ -32,7 +32,6 @@ import { ToastModule } from "primeng/toast";
     MessageModule,
     ToastModule,
   ],
-  providers: [MessageService],
   template: `
     <p-toast></p-toast>
     <div class="reset-password-page">
@@ -157,7 +156,7 @@ import { ToastModule } from "primeng/toast";
 export class ResetPasswordComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
 
   resetForm: FormGroup;
   isLoading = signal(false);
@@ -195,11 +194,7 @@ export class ResetPasswordComponent {
 
     // Reset password API call - implementation pending
     setTimeout(() => {
-      this.messageService.add({
-        severity: "success",
-        summary: "Success",
-        detail: "Password reset link sent to your email!",
-      });
+      this.toastService.success("Password reset link sent to your email!");
       this.isLoading.set(false);
       setTimeout(() => {
         this.router.navigate(["/login"]);

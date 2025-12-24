@@ -1,4 +1,4 @@
-import { Component, input, OnInit, inject, signal } from "@angular/core";
+import { Component, input, OnInit, inject, signal, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ChartModule } from "primeng/chart";
 import { CardModule } from "primeng/card";
@@ -13,6 +13,7 @@ import { LoggerService } from "../../core/services/logger.service";
 @Component({
   selector: "app-flag-load",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, CardModule, TableModule, ChartModule],
   template: `
     <div

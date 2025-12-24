@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
+import { ScrollingModule } from "@angular/cdk/scrolling";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { Textarea } from "primeng/textarea";
@@ -45,6 +46,7 @@ interface Comment {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
+    ScrollingModule,
     CardModule,
     ButtonModule,
     Textarea,
@@ -107,10 +109,15 @@ interface Comment {
               </div>
             </p-card>
 
-            <!-- Posts Feed -->
-            <div class="posts-feed">
-              @for (post of posts(); track trackByPostId($index, post)) {
-                <p-card class="post-card">
+            <!-- Posts Feed with Virtual Scrolling -->
+            <cdk-virtual-scroll-viewport
+              itemSize="300"
+              class="posts-viewport"
+              [style]="{ height: 'calc(100vh - 400px)', minHeight: '600px' }"
+            >
+              <div class="posts-feed">
+                @for (post of posts(); track trackByPostId($index, post)) {
+                  <p-card class="post-card">
                   <div class="post-header">
                     <p-avatar
                       [label]="post.authorInitials"
@@ -201,7 +208,8 @@ interface Comment {
                   }
                 </p-card>
               }
-            </div>
+              </div>
+            </cdk-virtual-scroll-viewport>
           </div>
 
           <!-- Sidebar -->
@@ -317,10 +325,20 @@ interface Comment {
         gap: var(--space-2);
       }
 
+      .posts-viewport {
+        width: 100%;
+      }
+
+      /* Virtual scroll viewport styling */
+      ::ng-deep .cdk-virtual-scroll-content-wrapper {
+        width: 100%;
+      }
+
       .posts-feed {
         display: flex;
         flex-direction: column;
         gap: var(--space-4);
+        padding: 0 var(--space-2);
       }
 
       .post-card {

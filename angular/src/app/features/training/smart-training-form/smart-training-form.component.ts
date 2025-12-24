@@ -22,7 +22,7 @@ import { ChipModule } from "primeng/chip";
 import { TagModule } from "primeng/tag";
 import { SelectButtonModule } from "primeng/selectbutton";
 import { ToastModule } from "primeng/toast";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../../core/services/toast.service";
 import {
   AIService,
   TrainingSuggestion,
@@ -354,7 +354,7 @@ export class SmartTrainingFormComponent implements OnInit {
   private aiService = inject(AIService);
   private weatherService = inject(WeatherService);
   private authService = inject(AuthService);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
   private logger = inject(LoggerService);
 
   aiSuggestions = signal<TrainingSuggestion[]>([]);
@@ -527,11 +527,7 @@ export class SmartTrainingFormComponent implements OnInit {
 
   applySuggestion(suggestion: TrainingSuggestion) {
     this.trainingForm.patchValue(suggestion.formData);
-    this.messageService.add({
-      severity: "success",
-      summary: "AI Suggestion Applied",
-      detail: suggestion.title + " - " + suggestion.reason,
-    });
+    this.toastService.info(suggestion.title + " - " + suggestion.reason);
   }
 
   getWeatherSeverity(
@@ -545,26 +541,14 @@ export class SmartTrainingFormComponent implements OnInit {
       const formValue = this.trainingForm.value;
       this.logger.debug("Creating training session:", formValue);
       // See issue #7 - Implement training form submission API
-      this.messageService.add({
-        severity: "success",
-        summary: "Training Session Created",
-        detail: "Your training session has been created successfully",
-      });
+      this.toastService.success("Your training session has been created successfully");
     } else {
-      this.messageService.add({
-        severity: "error",
-        summary: "Validation Error",
-        detail: "Please fill in all required fields",
-      });
+      this.toastService.error("Please fill in all required fields");
     }
   }
 
   onCancel() {
     this.trainingForm.reset();
-    this.messageService.add({
-      severity: "info",
-      summary: "Form Reset",
-      detail: "Training session creation cancelled",
-    });
+    this.toastService.info("Training session creation cancelled");
   }
 }

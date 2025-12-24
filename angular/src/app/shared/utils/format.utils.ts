@@ -1,427 +1,278 @@
 /**
- * Data Formatting Utilities
- *
- * Centralized formatting functions following PLAYER_DATA_DISPLAY_LOGIC.md guidelines
- * Ensures consistent number, percentage, date, and stat formatting across the app
+ * String formatting utility functions
  */
 
 /**
- * Format a number with specified decimal places
- * Uses banker's rounding for consistency
- *
- * @param value - Number to format
- * @param decimals - Number of decimal places (default: 0)
- * @param showZero - Whether to show "0" or "N/A" for zero values (default: true)
- * @returns Formatted number string with thousand separators
- *
+ * Capitalize first letter of string
  * @example
- * formatNumber(1234.567, 2) // "1,234.57"
- * formatNumber(0, 0, false) // "N/A"
+ * capitalize('hello') // 'Hello'
  */
-export function formatNumber(
-  value: number | null | undefined,
-  decimals: number = 0,
-  showZero: boolean = true,
-): string {
-  if (value === null || value === undefined || isNaN(value)) {
-    return showZero ? "0" : "N/A";
-  }
+export function capitalize(str: string): string {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
 
-  if (value === 0 && !showZero) {
-    return "N/A";
-  }
+/**
+ * Capitalize first letter of each word
+ * @example
+ * titleCase('hello world') // 'Hello World'
+ */
+export function titleCase(str: string): string {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => capitalize(word))
+    .join(' ');
+}
 
-  // Use banker's rounding for consistency
-  const rounded = roundToDecimals(value, decimals);
+/**
+ * Convert string to camelCase
+ * @example
+ * camelCase('hello world') // 'helloWorld'
+ */
+export function camelCase(str: string): string {
+  return str
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase());
+}
 
-  return rounded.toLocaleString("en-US", {
+/**
+ * Convert string to kebab-case
+ * @example
+ * kebabCase('helloWorld') // 'hello-world'
+ */
+export function kebabCase(str: string): string {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase();
+}
+
+/**
+ * Convert string to snake_case
+ * @example
+ * snakeCase('helloWorld') // 'hello_world'
+ */
+export function snakeCase(str: string): string {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1_$2')
+    .replace(/[\s-]+/g, '_')
+    .toLowerCase();
+}
+
+/**
+ * Truncate string to specified length
+ * @example
+ * truncate('Hello World', 5) // 'Hello...'
+ */
+export function truncate(str: string, length: number, suffix: string = '...'): string {
+  if (str.length <= length) return str;
+  return str.slice(0, length) + suffix;
+}
+
+/**
+ * Truncate to word boundary
+ * @example
+ * truncateWords('Hello world foo bar', 2) // 'Hello world...'
+ */
+export function truncateWords(str: string, count: number, suffix: string = '...'): string {
+  const words = str.split(' ');
+  if (words.length <= count) return str;
+  return words.slice(0, count).join(' ') + suffix;
+}
+
+/**
+ * Remove HTML tags from string
+ * @example
+ * stripHtml('<p>Hello</p>') // 'Hello'
+ */
+export function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, '');
+}
+
+/**
+ * Format number with thousands separator
+ * @example
+ * formatNumber(1234567) // '1,234,567'
+ */
+export function formatNumber(num: number, decimals: number = 0): string {
+  return num.toLocaleString('en-US', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
 }
 
 /**
- * Format a percentage value
- * Always shows 1 decimal place by default (per PLAYER_DATA_DISPLAY_LOGIC.md)
- *
- * @param value - Percentage as decimal (0-1) or already as percentage (0-100)
- * @param decimals - Number of decimal places (default: 1)
- * @param asDecimal - Whether value is already a decimal (0-1) or percentage (0-100) (default: true)
- * @param showZero - Whether to show "0.0%" or "N/A" for zero values (default: true)
- * @returns Formatted percentage string
- *
+ * Format currency
  * @example
- * formatPercentage(0.75) // "75.0%"
- * formatPercentage(75, 1, false) // "75.0%"
- * formatPercentage(0, 1, true, false) // "N/A"
+ * formatCurrency(1234.56) // '$1,234.56'
  */
-export function formatPercentage(
-  value: number | null | undefined,
-  decimals: number = 1,
-  asDecimal: boolean = true,
-  showZero: boolean = true,
+export function formatCurrency(
+  amount: number,
+  currency: string = 'USD',
+  locale: string = 'en-US'
 ): string {
-  if (value === null || value === undefined || isNaN(value)) {
-    return showZero ? "0.0%" : "N/A";
-  }
-
-  if (value === 0 && !showZero) {
-    return "N/A";
-  }
-
-  const percentage = asDecimal ? value * 100 : value;
-  const rounded = roundToDecimals(percentage, decimals);
-
-  return `${rounded.toFixed(decimals)}%`;
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+  }).format(amount);
 }
 
 /**
- * Format an average value (yards per attempt, yards per carry, etc.)
- * Always shows 2 decimal places (per PLAYER_DATA_DISPLAY_LOGIC.md)
- *
- * @param value - Average value to format
- * @param decimals - Number of decimal places (default: 2)
- * @param showZero - Whether to show "0.00" or "N/A" for zero values (default: true)
- * @returns Formatted average string
- *
+ * Format percentage
  * @example
- * formatAverage(12.5) // "12.50"
- * formatAverage(8.456) // "8.46"
- * formatAverage(0, 2, false) // "N/A"
+ * formatPercent(0.1234) // '12.34%'
  */
-export function formatAverage(
-  value: number | null | undefined,
-  decimals: number = 2,
-  showZero: boolean = true,
+export function formatPercent(value: number, decimals: number = 2): string {
+  return `${(value * 100).toFixed(decimals)}%`;
+}
+
+/**
+ * Format file size
+ * @example
+ * formatFileSize(1536) // '1.5 KB'
+ */
+export function formatFileSize(bytes: number): string {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let size = bytes;
+  let unitIndex = 0;
+  
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+  
+  return `${size.toFixed(1)} ${units[unitIndex]}`;
+}
+
+/**
+ * Format phone number (US)
+ * @example
+ * formatPhone('5551234567') // '(555) 123-4567'
+ */
+export function formatPhone(phone: string): string {
+  const cleaned = phone.replace(/\D/g, '');
+  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  
+  if (match) {
+    return `(${match[1]}) ${match[2]}-${match[3]}`;
+  }
+  
+  return phone;
+}
+
+/**
+ * Pluralize word based on count
+ * @example
+ * pluralize('item', 1) // 'item'
+ * pluralize('item', 2) // 'items'
+ */
+export function pluralize(
+  word: string,
+  count: number,
+  plural?: string
 ): string {
-  if (value === null || value === undefined || isNaN(value)) {
-    return showZero ? `0.${"0".repeat(decimals)}` : "N/A";
-  }
-
-  if (value === 0 && !showZero) {
-    return "N/A";
-  }
-
-  const rounded = roundToDecimals(value, decimals);
-  return rounded.toFixed(decimals);
+  if (count === 1) return word;
+  return plural || `${word}s`;
 }
 
 /**
- * Format a stat value based on its type
- * Automatically applies correct formatting based on stat type
- *
- * @param value - Stat value to format
- * @param statType - Type of stat ('percentage' | 'average' | 'whole')
- * @param options - Formatting options
- * @returns Formatted stat string
- *
+ * Generate initials from name
  * @example
- * formatStat(75.5, 'percentage') // "75.5%"
- * formatStat(12.5, 'average') // "12.50"
- * formatStat(1234, 'whole') // "1,234"
+ * getInitials('John Doe') // 'JD'
  */
-export function formatStat(
-  value: number | null | undefined,
-  statType: "percentage" | "average" | "whole",
-  options?: {
-    decimals?: number;
-    showZero?: boolean;
-  },
-): string {
-  const { decimals, showZero = true } = options || {};
-
-  switch (statType) {
-    case "percentage":
-      return formatPercentage(value, decimals, true, showZero);
-    case "average":
-      return formatAverage(value, decimals, showZero);
-    case "whole":
-      return formatNumber(value, 0, showZero);
-    default:
-      return formatNumber(value, 0, showZero);
-  }
+export function getInitials(name: string, maxLength: number = 2): string {
+  return name
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase())
+    .slice(0, maxLength)
+    .join('');
 }
 
 /**
- * Format a date for display
- *
- * @param date - Date to format (Date object, string, or timestamp)
- * @param format - Format style ('short' | 'medium' | 'long' | 'full' | 'time')
- * @returns Formatted date string
- *
+ * Pad string to specific length
  * @example
- * formatDate(new Date(), 'short') // "12/14/25"
- * formatDate(new Date(), 'medium') // "Dec 14, 2025"
- * formatDate(new Date(), 'time') // "3:45 PM"
+ * padStart('5', 3, '0') // '005'
  */
-export function formatDate(
-  date: Date | string | number | null | undefined,
-  format: "short" | "medium" | "long" | "full" | "time" = "medium",
-): string {
-  if (!date) {
-    return "N/A";
-  }
-
-  const dateObj =
-    typeof date === "string" || typeof date === "number"
-      ? new Date(date)
-      : date;
-
-  if (isNaN(dateObj.getTime())) {
-    return "Invalid Date";
-  }
-
-  const formatOptions: Record<string, Intl.DateTimeFormatOptions> = {
-    short: { month: "numeric", day: "numeric", year: "2-digit" },
-    medium: { month: "short", day: "numeric", year: "numeric" },
-    long: { month: "long", day: "numeric", year: "numeric" },
-    full: { weekday: "long", month: "long", day: "numeric", year: "numeric" },
-    time: { hour: "numeric", minute: "2-digit", hour12: true },
-  };
-  const options: Intl.DateTimeFormatOptions = formatOptions[format];
-
-  return dateObj.toLocaleDateString("en-US", options);
+export function padStart(str: string, length: number, char: string = ' '): string {
+  return str.padStart(length, char);
 }
 
 /**
- * Format a date range for display
- *
- * @param startDate - Start date
- * @param endDate - End date
- * @returns Formatted date range string
- *
- * @example
- * formatDateRange(new Date('2025-12-01'), new Date('2025-12-14'))
- * // "Dec 1 - Dec 14, 2025"
+ * Pad string end to specific length
  */
-export function formatDateRange(
-  startDate: Date | string | number | null | undefined,
-  endDate: Date | string | number | null | undefined,
-): string {
-  if (!startDate || !endDate) {
-    return "N/A";
-  }
-
-  const start =
-    typeof startDate === "string" || typeof startDate === "number"
-      ? new Date(startDate)
-      : startDate;
-  const end =
-    typeof endDate === "string" || typeof endDate === "number"
-      ? new Date(endDate)
-      : endDate;
-
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-    return "Invalid Date Range";
-  }
-
-  const startFormatted = start.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-  const endFormatted = end.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  if (start.getFullYear() === end.getFullYear()) {
-    return `${startFormatted} - ${endFormatted}`;
-  }
-
-  return `${start.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  })} - ${endFormatted}`;
+export function padEnd(str: string, length: number, char: string = ' '): string {
+  return str.padEnd(length, char);
 }
 
 /**
- * Round a number to specified decimal places using banker's rounding
- * This ensures consistent rounding across the application
- *
- * @param value - Number to round
- * @param decimals - Number of decimal places
- * @returns Rounded number
- *
+ * Remove extra whitespace
  * @example
- * roundToDecimals(1.25, 1) // 1.2 (banker's rounding)
- * roundToDecimals(1.35, 1) // 1.4 (banker's rounding)
+ * trimWhitespace('  hello   world  ') // 'hello world'
  */
-export function roundToDecimals(value: number, decimals: number): number {
-  if (decimals === 0) {
-    return Math.round(value);
-  }
-
-  const factor = Math.pow(10, decimals);
-  const multiplied = value * factor;
-
-  // Banker's rounding: round to nearest even
-  const rounded = Math.round(multiplied);
-
-  return rounded / factor;
+export function trimWhitespace(str: string): string {
+  return str.replace(/\s+/g, ' ').trim();
 }
 
 /**
- * Format a duration (time span) for display
- *
- * @param minutes - Duration in minutes
- * @returns Formatted duration string
- *
- * @example
- * formatDuration(90) // "1h 30m"
- * formatDuration(45) // "45m"
- * formatDuration(0) // "0m"
+ * Escape HTML special characters
  */
-export function formatDuration(minutes: number | null | undefined): string {
-  if (minutes === null || minutes === undefined || isNaN(minutes)) {
-    return "N/A";
-  }
-
-  if (minutes === 0) {
-    return "0m";
-  }
-
-  const hours = Math.floor(minutes / 60);
-  const mins = Math.floor(minutes % 60);
-
-  if (hours > 0 && mins > 0) {
-    return `${hours}h ${mins}m`;
-  } else if (hours > 0) {
-    return `${hours}h`;
-  } else {
-    return `${mins}m`;
-  }
+export function escapeHtml(str: string): string {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 /**
- * Format a stat value with appropriate unit
- *
- * @param value - Stat value
- * @param unit - Unit to append ('yards' | 'attempts' | 'games' | 'sessions' | etc.)
- * @param decimals - Number of decimal places (default: 0)
- * @returns Formatted stat with unit
- *
- * @example
- * formatStatWithUnit(250, 'yards') // "250 yards"
- * formatStatWithUnit(12.5, 'yards', 2) // "12.50 yards"
+ * Unescape HTML entities
  */
-export function formatStatWithUnit(
-  value: number | null | undefined,
-  unit: string,
-  decimals: number = 0,
-): string {
-  const formatted = formatNumber(value, decimals, true);
-  return formatted === "N/A" ? "N/A" : `${formatted} ${unit}`;
+export function unescapeHtml(str: string): string {
+  const div = document.createElement('div');
+  div.innerHTML = str;
+  return div.textContent || '';
 }
 
 /**
- * Format a completion percentage (specialized for player stats)
- * Always uses 1 decimal place per PLAYER_DATA_DISPLAY_LOGIC.md
- *
- * @param completions - Number of completions
- * @param attempts - Number of attempts
- * @returns Formatted completion percentage
- *
+ * Generate random string
  * @example
- * formatCompletionPercentage(15, 20) // "75.0%"
- * formatCompletionPercentage(0, 0) // "0.0%"
+ * randomString(8) // 'a7x4m9k2'
  */
-export function formatCompletionPercentage(
-  completions: number,
-  attempts: number,
-): string {
-  if (attempts === 0) {
-    return "0.0%";
+export function randomString(length: number): string {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-
-  const percentage = (completions / attempts) * 100;
-  return formatPercentage(percentage / 100, 1, false, true);
+  return result;
 }
 
 /**
- * Format a drop rate (specialized for player stats)
- * Always uses 1 decimal place per PLAYER_DATA_DISPLAY_LOGIC.md
- *
- * @param drops - Number of drops
- * @param targets - Number of targets
- * @returns Formatted drop rate percentage
- *
- * @example
- * formatDropRate(2, 15) // "13.3%"
- * formatDropRate(0, 0) // "0.0%"
+ * Check if string contains substring (case-insensitive)
  */
-export function formatDropRate(drops: number, targets: number): string {
-  if (targets === 0) {
-    return "0.0%";
-  }
-
-  const rate = (drops / targets) * 100;
-  return formatPercentage(rate / 100, 1, false, true);
+export function containsIgnoreCase(str: string, search: string): boolean {
+  return str.toLowerCase().includes(search.toLowerCase());
 }
 
 /**
- * Format yards per attempt (specialized for player stats)
- * Always uses 2 decimal places per PLAYER_DATA_DISPLAY_LOGIC.md
- *
- * @param yards - Total yards
- * @param attempts - Number of attempts
- * @returns Formatted yards per attempt
- *
- * @example
- * formatYardsPerAttempt(250, 20) // "12.50"
- * formatYardsPerAttempt(0, 0) // "0.00"
+ * Reverse string
  */
-export function formatYardsPerAttempt(yards: number, attempts: number): string {
-  if (attempts === 0) {
-    return "0.00";
-  }
-
-  const avg = yards / attempts;
-  return formatAverage(avg, 2, true);
+export function reverse(str: string): string {
+  return str.split('').reverse().join('');
 }
 
 /**
- * Format yards per carry (specialized for player stats)
- * Always uses 2 decimal places per PLAYER_DATA_DISPLAY_LOGIC.md
- *
- * @param yards - Total rushing yards
- * @param carries - Number of carries
- * @returns Formatted yards per carry
- *
- * @example
- * formatYardsPerCarry(85, 10) // "8.50"
- * formatYardsPerCarry(0, 0) // "0.00"
+ * Count words in string
  */
-export function formatYardsPerCarry(yards: number, carries: number): string {
-  if (carries === 0) {
-    return "0.00";
-  }
-
-  const avg = yards / carries;
-  return formatAverage(avg, 2, true);
+export function wordCount(str: string): number {
+  return str.trim().split(/\s+/).length;
 }
 
 /**
- * Format flag pull success rate (specialized for player stats)
- * Always uses 1 decimal place per PLAYER_DATA_DISPLAY_LOGIC.md
- *
- * @param pulls - Number of successful flag pulls
- * @param attempts - Number of flag pull attempts
- * @returns Formatted success rate percentage
- *
+ * Mask string (e.g., credit card, email)
  * @example
- * formatFlagPullSuccessRate(8, 12) // "66.7%"
- * formatFlagPullSuccessRate(0, 0) // "0.0%"
+ * mask('1234567890', 6, '*') // '123456****'
  */
-export function formatFlagPullSuccessRate(
-  pulls: number,
-  attempts: number,
-): string {
-  if (attempts === 0) {
-    return "0.0%";
-  }
-
-  const rate = (pulls / attempts) * 100;
-  return formatPercentage(rate / 100, 1, false, true);
+export function mask(str: string, visibleChars: number, maskChar: string = '*'): string {
+  if (str.length <= visibleChars) return str;
+  return str.slice(0, visibleChars) + maskChar.repeat(str.length - visibleChars);
 }

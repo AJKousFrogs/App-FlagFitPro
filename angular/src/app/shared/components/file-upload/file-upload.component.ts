@@ -93,7 +93,7 @@ export interface UploadedFile {
                       (click)="removeFile(file)"
                       [attr.aria-label]="'Remove ' + file.name"
                     >
-                      <i class="pi pi-times"></i>
+                      <i class="pi pi-times" aria-hidden="true"></i>
                     </button>
                   }
                 </div>
