@@ -517,13 +517,13 @@ function addChannelToSidebar(channel) {
   channelItem.setAttribute("tabindex", "0");
   channelItem.setAttribute("aria-label", `Channel: ${channel.name}`);
 
-  channelItem.innerHTML = `
+  setSafeContent(channelItem, `
     <span class="channel-icon">#</span>
     <div class="channel-info">
       <div class="channel-name">${channel.name}</div>
       ${channel.description ? `<div class="channel-preview">${escapeHtml(channel.description)}</div>` : ""}
     </div>
-  `;
+  `, true, true);
 
   // Add click handler
   channelItem.addEventListener("click", function () {
@@ -706,7 +706,7 @@ function updateMessagesContainer(messages) {
       msg.authorName || msg.author || "Unknown",
     );
 
-    messageDiv.innerHTML = `
+    setSafeContent(messageDiv, `
       <div class="message-avatar">${getInitials(safeAuthorName)}</div>
       <div class="message-content">
         <div class="message-header">
@@ -717,7 +717,7 @@ function updateMessagesContainer(messages) {
         ${statusHtml}
         ${actionsHtml}
       </div>
-    `;
+    `, true, true);
 
     fragment.appendChild(messageDiv);
   });
@@ -745,7 +745,7 @@ async function sendMessage() {
 
   // Show loading state with accessibility
   const originalBtnText = sendBtn.innerHTML;
-  sendBtn.innerHTML = '<span aria-hidden="true">⏳</span>';
+  setSafeContent(sendBtn, '<span aria-hidden="true">⏳</span>', true, true);
   sendBtn.disabled = true;
   sendBtn.setAttribute("aria-label", "Sending message...");
 
@@ -950,7 +950,7 @@ function addMessageToUI(message, isOwn = false) {
     : "";
   const actionsHtml = getMessageActionsHtml(isOwn);
 
-  messageDiv.innerHTML = `
+  setSafeContent(messageDiv, `
           <div class="message-avatar">${getInitials(message.authorName)}</div>
           <div class="message-content">
               <div class="message-header">
@@ -961,7 +961,7 @@ function addMessageToUI(message, isOwn = false) {
               ${statusHtml}
               ${actionsHtml}
           </div>
-      `;
+      `, true, true);
 
   container.appendChild(messageDiv);
 
@@ -1036,7 +1036,7 @@ function updateMessageStatus(status) {
       const icon = statusIcons[status] || "check";
       const statusClass = statusClasses[status] || "status-sent";
 
-      statusDiv.innerHTML = `<i data-lucide="${icon}" class="${statusClass} icon-14"></i>`;
+      setSafeContent(statusDiv, `<i data-lucide="${icon}" class="${statusClass} icon-14"></i>`, true, true);
 
       // Re-initialize Lucide icons
       if (typeof lucide !== "undefined") {

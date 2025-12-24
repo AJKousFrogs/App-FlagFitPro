@@ -150,7 +150,7 @@ export class ExerciseLibraryPage {
     const prevDisabled = this.currentPage === 0 ? "disabled" : "";
     const nextDisabled = this.currentPage >= totalPages - 1 ? "disabled" : "";
 
-    paginationContainer.innerHTML = `
+    setSafeContent(paginationContainer, `
       <div class="pagination-info">
         Showing ${this.currentPage * this.itemsPerPage + 1}-${Math.min(
           (this.currentPage + 1) * this.itemsPerPage,
@@ -168,7 +168,7 @@ export class ExerciseLibraryPage {
           <i data-lucide="chevron-right"></i>
         </button>
       </div>
-    `;
+    `, true, true);
 
     // Add event listeners for pagination buttons
     const handlePaginationClick = (e) => {
@@ -297,7 +297,7 @@ export class ExerciseLibraryPage {
     const equipment = (exercise.equipment || []).slice(0, 2).join(", ");
     const equipmentMore = (exercise.equipment || []).length > 2 ? "..." : "";
 
-    card.innerHTML = `
+    setSafeContent(card, `
       <div class="exercise-video">${icon}</div>
       <div class="exercise-content">
         <div class="exercise-header">
@@ -319,7 +319,7 @@ export class ExerciseLibraryPage {
           <div class="equipment-list">${equipment}${equipmentMore}</div>
         </div>
       </div>
-    `;
+    `, true, true);
 
     return card;
   }
@@ -413,13 +413,13 @@ export class ExerciseLibraryPage {
     if (!exerciseGrid) {
       return;
     }
-    exerciseGrid.innerHTML = `
+    setSafeContent(exerciseGrid, `
       <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-error);">
         <div style="font-size: 2rem; margin-bottom: var(--space-4);">❌</div>
         <h3>${this.escapeHtml(message)}</h3>
         <p>Please refresh the page or try again later</p>
       </div>
-    `;
+    `, true, true);
   }
 
   openExerciseModal(name) {
@@ -441,13 +441,13 @@ export class ExerciseLibraryPage {
     modalTitle.textContent = name;
     // SECURITY: Sanitize exercise category to prevent XSS
     const safeCategory = escapeHtml(exercise.category || "");
-    modalCategory.innerHTML = `<span class="exercise-category">${safeCategory}</span>`;
+    setSafeContent(modalCategory, `<span class="exercise-category">${safeCategory}</span>`, true, true);
 
     // Use DocumentFragment for modal content
     const fragment = document.createDocumentFragment();
     const tempDiv = document.createElement("div");
 
-    tempDiv.innerHTML = `
+    setSafeContent(tempDiv, `
       <div class="exercise-video" style="margin-bottom: var(--space-6);">
         ${this.getExerciseIcon(exercise.category)}
         <div style="position: absolute; bottom: var(--space-2); right: var(--space-2); background: rgba(0,0,0,0.7); color: var(--color-text-primary); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-xs);">
@@ -516,7 +516,7 @@ export class ExerciseLibraryPage {
       `
           : ""
       }
-    `;
+    `, true, true);
 
     while (tempDiv.firstChild) {
       fragment.appendChild(tempDiv.firstChild);

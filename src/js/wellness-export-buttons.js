@@ -202,7 +202,7 @@ import { setSafeContent } from './utils/shared.js';
     const btn = event.target.closest(".export-btn");
     const originalHTML = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = "<span>⏳ Generating PDF...</span>";
+    setSafeContent(btn, "<span>⏳ Generating PDF...</span>", true, true);
 
     // Export with slight delay for UI feedback
     setTimeout(async () => {
@@ -210,16 +210,16 @@ import { setSafeContent } from './utils/shared.js';
         await window.exportService.exportWellnessToPDF(wellnessHistory);
 
       if (success) {
-        btn.innerHTML = "<span>✅ PDF Downloaded!</span>";
+        setSafeContent(btn, "<span>✅ PDF Downloaded!</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          btn.innerHTML = originalHTML;
+          setSafeContent(btn, originalHTML, true, true);
         }, 2000);
       } else {
-        btn.innerHTML = "<span>❌ Export Failed</span>";
+        setSafeContent(btn, "<span>❌ Export Failed</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          btn.innerHTML = originalHTML;
+          setSafeContent(btn, originalHTML, true, true);
         }, 2000);
       }
     }, 300);
@@ -243,7 +243,7 @@ import { setSafeContent } from './utils/shared.js';
     const btn = event.target.closest(".export-btn");
     const originalHTML = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = "<span>⏳ Generating CSV...</span>";
+    setSafeContent(btn, "<span>⏳ Generating CSV...</span>", true, true);
 
     // Format data for CSV
     const csvData = wellnessHistory.map((entry) => ({
@@ -266,16 +266,16 @@ import { setSafeContent } from './utils/shared.js';
       );
 
       if (success) {
-        btn.innerHTML = "<span>✅ CSV Downloaded!</span>";
+        setSafeContent(btn, "<span>✅ CSV Downloaded!</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          btn.innerHTML = originalHTML;
+          setSafeContent(btn, originalHTML, true, true);
         }, 2000);
       } else {
-        btn.innerHTML = "<span>❌ Export Failed</span>";
+        setSafeContent(btn, "<span>❌ Export Failed</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          btn.innerHTML = originalHTML;
+          setSafeContent(btn, originalHTML, true, true);
         }, 2000);
       }
     }, 300);

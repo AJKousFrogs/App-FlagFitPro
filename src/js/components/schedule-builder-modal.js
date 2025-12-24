@@ -7,7 +7,7 @@
 import Modal from "./modal.js";
 import { scheduleFileParser } from "../services/scheduleFileParser.js";
 import { storageService } from "../services/storage-service-unified.js";
-
+import { setSafeContent } from "../utils/shared.js";
 import { logger } from '../../logger.js';
 
 class ScheduleBuilderModal extends Modal {
@@ -531,14 +531,14 @@ class ScheduleBuilderModal extends Modal {
         if (this.selectedGameDays.has(date)) {
           dayEl.classList.add("selected");
           if (!dayEl.querySelector("i[data-lucide='check']")) {
-            dayEl.innerHTML = `${dayEl.getAttribute("data-day")} <i data-lucide="check" style="width: 14px; height: 14px;"></i>`;
+            setSafeContent(dayEl, `${dayEl.getAttribute("data-day")} <i data-lucide="check" style="width: 14px; height: 14px;"></i>`, true, true);
             if (typeof lucide !== "undefined") {
               lucide.createIcons();
             }
           }
         } else {
           dayEl.classList.remove("selected");
-          dayEl.innerHTML = dayEl.getAttribute("data-day");
+          setSafeContent(dayEl, dayEl.getAttribute("data-day"), true, true);
         }
       }
     });
@@ -657,7 +657,7 @@ class ScheduleBuilderModal extends Modal {
         }
 
         previewHTML += "</ul></div>";
-        uploadPreview.innerHTML = previewHTML;
+        setSafeContent(uploadPreview, previewHTML, true, true);
       }
 
       // Update selected game days from uploaded schedule
@@ -676,7 +676,7 @@ class ScheduleBuilderModal extends Modal {
       fileStats.style.color = "var(--color-error, #ef4444)";
 
       if (uploadPreview) {
-        uploadPreview.innerHTML = `<div style='color: var(--color-error, #ef4444); margin-top: var(--space-2);'>${error.message}</div>`;
+        setSafeContent(uploadPreview, `<div style='color: var(--color-error, #ef4444); margin-top: var(--space-2);'>${error.message}</div>`, true, true);
       }
     }
   }
@@ -756,8 +756,8 @@ class ScheduleBuilderModal extends Modal {
     const successMsg = document.createElement("div");
     successMsg.style.cssText =
       "position: fixed; top: 20px; right: 20px; background: var(--color-success); color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: var(--shadow-lg); z-index: 9999;";
-    successMsg.innerHTML =
-      '<i data-lucide="check-circle" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i> Schedule saved successfully!';
+    setSafeContent(successMsg,
+      '<i data-lucide="check-circle" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i> Schedule saved successfully!', true, true);
     document.body.appendChild(successMsg);
 
     if (typeof lucide !== "undefined") {
