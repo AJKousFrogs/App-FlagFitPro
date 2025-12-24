@@ -945,7 +945,7 @@ class FlagFitChatbot {
     const progressBar = document.createElement("div");
     progressBar.className = "chatbot-progress-bar";
     progressBar.id = "chatbot-progress";
-    progressBar.innerHTML = '<div class="chatbot-progress-fill"></div>';
+    setSafeContent(progressBar, '<div class="chatbot-progress-fill"></div>', true, true);
 
     const typingIndicator = document.getElementById("typing-indicator");
     if (typingIndicator) {
@@ -981,12 +981,12 @@ class FlagFitChatbot {
     errorDiv.id = "chatbot-error-message";
     errorDiv.className = "chatbot-error-message";
     errorDiv.setAttribute("role", "alert");
-    errorDiv.innerHTML = `
+    setSafeContent(errorDiv, `
       <div class="error-content">
         <span class="error-icon">⚠️</span>
         <span class="error-text">${this.escapeHtml(message)}</span>
       </div>
-    `;
+    `, true, true);
 
     messagesContainer.appendChild(errorDiv);
     this.scrollToBottom();
@@ -1588,19 +1588,19 @@ class FlagFitChatbot {
     messageDiv.className = `chatbot-message ${type}-message`;
 
     if (type === "user") {
-      messageDiv.innerHTML = `
+      setSafeContent(messageDiv, `
         <div class="message-content">
           <div class="message-text">${this.escapeHtml(text)}</div>
         </div>
         <div class="message-avatar">You</div>
-      `;
+      `, true, true);
     } else {
-      messageDiv.innerHTML = `
+      setSafeContent(messageDiv, `
         <div class="message-avatar">🤖</div>
         <div class="message-content">
           <div class="message-text">${this.formatBotMessage(text)}</div>
         </div>
-      `;
+      `, true, true);
     }
 
     messagesContainer.appendChild(messageDiv);
