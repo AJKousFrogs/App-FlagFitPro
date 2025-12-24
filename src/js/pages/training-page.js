@@ -11,6 +11,7 @@ import {
   announceToScreenReader,
   debounce,
 } from "../utils/shared.js";
+import { escapeHtml } from "../utils/sanitize.js";
 import TrainingVideoComponent from "../../training-video-component.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 // Services
@@ -866,7 +867,7 @@ function createTrainingPlanModal(title, plan) {
   header.appendChild(closeBtn);
 
   const content = document.createElement("div");
-  content.innerHTML = formatTrainingPlan(plan);
+  setSafeContent(content, formatTrainingPlan(plan), true, true);
 
   modalContent.appendChild(header);
   modalContent.appendChild(content);
@@ -898,9 +899,9 @@ function formatTrainingPlan(plan) {
 
   plan.focusAreas.forEach((area) => {
     if (typeof area === "string") {
-      html += `<li>${area}</li>`;
+      html += `<li>${escapeHtml(area)}</li>`;
     } else if (area.name) {
-      html += `<li><strong>${area.name}</strong>: ${area.description || "Specialized training focus"}</li>`;
+      html += `<li><strong>${escapeHtml(area.name)}</strong>: ${escapeHtml(area.description || "Specialized training focus")}</li>`;
     }
   });
 

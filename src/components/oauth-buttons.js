@@ -1,4 +1,5 @@
 import { logger } from '../logger.js';
+import { setSafeContent } from '../src/js/utils/shared.js';
 
 // OAuth Buttons Component for Social Login
 // Handles Google, Facebook, and Apple authentication with role selection
@@ -86,7 +87,7 @@ export class OAuthButtons {
       </div>
     `;
 
-    this.container.innerHTML = html;
+    setSafeContent(this.container, html, true, true);
     this.attachEventListeners();
   }
 

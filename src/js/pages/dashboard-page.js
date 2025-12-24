@@ -400,7 +400,7 @@ class DashboardPage {
     const notificationList = document.getElementById("notification-list");
     if (!notificationList) {return;}
 
-    notificationList.innerHTML = `
+    setSafeContent(notificationList, `
       <div class="notification-error">
         <div class="notification-error-icon">⚠️</div>
         <div class="notification-error-text">${escapeHtml(error)}</div>
@@ -408,7 +408,7 @@ class DashboardPage {
           Retry
         </button>
       </div>
-    `;
+    `, true, true);
   }
 
   /**
@@ -876,7 +876,7 @@ class DashboardPage {
       return;
     }
 
-    notificationList.innerHTML = notifications
+    setSafeContent(notificationList, notifications
       .map(
         (notif) => `
       <div class="notification-item ${notif.read ? "read" : ""} ${notif.new ? "new" : ""}" data-id="${escapeHtml(notif.id)}">
@@ -893,7 +893,7 @@ class DashboardPage {
       </div>
     `,
       )
-      .join("");
+      .join(""), true, true);
 
     // Add click handlers for mark as read
     notificationList
@@ -1895,8 +1895,8 @@ class DashboardPage {
 
     // Disable button and show loading
     button.disabled = true;
-    button.innerHTML =
-      '<i data-lucide="loader-2" class="icon-16 icon-inline"></i> Saving...';
+    setSafeContent(button,
+      '<i data-lucide="loader-2" class="icon-16 icon-inline"></i> Saving...', true, true);
 
     try {
       const user = authManager.getCurrentUser();
@@ -1999,13 +1999,13 @@ class DashboardPage {
     }
 
     if (this.injuries.length === 0) {
-      container.innerHTML =
-        '<p class="injury-description" style="margin: 0; color: var(--color-text-tertiary);">No active injuries reported.</p>';
+      setSafeContent(container,
+        '<p class="injury-description" style="margin: 0; color: var(--color-text-tertiary);">No active injuries reported.</p>', true, true);
       return;
     }
 
     // SECURITY: Sanitize all user-provided injury data before rendering
-    container.innerHTML = this.injuries
+    setSafeContent(container, this.injuries
       .map((injury) => {
         const statusClass =
           injury.status === "recovered"
@@ -2052,7 +2052,7 @@ class DashboardPage {
         </div>
       `;
       })
-      .join("");
+      .join(""), true, true);
 
     // Add event listeners for mark recovered buttons
     container.querySelectorAll(".btn-mark-recovered").forEach((btn) => {

@@ -225,14 +225,14 @@ import { setSafeContent } from './utils/shared.js';
 
         if (granted) {
           // Show success message
-          modal.querySelector(".notification-prompt-content").innerHTML = `
+          setSafeContent(modal.querySelector(".notification-prompt-content"), `
           <div class="notification-prompt-icon">✅</div>
           <h3>You're all set!</h3>
           <p>You'll receive daily wellness reminders at 9:00 PM.</p>
           <button class="btn-primary" onclick="this.closest('.notification-prompt-modal').remove()">
             Got it!
           </button>
-        `;
+        `, true, true);
 
           // Auto-close after 2 seconds
           setTimeout(() => {

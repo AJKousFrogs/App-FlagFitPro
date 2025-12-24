@@ -3,6 +3,8 @@
  * Reusable modal component with accessibility features
  */
 
+import { setSafeContent } from '../utils/shared.js';
+
 class Modal {
   constructor(options = {}) {
     this.id = options.id || `modal-${Date.now()}`;
@@ -56,7 +58,7 @@ class Modal {
     // Create modal element
     const modalHTML = this.createHTML();
     const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = modalHTML;
+    setSafeContent(tempDiv, modalHTML, true, true);
     this.modalElement = tempDiv.firstElementChild;
 
     // Add to DOM
