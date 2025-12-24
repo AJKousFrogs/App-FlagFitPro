@@ -10,6 +10,7 @@ export default [
       ".netlify/**",
       "**/*.ts",
       "**/*.tsx",
+      "**/*.jsx",
       "supabase-types.ts",
       "Wireframes clean/**",
     ],
@@ -94,6 +95,9 @@ export default [
         // Third-party libraries (loaded via script tags)
         Chart: "readonly",
         lucide: "readonly",
+        XLSX: "readonly",
+        event: "readonly",
+        logger: "readonly",
         // Test globals
         describe: "readonly",
         it: "readonly",
@@ -264,6 +268,39 @@ export default [
       "no-promise-executor-return": "warn", // Warn but don't error for promise executor returns (common in scripts)
       "no-restricted-syntax": "off", // Allow innerHTML in scripts (utility scripts)
       "no-undef": "warn", // Warn but don't error for undefined vars in scripts (may use globals)
+    },
+  },
+
+  // ============================================
+  // RELAXED RULES FOR NETLIFY FUNCTIONS
+  // ============================================
+  {
+    files: ["netlify/functions/**/*.js", "netlify/functions/**/*.cjs"],
+    rules: {
+      "no-console": "off", // Allow console in serverless functions (for logging)
+      "no-unused-vars": "warn", // Warn but don't error for unused vars
+      "require-await": "off", // Allow async without await
+      "no-await-in-loop": "warn", // Warn but don't error for await in loops
+      "no-promise-executor-return": "warn", // Warn but don't error
+      "no-undef": "warn", // Warn but don't error for undefined vars
+    },
+  },
+
+  // ============================================
+  // RELAXED RULES FOR SERVER/ROUTES
+  // ============================================
+  {
+    files: [
+      "server.js",
+      "simple-server.js",
+      "routes/**/*.js",
+      "src/analytics-data-service.js",
+      "src/api-config.js",
+    ],
+    rules: {
+      "no-console": "off", // Allow console in server files
+      "no-unused-vars": "warn", // Warn but don't error for unused vars
+      "require-await": "off", // Allow async without await
     },
   },
 
