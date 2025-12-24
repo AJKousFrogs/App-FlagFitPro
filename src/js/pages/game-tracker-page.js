@@ -344,7 +344,7 @@ class GameTrackerPage {
       return;
     }
 
-    gamesList.innerHTML = games
+    setSafeContent(gamesList, games
       .map((game) => {
         const result = this.determineGameResult(game);
         return `
@@ -389,7 +389,7 @@ class GameTrackerPage {
         </div>
       `;
       })
-      .join("");
+      .join(""), true, true);
 
     lucide.createIcons();
   }
@@ -694,7 +694,7 @@ class GameTrackerPage {
     // Show last 10 plays, most recent first
     const recentPlays = [...this.plays].reverse().slice(0, 10);
 
-    recentPlaysList.innerHTML = recentPlays
+    setSafeContent(recentPlaysList, recentPlays
       .map((play) => {
         const badge = this.getPlayBadge(play);
         const description = this.getPlayDescription(play);
@@ -717,7 +717,7 @@ class GameTrackerPage {
         </div>
       `;
       })
-      .join("");
+      .join(""), true, true);
 
     lucide.createIcons();
   }

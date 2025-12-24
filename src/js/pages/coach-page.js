@@ -114,9 +114,9 @@ async function initCoachDashboard() {
 function loadPlayers() {
   const playersGrid = document.getElementById("playersGrid");
   if (playersGrid) {
-    playersGrid.innerHTML = playersData
+    setSafeContent(playersGrid, playersData
       .map((player) => createPlayerCard(player))
-      .join("");
+      .join(""), true, true);
   }
 }
 
@@ -347,7 +347,7 @@ function showPlayerStatsModal(player) {
             justify-content: center; z-index: var(--z-index-modal, 1400);
         `;
 
-  modal.innerHTML = `
+  setSafeContent(modal, `
             <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%;">
                 <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">${player.name} - Performance Stats</h3>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;">
@@ -376,7 +376,7 @@ function showPlayerStatsModal(player) {
                     <button onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; background: var(--primary); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: pointer;">Close</button>
                 </div>
             </div>
-        `;
+        `, true, true);
 
   document.body.appendChild(modal);
 }
