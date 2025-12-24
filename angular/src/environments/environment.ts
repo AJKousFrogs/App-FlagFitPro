@@ -8,20 +8,9 @@ export const environment = {
   production: false,
   apiUrl: "http://localhost:3001", // Backend API server
   supabase: {
-    // These will be replaced during build via Angular's file replacement
-    // For local dev, check window._env (set by dev server) or use build script
-    // Fallback to empty string - SupabaseService should handle missing config gracefully
-    url:
-      (typeof window !== "undefined" && (window as any)._env?.SUPABASE_URL) ||
-      (typeof window !== "undefined" &&
-        (window as any)._env?.VITE_SUPABASE_URL) ||
-      "",
-    anonKey:
-      (typeof window !== "undefined" &&
-        (window as any)._env?.SUPABASE_ANON_KEY) ||
-      (typeof window !== "undefined" &&
-        (window as any)._env?.VITE_SUPABASE_ANON_KEY) ||
-      "",
+    // Development credentials (safe to commit - public anon key)
+    url: "https://pvziciccwxgftcielknm.supabase.co",
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU",
   },
   // Angular DevTools configuration
   devtools: {

@@ -36,25 +36,6 @@ import { qbTraining } from "../../training-modules/qb-training.js";
 import { dbTraining } from "../../training-modules/db-training.js";
 import { logger } from "../../logger.js";
 import { storageService } from "../services/storage-service-unified.js";
-// #region agent log
-fetch("http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    location: "training-page.js:36",
-    message: "storageService imported",
-    data: {
-      storageServiceType: typeof storageService,
-      storageServiceExists: !!storageService,
-      isInstance: storageService?.constructor?.name,
-    },
-    timestamp: Date.now(),
-    sessionId: "debug-session",
-    runId: "run1",
-    hypothesisId: "B",
-  }),
-}).catch(() => {});
-// #endregion
 
 // Initialize training page
 document.addEventListener("DOMContentLoaded", async function () {
@@ -226,32 +207,6 @@ async function initializePageState() {
   trainingPageState.setWeeklySchedule(weeklySchedule);
 
   // Load program states
-  // #region agent log
-  fetch("http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      location: "training-page.js:200",
-      message: "Before getOffseasonProgram check",
-      data: {
-        storageServiceExists: !!storageService,
-        storageServiceType: typeof storageService,
-        hasGetOffseasonProgram: !!storageService?.getOffseasonProgram,
-        getOffseasonProgramType: typeof storageService?.getOffseasonProgram,
-        storageServiceConstructor: storageService?.constructor?.name,
-        prototypeMethods: storageService
-          ? Object.getOwnPropertyNames(
-              Object.getPrototypeOf(storageService),
-            ).filter((m) => typeof storageService[m] === "function")
-          : "N/A",
-      },
-      timestamp: Date.now(),
-      sessionId: "debug-session",
-      runId: "post-fix",
-      hypothesisId: "C",
-    }),
-  }).catch(() => {});
-  // #endregion
   let currentProgram = null;
   // Use a more defensive approach: check method exists and wrap in try-catch
   try {
@@ -260,53 +215,9 @@ async function initializePageState() {
       storageService.getOffseasonProgram &&
       typeof storageService.getOffseasonProgram === "function"
     ) {
-      // #region agent log
-      fetch(
-        "http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            location: "training-page.js:204",
-            message: "Calling getOffseasonProgram",
-            data: {
-              storageServiceExists: !!storageService,
-              getOffseasonProgramType:
-                typeof storageService?.getOffseasonProgram,
-            },
-            timestamp: Date.now(),
-            sessionId: "debug-session",
-            runId: "post-fix",
-            hypothesisId: "C",
-          }),
-        },
-      ).catch(() => {});
-      // #endregion
       currentProgram = storageService.getOffseasonProgram();
     } else {
       // Fallback: use generic get method if getOffseasonProgram doesn't exist
-      // #region agent log
-      fetch(
-        "http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            location: "training-page.js:208",
-            message: "getOffseasonProgram not available, using fallback",
-            data: {
-              storageServiceExists: !!storageService,
-              hasGetMethod: !!storageService?.get,
-              getMethodType: typeof storageService?.get,
-            },
-            timestamp: Date.now(),
-            sessionId: "debug-session",
-            runId: "post-fix",
-            hypothesisId: "C",
-          }),
-        },
-      ).catch(() => {});
-      // #endregion
       if (
         storageService &&
         storageService.get &&
@@ -322,25 +233,6 @@ async function initializePageState() {
       }
     }
   } catch (error) {
-    // #region agent log
-    fetch("http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        location: "training-page.js:215",
-        message: "Error loading offseason program",
-        data: {
-          errorName: error?.name,
-          errorMessage: error?.message,
-          errorStack: error?.stack?.substring(0, 500),
-        },
-        timestamp: Date.now(),
-        sessionId: "debug-session",
-        runId: "post-fix",
-        hypothesisId: "C",
-      }),
-    }).catch(() => {});
-    // #endregion
     logger.error("Error loading offseason program:", error);
   }
 
