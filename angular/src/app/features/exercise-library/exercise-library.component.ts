@@ -339,7 +339,7 @@ export class ExerciseLibraryComponent implements OnInit {
     this.totalExercises.set(filtered.length);
   }
 
-  onPageChange(event: any): void {
+  onPageChange(event: { page: number; rows: number }): void {
     this.currentPage = event.page;
     this.itemsPerPage = event.rows;
   }

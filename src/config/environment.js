@@ -51,40 +51,33 @@ const getEnvVar = (key, defaultValue = "") => {
 };
 
 // Environment-specific configurations
+// NOTE: This project uses SUPABASE as the ONLY database system.
+// All database operations are handled through Supabase API.
 const configs = {
   development: {
     API_BASE_URL: getEnvVar("API_BASE_URL", ""), // Use Netlify Functions or configured API
-    DATABASE_URL: "http://localhost:5432",
     ENABLE_MOCK_AUTH: false, // Use real authentication
     ENABLE_DEBUG_LOGS: true,
     ENABLE_ANALYTICS: false,
     YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),
-    POCKETBASE_URL: getEnvVar("POCKETBASE_URL", "http://localhost:8090"),
-    NEON_DATABASE_URL: getEnvVar("NEON_DATABASE_URL", ""),
     ENABLE_SECURE_STORAGE: false, // Disable for local dev
   },
 
   staging: {
     API_BASE_URL: getEnvVar("REACT_APP_API_URL", ""), // Use Netlify Functions (relative URLs)
-    DATABASE_URL: getEnvVar("DATABASE_URL", ""),
     ENABLE_MOCK_AUTH: false,
     ENABLE_DEBUG_LOGS: true,
     ENABLE_ANALYTICS: true,
     YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),
-    POCKETBASE_URL: getEnvVar("POCKETBASE_URL", ""),
-    NEON_DATABASE_URL: getEnvVar("NEON_DATABASE_URL", ""),
     ENABLE_SECURE_STORAGE: true,
   },
 
   production: {
     API_BASE_URL: getEnvVar("REACT_APP_API_URL", ""), // Use Netlify Functions (relative URLs)
-    DATABASE_URL: getEnvVar("DATABASE_URL", ""),
     ENABLE_MOCK_AUTH: false,
     ENABLE_DEBUG_LOGS: false,
     ENABLE_ANALYTICS: true,
     YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),
-    POCKETBASE_URL: getEnvVar("POCKETBASE_URL", ""),
-    NEON_DATABASE_URL: getEnvVar("NEON_DATABASE_URL", ""),
     ENABLE_SECURE_STORAGE: true,
   },
 };
@@ -97,8 +90,8 @@ const validateConfig = () => {
   const warnings = [];
 
   if (ENV === "production") {
-    // Note: DATABASE_URL and POCKETBASE_URL are backend-only variables
-    // They should be configured in Netlify Functions, not frontend
+    // Note: Supabase credentials are configured in Angular environment files
+    // and Netlify Functions, not in this legacy frontend config
     if (!config.API_BASE_URL) {
       warnings.push("API_BASE_URL not configured, using default");
     }

@@ -18,9 +18,27 @@ import { LoggerService } from "../../../core/services/logger.service";
 
 export interface ProgressiveStatItem extends StatItem {
   id: string;
-  trendData?: any;
-  breakdownData?: any;
-  benchmarkData?: any;
+  trendData?: {
+    labels: string[];
+    datasets: Array<{
+      label: string;
+      data: number[];
+      [key: string]: unknown;
+    }>;
+  };
+  breakdownData?: {
+    labels: string[];
+    datasets: Array<{
+      label: string;
+      data: number[];
+      [key: string]: unknown;
+    }>;
+  };
+  benchmarkData?: Array<{
+    label: string;
+    value: string | number;
+    comparison: string;
+  }>;
 }
 
 @Component({
@@ -345,7 +363,7 @@ export interface ProgressiveStatItem extends StatItem {
 export class ProgressiveStatsComponent {
   // Angular 21: Use input() signal instead of @Input()
   stats = input<ProgressiveStatItem[]>([]);
-  chartOptions = input<any>(DEFAULT_CHART_OPTIONS);
+  chartOptions = input<Record<string, unknown>>(DEFAULT_CHART_OPTIONS);
   private logger = inject(LoggerService);
 
   expandedStat = signal<string | null>(null);

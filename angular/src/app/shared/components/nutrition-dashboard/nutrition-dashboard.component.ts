@@ -22,6 +22,37 @@ import {
 import { firstValueFrom } from "rxjs";
 import { LoggerService } from "../../../core/services/logger.service";
 
+interface FoodItem {
+  name: string;
+  amount: number;
+  unit: string;
+}
+
+interface Meal {
+  type: string;
+  timestamp: Date;
+  totalCalories: number;
+  foods: FoodItem[];
+  carbs: number;
+  protein: number;
+  fat: number;
+}
+
+interface AISuggestion {
+  name: string;
+  priority: string;
+  benefit: string;
+  food: unknown;
+}
+
+interface PerformanceInsight {
+  title: string;
+  description: string;
+  type: string;
+  icon: string;
+  actionLabel?: string;
+}
+
 @Component({
   selector: "app-nutrition-dashboard",
   standalone: true,
@@ -497,10 +528,10 @@ export class NutritionDashboardComponent {
   private nutritionService = inject(NutritionService);
   private logger = inject(LoggerService);
 
-  selectedFood: any = null;
-  foodSuggestions = signal<any[]>([]);
+  selectedFood: unknown = null;
+  foodSuggestions = signal<unknown[]>([]);
   nutritionGoals = signal<NutritionGoal[]>([]);
-  todaysMeals = signal<any[]>([]);
+  todaysMeals = signal<Meal[]>([]);
 
   constructor() {
     // Angular 21: Initialize in constructor instead of OnInit
@@ -509,8 +540,8 @@ export class NutritionDashboardComponent {
     this.loadAISuggestions();
     this.loadPerformanceInsights();
   }
-  aiSuggestions = signal<any[]>([]);
-  performanceInsights = signal<any[]>([]);
+  aiSuggestions = signal<AISuggestion[]>([]);
+  performanceInsights = signal<PerformanceInsight[]>([]);
 
   doughnutOptions = {
     responsive: true,
@@ -520,7 +551,7 @@ export class NutritionDashboardComponent {
     },
   };
 
-  async searchFoods(event: any) {
+  async searchFoods(event: { query: string }) {
     // Search USDA FoodData Central database
     const results = await firstValueFrom(
       this.nutritionService.searchUSDAFoods(event.query),
@@ -540,7 +571,7 @@ export class NutritionDashboardComponent {
     }
   }
 
-  addSuggestedFood(suggestion: any) {
+  addSuggestedFood(suggestion: AISuggestion) {
     firstValueFrom(
       this.nutritionService.addFoodToCurrentMeal(suggestion.food),
     ).then(() => {
@@ -586,7 +617,7 @@ export class NutritionDashboardComponent {
     }
   }
 
-  getProgressStyle(goal: NutritionGoal) {
+  getProgressStyle(goal: NutritionGoal): Record<string, string> {
     const percentage = (goal.current / goal.target) * 100;
     let color = "#10c96b"; // Green for achieved
 
@@ -594,7 +625,7 @@ export class NutritionDashboardComponent {
       color = "#ef4444"; // Red for low
     else if (percentage < 80) color = "#f1c40f"; // Yellow for medium
 
-    return { "--p-progressbar-value-bg": color } as any;
+    return { "--p-progressbar-value-bg": color };
   }
 
   getNutrientSources(nutrient: string): string[] {
@@ -602,7 +633,7 @@ export class NutritionDashboardComponent {
     return this.nutritionService.getNutrientSources(nutrient);
   }
 
-  getMealNutritionChart(meal: any) {
+  getMealNutritionChart(meal: Meal) {
     return {
       labels: ["Carbs", "Protein", "Fat"],
       datasets: [
@@ -616,7 +647,7 @@ export class NutritionDashboardComponent {
     };
   }
 
-  executeInsightAction(insight: any) {
+  executeInsightAction(insight: PerformanceInsight) {
     // Handle insight actions (e.g., add recommended food, adjust meal timing)
     this.logger.debug("Executing insight action:", insight);
   }

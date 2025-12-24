@@ -347,7 +347,7 @@ export class LandingComponent {
     },
   ];
 
-  trackByFeatureId(index: number, feature: any): string {
+  trackByFeatureId(index: number, feature: { id: string }): string {
     return feature.id;
   }
 }

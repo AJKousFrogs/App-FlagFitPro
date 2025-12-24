@@ -1157,7 +1157,9 @@ class FlagFitChatbot {
             parsedQuestion.entities?.training?.[0] ||
             parsedQuestion.entities?.psychology?.[0] ||
             "general";
-          this.updateQueryStats(detectedTopic).catch(() => {});
+          this.updateQueryStats(detectedTopic).catch((error) => {
+            logger.warn("[Chatbot] Failed to update query stats (non-critical):", error);
+          });
 
           return answer;
         }
@@ -1213,7 +1215,9 @@ class FlagFitChatbot {
         parsedQuestion?.entities?.training?.[0] ||
         parsedQuestion?.entities?.psychology?.[0] ||
         "general";
-      this.updateQueryStats(detectedTopic).catch(() => {});
+      this.updateQueryStats(detectedTopic).catch((error) => {
+        logger.warn("[Chatbot] Failed to update query stats (non-critical):", error);
+      });
 
       return localResponse;
     } catch (error) {

@@ -83,7 +83,7 @@ export abstract class ReactiveViewModel extends BaseViewModel {
    * Initialize the view model
    * Override in subclasses to set up initial data loading
    */
-  override initialize(...args: any[]): void {
+  override initialize(...args: unknown[]): void {
     // Override in subclasses if needed
   }
 }

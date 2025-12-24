@@ -25,13 +25,45 @@ export interface TrainingDistributionData {
   values: number[];
 }
 
+export interface PositionPerformanceData {
+  position: string;
+  metrics: {
+    averageScore: number;
+    gamesPlayed: number;
+    improvementRate: number;
+  };
+  playersByPosition: Record<string, number>;
+}
+
+export interface InjuryRiskData {
+  riskLevel: 'low' | 'medium' | 'high';
+  factors: Array<{
+    name: string;
+    impact: number;
+    description: string;
+  }>;
+  recommendations: string[];
+}
+
+export interface SpeedDevelopmentData {
+  timeline: Array<{
+    date: string;
+    speed: number;
+    acceleration: number;
+  }>;
+  improvement: {
+    percentChange: number;
+    trend: 'improving' | 'stable' | 'declining';
+  };
+}
+
 export interface AnalyticsData {
   performanceTrends?: PerformanceTrendsData;
   teamChemistry?: TeamChemistryData;
   trainingDistribution?: TrainingDistributionData;
-  positionPerformance?: any;
-  injuryRisk?: any;
-  speedDevelopment?: any;
+  positionPerformance?: PositionPerformanceData;
+  injuryRisk?: InjuryRiskData;
+  speedDevelopment?: SpeedDevelopmentData;
 }
 
 @Injectable({
@@ -96,9 +128,9 @@ export class AnalyticsDataService {
   /**
    * Get position performance data
    */
-  getPositionPerformance(): Observable<any> {
+  getPositionPerformance(): Observable<PositionPerformanceData | null> {
     return this.apiService
-      .get<any>(API_ENDPOINTS.analytics.positionPerformance)
+      .get<PositionPerformanceData>(API_ENDPOINTS.analytics.positionPerformance)
       .pipe(
         map((response) =>
           response.success && response.data ? response.data : null,
@@ -109,9 +141,9 @@ export class AnalyticsDataService {
   /**
    * Get injury risk data
    */
-  getInjuryRisk(): Observable<any> {
+  getInjuryRisk(): Observable<InjuryRiskData | null> {
     return this.apiService
-      .get<any>(API_ENDPOINTS.analytics.injuryRisk)
+      .get<InjuryRiskData>(API_ENDPOINTS.analytics.injuryRisk)
       .pipe(
         map((response) =>
           response.success && response.data ? response.data : null,
@@ -122,9 +154,9 @@ export class AnalyticsDataService {
   /**
    * Get speed development data
    */
-  getSpeedDevelopment(): Observable<any> {
+  getSpeedDevelopment(): Observable<SpeedDevelopmentData | null> {
     return this.apiService
-      .get<any>(API_ENDPOINTS.analytics.speedDevelopment)
+      .get<SpeedDevelopmentData>(API_ENDPOINTS.analytics.speedDevelopment)
       .pipe(
         map((response) =>
           response.success && response.data ? response.data : null,

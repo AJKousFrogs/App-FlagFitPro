@@ -355,7 +355,14 @@ export class CoachDashboardComponent implements OnInit {
   squadMembers = signal<SquadMember[]>([]);
   riskFlags = signal<SquadMember[]>([]);
   upcomingFixtures = signal<UpcomingFixture[]>([]);
-  workloadChartData = signal<any>(null);
+  workloadChartData = signal<{
+    labels: string[];
+    datasets: Array<{
+      label: string;
+      data: number[];
+      backgroundColor: string;
+    }>;
+  } | null>(null);
 
   chartOptions = DEFAULT_CHART_OPTIONS;
 
@@ -397,28 +404,41 @@ export class CoachDashboardComponent implements OnInit {
       });
   }
 
-  processSquadData(members: any[]): void {
-    const squadMembers: SquadMember[] = members.map((member: any) => {
-      const acwr = member.acwr || 1.0;
-      const readiness = member.readiness || 75;
+  processSquadData(members: unknown[]): void {
+    const squadMembers: SquadMember[] = members
+      .filter((member): member is Record<string, unknown> => 
+        member !== null && typeof member === 'object'
+      )
+      .map((member) => {
+        const acwr = typeof member.acwr === 'number' ? member.acwr : 1.0;
+        const readiness = typeof member.readiness === 'number' ? member.readiness : 75;
 
-      let riskFlag: "low" | "medium" | "high" = "low";
-      if (acwr > 1.5 || readiness < 55) {
-        riskFlag = "high";
-      } else if (acwr > 1.3 || readiness < 70) {
-        riskFlag = "medium";
-      }
+        let riskFlag: "low" | "medium" | "high" = "low";
+        if (acwr > 1.5 || readiness < 55) {
+          riskFlag = "high";
+        } else if (acwr > 1.3 || readiness < 70) {
+          riskFlag = "medium";
+        }
 
-      return {
-        id: member.id || member.user_id,
-        name: member.name || member.full_name || "Unknown",
-        position: member.position || "N/A",
-        workload: member.workload || member.today_workload || 0,
-        acwr,
-        readiness,
-        riskFlag,
-      };
-    });
+        return {
+          id: 
+            typeof member.id === 'string' ? member.id :
+            typeof member.user_id === 'string' ? member.user_id :
+            'unknown',
+          name: 
+            typeof member.name === 'string' ? member.name :
+            typeof member.full_name === 'string' ? member.full_name :
+            "Unknown",
+          position: typeof member.position === 'string' ? member.position : "N/A",
+          workload: 
+            typeof member.workload === 'number' ? member.workload :
+            typeof member.today_workload === 'number' ? member.today_workload :
+            0,
+          acwr,
+          readiness,
+          riskFlag,
+        };
+      });
 
     this.squadMembers.set(squadMembers);
     this.squadSize.set(squadMembers.length);
@@ -472,19 +492,33 @@ export class CoachDashboardComponent implements OnInit {
       });
   }
 
-  processFixtures(fixtures: any[]): void {
+  processFixtures(fixtures: unknown[]): void {
     const upcoming: UpcomingFixture[] = fixtures
-      .filter((f: any) => {
-        const date = new Date(f.game_start || f.date || f.game_date);
+      .filter((f): f is Record<string, unknown> => 
+        f !== null && typeof f === 'object'
+      )
+      .filter((f) => {
+        const dateValue = f.game_start || f.date || f.game_date;
+        if (!dateValue) return false;
+        const date = new Date(String(dateValue));
         return date >= new Date();
       })
-      .map((f: any) => ({
-        id: f.id || f.game_id,
-        opponent: f.opponent || f.opponent_name || "TBD",
-        date: new Date(f.game_start || f.date || f.game_date),
-        location: f.location || "",
-        gameType: f.game_type || "Game",
-      }))
+      .map((f) => {
+        const dateValue = f.game_start || f.date || f.game_date;
+        return {
+          id: 
+            typeof f.id === 'string' ? f.id :
+            typeof f.game_id === 'string' ? f.game_id :
+            'unknown',
+          opponent: 
+            typeof f.opponent === 'string' ? f.opponent :
+            typeof f.opponent_name === 'string' ? f.opponent_name :
+            "TBD",
+          date: new Date(String(dateValue)),
+          location: typeof f.location === 'string' ? f.location : "",
+          gameType: typeof f.game_type === 'string' ? f.game_type : "Game",
+        };
+      })
       .sort((a, b) => a.date.getTime() - b.date.getTime())
       .slice(0, 5); // Next 5 fixtures
 

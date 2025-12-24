@@ -556,7 +556,11 @@ export class TrainingBuilderComponent {
 
   selectedGoals = signal<string[]>([]);
   generatedExercises = signal<TrainingExercise[]>([]);
-  weatherData = signal<any>(null);
+  weatherData = signal<{
+    condition: string;
+    temperature: number;
+    recommendation: string;
+  } | null>(null);
 
   availableGoals: Goal[] = [
     {
@@ -607,7 +611,16 @@ export class TrainingBuilderComponent {
   );
 
   timelineEvents = computed(() => {
-    const events: any[] = [];
+    interface TimelineEvent {
+      type: string;
+      icon: string;
+      title: string;
+      duration: number;
+      description: string;
+      aiGenerated: boolean;
+    }
+
+    const events: TimelineEvent[] = [];
     let currentTime = 0;
 
     // Warmup
@@ -789,23 +802,40 @@ export class TrainingBuilderComponent {
   }
 
   private convertAISuggestionsToExercises(
-    suggestions: any[],
+    suggestions: unknown[],
     duration: number,
     intensity: string,
     equipment: string[],
   ): TrainingExercise[] {
     return suggestions
-      .filter((s) => s.formData)
-      .map((suggestion, index) => ({
-        id: `ai-${suggestion.id}-${index}`,
-        name: suggestion.title,
-        category: suggestion.formData.sessionType || "mixed",
-        duration: suggestion.formData.duration || Math.floor(duration / 3),
-        intensity: (suggestion.formData.intensity || intensity) as any,
-        equipment: suggestion.formData.equipment || equipment,
-        description: suggestion.description,
-        aiRecommended: true,
-      }));
+      .filter((s): s is Record<string, unknown> => 
+        s !== null && 
+        typeof s === 'object' && 
+        'formData' in s &&
+        s.formData !== null &&
+        typeof s.formData === 'object'
+      )
+      .map((suggestion, index) => {
+        const formData = suggestion.formData as Record<string, unknown>;
+        return {
+          id: `ai-${typeof suggestion.id === 'string' ? suggestion.id : 'unknown'}-${index}`,
+          name: typeof suggestion.title === 'string' ? suggestion.title : 'Untitled Exercise',
+          category: typeof formData.sessionType === 'string' ? formData.sessionType : "mixed",
+          duration: typeof formData.duration === 'number' ? formData.duration : Math.floor(duration / 3),
+          intensity: (
+            formData.intensity === 'low' ||
+            formData.intensity === 'medium' ||
+            formData.intensity === 'high'
+              ? formData.intensity
+              : intensity
+          ) as "low" | "medium" | "high",
+          equipment: Array.isArray(formData.equipment) 
+            ? formData.equipment.filter((e): e is string => typeof e === 'string')
+            : equipment,
+          description: typeof suggestion.description === 'string' ? suggestion.description : '',
+          aiRecommended: true,
+        };
+      });
   }
 
   private generateExercisesForGoals(
@@ -822,7 +852,7 @@ export class TrainingBuilderComponent {
           name: "40-Yard Sprints",
           category: "speed",
           duration: 15,
-          intensity: intensity as any,
+          intensity: intensity as "low" | "medium" | "high",
           equipment: ["cones"],
           description: "High-intensity sprint intervals to improve top speed",
           aiRecommended: true,
@@ -834,7 +864,7 @@ export class TrainingBuilderComponent {
           name: "5-10-5 Shuttle",
           category: "agility",
           duration: 12,
-          intensity: intensity as any,
+          intensity: intensity as "low" | "medium" | "high",
           equipment: ["cones"],
           description: "Lateral movement drill for quick direction changes",
           aiRecommended: true,
@@ -846,7 +876,7 @@ export class TrainingBuilderComponent {
           name: "Cardiovascular Intervals",
           category: "endurance",
           duration: 20,
-          intensity: intensity as any,
+          intensity: intensity as "low" | "medium" | "high",
           equipment: [],
           description:
             "High-intensity interval training for cardiovascular fitness",
@@ -859,7 +889,7 @@ export class TrainingBuilderComponent {
           name: "Position-Specific Drills",
           category: "skills",
           duration: 18,
-          intensity: intensity as any,
+          intensity: intensity as "low" | "medium" | "high",
           equipment: ["football"],
           description: "Focused practice on position-specific techniques",
           aiRecommended: true,
@@ -905,7 +935,10 @@ export class TrainingBuilderComponent {
       });
   }
 
-  private getWeatherRecommendation(weather: any): string {
+  private getWeatherRecommendation(weather: {
+    suitable?: boolean;
+    suitability?: string;
+  }): string {
     if (!weather.suitable) {
       return "Indoor training recommended";
     }
@@ -954,12 +987,12 @@ export class TrainingBuilderComponent {
     }
   }
 
-  previewExercise(event: any) {
+  previewExercise(event: { title: string; description: string }) {
     // Open exercise preview modal
     this.logger.debug("Preview exercise:", event);
   }
 
-  modifyExercise(event: any) {
+  modifyExercise(event: { title: string; description: string }) {
     // Open exercise modification modal
     this.logger.debug("Modify exercise:", event);
   }

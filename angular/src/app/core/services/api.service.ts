@@ -5,7 +5,7 @@ import { catchError, map } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -69,17 +69,18 @@ export class ApiService {
     return endpoint;
   }
 
-  get<T>(
+  get<T = unknown>(
     endpoint: string,
-    params?: Record<string, any>,
+    params?: Record<string, unknown>,
   ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     let httpParams = new HttpParams();
 
     if (params) {
       Object.keys(params).forEach((key) => {
-        if (params[key] !== null && params[key] !== undefined) {
-          httpParams = httpParams.set(key, params[key].toString());
+        const value = params[key];
+        if (value !== null && value !== undefined) {
+          httpParams = httpParams.set(key, String(value));
         }
       });
     }
@@ -91,7 +92,7 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  post<T>(endpoint: string, data?: any): Observable<ApiResponse<T>> {
+  post<T = unknown>(endpoint: string, data?: unknown): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
@@ -100,7 +101,7 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  put<T>(endpoint: string, data?: any): Observable<ApiResponse<T>> {
+  put<T = unknown>(endpoint: string, data?: unknown): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
@@ -109,7 +110,7 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  patch<T>(endpoint: string, data?: any): Observable<ApiResponse<T>> {
+  patch<T = unknown>(endpoint: string, data?: unknown): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
@@ -118,7 +119,7 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  delete<T>(endpoint: string): Observable<ApiResponse<T>> {
+  delete<T = unknown>(endpoint: string): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
@@ -127,16 +128,24 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  private handleError = (error: any): Observable<never> => {
+  private handleError = (error: unknown): Observable<never> => {
     let errorMessage = "An unknown error occurred";
 
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
+    if (error instanceof ErrorEvent) {
+      errorMessage = `Error: ${error.message}`;
+    } else if (error && typeof error === 'object' && 'error' in error) {
+      const httpError = error as {
+        error?: {
+          error?: string;
+          message?: string;
+        };
+        status?: number;
+        message?: string;
+      };
       errorMessage =
-        error.error?.error ||
-        error.error?.message ||
-        `Error Code: ${error.status}\nMessage: ${error.message}`;
+        httpError.error?.error ||
+        httpError.error?.message ||
+        `Error Code: ${httpError.status}\nMessage: ${httpError.message}`;
     }
 
     this.logger.error(`[ApiService] API request failed: ${errorMessage}`);

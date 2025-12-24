@@ -316,11 +316,11 @@ export class DashboardComponentRefactoredExample implements OnInit {
   }
 
   // Helper methods
-  trackByActivityId(index: number, activity: any): any {
+  trackByActivityId(index: number, activity: { id?: string }): string | number {
     return activity.id || index;
   }
 
-  trackBySessionId(index: number, session: any): any {
+  trackBySessionId(index: number, session: { id?: string }): string | number {
     return session.id || index;
   }
 

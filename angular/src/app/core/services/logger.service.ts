@@ -51,7 +51,7 @@ export class LoggerService {
    * Debug logging (development only)
    * @param args - Arguments to log
    */
-  debug(...args: any[]): void {
+  debug(...args: unknown[]): void {
     if (!this.shouldLog("debug")) return;
     if (this.isDevelopment) {
       console.log("🔍 [DEBUG]", ...args);
@@ -62,7 +62,7 @@ export class LoggerService {
    * Info logging
    * @param args - Arguments to log
    */
-  info(...args: any[]): void {
+  info(...args: unknown[]): void {
     if (!this.shouldLog("info")) return;
     if (this.isDevelopment) {
       console.log("ℹ️ [INFO]", ...args);
@@ -73,7 +73,7 @@ export class LoggerService {
    * Warning logging
    * @param args - Arguments to log
    */
-  warn(...args: any[]): void {
+  warn(...args: unknown[]): void {
     if (!this.shouldLog("warn")) return;
     console.warn("⚠️ [WARN]", ...args);
   }
@@ -82,7 +82,7 @@ export class LoggerService {
    * Error logging (always logged)
    * @param args - Arguments to log
    */
-  error(...args: any[]): void {
+  error(...args: unknown[]): void {
     if (!this.shouldLog("error")) return;
     console.error("❌ [ERROR]", ...args);
 
@@ -97,7 +97,7 @@ export class LoggerService {
    * Success logging (info level)
    * @param args - Arguments to log
    */
-  success(...args: any[]): void {
+  success(...args: unknown[]): void {
     if (!this.shouldLog("info")) return;
     if (this.isDevelopment) {
       console.log("✅ [SUCCESS]", ...args);

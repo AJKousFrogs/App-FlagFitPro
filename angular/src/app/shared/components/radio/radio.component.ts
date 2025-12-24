@@ -166,33 +166,34 @@ import { CommonModule } from "@angular/common";
     `,
   ],
 })
-export class RadioComponent implements ControlValueAccessor {
+export class RadioComponent<T = unknown> implements ControlValueAccessor {
   // Configuration
   id = input<string>(`radio-${Math.random().toString(36).substr(2, 9)}`);
   name = input<string>("radio-group");
   label = input<string>();
-  value = input<any>();
+  value = input<T>();
   helpText = input<string>();
   errorMessage = input<string>();
   disabled = input<boolean>(false);
   invalid = input<boolean>(false);
 
   // Selected value (from parent form control)
-  selectedValue = signal<any>(null);
-  private onChangeFn = (value: any) => {};
+  selectedValue = signal<T | null>(null);
+  private onChangeFn = (value: T | null) => {};
   private onTouchedFn = () => {};
 
   // Events
-  changed = output<any>();
+  changed = output<T>();
 
   isChecked = signal<boolean>(false);
 
   onChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     if (target.checked) {
-      this.selectedValue.set(this.value());
-      this.onChangeFn(this.value());
-      this.changed.emit(this.value());
+      const val = this.value();
+      this.selectedValue.set(val);
+      this.onChangeFn(val);
+      this.changed.emit(val);
     }
   }
 
@@ -201,12 +202,12 @@ export class RadioComponent implements ControlValueAccessor {
   }
 
   // ControlValueAccessor implementation
-  writeValue(value: any): void {
+  writeValue(value: T | null): void {
     this.selectedValue.set(value);
     this.isChecked.set(value === this.value());
   }
 
-  registerOnChange(fn: (value: any) => void): void {
+  registerOnChange(fn: (value: T | null) => void): void {
     this.onChangeFn = fn;
   }
 

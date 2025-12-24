@@ -212,10 +212,10 @@ export class AcceptInvitationComponent implements OnInit {
       this.teamName.set("Eagles Flag Football");
 
       this.isLoading.set(false);
-    } catch (error: any) {
+    } catch (error) {
       this.isLoading.set(false);
       this.invitationError.set(
-        error.message || "Failed to load invitation. It may have expired.",
+        error instanceof Error ? error.message : "Failed to load invitation. It may have expired.",
       );
     }
   }
@@ -244,12 +244,12 @@ export class AcceptInvitationComponent implements OnInit {
       setTimeout(() => {
         this.router.navigate(["/roster"]);
       }, 2000);
-    } catch (error: any) {
+    } catch (error) {
       this.messageService.add({
         severity: "error",
         summary: "Error",
         detail:
-          error.message || "Failed to accept invitation. Please try again.",
+          error instanceof Error ? error.message : "Failed to accept invitation. Please try again.",
       });
     } finally {
       this.isProcessing.set(false);
@@ -278,12 +278,12 @@ export class AcceptInvitationComponent implements OnInit {
       setTimeout(() => {
         this.router.navigate(["/dashboard"]);
       }, 1000);
-    } catch (error: any) {
+    } catch (error) {
       this.messageService.add({
         severity: "error",
         summary: "Error",
         detail:
-          error.message || "Failed to decline invitation. Please try again.",
+          error instanceof Error ? error.message : "Failed to decline invitation. Please try again.",
       });
     } finally {
       this.isProcessing.set(false);

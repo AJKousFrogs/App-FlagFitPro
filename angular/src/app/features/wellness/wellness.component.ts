@@ -372,7 +372,7 @@ export class WellnessComponent implements OnInit {
     this.recoveryChartData.set(null);
   }
 
-  private calculateTrend(data: any[], metric: string): string {
+  private calculateTrend(data: Record<string, number>[], metric: string): string {
     if (data.length < 2) return "N/A";
     const current = data[0][metric];
     const previous = data[1][metric];

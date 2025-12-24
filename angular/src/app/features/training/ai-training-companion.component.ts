@@ -57,10 +57,62 @@ interface PerformanceMetric {
   };
 }
 
+// Speech Recognition API Type Definitions
+interface SpeechRecognitionResult {
+  isFinal: boolean;
+  [index: number]: {
+    transcript: string;
+    confidence: number;
+  };
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionEvent {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
+}
+
+interface SpeechRecognitionErrorEvent {
+  error: string;
+  message: string;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+  stop(): void;
+}
+
+interface SpeechRecognitionConstructor {
+  new (): SpeechRecognition;
+}
+
+interface TrainingContext {
+  currentExercise: string | null;
+  timeInSession: number;
+  previousPerformance: unknown[];
+  environmentalFactors: unknown | null;
+}
+
+interface AIResponse {
+  message?: string;
+  actions?: QuickAction[];
+}
+
 declare global {
   interface Window {
-    webkitSpeechRecognition: any;
-    SpeechRecognition: any;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    SpeechRecognition?: SpeechRecognitionConstructor;
   }
 }
 
@@ -593,7 +645,7 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
   lastVoiceCommand = signal<string | null>(null);
   quickActions = signal<QuickAction[]>([]);
 
-  private speechRecognition?: any;
+  private speechRecognition: SpeechRecognition | null = null;
   private contextAnalysisInterval?: NodeJS.Timeout;
 
   ngOnInit(): void {
@@ -618,27 +670,27 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
   }
 
   private initializeSpeechRecognition(): void {
-    const SpeechRecognition =
+    const SpeechRecognitionClass =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
+    if (!SpeechRecognitionClass) {
       this.logger.warn("Speech recognition not supported");
       return;
     }
 
-    this.speechRecognition = new SpeechRecognition();
+    this.speechRecognition = new SpeechRecognitionClass();
     this.speechRecognition.continuous = true;
     this.speechRecognition.interimResults = true;
     this.speechRecognition.lang = "en-US";
 
-    this.speechRecognition.onresult = (event: any) => {
+    this.speechRecognition.onresult = (event: SpeechRecognitionEvent) => {
       const result = event.results[event.resultIndex];
       if (result.isFinal) {
         this.processVoiceCommand(result[0].transcript);
       }
     };
 
-    this.speechRecognition.onerror = (event: any) => {
+    this.speechRecognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       this.logger.error("Speech recognition error:", event.error);
       this.isListening.set(false);
       this.aiStatus.set("idle");
@@ -744,7 +796,7 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
       });
   }
 
-  private async gatherTrainingContext(): Promise<any> {
+  private async gatherTrainingContext(): Promise<TrainingContext> {
     return {
       currentExercise: null, // Would come from training service
       timeInSession: 0, // Would come from training service
@@ -797,19 +849,53 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
     this.realtimePerformance.set(true);
   }
 
-  private updateInsights(insights: any[]): void {
-    const formattedInsights: Insight[] = insights.map((insight) => ({
-      id: insight.id || `insight-${Date.now()}`,
-      type: insight.type || "General",
-      message: insight.message,
-      icon: insight.icon || "pi pi-info-circle",
-      priority: insight.priority || "medium",
-      actions: insight.actions,
-    }));
+  private updateInsights(insights: unknown[]): void {
+    const formattedInsights: Insight[] = insights.map((insight) => {
+      // Type guard to check if insight has required properties
+      const hasRequiredProps =
+        insight &&
+        typeof insight === "object" &&
+        "message" in insight &&
+        typeof (insight as Record<string, unknown>).message === "string";
+
+      if (!hasRequiredProps) {
+        return {
+          id: `insight-${Date.now()}`,
+          type: "General",
+          message: "Unknown insight",
+          icon: "pi pi-info-circle",
+          priority: "medium" as const,
+        };
+      }
+
+      const insightObj = insight as Record<string, unknown>;
+      return {
+        id:
+          typeof insightObj.id === "string"
+            ? insightObj.id
+            : `insight-${Date.now()}`,
+        type:
+          typeof insightObj.type === "string" ? insightObj.type : "General",
+        message: insightObj.message as string,
+        icon:
+          typeof insightObj.icon === "string"
+            ? insightObj.icon
+            : "pi pi-info-circle",
+        priority:
+          insightObj.priority === "high" ||
+          insightObj.priority === "medium" ||
+          insightObj.priority === "low"
+            ? insightObj.priority
+            : "medium",
+        actions: Array.isArray(insightObj.actions)
+          ? insightObj.actions
+          : undefined,
+      };
+    });
     this.currentInsights.set(formattedInsights);
   }
 
-  private handleAIResponse(response: any): void {
+  private handleAIResponse(response: AIResponse): void {
     if (response.message) {
       this.showMessage(response.message);
     }

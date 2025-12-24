@@ -58,26 +58,88 @@ export interface PerformanceTest {
   result: number;
   target?: number;
   timestamp: string;
-  conditions?: any;
+  conditions?: Record<string, unknown>;
 }
 
 // Trends Interfaces
 export interface TrendsData {
-  performance: Record<string, any>;
+  performance: Record<string, TrendValue>;
   body_composition: {
     trend: string;
-    changes: any;
-    latest?: any;
-    previous?: any;
+    changes: TrendChanges | null;
+    latest?: PhysicalMeasurement;
+    previous?: PhysicalMeasurement;
   };
   wellness: {
     trend: string;
-    trends: Record<string, any>;
-    recentAverage?: any;
+    trends: Record<string, TrendValue>;
+    recentAverage?: number;
   };
   correlations: Record<string, number>;
   insights: string[];
   recommendations: string[];
+}
+
+interface TrendValue {
+  value: number;
+  change?: number;
+  trend?: 'up' | 'down' | 'stable';
+}
+
+interface TrendChanges {
+  weight?: number;
+  bodyFat?: number;
+  muscleMass?: number;
+}
+
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+}
+
+interface DatabaseMeasurement {
+  id: number;
+  user_id: string;
+  weight_kg: number;
+  height_cm: number;
+  body_fat_percentage?: number;
+  muscle_mass_kg?: number;
+  notes?: string;
+  measured_at: string;
+}
+
+interface DatabaseSupplement {
+  id: number;
+  user_id: string;
+  supplement_name: string;
+  dosage?: string;
+  taken: boolean;
+  date: string;
+  time_of_day?: Supplement['timeOfDay'];
+  notes?: string;
+  created_at: string;
+}
+
+interface DatabaseTest {
+  id: number;
+  user_id: string;
+  test_name: string;
+  result_value: number;
+  target_value?: number;
+  performed_at: string;
+  test_conditions?: Record<string, unknown>;
+}
+
+interface RealtimePayload<T> {
+  new: T;
+  old: T;
+}
+
+interface TestSummary {
+  totalTests: number;
+  byType?: Record<string, number>;
+  improvements?: Record<string, number>;
 }
 
 @Injectable({
@@ -193,13 +255,13 @@ export class PerformanceDataService {
       "physical_measurements",
       `user_id=eq.${userId}`,
       {
-        onInsert: (payload: any) => {
+        onInsert: (payload: RealtimePayload<DatabaseMeasurement>) => {
           this.logger.info("[PerformanceData] New measurement via realtime");
           const measurement = this.transformMeasurement(payload.new);
           const current = this._recentMeasurements();
           this._recentMeasurements.set([measurement, ...current.slice(0, 9)]);
         },
-        onUpdate: (payload: any) => {
+        onUpdate: (payload: RealtimePayload<DatabaseMeasurement>) => {
           this.logger.info(
             "[PerformanceData] Measurement updated via realtime",
           );
@@ -212,7 +274,7 @@ export class PerformanceDataService {
             this._recentMeasurements.set(updated);
           }
         },
-        onDelete: (payload: any) => {
+        onDelete: (payload: RealtimePayload<DatabaseMeasurement>) => {
           this.logger.info(
             "[PerformanceData] Measurement deleted via realtime",
           );
@@ -229,13 +291,13 @@ export class PerformanceDataService {
       "performance_tests",
       `user_id=eq.${userId}`,
       {
-        onInsert: (payload: any) => {
+        onInsert: (payload: RealtimePayload<DatabaseTest>) => {
           this.logger.info("[PerformanceData] New test via realtime");
           const test = this.transformTest(payload.new);
           const current = this._recentTests();
           this._recentTests.set([test, ...current]);
         },
-        onUpdate: (payload: any) => {
+        onUpdate: (payload: RealtimePayload<DatabaseTest>) => {
           this.logger.info("[PerformanceData] Test updated via realtime");
           const test = this.transformTest(payload.new);
           const current = this._recentTests();
@@ -246,7 +308,7 @@ export class PerformanceDataService {
             this._recentTests.set(updated);
           }
         },
-        onDelete: (payload: any) => {
+        onDelete: (payload: RealtimePayload<DatabaseTest>) => {
           this.logger.info("[PerformanceData] Test deleted via realtime");
           const current = this._recentTests();
           this._recentTests.set(current.filter((t) => t.id !== payload.old.id));
@@ -256,7 +318,7 @@ export class PerformanceDataService {
 
     // Subscribe to supplement logs
     this.realtimeService.subscribe("supplement_logs", `user_id=eq.${userId}`, {
-      onInsert: (payload: any) => {
+      onInsert: (payload: RealtimePayload<DatabaseSupplement>) => {
         const logDate = payload.new.date;
         if (logDate === today) {
           this.logger.info("[PerformanceData] New supplement log via realtime");
@@ -265,7 +327,7 @@ export class PerformanceDataService {
           this._todaysSupplements.set([...current, supplement]);
         }
       },
-      onUpdate: (payload: any) => {
+      onUpdate: (payload: RealtimePayload<DatabaseSupplement>) => {
         const logDate = payload.new.date;
         if (logDate === today) {
           this.logger.info(
@@ -281,7 +343,7 @@ export class PerformanceDataService {
           }
         }
       },
-      onDelete: (payload: any) => {
+      onDelete: (payload: RealtimePayload<DatabaseSupplement>) => {
         this.logger.info(
           "[PerformanceData] Supplement log deleted via realtime",
         );
@@ -296,7 +358,7 @@ export class PerformanceDataService {
   /**
    * Transform database measurement to PhysicalMeasurement
    */
-  private transformMeasurement(data: any): PhysicalMeasurement {
+  private transformMeasurement(data: DatabaseMeasurement): PhysicalMeasurement {
     return {
       id: data.id,
       userId: data.user_id,
@@ -312,7 +374,7 @@ export class PerformanceDataService {
   /**
    * Transform database test to PerformanceTest
    */
-  private transformTest(data: any): PerformanceTest {
+  private transformTest(data: DatabaseTest): PerformanceTest {
     return {
       id: data.id,
       userId: data.user_id,
@@ -327,7 +389,7 @@ export class PerformanceDataService {
   /**
    * Transform database supplement to Supplement
    */
-  private transformSupplement(data: any): Supplement {
+  private transformSupplement(data: DatabaseSupplement): Supplement {
     return {
       id: data.id,
       userId: data.user_id,
@@ -349,7 +411,7 @@ export class PerformanceDataService {
   ): Observable<{
     data: PhysicalMeasurement[];
     summary: MeasurementsSummary;
-    pagination: any;
+    pagination: PaginationInfo;
   }> {
     const userId = this.userId();
 
@@ -381,7 +443,7 @@ export class PerformanceDataService {
         }
 
         const measurements: PhysicalMeasurement[] = (data || []).map(
-          (m: any) => ({
+          (m: DatabaseMeasurement) => ({
             id: m.id,
             userId: m.user_id,
             weight: m.weight_kg,
@@ -422,7 +484,11 @@ export class PerformanceDataService {
     );
   }
 
-  logMeasurement(measurement: Partial<PhysicalMeasurement>): Observable<any> {
+  logMeasurement(measurement: Partial<PhysicalMeasurement>): Observable<{
+    success: boolean;
+    data?: DatabaseMeasurement;
+    error?: unknown;
+  }> {
     const userId = this.userId();
 
     if (!userId) {
@@ -518,7 +584,7 @@ export class PerformanceDataService {
           throw error;
         }
 
-        const supplements: Supplement[] = (data || []).map((s: any) => ({
+        const supplements: Supplement[] = (data || []).map((s: DatabaseSupplement) => ({
           id: s.id,
           userId: s.user_id,
           name: s.supplement_name,
@@ -556,7 +622,11 @@ export class PerformanceDataService {
     );
   }
 
-  logSupplement(supplement: Partial<Supplement>): Observable<any> {
+  logSupplement(supplement: Partial<Supplement>): Observable<{
+    success: boolean;
+    data?: DatabaseSupplement;
+    error?: unknown;
+  }> {
     const userId = this.userId();
 
     if (!userId) {
@@ -602,9 +672,9 @@ export class PerformanceDataService {
     testType?: string,
   ): Observable<{
     data: PerformanceTest[];
-    trends: any;
-    summary: any;
-    pagination: any;
+    trends: Record<string, TrendValue>;
+    summary: TestSummary;
+    pagination: { total: number };
   }> {
     const userId = this.userId();
 
@@ -637,7 +707,7 @@ export class PerformanceDataService {
           throw error;
         }
 
-        const tests: PerformanceTest[] = (data || []).map((t: any) => ({
+        const tests: PerformanceTest[] = (data || []).map((t: DatabaseTest) => ({
           id: t.id,
           userId: t.user_id,
           testType: t.test_type,
@@ -648,8 +718,8 @@ export class PerformanceDataService {
         }));
 
         // Calculate basic trends
-        const trends: any = {};
-        const summary: any = { totalTests: tests.length };
+        const trends: Record<string, TrendValue> = {};
+        const summary: TestSummary = { totalTests: tests.length };
 
         return {
           data: tests,
@@ -666,7 +736,11 @@ export class PerformanceDataService {
     );
   }
 
-  logPerformanceTest(test: Partial<PerformanceTest>): Observable<any> {
+  logPerformanceTest(test: Partial<PerformanceTest>): Observable<{
+    success: boolean;
+    data?: DatabaseTest;
+    error?: unknown;
+  }> {
     const userId = this.userId();
 
     if (!userId) {
@@ -738,7 +812,7 @@ export class PerformanceDataService {
   exportData(
     timeframe: string = "12m",
     format: "json" | "csv" = "json",
-  ): Observable<any> {
+  ): Observable<{ success: boolean; message?: string; data?: unknown }> {
     this.logger.warn(
       "[Performance] Export feature not yet implemented for Supabase",
     );

@@ -370,7 +370,7 @@ export class AthleteDashboardComponent
       .pipe(takeUntilDestroyed())
       .subscribe({
         next: (sessions) => {
-          const workload = sessions.reduce((sum: number, session: any) => {
+          const workload = sessions.reduce((sum: number, session: { rpe?: number; intensity_level?: number; duration_minutes?: number; duration?: number }) => {
             const rpe = session.rpe || session.intensity_level || 0;
             const duration = session.duration_minutes || session.duration || 0;
             return sum + rpe * duration;

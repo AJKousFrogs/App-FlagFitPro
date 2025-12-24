@@ -316,7 +316,7 @@ export class LoginComponent {
       .login(credentials)
       .pipe(takeUntilDestroyed())
       .subscribe({
-        next: (response: any) => {
+        next: (response: { success?: boolean; error?: string }) => {
           if (response.success) {
             this.messageService.add({
               severity: "success",
@@ -333,7 +333,7 @@ export class LoginComponent {
           }
           this.isLoading.set(false);
         },
-        error: (error: any) => {
+        error: (error: Error) => {
           this.messageService.add({
             severity: "error",
             summary: "Error",

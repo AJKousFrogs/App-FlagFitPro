@@ -20,12 +20,42 @@ export interface DashboardStats {
   acwr: number;
 }
 
+export interface ActivityItem {
+  id: string;
+  type: string;
+  title: string;
+  timestamp: string;
+  description?: string;
+}
+
+export interface UpcomingSession {
+  id: string;
+  title: string;
+  date: string;
+  type: string;
+  duration?: number;
+}
+
+export interface ChartData {
+  labels: string[];
+  datasets: Array<{
+    label: string;
+    data: number[];
+    backgroundColor?: string | string[];
+    borderColor?: string;
+  }>;
+}
+
 export interface DashboardData {
   stats: DashboardStats;
-  recentActivity: any[];
-  upcomingSessions: any[];
-  performanceChart: any;
-  trainingChart: any;
+  recentActivity: ActivityItem[];
+  upcomingSessions: UpcomingSession[];
+  performanceChart: ChartData | null;
+  trainingChart: ChartData | null;
+}
+
+interface DashboardResponse {
+  recentActivity?: ActivityItem[];
 }
 
 @Injectable({
@@ -55,9 +85,9 @@ export class DashboardDataService {
   /**
    * Get training calendar data
    */
-  getTrainingCalendar(): Observable<any[]> {
+  getTrainingCalendar(): Observable<UpcomingSession[]> {
     return this.apiService
-      .get<any[]>(API_ENDPOINTS.dashboard.trainingCalendar)
+      .get<UpcomingSession[]>(API_ENDPOINTS.dashboard.trainingCalendar)
       .pipe(
         map((response) =>
           response.success && response.data ? response.data : [],
@@ -68,13 +98,13 @@ export class DashboardDataService {
   /**
    * Get recent activity
    */
-  getRecentActivity(limit: number = 10): Observable<any[]> {
+  getRecentActivity(limit: number = 10): Observable<ActivityItem[]> {
     return this.apiService
-      .get<any>(API_ENDPOINTS.dashboard.overview, { activityLimit: limit })
+      .get<DashboardResponse>(API_ENDPOINTS.dashboard.overview, { activityLimit: limit })
       .pipe(
         map((response) => {
-          if (response.success && (response.data as any)?.recentActivity) {
-            return (response.data as any).recentActivity;
+          if (response.success && response.data?.recentActivity) {
+            return response.data.recentActivity;
           }
           return [];
         }),
@@ -84,11 +114,9 @@ export class DashboardDataService {
   /**
    * Get upcoming sessions
    */
-  getUpcomingSessions(limit: number = 5): Observable<any[]> {
+  getUpcomingSessions(limit: number = 5): Observable<UpcomingSession[]> {
     return this.apiService
-      .get<
-        any[]
-      >(API_ENDPOINTS.dashboard.trainingCalendar, { upcoming: true, limit })
+      .get<UpcomingSession[]>(API_ENDPOINTS.dashboard.trainingCalendar, { upcoming: true, limit })
       .pipe(
         map((response) => {
           if (response.success && response.data) {

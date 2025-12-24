@@ -10,21 +10,30 @@ import { SupabaseService } from "./supabase.service";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import { LoggerService } from "./logger.service";
 
-export interface RealtimeEvent<T = any> {
+export interface RealtimeEvent<T = unknown> {
   eventType: "INSERT" | "UPDATE" | "DELETE";
   table: string;
   schema: string;
   new: T;
   old: T;
-  errors: any;
+  errors: unknown;
 }
 
-export type RealtimeCallback<T = any> = (event: RealtimeEvent<T>) => void;
+export type RealtimeCallback<T = unknown> = (event: RealtimeEvent<T>) => void;
 
-export interface RealtimeSubscriptionCallbacks<T = any> {
+export interface RealtimeSubscriptionCallbacks<T = unknown> {
   onInsert?: (payload: RealtimeEvent<T>) => void;
   onUpdate?: (payload: RealtimeEvent<T>) => void;
   onDelete?: (payload: RealtimeEvent<T>) => void;
+}
+
+interface PostgresPayload<T = unknown> {
+  eventType: "INSERT" | "UPDATE" | "DELETE";
+  table: string;
+  schema: string;
+  new: T;
+  old: T;
+  errors: unknown;
 }
 
 @Injectable({
@@ -67,7 +76,7 @@ export class RealtimeService {
    * Generic subscribe method for any table
    * Allows subscribing to specific tables with custom callbacks
    */
-  subscribe<T = any>(
+  subscribe<T = unknown>(
     tableName: string,
     filter: string,
     callbacks: RealtimeSubscriptionCallbacks<T>,
@@ -91,7 +100,7 @@ export class RealtimeService {
           table: tableName,
           filter: filter,
         },
-        (payload: any) => {
+        (payload: PostgresPayload<T>) => {
           const event: RealtimeEvent<T> = {
             eventType: payload.eventType,
             table: payload.table,
@@ -276,7 +285,7 @@ export class RealtimeService {
           table: tableName,
           filter: filter,
         },
-        (payload: any) => {
+        (payload: PostgresPayload) => {
           const event: RealtimeEvent = {
             eventType: payload.eventType,
             table: payload.table,

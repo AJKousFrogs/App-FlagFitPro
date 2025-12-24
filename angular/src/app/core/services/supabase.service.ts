@@ -5,9 +5,20 @@ import {
   User,
   Session,
   AuthChangeEvent,
+  UserAttributes,
 } from "@supabase/supabase-js";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
+
+export interface UserMetadata {
+  firstName?: string;
+  lastName?: string;
+  fullName?: string;
+  avatarUrl?: string;
+  position?: string;
+  teamId?: string;
+  [key: string]: unknown;
+}
 
 @Injectable({
   providedIn: "root",
@@ -110,7 +121,7 @@ export class SupabaseService {
   /**
    * Sign up with email and password
    */
-  async signUp(email: string, password: string, metadata?: any) {
+  async signUp(email: string, password: string, metadata?: UserMetadata) {
     return await this.supabase.auth.signUp({
       email,
       password,
@@ -137,7 +148,7 @@ export class SupabaseService {
   /**
    * Update user metadata
    */
-  async updateUser(attributes: any) {
+  async updateUser(attributes: UserAttributes) {
     return await this.supabase.auth.updateUser(attributes);
   }
 

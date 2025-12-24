@@ -514,8 +514,16 @@ export class CommunityComponent implements OnInit {
 
   newPostContent = "";
   posts = signal<Post[]>([]);
-  leaderboard = signal<any[]>([]);
-  trendingTopics = signal<any[]>([]);
+  leaderboard = signal<Array<{
+    rank: number;
+    name: string;
+    initials: string;
+    score: number;
+  }>>([]);
+  trendingTopics = signal<Array<{
+    name: string;
+    count: number;
+  }>>([]);
 
   ngOnInit(): void {
     this.loadCommunityData();
@@ -634,11 +642,11 @@ export class CommunityComponent implements OnInit {
     return comment.author + comment.timeAgo;
   }
 
-  trackByLeaderboardRank(index: number, entry: any): number {
+  trackByLeaderboardRank(index: number, entry: { rank: number; name: string; initials: string; score: number }): number {
     return entry.rank;
   }
 
-  trackByTopicName(index: number, topic: any): string {
+  trackByTopicName(index: number, topic: { name: string; count: number }): string {
     return topic.name;
   }
 }

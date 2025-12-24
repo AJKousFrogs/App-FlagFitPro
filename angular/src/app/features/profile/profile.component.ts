@@ -342,10 +342,10 @@ export class ProfileComponent implements OnInit {
   userEmail = signal("Loading...");
   userRole = signal("Player");
   userInitials = signal("U");
-  stats = signal<any[]>([]);
-  activities = signal<any[]>([]);
-  achievements = signal<any[]>([]);
-  performanceStats = signal<any[]>([]);
+  stats = signal<Array<{ value: string; label: string }>>([]);
+  activities = signal<Array<{ icon: string; title: string; time: string }>>([]);
+  achievements = signal<Array<{ icon: string; title: string; description: string; date: string }>>([]);
+  performanceStats = signal<Array<{ label: string; value: string; trend: string; trendType: string }>>([]);
 
   ngOnInit(): void {
     this.loadProfileData();
@@ -413,15 +413,15 @@ export class ProfileComponent implements OnInit {
       .slice(0, 2);
   }
 
-  trackByActivityTitle(index: number, activity: any): string {
+  trackByActivityTitle(index: number, activity: { icon: string; title: string; time: string }): string {
     return activity.title || index.toString();
   }
 
-  trackByAchievementTitle(index: number, achievement: any): string {
+  trackByAchievementTitle(index: number, achievement: { icon: string; title: string; description: string; date: string }): string {
     return achievement.title || index.toString();
   }
 
-  trackByPerformanceStatLabel(index: number, stat: any): string {
+  trackByPerformanceStatLabel(index: number, stat: { label: string; value: string; trend: string; trendType: string }): string {
     return stat.label || index.toString();
   }
 }

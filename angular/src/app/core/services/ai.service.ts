@@ -3,6 +3,52 @@ import { Observable, of } from "rxjs";
 import { delay, map, catchError } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 
+interface RecentPerformance {
+  type: string;
+  date: string;
+  score?: number;
+  [key: string]: unknown;
+}
+
+interface UpcomingGame {
+  date: string | Date;
+  opponent?: string;
+  [key: string]: unknown;
+}
+
+interface UserPreferences {
+  [key: string]: unknown;
+}
+
+interface CommandAction {
+  label: string;
+  icon: string;
+  action: () => void;
+}
+
+interface CommandResponse {
+  message: string;
+  actions?: CommandAction[];
+}
+
+interface ContextInsight {
+  id: string;
+  type: string;
+  message: string;
+  icon: string;
+  priority: "high" | "medium" | "low";
+  actions?: CommandAction[];
+}
+
+interface AnalysisContext {
+  currentExercise?: unknown;
+  heartRate?: number;
+  timeInSession?: number;
+  previousPerformance?: RecentPerformance[];
+  environmentalFactors?: unknown;
+  userFatigue?: number;
+}
+
 export interface TrainingSuggestion {
   id: string;
   title: string;
@@ -20,9 +66,9 @@ export interface TrainingSuggestion {
 
 export interface TrainingSuggestionParams {
   userId: string;
-  recentPerformance?: any[];
-  upcomingGames?: any[];
-  preferences?: any;
+  recentPerformance?: RecentPerformance[];
+  upcomingGames?: UpcomingGame[];
+  preferences?: UserPreferences;
 }
 
 @Injectable({
@@ -181,10 +227,7 @@ export class AIService {
   /**
    * Process natural language command from voice or text input
    */
-  processNaturalCommand(command: string): Observable<{
-    message: string;
-    actions?: Array<{ label: string; icon: string; action: () => void }>;
-  }> {
+  processNaturalCommand(command: string): Observable<CommandResponse> {
     const lowerCommand = command.toLowerCase().trim();
 
     // Intent detection patterns
@@ -288,12 +331,9 @@ export class AIService {
       default:
         // Try API for advanced processing
         return this.apiService
-          .post<{
-            message: string;
-            actions?: any[];
-          }>("/api/ai/process-command", { command: lowerCommand })
+          .post<CommandResponse>("/api/ai/process-command", { command: lowerCommand })
           .pipe(
-            map((response): { message: string; actions?: any[] } => {
+            map((response): CommandResponse => {
               if (response.success && response.data) {
                 return {
                   message: response.data.message,
@@ -322,31 +362,8 @@ export class AIService {
   /**
    * Analyze training context and generate insights
    */
-  analyzeContext(context: {
-    currentExercise?: any;
-    heartRate?: number;
-    timeInSession?: number;
-    previousPerformance?: any[];
-    environmentalFactors?: any;
-    userFatigue?: number;
-  }): Observable<
-    Array<{
-      id: string;
-      type: string;
-      message: string;
-      icon: string;
-      priority: "high" | "medium" | "low";
-      actions?: Array<{ label: string; icon: string; action: () => void }>;
-    }>
-  > {
-    const insights: Array<{
-      id: string;
-      type: string;
-      message: string;
-      icon: string;
-      priority: "high" | "medium" | "low";
-      actions?: Array<{ label: string; icon: string; action: () => void }>;
-    }> = [];
+  analyzeContext(context: AnalysisContext): Observable<ContextInsight[]> {
+    const insights: ContextInsight[] = [];
 
     // Analyze heart rate
     if (context.heartRate) {
@@ -421,7 +438,7 @@ export class AIService {
       const recentAvg =
         context.previousPerformance
           .slice(-3)
-          .reduce((sum: number, p: any) => sum + (p.score || 0), 0) /
+          .reduce((sum: number, p: RecentPerformance) => sum + (p.score || 0), 0) /
         Math.min(3, context.previousPerformance.length);
 
       if (recentAvg > 85) {
@@ -437,7 +454,7 @@ export class AIService {
     }
 
     // Try API for advanced analysis
-    return this.apiService.post<any[]>("/api/ai/analyze-context", context).pipe(
+    return this.apiService.post<ContextInsight[]>("/api/ai/analyze-context", context).pipe(
       map((response) => {
         if (response.success && response.data) {
           return response.data;

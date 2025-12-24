@@ -4,6 +4,7 @@
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "noImplicitAny": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -17,7 +18,15 @@
     "target": "ES2022",
     "module": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": "src",
+    "paths": {
+      "@core/*": ["app/core/*"],
+      "@shared/*": ["app/shared/*"],
+      "@features/*": ["app/features/*"],
+      "@environments/*": ["environments/*"],
+      "@assets/*": ["assets/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

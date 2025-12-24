@@ -202,7 +202,7 @@ export class TeamCreateComponent {
       setTimeout(() => {
         this.router.navigate(["/roster"]);
       }, 1000);
-    } catch (error: any) {
+    } catch (error) {
       this.messageService.add({
         severity: "error",
         summary: "Error",

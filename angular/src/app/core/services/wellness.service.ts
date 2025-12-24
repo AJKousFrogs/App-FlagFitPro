@@ -44,6 +44,32 @@ export interface WellnessResponse {
   patterns?: WellnessPatterns;
 }
 
+interface DatabaseWellnessEntry {
+  id: number;
+  athlete_id: string;
+  date: string;
+  sleep_quality?: number;
+  energy_level?: number;
+  stress_level?: number;
+  muscle_soreness?: number;
+  motivation_level?: number;
+  mood?: number;
+  hydration_level?: number;
+  notes?: string;
+  created_at: string;
+}
+
+interface RealtimePayload<T> {
+  new: T;
+  old: T;
+}
+
+interface WellnessTrend {
+  metric: string;
+  trend: "improving" | "declining" | "stable";
+  change: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -121,7 +147,7 @@ export class WellnessService {
           throw error;
         }
 
-        const wellnessData: WellnessData[] = (data || []).map((entry: any) => ({
+        const wellnessData: WellnessData[] = (data || []).map((entry: DatabaseWellnessEntry) => ({
           id: entry.id,
           userId: entry.athlete_id,
           date: entry.date,
@@ -267,7 +293,7 @@ export class WellnessService {
    * Log wellness entry for today or specific date
    * Saves directly to Supabase wellness_entries table
    */
-  logWellness(data: Partial<WellnessData>): Observable<any> {
+  logWellness(data: Partial<WellnessData>): Observable<{ success: boolean; data?: unknown; error?: string }> {
     const userId = this.userId();
 
     if (!userId) {
@@ -374,11 +400,7 @@ export class WellnessService {
   /**
    * Get wellness trends over time
    */
-  getWellnessTrends(data: WellnessData[]): {
-    metric: string;
-    trend: "improving" | "declining" | "stable";
-    change: number;
-  }[] {
+  getWellnessTrends(data: WellnessData[]): WellnessTrend[] {
     if (data.length < 2) return [];
 
     const metrics = [
@@ -390,12 +412,12 @@ export class WellnessService {
       "mood",
       "hydration",
     ];
-    const trends: any[] = [];
+    const trends: WellnessTrend[] = [];
 
     metrics.forEach((metric) => {
       const values = data
-        .map((d) => (d as any)[metric])
-        .filter((v): v is number => v !== undefined && v !== null);
+        .map((d) => (d as Record<string, unknown>)[metric])
+        .filter((v): v is number => typeof v === 'number');
 
       if (values.length < 2) return;
 
@@ -497,14 +519,14 @@ export class WellnessService {
       "wellness_entries",
       `athlete_id=eq.${userId}`,
       {
-        onInsert: (payload: any) => {
+        onInsert: (payload: RealtimePayload<DatabaseWellnessEntry>) => {
           this.logger.info("[Wellness] New entry received via realtime");
           const newEntry = this.transformEntry(payload.new);
           const current = this._wellnessData();
           this._wellnessData.set([newEntry, ...current]);
           this._averages.set(this.calculateAverages([newEntry, ...current]));
         },
-        onUpdate: (payload: any) => {
+        onUpdate: (payload: RealtimePayload<DatabaseWellnessEntry>) => {
           this.logger.info("[Wellness] Entry updated via realtime");
           const updatedEntry = this.transformEntry(payload.new);
           const current = this._wellnessData();
@@ -517,7 +539,7 @@ export class WellnessService {
             this._averages.set(this.calculateAverages(updated));
           }
         },
-        onDelete: (payload: any) => {
+        onDelete: (payload: RealtimePayload<DatabaseWellnessEntry>) => {
           this.logger.info("[Wellness] Entry deleted via realtime");
           const current = this._wellnessData();
           const filtered = current.filter((e) => e.id !== payload.old.id);
@@ -531,7 +553,7 @@ export class WellnessService {
   /**
    * Transform database entry to WellnessData
    */
-  private transformEntry(entry: any): WellnessData {
+  private transformEntry(entry: DatabaseWellnessEntry): WellnessData {
     return {
       id: entry.id,
       userId: entry.athlete_id,

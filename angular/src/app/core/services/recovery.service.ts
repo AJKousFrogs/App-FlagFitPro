@@ -72,6 +72,41 @@ export interface ResearchInsight {
   category: string;
 }
 
+// Database Types for Recovery
+interface DatabaseRecoveryProtocol {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  duration_minutes: number;
+  priority: "high" | "medium" | "low";
+  evidence_level: string;
+  study_count: number;
+  benefits: string[];
+  steps: ProtocolStep[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface DatabaseRecoverySession {
+  id: string;
+  athlete_id: string;
+  protocol_id: string;
+  protocol?: DatabaseRecoveryProtocol;
+  start_time: string;
+  duration_minutes: number;
+  progress_percentage: number;
+  is_paused: boolean;
+  status: "in_progress" | "paused" | "completed" | "stopped";
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface RealtimePayload<T> {
+  new: T;
+  old: T;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -147,7 +182,7 @@ export class RecoveryService {
       "recovery_sessions",
       `athlete_id=eq.${userId}`,
       {
-        onInsert: async (payload: any) => {
+        onInsert: async (payload: RealtimePayload<DatabaseRecoverySession>) => {
           this.logger.info("[Recovery] New session received via realtime");
           const session = await this.fetchSessionWithProtocol(payload.new.id);
           if (session) {
@@ -155,7 +190,7 @@ export class RecoveryService {
             this._activeSessions.set([session, ...current]);
           }
         },
-        onUpdate: async (payload: any) => {
+        onUpdate: async (payload: RealtimePayload<DatabaseRecoverySession>) => {
           this.logger.info("[Recovery] Session updated via realtime");
           const session = await this.fetchSessionWithProtocol(payload.new.id);
           if (session) {
@@ -172,7 +207,7 @@ export class RecoveryService {
             }
           }
         },
-        onDelete: (payload: any) => {
+        onDelete: (payload: RealtimePayload<DatabaseRecoverySession>) => {
           this.logger.info("[Recovery] Session deleted via realtime");
           const current = this._activeSessions();
           const filtered = current.filter((s) => s.id !== payload.old.id);
@@ -214,10 +249,10 @@ export class RecoveryService {
   /**
    * Transform database session to RecoverySession
    */
-  private transformSession(data: any): RecoverySession {
+  private transformSession(data: DatabaseRecoverySession): RecoverySession {
     return {
       id: data.id,
-      protocol: this.transformProtocol(data.protocol),
+      protocol: this.transformProtocol(data.protocol!),
       startTime: new Date(data.start_time),
       duration: data.duration_minutes,
       progress: data.progress_percentage || 0,
@@ -228,7 +263,7 @@ export class RecoveryService {
   /**
    * Transform database protocol to RecoveryProtocol
    */
-  private transformProtocol(data: any): RecoveryProtocol {
+  private transformProtocol(data: DatabaseRecoveryProtocol): RecoveryProtocol {
     return {
       id: data.id,
       name: data.name,

@@ -395,13 +395,29 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  private updateMetricsFromApi(data: any) {
+  private updateMetricsFromApi(data: {
+    metrics?: Array<{
+      id?: string;
+      metricId?: string;
+      label?: string;
+      name?: string;
+      value?: number;
+      currentValue?: number;
+      unit?: string;
+      trend?: "up" | "down" | "stable";
+      trendValue?: number;
+      target?: number;
+      goal?: number;
+      color?: string;
+      icon?: string;
+    }>;
+  }) {
     if (data.metrics && Array.isArray(data.metrics)) {
       this.metrics.set(
-        data.metrics.map((m: any) => ({
-          id: m.id || m.metricId,
-          label: m.label || m.name,
-          value: m.value || m.currentValue,
+        data.metrics.map((m) => ({
+          id: m.id || m.metricId || "",
+          label: m.label || m.name || "",
+          value: m.value || m.currentValue || 0,
           unit: m.unit || "%",
           trend: m.trend || "stable",
           trendValue: m.trendValue || 0,

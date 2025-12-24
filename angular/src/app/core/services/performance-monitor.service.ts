@@ -22,6 +22,37 @@ export interface PerformanceMetric {
   };
 }
 
+interface PerformanceMemory {
+  usedJSHeapSize: number;
+  totalJSHeapSize: number;
+  jsHeapSizeLimit: number;
+}
+
+interface ExtendedPerformance extends Performance {
+  memory?: PerformanceMemory;
+}
+
+interface LargestContentfulPaintEntry extends PerformanceEntry {
+  renderTime: number;
+  loadTime: number;
+  size: number;
+  element?: Element;
+}
+
+interface LayoutShiftEntry extends PerformanceEntry {
+  value: number;
+  hadRecentInput: boolean;
+  sources?: Array<{
+    node?: Node;
+    previousRect: DOMRectReadOnly;
+    currentRect: DOMRectReadOnly;
+  }>;
+}
+
+interface WindowWithGC extends Window {
+  gc?: () => void;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -125,10 +156,10 @@ export class PerformanceMonitorService {
       const paintEntry = entry as PerformancePaintTiming;
       // Process paint timing
     } else if (entry.entryType === "largest-contentful-paint") {
-      const lcpEntry = entry as any;
+      const lcpEntry = entry as LargestContentfulPaintEntry;
       // Process LCP
     } else if (entry.entryType === "layout-shift") {
-      const clsEntry = entry as any;
+      const clsEntry = entry as LayoutShiftEntry;
       // Process CLS
     }
   }
@@ -198,8 +229,8 @@ export class PerformanceMonitorService {
   }
 
   private getMemoryUsage(): number {
-    if (typeof performance !== "undefined" && (performance as any).memory) {
-      const memory = (performance as any).memory;
+    if (typeof performance !== "undefined" && (performance as ExtendedPerformance).memory) {
+      const memory = (performance as ExtendedPerformance).memory!;
       return Math.round(memory.usedJSHeapSize / 1048576); // Convert to MB
     }
     return 0;
@@ -222,7 +253,7 @@ export class PerformanceMonitorService {
 
     const lcpEntries = performance.getEntriesByType(
       "largest-contentful-paint",
-    ) as any[];
+    ) as LargestContentfulPaintEntry[];
     if (lcpEntries.length > 0) {
       return Math.round(lcpEntries[lcpEntries.length - 1].renderTime);
     }
@@ -277,8 +308,9 @@ export class PerformanceMonitorService {
     this.prefetchCriticalResources();
 
     // Force garbage collection if available
-    if ((window as any).gc) {
-      (window as any).gc();
+    const windowWithGC = window as WindowWithGC;
+    if (windowWithGC.gc) {
+      windowWithGC.gc();
     }
 
     // Show success message

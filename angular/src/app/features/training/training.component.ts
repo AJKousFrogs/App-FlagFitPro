@@ -528,10 +528,24 @@ export class TrainingComponent implements OnInit {
 
   userName = signal("Alex");
   stats = signal<StatCard[]>([]);
-  trainingStats = signal<any[]>([]);
-  weeklySchedule = signal<any[]>([]);
+  trainingStats = signal<Array<{
+    label: string;
+    value: string;
+    icon: string;
+    color: string;
+    trend: string;
+    trendType: "positive" | "negative" | "neutral";
+  }>>([]);
+  weeklySchedule = signal<Array<{
+    name: string;
+    sessions: Array<{ time: string; title: string }>;
+  }>>([]);
   workouts = signal<Workout[]>([]);
-  achievements = signal<any[]>([]);
+  achievements = signal<Array<{
+    icon: string;
+    title: string;
+    date: string;
+  }>>([]);
   swipingWorkoutId = signal<string | null>(null);
   swipeDirection = signal<"left" | "right" | null>(null);
   isRefreshing = signal(false);
@@ -731,11 +745,11 @@ export class TrainingComponent implements OnInit {
     return stat.title;
   }
 
-  trackByDayName(index: number, day: any): string {
+  trackByDayName(index: number, day: { name: string; sessions: Array<{ time: string; title: string }> }): string {
     return day.name;
   }
 
-  trackBySessionTime(index: number, session: any): string {
+  trackBySessionTime(index: number, session: { time: string; title: string }): string {
     return session.time || index.toString();
   }
 
@@ -743,7 +757,7 @@ export class TrainingComponent implements OnInit {
     return workout.title;
   }
 
-  trackByAchievementTitle(index: number, achievement: any): string {
+  trackByAchievementTitle(index: number, achievement: { icon: string; title: string; date: string }): string {
     return achievement.title || index.toString();
   }
 }

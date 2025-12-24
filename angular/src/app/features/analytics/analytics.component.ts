@@ -1229,9 +1229,19 @@ export class AnalyticsComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.success && response.data) {
+            const speedData = response.data as { 
+              labels: string[]; 
+              datasets: Array<{ 
+                label: string;
+                data: number[];
+                borderColor?: string;
+                backgroundColor?: string;
+                tension?: number;
+              }> 
+            };
             this.speedChartData.set({
-              labels: (response.data as any).labels,
-              datasets: (response.data as any).datasets.map((ds: any) => ({
+              labels: speedData.labels,
+              datasets: speedData.datasets.map((ds) => ({
                 ...ds,
                 borderColor: ds.label.includes("40")
                   ? "var(--ds-primary-green)"

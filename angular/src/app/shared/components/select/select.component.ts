@@ -12,9 +12,9 @@ import {
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 
-export interface SelectOption {
+export interface SelectOption<T = unknown> {
   label: string;
-  value: any;
+  value: T;
   disabled?: boolean;
 }
 
@@ -135,24 +135,24 @@ export interface SelectOption {
     `,
   ],
 })
-export class SelectComponent implements ControlValueAccessor {
+export class SelectComponent<T = unknown> implements ControlValueAccessor {
   // Angular 21: Use input() signals instead of @Input()
   id = input<string>(`select-${Math.random().toString(36).substr(2, 9)}`);
   label = input<string>();
   placeholder = input<string>("Select an option");
-  options = input<SelectOption[]>([]);
+  options = input<SelectOption<T>[]>([]);
   errorMessage = input<string>();
   disabled = input<boolean>(false);
   invalid = input<boolean>(false);
 
   // Value signal for ControlValueAccessor
-  value = signal<any>(null);
-  private onChangeFn = (value: any) => {};
+  value = signal<T | null>(null);
+  private onChangeFn = (value: T | null) => {};
   private onTouchedFn = () => {};
 
   onChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
-    const newValue = target.value;
+    const newValue = target.value as T;
     this.value.set(newValue);
     this.onChangeFn(newValue);
   }
@@ -162,11 +162,11 @@ export class SelectComponent implements ControlValueAccessor {
   }
 
   // ControlValueAccessor implementation
-  writeValue(value: any): void {
+  writeValue(value: T | null): void {
     this.value.set(value);
   }
 
-  registerOnChange(fn: (value: any) => void): void {
+  registerOnChange(fn: (value: T | null) => void): void {
     this.onChangeFn = fn;
   }
 

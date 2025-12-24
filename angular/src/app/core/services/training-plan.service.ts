@@ -62,6 +62,19 @@ export interface GoalBasedPlanConfig {
   phase?: "foundation" | "strength" | "power" | "peaking" | "maintenance";
 }
 
+interface FixtureResponse {
+  game_start: string;
+  [key: string]: unknown;
+}
+
+interface PlanSaveResponse {
+  success?: boolean;
+}
+
+interface PlanWithId extends WeeklyTrainingPlan {
+  id?: string;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -988,13 +1001,13 @@ export class TrainingPlanService {
   ): Promise<Date[]> {
     try {
       const response = await firstValueFrom(
-        this.apiService.get<Array<{ game_start: string }>>(
+        this.apiService.get<FixtureResponse[]>(
           "/api/fixtures",
           { athleteId, days },
         ),
       );
 
-      return ((response.data as any) || []).map((f: any) =>
+      return (response.data || []).map((f: FixtureResponse) =>
         new Date(f.game_start),
       );
     } catch (error) {
@@ -1014,7 +1027,7 @@ export class TrainingPlanService {
     this.loading.set(true);
     try {
       const response = await firstValueFrom(
-        this.apiService.post<{ success: boolean }>(
+        this.apiService.post<PlanSaveResponse>(
           "/api/training/plan",
           {
             athleteId,
@@ -1030,7 +1043,7 @@ export class TrainingPlanService {
         ),
       );
 
-      if (response && response.data && (response.data as any).success !== false) {
+      if (response && response.data && response.data.success !== false) {
         this.currentPlan.set(plan);
         this.loading.set(false);
         return true;
@@ -1055,7 +1068,7 @@ export class TrainingPlanService {
   ): Promise<WeeklyTrainingPlan | null> {
     this.loading.set(true);
     try {
-      const params: any = { athleteId };
+      const params: Record<string, string | number> = { athleteId };
       if (weekNumber) {
         params.weekNumber = weekNumber;
       }
@@ -1095,7 +1108,7 @@ export class TrainingPlanService {
         ),
       );
 
-      return (response.data as any) || [];
+      return response.data || [];
     } catch (error) {
       this.logger.error("Error fetching plan history:", error);
       return [];
@@ -1108,18 +1121,18 @@ export class TrainingPlanService {
   async deletePlan(athleteId: string, planId: string): Promise<boolean> {
     try {
       const response = await firstValueFrom(
-        this.apiService.delete<{ success: boolean }>(
+        this.apiService.delete<PlanSaveResponse>(
           `/api/training/plan/${planId}`,
         ),
       );
 
       // If deleted plan was current, clear it
-      const current = this.currentPlan();
-      if (current && (current as any).id === planId) {
+      const current = this.currentPlan() as PlanWithId | null;
+      if (current && current.id === planId) {
         this.currentPlan.set(null);
       }
 
-      return !!(response && response.data && (response.data as any).success !== false);
+      return !!(response && response.data && response.data.success !== false);
     } catch (error) {
       this.logger.error("Error deleting training plan:", error);
       return false;

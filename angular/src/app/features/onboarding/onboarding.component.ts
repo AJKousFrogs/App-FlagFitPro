@@ -322,7 +322,7 @@ export class OnboardingComponent implements OnInit {
       setTimeout(() => {
         this.router.navigate(["/dashboard"]);
       }, 1000);
-    } catch (error: any) {
+    } catch (error) {
       this.messageService.add({
         severity: "error",
         summary: "Error",

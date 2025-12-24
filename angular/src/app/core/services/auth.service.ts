@@ -9,7 +9,6 @@ export interface User {
   email: string;
   name?: string;
   role?: string;
-  [key: string]: any;
 }
 
 export interface LoginCredentials {
@@ -22,7 +21,17 @@ export interface RegisterData {
   email: string;
   password: string;
   name?: string;
-  [key: string]: any;
+  [key: string]: unknown;
+}
+
+interface AuthResponse {
+  success: boolean;
+  data?: {
+    user: unknown;
+    session: unknown;
+  };
+  message?: string;
+  error?: string;
 }
 
 @Injectable({
@@ -81,7 +90,7 @@ export class AuthService {
     }
   }
 
-  login(credentials: LoginCredentials): Observable<any> {
+  login(credentials: LoginCredentials): Observable<AuthResponse> {
     this.isLoading.set(true);
 
     return from(
@@ -107,7 +116,7 @@ export class AuthService {
     );
   }
 
-  register(data: RegisterData): Observable<any> {
+  register(data: RegisterData): Observable<AuthResponse> {
     this.isLoading.set(true);
 
     const { email, password, ...metadata } = data;
@@ -136,7 +145,7 @@ export class AuthService {
     );
   }
 
-  logout(): Observable<any> {
+  logout(): Observable<unknown> {
     return from(this.supabaseService.signOut()).pipe(
       tap(() => {
         this.clearAuth();
@@ -151,7 +160,7 @@ export class AuthService {
     );
   }
 
-  getCurrentUser(): Observable<any> {
+  getCurrentUser(): Observable<AuthResponse> {
     // Use signal instead of property access
     const user = this.supabaseService.currentUser();
     if (user) {

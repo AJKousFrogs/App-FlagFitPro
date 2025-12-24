@@ -22,6 +22,72 @@ import { firstValueFrom, timer, Subscription } from "rxjs";
 import { LoggerService } from "../../../core/services/logger.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
+interface RecoveryMetric {
+  name: string;
+  value: number | string;
+  unit: string;
+  percentage: number;
+  icon: string;
+  color: string;
+}
+
+interface RecoveryProtocol {
+  name: string;
+  category: string;
+  description: string;
+  duration: number;
+  priority?: 'high' | 'medium' | 'low';
+  evidenceLevel?: string;
+  studyCount?: number;
+  benefits: string[];
+  steps: ProtocolStep[];
+}
+
+interface ProtocolStep {
+  title: string;
+  description: string;
+  duration: number;
+  icon: string;
+  completed?: boolean;
+  active?: boolean;
+}
+
+interface RecoverySession {
+  id: string;
+  protocol: RecoveryProtocol;
+  duration: number;
+  startTime: string;
+  endTime?: string;
+}
+
+interface ResearchInsight {
+  title: string;
+  journal: string;
+  summary: string;
+  authors: string;
+  year: number;
+  doi: string;
+}
+
+interface ChartData {
+  labels: string[];
+  datasets: ChartDataset[];
+}
+
+interface ChartDataset {
+  label: string;
+  data: number[];
+  borderColor?: string;
+  backgroundColor: string | string[];
+}
+
+interface ChartOptions {
+  responsive: boolean;
+  scales?: {
+    y?: { beginAtZero: boolean; max: number };
+  };
+}
+
 @Component({
   selector: "app-recovery-dashboard",
   standalone: true,
@@ -594,21 +660,21 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   private logger = inject(LoggerService);
 
   recoveryScoreValue = 78;
-  recoveryMetrics = signal<any[]>([]);
-  recommendedProtocols = signal<any[]>([]);
-  activeSession = signal<any>(null);
+  recoveryMetrics = signal<RecoveryMetric[]>([]);
+  recommendedProtocols = signal<RecoveryProtocol[]>([]);
+  activeSession = signal<RecoverySession | null>(null);
   sessionPaused = signal(false);
   sessionProgressValue = 0;
   timeRemaining = signal(0);
   totalTime = signal(0);
-  sessionSteps = signal<any[]>([]);
-  researchInsights = signal<any[]>([]);
+  sessionSteps = signal<ProtocolStep[]>([]);
+  researchInsights = signal<ResearchInsight[]>([]);
 
   // Chart data
-  weeklyRecoveryData: any = {};
-  protocolEffectivenessData: any = {};
-  chartOptions: any = {};
-  barChartOptions: any = {};
+  weeklyRecoveryData: ChartData = { labels: [], datasets: [] };
+  protocolEffectivenessData: ChartData = { labels: [], datasets: [] };
+  chartOptions: ChartOptions = { responsive: true };
+  barChartOptions: ChartOptions = { responsive: true };
 
   ngOnInit() {
     this.loadRecoveryData();
@@ -649,11 +715,11 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     return severityMap[category] || "info";
   }
 
-  selectProtocol(protocol: any) {
+  selectProtocol(protocol: RecoveryProtocol) {
     this.logger.debug("Selected protocol:", protocol);
   }
 
-  async startProtocol(protocol: any) {
+  async startProtocol(protocol: RecoveryProtocol) {
     const session = await firstValueFrom(
       this.recoveryService.startRecoverySession(protocol),
     );
@@ -661,7 +727,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     this.setupSessionTimer(session);
   }
 
-  showProtocolDetails(protocol: any) {
+  showProtocolDetails(protocol: RecoveryProtocol) {
     // Open protocol details modal with research evidence
     this.logger.debug("Show details for:", protocol);
   }
@@ -766,12 +832,12 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  private setupSessionTimer(session: any) {
+  private setupSessionTimer(session: RecoverySession) {
     // Setup session timer and steps
     this.totalTime.set(session.duration); // Already in seconds
     this.timeRemaining.set(this.totalTime());
     this.sessionSteps.set(
-      session.protocol.steps.map((step: any, index: number) => ({
+      session.protocol.steps.map((step: ProtocolStep, index: number) => ({
         ...step,
         completed: false,
         active: index === 0,

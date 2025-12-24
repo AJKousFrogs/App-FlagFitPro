@@ -202,10 +202,10 @@ export class VerifyEmailComponent implements OnInit {
       setTimeout(() => {
         this.router.navigate(["/dashboard"]);
       }, 2000);
-    } catch (error: any) {
+    } catch (error) {
       this.isVerifying.set(false);
       this.verificationError.set(
-        error.message || "Verification failed. Please try again.",
+        error instanceof Error ? error.message : "Verification failed. Please try again.",
       );
     }
   }
@@ -225,13 +225,14 @@ export class VerifyEmailComponent implements OnInit {
         summary: "Email Sent",
         detail: "Verification email has been sent. Please check your inbox.",
       });
-    } catch (error: any) {
+    } catch (error) {
       this.messageService.add({
         severity: "error",
         summary: "Error",
         detail:
-          error.message ||
-          "Failed to send verification email. Please try again.",
+          error instanceof Error
+            ? error.message
+            : "Failed to send verification email. Please try again.",
       });
     } finally {
       this.isResending.set(false);

@@ -219,10 +219,17 @@ export interface AccessibleDataPoint {
 })
 export class AccessiblePerformanceChartComponent {
   // Angular 21: Use input() signal instead of @Input()
-  chartData = input<any>();
+  chartData = input<{
+    labels?: (string | Date)[];
+    datasets?: Array<{
+      label?: string;
+      data: (number | { speed?: number; accuracy?: number; [key: string]: unknown })[];
+      [key: string]: unknown;
+    }>;
+  }>();
   chartTitle = input<string>("Performance Chart");
   private logger = inject(LoggerService);
-  chartOptions = input<any>(DEFAULT_CHART_OPTIONS);
+  chartOptions = input<Record<string, unknown>>(DEFAULT_CHART_OPTIONS);
 
   showKeyboardHelp = signal(false);
   currentDataPointIndex = signal<number | null>(null);
@@ -239,10 +246,10 @@ export class AccessiblePerformanceChartComponent {
       return [];
     }
 
-    return data.datasets[0].data.map((value: any, index: number) => {
+    return data.datasets[0].data.map((value: number | { speed?: number; accuracy?: number; [key: string]: unknown }, index: number) => {
       const date = data.labels?.[index] || new Date();
-      const speed = typeof value === "object" ? value.speed || value : value;
-      const accuracy = typeof value === "object" ? value.accuracy || 0 : 100;
+      const speed = typeof value === "object" ? (value.speed ?? value as unknown as number) : value;
+      const accuracy = typeof value === "object" ? (value.accuracy ?? 0) : 100;
       return {
         date,
         speed,
@@ -262,8 +269,8 @@ export class AccessiblePerformanceChartComponent {
   });
 
   // Initialize speechSynthesis at field declaration
-  private speechSynthesis: SpeechSynthesis =
-    typeof window !== "undefined" ? window.speechSynthesis : (null as any);
+  private speechSynthesis: SpeechSynthesis | null =
+    typeof window !== "undefined" ? window.speechSynthesis : null;
 
   @HostListener("keydown", ["$event"])
   handleKeydown(event: KeyboardEvent): void {
@@ -409,14 +416,14 @@ export class AccessiblePerformanceChartComponent {
     const data = this.accessibleData();
     if (data.length === 0) return 0;
 
-    const sum = data.reduce((acc: number, point: any) => {
+    const sum = data.reduce((acc: number, point) => {
       return acc + (metric === "speed" ? point.speed : point.accuracy);
     }, 0);
 
     return Math.round((sum / data.length) * 10) / 10;
   }
 
-  private calculateTrend(value: any, index: number): string {
+  private calculateTrend(value: number | { speed?: number; accuracy?: number; [key: string]: unknown }, index: number): string {
     const chartData = this.chartData();
     if (!chartData?.datasets?.[0]?.data || index === 0) {
       return "Baseline measurement";
@@ -424,14 +431,14 @@ export class AccessiblePerformanceChartComponent {
 
     const previousValue =
       typeof chartData.datasets[0].data[index - 1] === "object"
-        ? chartData.datasets[0].data[index - 1].speed ||
+        ? (chartData.datasets[0].data[index - 1] as { speed?: number; [key: string]: unknown }).speed ??
           chartData.datasets[0].data[index - 1]
         : chartData.datasets[0].data[index - 1];
 
     const currentValue =
-      typeof value === "object" ? value.speed || value : value;
+      typeof value === "object" ? (value.speed ?? value) as number : value;
 
-    const change = ((currentValue - previousValue) / previousValue) * 100;
+    const change = ((currentValue - (previousValue as number)) / (previousValue as number)) * 100;
 
     if (change > 5) {
       return `Significant improvement of ${change.toFixed(1)}%`;

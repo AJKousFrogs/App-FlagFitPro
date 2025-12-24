@@ -27,7 +27,9 @@ export interface USDAFood {
   calcium?: number;
   iron?: number;
   vitaminC?: number;
-  [key: string]: any;
+  image?: string;
+  brandOwner?: string;
+  ingredients?: string;
 }
 
 export interface Meal {
@@ -64,6 +66,43 @@ export interface PerformanceInsight {
   description: string;
   actionLabel?: string;
   action?: () => void;
+}
+
+interface DatabaseNutritionLog {
+  id: number;
+  user_id: string;
+  food_name: string;
+  food_id?: number;
+  calories: number;
+  protein: number;
+  carbohydrates: number;
+  fat: number;
+  fiber?: number;
+  logged_at: string;
+  meal_type?: string;
+}
+
+interface RealtimePayload<T> {
+  new: T;
+  old: T;
+}
+
+interface EdamamFood {
+  fdcId: number;
+  description: string;
+  dataType?: string;
+  nutrients?: {
+    calories?: number;
+    protein?: number;
+    carbohydrates?: number;
+    fat?: number;
+    fiber?: number;
+    sugar?: number;
+    sodium?: number;
+  };
+  image?: string;
+  brandOwner?: string;
+  foodContentsLabel?: string;
 }
 
 @Injectable({
@@ -151,7 +190,7 @@ export class NutritionService {
 
     // Subscribe to nutrition logs
     this.realtimeService.subscribe("nutrition_logs", `user_id=eq.${userId}`, {
-      onInsert: (payload: any) => {
+      onInsert: (payload: RealtimePayload<DatabaseNutritionLog>) => {
         const logDate =
           payload.new.log_date ||
           new Date(payload.new.logged_at).toISOString().split("T")[0];
@@ -160,7 +199,7 @@ export class NutritionService {
           this.refreshTodaysMeals();
         }
       },
-      onUpdate: (payload: any) => {
+      onUpdate: (payload: RealtimePayload<DatabaseNutritionLog>) => {
         const logDate =
           payload.new.log_date ||
           new Date(payload.new.logged_at).toISOString().split("T")[0];
@@ -169,7 +208,7 @@ export class NutritionService {
           this.refreshTodaysMeals();
         }
       },
-      onDelete: (payload: any) => {
+      onDelete: (payload: RealtimePayload<DatabaseNutritionLog>) => {
         this.logger.info("[Nutrition] Food log deleted via realtime");
         this.refreshTodaysMeals();
       },
@@ -263,7 +302,7 @@ export class NutritionService {
   /**
    * Transform Edamam results to USDAFood format
    */
-  private transformEdamamResults(foods: any[]): USDAFood[] {
+  private transformEdamamResults(foods: EdamamFood[]): USDAFood[] {
     return foods.map((food) => ({
       fdcId: food.fdcId,
       description: food.description,
@@ -286,7 +325,7 @@ export class NutritionService {
    * Add food to current meal
    * Logs food intake to nutrition_logs table
    */
-  addFoodToCurrentMeal(food: USDAFood | any): Observable<boolean> {
+  addFoodToCurrentMeal(food: USDAFood | { name?: string; calories?: number; protein?: number; carbs?: number; fat?: number; fiber?: number; [key: string]: unknown }): Observable<boolean> {
     const userId = this.userId();
 
     if (!userId) {
@@ -465,38 +504,38 @@ export class NutritionService {
         }
 
         // Group by meal type
-        const mealsByType = data.reduce((acc: any, log: any) => {
+        const mealsByType = data.reduce((acc: Record<string, DatabaseNutritionLog[]>, log: DatabaseNutritionLog) => {
           const type = log.meal_type || "other";
           if (!acc[type]) {
             acc[type] = [];
           }
           acc[type].push(log);
-          return {};
+          return acc;
         }, {});
 
         // Convert to Meal[] format
         return Object.entries(mealsByType).map(
-          ([type, logs]: [string, any]) => ({
+          ([type, logs]: [string, DatabaseNutritionLog[]]) => ({
             id: type,
             type,
             timestamp: new Date(logs[0].logged_at),
             totalCalories: logs.reduce(
-              (sum: number, log: any) => sum + (log.calories || 0),
+              (sum: number, log: DatabaseNutritionLog) => sum + (log.calories || 0),
               0,
             ),
             carbs: logs.reduce(
-              (sum: number, log: any) => sum + (log.carbohydrates || 0),
+              (sum: number, log: DatabaseNutritionLog) => sum + (log.carbohydrates || 0),
               0,
             ),
             protein: logs.reduce(
-              (sum: number, log: any) => sum + (log.protein || 0),
+              (sum: number, log: DatabaseNutritionLog) => sum + (log.protein || 0),
               0,
             ),
             fat: logs.reduce(
-              (sum: number, log: any) => sum + (log.fat || 0),
+              (sum: number, log: DatabaseNutritionLog) => sum + (log.fat || 0),
               0,
             ),
-            foods: logs.map((log: any) => ({
+            foods: logs.map((log: DatabaseNutritionLog) => ({
               name: log.food_name,
               amount: 1,
               unit: "serving",
@@ -560,10 +599,10 @@ export class NutritionService {
 
         // Calculate averages
         const avgCalories =
-          data.reduce((sum, log: any) => sum + (log.calories || 0), 0) /
+          data.reduce((sum, log: DatabaseNutritionLog) => sum + (log.calories || 0), 0) /
           data.length;
         const avgProtein =
-          data.reduce((sum, log: any) => sum + (log.protein || 0), 0) /
+          data.reduce((sum, log: DatabaseNutritionLog) => sum + (log.protein || 0), 0) /
           data.length;
 
         // Generate insights

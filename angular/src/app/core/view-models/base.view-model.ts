@@ -79,7 +79,7 @@ export abstract class BaseViewModel {
     observable: Observable<T>,
     callbacks: {
       next?: (value: T) => void;
-      error?: (error: any) => void;
+      error?: (error: unknown) => void;
       complete?: () => void;
       showLoading?: boolean;
     } = {},
@@ -123,9 +123,20 @@ export abstract class BaseViewModel {
   /**
    * Handle errors consistently
    */
-  protected handleError(error: any): void {
-    const errorMessage =
-      error?.message || error?.error?.message || "An error occurred";
+  protected handleError(error: unknown): void {
+    let errorMessage = "An error occurred";
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (error && typeof error === 'object' && 'message' in error) {
+      errorMessage = String(error.message);
+    } else if (error && typeof error === 'object' && 'error' in error) {
+      const nestedError = (error as { error: { message?: string } }).error;
+      if (nestedError && typeof nestedError.message === 'string') {
+        errorMessage = nestedError.message;
+      }
+    }
+    
     this.error.set(errorMessage);
     this.logger.error("[ViewModel Error]", error);
   }
@@ -143,5 +154,5 @@ export abstract class BaseViewModel {
    * Initialize the view model
    * Override in subclasses to set up initial data loading
    */
-  abstract initialize(...args: any[]): void;
+  abstract initialize(...args: unknown[]): void;
 }

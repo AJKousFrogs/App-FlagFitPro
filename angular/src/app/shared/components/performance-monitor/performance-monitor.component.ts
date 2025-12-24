@@ -309,7 +309,7 @@ export class PerformanceMonitorComponent implements OnInit, OnDestroy {
     return labelMap[status] || "Unknown";
   }
 
-  trackByLabel(index: number, metric: any): string {
+  trackByLabel(index: number, metric: { label: string }): string {
     return metric.label;
   }
 }

@@ -302,7 +302,12 @@ export class ImportDatasetComponent {
   isLoading = signal(false);
   importResult = signal<{
     success: boolean;
-    metrics?: any;
+    metrics?: {
+      total_volume: number;
+      high_speed_distance: number;
+      sprint_count: number;
+      duration_minutes: number;
+    };
     error?: string;
   } | null>(null);
 
@@ -354,7 +359,7 @@ export class ImportDatasetComponent {
       } else {
         throw new Error("Import failed");
       }
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage = ErrorHandlerUtil.extractErrorMessage(
         error,
         "Failed to parse and import file",
@@ -406,7 +411,7 @@ export class ImportDatasetComponent {
       } else {
         throw new Error("Import failed");
       }
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage = ErrorHandlerUtil.extractErrorMessage(
         error,
         "Failed to generate and import dataset",
@@ -468,7 +473,7 @@ export class ImportDatasetComponent {
       } else {
         throw new Error("Import failed");
       }
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage = ErrorHandlerUtil.extractErrorMessage(
         error,
         "Failed to import dataset",

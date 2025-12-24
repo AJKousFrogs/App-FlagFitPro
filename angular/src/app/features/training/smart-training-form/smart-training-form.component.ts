@@ -519,7 +519,7 @@ export class SmartTrainingFormComponent implements OnInit {
     }
   }
 
-  onSessionTypeChange(event: any) {
+  onSessionTypeChange(event: { value: string }) {
     // Additional logic when session type changes
     const selectedType = event.value;
     this.logger.debug("Session type changed to:", selectedType);

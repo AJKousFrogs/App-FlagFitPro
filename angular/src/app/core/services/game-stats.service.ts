@@ -88,7 +88,7 @@ export class GameStatsService {
 
         // Aggregate stats
         return this.aggregatePlayerStats(data as GamePlay[]);
-      } catch (error: any) {
+      } catch (error) {
         if (attempt < maxRetries - 1) {
           // Exponential backoff
           await this.delay(this.RETRY_DELAY_MS * Math.pow(2, attempt));
@@ -243,9 +243,11 @@ export class GameStatsService {
   /**
    * Extract error message from various error types
    */
-  private getErrorMessage(error: any): string {
-    if (error?.message) return error.message;
-    if (error?.status) return `HTTP ${error.status}`;
+  private getErrorMessage(error: unknown): string {
+    if (error instanceof Error) return error.message;
+    if (error && typeof error === 'object' && 'status' in error) {
+      return `HTTP ${(error as { status: number }).status}`;
+    }
     if (typeof error === "string") return error;
     return "Unknown error";
   }

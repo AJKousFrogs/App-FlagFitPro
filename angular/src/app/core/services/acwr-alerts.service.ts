@@ -382,7 +382,7 @@ export class AcwrAlertsService {
   public generateAdjustment(
     playerId: string,
     plannedSession: {
-      sessionType: any;
+      sessionType: string;
       plannedIntensity: number;
       plannedDuration: number;
     },

@@ -314,7 +314,7 @@ export class RegisterComponent {
 
         // Check password via Supabase Edge Function
         const functionUrl = `${supabaseUrl}/functions/v1/enable-leaked-password-protection`;
-        const headers: any = {
+        const headers: Record<string, string> = {
           "Content-Type": "application/json",
         };
         if (supabaseToken) {

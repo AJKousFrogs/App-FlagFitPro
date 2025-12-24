@@ -36,6 +36,25 @@ export interface NotificationState {
   lastOpenedAt: string | null;
 }
 
+interface NotificationResponse {
+  data?: Notification[] | NotificationWrapper | NotificationDataWrapper;
+  notifications?: Notification[];
+}
+
+interface NotificationWrapper {
+  notifications?: Notification[];
+  data?: Notification[];
+}
+
+interface NotificationDataWrapper {
+  data?: Notification[];
+}
+
+interface CountResponse {
+  data?: { unreadCount?: number; count?: number } | number;
+  unreadCount?: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -94,25 +113,27 @@ export class NotificationStateService {
         if (Array.isArray(response.data)) {
           notifications = response.data;
         } else if (
-          (response.data as any).notifications &&
-          Array.isArray((response.data as any).notifications)
+          typeof response.data === 'object' &&
+          'notifications' in response.data &&
+          Array.isArray(response.data.notifications)
         ) {
-          notifications = (response.data as any).notifications;
+          notifications = response.data.notifications;
         } else if (
-          (response.data as any).data &&
-          Array.isArray((response.data as any).data)
+          typeof response.data === 'object' &&
+          'data' in response.data &&
+          Array.isArray(response.data.data)
         ) {
-          notifications = (response.data as any).data;
+          notifications = response.data.data;
         }
       } else if (Array.isArray(response)) {
-        notifications = response as any;
+        notifications = response as Notification[];
       }
 
       this.notifications.set(notifications);
       this.loading.set(false);
       return notifications;
-    } catch (error: any) {
-      const errorMessage = error?.message || "Failed to load notifications";
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to load notifications";
       this.error.set(errorMessage);
       this.loading.set(false);
       this.logger.error("Error loading notifications:", error);
@@ -156,11 +177,11 @@ export class NotificationStateService {
       // Refresh badge count to ensure consistency
       await this.refreshBadgeCount();
       return true;
-    } catch (error: any) {
+    } catch (error) {
       // Revert optimistic update
       this.notifications.set(previousState);
       const errorMessage =
-        error?.message || "Failed to mark notification as read";
+        error instanceof Error ? error.message : "Failed to mark notification as read";
       this.error.set(errorMessage);
       this.logger.error("Error marking notification as read:", error);
       throw error;
@@ -201,11 +222,11 @@ export class NotificationStateService {
       // Refresh badge count to ensure consistency
       await this.refreshBadgeCount();
       return true;
-    } catch (error: any) {
+    } catch (error) {
       // Revert optimistic update
       this.notifications.set(previousState);
       const errorMessage =
-        error?.message || "Failed to mark all notifications as read";
+        error instanceof Error ? error.message : "Failed to mark all notifications as read";
       this.error.set(errorMessage);
       this.logger.error("Error marking all notifications as read:", error);
       throw error;
@@ -247,11 +268,11 @@ export class NotificationStateService {
       // Refresh badge count to ensure consistency
       await this.refreshBadgeCount();
       return true;
-    } catch (error: any) {
+    } catch (error) {
       // Revert optimistic update
       this.notifications.set(previousState);
       const errorMessage =
-        error?.message || "Failed to mark notifications as read";
+        error instanceof Error ? error.message : "Failed to mark notifications as read";
       this.error.set(errorMessage);
       this.logger.error("Error marking notifications as read:", error);
       throw error;
@@ -271,14 +292,15 @@ export class NotificationStateService {
 
       let count = 0;
       if (response && response.data) {
-        count =
-          (response.data as any).unreadCount ||
-          (response.data as any).count ||
-          0;
+        if (typeof response.data === 'object' && 'unreadCount' in response.data) {
+          count = response.data.unreadCount || 0;
+        } else if (typeof response.data === 'object' && 'count' in response.data) {
+          count = response.data.count || 0;
+        }
       } else if (typeof response === "number") {
         count = response;
-      } else if ((response as any).unreadCount !== undefined) {
-        count = (response as any).unreadCount;
+      } else if (typeof response === 'object' && response !== null && 'unreadCount' in response) {
+        count = response.unreadCount || 0;
       }
 
       // Update notifications to match server count if there's a mismatch
@@ -289,7 +311,7 @@ export class NotificationStateService {
       }
 
       return count;
-    } catch (error: any) {
+    } catch (error) {
       this.logger.warn("Error refreshing badge count:", error);
       // Return current count as fallback
       return this.unreadCount();
@@ -309,7 +331,7 @@ export class NotificationStateService {
       );
 
       this.lastOpenedAt.set(new Date().toISOString());
-    } catch (error: any) {
+    } catch (error) {
       this.logger.warn("Error updating last opened timestamp:", error);
       // Non-critical error, don't throw
     }

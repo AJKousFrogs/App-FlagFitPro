@@ -190,12 +190,12 @@ import { ButtonModule } from "primeng/button";
     `,
   ],
 })
-export class SwipeTableComponent {
+export class SwipeTableComponent<T = Record<string, unknown>> {
   // Angular 21: Use input() signal instead of @Input() with signal assignment
-  data = input<any[]>([]);
+  data = input<T[]>([]);
   columns = input<Array<{ field: string; header: string }>>([]);
-  onEdit = input<(row: any) => void>();
-  onDelete = input<(row: any) => void>();
+  onEdit = input<(row: T) => void>();
+  onDelete = input<(row: T) => void>();
 
   @ViewChild("tableContainer") tableContainer!: ElementRef;
 
@@ -246,7 +246,7 @@ export class SwipeTableComponent {
     }
   }
 
-  editRow(row: any) {
+  editRow(row: T) {
     const editFn = this.onEdit();
     if (editFn) {
       editFn(row);
@@ -254,7 +254,7 @@ export class SwipeTableComponent {
     this.resetSwipe();
   }
 
-  deleteRow(row: any) {
+  deleteRow(row: T) {
     const deleteFn = this.onDelete();
     if (deleteFn) {
       deleteFn(row);
@@ -267,8 +267,13 @@ export class SwipeTableComponent {
     this.swipeDistance = 0;
   }
 
-  getFieldValue(row: any, field: string): any {
+  getFieldValue(row: T, field: string): unknown {
     // Support nested fields like "user.name"
-    return field.split(".").reduce((obj, key) => obj?.[key], row);
+    return field.split(".").reduce((obj: unknown, key: string) => {
+      if (obj && typeof obj === "object" && key in obj) {
+        return (obj as Record<string, unknown>)[key];
+      }
+      return undefined;
+    }, row);
   }
 }

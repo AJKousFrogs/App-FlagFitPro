@@ -36,7 +36,7 @@ export interface GamePerformanceTrend {
       touchdowns?: number;
       completions?: number;
       yards?: number;
-      [key: string]: any;
+      [key: string]: unknown;
     };
   }>;
   averagePerformance: number;

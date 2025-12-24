@@ -228,28 +228,60 @@ export class GameTrackerComponent implements OnInit {
       .get("/api/roster/players")
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response: any) => {
-          const players = response.data || response || [];
+        next: (response: unknown) => {
+          // Type guard for response structure
+          const isValidResponse = 
+            response &&
+            typeof response === 'object' &&
+            ('data' in response || Array.isArray(response));
+
+          if (!isValidResponse) {
+            this.loadDefaultPlayers();
+            return;
+          }
+
+          const responseObj = response as Record<string, unknown>;
+          const playersData = Array.isArray(responseObj.data) 
+            ? responseObj.data 
+            : Array.isArray(response) 
+              ? response 
+              : [];
+
           this.players.set(
-            players.map((p: any) => ({
-              id: p.id || p.playerId,
-              name: p.name || `${p.firstName} ${p.lastName}`,
-              position: p.position || "",
-            })),
+            playersData
+              .filter((p): p is Record<string, unknown> => 
+                p !== null && typeof p === 'object'
+              )
+              .map((p) => ({
+                id: 
+                  typeof p.id === 'string' ? p.id :
+                  typeof p.playerId === 'string' ? p.playerId :
+                  `player-${Math.random()}`,
+                name: 
+                  typeof p.name === 'string' ? p.name :
+                  (typeof p.firstName === 'string' && typeof p.lastName === 'string')
+                    ? `${p.firstName} ${p.lastName}`
+                    : 'Unknown Player',
+                position: typeof p.position === 'string' ? p.position : "",
+              })),
           );
         },
         error: () => {
-          // Fallback to default players if API fails
-          this.players.set([
-            { id: "player_1", name: "Player 1", position: "QB" },
-            { id: "player_2", name: "Player 2", position: "WR" },
-            { id: "player_3", name: "Player 3", position: "WR" },
-            { id: "player_4", name: "Player 4", position: "RB" },
-            { id: "player_5", name: "Player 5", position: "DB" },
-            { id: "player_6", name: "Player 6", position: "DB" },
-          ]);
+          this.loadDefaultPlayers();
         },
       });
+  }
+
+  private loadDefaultPlayers(): void {
+    // Fallback to default players if API fails
+    this.players.set([
+      { id: "player_1", name: "Player 1", position: "QB" },
+      { id: "player_2", name: "Player 2", position: "WR" },
+      { id: "player_3", name: "Player 3", position: "WR" },
+      { id: "player_4", name: "Player 4", position: "RB" },
+      { id: "player_5", name: "Player 5", position: "DB" },
+      { id: "player_6", name: "Player 6", position: "DB" },
+    ]);
   }
 
   initGameForm(): void {
@@ -420,9 +452,13 @@ export class GameTrackerComponent implements OnInit {
       .post("/api/tournaments/games", gameData)
       .pipe(takeUntilDestroyed())
       .subscribe({
-        next: (response: any) => {
-          const gameId =
-            response.id || response.game_id || `game-${Date.now()}`;
+        next: (response: unknown) => {
+          const gameId = 
+            response && typeof response === 'object' && 'id' in response && typeof (response as Record<string, unknown>).id === 'string'
+              ? (response as Record<string, unknown>).id as string
+              : response && typeof response === 'object' && 'game_id' in response && typeof (response as Record<string, unknown>).game_id === 'string'
+                ? (response as Record<string, unknown>).game_id as string
+                : `game-${Date.now()}`;
           this.showGameForm.set(false);
           this.gameForm.reset();
           this.loadGames();
@@ -461,9 +497,15 @@ export class GameTrackerComponent implements OnInit {
 
     const formValue = this.playForm.value;
 
-    const playData: any = {
+    const playData: Partial<Play> & { 
+      gameId: string;
+      id: string;
+      recordedBy: string;
+      recorderRole: "coach" | "player";
+      timestamp: Date;
+    } = {
       ...formValue,
-      gameId: this.activeGameId(),
+      gameId: this.activeGameId()!,
       id: `play-${Date.now()}`,
       recordedBy: currentUser?.id || "unknown",
       recorderRole: recorderRole,
@@ -479,9 +521,9 @@ export class GameTrackerComponent implements OnInit {
     // Map play types for compatibility with existing system
     // Convert pass_play -> pass, run_play -> run for backend compatibility
     if (playData.playType === "pass_play") {
-      playData.playType = "pass";
+      playData.playType = "pass" as any;
     } else if (playData.playType === "run_play") {
-      playData.playType = "run";
+      playData.playType = "run" as any;
     }
 
     // Save play
@@ -507,16 +549,16 @@ export class GameTrackerComponent implements OnInit {
       });
   }
 
-  private markPlayersPresent(playData: any): void {
+  private markPlayersPresent(playData: Record<string, unknown>): void {
     const playersInPlay: string[] = [];
 
     // Collect all player IDs involved in this play
-    if (playData.quarterbackId) playersInPlay.push(playData.quarterbackId);
-    if (playData.receiverId) playersInPlay.push(playData.receiverId);
-    if (playData.ballCarrierId) playersInPlay.push(playData.ballCarrierId);
-    if (playData.defenderId) playersInPlay.push(playData.defenderId);
-    if (playData.interceptorId) playersInPlay.push(playData.interceptorId);
-    if (playData.deflectedBy) playersInPlay.push(playData.deflectedBy);
+    if (typeof playData.quarterbackId === 'string') playersInPlay.push(playData.quarterbackId);
+    if (typeof playData.receiverId === 'string') playersInPlay.push(playData.receiverId);
+    if (typeof playData.ballCarrierId === 'string') playersInPlay.push(playData.ballCarrierId);
+    if (typeof playData.defenderId === 'string') playersInPlay.push(playData.defenderId);
+    if (typeof playData.interceptorId === 'string') playersInPlay.push(playData.interceptorId);
+    if (typeof playData.deflectedBy === 'string') playersInPlay.push(playData.deflectedBy);
 
     // If a player is recording their own stats, mark them as present
     const currentUser = this.authService.getUser();

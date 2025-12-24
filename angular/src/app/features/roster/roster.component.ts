@@ -32,7 +32,7 @@ interface Player {
   age: number;
   height: string;
   weight: string;
-  stats?: any;
+  stats?: Record<string, number | string>;
 }
 
 @Component({
@@ -462,7 +462,10 @@ export class RosterComponent implements OnInit {
 
   teamStats = signal<TeamStat[]>([]);
   coachingStaff = signal<StaffMember[]>([]);
-  playersByPosition = signal<any[]>([]);
+  playersByPosition = signal<Array<{
+    position: string;
+    players: Player[];
+  }>>([]);
 
   ngOnInit(): void {
     this.loadRosterData();
@@ -587,7 +590,11 @@ export class RosterComponent implements OnInit {
     );
   }
 
-  getPlayerStats(player: Player): any[] {
+  getPlayerStats(player: Player): Array<{
+    label: string;
+    value: string | number;
+    key: string;
+  }> {
     if (!player.stats) return [];
     return Object.entries(player.stats).map(([key, value]) => ({
       label: key.charAt(0).toUpperCase() + key.slice(1),
@@ -608,7 +615,7 @@ export class RosterComponent implements OnInit {
     return achievement;
   }
 
-  trackByPosition(index: number, positionGroup: any): string {
+  trackByPosition(index: number, positionGroup: { position: string; players: Player[] }): string {
     return positionGroup.position;
   }
 
@@ -616,7 +623,7 @@ export class RosterComponent implements OnInit {
     return player.jersey;
   }
 
-  trackByStatKey(index: number, stat: any): string {
+  trackByStatKey(index: number, stat: { label: string; value: string | number; key: string }): string {
     return stat.key || index.toString();
   }
 }

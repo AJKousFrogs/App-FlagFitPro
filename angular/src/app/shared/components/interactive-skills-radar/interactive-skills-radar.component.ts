@@ -240,7 +240,7 @@ export class InteractiveSkillsRadarComponent {
       ...DEFAULT_CHART_OPTIONS,
       responsive: true,
       maintainAspectRatio: true,
-      onClick: (evt: any, elements: any[]) => {
+      onClick: (evt: MouseEvent | PointerEvent, elements: Array<{ index: number }>) => {
         if (elements.length > 0) {
           const elementIndex = elements[0].index;
           this.onSkillSelect(elementIndex);
@@ -253,7 +253,7 @@ export class InteractiveSkillsRadarComponent {
         },
         tooltip: {
           callbacks: {
-            label: (context: any) => {
+            label: (context: { dataset: { label?: string }; parsed: { r: number } }) => {
               return `${context.dataset.label}: ${context.parsed.r}/100`;
             },
           },

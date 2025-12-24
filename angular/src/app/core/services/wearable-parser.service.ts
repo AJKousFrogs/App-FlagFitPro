@@ -26,6 +26,19 @@ export interface ParseOptions {
   autoDetect?: boolean; // Auto-detect format
 }
 
+interface JsonDataStructure {
+  data?: unknown[];
+  samples?: unknown[];
+  records?: unknown[];
+  deviceType?: string;
+  deviceModel?: string;
+  startTime?: string;
+  timestamp?: string;
+  [key: string]: unknown;
+}
+
+type WearableDataEntry = Record<string, unknown>;
+
 @Injectable({
   providedIn: "root",
 })
@@ -122,8 +135,8 @@ export class WearableParserService {
         if (speed > 0 || distance > 0) {
           data.push({ speed_m_s: speed, distance_m: distance });
         }
-      } catch (error: any) {
-        errors.push(`Row ${i + 1}: ${error.message}`);
+      } catch (error) {
+        errors.push(`Row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
 
@@ -146,7 +159,7 @@ export class WearableParserService {
     options: ParseOptions,
   ): Promise<ParsedWearableData> {
     const text = await file.text();
-    let jsonData: any;
+    let jsonData: JsonDataStructure;
 
     try {
       jsonData = JSON.parse(text);
@@ -155,7 +168,7 @@ export class WearableParserService {
     }
 
     // Handle different JSON structures
-    let dataArray: any[] = [];
+    let dataArray: unknown[] = [];
 
     if (Array.isArray(jsonData)) {
       dataArray = jsonData;
@@ -192,8 +205,8 @@ export class WearableParserService {
         if (speed > 0 || distance > 0) {
           data.push({ speed_m_s: speed, distance_m: distance });
         }
-      } catch (error: any) {
-        errors.push(`Entry ${i + 1}: ${error.message}`);
+      } catch (error) {
+        errors.push(`Entry ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
 
@@ -260,8 +273,8 @@ export class WearableParserService {
         if (speed > 0 || distance > 0) {
           data.push({ speed_m_s: speed, distance_m: distance });
         }
-      } catch (error: any) {
-        errors.push(`Sample ${index + 1}: ${error.message}`);
+      } catch (error) {
+        errors.push(`Sample ${index + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     });
 
@@ -315,7 +328,7 @@ export class WearableParserService {
   /**
    * Helper: Extract speed from object
    */
-  private extractSpeed(obj: any): number {
+  private extractSpeed(obj: WearableDataEntry): number {
     const speedFields = [
       "speed_m_s",
       "speed",
@@ -335,7 +348,7 @@ export class WearableParserService {
   /**
    * Helper: Extract distance from object
    */
-  private extractDistance(obj: any): number {
+  private extractDistance(obj: WearableDataEntry): number {
     const distanceFields = [
       "distance_m",
       "distance",

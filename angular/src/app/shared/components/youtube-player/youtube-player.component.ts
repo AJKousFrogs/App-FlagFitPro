@@ -17,7 +17,61 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { timer, Subscription } from "rxjs";
 
-declare var YT: any;
+// YouTube IFrame Player API Type Definitions
+interface YTPlayerVars {
+  autoplay?: 0 | 1;
+  controls?: 0 | 1;
+  start?: number;
+  end?: number;
+  [key: string]: string | number | undefined;
+}
+
+interface YTEvent {
+  target: YTPlayer;
+  data: number;
+}
+
+interface YTPlayer {
+  loadVideoById(videoId: string): void;
+  playVideo(): void;
+  pauseVideo(): void;
+  stopVideo(): void;
+  mute(): void;
+  unMute(): void;
+  isMuted(): boolean;
+  setVolume(volume: number): void;
+  getDuration(): number;
+  getCurrentTime(): number;
+  destroy(): void;
+}
+
+interface YTPlayerConstructor {
+  new (
+    element: HTMLElement,
+    options: {
+      videoId: string;
+      width: number;
+      height: number;
+      playerVars: YTPlayerVars;
+      events: {
+        onReady: (event: YTEvent) => void;
+        onStateChange: (event: YTEvent) => void;
+        onError: (event: YTEvent) => void;
+      };
+    },
+  ): YTPlayer;
+}
+
+interface YouTubeIFrameAPI {
+  Player: YTPlayerConstructor;
+}
+
+declare const YT: YouTubeIFrameAPI;
+
+interface WindowWithYouTubeAPI extends Window {
+  onYouTubeIframeAPIReady?: () => void;
+  YT?: YouTubeIFrameAPI;
+}
 
 /**
  * Angular 21 YouTube Player Component
@@ -167,7 +221,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   duration = signal<number>(0);
   currentTime = signal<number>(0);
 
-  private player: any = null;
+  private player: YTPlayer | null = null;
   private timeTrackingSubscription: Subscription | null = null;
 
   constructor() {
@@ -203,6 +257,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     }
 
     // Check if API is already loaded
+    const win = window as WindowWithYouTubeAPI;
     if (typeof YT !== "undefined" && YT.Player) {
       this.youtubeApiLoaded.set(true);
       this.initializePlayer();
@@ -216,7 +271,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
     // Set up callback
-    (window as any).onYouTubeIframeAPIReady = () => {
+    win.onYouTubeIframeAPIReady = () => {
       this.youtubeApiLoaded.set(true);
       this.initializePlayer();
     };
@@ -234,7 +289,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
 
     this.loading.set(true);
 
-    const playerVars: any = {
+    const playerVars: YTPlayerVars = {
       autoplay: this.autoplay() ? 1 : 0,
       controls: this.showControls() ? 1 : 0,
       start: this.startSeconds(),
@@ -250,13 +305,13 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
       height: this.height(),
       playerVars: playerVars,
       events: {
-        onReady: (event: any) => {
+        onReady: (event: YTEvent) => {
           this.onPlayerReady(event);
         },
-        onStateChange: (event: any) => {
+        onStateChange: (event: YTEvent) => {
           this.onPlayerStateChange(event);
         },
-        onError: (event: any) => {
+        onError: (event: YTEvent) => {
           this.onPlayerError(event);
         },
       },
@@ -273,11 +328,13 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onPlayerReady(event: any): void {
+  private onPlayerReady(event: YTEvent): void {
     this.playerReady.set(true);
     this.loading.set(false);
-    this.duration.set(this.player.getDuration());
-    this.player.setVolume(this.volume());
+    if (this.player) {
+      this.duration.set(this.player.getDuration());
+      this.player.setVolume(this.volume());
+    }
 
     // Start tracking current time
     this.startTimeTracking();
@@ -285,7 +342,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     this.ready.emit();
   }
 
-  private onPlayerStateChange(event: any): void {
+  private onPlayerStateChange(event: YTEvent): void {
     const states = [
       "UNSTARTED",
       "ENDED",
@@ -294,19 +351,20 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
       "BUFFERING",
       "CUED",
     ];
-    const state = states[event.data];
+    const state = states[event.data] || "UNKNOWN";
     this.stateChange.emit(state);
 
     this.isPlaying.set(state === "PLAYING");
   }
 
-  private onPlayerError(event: any): void {
-    const errors = [
-      "Invalid video ID",
-      "Video removed",
-      "Video private",
-      "Age restricted",
-    ];
+  private onPlayerError(event: YTEvent): void {
+    const errors: Record<number, string> = {
+      2: "Invalid video ID",
+      5: "HTML5 player error",
+      100: "Video not found",
+      101: "Video not allowed",
+      150: "Video not allowed",
+    };
     const errorMsg = errors[event.data] || "Unknown error";
     this.error.emit(errorMsg);
     this.loading.set(false);

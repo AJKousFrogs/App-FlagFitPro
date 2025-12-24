@@ -54,6 +54,25 @@ import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeChannel } from "@supabase/supabase-js";
 
+interface Citation {
+  authors: string;
+  year: number;
+  title: string;
+  doi: string;
+}
+
+interface WorkoutLog {
+  player_id: string;
+  completed_at: string;
+  rpe?: number;
+  duration_minutes?: number;
+  notes?: string;
+  load_monitoring?: {
+    acwr?: number;
+    chronic_load?: number;
+  };
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -822,7 +841,7 @@ export class AcwrService {
 
     return {
       preset: `${preset.name} (${preset.version})`,
-      citations: acwrConfig.citations.map((c: any) => ({
+      citations: acwrConfig.citations.map((c: Citation) => ({
         authors: c.authors,
         year: c.year,
         title: c.title,
@@ -964,7 +983,7 @@ export class AcwrService {
       }
 
       // Convert workout logs to TrainingSession format
-      const sessions: TrainingSession[] = workoutLogs.map((log: any) => ({
+      const sessions: TrainingSession[] = workoutLogs.map((log: WorkoutLog) => ({
         playerId: log.player_id,
         date: new Date(log.completed_at),
         sessionType: this.inferSessionType(log),
@@ -989,8 +1008,8 @@ export class AcwrService {
       // Load historical ACWR for tolerance detection
       if (workoutLogs[0]?.load_monitoring) {
         const history = workoutLogs
-          .filter((log: any) => log.load_monitoring?.acwr)
-          .map((log: any) => ({
+          .filter((log: WorkoutLog) => log.load_monitoring?.acwr)
+          .map((log: WorkoutLog) => ({
             date: new Date(log.completed_at),
             ratio: log.load_monitoring.acwr,
             chronic: log.load_monitoring.chronic_load,
@@ -1027,7 +1046,7 @@ export class AcwrService {
         },
         (payload) => {
           this.logger.info("[ACWR] New workout log received", payload.new);
-          const log = payload.new as any;
+          const log = payload.new as WorkoutLog;
 
           const session: TrainingSession = {
             playerId: log.player_id,
@@ -1094,7 +1113,7 @@ export class AcwrService {
    * Infer session type from workout log data
    */
   private inferSessionType(
-    log: any,
+    log: WorkoutLog,
   ):
     | "game"
     | "sprint"

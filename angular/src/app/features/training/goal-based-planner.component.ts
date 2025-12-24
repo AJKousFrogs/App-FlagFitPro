@@ -409,7 +409,7 @@ export class GoalBasedPlannerComponent implements OnInit {
     return "Maintain current load";
   }
 
-  getSessionCardClass(session: any): string {
+  getSessionCardClass(session: { sessionType?: string }): string {
     if (session.sessionType === "recovery" || session.sessionType === "game") {
       return "border-gray-300";
     }

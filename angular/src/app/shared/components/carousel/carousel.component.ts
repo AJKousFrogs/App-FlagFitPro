@@ -228,7 +228,7 @@ export class CarouselComponent {
       content?: string;
       alt?: string;
       caption?: { title: string; description?: string };
-      template?: any;
+      template?: unknown;
     }>
   >();
   showNavigation = input<boolean>(true);
