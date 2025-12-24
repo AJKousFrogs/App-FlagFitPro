@@ -1,4 +1,6 @@
 import { logger } from '../logger.js';
+import { setSafeContent } from './utils/shared.js';
+
 
 /**
  * FlagFit Pro - Wellness Notifications Integration
@@ -56,7 +58,7 @@ import { logger } from '../logger.js';
     // Create prompt modal
     const modal = document.createElement("div");
     modal.className = "notification-prompt-modal";
-    modal.innerHTML = `
+    setSafeContent(modal, `
       <div class="notification-prompt-overlay"></div>
       <div class="notification-prompt-content">
         <div class="notification-prompt-icon">🔔</div>
@@ -85,7 +87,7 @@ import { logger } from '../logger.js';
           </button>
         </div>
       </div>
-    `;
+    `, true, true);
 
     // Add styles
     const style = document.createElement("style");
@@ -378,10 +380,10 @@ import { logger } from '../logger.js';
     // Create install button
     const installBtn = document.createElement("button");
     installBtn.className = "pwa-install-btn";
-    installBtn.innerHTML = `
+    setSafeContent(installBtn, `
       <span class="pwa-install-icon">📱</span>
       <span>Install App</span>
-    `;
+    `, true, true);
 
     // Add styles
     const style = document.createElement("style");

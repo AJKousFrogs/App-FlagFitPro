@@ -7,6 +7,7 @@ import {
 } from "../../real-team-data.js";
 import {
   initializeLucideIcons,
+  setSafeContent,
   announceToScreenReader,
   debounce,
 } from "../utils/shared.js";
@@ -152,7 +153,7 @@ function initializeTrainingVideos() {
     // Show fallback message
     const container = document.getElementById("training-videos-container");
     if (container) {
-      container.innerHTML = `
+      setSafeContent(container, `
                 <div style="background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;">
                     <h3 style="color: var(--text-primary); margin-bottom: 1rem;">📺 Training Videos</h3>
                     <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Training videos are temporarily unavailable.</p>
@@ -160,7 +161,7 @@ function initializeTrainingVideos() {
                         Search YouTube Manually
                     </a>
                 </div>
-            `;
+            `, true, true);
     }
   }
 }

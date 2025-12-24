@@ -8,6 +8,8 @@ import { storageService } from "../services/storage-service-unified.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 
 import { logger } from "../../logger.js";
+import { setSafeContent } from '../utils/shared.js';
+
 
 /**
  * NotificationStore - Centralized notification state management
@@ -383,12 +385,12 @@ class DashboardPage {
     const notificationList = document.getElementById("notification-list");
     if (!notificationList) {return;}
 
-    notificationList.innerHTML = `
+    setSafeContent(notificationList, `
       <div class="notification-loading">
         <div class="notification-loading-spinner"></div>
         <div class="notification-loading-text">Loading notifications...</div>
       </div>
-    `;
+    `, true, true);
   }
 
   /**
@@ -479,7 +481,7 @@ class DashboardPage {
     const banner = document.createElement("div");
     banner.id = "profile-completion-banner";
     banner.className = "profile-completion-banner";
-    banner.innerHTML = `
+    setSafeContent(banner, `
       <div class="profile-completion-banner-content">
         <div class="profile-completion-banner-icon">
           <i data-lucide="alert-circle" class="icon-20"></i>
@@ -497,7 +499,7 @@ class DashboardPage {
           </button>
         </div>
       </div>
-    `;
+    `, true, true);
 
     // Add styles if not already present
     if (!document.getElementById("profile-completion-banner-styles")) {
@@ -864,13 +866,13 @@ class DashboardPage {
     }
 
     if (notifications.length === 0) {
-      notificationList.innerHTML = `
+      setSafeContent(notificationList, `
         <div class="notification-empty">
           <div class="notification-empty-icon">🔔</div>
           <div class="notification-empty-title">No notifications yet</div>
           <div class="notification-empty-text">You're all caught up! New notifications will appear here.</div>
         </div>
-      `;
+      `, true, true);
       return;
     }
 

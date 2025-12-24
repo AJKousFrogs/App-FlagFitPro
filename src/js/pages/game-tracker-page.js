@@ -5,6 +5,8 @@ import { gameStatsService } from "../services/gameStatsService.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 
 import { logger } from "../../logger.js";
+import { setSafeContent } from '../utils/shared.js';
+
 
 class GameTrackerPage {
   constructor() {
@@ -295,12 +297,12 @@ class GameTrackerPage {
     }
 
     // Show loading state
-    gamesList.innerHTML = `
+    setSafeContent(gamesList, `
       <div class="empty-state">
         <i data-lucide="loader" class="icon-48 spinning"></i>
         <p>Loading games...</p>
       </div>
-    `;
+    `, true, true);
     lucide.createIcons();
 
     try {
@@ -317,12 +319,12 @@ class GameTrackerPage {
 
   renderGamesList(games, gamesList) {
     if (games.length === 0) {
-      gamesList.innerHTML = `
+      setSafeContent(gamesList, `
         <div class="empty-state">
           <i data-lucide="calendar" class="icon-48"></i>
           <p>No games tracked yet</p>
         </div>
-      `;
+      `, true, true);
       lucide.createIcons();
       return;
     }
@@ -332,12 +334,12 @@ class GameTrackerPage {
 
   renderGamesList(games, gamesList) {
     if (games.length === 0) {
-      gamesList.innerHTML = `
+      setSafeContent(gamesList, `
         <div class="empty-state">
           <i data-lucide="calendar" class="icon-48"></i>
           <p>No games tracked yet</p>
         </div>
-      `;
+      `, true, true);
       lucide.createIcons();
       return;
     }
@@ -679,12 +681,12 @@ class GameTrackerPage {
     }
 
     if (this.plays.length === 0) {
-      recentPlaysList.innerHTML = `
+      setSafeContent(recentPlaysList, `
         <div class="empty-state">
           <i data-lucide="clipboard" class="icon-48"></i>
           <p>No plays tracked yet. Start tracking plays above!</p>
         </div>
-      `;
+      `, true, true);
       lucide.createIcons();
       return;
     }

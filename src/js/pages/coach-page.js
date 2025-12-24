@@ -1,6 +1,8 @@
 // Coach Page JavaScript Module
 import { authManager } from "../../auth-manager.js";
 import { logger } from "../../logger.js";
+import { setSafeContent } from '../utils/shared.js';
+
 
 // Sample player data
 const playersData = [
@@ -387,7 +389,7 @@ function showAIAnalysisModal() {
             justify-content: center; z-index: var(--z-index-modal, 1400);
         `;
 
-  modal.innerHTML = `
+  setSafeContent(modal, `
             <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 700px; width: 90%;">
                 <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);"><i data-lucide="bot" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> AI Team Chemistry Analysis</h3>
                 <div style="margin-bottom: 1rem; padding: 1rem; background: var(--primary-50); border-radius: 8px; border-left: 4px solid var(--primary);">
@@ -415,7 +417,7 @@ function showAIAnalysisModal() {
                     <button onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; background: var(--primary); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: pointer;">Close Analysis</button>
                 </div>
             </div>
-        `;
+        `, true, true);
 
   document.body.appendChild(modal);
 }

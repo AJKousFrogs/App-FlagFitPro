@@ -11,6 +11,7 @@ import {
   formatTime,
   scrollToBottom,
   initializeLucideIcons,
+  setSafeContent,
   getMessageStatusHtml,
   getMessageActionsHtml,
   announceToScreenReader,
@@ -101,13 +102,13 @@ function createAIAssistantChannel() {
   channelItem.setAttribute("tabindex", "0");
   channelItem.setAttribute("aria-label", "Channel: FlagFit AI Assistant");
 
-  channelItem.innerHTML = `
+  setSafeContent(channelItem, `
     <span class="channel-icon">🤖</span>
     <div class="channel-info">
       <div class="channel-name">FlagFit AI Assistant</div>
       <div class="channel-preview">Ask me about training, nutrition, and performance</div>
     </div>
-  `;
+  `, true, true);
 
   // Add click handler
   channelItem.addEventListener("click", function () {
@@ -312,7 +313,7 @@ function openChannelSettings() {
   modal.setAttribute("aria-labelledby", "channel-modal-title");
   modal.setAttribute("aria-modal", "true");
 
-  modal.innerHTML = `
+  setSafeContent(modal, `
     <div class="channel-modal-overlay" onclick="closeChannelModal()"></div>
     <div class="channel-modal-content">
       <div class="channel-modal-header">
@@ -360,7 +361,7 @@ function openChannelSettings() {
         </div>
       </form>
     </div>
-  `;
+  `, true, true);
 
   document.body.appendChild(modal);
 

@@ -1,4 +1,6 @@
 import { logger } from '../logger.js';
+import { setSafeContent } from './utils/shared.js';
+
 
 /**
  * FlagFit Pro - Wellness Export Buttons
@@ -38,7 +40,7 @@ import { logger } from '../logger.js';
     const exportContainer = document.createElement("div");
     exportContainer.id = "wellness-export-buttons";
     exportContainer.className = "wellness-export-buttons";
-    exportContainer.innerHTML = `
+    setSafeContent(exportContainer, `
       <div class="export-buttons-wrapper">
         <h3 class="export-title">📊 Export Your Data</h3>
         <p class="export-description">Download your wellness data for your records or to share with your coach</p>
@@ -65,7 +67,7 @@ import { logger } from '../logger.js';
           </button>
         </div>
       </div>
-    `;
+    `, true, true);
 
     // Add styles
     const style = document.createElement("style");

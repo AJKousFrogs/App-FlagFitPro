@@ -1,4 +1,6 @@
 import { logger } from '../../logger.js';
+import { setSafeContent } from '../utils/shared.js';
+
 
 // FlagFit AI Chatbot Component
 // Provides intelligent responses about sports psychology, nutrition, speed training, injuries, recovery, etc.
@@ -210,7 +212,7 @@ class FlagFitChatbot {
     modal.setAttribute("aria-labelledby", "chatbot-title");
     modal.setAttribute("aria-hidden", "true");
 
-    modal.innerHTML = `
+    setSafeContent(modal, `
       <div class="chatbot-modal-content">
         <div class="chatbot-header">
           <div class="chatbot-header-info">
@@ -284,7 +286,7 @@ class FlagFitChatbot {
           </div>
         </div>
       </div>
-    `;
+    `, true, true);
 
     document.body.appendChild(modal);
     this.modal = modal;
@@ -619,7 +621,7 @@ class FlagFitChatbot {
     // Clear UI
     const messagesContainer = document.getElementById("chatbot-messages");
     if (messagesContainer) {
-      messagesContainer.innerHTML = `
+      setSafeContent(messagesContainer, `
         <div class="chatbot-message bot-message">
           <div class="message-avatar">🤖</div>
           <div class="message-content">
@@ -638,7 +640,7 @@ class FlagFitChatbot {
             </div>
           </div>
         </div>
-      `;
+      `, true, true);
     }
 
     // Reset conversation context
@@ -1641,7 +1643,7 @@ class FlagFitChatbot {
     const typingDiv = document.createElement("div");
     typingDiv.className = "chatbot-message bot-message typing-indicator";
     typingDiv.id = "typing-indicator";
-    typingDiv.innerHTML = `
+    setSafeContent(typingDiv, `
       <div class="message-avatar">🤖</div>
       <div class="message-content">
         <div class="typing-dots">
@@ -1650,7 +1652,7 @@ class FlagFitChatbot {
           <span></span>
         </div>
       </div>
-    `;
+    `, true, true);
 
     messagesContainer.appendChild(typingDiv);
     this.scrollToBottom();

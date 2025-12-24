@@ -4,6 +4,7 @@ import { getAllPlayers } from "../../real-team-data.js";
 import { logger } from "../../logger.js";
 import {
   initializeLucideIcons,
+  setSafeContent,
   showFieldError,
   showFieldSuccess,
   clearFieldState,
@@ -535,7 +536,7 @@ function showDeleteAccountModal() {
         justify-content: center; z-index: var(--z-index-modal, 1400);
     `;
 
-  modal.innerHTML = `
+  setSafeContent(modal, `
         <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; border: 2px solid var(--error);">
             <h3 style="margin-bottom: 1rem; color: var(--error); display: flex; align-items: center; gap: 0.5rem;">
                 ⚠️ Delete Account
@@ -560,7 +561,7 @@ function showDeleteAccountModal() {
                 <button id="confirmDeleteBtn" onclick="confirmAccountDeletion()" disabled style="padding: 0.75rem 1.5rem; background: var(--error); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: not-allowed; opacity: 0.5;">Delete Account</button>
             </div>
         </div>
-    `;
+    `, true, true);
 
   document.body.appendChild(modal);
 }

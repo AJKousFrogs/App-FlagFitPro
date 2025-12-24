@@ -1,5 +1,5 @@
 // Exercise Library Page - Optimized with pagination, debouncing, and DocumentFragment
-import { debounce } from "../utils/shared.js";
+import { debounce, setSafeContent } from "../utils/shared.js";
 import { logger } from "../../logger.js";
 import { escapeHtml } from "../utils/sanitize.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
@@ -381,12 +381,12 @@ export class ExerciseLibraryPage {
     if (!exerciseGrid) {
       return;
     }
-    exerciseGrid.innerHTML = `
+    setSafeContent(exerciseGrid, `
       <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12);">
         <div style="font-size: 2rem; margin-bottom: var(--space-4);">⏳</div>
         <h3>Loading exercises...</h3>
       </div>
-    `;
+    `, true, true);
   }
 
   showNoResults() {
@@ -394,7 +394,7 @@ export class ExerciseLibraryPage {
     if (!exerciseGrid) {
       return;
     }
-    exerciseGrid.innerHTML = `
+    setSafeContent(exerciseGrid, `
       <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-text-secondary);">
         <div style="font-size: 3rem; margin-bottom: var(--space-4);">
           <i data-lucide="search" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
@@ -402,7 +402,7 @@ export class ExerciseLibraryPage {
         <h3>No exercises found</h3>
         <p>Try adjusting your search terms or filters</p>
       </div>
-    `;
+    `, true, true);
     if (typeof lucide !== "undefined") {
       lucide.createIcons(exerciseGrid);
     }
