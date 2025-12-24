@@ -7,6 +7,8 @@
 import { BaseComponentLoader } from "./base-component-loader.js";
 import { onDOMReady } from "../utils/dom-ready.js";
 
+import { logger } from '../../logger.js';
+
 class FooterLoader extends BaseComponentLoader {
   constructor() {
     const footerType = FooterLoader.detectFooterType();
@@ -55,7 +57,7 @@ class FooterLoader extends BaseComponentLoader {
    */
   afterLoad() {
     super.afterLoad();
-    console.log(
+    logger.info(
       `[Footer Loader] Footer loaded successfully (${this.footerType})`,
     );
   }

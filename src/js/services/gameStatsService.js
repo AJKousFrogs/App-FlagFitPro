@@ -9,6 +9,8 @@ import { API_ENDPOINTS } from "../../api-config.js";
 import { storageService } from "./storage-service-unified.js";
 import { statisticsCalculationService } from "./statisticsCalculationService.js";
 
+import { logger } from '../../logger.js';
+
 class GameStatsService {
   constructor() {
     this.storageKey = "flagfit_games";
@@ -44,7 +46,7 @@ class GameStatsService {
       storageService.set(this.storageKey, games, { usePrefix: false });
       storageService.set(this.currentGameKey, game, { usePrefix: false });
     } catch (error) {
-      console.error("Error saving to localStorage:", error);
+      logger.error("Error saving to localStorage:", error);
     }
 
     // Try to save to backend
@@ -54,7 +56,7 @@ class GameStatsService {
           usePrefix: false,
         });
         if (!token) {
-          console.warn("No auth token, skipping backend save");
+          logger.warn("No auth token, skipping backend save");
           return true; // Saved to localStorage
         }
 
@@ -96,7 +98,7 @@ class GameStatsService {
           return true;
         }
       } catch (error) {
-        console.error("Error saving game to backend:", error);
+        logger.error("Error saving game to backend:", error);
         // Continue with localStorage version
       }
     }
@@ -114,7 +116,7 @@ class GameStatsService {
       const games = this.getAllGames();
       return games.find((g) => g.gameId === gameId) || null;
     } catch (error) {
-      console.error("Error getting game:", error);
+      logger.error("Error getting game:", error);
       return null;
     }
   }
@@ -157,7 +159,7 @@ class GameStatsService {
           }
         }
       } catch (error) {
-        console.error("Error loading games from backend:", error);
+        logger.error("Error loading games from backend:", error);
         // Fall through to localStorage
       }
     }
@@ -166,7 +168,7 @@ class GameStatsService {
     try {
       return storageService.get(this.storageKey, [], { usePrefix: false });
     } catch (error) {
-      console.error("Error loading games from localStorage:", error);
+      logger.error("Error loading games from localStorage:", error);
       return [];
     }
   }
@@ -179,7 +181,7 @@ class GameStatsService {
     try {
       return storageService.get(this.storageKey, [], { usePrefix: false });
     } catch (error) {
-      console.error("Error loading games:", error);
+      logger.error("Error loading games:", error);
       return [];
     }
   }
@@ -194,7 +196,7 @@ class GameStatsService {
         usePrefix: false,
       });
     } catch (error) {
-      console.error("Error loading current game:", error);
+      logger.error("Error loading current game:", error);
       return null;
     }
   }
@@ -211,7 +213,7 @@ class GameStatsService {
       storageService.set(this.storageKey, filteredGames, { usePrefix: false });
       return true;
     } catch (error) {
-      console.error("Error deleting game:", error);
+      logger.error("Error deleting game:", error);
       return false;
     }
   }
@@ -606,7 +608,7 @@ class GameStatsService {
           );
         stats.completionPercentage = completionResult.percentage.toFixed(1);
       } catch (error) {
-        console.warn("Error calculating completion percentage:", error);
+        logger.warn("Error calculating completion percentage:", error);
         stats.completionPercentage = "0.0";
       }
 
@@ -619,7 +621,7 @@ class GameStatsService {
         stats.dropRateSeverity = dropRateResult.severity;
         stats.dropRateRecommendation = dropRateResult.recommendation;
       } catch (error) {
-        console.warn("Error calculating drop rate:", error);
+        logger.warn("Error calculating drop rate:", error);
         stats.dropRate = "0.0";
       }
     }
@@ -636,7 +638,7 @@ class GameStatsService {
         stats.flagPullSampleSizeAdequate = flagPullResult.sampleSizeAdequate;
         stats.defensiveGrade = flagPullResult.defensiveGrade;
       } catch (error) {
-        console.warn("Error calculating flag pull success rate:", error);
+        logger.warn("Error calculating flag pull success rate:", error);
         stats.flagPullSuccessRate = "0.0";
       }
     }
@@ -693,7 +695,7 @@ class GameStatsService {
       storageService.set(this.storageKey, games, { usePrefix: false });
       return true;
     } catch (error) {
-      console.error("Error importing games:", error);
+      logger.error("Error importing games:", error);
       return false;
     }
   }
@@ -708,7 +710,7 @@ class GameStatsService {
       storageService.remove(this.currentGameKey, { usePrefix: false });
       return true;
     } catch (error) {
-      console.error("Error clearing games:", error);
+      logger.error("Error clearing games:", error);
       return false;
     }
   }

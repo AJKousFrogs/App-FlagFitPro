@@ -5,6 +5,8 @@
 
 import { statisticsCalculationService } from "./statisticsCalculationService.js";
 
+import { logger } from '../../logger.js';
+
 class StatsService {
   /**
    * Calculate weekly stats from workout sessions (now uses validated calculation service)
@@ -37,7 +39,7 @@ class StatsService {
         weeklyLoad: result.weeklyLoad,
       };
     } catch (error) {
-      console.warn(
+      logger.warn(
         "Error calculating weekly stats, falling back to basic calculation:",
         error,
       );
@@ -118,7 +120,7 @@ class StatsService {
         stretchDates: result.stretchDates,
       };
     } catch (error) {
-      console.warn(
+      logger.warn(
         "Error calculating streak, falling back to basic calculation:",
         error,
       );

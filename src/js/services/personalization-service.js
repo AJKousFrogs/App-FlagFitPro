@@ -1,11 +1,13 @@
+import { logger } from '../../logger.js';
+
 // Personalization Service
 // Enriches chatbot questions with user profile data (body metrics, injuries, training schedule, position)
 
 const logger = window.logger || {
-  error: (...args) => console.error(...args),
-  warn: (...args) => console.warn(...args),
+  error: (...args) => logger.error(...args),
+  warn: (...args) => logger.warn(...args),
   info: (...args) => console.info(...args),
-  debug: (...args) => console.debug(...args),
+  debug: (...args) => logger.debug(...args),
 };
 
 class PersonalizationService {

@@ -1,3 +1,5 @@
+import { logger } from '../logger.js';
+
 /**
  * FlagFit Pro - Wellness Export Buttons
  * Adds PDF/CSV export buttons to wellness page
@@ -20,7 +22,7 @@
     );
 
     if (!wellnessPage) {
-      console.log(
+      logger.info(
         "[Wellness Export] Wellness container not found, will try again",
       );
       setTimeout(addExportButtons, 500);
@@ -177,7 +179,7 @@
       wellnessPage.appendChild(exportContainer);
     }
 
-    console.log("[Wellness Export] Export buttons added");
+    logger.info("[Wellness Export] Export buttons added");
   }
 
   /**
@@ -284,5 +286,5 @@
     addExportButtons();
   }
 
-  console.log("[Wellness Export] Export buttons script loaded");
+  logger.info("[Wellness Export] Export buttons script loaded");
 })();

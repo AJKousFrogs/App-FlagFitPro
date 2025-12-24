@@ -6,6 +6,8 @@ import { API_ENDPOINTS } from "../../api-config.js";
 import { authManager } from "../../auth-manager.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 
+import { logger } from '../../logger.js';
+
 class AnalyticsPage {
   constructor() {
     this.charts = {};
@@ -26,15 +28,15 @@ class AnalyticsPage {
   async initializeCharts() {
     // Check if Chart.js is loaded
     if (typeof Chart === "undefined") {
-      console.error("Chart.js not loaded");
+      logger.error("Chart.js not loaded");
       return;
     }
 
-    console.log("🚀 Initializing FlagFit Pro Analytics Dashboard...");
+    logger.info("🚀 Initializing FlagFit Pro Analytics Dashboard...");
 
     // Check authentication
     if (!authManager.requireAuth()) {
-      console.error("User not authenticated");
+      logger.error("User not authenticated");
       return;
     }
 
@@ -52,10 +54,10 @@ class AnalyticsPage {
         this.initInjuryRiskChart();
         this.initSpeedDevelopmentChart();
         this.initEngagementFunnelChart();
-        console.log("✅ All charts initialized successfully!");
+        logger.info("✅ All charts initialized successfully!");
       }, 100);
     } catch (error) {
-      console.error("Error loading analytics data:", error);
+      logger.error("Error loading analytics data:", error);
       // Fallback to hardcoded data
       this.loadFallbackData();
     }
@@ -124,7 +126,7 @@ class AnalyticsPage {
           : null,
       };
     } catch (error) {
-      console.error("Error fetching analytics data:", error);
+      logger.error("Error fetching analytics data:", error);
       throw error;
     }
   }

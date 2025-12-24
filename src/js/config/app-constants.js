@@ -1,3 +1,5 @@
+import { logger } from '../../logger.js';
+
 /**
  * FlagFit Pro - Application Constants
  * Centralized constants to avoid hardcoded values throughout the codebase
@@ -315,4 +317,4 @@ export default {
   isDesktop,
 };
 
-console.log("[App Constants] Application constants loaded");
+logger.info("[App Constants] Application constants loaded");

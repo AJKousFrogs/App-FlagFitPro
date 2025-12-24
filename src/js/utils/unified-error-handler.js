@@ -6,6 +6,8 @@
 import { logger } from "../../logger.js";
 import { escapeHtml } from "./sanitize.js";
 
+import { logger } from '../../logger.js';
+
 // Lazy-load Sentry service (only in production)
 let sentryService = null;
 const loadSentry = async () => {
@@ -734,4 +736,4 @@ if (typeof window !== "undefined") {
   }
 }
 
-console.log("[Unified Error Handler] Module loaded");
+logger.info("[Unified Error Handler] Module loaded");

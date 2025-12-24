@@ -7,6 +7,8 @@
 import { onDOMReady } from "../utils/dom-ready.js";
 import { initializeLucideIcons } from "../utils/shared.js";
 
+import { logger } from '../../logger.js';
+
 export class BaseComponentLoader {
   constructor(config) {
     this.config = {
@@ -32,7 +34,7 @@ export class BaseComponentLoader {
       await this.loadComponent();
       this.afterLoad();
     } catch (error) {
-      console.error(
+      logger.error(
         `[${this.config.componentName} Loader] Failed to load:`,
         error,
       );
@@ -67,7 +69,7 @@ export class BaseComponentLoader {
     // Inject component HTML
     this.container.innerHTML = componentHTML;
 
-    console.log(`[${this.config.componentName} Loader] Loaded successfully`);
+    logger.info(`[${this.config.componentName} Loader] Loaded successfully`);
   }
 
   /**

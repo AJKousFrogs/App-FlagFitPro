@@ -6,6 +6,8 @@
 import { logger } from "../../logger.js";
 import { NETWORK, STORAGE_KEYS } from "../config/app-constants.js";
 
+import { logger } from '../../logger.js';
+
 /**
  * Cache entry structure
  */
@@ -417,4 +419,4 @@ if (typeof window !== "undefined") {
 
 export default cacheService;
 
-console.log("[Cache] Cache service loaded");
+logger.info("[Cache] Cache service loaded");

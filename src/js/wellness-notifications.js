@@ -1,3 +1,5 @@
+import { logger } from '../logger.js';
+
 /**
  * FlagFit Pro - Wellness Notifications Integration
  * Integrates push notifications with wellness tracking
@@ -12,12 +14,12 @@
   // Wait for notification manager to be available
   function initWellnessNotifications() {
     if (!window.notificationManager) {
-      console.log("[Wellness] Waiting for notification manager...");
+      logger.info("[Wellness] Waiting for notification manager...");
       setTimeout(initWellnessNotifications, 100);
       return;
     }
 
-    console.log("[Wellness] Initializing wellness notifications");
+    logger.info("[Wellness] Initializing wellness notifications");
 
     // Check if this is first visit
     const hasSeenPrompt = storageService.get(
@@ -267,7 +269,7 @@
     // For now, we'll listen for custom events
 
     document.addEventListener("wellnessSubmitted", (event) => {
-      console.log("[Wellness] Wellness submitted:", event.detail);
+      logger.info("[Wellness] Wellness submitted:", event.detail);
 
       if (
         window.notificationManager &&
@@ -360,7 +362,7 @@
     // Stash the event so it can be triggered later
     deferredPrompt = e;
 
-    console.log("[PWA] Install prompt available");
+    logger.info("[PWA] Install prompt available");
 
     // Show custom install button
     showInstallButton();
@@ -369,7 +371,7 @@
   function showInstallButton() {
     // Check if already installed
     if (window.matchMedia("(display-mode: standalone)").matches) {
-      console.log("[PWA] Already installed");
+      logger.info("[PWA] Already installed");
       return;
     }
 
@@ -447,10 +449,10 @@
       // Wait for the user to respond to the prompt
       const { outcome } = await deferredPrompt.userChoice;
 
-      console.log(`[PWA] User response: ${outcome}`);
+      logger.info(`[PWA] User response: ${outcome}`);
 
       if (outcome === "accepted") {
-        console.log("[PWA] App installed");
+        logger.info("[PWA] App installed");
         installBtn.remove();
       }
 
@@ -466,5 +468,5 @@
     initWellnessNotifications();
   }
 
-  console.log("[Wellness] Wellness notifications script loaded");
+  logger.info("[Wellness] Wellness notifications script loaded");
 })();

@@ -5,6 +5,8 @@
 
 import { storageService } from "./storage-service-unified.js";
 
+import { logger } from '../../logger.js';
+
 class PlayerProfileService {
   /**
    * Create or update player profile
@@ -157,7 +159,7 @@ class PlayerProfileService {
 
       return this.savePlayerProfile(profile);
     } catch (error) {
-      console.error("Error parsing schedule file:", error);
+      logger.error("Error parsing schedule file:", error);
       throw error;
     }
   }

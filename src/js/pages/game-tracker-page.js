@@ -5,6 +5,8 @@ import { gameStatsService } from "../services/gameStatsService.js";
 import { logger } from "../../logger.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 
+import { logger } from '../../logger.js';
+
 class GameTrackerPage {
   constructor() {
     this.currentGame = null;
@@ -217,7 +219,7 @@ class GameTrackerPage {
     try {
       await gameStatsService.saveGame(this.currentGame);
     } catch (error) {
-      console.error("Error saving game:", error);
+      logger.error("Error saving game:", error);
       // Game is still saved to localStorage as fallback
     }
 
@@ -307,7 +309,7 @@ class GameTrackerPage {
       const games = await gameStatsService.getAllGames();
       this.renderGamesList(games, gamesList);
     } catch (error) {
-      console.error("Error loading games:", error);
+      logger.error("Error loading games:", error);
       // Fallback to localStorage
       const games = gameStatsService.getAllGamesSync();
       this.renderGamesList(games, gamesList);
@@ -567,13 +569,13 @@ class GameTrackerPage {
 
     // Save play to backend
     this.savePlayToBackend(play).catch((error) => {
-      console.error("Error saving play to backend:", error);
+      logger.error("Error saving play to backend:", error);
       // Continue with local save
     });
 
     // Save game to service (localStorage + backend)
     gameStatsService.saveGame(this.currentGame).catch((error) => {
-      console.error("Error saving game:", error);
+      logger.error("Error saving game:", error);
     });
 
     logger.info("Play saved:", play);
@@ -626,7 +628,7 @@ class GameTrackerPage {
         logger.info("Play saved to backend:", response.data);
       }
     } catch (error) {
-      console.error("Error saving play to backend:", error);
+      logger.error("Error saving play to backend:", error);
       throw error;
     }
   }
@@ -855,7 +857,7 @@ class GameTrackerPage {
           );
         }
       } catch (error) {
-        console.error("Error saving final game state:", error);
+        logger.error("Error saving final game state:", error);
         // Continue anyway - game is saved to localStorage
       }
 

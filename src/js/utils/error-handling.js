@@ -5,6 +5,8 @@
 
 import { logger } from "../../logger.js";
 
+import { logger } from '../../logger.js';
+
 /**
  * Error types for categorization
  */
@@ -297,4 +299,4 @@ export default {
   setupGlobalErrorHandlers,
 };
 
-console.log("[Error Handling] Standardized error handling utilities loaded");
+logger.info("[Error Handling] Standardized error handling utilities loaded");

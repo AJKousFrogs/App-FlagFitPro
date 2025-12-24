@@ -8,6 +8,8 @@ import Modal from "./modal.js";
 import { scheduleFileParser } from "../services/scheduleFileParser.js";
 import { storageService } from "../services/storage-service-unified.js";
 
+import { logger } from '../../logger.js';
+
 class ScheduleBuilderModal extends Modal {
   constructor(options = {}) {
     super({
@@ -501,14 +503,14 @@ class ScheduleBuilderModal extends Modal {
     if (prevBtn) {
       prevBtn.addEventListener("click", () => {
         // TODO: Implement month navigation
-        console.log("Previous month");
+        logger.info("Previous month");
       });
     }
 
     if (nextBtn) {
       nextBtn.addEventListener("click", () => {
         // TODO: Implement month navigation
-        console.log("Next month");
+        logger.info("Next month");
       });
     }
   }
@@ -668,7 +670,7 @@ class ScheduleBuilderModal extends Modal {
         this.updateCalendarDisplay();
       }
     } catch (error) {
-      console.error("Error parsing file:", error);
+      logger.error("Error parsing file:", error);
       fileName.textContent = `Error processing ${file.name}`;
       fileStats.textContent = error.message || "Invalid file format";
       fileStats.style.color = "var(--color-error, #ef4444)";

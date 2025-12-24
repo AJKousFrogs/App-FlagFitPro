@@ -6,6 +6,8 @@
 
 import { MORNING_MOBILITY_ROUTINE } from "../data/shared-protocols.js";
 
+import { logger } from '../../logger.js';
+
 // Dynamic import for team data and API (to avoid circular dependencies)
 let getAllPlayers = null;
 let apiClient = null;
@@ -18,7 +20,7 @@ async function loadDependencies() {
       const teamData = await import("../../real-team-data.js");
       getAllPlayers = teamData.getAllPlayers;
     } catch (error) {
-      console.warn("Failed to load team data:", error);
+      logger.warn("Failed to load team data:", error);
       getAllPlayers = () => [];
     }
   }
@@ -29,7 +31,7 @@ async function loadDependencies() {
       apiClient = apiConfig.apiClient;
       API_ENDPOINTS = apiConfig.API_ENDPOINTS;
     } catch (error) {
-      console.warn("Failed to load API config:", error);
+      logger.warn("Failed to load API config:", error);
     }
   }
 }
@@ -216,7 +218,7 @@ async function loadPlayers() {
         return localPlayers;
       }
     } catch (error) {
-      console.warn("Failed to load local players data:", error);
+      logger.warn("Failed to load local players data:", error);
     }
   }
 
@@ -446,7 +448,7 @@ export async function performGlobalSearch(query) {
     const playerResults = searchPlayers(query, players);
     results.push(...playerResults);
   } catch (error) {
-    console.warn("Error searching players:", error);
+    logger.warn("Error searching players:", error);
   }
 
   // Search knowledge base (async)
@@ -454,7 +456,7 @@ export async function performGlobalSearch(query) {
     const knowledgeResults = await searchKnowledgeBase(query);
     results.push(...knowledgeResults);
   } catch (error) {
-    console.warn("Error searching knowledge base:", error);
+    logger.warn("Error searching knowledge base:", error);
   }
 
   // Search tournaments (async)
@@ -462,7 +464,7 @@ export async function performGlobalSearch(query) {
     const tournamentResults = await searchTournaments(query);
     results.push(...tournamentResults);
   } catch (error) {
-    console.warn("Error searching tournaments:", error);
+    logger.warn("Error searching tournaments:", error);
   }
 
   // Search games (async)
@@ -470,7 +472,7 @@ export async function performGlobalSearch(query) {
     const gameResults = await searchGames(query);
     results.push(...gameResults);
   } catch (error) {
-    console.warn("Error searching games:", error);
+    logger.warn("Error searching games:", error);
   }
 
   // Search community posts (async)
@@ -478,7 +480,7 @@ export async function performGlobalSearch(query) {
     const communityResults = await searchCommunityPosts(query);
     results.push(...communityResults);
   } catch (error) {
-    console.warn("Error searching community posts:", error);
+    logger.warn("Error searching community posts:", error);
   }
 
   // Sort by score (highest first)
@@ -530,7 +532,7 @@ async function searchKnowledgeBase(query) {
       score: 40, // Medium priority
     }));
   } catch (error) {
-    console.debug("Knowledge base search failed:", error);
+    logger.debug("Knowledge base search failed:", error);
     return [];
   }
 }
@@ -589,7 +591,7 @@ async function searchTournaments(query) {
 
     return results;
   } catch (error) {
-    console.debug("Tournament search failed:", error);
+    logger.debug("Tournament search failed:", error);
     return [];
   }
 }
@@ -648,7 +650,7 @@ async function searchGames(query) {
 
     return results;
   } catch (error) {
-    console.debug("Game search failed:", error);
+    logger.debug("Game search failed:", error);
     return [];
   }
 }
@@ -705,7 +707,7 @@ async function searchCommunityPosts(query) {
 
     return results;
   } catch (error) {
-    console.debug("Community search failed:", error);
+    logger.debug("Community search failed:", error);
     return [];
   }
 }

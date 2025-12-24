@@ -1,3 +1,5 @@
+import { logger } from '../logger.js';
+
 // OAuth Buttons Component for Social Login
 // Handles Google, Facebook, and Apple authentication with role selection
 
@@ -5,7 +7,7 @@ export class OAuthButtons {
   constructor(containerSelector, options = {}) {
     this.container = document.querySelector(containerSelector);
     if (!this.container) {
-      console.error("[OAuth] Container not found:", containerSelector);
+      logger.error("[OAuth] Container not found:", containerSelector);
       return;
     }
 

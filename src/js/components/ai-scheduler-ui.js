@@ -6,6 +6,8 @@
 import { aiTrainingScheduler } from "../services/aiTrainingScheduler.js";
 import { playerProfileService } from "../services/playerProfileService.js";
 
+import { logger } from '../../logger.js';
+
 class AISchedulerUI {
   constructor(containerId) {
     this.containerId = containerId;
@@ -19,7 +21,7 @@ class AISchedulerUI {
    */
   async init() {
     if (!this.container) {
-      console.error("Container not found:", this.containerId || "unknown");
+      logger.error("Container not found:", this.containerId || "unknown");
       return;
     }
 
@@ -558,7 +560,7 @@ class AISchedulerUI {
         });
       }
     } catch (error) {
-      console.error("Error generating schedule:", error);
+      logger.error("Error generating schedule:", error);
       if (statusEl) {
         statusEl.textContent = "Error generating schedule: " + error.message;
         statusEl.className = "status-message error";
@@ -600,7 +602,7 @@ class AISchedulerUI {
    */
   syncWithTrainingSchedule() {
     if (!this.currentSchedule) {
-      console.warn("No schedule generated yet");
+      logger.warn("No schedule generated yet");
       return;
     }
 
@@ -617,7 +619,7 @@ class AISchedulerUI {
       }),
     );
 
-    console.log("Schedule synced with training schedule page");
+    logger.info("Schedule synced with training schedule page");
   }
 }
 

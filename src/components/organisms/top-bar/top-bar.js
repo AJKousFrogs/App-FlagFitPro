@@ -1,3 +1,5 @@
+import { logger } from '../../../logger.js';
+
 /**
  * Top Bar Component - FlagFit Pro
  * Handles search combobox, notifications, and user menu interactions
@@ -8,10 +10,10 @@
 
   // Logger fallback - use window.logger if available, otherwise console
   const logger = window.logger || {
-    error: (...args) => console.error(...args),
-    warn: (...args) => console.warn(...args),
+    error: (...args) => logger.error(...args),
+    warn: (...args) => logger.warn(...args),
     info: (...args) => console.info(...args),
-    debug: (...args) => console.debug(...args),
+    debug: (...args) => logger.debug(...args),
   };
 
   // Global function stubs (can be overridden by other scripts)
@@ -84,7 +86,7 @@
         }
         return 0;
       } catch (error) {
-        console.warn("Failed to get notification count:", error);
+        logger.warn("Failed to get notification count:", error);
         return 0;
       }
     };
@@ -350,7 +352,7 @@
         const count = await window.getNotificationCount();
         setBadge(count);
       } catch (error) {
-        console.warn("Failed to initialize badge:", error);
+        logger.warn("Failed to initialize badge:", error);
         setBadge(0);
       }
     };

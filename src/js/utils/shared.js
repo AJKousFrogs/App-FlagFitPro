@@ -59,7 +59,7 @@ export function initializeLucideIcons(container = document, options = {}) {
       lucide.createIcons(container);
     } else if (attempts >= maxAttempts) {
       clearInterval(checkLucide);
-      console.warn(
+      logger.warn(
         "[Lucide Icons] Lucide library not loaded after maximum attempts",
       );
     }
@@ -204,6 +204,8 @@ export function getFormData(formId) {
 // Import from '../services/storage-service-unified.js' instead
 
 import { storageService } from "../services/storage-service-unified.js";
+
+import { logger } from '../../logger.js';
 
 /**
  * @deprecated Use storageService.set() from storage-service-unified.js instead

@@ -1,3 +1,5 @@
+import { logger } from '../../logger.js';
+
 /**
  * Universal Mobile Navigation Component
  * Standardizes mobile navigation behavior across all 26 pages
@@ -50,7 +52,7 @@ class UniversalMobileNav {
           window.location.hostname === "localhost" ||
           window.location.hostname === "127.0.0.1";
         if (!isDevelopment) {
-          console.warn("Mobile nav elements not found - creating fallback");
+          logger.warn("Mobile nav elements not found - creating fallback");
         }
       }
       this.createFallbackElements();

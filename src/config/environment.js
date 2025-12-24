@@ -1,3 +1,5 @@
+import { logger } from '../logger.js';
+
 /**
  * Environment Configuration
  * Centralized configuration for different deployment environments
@@ -104,7 +106,7 @@ const validateConfig = () => {
 
   // In development, validate more strictly
   if (ENV === "development" && warnings.length > 0) {
-    console.warn("⚠️ Environment configuration warnings:", warnings);
+    logger.warn("⚠️ Environment configuration warnings:", warnings);
   }
 };
 
@@ -170,8 +172,8 @@ export default {
 
 // Log current environment (only in development)
 if (config.ENABLE_DEBUG_LOGS) {
-  console.log(`🌍 Environment: ${ENV}`);
-  console.log("📋 Configuration:", {
+  logger.info(`🌍 Environment: ${ENV}`);
+  logger.info("📋 Configuration:", {
     API_BASE_URL: config.API_BASE_URL,
     ENABLE_MOCK_AUTH: config.ENABLE_MOCK_AUTH,
     ENABLE_ANALYTICS: config.ENABLE_ANALYTICS,

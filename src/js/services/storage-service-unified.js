@@ -22,6 +22,8 @@
 
 import { logger } from "../../logger.js";
 
+import { logger } from '../../logger.js';
+
 class UnifiedStorageService {
   constructor() {
     this.isAvailable = this.checkAvailability();
@@ -384,7 +386,7 @@ const methodCheck = {
     Object.getPrototypeOf(storageService),
   ).filter((m) => typeof storageService[m] === "function"),
 };
-console.log(
+logger.info(
   "[DEBUG] storageService instance created with methods:",
   methodCheck,
 );

@@ -8,6 +8,8 @@ import { escapeHtml } from "../utils/sanitize.js";
 import { storageService } from "../services/storage-service-unified.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 
+import { logger } from '../../logger.js';
+
 /**
  * NotificationStore - Centralized notification state management
  * Manages notifications, unread count, loading state, and API calls
@@ -182,7 +184,7 @@ class NotificationStore {
         window.ErrorHandler.showError(errorMessage);
       } else {
         // Fallback: use console if ErrorHandler not available
-        console.error("Notification error:", errorMessage);
+        logger.error("Notification error:", errorMessage);
       }
 
       throw error;
@@ -245,7 +247,7 @@ class NotificationStore {
         window.ErrorHandler.showError(errorMessage);
       } else {
         // Fallback: use console if ErrorHandler not available
-        console.error("Notification error:", errorMessage);
+        logger.error("Notification error:", errorMessage);
       }
 
       throw error;
@@ -1212,7 +1214,7 @@ class DashboardPage {
       }, 1000);
     } catch (error) {
       logger.error("❌ Failed to start training session:", error);
-      console.error("Start session error:", error);
+      logger.error("Start session error:", error);
       this.showNotification(
         "Failed to start session. Please try again.",
         "error",

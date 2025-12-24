@@ -1,3 +1,5 @@
+import { logger } from '../logger.js';
+
 /**
  * FlagFit Pro - Notification Manager
  * Handles push notifications, reminders, and achievement alerts
@@ -24,7 +26,7 @@ class NotificationManager {
    */
   async init() {
     if (!this.isSupported) {
-      console.warn("[Notifications] Not supported in this browser");
+      logger.warn("[Notifications] Not supported in this browser");
       return false;
     }
 
@@ -35,7 +37,7 @@ class NotificationManager {
           scope: "/",
         });
 
-        console.log(
+        logger.info(
           "[Notifications] Service Worker registered:",
           this.swRegistration,
         );
@@ -43,7 +45,7 @@ class NotificationManager {
         // Check for updates
         this.swRegistration.addEventListener("updatefound", () => {
           const newWorker = this.swRegistration.installing;
-          console.log("[Notifications] Service Worker update found");
+          logger.info("[Notifications] Service Worker update found");
 
           newWorker.addEventListener("statechange", () => {
             if (
@@ -58,7 +60,7 @@ class NotificationManager {
 
         return true;
       } catch (error) {
-        console.error(
+        logger.error(
           "[Notifications] Service Worker registration failed:",
           error,
         );
@@ -86,15 +88,15 @@ class NotificationManager {
       this.permission = permission;
 
       if (permission === "granted") {
-        console.log("[Notifications] Permission granted");
+        logger.info("[Notifications] Permission granted");
         this.scheduleDefaultReminders();
         return true;
       } else {
-        console.log("[Notifications] Permission denied");
+        logger.info("[Notifications] Permission denied");
         return false;
       }
     } catch (error) {
-      console.error("[Notifications] Permission request failed:", error);
+      logger.error("[Notifications] Permission request failed:", error);
       return false;
     }
   }
@@ -123,7 +125,7 @@ class NotificationManager {
           },
         );
       } catch (error) {
-        console.warn(
+        logger.warn(
           "[Notifications] Failed to create notification in backend:",
           error,
         );
@@ -141,20 +143,20 @@ class NotificationManager {
           const typePrefs = prefsResponse.data[type];
           // Don't show push if muted or push disabled
           if (typePrefs && (typePrefs.muted || !typePrefs.pushEnabled)) {
-            console.log(
+            logger.info(
               `[Notifications] Push notification for ${type} is muted or disabled`,
             );
             return null;
           }
         }
       } catch (error) {
-        console.warn("[Notifications] Failed to check preferences:", error);
+        logger.warn("[Notifications] Failed to check preferences:", error);
         // Continue to show notification if preference check fails
       }
     }
 
     if (!this.isSupported || this.permission !== "granted") {
-      console.warn(
+      logger.warn(
         "[Notifications] Cannot show notification - permission not granted",
       );
       return null;
@@ -180,7 +182,7 @@ class NotificationManager {
       // Fallback to basic notification
       return new Notification(title, finalOptions);
     } catch (error) {
-      console.error("[Notifications] Failed to show notification:", error);
+      logger.error("[Notifications] Failed to show notification:", error);
       return null;
     }
   }
@@ -202,7 +204,7 @@ class NotificationManager {
 
     const timeUntilReminder = scheduledTime - now;
 
-    console.log(
+    logger.info(
       `[Notifications] Wellness reminder scheduled for ${scheduledTime.toLocaleString()}`,
     );
 
@@ -321,7 +323,7 @@ class NotificationManager {
     });
     this.scheduleWellnessReminder(savedTime);
 
-    console.log("[Notifications] Default reminders scheduled");
+    logger.info("[Notifications] Default reminders scheduled");
   }
 
   /**
@@ -331,7 +333,7 @@ class NotificationManager {
     // Clear from localStorage
     storageService.remove("wellnessReminderTime", { usePrefix: false });
 
-    console.log("[Notifications] All reminders cancelled");
+    logger.info("[Notifications] All reminders cancelled");
   }
 
   /**
@@ -390,4 +392,4 @@ if (typeof module !== "undefined" && module.exports) {
 // Make available globally
 window.notificationManager = notificationManager;
 
-console.log("[Notifications] Notification Manager loaded");
+logger.info("[Notifications] Notification Manager loaded");

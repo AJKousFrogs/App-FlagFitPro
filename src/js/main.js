@@ -11,6 +11,8 @@ import { UniversalChartAccessibility } from "./components/universal-chart-access
 import { UniversalFocusManagement } from "./components/universal-focus-management.js";
 import { performGlobalSearch } from "./services/global-search-service.js";
 
+import { logger } from '../logger.js';
+
 // Global application state
 window.FlagFitApp = {
   components: {},
@@ -80,7 +82,7 @@ class FlagFitApplication {
         }),
       );
     } catch (error) {
-      console.error("Failed to initialize FlagFit application:", error);
+      logger.error("Failed to initialize FlagFit application:", error);
     }
   }
 
@@ -479,7 +481,7 @@ class FlagFitApplication {
 
   handleError(type, error) {
     if (window.FlagFitApp.config.debug) {
-      console.error(`${type}:`, error);
+      logger.error(`${type}:`, error);
     }
 
     // Report error to analytics service if available
@@ -494,7 +496,7 @@ class FlagFitApplication {
 
   log(message, ...args) {
     if (window.FlagFitApp.config.debug) {
-      console.log(`[FlagFit] ${message}`, ...args);
+      logger.info(`[FlagFit] ${message}`, ...args);
     }
   }
 

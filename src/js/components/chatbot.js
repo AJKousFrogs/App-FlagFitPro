@@ -1,12 +1,14 @@
+import { logger } from '../../logger.js';
+
 // FlagFit AI Chatbot Component
 // Provides intelligent responses about sports psychology, nutrition, speed training, injuries, recovery, etc.
 
 // Logger fallback - use window.logger if available, otherwise console
 const logger = window.logger || {
-  error: (...args) => console.error(...args),
-  warn: (...args) => console.warn(...args),
+  error: (...args) => logger.error(...args),
+  warn: (...args) => logger.warn(...args),
   info: (...args) => console.info(...args),
-  debug: (...args) => console.debug(...args),
+  debug: (...args) => logger.debug(...args),
 };
 
 class FlagFitChatbot {

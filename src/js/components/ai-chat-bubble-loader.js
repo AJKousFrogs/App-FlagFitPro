@@ -1,3 +1,5 @@
+import { logger } from '../../logger.js';
+
 // AI Chat Bubble Loader - FlagFit Pro
 // Dynamically loads the AI chat bubble component into pages that need it
 
@@ -45,7 +47,7 @@ async function handleAIChat(e) {
       throw new Error("Chatbot module not properly initialized");
     }
   } catch (error) {
-    console.error("Failed to load chatbot:", error);
+    logger.error("Failed to load chatbot:", error);
 
     // Try to use global chatbot if available
     if (

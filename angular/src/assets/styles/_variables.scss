@@ -1,0 +1,17 @@
+/* ================================================================
+   ⚠️ DEPRECATED - DO NOT USE
+   ================================================================
+   
+   This file is deprecated and will be removed in a future version.
+   Please use the new design system tokens instead:
+   
+   @import './assets/styles/design-system-tokens.scss';
+   
+   Migration guide: DESIGN_SYSTEM_REVAMP_SUMMARY.md
+   ================================================================ */
+
+/* Legacy compatibility aliases - These redirect to new design system */
+@import "./design-system-tokens.scss";
+
+/* These variables are kept for backward compatibility only */
+/* They will be removed once all components are migrated */

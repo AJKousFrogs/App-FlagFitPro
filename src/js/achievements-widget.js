@@ -1,3 +1,5 @@
+import { logger } from '../logger.js';
+
 /**
  * FlagFit Pro - Achievements Widget
  * Displays achievements on the dashboard
@@ -12,14 +14,14 @@
   function renderAchievementsWidget(containerId) {
     // Wait for achievements service to be available
     if (!window.achievementsService) {
-      console.log("[Achievements Widget] Waiting for achievements service...");
+      logger.info("[Achievements Widget] Waiting for achievements service...");
       setTimeout(() => renderAchievementsWidget(containerId), 100);
       return;
     }
 
     const container = document.getElementById(containerId);
     if (!container) {
-      console.error(
+      logger.error(
         `[Achievements Widget] Container #${containerId} not found`,
       );
       return;
@@ -71,7 +73,7 @@
     container.innerHTML = "";
     container.appendChild(widget);
 
-    console.log("[Achievements Widget] Rendered successfully");
+    logger.info("[Achievements Widget] Rendered successfully");
   }
 
   /**
@@ -569,5 +571,5 @@
   // Export for manual rendering
   window.renderAchievementsWidget = renderAchievementsWidget;
 
-  console.log("[Achievements Widget] Widget script loaded");
+  logger.info("[Achievements Widget] Widget script loaded");
 })();

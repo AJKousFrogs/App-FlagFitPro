@@ -1,3 +1,5 @@
+import { logger } from '../logger.js';
+
 /**
  * FlagFit Pro - Achievements Integration
  * Automatically checks achievements when users log activities
@@ -13,7 +15,7 @@
       return;
     }
 
-    console.log("[Achievements Integration] Initializing...");
+    logger.info("[Achievements Integration] Initializing...");
 
     // Listen for wellness submissions
     document.addEventListener("wellnessSubmitted", handleWellnessSubmitted);
@@ -21,7 +23,7 @@
     // Listen for training completions
     document.addEventListener("trainingCompleted", handleTrainingCompleted);
 
-    console.log("[Achievements Integration] Ready");
+    logger.info("[Achievements Integration] Ready");
   }
 
   /**
@@ -38,7 +40,7 @@
       window.achievementsService.checkAchievements(userData);
 
     if (newAchievements.length > 0) {
-      console.log(
+      logger.info(
         `[Achievements] Unlocked ${newAchievements.length} new achievement(s)!`,
       );
 
@@ -76,7 +78,7 @@
       window.achievementsService.checkAchievements(userData);
 
     if (newAchievements.length > 0) {
-      console.log(
+      logger.info(
         `[Achievements] Unlocked ${newAchievements.length} new achievement(s)!`,
       );
 
@@ -236,5 +238,5 @@
     initAchievementsIntegration();
   }
 
-  console.log("[Achievements Integration] Script loaded");
+  logger.info("[Achievements Integration] Script loaded");
 })();
