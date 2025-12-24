@@ -1,4 +1,5 @@
 import { logger } from '../../../logger.js';
+import { setSafeContent } from '../../../js/utils/shared.js';
 
 /**
  * Top Bar Component - FlagFit Pro
@@ -128,7 +129,7 @@ import { logger } from '../../../logger.js';
 
     // Render search results
     const render = (results = []) => {
-      listbox.innerHTML = results
+      setSafeContent(listbox, results
         .map((r, i) => {
           const description = r.description
             ? `<div class="result-description">${r.description}</div>`
@@ -142,7 +143,7 @@ import { logger } from '../../../logger.js';
               ${category}
             </div>`;
         })
-        .join("");
+        .join(""), true, true);
 
       listbox.hidden = results.length === 0;
       input.setAttribute("aria-expanded", String(!listbox.hidden));

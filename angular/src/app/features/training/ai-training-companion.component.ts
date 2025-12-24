@@ -684,7 +684,7 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async processVoiceCommand(command: string): void {
+  private async processVoiceCommand(command: string): Promise<void> {
     this.lastVoiceCommand.set(command.toLowerCase());
     this.processingVoice.set(true);
     this.aiStatus.set("processing");

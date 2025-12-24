@@ -7,7 +7,7 @@ import {
 import { CommonModule, DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { Select } from "primeng/dropdown";
+import { Select } from "primeng/select";
 import { ToggleButtonModule } from "primeng/togglebutton";
 import { TagModule } from "primeng/tag";
 import { DialogModule } from "primeng/dialog";

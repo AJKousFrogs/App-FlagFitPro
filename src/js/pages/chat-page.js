@@ -744,7 +744,7 @@ async function sendMessage() {
   const user = authManager.getCurrentUser();
 
   // Show loading state with accessibility
-  const originalBtnText = sendBtn.innerHTML;
+  const originalContent = sendBtn.cloneNode(true);
   setSafeContent(sendBtn, '<span aria-hidden="true">⏳</span>', true, true);
   sendBtn.disabled = true;
   sendBtn.setAttribute("aria-label", "Sending message...");
@@ -822,7 +822,10 @@ async function sendMessage() {
   // Reset form state
   input.value = "";
   input.style.height = "auto";
-  sendBtn.textContent = originalBtnText;
+  sendBtn.textContent = '';
+  while (originalContent.firstChild) {
+    sendBtn.appendChild(originalContent.firstChild.cloneNode(true));
+  }
   sendBtn.disabled = true;
   sendBtn.setAttribute("aria-label", "Send message");
 

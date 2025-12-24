@@ -151,7 +151,7 @@ export class NutritionService {
 
     // Subscribe to nutrition logs
     this.realtimeService.subscribe("nutrition_logs", `user_id=eq.${userId}`, {
-      onInsert: (payload) => {
+      onInsert: (payload: any) => {
         const logDate =
           payload.new.log_date ||
           new Date(payload.new.logged_at).toISOString().split("T")[0];
@@ -160,7 +160,7 @@ export class NutritionService {
           this.refreshTodaysMeals();
         }
       },
-      onUpdate: (payload) => {
+      onUpdate: (payload: any) => {
         const logDate =
           payload.new.log_date ||
           new Date(payload.new.logged_at).toISOString().split("T")[0];
@@ -169,7 +169,7 @@ export class NutritionService {
           this.refreshTodaysMeals();
         }
       },
-      onDelete: (payload) => {
+      onDelete: (payload: any) => {
         this.logger.info("[Nutrition] Food log deleted via realtime");
         this.refreshTodaysMeals();
       },
@@ -368,28 +368,28 @@ export class NutritionService {
             current: 0, // TODO: Calculate from today's logs
             target: data.calories_target || 2500,
             unit: "kcal",
-            priority: "high",
+            priority: "high" as "high" | "low" | "medium",
           },
           {
             nutrient: "Protein",
             current: 0,
             target: data.protein_target || 150,
             unit: "g",
-            priority: "high",
+            priority: "high" as "high" | "low" | "medium",
           },
           {
             nutrient: "Carbs",
             current: 0,
             target: data.carbs_target || 300,
             unit: "g",
-            priority: "medium",
+            priority: "medium" as "high" | "low" | "medium",
           },
           {
             nutrient: "Fat",
             current: 0,
             target: data.fat_target || 80,
             unit: "g",
-            priority: "medium",
+            priority: "medium" as "high" | "low" | "medium",
           },
         ];
       }),

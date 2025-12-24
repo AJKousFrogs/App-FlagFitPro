@@ -70,11 +70,11 @@ export class DashboardDataService {
    */
   getRecentActivity(limit: number = 10): Observable<any[]> {
     return this.apiService
-      .get<any[]>(API_ENDPOINTS.dashboard.overview, { activityLimit: limit })
+      .get<any>(API_ENDPOINTS.dashboard.overview, { activityLimit: limit })
       .pipe(
         map((response) => {
-          if (response.success && response.data?.recentActivity) {
-            return response.data.recentActivity;
+          if (response.success && (response.data as any)?.recentActivity) {
+            return (response.data as any).recentActivity;
           }
           return [];
         }),

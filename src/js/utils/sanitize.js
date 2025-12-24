@@ -129,6 +129,7 @@ function sanitizeRichText(html) {
   temp.textContent = html; // First escape everything
 
   // Then allow specific safe formatting
+  // eslint-disable-next-line no-restricted-syntax
   let sanitized = temp.innerHTML;
 
   // Allow safe tags: <b>, <i>, <em>, <strong>, <br>

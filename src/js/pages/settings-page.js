@@ -478,13 +478,16 @@ window.saveSettings = async function (event) {
   if (!button) {
     return;
   }
-  const originalText = button.innerHTML;
-  button.innerHTML =
-    '<span><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Saved!';
+  const originalContent = button.cloneNode(true);
+  setSafeContent(button,
+    '<span><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Saved!', true, true);
   button.style.background = "var(--success)";
 
   setTimeout(() => {
-    button.textContent = originalText;
+    button.textContent = '';
+    while (originalContent.firstChild) {
+      button.appendChild(originalContent.firstChild.cloneNode(true));
+    }
     button.style.background = "var(--primary)";
   }, 2000);
 

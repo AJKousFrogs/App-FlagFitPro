@@ -196,7 +196,7 @@ export class DateRangeComponent {
   selectedPreset = signal<string | null>(null);
 
   // Presets
-  presets = input<Array<{ label: string; value: string }>>(() => [
+  presets = input<Array<{ label: string; value: string }>>([
     { label: "Today", value: "today" },
     { label: "Yesterday", value: "yesterday" },
     { label: "Last 7 Days", value: "last7days" },

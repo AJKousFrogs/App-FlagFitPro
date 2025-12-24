@@ -5,8 +5,6 @@
  * Provides smooth page transitions between routes
  */
 
-import { ViewTransitionsService } from "@angular/router";
-
 /**
  * View Transition Options
  */

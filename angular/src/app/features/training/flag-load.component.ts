@@ -1,6 +1,8 @@
 import { Component, input, OnInit, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ChartModule } from "primeng/chart";
+import { CardModule } from "primeng/card";
+import { TableModule } from "primeng/table";
 import {
   TrainingMetricsService,
   ACWRData,

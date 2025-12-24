@@ -10,7 +10,7 @@ import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { AutoCompleteModule } from "primeng/autocomplete";
-import { Select } from "primeng/dropdown";
+import { Select } from "primeng/select";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { DataViewModule } from "primeng/dataview";

@@ -770,7 +770,8 @@ exports.handler = async (event, context) => {
       return createErrorResponse("Endpoint not found", 404, "not_found");
     }
 
-    return createSuccessResponse(data);
+    // Return with 5-minute cache headers (300 seconds)
+    return createSuccessResponse(data, 200, null, 300);
   } catch (error) {
     console.error("Error in analytics function:", error);
     console.error("Error stack:", error.stack);

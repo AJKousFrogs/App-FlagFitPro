@@ -6,6 +6,7 @@
  */
 
 import { Injectable, inject, signal } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 import { AcwrService } from "./acwr.service";
 import { ReadinessService } from "./readiness.service";
 import { ApiService } from "./api.service";
@@ -800,7 +801,7 @@ export class TrainingPlanService {
       },
     };
 
-    return templates[goal]?.[phase] || templates[goal]?.foundation || [];
+    return templates[goal]?.[phase] || templates[goal]?.["foundation"] || [];
   }
 
   /**
@@ -986,12 +987,16 @@ export class TrainingPlanService {
     days: number = 14,
   ): Promise<Date[]> {
     try {
-      const response = await this.apiService.get<Array<{ game_start: string }>>(
-        "/api/fixtures",
-        { athleteId, days },
+      const response = await firstValueFrom(
+        this.apiService.get<Array<{ game_start: string }>>(
+          "/api/fixtures",
+          { athleteId, days },
+        ),
       );
 
-      return (response.data || []).map((f) => new Date(f.game_start));
+      return ((response.data as any) || []).map((f: any) =>
+        new Date(f.game_start),
+      );
     } catch (error) {
       this.logger.error("Error fetching fixtures:", error);
       return [];
@@ -1008,22 +1013,24 @@ export class TrainingPlanService {
   ): Promise<boolean> {
     this.loading.set(true);
     try {
-      const response = await this.apiService.post<{ success: boolean }>(
-        "/api/training/plan",
-        {
-          athleteId,
-          plan: {
-            ...plan,
-            // Convert dates to ISO strings for serialization
-            sessions: plan.sessions.map((s) => ({
-              ...s,
-              // Ensure all fields are serializable
-            })),
+      const response = await firstValueFrom(
+        this.apiService.post<{ success: boolean }>(
+          "/api/training/plan",
+          {
+            athleteId,
+            plan: {
+              ...plan,
+              // Convert dates to ISO strings for serialization
+              sessions: plan.sessions.map((s) => ({
+                ...s,
+                // Ensure all fields are serializable
+              })),
+            },
           },
-        },
+        ),
       );
 
-      if (response.success !== false) {
+      if (response && response.data && (response.data as any).success !== false) {
         this.currentPlan.set(plan);
         this.loading.set(false);
         return true;
@@ -1053,13 +1060,12 @@ export class TrainingPlanService {
         params.weekNumber = weekNumber;
       }
 
-      const response = await this.apiService.get<WeeklyTrainingPlan>(
-        "/api/training/plan",
-        params,
+      const response = await firstValueFrom(
+        this.apiService.get<WeeklyTrainingPlan>("/api/training/plan", params),
       );
 
       if (response && response.data) {
-        const plan = response.data;
+        const plan = response.data as WeeklyTrainingPlan;
         this.currentPlan.set(plan);
         this.loading.set(false);
         return plan;
@@ -1082,12 +1088,14 @@ export class TrainingPlanService {
     limit: number = 10,
   ): Promise<WeeklyTrainingPlan[]> {
     try {
-      const response = await this.apiService.get<WeeklyTrainingPlan[]>(
-        "/api/training/plan/history",
-        { athleteId, limit },
+      const response = await firstValueFrom(
+        this.apiService.get<WeeklyTrainingPlan[]>(
+          "/api/training/plan/history",
+          { athleteId, limit },
+        ),
       );
 
-      return response.data || [];
+      return (response.data as any) || [];
     } catch (error) {
       this.logger.error("Error fetching plan history:", error);
       return [];
@@ -1099,9 +1107,10 @@ export class TrainingPlanService {
    */
   async deletePlan(athleteId: string, planId: string): Promise<boolean> {
     try {
-      const response = await this.apiService.delete<{ success: boolean }>(
-        `/api/training/plan/${planId}`,
-        { athleteId },
+      const response = await firstValueFrom(
+        this.apiService.delete<{ success: boolean }>(
+          `/api/training/plan/${planId}`,
+        ),
       );
 
       // If deleted plan was current, clear it
@@ -1110,7 +1119,7 @@ export class TrainingPlanService {
         this.currentPlan.set(null);
       }
 
-      return response.success !== false;
+      return !!(response && response.data && (response.data as any).success !== false);
     } catch (error) {
       this.logger.error("Error deleting training plan:", error);
       return false;

@@ -1,3 +1,5 @@
+import { setSafeContent } from '../utils/shared.js';
+
 // Notification Panel Loader - FlagFit Pro
 // Dynamically loads the notification panel component into pages that need it
 
@@ -45,7 +47,7 @@ export function loadNotificationPanel() {
   }
 
   // Insert notification panel HTML
-  container.innerHTML = NOTIFICATION_PANEL_HTML;
+  setSafeContent(container, NOTIFICATION_PANEL_HTML, true, true);
 
   // Initialize Lucide icons
   if (typeof lucide !== "undefined") {

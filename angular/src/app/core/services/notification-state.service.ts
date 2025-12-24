@@ -13,6 +13,7 @@
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 
@@ -79,12 +80,11 @@ export class NotificationStateService {
     this.error.set(null);
 
     try {
-      const response = await this.apiService.get<Notification[]>(
-        "/api/dashboard/notifications",
-        {
+      const response = await firstValueFrom(
+        this.apiService.get<Notification[]>("/api/dashboard/notifications", {
           ...options,
           lastOpenedAt: this.lastOpenedAt() || options.lastOpenedAt,
-        },
+        }),
       );
 
       let notifications: Notification[] = [];
@@ -94,15 +94,18 @@ export class NotificationStateService {
         if (Array.isArray(response.data)) {
           notifications = response.data;
         } else if (
-          response.data.notifications &&
-          Array.isArray(response.data.notifications)
+          (response.data as any).notifications &&
+          Array.isArray((response.data as any).notifications)
         ) {
-          notifications = response.data.notifications;
-        } else if (response.data.data && Array.isArray(response.data.data)) {
-          notifications = response.data.data;
+          notifications = (response.data as any).notifications;
+        } else if (
+          (response.data as any).data &&
+          Array.isArray((response.data as any).data)
+        ) {
+          notifications = (response.data as any).data;
         }
       } else if (Array.isArray(response)) {
-        notifications = response;
+        notifications = response as any;
       }
 
       this.notifications.set(notifications);
@@ -137,17 +140,17 @@ export class NotificationStateService {
     );
 
     try {
-      const response = await this.apiService.post<{ success: boolean }>(
-        "/api/dashboard/notifications",
-        { notificationId },
+      const response = await firstValueFrom(
+        this.apiService.post<{ success: boolean }>(
+          "/api/dashboard/notifications",
+          { notificationId },
+        ),
       );
 
-      if (response.success === false) {
+      if (response.success === false || !response.data) {
         // Revert optimistic update
         this.notifications.set(previousState);
-        throw new Error(
-          response.error || "Failed to mark notification as read",
-        );
+        throw new Error(response.error || "Failed to mark notification as read");
       }
 
       // Refresh badge count to ensure consistency
@@ -180,12 +183,14 @@ export class NotificationStateService {
     );
 
     try {
-      const response = await this.apiService.post<{ success: boolean }>(
-        "/api/dashboard/notifications",
-        { notificationId: "all" },
+      const response = await firstValueFrom(
+        this.apiService.post<{ success: boolean }>(
+          "/api/dashboard/notifications",
+          { notificationId: "all" },
+        ),
       );
 
-      if (response.success === false) {
+      if (response.success === false || !response.data) {
         // Revert optimistic update
         this.notifications.set(previousState);
         throw new Error(
@@ -224,12 +229,14 @@ export class NotificationStateService {
     );
 
     try {
-      const response = await this.apiService.post<{ success: boolean }>(
-        "/api/dashboard/notifications",
-        { ids: notificationIds },
+      const response = await firstValueFrom(
+        this.apiService.post<{ success: boolean }>(
+          "/api/dashboard/notifications",
+          { ids: notificationIds },
+        ),
       );
 
-      if (response.success === false) {
+      if (response.success === false || !response.data) {
         // Revert optimistic update
         this.notifications.set(previousState);
         throw new Error(
@@ -256,13 +263,18 @@ export class NotificationStateService {
    */
   async refreshBadgeCount(): Promise<number> {
     try {
-      const response = await this.apiService.get<{ unreadCount: number }>(
-        "/api/dashboard/notifications/count",
+      const response = await firstValueFrom(
+        this.apiService.get<{ unreadCount: number }>(
+          "/api/dashboard/notifications/count",
+        ),
       );
 
       let count = 0;
       if (response && response.data) {
-        count = response.data.unreadCount || response.data.count || 0;
+        count =
+          (response.data as any).unreadCount ||
+          (response.data as any).count ||
+          0;
       } else if (typeof response === "number") {
         count = response;
       } else if ((response as any).unreadCount !== undefined) {
@@ -289,9 +301,11 @@ export class NotificationStateService {
    */
   async updateLastOpenedAt(): Promise<void> {
     try {
-      await this.apiService.patch<{ success: boolean }>(
-        "/api/dashboard/notifications/last-opened",
-        {},
+      await firstValueFrom(
+        this.apiService.patch<{ success: boolean }>(
+          "/api/dashboard/notifications/last-opened",
+          {},
+        ),
       );
 
       this.lastOpenedAt.set(new Date().toISOString());

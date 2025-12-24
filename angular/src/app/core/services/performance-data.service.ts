@@ -193,13 +193,13 @@ export class PerformanceDataService {
       "physical_measurements",
       `user_id=eq.${userId}`,
       {
-        onInsert: (payload) => {
+        onInsert: (payload: any) => {
           this.logger.info("[PerformanceData] New measurement via realtime");
           const measurement = this.transformMeasurement(payload.new);
           const current = this._recentMeasurements();
           this._recentMeasurements.set([measurement, ...current.slice(0, 9)]);
         },
-        onUpdate: (payload) => {
+        onUpdate: (payload: any) => {
           this.logger.info(
             "[PerformanceData] Measurement updated via realtime",
           );
@@ -212,7 +212,7 @@ export class PerformanceDataService {
             this._recentMeasurements.set(updated);
           }
         },
-        onDelete: (payload) => {
+        onDelete: (payload: any) => {
           this.logger.info(
             "[PerformanceData] Measurement deleted via realtime",
           );
@@ -229,13 +229,13 @@ export class PerformanceDataService {
       "performance_tests",
       `user_id=eq.${userId}`,
       {
-        onInsert: (payload) => {
+        onInsert: (payload: any) => {
           this.logger.info("[PerformanceData] New test via realtime");
           const test = this.transformTest(payload.new);
           const current = this._recentTests();
           this._recentTests.set([test, ...current]);
         },
-        onUpdate: (payload) => {
+        onUpdate: (payload: any) => {
           this.logger.info("[PerformanceData] Test updated via realtime");
           const test = this.transformTest(payload.new);
           const current = this._recentTests();
@@ -246,7 +246,7 @@ export class PerformanceDataService {
             this._recentTests.set(updated);
           }
         },
-        onDelete: (payload) => {
+        onDelete: (payload: any) => {
           this.logger.info("[PerformanceData] Test deleted via realtime");
           const current = this._recentTests();
           this._recentTests.set(current.filter((t) => t.id !== payload.old.id));
@@ -256,7 +256,7 @@ export class PerformanceDataService {
 
     // Subscribe to supplement logs
     this.realtimeService.subscribe("supplement_logs", `user_id=eq.${userId}`, {
-      onInsert: (payload) => {
+      onInsert: (payload: any) => {
         const logDate = payload.new.date;
         if (logDate === today) {
           this.logger.info("[PerformanceData] New supplement log via realtime");
@@ -265,7 +265,7 @@ export class PerformanceDataService {
           this._todaysSupplements.set([...current, supplement]);
         }
       },
-      onUpdate: (payload) => {
+      onUpdate: (payload: any) => {
         const logDate = payload.new.date;
         if (logDate === today) {
           this.logger.info(
@@ -281,7 +281,7 @@ export class PerformanceDataService {
           }
         }
       },
-      onDelete: (payload) => {
+      onDelete: (payload: any) => {
         this.logger.info(
           "[PerformanceData] Supplement log deleted via realtime",
         );

@@ -1,3 +1,5 @@
+import { setSafeContent } from '../utils/shared.js';
+
 /**
  * Universal Form Validation Component
  * Standardizes form validation across all pages with forms
@@ -294,7 +296,7 @@ class UniversalFormValidator {
       }
 
       strengthContainer.style.display = "block";
-      strengthContainer.innerHTML = this.getPasswordStrengthHTML(strength);
+      setSafeContent(strengthContainer, this.getPasswordStrengthHTML(strength), true, true);
     });
   }
 

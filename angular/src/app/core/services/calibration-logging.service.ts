@@ -12,6 +12,7 @@
 
 import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
+import { map } from "rxjs/operators";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 
@@ -102,6 +103,7 @@ export class CalibrationLoggingService {
       athleteId,
       timestamp,
       outcomes: {
+        injuryFlagged: false, // Default to false if not provided
         ...outcomes,
         recordedAt: new Date(),
       },
@@ -154,7 +156,9 @@ export class CalibrationLoggingService {
       push: number;
     };
   }> {
-    return this.apiService.get(`/api/calibration-logs/stats/${athleteId}`);
+    return this.apiService
+      .get(`/api/calibration-logs/stats/${athleteId}`)
+      .pipe(map((response) => response.data as any));
   }
 
   /**
@@ -170,8 +174,8 @@ export class CalibrationLoggingService {
       recommendation: "conservative" | "optimal" | "aggressive";
     };
   }> {
-    return this.apiService.get(
-      `/api/calibration-logs/preset-stats/${presetId}`,
-    );
+    return this.apiService
+      .get(`/api/calibration-logs/preset-stats/${presetId}`)
+      .pipe(map((response) => response.data as any));
   }
 }

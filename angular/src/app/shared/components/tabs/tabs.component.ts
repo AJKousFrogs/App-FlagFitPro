@@ -1,6 +1,11 @@
-import { Component, input, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  input,
+  output,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { TabViewModule } from "primeng/tabview";
+import { Tabs } from "primeng/tabs";
 
 export interface TabItem {
   header: string;
@@ -19,7 +24,7 @@ export interface TabItem {
   selector: "app-tabs",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TabViewModule],
+  imports: [CommonModule, Tabs],
   template: `
     <p-tabView
       [activeIndex]="activeIndex()"

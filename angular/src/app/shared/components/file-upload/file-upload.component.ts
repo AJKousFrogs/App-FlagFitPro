@@ -430,7 +430,7 @@ export class FileUploadComponent {
 
       // Preview text files
       if (this.showPreview()) {
-        this.previewFiles(validFiles);
+        this.loadFilePreviews(validFiles);
       }
     }
   }
@@ -447,7 +447,7 @@ export class FileUploadComponent {
     });
   }
 
-  private async previewFiles(files: UploadedFile[]): Promise<void> {
+  private async loadFilePreviews(files: UploadedFile[]): Promise<void> {
     const textFiles = files.filter((f) => this.isTextFile(f));
     if (textFiles.length > 0) {
       const content = await textFiles[0].file.text();

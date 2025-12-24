@@ -4,7 +4,12 @@
  * Helper functions for working with animations in Angular 21
  */
 
-import { AnimationBuilder, AnimationPlayer } from "@angular/animations";
+import {
+  AnimationBuilder,
+  AnimationPlayer,
+  style,
+  animate,
+} from "@angular/animations";
 import { ElementRef, inject } from "@angular/core";
 
 /**
@@ -46,7 +51,7 @@ export class AnimationPlayerManager {
 
   finishAll(): void {
     this.players.forEach((player) => {
-      if (player.hasStarted() && !player.hasFinished()) {
+      if (player.hasStarted()) {
         player.finish();
       }
     });

@@ -3,6 +3,7 @@ import {
   OnInit,
   OnDestroy,
   signal,
+  input,
   ChangeDetectionStrategy,
   inject,
 } from "@angular/core";

@@ -62,6 +62,9 @@ async function baseHandler(event, context, options = {}) {
     onAuth = null,
   } = options;
 
+  // Performance monitoring - start timer
+  const startTime = Date.now();
+
   // Validate required options
   if (!functionName) {
     throw new Error("baseHandler: functionName is required");
@@ -117,8 +120,36 @@ async function baseHandler(event, context, options = {}) {
     }
 
     // Call the actual handler
-    return await handler(event, context, { userId });
+    const response = await handler(event, context, { userId });
+
+    // Performance monitoring - calculate duration
+    const duration = Date.now() - startTime;
+    
+    // Log performance metrics
+    console.log(`[PERFORMANCE] ${functionName}: ${duration}ms`, {
+      method: event.httpMethod,
+      path: event.path,
+      userId: userId || "anonymous",
+      duration,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Add performance headers to response
+    if (response && response.headers) {
+      response.headers["X-Response-Time"] = `${duration}ms`;
+      response.headers["X-Function-Name"] = functionName;
+    }
+
+    // Alert on slow responses (>1000ms)
+    if (duration > 1000) {
+      console.warn(`[SLOW RESPONSE] ${functionName} took ${duration}ms`);
+    }
+
+    return response;
   } catch (error) {
+    // Calculate duration even for errors
+    const duration = Date.now() - startTime;
+    console.error(`[ERROR] ${functionName} failed after ${duration}ms:`, error);
     return handleServerError(error, functionName);
   }
 }

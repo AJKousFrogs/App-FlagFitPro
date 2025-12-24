@@ -69,9 +69,10 @@ function createErrorResponse(
  * @param {*} data - Data to return
  * @param {number} statusCode - HTTP status code
  * @param {string} message - Optional success message
+ * @param {number} cacheTTL - Cache TTL in seconds (0 = no cache)
  * @returns {object} Netlify function response
  */
-function createSuccessResponse(data, statusCode = 200, message = null) {
+function createSuccessResponse(data, statusCode = 200, message = null, cacheTTL = 0) {
   const response = {
     success: true,
     data,
@@ -81,9 +82,20 @@ function createSuccessResponse(data, statusCode = 200, message = null) {
     response.message = message;
   }
 
+  // Add cache headers based on TTL
+  const cacheHeaders = cacheTTL > 0 ? {
+    'Cache-Control': `public, max-age=${cacheTTL}, stale-while-revalidate=${cacheTTL * 5}`,
+    'CDN-Cache-Control': `public, max-age=${cacheTTL}`,
+  } : {
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+  };
+
   return {
     statusCode,
-    headers: CORS_HEADERS,
+    headers: {
+      ...CORS_HEADERS,
+      ...cacheHeaders,
+    },
     body: JSON.stringify(response),
   };
 }

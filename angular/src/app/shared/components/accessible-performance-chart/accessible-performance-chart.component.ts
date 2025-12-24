@@ -3,6 +3,7 @@ import {
   input,
   computed,
   signal,
+  inject,
   HostListener,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -408,7 +409,7 @@ export class AccessiblePerformanceChartComponent {
     const data = this.accessibleData();
     if (data.length === 0) return 0;
 
-    const sum = data.reduce((acc, point) => {
+    const sum = data.reduce((acc: number, point: any) => {
       return acc + (metric === "speed" ? point.speed : point.accuracy);
     }, 0);
 

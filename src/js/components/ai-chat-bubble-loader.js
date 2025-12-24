@@ -1,4 +1,5 @@
 import { logger } from '../../logger.js';
+import { setSafeContent } from '../utils/shared.js';
 
 // AI Chat Bubble Loader - FlagFit Pro
 // Dynamically loads the AI chat bubble component into pages that need it
@@ -80,7 +81,7 @@ export function loadAIChatBubble() {
   }
 
   // Insert AI chat bubble HTML
-  container.innerHTML = AI_CHAT_BUBBLE_HTML;
+  setSafeContent(container, AI_CHAT_BUBBLE_HTML, true, true);
 
   // Initialize chat button functionality
   initializeAIChatButton();

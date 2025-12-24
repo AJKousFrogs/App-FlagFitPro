@@ -5,7 +5,7 @@
  */
 
 import { onDOMReady } from "../utils/dom-ready.js";
-import { initializeLucideIcons } from "../utils/shared.js";
+import { initializeLucideIcons, setSafeContent } from "../utils/shared.js";
 
 import { logger } from '../../logger.js';
 
@@ -67,7 +67,7 @@ export class BaseComponentLoader {
     }
 
     // Inject component HTML
-    this.container.innerHTML = componentHTML;
+    setSafeContent(this.container, componentHTML, true, true);
 
     logger.info(`[${this.config.componentName} Loader] Loaded successfully`);
   }

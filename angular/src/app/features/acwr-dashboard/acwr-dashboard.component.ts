@@ -548,7 +548,7 @@ export class AcwrDashboardComponent implements OnInit {
   /**
    * Load sample training data
    */
-  private loadSampleData(): void {
+  private async loadSampleData(): Promise<void> {
     // Simulate 28 days of training
     for (let i = 28; i >= 0; i--) {
       const date = new Date();
@@ -559,7 +559,7 @@ export class AcwrDashboardComponent implements OnInit {
       const variation = Math.sin(i / 7) * 2; // Weekly variation
       const rpe = Math.max(3, Math.min(9, baseRPE + variation));
 
-      const session = this.loadService.createQuickSession(
+      const session = await this.loadService.createQuickSession(
         "player123",
         "technical",
         rpe,

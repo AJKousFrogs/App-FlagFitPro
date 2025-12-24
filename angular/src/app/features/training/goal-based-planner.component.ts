@@ -1,4 +1,11 @@
-import { Component, OnInit, inject, signal, computed } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  computed,
+  input,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
@@ -303,7 +310,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
   ],
 })
 export class GoalBasedPlannerComponent implements OnInit {
-  @Input() athleteId!: string;
+  athleteId = input.required<string>();
 
   private trainingPlanService = inject(TrainingPlanService);
   private acwrService = inject(AcwrService);
@@ -332,9 +339,10 @@ export class GoalBasedPlannerComponent implements OnInit {
   ];
 
   async ngOnInit() {
-    if (this.athleteId) {
+    const athleteIdValue = this.athleteId();
+    if (athleteIdValue) {
       const games = await this.trainingPlanService.getUpcomingGames(
-        this.athleteId,
+        athleteIdValue,
         14,
       );
       this.gameDays.set(games);
@@ -388,7 +396,9 @@ export class GoalBasedPlannerComponent implements OnInit {
   }
 
   getReadinessSeverity(): "success" | "warning" | "danger" {
-    return this.readinessService.getSeverity(this.readinessLevel());
+    const severity = this.readinessService.getSeverity(this.readinessLevel());
+    // Convert 'warn' to 'warning' for PrimeNG compatibility
+    return severity === "warn" ? "warning" : severity;
   }
 
   getProgressionRule(): string {

@@ -52,7 +52,7 @@
                 "scripts": true,
                 "styles": {
                   "minify": true,
-                  "inlineCritical": false
+                  "inlineCritical": true
                 },
                 "fonts": true
               },
@@ -95,7 +95,11 @@
         "prerender": {
           "builder": "@angular-devkit/build-angular:prerender",
           "options": {
-            "routes": []
+            "routes": [
+              "/",
+              "/login",
+              "/register"
+            ]
           }
         },
         "server": {

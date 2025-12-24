@@ -509,7 +509,7 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   ]);
 
   // Initialize yard lines at field declaration
-  yardLines = signal<YardLine[]>(() => {
+  yardLines = signal<YardLine[]>((() => {
     const lines: YardLine[] = [];
     for (let i = 0; i <= 10; i++) {
       lines.push({
@@ -518,7 +518,7 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
       });
     }
     return lines;
-  });
+  })());
   activePlayers = signal<FieldPlayer[]>([]);
 
   private gameTimerSubscription?: Subscription;

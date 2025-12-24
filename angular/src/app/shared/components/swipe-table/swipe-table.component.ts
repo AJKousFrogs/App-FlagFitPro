@@ -5,6 +5,7 @@ import {
   ElementRef,
   ChangeDetectionStrategy,
   signal,
+  input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";

@@ -15,7 +15,7 @@ import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { KnobModule } from "primeng/knob";
 import { ProgressBarModule } from "primeng/progressbar";
-import { Tabs } from "primeng/tabview";
+import { Tabs } from "primeng/tabs";
 import { TimelineModule } from "primeng/timeline";
 import { RecoveryService } from "../../../core/services/recovery.service";
 import { firstValueFrom, timer, Subscription } from "rxjs";
@@ -676,14 +676,22 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   }
 
   async completeSession() {
-    await firstValueFrom(this.recoveryService.completeRecoverySession());
-    this.activeSession.set(null);
-    this.loadRecoveryData(); // Refresh recovery metrics
+    const session = this.activeSession();
+    if (session) {
+      await firstValueFrom(
+        this.recoveryService.completeRecoverySession(session.id),
+      );
+      this.activeSession.set(null);
+      this.loadRecoveryData(); // Refresh recovery metrics
+    }
   }
 
   async stopSession() {
-    await firstValueFrom(this.recoveryService.stopRecoverySession());
-    this.activeSession.set(null);
+    const session = this.activeSession();
+    if (session) {
+      await firstValueFrom(this.recoveryService.stopRecoverySession(session.id));
+      this.activeSession.set(null);
+    }
   }
 
   formatTime(seconds: number): string {

@@ -270,6 +270,7 @@ export class WearableParserService {
       metadata: {
         deviceType: options.deviceType || "generic",
         totalSamples: data.length,
+        fields: [], // Add empty fields array to satisfy type requirement
       },
       errors: errors.length > 0 ? errors : undefined,
     };

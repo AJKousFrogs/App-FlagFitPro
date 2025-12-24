@@ -5,6 +5,7 @@
 
 import { aiTrainingScheduler } from "../services/aiTrainingScheduler.js";
 import { playerProfileService } from "../services/playerProfileService.js";
+import { setSafeContent } from "../utils/shared.js";
 
 import { logger } from '../../logger.js';
 
@@ -35,7 +36,7 @@ class AISchedulerUI {
    * Render the main UI
    */
   render() {
-    this.container.innerHTML = `
+    setSafeContent(this.container, `
       <div class="ai-scheduler-container">
         <div class="scheduler-header">
           <h2>🤖 AI-Powered Training Scheduler</h2>
@@ -67,7 +68,7 @@ class AISchedulerUI {
           </div>
         </div>
       </div>
-    `;
+    `, true, true);
 
     this.attachEventListeners();
   }
@@ -540,7 +541,7 @@ class AISchedulerUI {
       // Update the schedule display with the rendered HTML
       const scheduleDisplayEl = document.getElementById("schedule-display");
       if (scheduleDisplayEl) {
-        scheduleDisplayEl.innerHTML = this.renderScheduleDisplay();
+        setSafeContent(scheduleDisplayEl, this.renderScheduleDisplay(), true, true);
         scheduleDisplayEl.style.display = "block";
       }
 

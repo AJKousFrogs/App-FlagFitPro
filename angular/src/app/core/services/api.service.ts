@@ -109,6 +109,15 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  patch<T>(endpoint: string, data?: any): Observable<ApiResponse<T>> {
+    const normalizedEndpoint = this.normalizeEndpoint(endpoint);
+    const url = `${this.baseUrl}${normalizedEndpoint}`;
+
+    return this.http
+      .patch<ApiResponse<T>>(url, data)
+      .pipe(catchError(this.handleError));
+  }
+
   delete<T>(endpoint: string): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;

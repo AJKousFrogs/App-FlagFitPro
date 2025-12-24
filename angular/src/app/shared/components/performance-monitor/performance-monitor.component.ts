@@ -255,9 +255,6 @@ export class PerformanceMonitorComponent implements OnInit, OnDestroy {
   hasIssues = computed(() => this.performanceMonitorService.hasIssues());
 
   ngOnInit(): void {
-    // Initialize message service in performance monitor service
-    this.performanceMonitorService.setMessageService(this.messageService);
-
     // Show monitor if there are issues
     this.checkAndShowMonitor();
 

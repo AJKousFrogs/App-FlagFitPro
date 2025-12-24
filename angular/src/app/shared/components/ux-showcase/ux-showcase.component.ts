@@ -1,11 +1,16 @@
-import { Component, signal, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  signal,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { PerformanceDashboardComponent } from "../performance-dashboard/performance-dashboard.component";
 import { TrainingBuilderComponent } from "../training-builder/training-builder.component";
 import { SwipeTableComponent } from "../swipe-table/swipe-table.component";
 import { TrainingHeatmapComponent } from "../training-heatmap/training-heatmap.component";
 import { CardModule } from "primeng/card";
-import { Tabs } from "primeng/tabview";
+import { Tabs } from "primeng/tabs";
 import { LoggerService } from "../../../core/services/logger.service";
 
 /**

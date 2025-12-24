@@ -10,6 +10,7 @@ import {
   effect,
   DestroyRef,
   input,
+  output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
@@ -267,7 +268,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
       this.loading.set(true);
       this.player.loadVideoById(videoId);
     } else {
-      this.videoId.set(videoId);
+      // videoId is an input signal, can't be set directly - just initialize player
       this.initializePlayer();
     }
   }

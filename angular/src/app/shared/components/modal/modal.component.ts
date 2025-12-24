@@ -133,7 +133,7 @@ export class ModalComponent {
   confirmLabel = input<string>("Confirm");
   confirmIcon = input<string>("pi pi-check");
   confirmSeverity = input<
-    "success" | "info" | "warning" | "danger" | "secondary"
+    "success" | "info" | "warning" | "danger" | "secondary" | "primary"
   >("primary");
 
   // Events

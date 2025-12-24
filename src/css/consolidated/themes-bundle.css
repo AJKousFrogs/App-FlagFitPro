@@ -1,0 +1,618 @@
+/* ================================================================
+   DARK THEME - FlagFit Pro
+   Comprehensive dark theme with proper contrast and accessibility
+   Design System Compliant - Uses primitive tokens for maintainability
+   ================================================================ */
+
+/* Manual theme switching via data-theme attribute */
+[data-theme="dark"],
+html[data-theme="dark"] {
+  /* Surface Colors - Dark Mode (Design System Compliant) */
+  --surface-primary: var(--primitive-neutral-900); /* #171717 */
+  --surface-secondary: var(--primitive-neutral-800); /* #262626 */
+  --surface-tertiary: var(--primitive-neutral-700); /* #404040 */
+  --surface-quaternary: var(
+    --primitive-neutral-600
+  ); /* #737373 - for layered UI */
+  --surface-elevated: var(
+    --primitive-neutral-800
+  ); /* #262626 - for cards/modals */
+  --surface-inverse: var(--primitive-neutral-50); /* #fafafa */
+
+  /* Text Colors - Dark Mode (Design System Compliant) */
+  --color-text-primary: var(--primitive-neutral-100); /* #f5f5f5 */
+  --color-text-secondary: var(--primitive-neutral-300); /* #e5e5e5 */
+  --color-text-tertiary: var(--primitive-neutral-500); /* #a3a3a3 */
+  --color-text-disabled: var(--primitive-neutral-700); /* #404040 */
+  --color-text-inverse: var(--primitive-neutral-900); /* #171717 */
+  --color-text-on-surface: var(--primitive-neutral-100); /* #f5f5f5 */
+
+  /* Icon Colors - Dark Mode (WCAG AA Compliant) */
+  --icon-color-primary: var(--primitive-neutral-100); /* #f5f5f5 */
+  --icon-color-secondary: var(--primitive-neutral-300); /* #e5e5e5 */
+  --icon-color-tertiary: var(--primitive-neutral-500); /* #a3a3a3 */
+  --icon-color-disabled: var(--primitive-neutral-700); /* #404040 */
+  --icon-color-on-primary: var(--primitive-neutral-900); /* #171717 */
+  --icon-color-brand: var(--primitive-primary-600); /* #0ab85a */
+
+  /* Border Colors - Dark Mode (Design System Compliant) */
+  --color-border-primary: var(--primitive-neutral-700); /* #404040 */
+  --color-border-secondary: var(--primitive-neutral-800); /* #262626 */
+  --color-border-subtle: var(--primitive-neutral-900); /* #171717 */
+  --color-border-strong: var(--primitive-neutral-500); /* #a3a3a3 */
+  --color-border-medium: var(--primitive-neutral-700); /* #404040 */
+  --color-border-focus: var(--primitive-primary-600); /* #0ab85a */
+
+  /* Brand Colors - Dark Mode */
+  --color-brand-primary: var(--primitive-primary-600); /* #0ab85a */
+  --color-brand-primary-hover: var(--primitive-primary-500); /* #10c96b */
+  --color-brand-primary-active: var(--primitive-primary-700); /* #089949 */
+  --color-brand-primary-alpha-10: rgba(10, 184, 90, 0.1);
+  --color-brand-primary-alpha-20: rgba(10, 184, 90, 0.2);
+
+  /* Chart Colors - Dark Mode */
+  --chart-bar-fill: var(--color-brand-primary);
+  --chart-bar-bg: var(--primitive-neutral-800); /* #262626 */
+
+  /* Status Colors - Dark Mode */
+  --status-success-600: var(
+    --primitive-primary-600
+  ); /* #0ab85a - bright green */
+  --status-warning-500: var(--primitive-warning-400); /* #fbbf24 - amber */
+  --status-error-500: var(--primitive-error-500); /* #ef4444 - red */
+  --status-info-500: var(--primitive-primary-500); /* #10c96b - lighter green */
+}
+
+/* Note: Class-based theme switching removed to eliminate duplication.
+   Use [data-theme="dark"] for theme switching. */
+
+/* ================================================================
+   DARK THEME COMPONENT OVERRIDES
+   ================================================================ */
+
+/* Body and main layout */
+[data-theme="dark"] body,
+html[data-theme="dark"] body {
+  background-color: var(--surface-primary);
+  color: var(--color-text-primary);
+}
+
+/* Sidebar styling */
+[data-theme="dark"] .sidebar {
+  background: var(--surface-secondary);
+  border-right: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .nav-item {
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  margin: 2px 8px;
+}
+
+[data-theme="dark"] .nav-item:hover {
+  background: var(--color-brand-primary-alpha-10);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .nav-item.active {
+  background: var(--color-brand-primary);
+  color: var(--icon-color-on-primary);
+}
+
+[data-theme="dark"] .nav-item.active .nav-item-icon {
+  color: var(--icon-color-on-primary);
+}
+
+/* Top bar and header */
+[data-theme="dark"] .top-bar {
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--color-border-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .header-icon {
+  color: var(--icon-color-primary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .header-icon:hover {
+  background: var(--color-border-primary);
+  border-color: var(--color-border-strong);
+}
+
+/* Cards and containers */
+[data-theme="dark"] .card,
+[data-theme="dark"] .stat-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Form elements */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus {
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px var(--color-brand-primary-alpha-20);
+}
+
+/* Buttons */
+[data-theme="dark"] .btn-secondary {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: var(--surface-quaternary);
+  border-color: var(--color-border-strong);
+}
+
+/* Icons - Ensure proper contrast */
+[data-theme="dark"] .icon,
+[data-theme="dark"] [data-lucide],
+[data-theme="dark"] svg {
+  color: var(--icon-color-primary);
+}
+
+[data-theme="dark"] .nav-item-icon [data-lucide],
+[data-theme="dark"] .nav-item-icon svg {
+  color: inherit;
+}
+
+/* Tables */
+[data-theme="dark"] table {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] th {
+  background: var(--surface-tertiary);
+  border-bottom: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] td {
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+}
+
+/* Theme toggle button */
+[data-theme="dark"] .theme-toggle-container {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+/* Notification panel */
+[data-theme="dark"] .notification-panel {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Charts and data visualization */
+[data-theme="dark"] .chart-container {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .chart-legend {
+  color: var(--color-text-secondary);
+}
+
+/* Mobile menu overlay */
+[data-theme="dark"] .mobile-menu-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Scrollbars for dark theme */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--surface-secondary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--primitive-neutral-400);
+}
+
+/* System preference (only if no manual theme is set) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]):not(.light) {
+    /* Surface Colors - Dark Mode (Design System Compliant) */
+    --surface-primary: var(--primitive-neutral-900);
+    --surface-secondary: var(--primitive-neutral-800);
+    --surface-tertiary: var(--primitive-neutral-700);
+    --surface-quaternary: var(--primitive-neutral-600);
+    --surface-elevated: var(--primitive-neutral-800);
+    --surface-inverse: var(--primitive-neutral-50);
+
+    /* Text Colors - Dark Mode (Design System Compliant) */
+    --color-text-primary: var(--primitive-neutral-100);
+    --color-text-secondary: var(--primitive-neutral-300);
+    --color-text-tertiary: var(--primitive-neutral-500);
+    --color-text-disabled: var(--primitive-neutral-700);
+    --color-text-inverse: var(--primitive-neutral-900);
+    --color-text-on-surface: var(--primitive-neutral-100);
+
+    /* Icon Colors - Dark Mode (WCAG AA Compliant) */
+    --icon-color-primary: var(--primitive-neutral-100);
+    --icon-color-secondary: var(--primitive-neutral-300);
+    --icon-color-tertiary: var(--primitive-neutral-500);
+    --icon-color-disabled: var(--primitive-neutral-700);
+    --icon-color-on-primary: var(--primitive-neutral-900);
+    --icon-color-brand: var(--primitive-primary-600);
+
+    /* Border Colors - Dark Mode (Design System Compliant) */
+    --color-border-primary: var(--primitive-neutral-700);
+    --color-border-secondary: var(--primitive-neutral-800);
+    --color-border-subtle: var(--primitive-neutral-900);
+    --color-border-strong: var(--primitive-neutral-500);
+    --color-border-medium: var(--primitive-neutral-700);
+    --color-border-focus: var(--primitive-primary-600);
+
+    /* Brand Colors - Dark Mode */
+    --color-brand-primary: var(--primitive-primary-600);
+    --color-brand-primary-hover: var(--primitive-primary-500);
+    --color-brand-primary-active: var(--primitive-primary-700);
+    --color-brand-primary-alpha-10: rgba(10, 184, 90, 0.1);
+    --color-brand-primary-alpha-20: rgba(10, 184, 90, 0.2);
+
+    /* Chart Colors - Dark Mode */
+    --chart-bar-fill: var(--color-brand-primary);
+    --chart-bar-bg: var(--primitive-neutral-800);
+
+    /* Status Colors - Dark Mode */
+    --status-success-600: var(--primitive-primary-600);
+    --status-warning-500: var(--primitive-warning-400);
+    --status-error-500: var(--primitive-error-500);
+    --status-info-500: var(--primitive-primary-500);
+  }
+}
+/* ================================================================
+   HIGH CONTRAST THEME - FlagFit Pro
+   Enhanced contrast for accessibility
+   ================================================================ */
+
+[data-theme="high-contrast"],
+html[data-theme="high-contrast"] {
+  /* Increased contrast ratios */
+  --surface-primary: #ffffff;
+  --surface-secondary: #f0f0f0;
+  --surface-tertiary: #e0e0e0;
+  --color-text-primary: #000000;
+  --color-text-secondary: #333333;
+  --color-text-tertiary: #666666;
+  --color-border-primary: #000000;
+  --color-border-secondary: #333333;
+  --color-border-strong: #000000;
+
+  /* Stronger focus indicators */
+  --color-border-focus: #0000ff;
+
+  /* Higher contrast for status colors */
+  --color-status-success: #006600;
+  --color-status-error: #cc0000;
+  --color-status-warning: #cc6600;
+  --color-status-info: #0066cc;
+}
+
+/* High contrast mode media query */
+@media (prefers-contrast: high) {
+  :root {
+    --color-border-primary: var(--primitive-neutral-600);
+    --color-border-secondary: var(--primitive-neutral-500);
+    --color-border-focus: #0000ff;
+  }
+}
+/* ================================================================
+   LIGHT THEME - FlagFit Pro
+   Comprehensive light theme with proper contrast and accessibility
+   Design System Compliant - Uses primitive tokens for maintainability
+   ================================================================ */
+
+/* Manual theme switching via data-theme attribute */
+[data-theme="light"],
+html[data-theme="light"] {
+  /* Surface Colors - Light Mode (Design System Compliant) */
+  --surface-primary: #ffffff;
+  --surface-secondary: var(--primitive-neutral-50); /* #fafafa */
+  --surface-tertiary: var(--primitive-neutral-100); /* #f5f5f5 */
+  --surface-quaternary: var(
+    --primitive-neutral-200
+  ); /* #f0f0f0 - for layered UI */
+  --surface-elevated: #ffffff;
+  --surface-inverse: var(--primitive-neutral-900); /* #171717 */
+
+  /* Text Colors - Light Mode (Design System Compliant) */
+  --color-text-primary: var(--primitive-neutral-900); /* #171717 */
+  --color-text-secondary: var(--primitive-neutral-700); /* #404040 */
+  --color-text-tertiary: var(--primitive-neutral-600); /* #737373 */
+  --color-text-disabled: var(--primitive-neutral-400); /* #d4d4d4 */
+  --color-text-inverse: var(--primitive-neutral-50); /* #fafafa */
+  --color-text-on-surface: var(--primitive-neutral-900); /* #171717 */
+
+  /* Icon Colors - Light Mode (WCAG AA Compliant) */
+  --icon-color-primary: var(--primitive-neutral-900); /* #171717 */
+  --icon-color-secondary: var(--primitive-neutral-700); /* #404040 */
+  --icon-color-tertiary: var(--primitive-neutral-600); /* #737373 */
+  --icon-color-disabled: var(--primitive-neutral-400); /* #d4d4d4 */
+  --icon-color-on-primary: #ffffff;
+  --icon-color-brand: var(--primitive-primary-700); /* #089949 */
+
+  /* Border Colors - Light Mode (Design System Compliant) */
+  --color-border-primary: var(--primitive-neutral-300); /* #e5e5e5 */
+  --color-border-secondary: var(--primitive-neutral-200); /* #f0f0f0 */
+  --color-border-subtle: var(--primitive-neutral-100); /* #f5f5f5 */
+  --color-border-strong: var(--primitive-neutral-400); /* #d4d4d4 */
+  --color-border-medium: var(--primitive-neutral-300); /* #e5e5e5 */
+  --color-border-focus: var(--primitive-primary-700); /* #089949 */
+
+  /* Brand Colors - Light Mode */
+  --color-brand-primary: var(--primitive-primary-700); /* #089949 */
+  --color-brand-primary-hover: var(--primitive-primary-800); /* #067a3c */
+  --color-brand-primary-active: var(--primitive-primary-900); /* #036d35 */
+  --color-brand-primary-alpha-10: rgba(8, 153, 73, 0.1);
+  --color-brand-primary-alpha-20: rgba(8, 153, 73, 0.2);
+
+  /* Chart Colors - Light Mode */
+  --chart-bar-fill: var(--color-brand-primary);
+  --chart-bar-bg: var(--primitive-neutral-100); /* #f5f5f5 */
+
+  /* Status Colors - Light Mode */
+  --status-success-600: var(--primitive-primary-700); /* #089949 - dark green */
+  --status-warning-500: var(--primitive-warning-500); /* #f59e0b - amber */
+  --status-error-500: var(--primitive-error-600); /* #dc2626 - red */
+  --status-info-500: var(
+    --primitive-primary-400
+  ); /* #40ccaf - light green/teal */
+}
+
+/* Note: Class-based theme switching removed to eliminate duplication.
+   Use [data-theme="light"] for theme switching. */
+
+/* ================================================================
+   LIGHT THEME COMPONENT OVERRIDES
+   ================================================================ */
+
+/* Body and main layout */
+[data-theme="light"] body,
+html[data-theme="light"] body {
+  background-color: var(--surface-primary);
+  color: var(--color-text-primary);
+}
+
+/* Sidebar styling */
+[data-theme="light"] .sidebar {
+  background: var(--surface-secondary);
+  border-right: 1px solid var(--color-border-primary);
+}
+
+[data-theme="light"] .nav-item {
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  margin: 2px 8px;
+}
+
+[data-theme="light"] .nav-item:hover {
+  background: var(--color-brand-primary-alpha-10);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .nav-item.active {
+  background: var(--color-brand-primary);
+  color: var(--icon-color-on-primary);
+}
+
+[data-theme="light"] .nav-item.active .nav-item-icon {
+  color: var(--icon-color-on-primary);
+}
+
+/* Top bar and header */
+[data-theme="light"] .top-bar {
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--color-border-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .header-icon {
+  color: var(--icon-color-primary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .header-icon:hover {
+  background: var(--surface-secondary);
+  border-color: var(--color-border-primary);
+}
+
+/* Cards and containers */
+[data-theme="light"] .card,
+[data-theme="light"] .stat-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Form elements */
+[data-theme="light"] input,
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px var(--color-brand-primary-alpha-20);
+}
+
+/* Buttons */
+[data-theme="light"] .btn-secondary {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background: var(--surface-secondary);
+  border-color: var(--color-border-strong);
+}
+
+/* Icons - Ensure proper contrast */
+[data-theme="light"] .icon,
+[data-theme="light"] [data-lucide],
+[data-theme="light"] svg {
+  color: var(--icon-color-primary);
+}
+
+[data-theme="light"] .nav-item-icon [data-lucide],
+[data-theme="light"] .nav-item-icon svg {
+  color: inherit;
+}
+
+/* Tables */
+[data-theme="light"] table {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="light"] th {
+  background: var(--surface-secondary);
+  border-bottom: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] td {
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+}
+
+/* Theme toggle button */
+[data-theme="light"] .theme-toggle-container {
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+/* Notification panel */
+[data-theme="light"] .notification-panel {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Charts and data visualization */
+[data-theme="light"] .chart-container {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="light"] .chart-legend {
+  color: var(--color-text-secondary);
+}
+
+/* Mobile menu overlay */
+[data-theme="light"] .mobile-menu-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Scrollbars for light theme */
+[data-theme="light"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: var(--surface-secondary);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 4px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--primitive-neutral-500);
+}
+
+/* System preference (only if no manual theme is set) */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]):not(.dark) {
+    /* Surface Colors - Light Mode (Design System Compliant) */
+    --surface-primary: #ffffff;
+    --surface-secondary: var(--primitive-neutral-50);
+    --surface-tertiary: var(--primitive-neutral-100);
+    --surface-quaternary: var(--primitive-neutral-200);
+    --surface-elevated: #ffffff;
+    --surface-inverse: var(--primitive-neutral-900);
+
+    /* Text Colors - Light Mode (Design System Compliant) */
+    --color-text-primary: var(--primitive-neutral-900);
+    --color-text-secondary: var(--primitive-neutral-700);
+    --color-text-tertiary: var(--primitive-neutral-600);
+    --color-text-disabled: var(--primitive-neutral-400);
+    --color-text-inverse: var(--primitive-neutral-50);
+    --color-text-on-surface: var(--primitive-neutral-900);
+
+    /* Icon Colors - Light Mode (WCAG AA Compliant) */
+    --icon-color-primary: var(--primitive-neutral-900);
+    --icon-color-secondary: var(--primitive-neutral-700);
+    --icon-color-tertiary: var(--primitive-neutral-600);
+    --icon-color-disabled: var(--primitive-neutral-400);
+    --icon-color-on-primary: #ffffff;
+    --icon-color-brand: var(--primitive-primary-700);
+
+    /* Border Colors - Light Mode (Design System Compliant) */
+    --color-border-primary: var(--primitive-neutral-300);
+    --color-border-secondary: var(--primitive-neutral-200);
+    --color-border-subtle: var(--primitive-neutral-100);
+    --color-border-strong: var(--primitive-neutral-400);
+    --color-border-medium: var(--primitive-neutral-300);
+    --color-border-focus: var(--primitive-primary-700);
+
+    /* Brand Colors - Light Mode */
+    --color-brand-primary: var(--primitive-primary-700);
+    --color-brand-primary-hover: var(--primitive-primary-800);
+    --color-brand-primary-active: var(--primitive-primary-900);
+    --color-brand-primary-alpha-10: rgba(8, 153, 73, 0.1);
+    --color-brand-primary-alpha-20: rgba(8, 153, 73, 0.2);
+
+    /* Chart Colors - Light Mode */
+    --chart-bar-fill: var(--color-brand-primary);
+    --chart-bar-bg: var(--primitive-neutral-100);
+
+    /* Status Colors - Light Mode */
+    --status-success-600: var(--primitive-primary-700);
+    --status-warning-500: var(--primitive-warning-500);
+    --status-error-500: var(--primitive-error-600);
+    --status-info-500: var(--primitive-primary-400);
+  }
+}

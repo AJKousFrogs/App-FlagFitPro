@@ -1,0 +1,2685 @@
+/* ================================================================
+   BASE STYLES - FlagFit Pro
+   Resets, base element styles, and typography defaults
+   ================================================================ */
+
+/* ================================================================
+   CSS RESET & NORMALIZATION
+   ================================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Prevent horizontal scrolling on mobile */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Mobile: Ensure all elements respect viewport width */
+@media (max-width: 480px) {
+  * {
+    max-width: 100vw;
+  }
+
+  .l-container,
+  .l-container-sm,
+  .l-container-md,
+  .l-container-lg,
+  .l-container-xl {
+    max-width: 100%;
+    padding-left: var(--spacing-component-md);
+    padding-right: var(--spacing-component-md);
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--primitive-font-sans);
+  font-size: var(--typography-body-md-size);
+  line-height: var(--typography-body-md-line-height);
+  font-weight: var(--typography-body-md-weight);
+  color: var(--color-text-on-surface);
+  background-color: var(--surface-primary);
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+  min-height: 100vh;
+}
+
+/* ================================================================
+   TYPOGRAPHY - HEADINGS
+   ================================================================ */
+
+h1,
+.h1 {
+  font-family: var(--primitive-font-display);
+  font-size: var(--font-heading-2xl); /* 2.5rem / 40px - Design System */
+  font-weight: 700; /* Design System */
+  line-height: 1; /* Design System */
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-6) 0; /* Design System spacing */
+}
+
+h2,
+.h2 {
+  font-family: var(--primitive-font-display);
+  font-size: var(--font-heading-xl); /* 1.875rem / 30px - Design System */
+  font-weight: 600; /* Design System */
+  line-height: 1.25; /* Design System */
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0; /* Design System spacing */
+}
+
+h3,
+.h3 {
+  font-family: var(--primitive-font-display);
+  font-size: var(--font-heading-lg); /* 1.5rem / 24px - Design System */
+  font-weight: 600; /* Design System */
+  line-height: 1.25; /* Design System */
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-3) 0; /* Design System spacing */
+}
+
+h4,
+.h4 {
+  font-family: var(--primitive-font-display);
+  font-size: var(--font-heading-md); /* 1.25rem / 20px - Design System */
+  font-weight: 500; /* Design System */
+  line-height: 1.375; /* Design System */
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-3) 0; /* Design System spacing */
+}
+
+h5,
+.h5 {
+  font-family: var(--primitive-font-display);
+  font-size: var(--font-body-lg); /* 1.125rem / 18px - Design System */
+  font-weight: 500; /* Design System */
+  line-height: 1.625; /* Design System */
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0; /* Design System spacing */
+}
+
+h6,
+.h6 {
+  font-family: var(--primitive-font-display);
+  font-size: var(--font-body-md); /* 1rem / 16px - Design System */
+  font-weight: 500; /* Design System */
+  line-height: 1.5; /* Design System */
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0; /* Design System spacing */
+}
+
+/* ================================================================
+   TYPOGRAPHY - BODY TEXT
+   ================================================================ */
+
+p {
+  margin: 0 0 var(--spacing-component-md) 0;
+  font-size: var(--typography-body-md-size);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* ================================================================
+   TYPOGRAPHY HIERARCHY UTILITIES (Unified Design System)
+   ================================================================ */
+
+.text-xs {
+  font-size: var(--font-xs);
+}
+
+.text-sm {
+  font-size: var(--font-sm);
+}
+
+.text-base {
+  font-size: var(--font-base);
+}
+
+.text-lg {
+  font-size: var(--font-lg);
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+/* Mobile: Ensure minimum readable font sizes */
+@media (max-width: 480px) {
+  body,
+  p,
+  .u-text-body-sm {
+    font-size: max(16px, var(--typography-body-md-size, 1rem));
+  }
+
+  .form-help,
+  .form-error,
+  .form-success,
+  .form-hint {
+    font-size: max(14px, var(--typography-body-sm-size, 0.875rem));
+  }
+
+  /* Ensure small text is still readable */
+  .u-text-body-sm,
+  .text-sm {
+    font-size: max(14px, var(--typography-body-sm-size, 0.875rem));
+  }
+}
+
+/* Desktop: Optimal reading width for text content */
+@media (min-width: 769px) {
+  p,
+  .text-content {
+    max-width: 65ch; /* Optimal reading width */
+  }
+
+  h1,
+  h2,
+  h3 {
+    max-width: 70ch;
+  }
+}
+
+/* ================================================================
+   LINKS
+   ================================================================ */
+
+a {
+  color: var(--color-brand-primary);
+  text-decoration: underline;
+  transition: color var(--motion-duration-normal)
+    var(--motion-easing-productive);
+}
+
+a:hover {
+  color: var(--color-brand-primary-hover);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-component-sm);
+}
+
+a:visited {
+  color: var(--color-brand-primary);
+}
+
+/* ================================================================
+   LISTS
+   ================================================================ */
+
+ul,
+ol {
+  margin: 0 0 var(--spacing-component-md) 0;
+  padding-left: var(--spacing-component-lg);
+}
+
+li {
+  margin-bottom: var(--spacing-component-xs);
+  line-height: var(--typography-body-md-line-height);
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+/* ================================================================
+   MEDIA ELEMENTS
+   ================================================================ */
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Remove shadows from all SVG icons */
+svg[data-lucide],
+[data-lucide] svg,
+i[data-lucide] svg,
+svg.lucide,
+.icon-inline svg,
+.icon-inline [data-lucide] {
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+img {
+  border-style: none;
+}
+
+/* Ensure images scale appropriately on all devices */
+@media (min-width: 481px) and (max-width: 768px) {
+  img,
+  picture img,
+  video,
+  canvas {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Card and hero images should cover appropriately */
+  .card img,
+  .hero-card img {
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* ================================================================
+   FORM ELEMENTS (Base styles - detailed in form.css)
+   ================================================================ */
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* ================================================================
+   ACCESSIBILITY
+   ================================================================ */
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-primary);
+  padding: var(--spacing-component-sm) var(--spacing-component-md);
+  text-decoration: none;
+  z-index: var(--z-index-skiplink);
+  border-radius: var(--radius-component-md);
+  /* Ensure skip link is completely hidden when not focused */
+  clip-path: inset(50%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    top var(--motion-duration-fast, 200ms) ease,
+    opacity var(--motion-duration-fast, 200ms) ease;
+}
+
+.skip-link:focus {
+  top: 6px;
+  clip-path: none;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hide skip link on mobile devices - not needed for touch navigation */
+@media (max-width: 1024px) {
+  .skip-link {
+    display: none !important;
+  }
+}
+
+/* Focus visible styles */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* ================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ================================================================ */
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --color-border-primary: var(--primitive-neutral-600);
+    --color-border-secondary: var(--primitive-neutral-500);
+    --color-border-focus: #0000ff;
+  }
+
+  /* Ensure sufficient contrast */
+  .btn,
+  .card,
+  .form-input {
+    border-width: 2px;
+  }
+}
+
+/* Forced colors mode (Windows High Contrast) */
+@media (forced-colors: active) {
+  .btn,
+  .card {
+    forced-color-adjust: none;
+  }
+
+  /* Ensure visibility in forced colors mode */
+  * {
+    border-color: ButtonBorder;
+  }
+
+  .btn-primary {
+    background-color: ButtonFace;
+    color: ButtonText;
+  }
+}
+
+/* Focus management - distinct from hover */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-component-sm);
+}
+
+/* Remove focus outline for mouse users */
+:focus:not(:focus-visible) {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* ARIA attribute styling */
+[aria-hidden="true"] {
+  display: none !important;
+}
+
+[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+[aria-busy="true"] {
+  position: relative;
+}
+
+[aria-busy="true"]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--color-border-primary);
+  border-top-color: var(--color-brand-primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+[aria-expanded="true"] {
+  /* Expanded state styling */
+}
+
+[aria-expanded="false"] {
+  /* Collapsed state styling */
+}
+
+/* Skip link styling */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-primary);
+  padding: var(--spacing-component-sm) var(--spacing-component-md);
+  text-decoration: none;
+  z-index: var(--z-index-skiplink);
+  border-radius: var(--radius-component-md);
+  font-weight: var(--primitive-font-weight-600);
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--color-text-on-primary);
+  outline-offset: 2px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+/* ================================================================
+   DESIGN TOKENS - FlagFit Pro
+   Simplified Production-Ready Token System (30 tokens)
+   Focus: Athletic data clarity, high performance, accessibility
+   ================================================================ */
+
+:root {
+  /* ================================
+     ESSENTIAL TOKENS ONLY (30 total)
+     ================================ */
+
+  /* Colors (8 tokens) - Aligned with Design System */
+  --color-primary: #089949; /* Design System Primary Brand Color */
+  --color-primary-600: #0ab85a;
+  --color-primary-dark: #036d35; /* Design System hover color */
+  --color-primary-rgb: 8, 153, 73; /* RGB values for alpha compositions */
+  --color-success: #f1c40f; /* Design System: Yellow for success */
+  --color-warning: #ef4444; /* Design System: Red for warning */
+  --color-error: #ef4444;
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+
+  /* Icon colors */
+  --icon-color-primary: #ffffff;
+
+  /* Spacing (6 tokens) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Typography (6 tokens) */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+
+  /* Component tokens (10 tokens) - Design System Compliant */
+  --radius-sm: 0.125rem; /* 2px - Design System */
+  --radius-md: 0.375rem; /* 6px - Design System */
+  --radius-lg: 0.5rem; /* 8px - Design System */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --transition: 0.2s ease;
+  --font-family: "Poppins", sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* ================================
+     LEGACY COMPATIBILITY ALIASES
+     (For existing code that uses old token names)
+     ================================ */
+
+  /* Spacing aliases */
+  --space-1: var(--space-xs);
+  --space-2: var(--space-sm);
+  --space-3: 12px;
+  --space-4: var(--space-md);
+  --space-5: 20px; /* 1.25rem - between space-4 (16px) and space-6 (24px) */
+  --space-6: var(--space-lg);
+  --space-8: var(--space-xl);
+  --space-12: var(--space-2xl);
+  --space-16: 64px;
+
+  /* Typography aliases */
+  --font-xs: var(--text-xs);
+  --font-sm: var(--text-sm);
+  --font-base: var(--text-base);
+  --font-lg: var(--text-lg);
+  --font-xl: var(--text-xl);
+  --font-2xl: var(--text-2xl);
+  --font-3xl: 30px;
+
+  /* Radius aliases - Design System Compliant */
+  --radius-none: 0;
+  --radius-xl: 0.75rem; /* 12px - Design System */
+  --radius-2xl: 1rem; /* 16px - Design System */
+  --radius-3xl: 1.5rem; /* 24px - Design System */
+  --radius-full: 9999px; /* Design System */
+
+  /* Shadow aliases */
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* Color aliases for backward compatibility */
+  --color-brand-primary: var(--color-primary);
+  --color-brand-primary-hover: var(--color-primary-dark);
+  --color-brand-primary-active: var(--color-primary-dark);
+  --surface-primary: #ffffff;
+  --surface-secondary: #f8f9fa;
+  --surface-tertiary: #e9ecef;
+  --color-text-primary: var(--color-text);
+  --color-text-secondary: var(--color-text-muted);
+  --color-text-tertiary: var(--color-text-muted);
+  --color-border-primary: var(--color-border);
+  --color-border-secondary: var(--color-border);
+  --border-subtle: var(--color-border);
+
+  /* Primitive Neutral Palette (Design System Compliant) */
+  --primitive-neutral-50: #fafafa;
+  --primitive-neutral-100: #f5f5f5;
+  --primitive-neutral-200: #f0f0f0;
+  --primitive-neutral-300: #e5e5e5;
+  --primitive-neutral-400: #d4d4d4;
+  --primitive-neutral-500: #a3a3a3;
+  --primitive-neutral-600: #737373;
+  --primitive-neutral-700: #404040;
+  --primitive-neutral-800: #262626;
+  --primitive-neutral-900: #171717;
+  --primitive-neutral-950: #0a0a0a;
+
+  /* Primitive Primary/Brand Palette (Design System Compliant) */
+  --primitive-primary-50: #f0f9f7;
+  --primitive-primary-100: #d0f0eb;
+  --primitive-primary-200: #a0e4d7;
+  --primitive-primary-300: #70d8c3;
+  --primitive-primary-400: #40ccaf;
+  --primitive-primary-500: #10c96b;
+  --primitive-primary-600: #0ab85a;
+  --primitive-primary-700: #089949;
+  --primitive-primary-800: #067a3c;
+  --primitive-primary-900: #036d35;
+
+  /* Primitive Status Palettes (Design System Compliant) */
+  /* Warning - Amber scale */
+  --primitive-warning-400: #fbbf24; /* For dark mode */
+  --primitive-warning-500: #f59e0b; /* For light mode */
+  --primitive-warning-600: #d97706;
+
+  /* Error - Red scale */
+  --primitive-error-500: #ef4444; /* For dark mode */
+  --primitive-error-600: #dc2626; /* For light mode */
+  --primitive-error-700: #b91c1c;
+
+  /* Primitive aliases (most commonly used) */
+  --primitive-success-500: var(--color-success);
+
+  /* Brand color aliases */
+  --brand-green: var(--color-primary);
+  --brand-green-hover: var(--color-primary-dark);
+  --brand-green-dark: var(--color-primary-dark);
+
+  /* Component spacing aliases */
+  --spacing-component-xs: var(--space-sm);
+  --spacing-component-sm: 12px;
+  --spacing-component-md: var(--space-md);
+  --spacing-component-lg: var(--space-lg);
+  --spacing-component-xl: var(--space-xl);
+
+  /* Elevation aliases */
+  --elevation-low: var(--shadow-sm);
+  --elevation-medium: var(--shadow-md);
+  --elevation-high: var(--shadow-lg);
+
+  /* Motion aliases */
+  --motion-duration-normal: var(--transition);
+  --motion-easing-productive: ease;
+  --transition-base: var(--transition);
+  --transition-fast: 0.15s ease;
+  --transition-slow: 0.3s ease;
+
+  /* Font weight aliases */
+  --font-weight-semibold: 600;
+  --font-normal: var(--font-weight-normal);
+  --font-medium: var(--font-weight-medium);
+  --font-semibold: 600;
+  --font-bold: var(--font-weight-bold);
+
+  /* Text size aliases */
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+  --text-5xl: 48px;
+
+  /* Line height aliases */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+
+  /* Letter spacing aliases */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+
+  /* RGB values for rgba() usage - Updated for new primary color */
+  --primitive-primary-rgb: 8, 153, 73; /* #089949 */
+  --primitive-primary-600-rgb: 10, 184, 90; /* #0ab85a */
+
+  /* ================================
+     TYPOGRAPHY SYSTEM VARIABLES
+     ================================ */
+
+  /* Typography - Display */
+  --typography-display-md-size: 48px;
+  --typography-display-md-weight: 700;
+  --typography-display-md-line-height: 1.2;
+  --typography-display-md-letter-spacing: -0.02em;
+
+  /* Typography - Headings */
+  --typography-heading-lg-size: 32px;
+  --typography-heading-lg-weight: 600;
+  --typography-heading-lg-line-height: 1.2;
+  --typography-heading-lg-letter-spacing: -0.01em;
+
+  --typography-heading-md-size: 24px;
+  --typography-heading-md-weight: 600;
+  --typography-heading-md-line-height: 1.3;
+  --typography-heading-md-letter-spacing: -0.01em;
+
+  --typography-heading-sm-size: 20px;
+  --typography-heading-sm-weight: 600;
+  --typography-heading-sm-line-height: 1.4;
+  --typography-heading-sm-letter-spacing: 0;
+
+  --typography-heading-xs-size: 18px;
+  --typography-heading-xs-weight: 600;
+  --typography-heading-xs-line-height: 1.4;
+  --typography-heading-xs-letter-spacing: 0;
+
+  /* Typography - Body */
+  --typography-body-md-size: 16px;
+  --typography-body-md-line-height: 1.5;
+  --typography-body-md-weight: 400;
+
+  --typography-body-sm-size: 14px;
+  --typography-body-sm-line-height: 1.5;
+  --typography-body-sm-weight: 400;
+
+  /* Typography - Labels */
+  --typography-label-sm-size: 12px;
+  --typography-label-sm-weight: 500;
+  --typography-label-sm-line-height: 1.4;
+
+  /* Typography - Caption */
+  --typography-caption-size: 12px;
+  --typography-caption-weight: 400;
+  --typography-caption-line-height: 1.4;
+
+  /* ================================
+     DESIGN SYSTEM TYPOGRAPHY TOKENS
+     (Matching DESIGN_SYSTEM_DOCUMENTATION.md)
+     ================================ */
+
+  /* Display Typography */
+  --font-display-2xl: 4.5rem; /* 72px */
+  --font-display-xl: 3.75rem; /* 60px */
+
+  /* Heading Typography */
+  --font-heading-2xl: 2.5rem; /* 40px */
+  --font-heading-xl: 1.875rem; /* 30px */
+  --font-heading-lg: 1.5rem; /* 24px */
+  --font-heading-md: 1.25rem; /* 20px */
+
+  /* Body Typography */
+  --font-body-lg: 1.125rem; /* 18px */
+  --font-body-md: 1rem; /* 16px */
+  --font-body-sm: 0.875rem; /* 14px */
+
+  /* Caption Typography */
+  --font-caption: 0.75rem; /* 12px */
+
+  /* Font Primitives - Design System Compliant */
+  --primitive-font-sans:
+    "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
+  --primitive-font-display:
+    "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
+  --primitive-font-weight-600: 600;
+
+  /* ================================
+     COLOR SYSTEM EXTENSIONS
+     ================================ */
+
+  /* Brand Color Variants - Updated for new primary color */
+  --color-brand-primary-light: rgba(8, 153, 73, 0.1);
+  --color-brand-primary-subtle: rgba(8, 153, 73, 0.05);
+  --color-brand-secondary: #10c96b; /* Design System secondary */
+
+  /* Interactive Colors */
+  --color-interactive-primary: var(--color-primary);
+  --color-interactive-primary-hover: var(--color-primary-600);
+
+  /* Status Colors - Design System Compliant */
+  --color-status-success: var(--color-success); /* #f1c40f - Yellow */
+  --color-status-success-light: rgba(241, 196, 15, 0.1);
+  --color-status-success-subtle: rgba(241, 196, 15, 0.05);
+
+  --color-status-warning: var(--color-warning); /* #ef4444 - Red */
+  --color-status-warning-light: rgba(239, 68, 68, 0.1);
+  --color-status-warning-subtle: rgba(239, 68, 68, 0.05);
+
+  --color-status-error: var(--color-error);
+  --color-status-error-light: rgba(239, 68, 68, 0.1);
+  --color-status-error-subtle: rgba(239, 68, 68, 0.05);
+
+  /* Text on Color Backgrounds */
+  --color-text-on-surface: var(--color-text);
+  --color-text-on-primary: #ffffff;
+
+  /* Dark Theme Colors */
+  --color-dark-surface: #1a1a1a;
+  --border-color-dark: rgba(255, 255, 255, 0.1);
+
+  /* ================================
+     GRADIENT SYSTEM
+     ================================ */
+
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(8, 153, 73, 0.05) 0%,
+    rgba(3, 109, 53, 0.02) 100%
+  );
+  --gradient-dark-card: linear-gradient(
+    135deg,
+    rgba(8, 153, 73, 0.1) 0%,
+    rgba(3, 109, 53, 0.05) 100%
+  );
+
+  /* ================================
+     COMPONENT RADIUS SYSTEM
+     ================================ */
+
+  --radius-component-sm: var(--radius-sm);
+  --radius-component-md: var(--radius-md);
+  --radius-component-lg: var(--radius-lg);
+  --radius-component-xl: var(--radius-xl);
+
+  /* ================================
+     Z-INDEX SYSTEM
+     ================================ */
+
+  --z-index-base: 1;
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  --z-index-skiplink: 10000;
+  --z-index-loading: 10001;
+  --z-index-loading-overlay: 10002;
+
+  /* ================================
+     BORDER SYSTEM EXTENSIONS
+     ================================ */
+
+  --color-border-focus: var(--color-primary);
+  --color-border-subtle: rgba(0, 0, 0, 0.05);
+  --color-border-secondary: var(--color-border);
+}
+/* ================================================================
+   LAYOUT MODULE - FlagFit Pro
+   Page-wide structural positioning (SMACSS Layout)
+   Handles major page divisions and grid systems
+   Prefix: .l- (layout)
+   ================================================================ */
+
+/* ================================================================
+   PAGE STRUCTURE
+   ================================================================ */
+
+.l-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-index-sticky);
+  width: 100%;
+  background-color: var(--surface-primary);
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+.l-main {
+  flex: 1;
+  min-height: 0; /* Allows flex children to shrink */
+  width: 100%;
+}
+
+.l-sidebar {
+  width: 280px;
+  background-color: var(--surface-secondary);
+  border-right: 1px solid var(--color-border-secondary);
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.l-footer {
+  width: 100%;
+  background-color: var(--surface-secondary);
+  border-top: 1px solid var(--color-border-secondary);
+  margin-top: auto;
+}
+
+/* ================================================================
+   LAYOUT CONTAINERS
+   ================================================================ */
+
+.l-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-layout-md);
+}
+
+.l-container-sm {
+  max-width: 640px;
+}
+
+.l-container-md {
+  max-width: 768px;
+}
+
+.l-container-lg {
+  max-width: 1024px;
+}
+
+.l-container-xl {
+  max-width: 1280px;
+}
+
+.l-container-2xl {
+  max-width: 1536px;
+}
+
+.l-container-full {
+  max-width: 100%;
+  padding: 0 var(--spacing-layout-md);
+}
+
+/* ================================================================
+   GRID SYSTEMS
+   ================================================================ */
+
+.l-grid {
+  display: grid;
+  gap: var(--spacing-component-md);
+}
+
+.l-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.l-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.l-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.l-grid-auto {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* ================================================================
+   SIMPLIFIED GRID SYSTEM (Unified Design System)
+   ================================================================ */
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-sidebar {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+}
+
+.gap-4 {
+  gap: var(--space-4);
+}
+
+.gap-6 {
+  gap: var(--space-6);
+}
+
+.gap-8 {
+  gap: var(--space-8);
+}
+
+/* ================================================================
+   RESPONSIVE BREAKPOINTS FOR SIMPLIFIED GRID SYSTEM
+   ================================================================ */
+
+/* Mobile: Stack all grids */
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3,
+  .grid-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-auto {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablet: 2 columns for grid-2 and grid-sidebar */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-sidebar {
+    grid-template-columns: 1fr;
+  }
+}
+
+.l-grid-auto-sm {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.l-grid-auto-lg {
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+}
+
+/* ================================================================
+   FLEXBOX LAYOUTS
+   ================================================================ */
+
+.l-flex {
+  display: flex;
+}
+
+.l-flex-row {
+  flex-direction: row;
+}
+
+.l-flex-column {
+  flex-direction: column;
+}
+
+.l-flex-wrap {
+  flex-wrap: wrap;
+}
+
+.l-flex-nowrap {
+  flex-wrap: nowrap;
+}
+
+.l-flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+.l-flex-between {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.l-flex-start {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.l-flex-end {
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+/* ================================================================
+   PAGE LAYOUTS
+   ================================================================ */
+
+.l-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.l-page-sidebar {
+  display: flex;
+  min-height: 100vh;
+}
+
+.l-page-sidebar .l-sidebar {
+  flex-shrink: 0;
+}
+
+.l-page-sidebar .l-main {
+  flex: 1;
+  overflow-x: hidden;
+}
+
+/* ================================================================
+   LEGACY LAYOUT CLASSES (for backward compatibility)
+   ================================================================ */
+
+/* Stop the gap */
+.layout {
+  display: flex;
+  gap: 0;
+}
+
+.sidebar {
+  width: 248px;
+  flex: 0 0 248px;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+  margin-left: 0 !important;
+}
+
+/* ================================================================
+   DASHBOARD LAYOUT PATTERNS
+   Consolidated from page-specific CSS files
+   ================================================================ */
+
+/* Dashboard Container - Common pattern across dashboard pages */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background: var(--surface-primary);
+}
+
+/* Main Content Area - Standard layout for pages with sidebar */
+.main-content {
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  padding: var(--space-xl) var(--space-xl);
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: var(--space-md) var(--space-6);
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: var(--space-md) var(--space-md);
+  }
+}
+
+/* Main content with top bar offset */
+.main-content.has-topbar {
+  padding-top: calc(64px + var(--space-xl));
+}
+
+@media (max-width: 1024px) {
+  .main-content.has-topbar {
+    padding-top: calc(64px + var(--space-5));
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content.has-topbar {
+    padding-top: calc(56px + var(--space-4));
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content.has-topbar {
+    padding-top: calc(56px + var(--space-3));
+  }
+}
+
+.l-page-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.l-page-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+/* ================================================================
+   RESPONSIVE LAYOUT ADJUSTMENTS
+   ================================================================ */
+
+/* Mobile: Stack sidebar */
+@media (max-width: calc(var(--bp-tablet) - 1px)) {
+  .l-page-sidebar {
+    flex-direction: column;
+  }
+
+  .l-sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-secondary);
+  }
+
+  .l-page-split {
+    grid-template-columns: 1fr;
+  }
+
+  .l-grid-2,
+  .l-grid-3,
+  .l-grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .l-container {
+    padding: 0 var(--spacing-component-md);
+  }
+}
+
+/* Tablet Portrait: 2 columns where appropriate */
+@media (min-width: 481px) and (max-width: 768px) {
+  .l-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .l-grid-3,
+  .l-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablet Portrait Landscape: Optimize for horizontal space */
+@media (min-width: 481px) and (max-width: 768px) and (orientation: landscape) {
+  .l-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .l-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .l-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Reduce vertical spacing */
+  .l-grid {
+    gap: var(--spacing-component-sm);
+  }
+}
+
+/* Tablet Landscape: 2-3 columns */
+@media (min-width: var(--bp-tablet)) and (max-width: calc(var(--bp-desktop) - 1px)) {
+  .l-grid-3,
+  .l-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop: Full grid */
+@media (min-width: var(--bp-desktop)) {
+  .l-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .l-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .l-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Desktop: Balanced spacing */
+@media (min-width: 769px) {
+  .l-grid {
+    gap: var(--spacing-component-md);
+  }
+}
+
+/* Wide: More spacing */
+@media (min-width: var(--bp-wide)) {
+  .l-container {
+    max-width: 1400px;
+    padding: 0 var(--spacing-layout-lg);
+  }
+
+  .l-grid {
+    gap: var(--spacing-component-lg);
+  }
+
+  .l-page-sidebar .l-main {
+    padding: var(--spacing-layout-lg);
+  }
+}
+
+/* Ultra-wide: Maximum content width */
+@media (min-width: 1920px) {
+  .l-container {
+    max-width: 1600px;
+  }
+
+  .l-grid {
+    gap: var(--spacing-component-xl);
+  }
+}
+/* ================================================================
+   UTILITY CLASSES - Based on Actual Usage Patterns
+   Replace inline styles with these utilities for better performance
+   ================================================================ */
+
+/* ================================
+   FLEXBOX UTILITIES
+   ================================ */
+
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.flex-1 {
+  flex: 1;
+}
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+.items-center {
+  align-items: center;
+}
+.items-start {
+  align-items: flex-start;
+}
+.items-end {
+  align-items: flex-end;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.gap-2 {
+  gap: var(--space-2);
+}
+.gap-3 {
+  gap: var(--space-3);
+}
+.gap-4 {
+  gap: var(--space-4);
+}
+.gap-6 {
+  gap: var(--space-6);
+}
+
+/* ================================
+   SPACING UTILITIES
+   ================================ */
+
+/* Padding */
+.p-2 {
+  padding: var(--space-2);
+}
+.p-3 {
+  padding: var(--space-3);
+}
+.p-4 {
+  padding: var(--space-4);
+}
+.p-6 {
+  padding: var(--space-6);
+}
+.px-2 {
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+}
+.px-3 {
+  padding-left: var(--space-3);
+  padding-right: var(--space-3);
+}
+.px-4 {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+.py-2 {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.py-3 {
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+}
+.py-4 {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+}
+
+/* Margin */
+.m-0 {
+  margin: 0;
+}
+.mb-1 {
+  margin-bottom: 4px;
+}
+.mb-2 {
+  margin-bottom: var(--space-2);
+}
+.mb-3 {
+  margin-bottom: var(--space-3);
+}
+.mb-4 {
+  margin-bottom: var(--space-4);
+}
+.mt-2 {
+  margin-top: var(--space-2);
+}
+.mt-3 {
+  margin-top: var(--space-3);
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.ml-2 {
+  margin-left: var(--space-2);
+}
+
+/* ================================
+   FLEXBOX CENTERING UTILITIES
+   Common patterns consolidated from page CSS files
+   ================================ */
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-center-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.flex-center-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.flex-center-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-start-between {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.flex-col-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-col-start {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.flex-col-between {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ================================
+   TYPOGRAPHY UTILITIES
+   ================================ */
+
+.text-xs {
+  font-size: var(--text-xs);
+}
+.text-sm {
+  font-size: var(--text-sm);
+}
+.text-base {
+  font-size: var(--text-base);
+}
+.text-lg {
+  font-size: var(--text-lg);
+}
+
+.font-medium {
+  font-weight: var(--font-weight-medium);
+}
+.font-semibold {
+  font-weight: var(--font-weight-semibold);
+}
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.text-primary {
+  color: var(--color-text-primary);
+}
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+.text-muted {
+  color: var(--color-text-muted);
+}
+.text-primary-600 {
+  color: var(--color-primary-600);
+}
+.text-success {
+  color: var(--color-success);
+}
+
+.leading-tight {
+  line-height: 1.375;
+}
+.leading-normal {
+  line-height: 1.5;
+}
+
+/* ================================
+   BACKGROUND UTILITIES
+   ================================ */
+
+.bg-surface-primary {
+  background-color: var(--surface-primary);
+}
+.bg-surface-secondary {
+  background-color: var(--surface-secondary);
+}
+.bg-white-50 {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.bg-primary-gradient {
+  background: var(--gradient-card);
+}
+.bg-primary-gradient-solid {
+  background: var(--gradient-primary);
+}
+
+/* ================================
+   BORDER UTILITIES
+   ================================ */
+
+.border-primary-10 {
+  border: 1px solid var(--color-brand-primary-light);
+}
+.border-secondary {
+  border-color: var(--color-border-secondary);
+}
+.rounded-md {
+  border-radius: var(--radius-md);
+}
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+
+/* ================================
+   SIZE UTILITIES
+   ================================ */
+
+.w-3 {
+  width: 12px;
+}
+.w-4 {
+  width: 16px;
+}
+.w-5 {
+  width: 20px;
+}
+.w-6 {
+  width: 24px;
+}
+.w-14 {
+  width: 56px;
+}
+.h-3 {
+  height: 12px;
+}
+.h-4 {
+  height: 16px;
+}
+.h-5 {
+  height: 20px;
+}
+.h-6 {
+  height: 24px;
+}
+.h-14 {
+  height: 56px;
+}
+
+/* Exact pixel sizes (for icons) */
+.w-14px {
+  width: 14px;
+}
+.w-16px {
+  width: 16px;
+}
+.w-18px {
+  width: 18px;
+}
+.w-20px {
+  width: 20px;
+}
+.w-24px {
+  width: 24px;
+}
+.h-14px {
+  height: 14px;
+}
+.h-16px {
+  height: 16px;
+}
+.h-18px {
+  height: 18px;
+}
+.h-20px {
+  height: 20px;
+}
+.h-24px {
+  height: 24px;
+}
+.min-w-0 {
+  min-width: 0;
+}
+.min-w-30 {
+  min-width: 120px;
+}
+
+/* Icon utility classes */
+.icon-14,
+.icon-14 svg,
+.icon-14 [data-lucide] {
+  width: 14px;
+  height: 14px;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.icon-16,
+.icon-16 svg,
+.icon-16 [data-lucide] {
+  width: 16px;
+  height: 16px;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.icon-18,
+.icon-18 svg,
+.icon-18 [data-lucide] {
+  width: 18px;
+  height: 18px;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.icon-20,
+.icon-20 svg,
+.icon-20 [data-lucide] {
+  width: 20px;
+  height: 20px;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.icon-24,
+.icon-24 svg,
+.icon-24 [data-lucide] {
+  width: 24px;
+  height: 24px;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* ================================
+   TRANSITION UTILITIES
+   ================================ */
+
+.transition-base {
+  transition: all var(--transition-base);
+}
+.transition-colors {
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
+}
+
+/* ================================
+   DISPLAY UTILITIES
+   ================================ */
+
+.inline-block {
+  display: inline-block;
+}
+.align-middle {
+  vertical-align: middle;
+}
+.text-center {
+  text-align: center;
+}
+.hidden {
+  display: none;
+}
+
+/* Grid utilities */
+.grid {
+  display: grid;
+}
+.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.gap-15 {
+  gap: 15px;
+}
+
+/* Additional spacing */
+.p-12 {
+  padding: 12px;
+}
+.p-15 {
+  padding: 15px;
+}
+.p-20 {
+  padding: 20px;
+}
+.p-30 {
+  padding: 30px;
+}
+.px-15 {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.py-15 {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.mb-5 {
+  margin-bottom: 5px;
+}
+.mb-10 {
+  margin-bottom: 10px;
+}
+.mb-15 {
+  margin-bottom: 15px;
+}
+.mb-20 {
+  margin-bottom: 20px;
+}
+.mb-25 {
+  margin-bottom: 25px;
+}
+.mb-30 {
+  margin-bottom: 30px;
+}
+.mt-0 {
+  margin-top: 0;
+}
+.m-0 {
+  margin: 0;
+}
+
+/* Text sizes */
+.text-2xl {
+  font-size: 24px;
+}
+.text-18px {
+  font-size: 18px;
+}
+.text-32px {
+  font-size: 32px;
+}
+
+/* Width/Height utilities */
+.w-12 {
+  width: 48px;
+}
+.h-12 {
+  height: 48px;
+}
+.w-80px {
+  width: 80px;
+}
+.h-80px {
+  height: 80px;
+}
+.w-full {
+  width: 100%;
+}
+
+/* Border utilities */
+.border-l-4 {
+  border-left-width: 4px;
+}
+.border-l-primary-600 {
+  border-left-color: var(--color-primary-600);
+}
+
+/* Background colors */
+.bg-surface-tertiary {
+  background-color: var(--surface-tertiary);
+}
+.bg-primary-50 {
+  background-color: var(--primary-50, rgba(16, 201, 107, 0.1));
+}
+.bg-primary-gradient-header {
+  background: var(--gradient-primary);
+}
+.bg-white-20 {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.text-primary-700 {
+  color: var(--primary-700, #089949);
+}
+
+/* Modal utilities */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-index-modal, 1400);
+  backdrop-filter: blur(4px);
+}
+
+.modal-container {
+  background: var(--color-text-primary);
+  border-radius: 20px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .modal-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    max-height: 100vh !important;
+  }
+}
+
+.modal-header {
+  padding: 30px;
+  border: 1px solid var(--color-border-secondary);
+  background: var(--gradient-primary);
+  color: var(--color-text-primary);
+  border-radius: 20px 20px 0 0;
+}
+
+.modal-close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: var(--color-text-primary);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.icon-circle {
+  width: 80px;
+  height: 80px;
+  background: var(--gradient-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 15px;
+  color: var(--color-text-primary);
+}
+
+.btn-primary-gradient {
+  background: var(--gradient-primary);
+  color: var(--color-text-primary);
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 160px;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.btn-primary-gradient:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary-outline {
+  background: var(--surface-secondary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-secondary);
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 120px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-secondary-outline:hover {
+  background: var(--surface-tertiary);
+}
+
+/* List utilities */
+.list-disc {
+  list-style-type: disc;
+}
+.pl-20 {
+  padding-left: 20px;
+}
+.opacity-90 {
+  opacity: 0.9;
+}
+/* ================================================================
+   Z-INDEX SYSTEM - FlagFit Pro
+   Centralized z-index management to prevent conflicts
+   ================================================================ */
+
+:root {
+  /* ================================
+     Z-INDEX SCALE (10-point increments)
+     Lower values = background layers
+     Higher values = foreground/modal layers
+     ================================ */
+
+  /* Background layers (1-99) */
+  --z-background: 1;
+  --z-background-pattern: 2;
+  --z-background-gradient: 3;
+
+  /* Content layers (100-499) */
+  --z-content: 100;
+  --z-sidebar: 200;
+  --z-main-content: 300;
+
+  /* Navigation layers (500-799) */
+  --z-header: 500;
+  --z-top-bar: 500;
+  --z-sticky-nav: 600;
+  --z-mobile-menu: 700;
+
+  /* Interactive layers (800-999) */
+  --z-dropdown: 800;
+  --z-tooltip: 850;
+  --z-popover: 900;
+  --z-search-results: 950;
+
+  /* Overlay layers (1000-1999) */
+  --z-modal-backdrop: 1000;
+  --z-modal: 1100;
+  --z-toast: 1200;
+  --z-loading-overlay: 1300;
+
+  /* System layers (2000+) */
+  --z-emergency: 2000;
+  --z-debug: 9999;
+}
+
+/* ================================================================
+   COMPONENT Z-INDEX ASSIGNMENTS
+   Apply these classes or use CSS variables directly
+   ================================================================ */
+
+.z-background {
+  z-index: var(--z-background);
+}
+.z-background-pattern {
+  z-index: var(--z-background-pattern);
+}
+.z-background-gradient {
+  z-index: var(--z-background-gradient);
+}
+
+.z-content {
+  z-index: var(--z-content);
+}
+.z-sidebar {
+  z-index: var(--z-sidebar);
+}
+.z-main-content {
+  z-index: var(--z-main-content);
+}
+
+.z-header {
+  z-index: var(--z-header);
+}
+.z-top-bar {
+  z-index: var(--z-top-bar);
+}
+.z-sticky-nav {
+  z-index: var(--z-sticky-nav);
+}
+.z-mobile-menu {
+  z-index: var(--z-mobile-menu);
+}
+
+.z-dropdown {
+  z-index: var(--z-dropdown);
+}
+.z-tooltip {
+  z-index: var(--z-tooltip);
+}
+.z-popover {
+  z-index: var(--z-popover);
+}
+.z-search-results {
+  z-index: var(--z-search-results);
+}
+
+.z-modal-backdrop {
+  z-index: var(--z-modal-backdrop);
+}
+.z-modal {
+  z-index: var(--z-modal);
+}
+.z-toast {
+  z-index: var(--z-toast);
+}
+.z-loading-overlay {
+  z-index: var(--z-loading-overlay);
+}
+
+.z-emergency {
+  z-index: var(--z-emergency);
+}
+.z-debug {
+  z-index: var(--z-debug);
+}
+/* ================================================================
+   ANIMATIONS MODULE - FlagFit Pro
+   Keyframes, transitions, and motion-related utilities
+   ================================================================ */
+
+/* ================================================================
+   KEYFRAME ANIMATIONS
+   ================================================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translate3d(0, 20px, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translate3d(0, -20px, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translate3d(-20px, 0, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translate3d(20px, 0, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutUp {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, -20px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutDown {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, 20px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: translate3d(0, 0, 0) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, 0, 0) scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(-10px, 0, 0);
+  }
+  75% {
+    transform: translate3d(10px, 0, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(16, 201, 107, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(16, 201, 107, 0.5);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translate3d(100%, 0, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+/* ================================================================
+   ANIMATION UTILITY CLASSES
+   ================================================================ */
+
+.u-animate-fade-in {
+  will-change: opacity;
+  animation: fadeIn var(--motion-duration-normal) var(--motion-easing-entrance);
+}
+
+.u-animate-fade-out {
+  will-change: opacity;
+  animation: fadeOut var(--motion-duration-normal) var(--motion-easing-exit);
+}
+
+.u-animate-slide-in-up {
+  will-change: transform, opacity;
+  animation: slideInUp var(--motion-duration-normal)
+    var(--motion-easing-entrance);
+}
+
+.u-animate-slide-in-down {
+  will-change: transform, opacity;
+  animation: slideInDown var(--motion-duration-normal)
+    var(--motion-easing-entrance);
+}
+
+.u-animate-slide-in-left {
+  will-change: transform, opacity;
+  animation: slideInLeft var(--motion-duration-normal)
+    var(--motion-easing-entrance);
+}
+
+.u-animate-slide-in-right {
+  will-change: transform, opacity;
+  animation: slideInRight var(--motion-duration-normal)
+    var(--motion-easing-entrance);
+}
+
+.u-animate-scale-in {
+  will-change: transform, opacity;
+  animation: scaleIn var(--motion-duration-normal)
+    var(--motion-easing-expressive);
+}
+
+.u-animate-pulse {
+  will-change: opacity;
+  animation: pulse 2s var(--motion-easing-expressive) infinite;
+}
+
+.u-animate-spin {
+  will-change: transform;
+  animation: spin 1s linear infinite;
+}
+
+.u-animate-bounce {
+  will-change: transform;
+  animation: bounce 1s var(--motion-easing-expressive) infinite;
+}
+
+.u-animate-shake {
+  will-change: transform;
+  animation: shake 0.5s var(--motion-easing-expressive);
+}
+
+/* ================================================================
+   TRANSITION UTILITY CLASSES
+   ================================================================ */
+
+.u-transition-all {
+  transition: all var(--motion-duration-normal) var(--motion-easing-productive);
+}
+
+.u-transition-colors {
+  transition:
+    color var(--motion-duration-fast) var(--motion-easing-productive),
+    background-color var(--motion-duration-fast) var(--motion-easing-productive),
+    border-color var(--motion-duration-fast) var(--motion-easing-productive);
+}
+
+.u-transition-opacity {
+  transition: opacity var(--motion-duration-fast)
+    var(--motion-easing-productive);
+}
+
+.u-transition-transform {
+  will-change: transform;
+  transition: transform var(--motion-duration-normal)
+    var(--motion-easing-productive);
+}
+
+.u-transition-shadow {
+  transition: box-shadow var(--motion-duration-normal)
+    var(--motion-easing-productive);
+}
+
+.u-transition-none {
+  transition: none;
+}
+
+/* ================================================================
+   DURATION UTILITIES
+   ================================================================ */
+
+.u-duration-instant {
+  transition-duration: var(--motion-duration-instant);
+}
+
+.u-duration-fast {
+  transition-duration: var(--motion-duration-fast);
+}
+
+.u-duration-normal {
+  transition-duration: var(--motion-duration-normal);
+}
+
+.u-duration-slow {
+  transition-duration: var(--motion-duration-slow);
+}
+
+.u-duration-slower {
+  transition-duration: var(--motion-duration-slower);
+}
+
+/* ================================================================
+   EASING UTILITIES
+   ================================================================ */
+
+.u-easing-linear {
+  transition-timing-function: var(--primitive-easing-linear);
+}
+
+.u-easing-productive {
+  transition-timing-function: var(--motion-easing-productive);
+}
+
+.u-easing-expressive {
+  transition-timing-function: var(--motion-easing-expressive);
+}
+
+.u-easing-entrance {
+  transition-timing-function: var(--motion-easing-entrance);
+}
+
+.u-easing-exit {
+  transition-timing-function: var(--motion-easing-exit);
+}
+
+/* ================================================================
+   MODERN ANIMATION UTILITIES
+   ================================================================ */
+
+.u-animate-fade-in-up {
+  will-change: transform, opacity;
+  animation: fadeInUp var(--transition-base) var(--motion-easing-entrance);
+}
+
+.u-animate-glow {
+  will-change: box-shadow;
+  animation: glow 2s var(--motion-easing-expressive) infinite;
+}
+
+.u-animate-slide-in-right {
+  will-change: transform, opacity;
+  animation: slideInFromRight var(--transition-base)
+    var(--motion-easing-entrance);
+}
+
+/* Loading skeleton shimmer */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-tertiary) 0%,
+    var(--surface-secondary) 50%,
+    var(--surface-tertiary) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: var(--radius-component-md);
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-title {
+  height: 1.5em;
+  width: 60%;
+  margin-bottom: var(--space-4);
+}
+
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.skeleton-card {
+  height: 200px;
+  border-radius: var(--radius-component-xl);
+}
+
+/* Smooth transitions for modern components */
+.card,
+.btn,
+.badge {
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  transition: all var(--transition-base);
+}
+
+.btn:hover {
+  transition: all var(--transition-fast);
+}
+
+.badge:hover {
+  transition: all var(--transition-fast);
+}
+
+/* ================================================================
+   REDUCED MOTION SUPPORT
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .u-animate-fade-in,
+  .u-animate-fade-out,
+  .u-animate-slide-in-up,
+  .u-animate-slide-in-down,
+  .u-animate-slide-in-left,
+  .u-animate-slide-in-right,
+  .u-animate-scale-in,
+  .u-animate-pulse,
+  .u-animate-spin,
+  .u-animate-bounce,
+  .u-animate-shake,
+  .u-animate-fade-in-up,
+  .u-animate-glow,
+  .u-animate-slide-in-right {
+    animation: none !important;
+  }
+
+  .u-transition-all,
+  .u-transition-colors,
+  .u-transition-opacity,
+  .u-transition-transform,
+  .u-transition-shadow {
+    transition: none !important;
+  }
+
+  .skeleton {
+    animation: none !important;
+  }
+
+  .card,
+  .btn,
+  .badge {
+    transition: none !important;
+  }
+}
+/* ================================================================
+   GRADIENTS MODULE - FlagFit Pro
+   Modern gradient utilities for visual interest
+   ================================================================ */
+
+/* ================================================================
+   GRADIENT UTILITY CLASSES
+   ================================================================ */
+
+.gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.gradient-card {
+  background: var(--gradient-card);
+}
+
+.gradient-dark-card {
+  background: var(--gradient-dark-card);
+}
+
+.gradient-hero {
+  background: var(--gradient-hero);
+}
+
+/* Text gradients */
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Border gradients */
+.gradient-border {
+  position: relative;
+  background: var(--surface-primary);
+  border-radius: var(--radius-component-xl);
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-component-xl);
+  padding: 2px;
+  background: var(--gradient-primary);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Radial gradients for backgrounds */
+.gradient-radial-primary {
+  background: radial-gradient(
+    circle at top right,
+    rgba(16, 201, 107, 0.1) 0%,
+    transparent 70%
+  );
+}
+
+.gradient-radial-accent {
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 255, 159, 0.15) 0%,
+    transparent 70%
+  );
+}
+
+/* Overlay gradients */
+.gradient-overlay-top {
+  background: linear-gradient(
+    to bottom,
+    rgba(16, 201, 107, 0.1) 0%,
+    transparent 100%
+  );
+}
+
+.gradient-overlay-bottom {
+  background: linear-gradient(
+    to top,
+    rgba(16, 201, 107, 0.1) 0%,
+    transparent 100%
+  );
+}
+
+.gradient-overlay-left {
+  background: linear-gradient(
+    to right,
+    rgba(16, 201, 107, 0.1) 0%,
+    transparent 100%
+  );
+}
+
+.gradient-overlay-right {
+  background: linear-gradient(
+    to left,
+    rgba(16, 201, 107, 0.1) 0%,
+    transparent 100%
+  );
+}
+
+/* Dark mode gradients */
+[data-theme="dark"] .gradient-card,
+@media (prefers-color-scheme: dark) {
+  .gradient-card {
+    background: var(--gradient-dark-card);
+  }
+
+  .gradient-radial-primary {
+    background: radial-gradient(
+      circle at top right,
+      rgba(16, 201, 107, 0.2) 0%,
+      transparent 70%
+    );
+  }
+}

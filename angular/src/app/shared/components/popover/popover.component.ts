@@ -168,7 +168,7 @@ export class PopoverComponent {
   // Configuration
   position = input<PopoverPosition>("bottom");
   trigger = input<"hover" | "click">("hover");
-  open = input<boolean>(false);
+  isOpenByDefault = input<boolean>(false);
 
   // State
   isOpen = signal<boolean>(false);
@@ -180,9 +180,9 @@ export class PopoverComponent {
   closed = output<void>();
 
   constructor() {
-    // Sync open input with isOpen signal
+    // Sync isOpenByDefault input with isOpen signal
     effect(() => {
-      this.isOpen.set(this.open());
+      this.isOpen.set(this.isOpenByDefault());
     });
   }
 

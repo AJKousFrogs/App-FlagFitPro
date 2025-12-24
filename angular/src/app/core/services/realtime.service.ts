@@ -21,6 +21,12 @@ export interface RealtimeEvent<T = any> {
 
 export type RealtimeCallback<T = any> = (event: RealtimeEvent<T>) => void;
 
+export interface RealtimeSubscriptionCallbacks<T = any> {
+  onInsert?: (payload: RealtimeEvent<T>) => void;
+  onUpdate?: (payload: RealtimeEvent<T>) => void;
+  onDelete?: (payload: RealtimeEvent<T>) => void;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -55,6 +61,62 @@ export class RealtimeService {
         this.isConnected.set(false);
       }
     });
+  }
+
+  /**
+   * Generic subscribe method for any table
+   * Allows subscribing to specific tables with custom callbacks
+   */
+  subscribe<T = any>(
+    tableName: string,
+    filter: string,
+    callbacks: RealtimeSubscriptionCallbacks<T>,
+  ): () => void {
+    const channelName = `${tableName}_${filter}`;
+
+    if (this.channels.has(channelName)) {
+      this.logger.warn(
+        `Already subscribed to ${channelName}, skipping duplicate subscription`,
+      );
+      return () => this.unsubscribe(channelName);
+    }
+
+    const channel = this.supabase.client
+      .channel(channelName)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: tableName,
+          filter: filter,
+        },
+        (payload: any) => {
+          const event: RealtimeEvent<T> = {
+            eventType: payload.eventType,
+            table: payload.table,
+            schema: payload.schema,
+            new: payload.new,
+            old: payload.old,
+            errors: payload.errors,
+          };
+
+          // Call appropriate callback based on event type
+          if (payload.eventType === "INSERT" && callbacks.onInsert) {
+            callbacks.onInsert(event);
+          } else if (payload.eventType === "UPDATE" && callbacks.onUpdate) {
+            callbacks.onUpdate(event);
+          } else if (payload.eventType === "DELETE" && callbacks.onDelete) {
+            callbacks.onDelete(event);
+          }
+        },
+      )
+      .subscribe();
+
+    this.channels.set(channelName, channel);
+    this.logger.debug(`Subscribed to ${channelName}`);
+
+    return () => this.unsubscribe(channelName);
   }
 
   /**
@@ -257,6 +319,18 @@ export class RealtimeService {
       this.logger.debug(`Unsubscribed from ${name}`);
     });
     this.channels.clear();
+  }
+
+  /**
+   * Unsubscribe from a specific channel
+   */
+  unsubscribe(channelName: string): void {
+    const channel = this.channels.get(channelName);
+    if (channel) {
+      this.supabase.client.removeChannel(channel);
+      this.channels.delete(channelName);
+      this.logger.debug(`Unsubscribed from ${channelName}`);
+    }
   }
 
   /**

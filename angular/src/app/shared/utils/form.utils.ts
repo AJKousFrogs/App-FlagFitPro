@@ -4,7 +4,7 @@
  * Utility functions for modern Angular 21 forms with signals
  */
 
-import { signal, computed, Signal } from "@angular/core";
+import { signal, computed, Signal, WritableSignal } from "@angular/core";
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 
 /**
@@ -187,8 +187,8 @@ export function resetForm(formGroup: FormGroup): void {
  */
 export interface SignalFormFieldState {
   error: Signal<string | null>;
-  touched: Signal<boolean>;
-  dirty: Signal<boolean>;
+  touched: WritableSignal<boolean>;
+  dirty: WritableSignal<boolean>;
   valid: Signal<boolean>;
   showError: () => boolean;
 }

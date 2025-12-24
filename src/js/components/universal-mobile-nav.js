@@ -1,4 +1,5 @@
 import { logger } from '../../logger.js';
+import { setSafeContent } from '../utils/shared.js';
 
 /**
  * Universal Mobile Navigation Component
@@ -75,7 +76,7 @@ class UniversalMobileNav {
         this.toggle.setAttribute("aria-label", "Toggle navigation menu");
         this.toggle.setAttribute("aria-expanded", "false");
         this.toggle.setAttribute("aria-controls", "sidebar");
-        this.toggle.innerHTML = '<i data-lucide="menu" class="icon-20"></i>';
+        setSafeContent(this.toggle, '<i data-lucide="menu" class="icon-20"></i>', true, true);
         header.insertBefore(this.toggle, header.firstChild);
       }
     }

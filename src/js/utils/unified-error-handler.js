@@ -4,6 +4,7 @@
  */
 
 import { escapeHtml } from "./sanitize.js";
+import { setSafeContent } from "./shared.js";
 
 import { logger } from "../../logger.js";
 
@@ -449,7 +450,7 @@ export class UnifiedErrorHandler {
 
     const icon = this.getNotificationIcon(type);
 
-    notification.innerHTML = `
+    setSafeContent(notification, `
       <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
         <span style="flex-shrink: 0; font-size: 1rem;">${icon}</span>
         <span style="flex: 1;">${escapeHtml(message)}</span>
@@ -459,7 +460,7 @@ export class UnifiedErrorHandler {
                 onmouseover="this.style.opacity='1'"
                 onmouseout="this.style.opacity='0.8'">×</button>
       </div>
-    `;
+    `, true, true);
 
     return notification;
   }
@@ -519,7 +520,7 @@ export class UnifiedErrorHandler {
 
     notification.style.cssText = this.getNotificationStyles("error");
 
-    notification.innerHTML = `
+    setSafeContent(notification, `
       <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
         <span style="flex-shrink: 0; font-size: 1rem;">❌</span>
         <div style="flex: 1;">
@@ -537,7 +538,7 @@ export class UnifiedErrorHandler {
                 onmouseover="this.style.opacity='1'"
                 onmouseout="this.style.opacity='0.8'">×</button>
       </div>
-    `;
+    `, true, true);
 
     document.body.appendChild(notification);
 

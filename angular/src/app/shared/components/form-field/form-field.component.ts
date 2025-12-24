@@ -210,7 +210,7 @@ export class FormFieldComponent implements ControlValueAccessor {
     const ids: string[] = [];
 
     if (this.config().ariaDescribedBy) {
-      ids.push(this.config().ariaDescribedBy);
+      ids.push(this.config().ariaDescribedBy!);
     }
 
     if (this.hasError()) {

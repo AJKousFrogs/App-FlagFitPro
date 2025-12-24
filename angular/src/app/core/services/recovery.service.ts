@@ -4,6 +4,16 @@ import { map, catchError } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
+import { ApiService } from "./api.service";
+
+// API Endpoints for recovery data
+const API_ENDPOINTS = {
+  recovery: {
+    researchInsights: "/api/recovery/research-insights",
+    weeklyTrends: "/api/recovery/weekly-trends",
+    protocolEffectiveness: "/api/recovery/protocol-effectiveness",
+  },
+};
 
 export interface RecoveryMetric {
   name: string;
@@ -67,6 +77,7 @@ export interface ResearchInsight {
 })
 export class RecoveryService {
   private supabaseService = inject(SupabaseService);
+  private apiService = inject(ApiService);
   private logger = inject(LoggerService);
   private realtimeService = inject(RealtimeService);
 
@@ -136,7 +147,7 @@ export class RecoveryService {
       "recovery_sessions",
       `athlete_id=eq.${userId}`,
       {
-        onInsert: async (payload) => {
+        onInsert: async (payload: any) => {
           this.logger.info("[Recovery] New session received via realtime");
           const session = await this.fetchSessionWithProtocol(payload.new.id);
           if (session) {
@@ -144,7 +155,7 @@ export class RecoveryService {
             this._activeSessions.set([session, ...current]);
           }
         },
-        onUpdate: async (payload) => {
+        onUpdate: async (payload: any) => {
           this.logger.info("[Recovery] Session updated via realtime");
           const session = await this.fetchSessionWithProtocol(payload.new.id);
           if (session) {
@@ -161,7 +172,7 @@ export class RecoveryService {
             }
           }
         },
-        onDelete: (payload) => {
+        onDelete: (payload: any) => {
           this.logger.info("[Recovery] Session deleted via realtime");
           const current = this._activeSessions();
           const filtered = current.filter((s) => s.id !== payload.old.id);

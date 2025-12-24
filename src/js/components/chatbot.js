@@ -1631,6 +1631,7 @@ class FlagFitChatbot {
   escapeHtml(text) {
     const div = document.createElement("div");
     div.textContent = text;
+    // eslint-disable-next-line no-restricted-syntax
     return div.innerHTML;
   }
 

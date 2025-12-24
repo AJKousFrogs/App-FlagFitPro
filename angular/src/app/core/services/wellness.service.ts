@@ -497,14 +497,14 @@ export class WellnessService {
       "wellness_entries",
       `athlete_id=eq.${userId}`,
       {
-        onInsert: (payload) => {
+        onInsert: (payload: any) => {
           this.logger.info("[Wellness] New entry received via realtime");
           const newEntry = this.transformEntry(payload.new);
           const current = this._wellnessData();
           this._wellnessData.set([newEntry, ...current]);
           this._averages.set(this.calculateAverages([newEntry, ...current]));
         },
-        onUpdate: (payload) => {
+        onUpdate: (payload: any) => {
           this.logger.info("[Wellness] Entry updated via realtime");
           const updatedEntry = this.transformEntry(payload.new);
           const current = this._wellnessData();
@@ -517,7 +517,7 @@ export class WellnessService {
             this._averages.set(this.calculateAverages(updated));
           }
         },
-        onDelete: (payload) => {
+        onDelete: (payload: any) => {
           this.logger.info("[Wellness] Entry deleted via realtime");
           const current = this._wellnessData();
           const filtered = current.filter((e) => e.id !== payload.old.id);

@@ -8,7 +8,7 @@ import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
-import { Tabs } from "primeng/tabview";
+import { Tabs } from "primeng/tabs";
 import { AdminService } from "../../../core/services/admin.service";
 import { MessageService } from "primeng/api";
 import { firstValueFrom } from "rxjs";

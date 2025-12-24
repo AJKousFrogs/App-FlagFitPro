@@ -1,13 +1,16 @@
 import {
   Component,
   signal,
+  input,
   ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
   CdkDragDrop,
   moveItemInArray,
   transferArrayItem,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { DragDropModule } from "@angular/cdk/drag-drop";
+  DragDropModule,
+} from "@angular/cdk/drag-drop";
 import { CardModule } from "primeng/card";
 
 export interface DragDropItem {

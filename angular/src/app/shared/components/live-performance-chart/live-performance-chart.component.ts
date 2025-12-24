@@ -182,6 +182,10 @@ export class LivePerformanceChartComponent implements OnInit {
     },
   ]);
 
+  ngOnInit(): void {
+    this.startLiveUpdates();
+  }
+
   private startLiveUpdates(): void {
     // Update metrics every 2 seconds using RxJS timer with automatic cleanup
     timer(0, 2000)
