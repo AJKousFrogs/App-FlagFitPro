@@ -2,10 +2,9 @@
 // Handles all interactive elements for live game tracking
 
 import { gameStatsService } from "../services/gameStatsService.js";
-import { logger } from "../../logger.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 class GameTrackerPage {
   constructor() {

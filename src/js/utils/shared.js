@@ -1,7 +1,6 @@
 // Shared Utilities Module - FlagFit Pro
 // Common functions used across multiple page modules
 
-import { logger } from "../../logger.js";
 import { escapeHtml } from "./sanitize.js";
 
 // ================================================================
@@ -205,7 +204,7 @@ export function getFormData(formId) {
 
 import { storageService } from "../services/storage-service-unified.js";
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 /**
  * @deprecated Use storageService.set() from storage-service-unified.js instead

@@ -1,7 +1,7 @@
 // Enhanced static file server for development
 // Lightweight alternative to full Express server with modern features
 
-/* eslint-disable no-console */
+ 
 import http from "http";
 import fs from "fs/promises";
 import { createReadStream, constants } from "fs";

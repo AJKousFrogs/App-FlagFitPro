@@ -1,3 +1,5 @@
+import { logger } from "../../logger.js";
+
 /**
  * Unified Storage Service
  * Centralized localStorage access with error handling, encryption support, and fallbacks
@@ -19,10 +21,6 @@
  * storageService.saveWorkoutSession(session);
  * const workouts = storageService.getRecentWorkouts();
  */
-
-import { logger } from "../../logger.js";
-
-import { logger } from '../../logger.js';
 
 class UnifiedStorageService {
   constructor() {

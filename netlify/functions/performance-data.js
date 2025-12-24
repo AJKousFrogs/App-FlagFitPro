@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 // Netlify Functions - Performance Data API
 // Handles athlete performance data storage and retrieval using Supabase
 

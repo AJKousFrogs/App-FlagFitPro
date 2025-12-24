@@ -50,7 +50,7 @@ class ServerLogger {
       return;
     }
     if (this.isDevelopment) {
-      // eslint-disable-next-line no-console
+       
       console.log("🔍 [DEBUG]", ...args);
     }
   }
@@ -64,7 +64,7 @@ class ServerLogger {
       return;
     }
     if (this.isDevelopment) {
-      // eslint-disable-next-line no-console
+       
       console.log("ℹ️ [INFO]", ...args);
     }
   }
@@ -77,7 +77,7 @@ class ServerLogger {
     if (!this.shouldLog("warn")) {
       return;
     }
-    // eslint-disable-next-line no-console
+     
     console.warn("⚠️ [WARN]", ...args);
   }
 
@@ -89,7 +89,7 @@ class ServerLogger {
     if (!this.shouldLog("error")) {
       return;
     }
-    // eslint-disable-next-line no-console
+     
     console.error("❌ [ERROR]", ...args);
 
     // In production, could send to error tracking service
@@ -108,7 +108,7 @@ class ServerLogger {
       return;
     }
     if (this.isDevelopment) {
-      // eslint-disable-next-line no-console
+       
       console.log("✅ [SUCCESS]", ...args);
     }
   }

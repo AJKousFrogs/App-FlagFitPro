@@ -290,7 +290,7 @@ router.get("/health", async (req, res) => {
  * @param {string} userId - User ID from URL parameter
  * @returns {object} Comprehensive recommendations data
  */
-// eslint-disable-next-line require-await
+ 
 router.get("/comprehensive/:userId", authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -350,7 +350,7 @@ router.get("/comprehensive/:userId", authenticateToken, async (req, res) => {
  * @param {string} userId - User ID from URL parameter
  * @returns {object} Training recommendations data
  */
-// eslint-disable-next-line require-await
+ 
 router.get(
   "/training/recommendations/:userId",
   authenticateToken,
@@ -400,7 +400,7 @@ router.get(
  * GET /supplements/recommendations/:userId
  * Get personalized supplement recommendations
  */
-// eslint-disable-next-line require-await
+ 
 router.get(
   "/supplements/recommendations/:userId",
   authenticateToken,
@@ -448,7 +448,7 @@ router.get(
  * GET /recovery/optimization/:userId
  * Get recovery optimization plans
  */
-// eslint-disable-next-line require-await
+ 
 router.get(
   "/recovery/optimization/:userId",
   authenticateToken,
@@ -495,7 +495,7 @@ router.get(
  * GET /performance/predictions/:userId
  * Get performance predictions
  */
-// eslint-disable-next-line require-await
+ 
 router.get(
   "/performance/predictions/:userId",
   authenticateToken,
@@ -543,7 +543,7 @@ router.get(
  * GET /la28/qualification/:userId
  * Get LA28 qualification roadmaps
  */
-// eslint-disable-next-line require-await
+ 
 router.get(
   "/la28/qualification/:userId",
   authenticateToken,
@@ -591,7 +591,7 @@ router.get(
  * GET /dashboard/:userId
  * Get comprehensive dashboard algorithm data
  */
-// eslint-disable-next-line require-await
+ 
 router.get("/dashboard/:userId", authenticateToken, async (req, res) => {
   try {
     const validation = validateUserId(req.params.userId);

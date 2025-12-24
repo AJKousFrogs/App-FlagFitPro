@@ -3,10 +3,9 @@
  * Combines error handling, user notifications, logging, and Sentry tracking
  */
 
-import { logger } from "../../logger.js";
 import { escapeHtml } from "./sanitize.js";
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 // Lazy-load Sentry service (only in production)
 let sentryService = null;

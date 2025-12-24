@@ -3,12 +3,11 @@
 
 import { apiClient, API_ENDPOINTS } from "../../api-config.js";
 import { authManager } from "../../auth-manager.js";
-import { logger } from "../../logger.js";
 import { escapeHtml } from "../utils/sanitize.js";
 import { storageService } from "../services/storage-service-unified.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 /**
  * NotificationStore - Centralized notification state management
@@ -382,7 +381,7 @@ class DashboardPage {
    */
   showNotificationLoading() {
     const notificationList = document.getElementById("notification-list");
-    if (!notificationList) return;
+    if (!notificationList) {return;}
 
     notificationList.innerHTML = `
       <div class="notification-loading">
@@ -397,7 +396,7 @@ class DashboardPage {
    */
   showNotificationError(error) {
     const notificationList = document.getElementById("notification-list");
-    if (!notificationList) return;
+    if (!notificationList) {return;}
 
     notificationList.innerHTML = `
       <div class="notification-error">
@@ -417,7 +416,7 @@ class DashboardPage {
     const badge = document.getElementById("notification-badge");
     const live = document.getElementById("notification-live");
 
-    if (!badge || !live) return;
+    if (!badge || !live) {return;}
 
     if (count > 0) {
       badge.textContent = String(count);
@@ -727,7 +726,7 @@ class DashboardPage {
     const panel = document.getElementById("notification-panel");
     const bell = document.getElementById("notification-bell");
 
-    if (!panel || !bell) return;
+    if (!panel || !bell) {return;}
 
     panel.classList.add("is-open");
     bell.setAttribute("aria-expanded", "true");
@@ -749,7 +748,7 @@ class DashboardPage {
     const panel = document.getElementById("notification-panel");
     const bell = document.getElementById("notification-bell");
 
-    if (!panel || !bell) return;
+    if (!panel || !bell) {return;}
 
     panel.classList.remove("is-open");
     bell.setAttribute("aria-expanded", "false");
@@ -770,7 +769,7 @@ class DashboardPage {
       const panel = document.getElementById("notification-panel");
       const bell = document.getElementById("notification-bell");
 
-      if (!panel || !bell) return;
+      if (!panel || !bell) {return;}
 
       // Check if click is outside panel and not on bell
       const clickedPanel = panel.contains(e.target);

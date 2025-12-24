@@ -1,11 +1,9 @@
+import { logger } from "../../logger.js";
+
 /**
  * FlagFit Pro - Standardized Error Handling Utilities
  * Provides consistent error handling patterns across the application
  */
-
-import { logger } from "../../logger.js";
-
-import { logger } from '../../logger.js';
 
 /**
  * Error types for categorization

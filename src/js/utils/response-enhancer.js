@@ -208,10 +208,7 @@ export class ResponseEnhancer {
     if (source_quality_score !== null && source_quality_score !== undefined) {
       const qualityPercent = Math.round(source_quality_score * 100);
       let qualityEmoji = "⚪";
-      if (qualityPercent >= 80) qualityEmoji = "🟢";
-      else if (qualityPercent >= 60) qualityEmoji = "🟡";
-      else if (qualityPercent >= 40) qualityEmoji = "🟠";
-      else qualityEmoji = "🔴";
+      if (qualityPercent >= 80) {qualityEmoji = "🟢";} else if (qualityPercent >= 60) {qualityEmoji = "🟡";} else if (qualityPercent >= 40) {qualityEmoji = "🟠";} else {qualityEmoji = "🔴";}
 
       indicators += `${qualityEmoji} **Source Quality:** ${qualityPercent}%\n`;
     }
