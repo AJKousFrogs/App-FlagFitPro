@@ -200,7 +200,7 @@ import { setSafeContent } from './utils/shared.js';
 
     // Show loading state
     const btn = event.target.closest(".export-btn");
-    const originalHTML = btn.innerHTML;
+    const originalContent = btn.cloneNode(true);
     btn.disabled = true;
     setSafeContent(btn, "<span>⏳ Generating PDF...</span>", true, true);
 
@@ -213,13 +213,19 @@ import { setSafeContent } from './utils/shared.js';
         setSafeContent(btn, "<span>✅ PDF Downloaded!</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          setSafeContent(btn, originalHTML, true, true);
+          btn.textContent = '';
+          while (originalContent.firstChild) {
+            btn.appendChild(originalContent.firstChild.cloneNode(true));
+          }
         }, 2000);
       } else {
         setSafeContent(btn, "<span>❌ Export Failed</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          setSafeContent(btn, originalHTML, true, true);
+          btn.textContent = '';
+          while (originalContent.firstChild) {
+            btn.appendChild(originalContent.firstChild.cloneNode(true));
+          }
         }, 2000);
       }
     }, 300);
@@ -241,7 +247,7 @@ import { setSafeContent } from './utils/shared.js';
 
     // Show loading state
     const btn = event.target.closest(".export-btn");
-    const originalHTML = btn.innerHTML;
+    const originalContent = btn.cloneNode(true);
     btn.disabled = true;
     setSafeContent(btn, "<span>⏳ Generating CSV...</span>", true, true);
 
@@ -269,13 +275,19 @@ import { setSafeContent } from './utils/shared.js';
         setSafeContent(btn, "<span>✅ CSV Downloaded!</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          setSafeContent(btn, originalHTML, true, true);
+          btn.textContent = '';
+          while (originalContent.firstChild) {
+            btn.appendChild(originalContent.firstChild.cloneNode(true));
+          }
         }, 2000);
       } else {
         setSafeContent(btn, "<span>❌ Export Failed</span>", true, true);
         setTimeout(() => {
           btn.disabled = false;
-          setSafeContent(btn, originalHTML, true, true);
+          btn.textContent = '';
+          while (originalContent.firstChild) {
+            btn.appendChild(originalContent.firstChild.cloneNode(true));
+          }
         }, 2000);
       }
     }, 300);
