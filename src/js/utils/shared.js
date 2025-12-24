@@ -65,13 +65,55 @@ export function initializeLucideIcons(container = document, options = {}) {
   }, pollInterval);
 }
 
-export function createElementWithClass(tag, className, innerHTML = "") {
+/**
+ * Safely set content on an element to prevent XSS attacks
+ * @param {HTMLElement} element - The element to set content on
+ * @param {string} content - The content to set
+ * @param {boolean} isHTML - Whether content should be treated as HTML (default: false)
+ * @param {boolean} allowRichText - Whether to allow rich text formatting (default: false)
+ */
+export function setSafeContent(element, content, isHTML = false, allowRichText = false) {
+  if (!element) return;
+
+  // Clear existing content
+  element.textContent = '';
+
+  if (!content) return;
+
+  if (isHTML && allowRichText) {
+    // For trusted HTML content (e.g., from database, not user input)
+    // Use a temporary container to sanitize
+    const temp = document.createElement('div');
+    // eslint-disable-next-line no-restricted-syntax
+    temp.innerHTML = escapeHtml(content);
+
+    // Only allow specific safe tags
+    const allowedTags = ['b', 'i', 'em', 'strong', 'br', 'p', 'span', 'div'];
+    const children = Array.from(temp.childNodes);
+
+    children.forEach(child => {
+      if (child.nodeType === Node.TEXT_NODE ||
+          (child.nodeType === Node.ELEMENT_NODE && allowedTags.includes(child.tagName.toLowerCase()))) {
+        element.appendChild(child.cloneNode(true));
+      }
+    });
+  } else if (isHTML) {
+    // Escape HTML but preserve line breaks
+    element.textContent = content;
+  } else {
+    // Plain text - safest option
+    element.textContent = content;
+  }
+}
+
+export function createElementWithClass(tag, className, content = "") {
   const element = document.createElement(tag);
   if (className) {
     element.className = className;
   }
-  if (innerHTML) {
-    element.innerHTML = innerHTML;
+  if (content) {
+    // Use setSafeContent instead of innerHTML
+    setSafeContent(element, content, false);
   }
   return element;
 }
@@ -330,7 +372,13 @@ export function showLoading(element, text = "Loading...") {
   if (!element) {
     return;
   }
-  element.innerHTML = `<span aria-hidden="true">⏳</span> ${text}`;
+  // Clear and build safely
+  element.textContent = '';
+  const icon = document.createElement('span');
+  icon.setAttribute('aria-hidden', 'true');
+  icon.textContent = '⏳';
+  element.appendChild(icon);
+  element.appendChild(document.createTextNode(' ' + text));
   element.disabled = true;
 }
 
@@ -338,37 +386,64 @@ export function hideLoading(element, originalText) {
   if (!element) {
     return;
   }
-  element.innerHTML = originalText;
+  element.textContent = originalText;
   element.disabled = false;
 }
 
 export function createModal(title, content, actions = []) {
   const modal = createElementWithClass("div", "modal");
-  modal.innerHTML = `
-    <div class="modal-overlay" onclick="closeModal()"></div>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>${title}</h2>
-        <button class="modal-close" onclick="closeModal()" aria-label="Close">
-          <i data-lucide="x" class="icon-18"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        ${content}
-      </div>
-      <div class="modal-actions">
-        ${actions
-          .map(
-            (action) => `
-          <button class="${action.class}" onclick="${action.onclick}">
-            ${action.text}
-          </button>
-        `,
-          )
-          .join("")}
-      </div>
-    </div>
-  `;
+
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.onclick = () => window.closeModal?.();
+
+  // Create modal content container
+  const modalContent = document.createElement('div');
+  modalContent.className = 'modal-content';
+
+  // Create header
+  const header = document.createElement('div');
+  header.className = 'modal-header';
+  const h2 = document.createElement('h2');
+  h2.textContent = title;
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'modal-close';
+  closeBtn.setAttribute('aria-label', 'Close');
+  closeBtn.onclick = () => window.closeModal?.();
+  const closeIcon = document.createElement('i');
+  closeIcon.setAttribute('data-lucide', 'x');
+  closeIcon.className = 'icon-18';
+  closeBtn.appendChild(closeIcon);
+  header.appendChild(h2);
+  header.appendChild(closeBtn);
+
+  // Create body
+  const body = document.createElement('div');
+  body.className = 'modal-body';
+  setSafeContent(body, content, false);
+
+  // Create actions
+  const actionsDiv = document.createElement('div');
+  actionsDiv.className = 'modal-actions';
+  actions.forEach(action => {
+    const btn = document.createElement('button');
+    btn.className = action.class;
+    btn.textContent = action.text;
+    btn.onclick = () => {
+      if (typeof action.onclick === 'function') {
+        action.onclick();
+      }
+    };
+    actionsDiv.appendChild(btn);
+  });
+
+  // Assemble
+  modalContent.appendChild(header);
+  modalContent.appendChild(body);
+  modalContent.appendChild(actionsDiv);
+  modal.appendChild(overlay);
+  modal.appendChild(modalContent);
 
   document.body.appendChild(modal);
   initializeLucideIcons(modal);

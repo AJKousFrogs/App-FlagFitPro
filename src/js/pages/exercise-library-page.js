@@ -143,7 +143,7 @@ export class ExerciseLibraryPage {
     );
 
     if (totalPages <= 1) {
-      paginationContainer.innerHTML = "";
+      paginationContainer.textContent = '';
       return;
     }
 
@@ -261,7 +261,7 @@ export class ExerciseLibraryPage {
     });
 
     // Single DOM update - clear and append fragment
-    exerciseGrid.innerHTML = "";
+    exerciseGrid.textContent = '';
     exerciseGrid.appendChild(fragment);
 
     // Initialize Lucide icons for new cards
@@ -522,7 +522,7 @@ export class ExerciseLibraryPage {
       fragment.appendChild(tempDiv.firstChild);
     }
 
-    modalBody.innerHTML = "";
+    modalBody.textContent = '';
     modalBody.appendChild(fragment);
 
     modal.style.display = "block";

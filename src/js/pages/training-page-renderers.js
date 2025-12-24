@@ -143,7 +143,7 @@ export function renderWeeklySchedule(
     return;
   }
 
-  scheduleGrid.innerHTML = "";
+  scheduleGrid.textContent = '';
 
   weeklySchedule.forEach((day) => {
     const dayCard = renderDayCard(day, scheduleSettings);

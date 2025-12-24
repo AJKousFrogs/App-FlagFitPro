@@ -722,7 +722,7 @@ function updateMessagesContainer(messages) {
   });
 
   // Single DOM update - clear and append fragment
-  container.innerHTML = "";
+  container.textContent = '';
   container.appendChild(fragment);
 
   // Initialize Lucide icons for new messages
@@ -821,7 +821,7 @@ async function sendMessage() {
   // Reset form state
   input.value = "";
   input.style.height = "auto";
-  sendBtn.innerHTML = originalBtnText;
+  sendBtn.textContent = originalBtnText;
   sendBtn.disabled = true;
   sendBtn.setAttribute("aria-label", "Send message");
 
@@ -859,7 +859,7 @@ function loadMessagesFromStorage() {
   if (storedMessages.length > 0) {
     // Clear existing demo messages and load stored ones
     const container = document.getElementById("messagesContainer");
-    container.innerHTML = "";
+    container.textContent = '';
 
     storedMessages.forEach((msg) => {
       addMessageToUI(msg, msg.author === authManager.getCurrentUser()?.email);

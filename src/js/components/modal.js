@@ -224,7 +224,7 @@ class Modal {
     }
     const body = this.modalElement.querySelector(".modal-body");
     if (body) {
-      body.innerHTML = content;
+      body.textContent = content;
       // Re-initialize icons if needed
       if (typeof lucide !== "undefined") {
         lucide.createIcons();

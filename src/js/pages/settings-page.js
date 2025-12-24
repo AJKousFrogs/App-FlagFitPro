@@ -483,7 +483,7 @@ window.saveSettings = async function (event) {
   button.style.background = "var(--success)";
 
   setTimeout(() => {
-    button.innerHTML = originalText;
+    button.textContent = originalText;
     button.style.background = "var(--primary)";
   }, 2000);
 
@@ -596,7 +596,7 @@ window.confirmAccountDeletion = function () {
 
   // Production mode - implement actual deletion
   const deleteButton = document.getElementById("confirmDeleteBtn");
-  deleteButton.innerHTML = "⏳ Deleting...";
+  deleteButton.textContent = '⏳ Deleting...';
   deleteButton.disabled = true;
 
   // Simulate API call to delete account
@@ -616,7 +616,7 @@ window.confirmAccountDeletion = function () {
       window.location.href = "/index.html";
     } catch (error) {
       alert("Error deleting account. Please try again or contact support.");
-      deleteButton.innerHTML = "Delete Account";
+      deleteButton.textContent = 'Delete Account';
       deleteButton.disabled = false;
     }
   }, 2000);

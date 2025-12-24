@@ -1997,7 +1997,7 @@ class DashboardPage {
 
       // Reset button
       button.disabled = false;
-      button.innerHTML = originalText;
+      button.textContent = originalText;
     } catch (error) {
       logger.error("Failed to save injury report:", error);
       this.showNotification(
@@ -2005,7 +2005,7 @@ class DashboardPage {
         "error",
       );
       button.disabled = false;
-      button.innerHTML = originalText;
+      button.textContent = originalText;
     }
   }
 

@@ -70,7 +70,7 @@ import { logger } from '../logger.js';
     addAchievementsStyles();
 
     // Clear and append
-    container.innerHTML = "";
+    container.textContent = '';
     container.appendChild(widget);
 
     logger.info("[Achievements Widget] Rendered successfully");

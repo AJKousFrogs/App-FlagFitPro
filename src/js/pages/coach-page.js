@@ -333,7 +333,7 @@ function showPlayerModal(mode, player = null) {
             `;
   }
 
-  modal.innerHTML = modalContent;
+  modal.textContent = modalContent;
   document.body.appendChild(modal);
 }
 
