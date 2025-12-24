@@ -65,15 +65,16 @@
         <i data-lucide="bell" class="icon-18"></i>
         <span id="notification-badge" class="badge" hidden>3</span>
       </button>
-      <span
-        id="notification-live"
-        class="sr-only"
-        aria-live="polite"
-      ></span>
+      <span id="notification-live" class="sr-only" aria-live="polite"></span>
     </div>
 
     <!-- Settings -->
-    <button class="header-icon" type="button" aria-label="Settings" onclick="window.location.href='/settings.html'">
+    <button
+      class="header-icon"
+      type="button"
+      aria-label="Settings"
+      onclick="window.location.href = '/settings.html'"
+    >
       <i data-lucide="settings" class="icon-18"></i>
     </button>
 
@@ -104,9 +105,7 @@
         aria-controls="user-menu"
         aria-expanded="false"
       >
-        <div class="user-avatar" id="user-avatar" aria-hidden="true">
-          JD
-        </div>
+        <div class="user-avatar" id="user-avatar" aria-hidden="true">JD</div>
       </button>
 
       <!-- User Menu Dropdown -->
@@ -128,7 +127,14 @@
           <a
             href="/login.html"
             class="user-menu-item user-menu-item-danger"
-            onclick="event.preventDefault(); if(window.authManager) { window.authManager.logout(); } else { window.location.href='/login.html'; }"
+            onclick="
+              event.preventDefault();
+              if (window.authManager) {
+                window.authManager.logout();
+              } else {
+                window.location.href = '/login.html';
+              }
+            "
           >
             <i data-lucide="log-out" class="icon-16"></i>
             <span>Logout</span>

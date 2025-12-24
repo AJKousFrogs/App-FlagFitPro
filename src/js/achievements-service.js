@@ -4,12 +4,12 @@
  * 100% FREE - Uses localStorage
  */
 
-import { storageService } from './services/storage-service-unified.js';
+import { storageService } from "./services/storage-service-unified.js";
 
 class AchievementsService {
   constructor() {
-    this.storageKey = 'flagfit_achievements';
-    this.historyKey = 'flagfit_achievement_history';
+    this.storageKey = "flagfit_achievements";
+    this.historyKey = "flagfit_achievement_history";
     this.achievements = this.defineAchievements();
     this.loadUnlockedAchievements();
   }
@@ -20,214 +20,214 @@ class AchievementsService {
   defineAchievements() {
     return {
       // Wellness Achievements
-      'wellness-first': {
-        id: 'wellness-first',
-        name: 'First Steps',
-        description: 'Log your first wellness check-in',
-        icon: '🎯',
-        category: 'wellness',
+      "wellness-first": {
+        id: "wellness-first",
+        name: "First Steps",
+        description: "Log your first wellness check-in",
+        icon: "🎯",
+        category: "wellness",
         points: 10,
         condition: (data) => data.wellnessCount >= 1,
-        unlocked: false
+        unlocked: false,
       },
-      'wellness-streak-3': {
-        id: 'wellness-streak-3',
-        name: 'Getting Started',
-        description: '3-day wellness tracking streak',
-        icon: '🔥',
-        category: 'wellness',
+      "wellness-streak-3": {
+        id: "wellness-streak-3",
+        name: "Getting Started",
+        description: "3-day wellness tracking streak",
+        icon: "🔥",
+        category: "wellness",
         points: 25,
         condition: (data) => data.wellnessStreak >= 3,
-        unlocked: false
+        unlocked: false,
       },
-      'wellness-streak-7': {
-        id: 'wellness-streak-7',
-        name: 'Wellness Warrior',
-        description: '7-day wellness tracking streak',
-        icon: '🔥🔥',
-        category: 'wellness',
+      "wellness-streak-7": {
+        id: "wellness-streak-7",
+        name: "Wellness Warrior",
+        description: "7-day wellness tracking streak",
+        icon: "🔥🔥",
+        category: "wellness",
         points: 50,
         condition: (data) => data.wellnessStreak >= 7,
-        unlocked: false
+        unlocked: false,
       },
-      'wellness-streak-30': {
-        id: 'wellness-streak-30',
-        name: 'Dedicated Athlete',
-        description: '30-day wellness tracking streak',
-        icon: '🔥🔥🔥',
-        category: 'wellness',
+      "wellness-streak-30": {
+        id: "wellness-streak-30",
+        name: "Dedicated Athlete",
+        description: "30-day wellness tracking streak",
+        icon: "🔥🔥🔥",
+        category: "wellness",
         points: 150,
         condition: (data) => data.wellnessStreak >= 30,
-        unlocked: false
+        unlocked: false,
       },
-      'wellness-streak-100': {
-        id: 'wellness-streak-100',
-        name: 'Elite Commitment',
-        description: '100-day wellness tracking streak',
-        icon: '💎',
-        category: 'wellness',
+      "wellness-streak-100": {
+        id: "wellness-streak-100",
+        name: "Elite Commitment",
+        description: "100-day wellness tracking streak",
+        icon: "💎",
+        category: "wellness",
         points: 500,
         condition: (data) => data.wellnessStreak >= 100,
-        unlocked: false
+        unlocked: false,
       },
-      'sleep-master': {
-        id: 'sleep-master',
-        name: 'Sleep Master',
-        description: 'Maintain 8+ hours of sleep for 7 days',
-        icon: '😴',
-        category: 'wellness',
+      "sleep-master": {
+        id: "sleep-master",
+        name: "Sleep Master",
+        description: "Maintain 8+ hours of sleep for 7 days",
+        icon: "😴",
+        category: "wellness",
         points: 75,
         condition: (data) => data.consecutiveDaysGoodSleep >= 7,
-        unlocked: false
+        unlocked: false,
       },
-      'recovery-champ': {
-        id: 'recovery-champ',
-        name: 'Recovery Champion',
-        description: 'Maintain high recovery scores for 14 days',
-        icon: '💪',
-        category: 'wellness',
+      "recovery-champ": {
+        id: "recovery-champ",
+        name: "Recovery Champion",
+        description: "Maintain high recovery scores for 14 days",
+        icon: "💪",
+        category: "wellness",
         points: 100,
         condition: (data) => data.consecutiveDaysHighRecovery >= 14,
-        unlocked: false
+        unlocked: false,
       },
 
       // Training Achievements
-      'training-first': {
-        id: 'training-first',
-        name: 'Training Begins',
-        description: 'Complete your first training session',
-        icon: '🏃',
-        category: 'training',
+      "training-first": {
+        id: "training-first",
+        name: "Training Begins",
+        description: "Complete your first training session",
+        icon: "🏃",
+        category: "training",
         points: 10,
         condition: (data) => data.totalTrainingSessions >= 1,
-        unlocked: false
+        unlocked: false,
       },
-      'training-10': {
-        id: 'training-10',
-        name: 'Getting Stronger',
-        description: 'Complete 10 training sessions',
-        icon: '💪',
-        category: 'training',
+      "training-10": {
+        id: "training-10",
+        name: "Getting Stronger",
+        description: "Complete 10 training sessions",
+        icon: "💪",
+        category: "training",
         points: 50,
         condition: (data) => data.totalTrainingSessions >= 10,
-        unlocked: false
+        unlocked: false,
       },
-      'training-50': {
-        id: 'training-50',
-        name: 'Half Century',
-        description: 'Complete 50 training sessions',
-        icon: '🎖️',
-        category: 'training',
+      "training-50": {
+        id: "training-50",
+        name: "Half Century",
+        description: "Complete 50 training sessions",
+        icon: "🎖️",
+        category: "training",
         points: 150,
         condition: (data) => data.totalTrainingSessions >= 50,
-        unlocked: false
+        unlocked: false,
       },
-      'training-100': {
-        id: 'training-100',
-        name: 'Century Club',
-        description: 'Complete 100 training sessions',
-        icon: '💯',
-        category: 'training',
+      "training-100": {
+        id: "training-100",
+        name: "Century Club",
+        description: "Complete 100 training sessions",
+        icon: "💯",
+        category: "training",
         points: 300,
         condition: (data) => data.totalTrainingSessions >= 100,
-        unlocked: false
+        unlocked: false,
       },
-      'early-bird': {
-        id: 'early-bird',
-        name: 'Early Bird',
-        description: 'Complete 10 morning workouts (before 8 AM)',
-        icon: '🌅',
-        category: 'training',
+      "early-bird": {
+        id: "early-bird",
+        name: "Early Bird",
+        description: "Complete 10 morning workouts (before 8 AM)",
+        icon: "🌅",
+        category: "training",
         points: 75,
         condition: (data) => data.morningWorkouts >= 10,
-        unlocked: false
+        unlocked: false,
       },
-      'night-owl': {
-        id: 'night-owl',
-        name: 'Night Owl',
-        description: 'Complete 10 evening workouts (after 6 PM)',
-        icon: '🦉',
-        category: 'training',
+      "night-owl": {
+        id: "night-owl",
+        name: "Night Owl",
+        description: "Complete 10 evening workouts (after 6 PM)",
+        icon: "🦉",
+        category: "training",
         points: 75,
         condition: (data) => data.eveningWorkouts >= 10,
-        unlocked: false
+        unlocked: false,
       },
 
       // Performance Achievements
-      'speed-demon': {
-        id: 'speed-demon',
-        name: 'Speed Demon',
-        description: 'Improve your 40-yard dash time by 0.5 seconds',
-        icon: '⚡',
-        category: 'performance',
+      "speed-demon": {
+        id: "speed-demon",
+        name: "Speed Demon",
+        description: "Improve your 40-yard dash time by 0.5 seconds",
+        icon: "⚡",
+        category: "performance",
         points: 100,
         condition: (data) => data.speedImprovement >= 0.5,
-        unlocked: false
+        unlocked: false,
       },
-      'agility-master': {
-        id: 'agility-master',
-        name: 'Agility Master',
-        description: 'Improve cone drill time by 1 second',
-        icon: '🌀',
-        category: 'performance',
+      "agility-master": {
+        id: "agility-master",
+        name: "Agility Master",
+        description: "Improve cone drill time by 1 second",
+        icon: "🌀",
+        category: "performance",
         points: 100,
         condition: (data) => data.agilityImprovement >= 1.0,
-        unlocked: false
+        unlocked: false,
       },
-      'consistent-performer': {
-        id: 'consistent-performer',
-        name: 'Consistent Performer',
-        description: 'Maintain 80%+ performance score for 30 days',
-        icon: '📊',
-        category: 'performance',
+      "consistent-performer": {
+        id: "consistent-performer",
+        name: "Consistent Performer",
+        description: "Maintain 80%+ performance score for 30 days",
+        icon: "📊",
+        category: "performance",
         points: 200,
         condition: (data) => data.consecutiveDaysHighPerformance >= 30,
-        unlocked: false
+        unlocked: false,
       },
 
       // Social Achievements
-      'team-player': {
-        id: 'team-player',
-        name: 'Team Player',
-        description: 'Join a team',
-        icon: '👥',
-        category: 'social',
+      "team-player": {
+        id: "team-player",
+        name: "Team Player",
+        description: "Join a team",
+        icon: "👥",
+        category: "social",
         points: 25,
         condition: (data) => data.hasJoinedTeam === true,
-        unlocked: false
+        unlocked: false,
       },
-      'mentor': {
-        id: 'mentor',
-        name: 'Mentor',
-        description: 'Help 5 teammates with their training',
-        icon: '🎓',
-        category: 'social',
+      mentor: {
+        id: "mentor",
+        name: "Mentor",
+        description: "Help 5 teammates with their training",
+        icon: "🎓",
+        category: "social",
         points: 150,
         condition: (data) => data.teammatesHelped >= 5,
-        unlocked: false
+        unlocked: false,
       },
 
       // Special Achievements
-      'perfect-week': {
-        id: 'perfect-week',
-        name: 'Perfect Week',
-        description: 'Log wellness 7 days straight with 8+ sleep each day',
-        icon: '⭐',
-        category: 'special',
+      "perfect-week": {
+        id: "perfect-week",
+        name: "Perfect Week",
+        description: "Log wellness 7 days straight with 8+ sleep each day",
+        icon: "⭐",
+        category: "special",
         points: 200,
         condition: (data) => data.hasPerfectWeek === true,
-        unlocked: false
+        unlocked: false,
       },
-      'comeback-kid': {
-        id: 'comeback-kid',
-        name: 'Comeback Kid',
-        description: 'Return to training after 7+ day break',
-        icon: '🔄',
-        category: 'special',
+      "comeback-kid": {
+        id: "comeback-kid",
+        name: "Comeback Kid",
+        description: "Return to training after 7+ day break",
+        icon: "🔄",
+        category: "special",
         points: 50,
         condition: (data) => data.hasComeback === true,
-        unlocked: false
-      }
+        unlocked: false,
+      },
     };
   }
 
@@ -236,14 +236,16 @@ class AchievementsService {
    */
   loadUnlockedAchievements() {
     try {
-      const unlockedIds = storageService.get(this.storageKey, [], { usePrefix: false });
-      unlockedIds.forEach(id => {
+      const unlockedIds = storageService.get(this.storageKey, [], {
+        usePrefix: false,
+      });
+      unlockedIds.forEach((id) => {
         if (this.achievements[id]) {
           this.achievements[id].unlocked = true;
         }
       });
     } catch (error) {
-      console.error('[Achievements] Error loading achievements:', error);
+      console.error("[Achievements] Error loading achievements:", error);
     }
   }
 
@@ -252,12 +254,13 @@ class AchievementsService {
    */
   saveUnlockedAchievements() {
     try {
-      const unlockedIds = Object.keys(this.achievements)
-        .filter(id => this.achievements[id].unlocked);
+      const unlockedIds = Object.keys(this.achievements).filter(
+        (id) => this.achievements[id].unlocked,
+      );
 
       storageService.set(this.storageKey, unlockedIds, { usePrefix: false });
     } catch (error) {
-      console.error('[Achievements] Error saving achievements:', error);
+      console.error("[Achievements] Error saving achievements:", error);
     }
   }
 
@@ -268,9 +271,11 @@ class AchievementsService {
   checkAchievements(userData) {
     const newlyUnlocked = [];
 
-    Object.values(this.achievements).forEach(achievement => {
+    Object.values(this.achievements).forEach((achievement) => {
       // Skip already unlocked
-      if (achievement.unlocked) {return;}
+      if (achievement.unlocked) {
+        return;
+      }
 
       // Check condition
       if (achievement.condition(userData)) {
@@ -282,7 +287,10 @@ class AchievementsService {
         this.addToHistory(achievement);
 
         // Show notification if available
-        if (window.notificationManager && window.notificationManager.isEnabled()) {
+        if (
+          window.notificationManager &&
+          window.notificationManager.isEnabled()
+        ) {
           window.notificationManager.notifyAchievement(achievement);
         }
 
@@ -302,16 +310,18 @@ class AchievementsService {
    */
   addToHistory(achievement) {
     try {
-      const history = storageService.get(this.historyKey, [], { usePrefix: false });
+      const history = storageService.get(this.historyKey, [], {
+        usePrefix: false,
+      });
       history.push({
         id: achievement.id,
         name: achievement.name,
         unlockedAt: achievement.unlockedAt,
-        points: achievement.points
+        points: achievement.points,
       });
       storageService.set(this.historyKey, history, { usePrefix: false });
     } catch (error) {
-      console.error('[Achievements] Error adding to history:', error);
+      console.error("[Achievements] Error adding to history:", error);
     }
   }
 
@@ -326,29 +336,30 @@ class AchievementsService {
    * Get unlocked achievements
    */
   getUnlockedAchievements() {
-    return Object.values(this.achievements).filter(a => a.unlocked);
+    return Object.values(this.achievements).filter((a) => a.unlocked);
   }
 
   /**
    * Get locked achievements
    */
   getLockedAchievements() {
-    return Object.values(this.achievements).filter(a => !a.unlocked);
+    return Object.values(this.achievements).filter((a) => !a.unlocked);
   }
 
   /**
    * Get achievements by category
    */
   getAchievementsByCategory(category) {
-    return Object.values(this.achievements).filter(a => a.category === category);
+    return Object.values(this.achievements).filter(
+      (a) => a.category === category,
+    );
   }
 
   /**
    * Get total points earned
    */
   getTotalPoints() {
-    return this.getUnlockedAchievements()
-      .reduce((sum, a) => sum + a.points, 0);
+    return this.getUnlockedAchievements().reduce((sum, a) => sum + a.points, 0);
   }
 
   /**
@@ -367,7 +378,7 @@ class AchievementsService {
     try {
       return storageService.get(this.historyKey, [], { usePrefix: false });
     } catch (error) {
-      console.error('[Achievements] Error getting history:', error);
+      console.error("[Achievements] Error getting history:", error);
       return [];
     }
   }
@@ -378,11 +389,11 @@ class AchievementsService {
   resetAll() {
     storageService.remove(this.storageKey, { usePrefix: false });
     storageService.remove(this.historyKey, { usePrefix: false });
-    Object.values(this.achievements).forEach(a => {
+    Object.values(this.achievements).forEach((a) => {
       a.unlocked = false;
       delete a.unlockedAt;
     });
-    console.log('[Achievements] All achievements reset');
+    console.log("[Achievements] All achievements reset");
   }
 
   /**
@@ -393,7 +404,7 @@ class AchievementsService {
       achievements: this.getAllAchievements(),
       totalPoints: this.getTotalPoints(),
       progress: this.getProgress(),
-      history: this.getHistory()
+      history: this.getHistory(),
     };
   }
 }
@@ -405,10 +416,14 @@ const achievementsService = new AchievementsService();
 window.achievementsService = achievementsService;
 
 // Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = achievementsService;
 }
 
-console.log('[Achievements] Achievements Service loaded');
-console.log(`[Achievements] ${achievementsService.getAllAchievements().length} achievements available`);
-console.log(`[Achievements] ${achievementsService.getUnlockedAchievements().length} unlocked`);
+console.log("[Achievements] Achievements Service loaded");
+console.log(
+  `[Achievements] ${achievementsService.getAllAchievements().length} achievements available`,
+);
+console.log(
+  `[Achievements] ${achievementsService.getUnlockedAchievements().length} unlocked`,
+);

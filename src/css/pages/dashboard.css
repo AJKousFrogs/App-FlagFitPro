@@ -1651,7 +1651,9 @@ html[data-theme="light"] .notification-panel {
 }
 
 @keyframes notificationSpinner {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .notification-loading-text {

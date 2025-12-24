@@ -26,7 +26,9 @@ class UniversalFormValidator {
   }
 
   init() {
-    if (!this.form) {return;}
+    if (!this.form) {
+      return;
+    }
 
     this.setupFields();
     this.setupEventListeners();
@@ -97,9 +99,15 @@ class UniversalFormValidator {
 
     // Update field ARIA attributes
     const describedBy = [];
-    if (config.helpContainer) {describedBy.push(config.helpContainer.id);}
-    if (config.errorContainer) {describedBy.push(config.errorContainer.id);}
-    if (config.successContainer) {describedBy.push(config.successContainer.id);}
+    if (config.helpContainer) {
+      describedBy.push(config.helpContainer.id);
+    }
+    if (config.errorContainer) {
+      describedBy.push(config.errorContainer.id);
+    }
+    if (config.successContainer) {
+      describedBy.push(config.successContainer.id);
+    }
 
     if (describedBy.length > 0) {
       field.setAttribute("aria-describedby", describedBy.join(" "));
@@ -158,7 +166,9 @@ class UniversalFormValidator {
     });
 
     this.validators.set("password", (value, _field) => {
-      if (!value) {return true;} // Let required validator handle empty values
+      if (!value) {
+        return true;
+      } // Let required validator handle empty values
       const passwordRegex =
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       return passwordRegex.test(value);
@@ -172,13 +182,17 @@ class UniversalFormValidator {
     });
 
     this.validators.set("phone", (value) => {
-      if (!value) {return true;}
+      if (!value) {
+        return true;
+      }
       const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
       return phoneRegex.test(value.replace(/[\s\-\(\)]/g, ""));
     });
 
     this.validators.set("url", (value) => {
-      if (!value) {return true;}
+      if (!value) {
+        return true;
+      }
       try {
         new URL(value);
         return true;
@@ -288,15 +302,35 @@ class UniversalFormValidator {
     let score = 0;
     const feedback = [];
 
-    if (password.length >= 8) {score++;} else {feedback.push("At least 8 characters");}
+    if (password.length >= 8) {
+      score++;
+    } else {
+      feedback.push("At least 8 characters");
+    }
 
-    if (/[A-Z]/.test(password)) {score++;} else {feedback.push("Uppercase letter");}
+    if (/[A-Z]/.test(password)) {
+      score++;
+    } else {
+      feedback.push("Uppercase letter");
+    }
 
-    if (/[a-z]/.test(password)) {score++;} else {feedback.push("Lowercase letter");}
+    if (/[a-z]/.test(password)) {
+      score++;
+    } else {
+      feedback.push("Lowercase letter");
+    }
 
-    if (/\d/.test(password)) {score++;} else {feedback.push("Number");}
+    if (/\d/.test(password)) {
+      score++;
+    } else {
+      feedback.push("Number");
+    }
 
-    if (/[@$!%*?&]/.test(password)) {score++;} else {feedback.push("Special character");}
+    if (/[@$!%*?&]/.test(password)) {
+      score++;
+    } else {
+      feedback.push("Special character");
+    }
 
     return { score, feedback, total: 5 };
   }
@@ -379,7 +413,9 @@ class UniversalFormValidator {
 
   validateField(field) {
     const config = this.fields.get(field);
-    if (!config) {return true;}
+    if (!config) {
+      return true;
+    }
 
     const value = field.value;
     let isValid = true;
@@ -403,7 +439,9 @@ class UniversalFormValidator {
 
   updateFieldState(field, isValid, errorMessage = "") {
     const config = this.fields.get(field);
-    if (!config) {return;}
+    if (!config) {
+      return;
+    }
 
     // Update field classes
     field.classList.remove("error", "success");
@@ -422,7 +460,9 @@ class UniversalFormValidator {
 
   showFieldError(field, message) {
     const config = this.fields.get(field);
-    if (!config || !config.errorContainer) {return;}
+    if (!config || !config.errorContainer) {
+      return;
+    }
 
     config.errorContainer.textContent = message;
     config.errorContainer.style.display = "block";
@@ -434,14 +474,22 @@ class UniversalFormValidator {
 
   hideFieldError(field) {
     const config = this.fields.get(field);
-    if (!config || !config.errorContainer) {return;}
+    if (!config || !config.errorContainer) {
+      return;
+    }
 
     config.errorContainer.style.display = "none";
   }
 
   showFieldSuccess(field) {
     const config = this.fields.get(field);
-    if (!config || !config.successContainer || !this.options.showSuccessStates) {return;}
+    if (
+      !config ||
+      !config.successContainer ||
+      !this.options.showSuccessStates
+    ) {
+      return;
+    }
 
     config.successContainer.textContent = "Valid";
     config.successContainer.style.display = "block";
@@ -449,7 +497,9 @@ class UniversalFormValidator {
 
   hideFieldSuccess(field) {
     const config = this.fields.get(field);
-    if (!config || !config.successContainer) {return;}
+    if (!config || !config.successContainer) {
+      return;
+    }
 
     config.successContainer.style.display = "none";
   }
@@ -526,7 +576,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const forms = document.querySelectorAll("form");
   forms.forEach((form) => {
     // Skip forms that already have validators or don't need validation
-    if (form.hasAttribute("data-no-validation") || form.validator) {return;}
+    if (form.hasAttribute("data-no-validation") || form.validator) {
+      return;
+    }
 
     form.validator = new UniversalFormValidator(form);
   });

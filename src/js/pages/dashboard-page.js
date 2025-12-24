@@ -34,7 +34,7 @@ class NotificationStore {
    * Notify all listeners of state changes
    */
   notify() {
-    this.listeners.forEach(callback => callback(this.getState()));
+    this.listeners.forEach((callback) => callback(this.getState()));
   }
 
   /**
@@ -45,7 +45,7 @@ class NotificationStore {
       notifications: this.notifications,
       unreadCount: this.unreadCount,
       loading: this.loading,
-      error: this.error
+      error: this.error,
     };
   }
 
@@ -61,7 +61,7 @@ class NotificationStore {
    * Calculate unread count from notifications
    */
   calculateUnreadCount() {
-    return this.notifications.filter(n => !n.read).length;
+    return this.notifications.filter((n) => !n.read).length;
   }
 
   /**
@@ -73,30 +73,33 @@ class NotificationStore {
     try {
       // Get last opened timestamp from store or API
       const lastOpenedAt = this.lastOpenedAt || null;
-      
+
       const response = await apiClient.get(
         API_ENDPOINTS.dashboard.notifications,
-        { ...options, lastOpenedAt }
+        { ...options, lastOpenedAt },
       );
 
       let notifications = [];
       if (response && response.success && response.data) {
         if (Array.isArray(response.data)) {
           notifications = response.data;
-        } else if (response.data.notifications && Array.isArray(response.data.notifications)) {
+        } else if (
+          response.data.notifications &&
+          Array.isArray(response.data.notifications)
+        ) {
           notifications = response.data.notifications;
         } else if (response.data.data && Array.isArray(response.data.data)) {
           notifications = response.data.data;
         }
       }
 
-      const unreadCount = notifications.filter(n => !n.read).length;
+      const unreadCount = notifications.filter((n) => !n.read).length;
 
       this.setState({
         notifications,
         unreadCount,
         loading: false,
-        error: null
+        error: null,
       });
 
       return notifications;
@@ -104,7 +107,7 @@ class NotificationStore {
       logger.warn("Failed to load notifications:", error);
       this.setState({
         loading: false,
-        error: error.message || "Failed to load notifications"
+        error: error.message || "Failed to load notifications",
       });
       throw error;
     }
@@ -117,7 +120,7 @@ class NotificationStore {
     try {
       // Use query parameter for more reliable routing
       await apiClient.patch(
-        `${API_ENDPOINTS.dashboard.notifications}?action=last-opened`
+        `${API_ENDPOINTS.dashboard.notifications}?action=last-opened`,
       );
       this.lastOpenedAt = new Date().toISOString();
       this.notify();
@@ -130,7 +133,9 @@ class NotificationStore {
    * Mark a single notification as read (optimistic update)
    */
   async markOneRead(id) {
-    const notification = this.notifications.find(n => String(n.id) === String(id));
+    const notification = this.notifications.find(
+      (n) => String(n.id) === String(id),
+    );
     if (!notification || notification.read) {
       return;
     }
@@ -146,12 +151,14 @@ class NotificationStore {
       // Use the API helper function for consistency
       const response = await apiClient.post(
         API_ENDPOINTS.dashboard.notifications,
-        { notificationId: String(id) }
+        { notificationId: String(id) },
       );
 
       // Verify API response indicates success
-      if (!response || (response.success === false)) {
-        throw new Error(response?.error || "Failed to mark notification as read");
+      if (!response || response.success === false) {
+        throw new Error(
+          response?.error || "Failed to mark notification as read",
+        );
       }
 
       // Success - state already updated optimistically
@@ -167,9 +174,10 @@ class NotificationStore {
       this.notify();
 
       // Show error toast with more details
-      const errorMessage = error?.message || "Couldn't mark notification as read, please retry.";
+      const errorMessage =
+        error?.message || "Couldn't mark notification as read, please retry.";
       logger.error("Failed to mark notification as read:", error);
-      
+
       if (window.ErrorHandler) {
         window.ErrorHandler.showError(errorMessage);
       } else {
@@ -185,15 +193,17 @@ class NotificationStore {
    * Mark all notifications as read
    */
   async markAllRead() {
-    const unreadNotifications = this.notifications.filter(n => !n.read);
+    const unreadNotifications = this.notifications.filter((n) => !n.read);
     if (unreadNotifications.length === 0) {
       logger.debug("No unread notifications to mark as read");
       return;
     }
 
     // Optimistic update
-    const previousState = this.notifications.map(n => ({ ...n }));
-    this.notifications.forEach(n => { n.read = true; });
+    const previousState = this.notifications.map((n) => ({ ...n }));
+    this.notifications.forEach((n) => {
+      n.read = true;
+    });
     const previousUnreadCount = this.unreadCount;
     this.unreadCount = 0;
     this.notify();
@@ -202,16 +212,20 @@ class NotificationStore {
       // Use the API helper function for consistency
       const response = await apiClient.post(
         API_ENDPOINTS.dashboard.notifications,
-        { notificationId: "all" }
+        { notificationId: "all" },
       );
 
       // Verify API response indicates success
-      if (!response || (response.success === false)) {
-        throw new Error(response?.error || "Failed to mark all notifications as read");
+      if (!response || response.success === false) {
+        throw new Error(
+          response?.error || "Failed to mark all notifications as read",
+        );
       }
 
       // Success - state already updated optimistically
-      logger.debug(`Marked ${unreadNotifications.length} notifications as read successfully`);
+      logger.debug(
+        `Marked ${unreadNotifications.length} notifications as read successfully`,
+      );
       this.notify();
       return true;
     } catch (error) {
@@ -222,9 +236,11 @@ class NotificationStore {
       this.notify();
 
       // Show error toast with more details
-      const errorMessage = error?.message || "Couldn't mark all notifications as read, please retry.";
+      const errorMessage =
+        error?.message ||
+        "Couldn't mark all notifications as read, please retry.";
       logger.error("Failed to mark all notifications as read:", error);
-      
+
       if (window.ErrorHandler) {
         window.ErrorHandler.showError(errorMessage);
       } else {
@@ -241,14 +257,16 @@ class NotificationStore {
    */
   async refreshBadge() {
     try {
-      const response = await apiClient.get(API_ENDPOINTS.dashboard.notificationsCount);
-      
+      const response = await apiClient.get(
+        API_ENDPOINTS.dashboard.notificationsCount,
+      );
+
       // Handle different response formats
       let count = 0;
       if (response) {
         if (response.success !== false && response.data) {
           count = response.data.unreadCount || response.data.count || 0;
-        } else if (typeof response === 'number') {
+        } else if (typeof response === "number") {
           count = response;
         } else if (response.unreadCount !== undefined) {
           count = response.unreadCount;
@@ -266,7 +284,10 @@ class NotificationStore {
       const calculatedCount = this.calculateUnreadCount();
       this.unreadCount = calculatedCount;
       this.notify();
-      logger.debug("Using calculated badge count as fallback:", calculatedCount);
+      logger.debug(
+        "Using calculated badge count as fallback:",
+        calculatedCount,
+      );
       return calculatedCount;
     }
   }
@@ -432,7 +453,8 @@ class DashboardPage {
       }
 
       // Dynamically import profile completion manager
-      const { profileCompletionManager } = await import("../../profile-completion.js");
+      const { profileCompletionManager } =
+        await import("../../profile-completion.js");
 
       // Check if profile needs completion
       if (profileCompletionManager.needsCompletion()) {
@@ -562,7 +584,8 @@ class DashboardPage {
 
     if (completeBtn) {
       completeBtn.addEventListener("click", async () => {
-        const { profileCompletionManager } = await import("../../profile-completion.js");
+        const { profileCompletionManager } =
+          await import("../../profile-completion.js");
         profileCompletionManager.showProfileCompletionModal(false); // false = not required, can skip
         this.hideProfileCompletionBanner();
       });
@@ -622,11 +645,11 @@ class DashboardPage {
     window.toggleSidebar = () => this.toggleSidebar();
     window.toggleNotifications = () => this.toggleNotifications();
     window.markAllAsRead = () => this.markAllAsRead();
-    
+
     // Make dashboardPage and notificationStore globally available
     window.dashboardPage = this;
     window.notificationStore = this.notificationStore;
-    
+
     // Make getNotificationCount available globally
     window.getNotificationCount = async () => {
       try {
@@ -649,7 +672,9 @@ class DashboardPage {
     const overlay = document.getElementById("sidebar-overlay");
     const toggleBtn = document.getElementById("mobile-menu-toggle");
 
-    if (!sidebar) {return;}
+    if (!sidebar) {
+      return;
+    }
 
     const isOpen =
       sidebar.classList.contains("open") ||
@@ -657,14 +682,18 @@ class DashboardPage {
 
     if (isOpen) {
       sidebar.classList.remove("open", "mobile-open");
-      if (overlay) {overlay.classList.remove("active");}
+      if (overlay) {
+        overlay.classList.remove("active");
+      }
       document.body.classList.remove("sidebar-open", "menu-open");
       if (toggleBtn) {
         toggleBtn.setAttribute("aria-expanded", "false");
       }
     } else {
       sidebar.classList.add("open", "mobile-open");
-      if (overlay) {overlay.classList.add("active");}
+      if (overlay) {
+        overlay.classList.add("active");
+      }
       document.body.classList.add("sidebar-open", "menu-open");
       if (toggleBtn) {
         toggleBtn.setAttribute("aria-expanded", "true");
@@ -676,10 +705,12 @@ class DashboardPage {
     const panel = document.getElementById("notification-panel");
     const bell = document.getElementById("notification-bell");
 
-    if (!panel || !bell) {return;}
+    if (!panel || !bell) {
+      return;
+    }
 
     const isOpen = panel.classList.contains("is-open");
-    
+
     if (isOpen) {
       this.closeNotificationPanel();
     } else {
@@ -774,8 +805,12 @@ class DashboardPage {
     } catch (error) {
       // Error handling is done in the store
       // For development, you might want to show mock data
-      if (error.isConnectionRefused || 
-          (error.isNetworkError && error.message && error.message.includes("Failed to fetch"))) {
+      if (
+        error.isConnectionRefused ||
+        (error.isNetworkError &&
+          error.message &&
+          error.message.includes("Failed to fetch"))
+      ) {
         // Silently fall back to mock data in development
         logger.debug("Using mock notifications in development");
         this.renderNotifications(this.getMockNotifications());
@@ -814,7 +849,9 @@ class DashboardPage {
 
   renderNotifications(notifications) {
     const notificationList = document.getElementById("notification-list");
-    if (!notificationList) {return;}
+    if (!notificationList) {
+      return;
+    }
 
     // Ensure notifications is an array
     if (!Array.isArray(notifications)) {
@@ -1052,7 +1089,9 @@ class DashboardPage {
       } catch (apiError) {
         // Fallback to localStorage for demo/testing
         logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = storageService.get("wellnessCheckIns", [], { usePrefix: false });
+        const saved = storageService.get("wellnessCheckIns", [], {
+          usePrefix: false,
+        });
         // Remove existing entry for this date
         const filtered = saved.filter((w) => w.date !== dateStr);
         filtered.push(wellnessCheckIn);
@@ -1139,7 +1178,9 @@ class DashboardPage {
       } catch (apiError) {
         // Fallback to localStorage
         logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = storageService.get("trainingSessions", [], { usePrefix: false });
+        const saved = storageService.get("trainingSessions", [], {
+          usePrefix: false,
+        });
         saved.push({ ...sessionData, status: "in_progress" });
         storageService.set("trainingSessions", saved, { usePrefix: false });
       }
@@ -1153,7 +1194,7 @@ class DashboardPage {
           date: sessionDate,
           status: "in_progress",
         },
-        { usePrefix: false }
+        { usePrefix: false },
       );
 
       // Show success and redirect to training schedule page
@@ -1194,10 +1235,14 @@ class DashboardPage {
       const supplementKey = item.getAttribute("data-supplement");
       const toggleInput = item.querySelector(".supplement-toggle-input");
 
-      if (!toggleInput || !supplementKey) {return;}
+      if (!toggleInput || !supplementKey) {
+        return;
+      }
 
       // Load saved state
-      const savedState = storageService.get("supplements", null, { usePrefix: false });
+      const savedState = storageService.get("supplements", null, {
+        usePrefix: false,
+      });
       if (savedState) {
         if (savedState[supplementKey]?.taken) {
           toggleInput.checked = true;
@@ -1277,7 +1322,9 @@ class DashboardPage {
       }
 
       // Fallback to localStorage (for unauthenticated users or API failures)
-      const saved = storageService.get("supplementLogs", [], { usePrefix: false });
+      const saved = storageService.get("supplementLogs", [], {
+        usePrefix: false,
+      });
 
       // Remove existing entry for this supplement on selected date
       const filtered = saved.filter((log) => {
@@ -1359,7 +1406,9 @@ class DashboardPage {
     const nextBtn = document.getElementById("next-day-btn");
     const todayBtn = document.getElementById("today-btn");
 
-    if (!datePicker) {return;}
+    if (!datePicker) {
+      return;
+    }
 
     // Initialize date picker with today's date
     const today = new Date();
@@ -1447,7 +1496,9 @@ class DashboardPage {
     const indicator = document.getElementById("date-indicator");
     const info = document.getElementById("date-info");
 
-    if (!indicator || !info) {return;}
+    if (!indicator || !info) {
+      return;
+    }
 
     const isToday = this.isToday(this.selectedDate);
     const isFuture = this.isFuture(this.selectedDate);
@@ -1534,7 +1585,9 @@ class DashboardPage {
 
   updateDateDataStatus(wellnessLoaded, supplementsLoaded) {
     const info = document.getElementById("date-info");
-    if (!info) {return;}
+    if (!info) {
+      return;
+    }
 
     const hasWellness =
       wellnessLoaded &&
@@ -1573,7 +1626,9 @@ class DashboardPage {
   async loadWellnessForDate(dateStr) {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) {return false;}
+      if (!user) {
+        return false;
+      }
 
       // Try API first
       try {
@@ -1597,7 +1652,9 @@ class DashboardPage {
       }
 
       // Load from localStorage
-      const saved = storageService.get("wellnessCheckIns", [], { usePrefix: false });
+      const saved = storageService.get("wellnessCheckIns", [], {
+        usePrefix: false,
+      });
       const wellnessForDate = saved.find((w) => w.date === dateStr);
 
       if (wellnessForDate) {
@@ -1662,7 +1719,9 @@ class DashboardPage {
   async loadSupplementsForDate(dateStr) {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) {return false;}
+      if (!user) {
+        return false;
+      }
 
       // Reset all supplements to false
       Object.keys(this.supplements).forEach((key) => {
@@ -1683,7 +1742,9 @@ class DashboardPage {
                 taken: log.taken || false,
                 time: log.timestamp || null,
               };
-              if (log.taken) {hasData = true;}
+              if (log.taken) {
+                hasData = true;
+              }
             }
           });
           this.updateSupplementsUI();
@@ -1695,7 +1756,9 @@ class DashboardPage {
       }
 
       // Load from localStorage
-      const saved = storageService.get("supplementLogs", [], { usePrefix: false });
+      const saved = storageService.get("supplementLogs", [], {
+        usePrefix: false,
+      });
       const supplementsForDate = saved.filter((s) => {
         const logDate =
           s.date ||
@@ -1829,8 +1892,10 @@ class DashboardPage {
 
     if (addBtn && injuryForm) {
       addBtn.addEventListener("click", () => {
-        injuryForm.style.display = injuryForm.style.display === "none" ? "block" : "none";
-        addBtn.style.display = injuryForm.style.display === "none" ? "flex" : "none";
+        injuryForm.style.display =
+          injuryForm.style.display === "none" ? "block" : "none";
+        addBtn.style.display =
+          injuryForm.style.display === "none" ? "flex" : "none";
       });
     }
 
@@ -1844,7 +1909,8 @@ class DashboardPage {
 
     // Setup severity slider
     const severitySlider = document.getElementById("injury-severity");
-    const severityValue = severitySlider?.parentElement.querySelector(".severity-value");
+    const severityValue =
+      severitySlider?.parentElement.querySelector(".severity-value");
     if (severitySlider && severityValue) {
       severitySlider.addEventListener("input", (e) => {
         severityValue.textContent = e.target.value;
@@ -1885,7 +1951,8 @@ class DashboardPage {
 
     // Disable button and show loading
     button.disabled = true;
-    button.innerHTML = '<i data-lucide="loader-2" class="icon-16 icon-inline"></i> Saving...';
+    button.innerHTML =
+      '<i data-lucide="loader-2" class="icon-16 icon-inline"></i> Saving...';
 
     try {
       const user = authManager.getCurrentUser();
@@ -1932,7 +1999,10 @@ class DashboardPage {
       button.innerHTML = originalText;
     } catch (error) {
       logger.error("Failed to save injury report:", error);
-      this.showNotification("Failed to save injury report. Please try again.", "error");
+      this.showNotification(
+        "Failed to save injury report. Please try again.",
+        "error",
+      );
       button.disabled = false;
       button.innerHTML = originalText;
     }
@@ -1941,7 +2011,9 @@ class DashboardPage {
   async loadInjuries() {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) {return;}
+      if (!user) {
+        return;
+      }
 
       let injuries = [];
 
@@ -1949,17 +2021,23 @@ class DashboardPage {
       try {
         const response = await apiClient.get(API_ENDPOINTS.wellness.injuries);
         if (response && response.data && Array.isArray(response.data)) {
-          injuries = response.data.filter(i =>
-            i.status === "active" || i.status === "recovering" || i.status === "monitoring"
+          injuries = response.data.filter(
+            (i) =>
+              i.status === "active" ||
+              i.status === "recovering" ||
+              i.status === "monitoring",
           );
         }
       } catch (apiError) {
         // Fallback to localStorage
         logger.warn("API unavailable, loading from localStorage:", apiError);
         const saved = storageService.get("injuries", [], { usePrefix: false });
-        injuries = saved.filter(i =>
-          i.userId === (user.id || user.email) &&
-          (i.status === "active" || i.status === "recovering" || i.status === "monitoring")
+        injuries = saved.filter(
+          (i) =>
+            i.userId === (user.id || user.email) &&
+            (i.status === "active" ||
+              i.status === "recovering" ||
+              i.status === "monitoring"),
         );
       }
 
@@ -1972,27 +2050,41 @@ class DashboardPage {
 
   renderInjuries() {
     const container = document.getElementById("active-injuries-list");
-    if (!container) {return;}
+    if (!container) {
+      return;
+    }
 
     if (this.injuries.length === 0) {
-      container.innerHTML = '<p class="injury-description" style="margin: 0; color: var(--color-text-tertiary);">No active injuries reported.</p>';
+      container.innerHTML =
+        '<p class="injury-description" style="margin: 0; color: var(--color-text-tertiary);">No active injuries reported.</p>';
       return;
     }
 
     // SECURITY: Sanitize all user-provided injury data before rendering
-    container.innerHTML = this.injuries.map(injury => {
-      const statusClass = injury.status === "recovered" ? "recovered" :
-                         injury.status === "monitoring" ? "monitoring" : "active";
-      const statusLabel = injury.status === "recovered" ? "Recovered" :
-                         injury.status === "monitoring" ? "Monitoring" : "Active";
+    container.innerHTML = this.injuries
+      .map((injury) => {
+        const statusClass =
+          injury.status === "recovered"
+            ? "recovered"
+            : injury.status === "monitoring"
+              ? "monitoring"
+              : "active";
+        const statusLabel =
+          injury.status === "recovered"
+            ? "Recovered"
+            : injury.status === "monitoring"
+              ? "Monitoring"
+              : "Active";
 
-      // Sanitize user-provided fields to prevent XSS
-      const safeType = escapeHtml(injury.type || '');
-      const safeDescription = escapeHtml(injury.description || "No description");
-      const safeSeverity = parseInt(injury.severity) || 0; // Ensure it's a number
-      const safeId = escapeHtml(String(injury.id || injury.startDate));
+        // Sanitize user-provided fields to prevent XSS
+        const safeType = escapeHtml(injury.type || "");
+        const safeDescription = escapeHtml(
+          injury.description || "No description",
+        );
+        const safeSeverity = parseInt(injury.severity) || 0; // Ensure it's a number
+        const safeId = escapeHtml(String(injury.id || injury.startDate));
 
-      return `
+        return `
         <div class="injury-item ${statusClass}">
           <div class="injury-item-info">
             <div class="injury-item-title">
@@ -2003,18 +2095,23 @@ class DashboardPage {
             </div>
           </div>
           <div class="injury-item-actions">
-            ${injury.status !== "recovered" ? `
+            ${
+              injury.status !== "recovered"
+                ? `
               <button class="btn-mark-recovered" data-injury-id="${safeId}">
                 Mark Recovered
               </button>
-            ` : ""}
+            `
+                : ""
+            }
           </div>
         </div>
       `;
-    }).join("");
+      })
+      .join("");
 
     // Add event listeners for mark recovered buttons
-    container.querySelectorAll(".btn-mark-recovered").forEach(btn => {
+    container.querySelectorAll(".btn-mark-recovered").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const injuryId = e.target.dataset.injuryId;
         this.markInjuryRecovered(injuryId);
@@ -2025,7 +2122,9 @@ class DashboardPage {
   async markInjuryRecovered(injuryId) {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) {return;}
+      if (!user) {
+        return;
+      }
 
       // Update injury status
       try {
@@ -2038,9 +2137,10 @@ class DashboardPage {
         // Fallback to localStorage
         logger.warn("API unavailable, updating localStorage:", apiError);
         const saved = storageService.get("injuries", [], { usePrefix: false });
-        const injuryIndex = saved.findIndex(i =>
-          (i.id || i.startDate) === injuryId &&
-          i.userId === (user.id || user.email)
+        const injuryIndex = saved.findIndex(
+          (i) =>
+            (i.id || i.startDate) === injuryId &&
+            i.userId === (user.id || user.email),
         );
         if (injuryIndex !== -1) {
           saved[injuryIndex].status = "recovered";
@@ -2062,7 +2162,7 @@ class DashboardPage {
 const dashboardPage = new DashboardPage();
 
 // Make API client and endpoints available globally for notification-manager.js
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.apiClient = window.apiClient || apiClient;
   window.API_ENDPOINTS = window.API_ENDPOINTS || API_ENDPOINTS;
 }

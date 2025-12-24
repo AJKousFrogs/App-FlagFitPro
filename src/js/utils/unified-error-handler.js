@@ -3,8 +3,8 @@
  * Combines error handling, user notifications, logging, and Sentry tracking
  */
 
-import { logger } from '../../logger.js';
-import { escapeHtml } from './sanitize.js';
+import { logger } from "../../logger.js";
+import { escapeHtml } from "./sanitize.js";
 
 // Lazy-load Sentry service (only in production)
 let sentryService = null;
@@ -12,21 +12,92 @@ const loadSentry = async () => {
   if (!sentryService) {
     try {
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'unified-error-handler.js:11',message:'loadSentry called',data:{sentryServiceExists:!!sentryService},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      fetch(
+        "http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            location: "unified-error-handler.js:11",
+            message: "loadSentry called",
+            data: { sentryServiceExists: !!sentryService },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "B",
+          }),
+        },
+      ).catch(() => {});
       // #endregion
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'unified-error-handler.js:14',message:'Before importing sentry-service',data:{importPath:'../services/sentry-service.js'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      fetch(
+        "http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            location: "unified-error-handler.js:14",
+            message: "Before importing sentry-service",
+            data: { importPath: "../services/sentry-service.js" },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "B",
+          }),
+        },
+      ).catch(() => {});
       // #endregion
-      const module = await import('../services/sentry-service.js');
+      const module = await import("../services/sentry-service.js");
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'unified-error-handler.js:15',message:'Import successful',data:{hasModule:!!module,hasSentryService:!!module.sentryService,moduleKeys:Object.keys(module||{})},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      fetch(
+        "http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            location: "unified-error-handler.js:15",
+            message: "Import successful",
+            data: {
+              hasModule: !!module,
+              hasSentryService: !!module.sentryService,
+              moduleKeys: Object.keys(module || {}),
+            },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "B",
+          }),
+        },
+      ).catch(() => {});
       // #endregion
       sentryService = module.sentryService;
     } catch (error) {
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'unified-error-handler.js:17',message:'Import error in loadSentry',data:{errorName:error?.name,errorMessage:error?.message,errorStack:error?.stack?.substring(0,500),errorToString:String(error),errorColumn:error?.columnNumber,errorLine:error?.lineNumber},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      fetch(
+        "http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            location: "unified-error-handler.js:17",
+            message: "Import error in loadSentry",
+            data: {
+              errorName: error?.name,
+              errorMessage: error?.message,
+              errorStack: error?.stack?.substring(0, 500),
+              errorToString: String(error),
+              errorColumn: error?.columnNumber,
+              errorLine: error?.lineNumber,
+            },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "B",
+          }),
+        },
+      ).catch(() => {});
       // #endregion
-      logger.warn('[Error Handler] Sentry not available:', error);
+      logger.warn("[Error Handler] Sentry not available:", error);
     }
   }
   return sentryService;
@@ -36,33 +107,38 @@ const loadSentry = async () => {
  * Error types for categorization
  */
 export const ErrorType = {
-  NETWORK: 'network',
-  VALIDATION: 'validation',
-  AUTHENTICATION: 'authentication',
-  AUTHORIZATION: 'authorization',
-  NOT_FOUND: 'not_found',
-  SERVER: 'server',
-  CLIENT: 'client',
-  UNKNOWN: 'unknown'
+  NETWORK: "network",
+  VALIDATION: "validation",
+  AUTHENTICATION: "authentication",
+  AUTHORIZATION: "authorization",
+  NOT_FOUND: "not_found",
+  SERVER: "server",
+  CLIENT: "client",
+  UNKNOWN: "unknown",
 };
 
 /**
  * Error severity levels
  */
 export const ErrorSeverity = {
-  INFO: 'info',
-  WARNING: 'warning',
-  ERROR: 'error',
-  CRITICAL: 'critical'
+  INFO: "info",
+  WARNING: "warning",
+  ERROR: "error",
+  CRITICAL: "critical",
 };
 
 /**
  * Custom application error class
  */
 export class AppError extends Error {
-  constructor(message, type = ErrorType.UNKNOWN, severity = ErrorSeverity.ERROR, details = {}) {
+  constructor(
+    message,
+    type = ErrorType.UNKNOWN,
+    severity = ErrorSeverity.ERROR,
+    details = {},
+  ) {
     super(message);
-    this.name = 'AppError';
+    this.name = "AppError";
     this.type = type;
     this.severity = severity;
     this.details = details;
@@ -84,40 +160,49 @@ export class UnifiedErrorHandler {
    * Initialize global error handlers
    */
   init() {
-    if (this.initialized) {return;}
+    if (this.initialized) {
+      return;
+    }
 
     // Global error listeners
-    window.addEventListener('error', this.handleGlobalError.bind(this));
-    window.addEventListener('unhandledrejection', this.handlePromiseRejection.bind(this));
+    window.addEventListener("error", this.handleGlobalError.bind(this));
+    window.addEventListener(
+      "unhandledrejection",
+      this.handlePromiseRejection.bind(this),
+    );
 
     // Network status monitoring
-    window.addEventListener('online', () => this.showSuccess('Connection restored'));
-    window.addEventListener('offline', () => this.showWarning('You are offline. Some features may not work.'));
+    window.addEventListener("online", () =>
+      this.showSuccess("Connection restored"),
+    );
+    window.addEventListener("offline", () =>
+      this.showWarning("You are offline. Some features may not work."),
+    );
 
     this.initialized = true;
-    logger.debug('[Error Handler] Initialized');
+    logger.debug("[Error Handler] Initialized");
   }
 
   /**
    * Handle global errors
    */
   handleGlobalError(event) {
-    logger.error('[Global Error]', {
+    logger.error("[Global Error]", {
       message: event.message,
       filename: event.filename,
       lineno: event.lineno,
       colno: event.colno,
-      error: event.error
+      error: event.error,
     });
 
     // Report to Sentry
-    loadSentry().then(sentry => {
+    loadSentry().then((sentry) => {
       if (sentry && event.error) {
         sentry.captureException(event.error, {
-          component: 'global',
+          component: "global",
           filename: event.filename,
           lineno: event.lineno,
-          colno: event.colno
+          colno: event.colno,
         });
       }
     });
@@ -133,24 +218,27 @@ export class UnifiedErrorHandler {
    * Handle unhandled promise rejections
    */
   handlePromiseRejection(event) {
-    logger.error('[Unhandled Promise Rejection]', event.reason);
+    logger.error("[Unhandled Promise Rejection]", event.reason);
     event.preventDefault();
 
-    const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason));
+    const error =
+      event.reason instanceof Error
+        ? event.reason
+        : new Error(String(event.reason));
 
     // Report to Sentry
-    loadSentry().then(sentry => {
+    loadSentry().then((sentry) => {
       if (sentry) {
         sentry.captureException(error, {
-          component: 'promise',
-          action: 'unhandled_rejection'
+          component: "promise",
+          action: "unhandled_rejection",
         });
       }
     });
 
     this.handleError(error, {
-      context: 'Promise Rejection',
-      showToUser: true
+      context: "Promise Rejection",
+      showToUser: true,
     });
   }
 
@@ -159,13 +247,13 @@ export class UnifiedErrorHandler {
    */
   handleError(error, options = {}) {
     const {
-      context = 'Operation',
+      context = "Operation",
       showToUser = true,
-      logLevel = 'error',
-      fallbackMessage = 'An error occurred. Please try again.',
+      logLevel = "error",
+      fallbackMessage = "An error occurred. Please try again.",
       onError = null,
       allowRetry = false,
-      retryCallback = null
+      retryCallback = null,
     } = options;
 
     // Categorize error
@@ -176,14 +264,17 @@ export class UnifiedErrorHandler {
     this.logError(logMessage, error, logLevel);
 
     // Report to Sentry for critical and error severity
-    if (errorInfo.severity === ErrorSeverity.ERROR || errorInfo.severity === ErrorSeverity.CRITICAL) {
-      loadSentry().then(sentry => {
+    if (
+      errorInfo.severity === ErrorSeverity.ERROR ||
+      errorInfo.severity === ErrorSeverity.CRITICAL
+    ) {
+      loadSentry().then((sentry) => {
         if (sentry) {
           sentry.captureException(error, {
             component: context,
             errorType: errorInfo.type,
             severity: errorInfo.severity,
-            userMessage: errorInfo.userMessage
+            userMessage: errorInfo.userMessage,
           });
         }
       });
@@ -194,16 +285,16 @@ export class UnifiedErrorHandler {
       if (allowRetry && retryCallback) {
         this.showErrorWithRetry(errorInfo.userMessage, retryCallback);
       } else {
-        this.showNotification(errorInfo.userMessage, 'error');
+        this.showNotification(errorInfo.userMessage, "error");
       }
     }
 
     // Call custom error handler if provided
-    if (onError && typeof onError === 'function') {
+    if (onError && typeof onError === "function") {
       try {
         onError(error, errorInfo);
       } catch (callbackError) {
-        logger.error('[Error Handler] Callback error:', callbackError);
+        logger.error("[Error Handler] Callback error:", callbackError);
       }
     }
 
@@ -214,7 +305,7 @@ export class UnifiedErrorHandler {
       errorType: errorInfo.type,
       severity: errorInfo.severity,
       details: error.details || {},
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -224,7 +315,7 @@ export class UnifiedErrorHandler {
   categorizeError(error) {
     let type = ErrorType.UNKNOWN;
     let severity = ErrorSeverity.ERROR;
-    let userMessage = 'An error occurred. Please try again.';
+    let userMessage = "An error occurred. Please try again.";
 
     // Handle AppError instances
     if (error instanceof AppError) {
@@ -232,26 +323,31 @@ export class UnifiedErrorHandler {
         type: error.type,
         severity: error.severity,
         message: error.message,
-        userMessage: error.message
+        userMessage: error.message,
       };
     }
 
     // Network errors
-    if (error.message?.includes('fetch') || error.message?.includes('network') || !navigator.onLine) {
+    if (
+      error.message?.includes("fetch") ||
+      error.message?.includes("network") ||
+      !navigator.onLine
+    ) {
       type = ErrorType.NETWORK;
       severity = ErrorSeverity.WARNING;
-      userMessage = 'Network error. Please check your connection and try again.';
+      userMessage =
+        "Network error. Please check your connection and try again.";
     }
     // Authentication errors
-    else if (error.status === 401 || error.message?.includes('auth')) {
+    else if (error.status === 401 || error.message?.includes("auth")) {
       type = ErrorType.AUTHENTICATION;
       severity = ErrorSeverity.ERROR;
-      userMessage = 'Authentication failed. Please log in again.';
+      userMessage = "Authentication failed. Please log in again.";
 
       // Redirect to login after delay
       setTimeout(() => {
-        if (window.location.pathname !== '/login.html') {
-          window.location.href = '/login.html';
+        if (window.location.pathname !== "/login.html") {
+          window.location.href = "/login.html";
         }
       }, 2000);
     }
@@ -259,47 +355,48 @@ export class UnifiedErrorHandler {
     else if (error.status === 403) {
       type = ErrorType.AUTHORIZATION;
       severity = ErrorSeverity.ERROR;
-      userMessage = 'You do not have permission to perform this action.';
+      userMessage = "You do not have permission to perform this action.";
     }
     // Not found errors
     else if (error.status === 404) {
       type = ErrorType.NOT_FOUND;
       severity = ErrorSeverity.WARNING;
-      userMessage = 'The requested resource was not found.';
+      userMessage = "The requested resource was not found.";
     }
     // Server errors
     else if (error.status >= 500) {
       type = ErrorType.SERVER;
       severity = ErrorSeverity.ERROR;
-      userMessage = 'Server error. Please try again later.';
+      userMessage = "Server error. Please try again later.";
     }
     // Client errors
     else if (error.status >= 400) {
       type = ErrorType.CLIENT;
       severity = ErrorSeverity.WARNING;
-      userMessage = error.message || 'Invalid request. Please check your input.';
+      userMessage =
+        error.message || "Invalid request. Please check your input.";
     }
 
     return {
       type,
       severity,
-      message: error.message || 'Unknown error',
-      userMessage
+      message: error.message || "Unknown error",
+      userMessage,
     };
   }
 
   /**
    * Log error based on level
    */
-  logError(message, error, level = 'error') {
+  logError(message, error, level = "error") {
     switch (level) {
-      case 'error':
+      case "error":
         logger.error(message, error);
         break;
-      case 'warn':
+      case "warn":
         logger.warn(message, error);
         break;
-      case 'debug':
+      case "debug":
         logger.debug(message, error);
         break;
       default:
@@ -310,7 +407,7 @@ export class UnifiedErrorHandler {
   /**
    * Show notification to user
    */
-  showNotification(message, type = 'info', duration = 5000) {
+  showNotification(message, type = "info", duration = 5000) {
     // Remove oldest notification if queue is full
     if (this.notificationQueue.length >= this.maxNotifications) {
       const oldest = this.notificationQueue.shift();
@@ -325,7 +422,7 @@ export class UnifiedErrorHandler {
 
     // Animate in
     setTimeout(() => {
-      notification.style.transform = 'translateX(0)';
+      notification.style.transform = "translateX(0)";
     }, 100);
 
     // Auto-remove after duration
@@ -342,9 +439,9 @@ export class UnifiedErrorHandler {
    * Create notification element
    */
   createNotification(message, type, duration) {
-    const notification = document.createElement('div');
+    const notification = document.createElement("div");
     notification.className = `error-notification ${type}`;
-    notification.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    notification.setAttribute("role", type === "error" ? "alert" : "status");
 
     const styles = this.getNotificationStyles(type);
     notification.style.cssText = styles;
@@ -389,10 +486,10 @@ export class UnifiedErrorHandler {
     `;
 
     const typeStyles = {
-      error: 'background: #ef4444; border-left: 4px solid #dc2626;',
-      success: 'background: #10c96b; border-left: 4px solid #0ab85a;',
-      warning: 'background: #fbbf24; border-left: 4px solid #f59e0b;',
-      info: 'background: #3b82f6; border-left: 4px solid #2563eb;'
+      error: "background: #ef4444; border-left: 4px solid #dc2626;",
+      success: "background: #10c96b; border-left: 4px solid #0ab85a;",
+      warning: "background: #fbbf24; border-left: 4px solid #f59e0b;",
+      info: "background: #3b82f6; border-left: 4px solid #2563eb;",
     };
 
     return baseStyles + (typeStyles[type] || typeStyles.info);
@@ -403,10 +500,10 @@ export class UnifiedErrorHandler {
    */
   getNotificationIcon(type) {
     const icons = {
-      error: '❌',
-      success: '✅',
-      warning: '⚠️',
-      info: 'ℹ️'
+      error: "❌",
+      success: "✅",
+      warning: "⚠️",
+      info: "ℹ️",
     };
     return icons[type] || icons.info;
   }
@@ -415,11 +512,11 @@ export class UnifiedErrorHandler {
    * Show error with retry option
    */
   showErrorWithRetry(message, retryCallback, duration = 10000) {
-    const notification = document.createElement('div');
-    notification.className = 'error-notification error';
-    notification.setAttribute('role', 'alert');
+    const notification = document.createElement("div");
+    notification.className = "error-notification error";
+    notification.setAttribute("role", "alert");
 
-    notification.style.cssText = this.getNotificationStyles('error');
+    notification.style.cssText = this.getNotificationStyles("error");
 
     notification.innerHTML = `
       <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
@@ -445,14 +542,16 @@ export class UnifiedErrorHandler {
 
     // Animate in
     setTimeout(() => {
-      notification.style.transform = 'translateX(0)';
+      notification.style.transform = "translateX(0)";
     }, 100);
 
     // Setup retry button
-    const retryBtn = notification.querySelector('.retry-btn');
-    retryBtn.addEventListener('click', () => {
+    const retryBtn = notification.querySelector(".retry-btn");
+    retryBtn.addEventListener("click", () => {
       notification.remove();
-      if (retryCallback) {retryCallback();}
+      if (retryCallback) {
+        retryCallback();
+      }
     });
 
     // Auto-remove after duration
@@ -470,7 +569,7 @@ export class UnifiedErrorHandler {
    */
   removeNotification(notification) {
     if (document.body.contains(notification)) {
-      notification.style.transform = 'translateX(100%)';
+      notification.style.transform = "translateX(100%)";
       setTimeout(() => {
         notification.remove();
         const index = this.notificationQueue.indexOf(notification);
@@ -485,19 +584,19 @@ export class UnifiedErrorHandler {
    * Convenience methods for different notification types
    */
   showError(message, duration = 8000) {
-    return this.showNotification(message, 'error', duration);
+    return this.showNotification(message, "error", duration);
   }
 
   showSuccess(message, duration = 5000) {
-    return this.showNotification(message, 'success', duration);
+    return this.showNotification(message, "success", duration);
   }
 
   showWarning(message, duration = 6000) {
-    return this.showNotification(message, 'warning', duration);
+    return this.showNotification(message, "warning", duration);
   }
 
   showInfo(message, duration = 5000) {
-    return this.showNotification(message, 'info', duration);
+    return this.showNotification(message, "info", duration);
   }
 
   /**
@@ -520,8 +619,9 @@ export class UnifiedErrorHandler {
       maxAttempts = 3,
       delay = 1000,
       backoff = 2,
-      shouldRetry = (error) => error.type === ErrorType.NETWORK || error.type === ErrorType.SERVER,
-      onRetry = null
+      shouldRetry = (error) =>
+        error.type === ErrorType.NETWORK || error.type === ErrorType.SERVER,
+      onRetry = null,
     } = options;
 
     let lastError;
@@ -533,16 +633,24 @@ export class UnifiedErrorHandler {
       } catch (error) {
         lastError = error;
 
-        if (attempt === maxAttempts) {break;}
+        if (attempt === maxAttempts) {
+          break;
+        }
 
         const errorInfo = this.categorizeError(error);
-        if (!shouldRetry(errorInfo)) {break;}
+        if (!shouldRetry(errorInfo)) {
+          break;
+        }
 
-        if (onRetry) {onRetry(error, attempt);}
+        if (onRetry) {
+          onRetry(error, attempt);
+        }
 
-        logger.warn(`[Retry] Attempt ${attempt}/${maxAttempts} failed, retrying in ${currentDelay}ms...`);
+        logger.warn(
+          `[Retry] Attempt ${attempt}/${maxAttempts} failed, retrying in ${currentDelay}ms...`,
+        );
 
-        await new Promise(resolve => setTimeout(resolve, currentDelay));
+        await new Promise((resolve) => setTimeout(resolve, currentDelay));
         currentDelay *= backoff;
       }
     }
@@ -553,11 +661,11 @@ export class UnifiedErrorHandler {
   /**
    * Handle API errors specifically
    */
-  handleApiError(error, context = 'API Request') {
+  handleApiError(error, context = "API Request") {
     return this.handleError(error, {
       context,
       showToUser: true,
-      fallbackMessage: 'Failed to communicate with server. Please try again.'
+      fallbackMessage: "Failed to communicate with server. Please try again.",
     });
   }
 
@@ -584,29 +692,29 @@ export class UnifiedErrorHandler {
     let errorElement = document.getElementById(`${fieldId}-error`);
 
     if (!errorElement) {
-      errorElement = document.createElement('div');
+      errorElement = document.createElement("div");
       errorElement.id = `${fieldId}-error`;
-      errorElement.className = 'field-error';
-      errorElement.setAttribute('role', 'alert');
+      errorElement.className = "field-error";
+      errorElement.setAttribute("role", "alert");
       fieldElement.parentElement.appendChild(errorElement);
     }
 
     errorElement.textContent = message;
-    errorElement.style.display = 'block';
+    errorElement.style.display = "block";
 
-    fieldElement.classList.add('has-error');
-    fieldElement.setAttribute('aria-invalid', 'true');
-    fieldElement.setAttribute('aria-describedby', `${fieldId}-error`);
+    fieldElement.classList.add("has-error");
+    fieldElement.setAttribute("aria-invalid", "true");
+    fieldElement.setAttribute("aria-describedby", `${fieldId}-error`);
 
     // Clear error on input
     const clearError = () => {
-      fieldElement.classList.remove('has-error');
-      fieldElement.removeAttribute('aria-invalid');
-      errorElement.style.display = 'none';
-      fieldElement.removeEventListener('input', clearError);
+      fieldElement.classList.remove("has-error");
+      fieldElement.removeAttribute("aria-invalid");
+      errorElement.style.display = "none";
+      fieldElement.removeEventListener("input", clearError);
     };
 
-    fieldElement.addEventListener('input', clearError, { once: true });
+    fieldElement.addEventListener("input", clearError, { once: true });
   }
 }
 
@@ -618,12 +726,12 @@ export { errorHandler };
 export default errorHandler;
 
 // Auto-initialize on DOM ready
-if (typeof window !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => errorHandler.init());
+if (typeof window !== "undefined") {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => errorHandler.init());
   } else {
     errorHandler.init();
   }
 }
 
-console.log('[Unified Error Handler] Module loaded');
+console.log("[Unified Error Handler] Module loaded");

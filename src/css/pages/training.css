@@ -271,7 +271,7 @@
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   overflow: auto;
 }
 
@@ -323,8 +323,8 @@
 .main-content {
   margin-left: 250px;
   width: calc(100% - 250px); /* ✅ Use width instead of max-width */
-  padding: calc(var(--space-16) + var(--space-xl))
-    var(--space-xl) var(--space-xl);
+  padding: calc(var(--space-16) + var(--space-xl)) var(--space-xl)
+    var(--space-xl);
   box-sizing: border-box;
 }
 .stat-card {
@@ -359,7 +359,11 @@
 }
 
 .stat-progress-bar {
-  background: linear-gradient(90deg, var(--color-success), var(--color-success-400, #16a34a));
+  background: linear-gradient(
+    90deg,
+    var(--color-success),
+    var(--color-success-400, #16a34a)
+  );
   transition: width 0.5s ease;
 }
 
@@ -625,19 +629,35 @@
 }
 
 .achievement-icon--tertiary {
-  background: linear-gradient(135deg, var(--tertiary-400, var(--color-brand-tertiary)), var(--tertiary-500, var(--color-brand-tertiary)));
+  background: linear-gradient(
+    135deg,
+    var(--tertiary-400, var(--color-brand-tertiary)),
+    var(--tertiary-500, var(--color-brand-tertiary))
+  );
 }
 
 .achievement-icon--success {
-  background: linear-gradient(135deg, var(--success-400, var(--color-success)), var(--primary-500, var(--color-brand-primary)));
+  background: linear-gradient(
+    135deg,
+    var(--success-400, var(--color-success)),
+    var(--primary-500, var(--color-brand-primary))
+  );
 }
 
 .achievement-icon--primary {
-  background: linear-gradient(135deg, var(--primary-400, var(--color-brand-primary)), var(--primary-600, var(--color-brand-primary)));
+  background: linear-gradient(
+    135deg,
+    var(--primary-400, var(--color-brand-primary)),
+    var(--primary-600, var(--color-brand-primary))
+  );
 }
 
 .achievement-icon--secondary {
-  background: linear-gradient(135deg, var(--secondary-400, var(--color-brand-secondary)), var(--secondary-600, var(--color-brand-secondary)));
+  background: linear-gradient(
+    135deg,
+    var(--secondary-400, var(--color-brand-secondary)),
+    var(--secondary-600, var(--color-brand-secondary))
+  );
 }
 
 .achievement-content {
@@ -1131,8 +1151,8 @@
   .main-content {
     margin-left: 0;
     width: 100%; /* ✅ Full width on mobile/tablet */
-    padding: calc(var(--space-16) + var(--space-md))
-      var(--space-md) var(--space-md);
+    padding: calc(var(--space-16) + var(--space-md)) var(--space-md)
+      var(--space-md);
   }
 
   .training-grid {
@@ -1144,8 +1164,8 @@
 /* Very small mobile devices */
 @media (max-width: 480px) {
   .main-content {
-    padding: calc(var(--space-14, 56px) + var(--space-3))
-      var(--space-3) var(--space-3);
+    padding: calc(var(--space-14, 56px) + var(--space-3)) var(--space-3)
+      var(--space-3);
   }
 
   .hero-main-title {
@@ -1327,7 +1347,11 @@
 }
 
 .workout-icon--program {
-  background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-primary-600, #0ab85a));
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-primary),
+    var(--color-brand-primary-600, #0ab85a)
+  );
   color: white;
 }
 
@@ -1336,32 +1360,56 @@
    ================================================================ */
 .workout-card--ai-qb {
   border: 2px solid var(--color-success);
-  background: linear-gradient(135deg, rgba(16, 201, 107, 0.05), rgba(16, 201, 107, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(16, 201, 107, 0.05),
+    rgba(16, 201, 107, 0.1)
+  );
 }
 
 .workout-card--ai-qb .workout-icon {
-  background: linear-gradient(135deg, var(--color-success), var(--color-success-600, #16a34a));
+  background: linear-gradient(
+    135deg,
+    var(--color-success),
+    var(--color-success-600, #16a34a)
+  );
   color: white;
 }
 
 .workout-card--ai-db {
   border: 2px solid var(--color-primary);
-  background: linear-gradient(135deg, var(--color-brand-primary-subtle, rgba(8, 153, 73, 0.05)), var(--color-brand-primary-light, rgba(8, 153, 73, 0.1)));
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-primary-subtle, rgba(8, 153, 73, 0.05)),
+    var(--color-brand-primary-light, rgba(8, 153, 73, 0.1))
+  );
 }
 
 .workout-card--ai-db .workout-icon {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-600, #0ab85a));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-600, #0ab85a)
+  );
   color: white;
 }
 
 .workout-card--ai-analytics {
   border: 2px solid var(--color-warning);
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.05), rgba(249, 115, 22, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(249, 115, 22, 0.05),
+    rgba(249, 115, 22, 0.1)
+  );
   grid-column: 1 / -1;
 }
 
 .workout-card--ai-analytics .workout-icon {
-  background: linear-gradient(135deg, var(--color-warning), var(--color-warning-600, #f97316));
+  background: linear-gradient(
+    135deg,
+    var(--color-warning),
+    var(--color-warning-600, #f97316)
+  );
   color: white;
 }
 

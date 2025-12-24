@@ -9,8 +9,8 @@ const storageService = window.storageService;
 
 class NotificationManager {
   constructor() {
-    this.permission = 'default';
-    this.isSupported = 'Notification' in window;
+    this.permission = "default";
+    this.isSupported = "Notification" in window;
     this.swRegistration = null;
 
     // Load permission status
@@ -24,26 +24,32 @@ class NotificationManager {
    */
   async init() {
     if (!this.isSupported) {
-      console.warn('[Notifications] Not supported in this browser');
+      console.warn("[Notifications] Not supported in this browser");
       return false;
     }
 
     // Register service worker if not already registered
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       try {
-        this.swRegistration = await navigator.serviceWorker.register('/sw.js', {
-          scope: '/'
+        this.swRegistration = await navigator.serviceWorker.register("/sw.js", {
+          scope: "/",
         });
 
-        console.log('[Notifications] Service Worker registered:', this.swRegistration);
+        console.log(
+          "[Notifications] Service Worker registered:",
+          this.swRegistration,
+        );
 
         // Check for updates
-        this.swRegistration.addEventListener('updatefound', () => {
+        this.swRegistration.addEventListener("updatefound", () => {
           const newWorker = this.swRegistration.installing;
-          console.log('[Notifications] Service Worker update found');
+          console.log("[Notifications] Service Worker update found");
 
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          newWorker.addEventListener("statechange", () => {
+            if (
+              newWorker.state === "installed" &&
+              navigator.serviceWorker.controller
+            ) {
               // New service worker available
               this.showUpdateNotification();
             }
@@ -52,7 +58,10 @@ class NotificationManager {
 
         return true;
       } catch (error) {
-        console.error('[Notifications] Service Worker registration failed:', error);
+        console.error(
+          "[Notifications] Service Worker registration failed:",
+          error,
+        );
         return false;
       }
     }
@@ -68,7 +77,7 @@ class NotificationManager {
       return false;
     }
 
-    if (this.permission === 'granted') {
+    if (this.permission === "granted") {
       return true;
     }
 
@@ -76,16 +85,16 @@ class NotificationManager {
       const permission = await Notification.requestPermission();
       this.permission = permission;
 
-      if (permission === 'granted') {
-        console.log('[Notifications] Permission granted');
+      if (permission === "granted") {
+        console.log("[Notifications] Permission granted");
         this.scheduleDefaultReminders();
         return true;
       } else {
-        console.log('[Notifications] Permission denied');
+        console.log("[Notifications] Permission denied");
         return false;
       }
     } catch (error) {
-      console.error('[Notifications] Permission request failed:', error);
+      console.error("[Notifications] Permission request failed:", error);
       return false;
     }
   }
@@ -95,9 +104,9 @@ class NotificationManager {
    */
   async show(title, options = {}) {
     const {
-      type = 'general',
+      type = "general",
       message = title,
-      priority = 'medium',
+      priority = "medium",
       createInBackend = true,
       ...notificationOptions
     } = options;
@@ -110,11 +119,14 @@ class NotificationManager {
           {
             type,
             message,
-            priority
-          }
+            priority,
+          },
         );
       } catch (error) {
-        console.warn('[Notifications] Failed to create notification in backend:', error);
+        console.warn(
+          "[Notifications] Failed to create notification in backend:",
+          error,
+        );
         // Continue to show push notification even if backend creation fails
       }
     }
@@ -123,34 +135,38 @@ class NotificationManager {
     if (window.apiClient && window.API_ENDPOINTS) {
       try {
         const prefsResponse = await window.apiClient.get(
-          window.API_ENDPOINTS.dashboard.notificationsPreferences
+          window.API_ENDPOINTS.dashboard.notificationsPreferences,
         );
         if (prefsResponse && prefsResponse.success && prefsResponse.data) {
           const typePrefs = prefsResponse.data[type];
           // Don't show push if muted or push disabled
           if (typePrefs && (typePrefs.muted || !typePrefs.pushEnabled)) {
-            console.log(`[Notifications] Push notification for ${type} is muted or disabled`);
+            console.log(
+              `[Notifications] Push notification for ${type} is muted or disabled`,
+            );
             return null;
           }
         }
       } catch (error) {
-        console.warn('[Notifications] Failed to check preferences:', error);
+        console.warn("[Notifications] Failed to check preferences:", error);
         // Continue to show notification if preference check fails
       }
     }
 
-    if (!this.isSupported || this.permission !== 'granted') {
-      console.warn('[Notifications] Cannot show notification - permission not granted');
+    if (!this.isSupported || this.permission !== "granted") {
+      console.warn(
+        "[Notifications] Cannot show notification - permission not granted",
+      );
       return null;
     }
 
     const defaultOptions = {
-      icon: '/icons/icon-192.png',
-      badge: '/icons/badge-72.png',
+      icon: "/icons/icon-192.png",
+      badge: "/icons/badge-72.png",
       vibrate: [200, 100, 200],
       tag: `flagfit-${type}-${Date.now()}`,
       requireInteraction: false,
-      data: { type, ...notificationOptions.data }
+      data: { type, ...notificationOptions.data },
     };
 
     const finalOptions = { ...defaultOptions, ...notificationOptions };
@@ -164,7 +180,7 @@ class NotificationManager {
       // Fallback to basic notification
       return new Notification(title, finalOptions);
     } catch (error) {
-      console.error('[Notifications] Failed to show notification:', error);
+      console.error("[Notifications] Failed to show notification:", error);
       return null;
     }
   }
@@ -172,8 +188,8 @@ class NotificationManager {
   /**
    * Schedule wellness reminder
    */
-  scheduleWellnessReminder(time = '21:00') {
-    const [hours, minutes] = time.split(':').map(Number);
+  scheduleWellnessReminder(time = "21:00") {
+    const [hours, minutes] = time.split(":").map(Number);
     const now = new Date();
     const scheduledTime = new Date();
 
@@ -186,21 +202,23 @@ class NotificationManager {
 
     const timeUntilReminder = scheduledTime - now;
 
-    console.log(`[Notifications] Wellness reminder scheduled for ${scheduledTime.toLocaleString()}`);
+    console.log(
+      `[Notifications] Wellness reminder scheduled for ${scheduledTime.toLocaleString()}`,
+    );
 
     setTimeout(() => {
-      this.show('Time for your wellness check-in! 💪', {
-        type: 'wellness',
-        message: 'Log your sleep, energy, and mood to track your recovery',
-        body: 'Log your sleep, energy, and mood to track your recovery',
-        icon: '/icons/icon-192.png',
-        tag: 'wellness-reminder',
-        data: { url: '/wellness.html', type: 'wellness' },
+      this.show("Time for your wellness check-in! 💪", {
+        type: "wellness",
+        message: "Log your sleep, energy, and mood to track your recovery",
+        body: "Log your sleep, energy, and mood to track your recovery",
+        icon: "/icons/icon-192.png",
+        tag: "wellness-reminder",
+        data: { url: "/wellness.html", type: "wellness" },
         actions: [
-          { action: 'log', title: 'Log Now' },
-          { action: 'skip', title: 'Skip' }
+          { action: "log", title: "Log Now" },
+          { action: "skip", title: "Skip" },
         ],
-        priority: 'medium'
+        priority: "medium",
       });
 
       // Schedule next reminder for tomorrow
@@ -208,7 +226,7 @@ class NotificationManager {
     }, timeUntilReminder);
 
     // Save scheduled time to localStorage
-    storageService.set('wellnessReminderTime', time, { usePrefix: false });
+    storageService.set("wellnessReminderTime", time, { usePrefix: false });
   }
 
   /**
@@ -216,12 +234,16 @@ class NotificationManager {
    */
   notifyAchievement(achievement) {
     this.show(`Achievement Unlocked! ${achievement.icon}`, {
-      body: achievement.name + '\n' + achievement.description,
-      icon: '/icons/icon-192.png',
+      body: achievement.name + "\n" + achievement.description,
+      icon: "/icons/icon-192.png",
       tag: `achievement-${achievement.id}`,
       requireInteraction: true,
-      data: { url: '/dashboard.html', type: 'achievement', achievementId: achievement.id },
-      vibrate: [100, 50, 100, 50, 100, 50, 200]
+      data: {
+        url: "/dashboard.html",
+        type: "achievement",
+        achievementId: achievement.id,
+      },
+      vibrate: [100, 50, 100, 50, 100, 50, 200],
     });
   }
 
@@ -229,15 +251,19 @@ class NotificationManager {
    * Notify training session reminder
    */
   notifyTrainingReminder(session) {
-    this.show('Training Session Reminder 🏈', {
+    this.show("Training Session Reminder 🏈", {
       body: `${session.title} starts in 30 minutes`,
-      icon: '/icons/icon-192.png',
+      icon: "/icons/icon-192.png",
       tag: `training-${session.id}`,
-      data: { url: '/training.html', type: 'training-reminder', sessionId: session.id },
+      data: {
+        url: "/training.html",
+        type: "training-reminder",
+        sessionId: session.id,
+      },
       actions: [
-        { action: 'view', title: 'View Session' },
-        { action: 'dismiss', title: 'Dismiss' }
-      ]
+        { action: "view", title: "View Session" },
+        { action: "dismiss", title: "Dismiss" },
+      ],
     });
   }
 
@@ -247,11 +273,11 @@ class NotificationManager {
   notifyMilestone(milestone) {
     this.show(`Milestone Reached! 🎉`, {
       body: milestone.message,
-      icon: '/icons/icon-192.png',
+      icon: "/icons/icon-192.png",
       tag: `milestone-${milestone.type}`,
       requireInteraction: true,
-      data: { url: '/dashboard.html', type: 'milestone' },
-      vibrate: [100, 50, 100, 50, 100, 50, 300]
+      data: { url: "/dashboard.html", type: "milestone" },
+      vibrate: [100, 50, 100, 50, 100, 50, 300],
     });
   }
 
@@ -259,17 +285,17 @@ class NotificationManager {
    * Notify streak maintained
    */
   notifyStreak(days) {
-    const emoji = days >= 30 ? '🔥🔥🔥' : days >= 7 ? '🔥🔥' : '🔥';
+    const emoji = days >= 30 ? "🔥🔥🔥" : days >= 7 ? "🔥🔥" : "🔥";
 
     this.show(`${days}-Day Streak! ${emoji}`, {
-      type: 'wellness',
+      type: "wellness",
       message: `You've logged wellness for ${days} days straight. Keep it up!`,
       body: `You've logged wellness for ${days} days straight. Keep it up!`,
-      icon: '/icons/icon-192.png',
+      icon: "/icons/icon-192.png",
       tag: `streak-${days}`,
-      data: { url: '/wellness.html', type: 'wellness', days },
+      data: { url: "/wellness.html", type: "wellness", days },
       vibrate: [200, 100, 200],
-      priority: 'medium'
+      priority: "medium",
     });
   }
 
@@ -277,11 +303,11 @@ class NotificationManager {
    * Notify performance improvement
    */
   notifyImprovement(metric, improvement) {
-    this.show('Performance Improved! 📈', {
+    this.show("Performance Improved! 📈", {
       body: `Your ${metric} improved by ${improvement}. Great work!`,
-      icon: '/icons/icon-192.png',
+      icon: "/icons/icon-192.png",
       tag: `improvement-${metric}`,
-      data: { url: '/analytics.html', type: 'improvement', metric }
+      data: { url: "/analytics.html", type: "improvement", metric },
     });
   }
 
@@ -290,10 +316,12 @@ class NotificationManager {
    */
   scheduleDefaultReminders() {
     // Get saved reminder time or use default (9 PM)
-    const savedTime = storageService.get('wellnessReminderTime', '21:00', { usePrefix: false });
+    const savedTime = storageService.get("wellnessReminderTime", "21:00", {
+      usePrefix: false,
+    });
     this.scheduleWellnessReminder(savedTime);
 
-    console.log('[Notifications] Default reminders scheduled');
+    console.log("[Notifications] Default reminders scheduled");
   }
 
   /**
@@ -301,25 +329,25 @@ class NotificationManager {
    */
   cancelAllReminders() {
     // Clear from localStorage
-    storageService.remove('wellnessReminderTime', { usePrefix: false });
+    storageService.remove("wellnessReminderTime", { usePrefix: false });
 
-    console.log('[Notifications] All reminders cancelled');
+    console.log("[Notifications] All reminders cancelled");
   }
 
   /**
    * Show update notification when new version available
    */
   showUpdateNotification() {
-    this.show('FlagFit Pro Update Available! 🎉', {
-      body: 'A new version is available. Refresh to update.',
-      icon: '/icons/icon-192.png',
-      tag: 'app-update',
+    this.show("FlagFit Pro Update Available! 🎉", {
+      body: "A new version is available. Refresh to update.",
+      icon: "/icons/icon-192.png",
+      tag: "app-update",
       requireInteraction: true,
-      data: { type: 'app-update' },
+      data: { type: "app-update" },
       actions: [
-        { action: 'update', title: 'Update Now' },
-        { action: 'later', title: 'Later' }
-      ]
+        { action: "update", title: "Update Now" },
+        { action: "later", title: "Later" },
+      ],
     });
   }
 
@@ -327,7 +355,7 @@ class NotificationManager {
    * Check if notifications are enabled
    */
   isEnabled() {
-    return this.isSupported && this.permission === 'granted';
+    return this.isSupported && this.permission === "granted";
   }
 
   /**
@@ -337,7 +365,7 @@ class NotificationManager {
     return {
       supported: this.isSupported,
       permission: this.permission,
-      enabled: this.isEnabled()
+      enabled: this.isEnabled(),
     };
   }
 }
@@ -346,8 +374,8 @@ class NotificationManager {
 const notificationManager = new NotificationManager();
 
 // Auto-initialize on page load
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
     notificationManager.init();
   });
 } else {
@@ -355,11 +383,11 @@ if (document.readyState === 'loading') {
 }
 
 // Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = notificationManager;
 }
 
 // Make available globally
 window.notificationManager = notificationManager;
 
-console.log('[Notifications] Notification Manager loaded');
+console.log("[Notifications] Notification Manager loaded");

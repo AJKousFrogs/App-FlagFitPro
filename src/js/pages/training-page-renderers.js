@@ -24,7 +24,9 @@ export function renderUserHeader(user) {
  * Render weekly progress stat card
  */
 export function renderWeeklyProgress(stats) {
-  if (!stats) {return;}
+  if (!stats) {
+    return;
+  }
 
   const weeklyProgressValue = document.querySelector(".stat-value");
   if (weeklyProgressValue && weeklyProgressValue.textContent.includes("/")) {
@@ -137,7 +139,9 @@ export function renderWeeklySchedule(
   viewMode = "detailed",
 ) {
   const scheduleGrid = document.getElementById("weekly-schedule-grid");
-  if (!scheduleGrid) {return;}
+  if (!scheduleGrid) {
+    return;
+  }
 
   scheduleGrid.innerHTML = "";
 
@@ -150,10 +154,14 @@ export function renderWeeklySchedule(
   const section = document.querySelector(".weekly-schedule-section");
   if (viewMode === "compact") {
     scheduleGrid.classList.add("compact");
-    if (section) {section.classList.add("schedule-view-compact");}
+    if (section) {
+      section.classList.add("schedule-view-compact");
+    }
   } else {
     scheduleGrid.classList.remove("compact");
-    if (section) {section.classList.remove("schedule-view-compact");}
+    if (section) {
+      section.classList.remove("schedule-view-compact");
+    }
   }
 
   // Update toggle button text
@@ -174,7 +182,9 @@ export function renderWeeklySchedule(
  */
 export function renderWorkoutCards() {
   const workoutsSection = document.querySelector(".workouts-section");
-  if (!workoutsSection) {return;}
+  if (!workoutsSection) {
+    return;
+  }
 
   // Workout cards are already in HTML, we just need to ensure they're properly initialized
   // This function can be extended to dynamically generate cards from templates if needed
@@ -197,7 +207,8 @@ export function renderAchievements(recentWorkouts) {
   // Achievements are currently static in HTML
   // This function can be extended to dynamically generate achievements based on workout data
   const achievementsSection = document.querySelector(".achievements-section");
-  if (!achievementsSection) {}
+  if (!achievementsSection) {
+  }
 
   // Future: Generate achievements based on recentWorkouts data
   // For now, achievements remain static in HTML

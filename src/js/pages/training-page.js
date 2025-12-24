@@ -35,7 +35,23 @@ import { dbTraining } from "../../training-modules/db-training.js";
 import { logger } from "../../logger.js";
 import { storageService } from "../services/storage-service-unified.js";
 // #region agent log
-fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training-page.js:36',message:'storageService imported',data:{storageServiceType:typeof storageService,storageServiceExists:!!storageService,isInstance:storageService?.constructor?.name},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+fetch("http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    location: "training-page.js:36",
+    message: "storageService imported",
+    data: {
+      storageServiceType: typeof storageService,
+      storageServiceExists: !!storageService,
+      isInstance: storageService?.constructor?.name,
+    },
+    timestamp: Date.now(),
+    sessionId: "debug-session",
+    runId: "run1",
+    hypothesisId: "B",
+  }),
+}).catch(() => {});
 // #endregion
 
 // Initialize training page
@@ -44,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (typeof lucide !== "undefined") {
     lucide.createIcons();
   }
-  
+
   // Check authentication - wait for auth manager to initialize first
   const isAuthenticated = await authManager.requireAuth();
   if (!isAuthenticated) {
@@ -85,7 +101,9 @@ function toggleSidebar() {
   const overlay = document.getElementById("sidebar-overlay");
   const toggleBtn = document.getElementById("mobile-menu-toggle");
 
-  if (!sidebar) {return;}
+  if (!sidebar) {
+    return;
+  }
 
   const isOpen =
     sidebar.classList.contains("open") ||
@@ -93,23 +111,31 @@ function toggleSidebar() {
 
   if (isOpen) {
     sidebar.classList.remove("open", "mobile-open");
-    if (overlay) {overlay.classList.remove("active");}
+    if (overlay) {
+      overlay.classList.remove("active");
+    }
     document.body.classList.remove("sidebar-open", "menu-open");
     if (toggleBtn) {
       toggleBtn.setAttribute("aria-expanded", "false");
     }
     // Return focus to toggle button
-    if (toggleBtn) {toggleBtn.focus();}
+    if (toggleBtn) {
+      toggleBtn.focus();
+    }
   } else {
     sidebar.classList.add("open", "mobile-open");
-    if (overlay) {overlay.classList.add("active");}
+    if (overlay) {
+      overlay.classList.add("active");
+    }
     document.body.classList.add("sidebar-open", "menu-open");
     if (toggleBtn) {
       toggleBtn.setAttribute("aria-expanded", "true");
     }
     // Focus first nav item for accessibility
     const firstNavItem = sidebar.querySelector(".nav-item");
-    if (firstNavItem) {firstNavItem.focus();}
+    if (firstNavItem) {
+      firstNavItem.focus();
+    }
   }
 }
 
@@ -199,51 +225,154 @@ async function initializePageState() {
 
   // Load program states
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training-page.js:200',message:'Before getOffseasonProgram check',data:{storageServiceExists:!!storageService,storageServiceType:typeof storageService,hasGetOffseasonProgram:!!storageService?.getOffseasonProgram,getOffseasonProgramType:typeof storageService?.getOffseasonProgram,storageServiceConstructor:storageService?.constructor?.name,prototypeMethods:storageService?Object.getOwnPropertyNames(Object.getPrototypeOf(storageService)).filter(m=>typeof storageService[m]==='function'):'N/A'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
+  fetch("http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      location: "training-page.js:200",
+      message: "Before getOffseasonProgram check",
+      data: {
+        storageServiceExists: !!storageService,
+        storageServiceType: typeof storageService,
+        hasGetOffseasonProgram: !!storageService?.getOffseasonProgram,
+        getOffseasonProgramType: typeof storageService?.getOffseasonProgram,
+        storageServiceConstructor: storageService?.constructor?.name,
+        prototypeMethods: storageService
+          ? Object.getOwnPropertyNames(
+              Object.getPrototypeOf(storageService),
+            ).filter((m) => typeof storageService[m] === "function")
+          : "N/A",
+      },
+      timestamp: Date.now(),
+      sessionId: "debug-session",
+      runId: "post-fix",
+      hypothesisId: "C",
+    }),
+  }).catch(() => {});
   // #endregion
   let currentProgram = null;
   // Use a more defensive approach: check method exists and wrap in try-catch
   try {
-    if (storageService && storageService.getOffseasonProgram && typeof storageService.getOffseasonProgram === 'function') {
+    if (
+      storageService &&
+      storageService.getOffseasonProgram &&
+      typeof storageService.getOffseasonProgram === "function"
+    ) {
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training-page.js:204',message:'Calling getOffseasonProgram',data:{storageServiceExists:!!storageService,getOffseasonProgramType:typeof storageService?.getOffseasonProgram},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
+      fetch(
+        "http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            location: "training-page.js:204",
+            message: "Calling getOffseasonProgram",
+            data: {
+              storageServiceExists: !!storageService,
+              getOffseasonProgramType:
+                typeof storageService?.getOffseasonProgram,
+            },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "post-fix",
+            hypothesisId: "C",
+          }),
+        },
+      ).catch(() => {});
       // #endregion
       currentProgram = storageService.getOffseasonProgram();
     } else {
       // Fallback: use generic get method if getOffseasonProgram doesn't exist
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training-page.js:208',message:'getOffseasonProgram not available, using fallback',data:{storageServiceExists:!!storageService,hasGetMethod:!!storageService?.get,getMethodType:typeof storageService?.get},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
+      fetch(
+        "http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            location: "training-page.js:208",
+            message: "getOffseasonProgram not available, using fallback",
+            data: {
+              storageServiceExists: !!storageService,
+              hasGetMethod: !!storageService?.get,
+              getMethodType: typeof storageService?.get,
+            },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "post-fix",
+            hypothesisId: "C",
+          }),
+        },
+      ).catch(() => {});
       // #endregion
-      if (storageService && storageService.get && typeof storageService.get === 'function') {
-        currentProgram = storageService.get('offseasonProgram', null, { usePrefix: true });
+      if (
+        storageService &&
+        storageService.get &&
+        typeof storageService.get === "function"
+      ) {
+        currentProgram = storageService.get("offseasonProgram", null, {
+          usePrefix: true,
+        });
       } else {
-        logger.warn('storageService.getOffseasonProgram is not available and fallback failed');
+        logger.warn(
+          "storageService.getOffseasonProgram is not available and fallback failed",
+        );
       }
     }
   } catch (error) {
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training-page.js:215',message:'Error loading offseason program',data:{errorName:error?.name,errorMessage:error?.message,errorStack:error?.stack?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
+    fetch("http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        location: "training-page.js:215",
+        message: "Error loading offseason program",
+        data: {
+          errorName: error?.name,
+          errorMessage: error?.message,
+          errorStack: error?.stack?.substring(0, 500),
+        },
+        timestamp: Date.now(),
+        sessionId: "debug-session",
+        runId: "post-fix",
+        hypothesisId: "C",
+      }),
+    }).catch(() => {});
     // #endregion
-    logger.error('Error loading offseason program:', error);
+    logger.error("Error loading offseason program:", error);
   }
-  
+
   let qbProgram = null;
   try {
-    if (storageService && storageService.getQBProgram && typeof storageService.getQBProgram === 'function') {
+    if (
+      storageService &&
+      storageService.getQBProgram &&
+      typeof storageService.getQBProgram === "function"
+    ) {
       qbProgram = storageService.getQBProgram();
     } else {
       // Fallback: use generic get method if getQBProgram doesn't exist
-      if (storageService && storageService.get && typeof storageService.get === 'function') {
-        qbProgram = storageService.get('qbProgram', null, { usePrefix: true });
+      if (
+        storageService &&
+        storageService.get &&
+        typeof storageService.get === "function"
+      ) {
+        qbProgram = storageService.get("qbProgram", null, { usePrefix: true });
       } else {
-        logger.warn('storageService.getQBProgram is not available and fallback failed');
+        logger.warn(
+          "storageService.getQBProgram is not available and fallback failed",
+        );
       }
     }
   } catch (error) {
-    logger.error('Error loading QB program:', error);
+    logger.error("Error loading QB program:", error);
   }
-  if (currentProgram) {trainingPageState.setCurrentProgram(currentProgram);}
-  if (qbProgram) {trainingPageState.setQBProgram(qbProgram);}
+  if (currentProgram) {
+    trainingPageState.setCurrentProgram(currentProgram);
+  }
+  if (qbProgram) {
+    trainingPageState.setQBProgram(qbProgram);
+  }
 
   // Set up global function for workout exercises (needed by workout.html)
   window.getWorkoutExercises = (type) =>
@@ -744,7 +873,9 @@ function createTrainingPlanModal(title, plan) {
 
   // Close on overlay click
   modal.onclick = (e) => {
-    if (e.target === modal) {modal.remove();}
+    if (e.target === modal) {
+      modal.remove();
+    }
   };
 
   return modal;

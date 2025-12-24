@@ -87,7 +87,11 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));
+  background: linear-gradient(
+    90deg,
+    var(--color-brand-primary),
+    var(--color-brand-secondary)
+  );
   border-radius: var(--radius-full);
   transition: width 0.3s ease;
   width: 0%;
@@ -124,7 +128,11 @@
 .exercise-item.active {
   border-color: var(--color-brand-primary);
   border-width: 2px;
-  background: linear-gradient(135deg, rgba(16, 201, 107, 0.08), rgba(16, 201, 107, 0.03));
+  background: linear-gradient(
+    135deg,
+    rgba(16, 201, 107, 0.08),
+    rgba(16, 201, 107, 0.03)
+  );
   box-shadow: 0 4px 12px rgba(16, 201, 107, 0.15);
   position: relative;
 }
@@ -263,4 +271,3 @@
     font-size: var(--text-xl);
   }
 }
-

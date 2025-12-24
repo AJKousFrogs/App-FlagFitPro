@@ -75,12 +75,12 @@ The Flag Football Training App is a comprehensive training platform that combine
 
 <div align="center">
 
-| Frontend        | Backend         | Database & Services | Analytics             |
-| --------------- | --------------- | ------------------- | --------------------- |
-| Angular 21      | Node.js         | Supabase PostgreSQL | AI/ML Models          |
-| PrimeNG 21      | Express         | Supabase Auth       | Chart.js              |
-| Angular Signals | Netlify Functions | Supabase Realtime | Sports Analytics APIs |
-| TypeScript      | JWT Auth        | Supabase Storage    | Evidence-Based Research |
+| Frontend        | Backend           | Database & Services | Analytics               |
+| --------------- | ----------------- | ------------------- | ----------------------- |
+| Angular 21      | Node.js           | Supabase PostgreSQL | AI/ML Models            |
+| PrimeNG 21      | Express           | Supabase Auth       | Chart.js                |
+| Angular Signals | Netlify Functions | Supabase Realtime   | Sports Analytics APIs   |
+| TypeScript      | JWT Auth          | Supabase Storage    | Evidence-Based Research |
 
 **NOTE**: Supabase is the ONLY database system. No NEON DB, no PocketBase, no other databases.
 

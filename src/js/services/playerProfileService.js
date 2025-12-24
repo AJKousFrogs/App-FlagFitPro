@@ -3,7 +3,7 @@
  * Manages player schedules, league commitments, and preferences
  */
 
-import { storageService } from './storage-service-unified.js';
+import { storageService } from "./storage-service-unified.js";
 
 class PlayerProfileService {
   /**
@@ -26,8 +26,8 @@ class PlayerProfileService {
 
     // Save to localStorage
     const profiles = this.getAllProfiles();
-    const existingIndex = profiles.findIndex(p => p.id === profileData.id);
-    
+    const existingIndex = profiles.findIndex((p) => p.id === profileData.id);
+
     if (existingIndex >= 0) {
       profiles[existingIndex] = profileData;
     } else {
@@ -43,7 +43,7 @@ class PlayerProfileService {
    */
   getPlayerProfile(playerId) {
     const profiles = this.getAllProfiles();
-    return profiles.find(p => p.id === playerId);
+    return profiles.find((p) => p.id === playerId);
   }
 
   /**
@@ -57,7 +57,9 @@ class PlayerProfileService {
    * Get current active profile
    */
   getCurrentProfile() {
-    const currentId = storageService.get("currentPlayerId", null, { usePrefix: false });
+    const currentId = storageService.get("currentPlayerId", null, {
+      usePrefix: false,
+    });
     if (currentId) {
       return this.getPlayerProfile(currentId);
     }
@@ -76,7 +78,9 @@ class PlayerProfileService {
    */
   addPractice(playerId, practice) {
     const profile = this.getPlayerProfile(playerId);
-    if (!profile) {return null;}
+    if (!profile) {
+      return null;
+    }
 
     profile.practices.push({
       date: practice.date,
@@ -94,7 +98,9 @@ class PlayerProfileService {
    */
   addLeagueGame(playerId, leagueGame) {
     const profile = this.getPlayerProfile(playerId);
-    if (!profile) {return null;}
+    if (!profile) {
+      return null;
+    }
 
     profile.leagueGames.push({
       date: leagueGame.date,
@@ -113,16 +119,18 @@ class PlayerProfileService {
    */
   async parseAndAddSchedule(playerId, file) {
     const { scheduleFileParser } = await import("./scheduleFileParser.js");
-    
+
     try {
       const parsedSchedule = await scheduleFileParser.parseFile(file);
       const profile = this.getPlayerProfile(playerId);
-      
-      if (!profile) {return null;}
+
+      if (!profile) {
+        return null;
+      }
 
       // Add game days
       if (parsedSchedule.gameDays) {
-        parsedSchedule.gameDays.forEach(gameDay => {
+        parsedSchedule.gameDays.forEach((gameDay) => {
           profile.leagueGames.push({
             date: gameDay.date,
             league: "Uploaded Schedule",
@@ -136,7 +144,7 @@ class PlayerProfileService {
 
       // Add practices from workouts
       if (parsedSchedule.workouts) {
-        parsedSchedule.workouts.forEach(workout => {
+        parsedSchedule.workouts.forEach((workout) => {
           profile.practices.push({
             date: workout.date,
             type: this.mapWorkoutTypeToPracticeType(workout.type),
@@ -159,10 +167,10 @@ class PlayerProfileService {
    */
   mapWorkoutTypeToPracticeType(workoutType) {
     const typeMap = {
-      "flag_practice": "flag_practice",
-      "technique": "technique_training",
-      "practice": "flag_practice",
-      "training": "technique_training",
+      flag_practice: "flag_practice",
+      technique: "technique_training",
+      practice: "flag_practice",
+      training: "technique_training",
     };
 
     return typeMap[workoutType?.toLowerCase()] || "flag_practice";
@@ -173,10 +181,10 @@ class PlayerProfileService {
    */
   mapWorkoutTypeToIntensity(workoutType) {
     const intensityMap = {
-      "flag_practice": "high",
-      "technique": "medium",
-      "practice": "high",
-      "training": "medium",
+      flag_practice: "high",
+      technique: "medium",
+      practice: "high",
+      training: "medium",
     };
 
     return intensityMap[workoutType?.toLowerCase()] || "medium";
@@ -256,4 +264,3 @@ class PlayerProfileService {
 
 // Export singleton instance
 export const playerProfileService = new PlayerProfileService();
-

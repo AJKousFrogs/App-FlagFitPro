@@ -13,6 +13,7 @@
 ### 1. ✅ `training-data.service.ts` - **MIGRATED**
 
 **Before (API Layer):**
+
 ```typescript
 getTrainingSessions(): Observable<TrainingSession[]> {
   return this.apiService
@@ -22,6 +23,7 @@ getTrainingSessions(): Observable<TrainingSession[]> {
 ```
 
 **After (Direct Supabase):**
+
 ```typescript
 getTrainingSessions(): Observable<TrainingSession[]> {
   return from(
@@ -40,6 +42,7 @@ getTrainingSessions(): Observable<TrainingSession[]> {
 ```
 
 **Benefits:**
+
 - ✅ 50% faster (no extra network hop)
 - ✅ RLS automatically enforced
 - ✅ Removed 62-line Netlify function
@@ -50,12 +53,14 @@ getTrainingSessions(): Observable<TrainingSession[]> {
 ### 2. ✅ `acwr.service.ts` - **DATABASE CONNECTED**
 
 **Added:**
+
 - ✅ Auto-loads workout logs on user login
 - ✅ Realtime subscriptions to workout_logs table
 - ✅ Auto-updates ACWR calculations when new data arrives
 - ✅ Saves computed ACWR to load_monitoring table
 
 **Code Added:**
+
 ```typescript
 constructor() {
   effect(() => {
@@ -73,11 +78,13 @@ constructor() {
 ### 3. ✅ `load-monitoring.service.ts` - **DATABASE CONNECTED**
 
 **Added:**
+
 - ✅ `createSession()` now saves to workout_logs table
 - ✅ Database trigger automatically calculates ACWR
 - ✅ Returns session with database ID
 
 **Code Added:**
+
 ```typescript
 public async createSession(...): Promise<TrainingSession> {
   const { data } = await this.supabaseService.client
@@ -90,7 +97,7 @@ public async createSession(...): Promise<TrainingSession> {
     })
     .select()
     .single();
-  
+
   return { ...session, id: data.id };
 }
 ```
@@ -106,20 +113,21 @@ public async createSession(...): Promise<TrainingSession> {
 **Current:** Uses `/api/performance-data/wellness`
 
 **Migration Pattern:**
+
 ```typescript
 // Before:
-return this.apiService.post('/api/performance-data/wellness', data);
+return this.apiService.post("/api/performance-data/wellness", data);
 
 // After:
 return from(
   this.supabaseService.client
-    .from('wellness_entries')
+    .from("wellness_entries")
     .insert({
       athlete_id: this.userId(),
-      ...data
+      ...data,
     })
     .select()
-    .single()
+    .single(),
 );
 ```
 
@@ -134,21 +142,22 @@ return from(
 **Current:** Uses `/api/recovery/*`
 
 **Migration Pattern:**
+
 ```typescript
 // Protocols
-from('recovery_protocols').select('*').order('name')
+from("recovery_protocols").select("*").order("name");
 
 // Start session
-from('recovery_sessions').insert({
+from("recovery_sessions").insert({
   athlete_id: this.userId(),
   protocol_id: protocolId,
-  started_at: new Date()
-})
+  started_at: new Date(),
+});
 
 // Complete session
-from('recovery_sessions')
+from("recovery_sessions")
   .update({ completed_at: new Date(), duration_minutes: duration })
-  .eq('id', sessionId)
+  .eq("id", sessionId);
 ```
 
 **Tables:** `recovery_protocols`, `recovery_sessions`  
@@ -162,25 +171,26 @@ from('recovery_sessions')
 **Current:** Uses `/api/nutrition/*`
 
 **Migration Pattern:**
+
 ```typescript
 // Search foods
-from('nutrition_foods').select('*').ilike('name', `%${searchTerm}%`)
+from("nutrition_foods").select("*").ilike("name", `%${searchTerm}%`);
 
 // Log food
-from('nutrition_logs').insert({
+from("nutrition_logs").insert({
   user_id: this.userId(),
   food_id: foodId,
   serving_size: servings,
   meal_type: mealType,
-  logged_at: new Date()
-})
+  logged_at: new Date(),
+});
 
 // Get daily nutrition
-from('nutrition_logs')
-  .select('*, nutrition_foods(*)')
-  .eq('user_id', this.userId())
-  .gte('logged_at', startOfDay)
-  .lte('logged_at', endOfDay)
+from("nutrition_logs")
+  .select("*, nutrition_foods(*)")
+  .eq("user_id", this.userId())
+  .gte("logged_at", startOfDay)
+  .lte("logged_at", endOfDay);
 ```
 
 **Tables:** `nutrition_foods`, `nutrition_logs`, `nutrition_goals`  
@@ -194,22 +204,23 @@ from('nutrition_logs')
 **Current:** Uses `/api/performance-data/*`
 
 **Migration Pattern:**
+
 ```typescript
 // Measurements
-from('performance_measurements').insert({
+from("performance_measurements").insert({
   athlete_id: this.userId(),
   measurement_type: type,
   value: value,
-  measured_at: new Date()
-})
+  measured_at: new Date(),
+});
 
 // Performance tests
-from('performance_tests').insert({
+from("performance_tests").insert({
   athlete_id: this.userId(),
   test_type: type,
   result: result,
-  tested_at: new Date()
-})
+  tested_at: new Date(),
+});
 ```
 
 **Tables:** `performance_measurements`, `performance_tests`  
@@ -227,19 +238,22 @@ from('performance_tests').insert({
 **Decision:** Some analytics queries are complex (multi-table joins, aggregations).
 
 **Recommendation:**
+
 - ✅ **Migrate:** Simple queries (player stats, recent activity)
 - ⚠️ **Keep Function:** Complex aggregations (team chemistry network analysis, trend calculations)
 
 **Example Simple Query (Migrate):**
+
 ```typescript
-from('performance_metrics')
-  .select('*')
-  .eq('athlete_id', this.userId())
-  .gte('recorded_at', last30Days)
-  .order('recorded_at', { ascending: false })
+from("performance_metrics")
+  .select("*")
+  .eq("athlete_id", this.userId())
+  .gte("recorded_at", last30Days)
+  .order("recorded_at", { ascending: false });
 ```
 
 **Example Complex Query (Keep Function):**
+
 ```typescript
 // Keep in Netlify function - requires multiple JOINs and calculations
 // /api/analytics/team-chemistry
@@ -262,6 +276,7 @@ from('performance_metrics')
 **Reason:** Admin operations require service role key (security)
 
 **Keep Functions:**
+
 - `/api/admin/health-metrics` - System-wide stats
 - `/api/admin/sync-usda` - External API sync
 - `/api/admin/sync-research` - External API sync
@@ -276,11 +291,12 @@ from('performance_metrics')
 **Current:** Uses `/user-context`
 
 **Migration:**
+
 ```typescript
-from('user_profiles')
-  .select('*, teams(*), preferences(*)')
-  .eq('user_id', this.userId())
-  .single()
+from("user_profiles")
+  .select("*, teams(*), preferences(*)")
+  .eq("user_id", this.userId())
+  .single();
 ```
 
 **Estimated Time:** 30 minutes  
@@ -293,12 +309,13 @@ from('user_profiles')
 **Current:** Uses `/api/performance/*`
 
 **Migration:**
+
 ```typescript
 // Player stats
-from('game_plays')
-  .select('*')
-  .eq('player_id', this.userId())
-  .gte('created_at', seasonStart)
+from("game_plays")
+  .select("*")
+  .eq("player_id", this.userId())
+  .gte("created_at", seasonStart);
 
 // Aggregate in frontend (or use Supabase Functions for complex aggregations)
 ```
@@ -313,16 +330,18 @@ from('game_plays')
 ### Step-by-Step Migration Process
 
 #### Step 1: Update Imports
+
 ```typescript
 // Before:
-import { ApiService, API_ENDPOINTS } from './api.service';
+import { ApiService, API_ENDPOINTS } from "./api.service";
 
 // After:
-import { SupabaseService } from './supabase.service';
-import { LoggerService } from './logger.service';
+import { SupabaseService } from "./supabase.service";
+import { LoggerService } from "./logger.service";
 ```
 
 #### Step 2: Inject Services
+
 ```typescript
 // Before:
 private apiService = inject(ApiService);
@@ -336,6 +355,7 @@ private userId = computed(() => this.supabaseService.userId());
 ```
 
 #### Step 3: Convert GET Request
+
 ```typescript
 // Before:
 return this.apiService.get<T>(API_ENDPOINTS.endpoint, params).pipe(...);
@@ -363,6 +383,7 @@ return from(
 ```
 
 #### Step 4: Convert POST Request
+
 ```typescript
 // Before:
 return this.apiService.post<T>(API_ENDPOINTS.endpoint, data).pipe(...);
@@ -387,6 +408,7 @@ return from(
 ```
 
 #### Step 5: Convert UPDATE Request
+
 ```typescript
 // Before:
 return this.apiService.put<T>(API_ENDPOINTS.endpoint, data).pipe(...);
@@ -409,6 +431,7 @@ return from(
 ```
 
 #### Step 6: Convert DELETE Request
+
 ```typescript
 // Before:
 return this.apiService.delete<T>(API_ENDPOINTS.endpoint).pipe(...);
@@ -436,15 +459,17 @@ return from(
 **Critical:** Supabase RLS must be properly configured for all tables.
 
 ### Check RLS Status
+
 ```sql
-SELECT schemaname, tablename, rowsecurity 
-FROM pg_tables 
+SELECT schemaname, tablename, rowsecurity
+FROM pg_tables
 WHERE schemaname = 'public';
 ```
 
 ### Example RLS Policies
 
 #### Allow users to see only their own data:
+
 ```sql
 -- Enable RLS
 ALTER TABLE training_sessions ENABLE ROW LEVEL SECURITY;
@@ -479,20 +504,20 @@ USING (auth.uid() = user_id);
 
 ## 📊 Migration Progress Tracker
 
-| Service | Status | Tables | Complexity | Time | Priority |
-|---------|--------|--------|-----------|------|----------|
-| training-data.service.ts | ✅ Done | training_sessions | ⭐ Easy | 1h | 🔴 High |
-| acwr.service.ts | ✅ Done | workout_logs, load_monitoring | ⭐⭐⭐ Complex | 2h | 🔴 High |
-| load-monitoring.service.ts | ✅ Done | workout_logs | ⭐⭐ Medium | 1h | 🔴 High |
-| wellness.service.ts | 🚧 Pending | wellness_entries | ⭐ Easy | 30m | 🟡 Medium |
-| recovery.service.ts | 🚧 Pending | recovery_* | ⭐⭐ Medium | 1h | 🟡 Medium |
-| nutrition.service.ts | 🚧 Pending | nutrition_* | ⭐⭐ Medium | 1.5h | 🟡 Medium |
-| performance-data.service.ts | 🚧 Pending | performance_* | ⭐⭐ Medium | 1h | 🟡 Medium |
-| context.service.ts | 🚧 Pending | user_profiles | ⭐ Easy | 30m | 🟢 Low |
-| player-statistics.service.ts | 🚧 Pending | game_plays | ⭐⭐ Medium | 1h | 🟢 Low |
-| analytics-data.service.ts | 🚧 Evaluate | multiple | ⭐⭐⭐ Complex | 2h | 🟢 Low |
-| admin.service.ts | ❌ Keep | N/A | N/A | N/A | - |
-| ai.service.ts | ❌ Keep | N/A (External API) | N/A | N/A | - |
+| Service                      | Status      | Tables                        | Complexity     | Time | Priority  |
+| ---------------------------- | ----------- | ----------------------------- | -------------- | ---- | --------- |
+| training-data.service.ts     | ✅ Done     | training_sessions             | ⭐ Easy        | 1h   | 🔴 High   |
+| acwr.service.ts              | ✅ Done     | workout_logs, load_monitoring | ⭐⭐⭐ Complex | 2h   | 🔴 High   |
+| load-monitoring.service.ts   | ✅ Done     | workout_logs                  | ⭐⭐ Medium    | 1h   | 🔴 High   |
+| wellness.service.ts          | 🚧 Pending  | wellness_entries              | ⭐ Easy        | 30m  | 🟡 Medium |
+| recovery.service.ts          | 🚧 Pending  | recovery\_\*                  | ⭐⭐ Medium    | 1h   | 🟡 Medium |
+| nutrition.service.ts         | 🚧 Pending  | nutrition\_\*                 | ⭐⭐ Medium    | 1.5h | 🟡 Medium |
+| performance-data.service.ts  | 🚧 Pending  | performance\_\*               | ⭐⭐ Medium    | 1h   | 🟡 Medium |
+| context.service.ts           | 🚧 Pending  | user_profiles                 | ⭐ Easy        | 30m  | 🟢 Low    |
+| player-statistics.service.ts | 🚧 Pending  | game_plays                    | ⭐⭐ Medium    | 1h   | 🟢 Low    |
+| analytics-data.service.ts    | 🚧 Evaluate | multiple                      | ⭐⭐⭐ Complex | 2h   | 🟢 Low    |
+| admin.service.ts             | ❌ Keep     | N/A                           | N/A            | N/A  | -         |
+| ai.service.ts                | ❌ Keep     | N/A (External API)            | N/A            | N/A  | -         |
 
 **Total Estimated Time:** 10-12 hours for all migrations
 
@@ -534,6 +559,7 @@ After each migration, verify:
 ## 🚀 Deployment Steps
 
 ### 1. Development Testing
+
 ```bash
 # Run Angular dev server
 cd angular
@@ -547,6 +573,7 @@ npm start
 ```
 
 ### 2. Verify Supabase Configuration
+
 ```bash
 # Check RLS policies
 supabase db diff --use-migra
@@ -556,6 +583,7 @@ supabase test db
 ```
 
 ### 3. Production Deployment
+
 ```bash
 # Build production
 npm run build
@@ -582,18 +610,22 @@ netlify deploy --prod
 ## 🆘 Troubleshooting
 
 ### Issue: "Error: fetch failed"
+
 **Cause:** Supabase URL or anon key not set  
 **Fix:** Check environment variables in `environment.ts` and `environment.prod.ts`
 
 ### Issue: "PGRST116 - No rows found"
+
 **Cause:** RLS policy blocking query  
 **Fix:** Verify RLS policies allow user to access data
 
 ### Issue: "User ID is null"
+
 **Cause:** User not authenticated  
 **Fix:** Ensure `SupabaseService.userId()` is reactive and checked before queries
 
 ### Issue: Realtime not updating
+
 **Cause:** Channel subscription not active  
 **Fix:** Check browser console for subscription errors, verify realtime enabled in Supabase
 
@@ -612,4 +644,3 @@ netlify deploy --prod
 
 **Last Updated:** December 23, 2025  
 **Status:** 3 of 26 services migrated (12% complete)
-

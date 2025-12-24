@@ -14,7 +14,10 @@ class StatsService {
    */
   calculateWeeklyStats(recentWorkouts = [], today = new Date()) {
     try {
-      const result = statisticsCalculationService.calculateWeeklyStats(recentWorkouts, today);
+      const result = statisticsCalculationService.calculateWeeklyStats(
+        recentWorkouts,
+        today,
+      );
       // Get week boundaries for backward compatibility
       const startOfWeek = new Date(today);
       startOfWeek.setDate(today.getDate() - today.getDay()); // Start from Sunday
@@ -31,10 +34,13 @@ class StatsService {
         // Additional enhanced data
         dataQuality: result.dataQuality,
         confidenceLevel: result.confidenceLevel,
-        weeklyLoad: result.weeklyLoad
+        weeklyLoad: result.weeklyLoad,
       };
     } catch (error) {
-      console.warn('Error calculating weekly stats, falling back to basic calculation:', error);
+      console.warn(
+        "Error calculating weekly stats, falling back to basic calculation:",
+        error,
+      );
       // Fallback to basic calculation
       const startOfWeek = new Date(today);
       startOfWeek.setDate(today.getDate() - today.getDay());
@@ -97,18 +103,25 @@ class StatsService {
    */
   computeStreak(recentWorkouts = [], today = new Date()) {
     try {
-      const result = statisticsCalculationService.calculateStreak(recentWorkouts, today);
+      const result = statisticsCalculationService.calculateStreak(
+        recentWorkouts,
+        today,
+      );
       return {
         currentStreak: result.currentStreak,
         longestStreak: result.longestStreak,
-        lastWorkoutDate: result.stretchDates.length > 0
-          ? result.stretchDates[result.stretchDates.length - 1].end
-          : null,
+        lastWorkoutDate:
+          result.stretchDates.length > 0
+            ? result.stretchDates[result.stretchDates.length - 1].end
+            : null,
         nextOpportunity: result.nextOpportunity,
-        stretchDates: result.stretchDates
+        stretchDates: result.stretchDates,
       };
     } catch (error) {
-      console.warn('Error calculating streak, falling back to basic calculation:', error);
+      console.warn(
+        "Error calculating streak, falling back to basic calculation:",
+        error,
+      );
       // Fallback to basic calculation
       if (recentWorkouts.length === 0) {
         return {

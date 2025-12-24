@@ -3,20 +3,20 @@
  * Provides consistent error handling patterns across the application
  */
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 /**
  * Error types for categorization
  */
 export const ErrorType = {
-  NETWORK: 'network',
-  VALIDATION: 'validation',
-  AUTHENTICATION: 'authentication',
-  AUTHORIZATION: 'authorization',
-  NOT_FOUND: 'not_found',
-  SERVER: 'server',
-  CLIENT: 'client',
-  UNKNOWN: 'unknown'
+  NETWORK: "network",
+  VALIDATION: "validation",
+  AUTHENTICATION: "authentication",
+  AUTHORIZATION: "authorization",
+  NOT_FOUND: "not_found",
+  SERVER: "server",
+  CLIENT: "client",
+  UNKNOWN: "unknown",
 };
 
 /**
@@ -25,7 +25,7 @@ export const ErrorType = {
 export class AppError extends Error {
   constructor(message, type = ErrorType.UNKNOWN, details = {}) {
     super(message);
-    this.name = 'AppError';
+    this.name = "AppError";
     this.type = type;
     this.details = details;
     this.timestamp = new Date().toISOString();
@@ -40,62 +40,65 @@ export class AppError extends Error {
  */
 export function handleError(error, options = {}) {
   const {
-    context = 'Operation',
-    logLevel = 'error',
+    context = "Operation",
+    logLevel = "error",
     showToUser = true,
-    fallbackMessage = 'An error occurred. Please try again.',
-    onError = null
+    fallbackMessage = "An error occurred. Please try again.",
+    onError = null,
   } = options;
 
   // Determine error type and user message
   let errorType = ErrorType.UNKNOWN;
   let userMessage = fallbackMessage;
-  const logMessage = `[${context}] ${error.message || 'Unknown error'}`;
+  const logMessage = `[${context}] ${error.message || "Unknown error"}`;
 
   // Categorize error
-  if (error.name === 'AppError') {
+  if (error.name === "AppError") {
     errorType = error.type;
     userMessage = error.message;
-  } else if (error.message?.includes('fetch') || error.message?.includes('network')) {
+  } else if (
+    error.message?.includes("fetch") ||
+    error.message?.includes("network")
+  ) {
     errorType = ErrorType.NETWORK;
-    userMessage = 'Network error. Please check your connection and try again.';
-  } else if (error.status === 401 || error.message?.includes('auth')) {
+    userMessage = "Network error. Please check your connection and try again.";
+  } else if (error.status === 401 || error.message?.includes("auth")) {
     errorType = ErrorType.AUTHENTICATION;
-    userMessage = 'Authentication failed. Please log in again.';
+    userMessage = "Authentication failed. Please log in again.";
   } else if (error.status === 403) {
     errorType = ErrorType.AUTHORIZATION;
-    userMessage = 'You do not have permission to perform this action.';
+    userMessage = "You do not have permission to perform this action.";
   } else if (error.status === 404) {
     errorType = ErrorType.NOT_FOUND;
-    userMessage = 'The requested resource was not found.';
+    userMessage = "The requested resource was not found.";
   } else if (error.status >= 500) {
     errorType = ErrorType.SERVER;
-    userMessage = 'Server error. Please try again later.';
+    userMessage = "Server error. Please try again later.";
   } else if (error.status >= 400) {
     errorType = ErrorType.CLIENT;
     userMessage = error.message || fallbackMessage;
   }
 
   // Log error
-  if (logLevel === 'error') {
+  if (logLevel === "error") {
     logger.error(logMessage, error);
-  } else if (logLevel === 'warn') {
+  } else if (logLevel === "warn") {
     logger.warn(logMessage, error);
-  } else if (logLevel === 'debug') {
+  } else if (logLevel === "debug") {
     logger.debug(logMessage, error);
   }
 
   // Show to user if requested
   if (showToUser && window.ErrorHandler) {
-    window.ErrorHandler.showNotification(userMessage, 'error');
+    window.ErrorHandler.showNotification(userMessage, "error");
   }
 
   // Call custom error handler if provided
-  if (onError && typeof onError === 'function') {
+  if (onError && typeof onError === "function") {
     try {
       onError(error, { type: errorType, message: userMessage });
     } catch (callbackError) {
-      logger.error('[Error Handler] Callback error:', callbackError);
+      logger.error("[Error Handler] Callback error:", callbackError);
     }
   }
 
@@ -105,7 +108,7 @@ export function handleError(error, options = {}) {
     error: userMessage,
     errorType,
     details: error.details || {},
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 }
 
@@ -116,7 +119,7 @@ export function handleError(error, options = {}) {
  * @returns {function} Wrapped function
  */
 export function withErrorHandling(fn, options = {}) {
-  return async function(...args) {
+  return async function (...args) {
     try {
       return await fn(...args);
     } catch (error) {
@@ -152,7 +155,7 @@ export async function withRetry(operation, options = {}) {
     delay = 1000,
     backoff = 2,
     shouldRetry = () => true,
-    onRetry = null
+    onRetry = null,
   } = options;
 
   let lastError;
@@ -179,10 +182,12 @@ export async function withRetry(operation, options = {}) {
         onRetry(error, attempt);
       }
 
-      logger.warn(`[Retry] Attempt ${attempt} failed, retrying in ${currentDelay}ms...`);
+      logger.warn(
+        `[Retry] Attempt ${attempt} failed, retrying in ${currentDelay}ms...`,
+      );
 
       // Wait before retrying
-      await new Promise(resolve => setTimeout(resolve, currentDelay));
+      await new Promise((resolve) => setTimeout(resolve, currentDelay));
 
       // Increase delay for next attempt (exponential backoff)
       currentDelay *= backoff;
@@ -209,7 +214,7 @@ export function validationError(message, details = {}) {
  * @param {object} details - Error details
  * @returns {AppError} Network error
  */
-export function networkError(message = 'Network error occurred', details = {}) {
+export function networkError(message = "Network error occurred", details = {}) {
   return new AppError(message, ErrorType.NETWORK, details);
 }
 
@@ -227,7 +232,7 @@ export function isRetryableError(error) {
     return true;
   }
 
-  if (error.message?.includes('fetch') || error.message?.includes('network')) {
+  if (error.message?.includes("fetch") || error.message?.includes("network")) {
     return true;
   }
 
@@ -247,7 +252,7 @@ export function safeDOMOperation(operation, options = {}) {
     return operation();
   } catch (error) {
     if (logError) {
-      logger.error('[DOM Operation] Error:', error);
+      logger.error("[DOM Operation] Error:", error);
     }
     return defaultValue;
   }
@@ -258,23 +263,23 @@ export function safeDOMOperation(operation, options = {}) {
  */
 export function setupGlobalErrorHandlers() {
   // Catch unhandled promise rejections
-  window.addEventListener('unhandledrejection', (event) => {
-    logger.error('[Unhandled Promise Rejection]', event.reason);
+  window.addEventListener("unhandledrejection", (event) => {
+    logger.error("[Unhandled Promise Rejection]", event.reason);
     event.preventDefault(); // Prevent default browser behavior
   });
 
   // Catch global errors
-  window.addEventListener('error', (event) => {
-    logger.error('[Global Error]', {
+  window.addEventListener("error", (event) => {
+    logger.error("[Global Error]", {
       message: event.message,
       filename: event.filename,
       lineno: event.lineno,
       colno: event.colno,
-      error: event.error
+      error: event.error,
     });
   });
 
-  logger.debug('[Error Handling] Global error handlers installed');
+  logger.debug("[Error Handling] Global error handlers installed");
 }
 
 // Export for use in modules
@@ -289,7 +294,7 @@ export default {
   networkError,
   isRetryableError,
   safeDOMOperation,
-  setupGlobalErrorHandlers
+  setupGlobalErrorHandlers,
 };
 
-console.log('[Error Handling] Standardized error handling utilities loaded');
+console.log("[Error Handling] Standardized error handling utilities loaded");

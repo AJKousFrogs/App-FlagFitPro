@@ -9,7 +9,9 @@ import { escapeHtml } from "./sanitize.js";
 // ================================================================
 
 export function getInitials(name) {
-  if (!name) {return "??";}
+  if (!name) {
+    return "??";
+  }
   return name
     .split(" ")
     .map((n) => n[0])
@@ -38,11 +40,7 @@ export function scrollToBottom(containerId, delay = 100) {
  * @returns {void}
  */
 export function initializeLucideIcons(container = document, options = {}) {
-  const {
-    maxAttempts = 50,
-    pollInterval = 100,
-    initialDelay = 100
-  } = options;
+  const { maxAttempts = 50, pollInterval = 100, initialDelay = 100 } = options;
 
   // Check if Lucide is already available
   if (typeof lucide !== "undefined" && lucide.createIcons) {
@@ -61,15 +59,21 @@ export function initializeLucideIcons(container = document, options = {}) {
       lucide.createIcons(container);
     } else if (attempts >= maxAttempts) {
       clearInterval(checkLucide);
-      console.warn('[Lucide Icons] Lucide library not loaded after maximum attempts');
+      console.warn(
+        "[Lucide Icons] Lucide library not loaded after maximum attempts",
+      );
     }
   }, pollInterval);
 }
 
 export function createElementWithClass(tag, className, innerHTML = "") {
   const element = document.createElement(tag);
-  if (className) {element.className = className;}
-  if (innerHTML) {element.innerHTML = innerHTML;}
+  if (className) {
+    element.className = className;
+  }
+  if (innerHTML) {
+    element.innerHTML = innerHTML;
+  }
   return element;
 }
 
@@ -100,9 +104,15 @@ export function getTimeAgo(timestamp) {
   const date = new Date(timestamp);
   const diffInSeconds = Math.floor((now - date) / 1000);
 
-  if (diffInSeconds < 60) {return "Just now";}
-  if (diffInSeconds < 3600) {return `${Math.floor(diffInSeconds / 60)}m ago`;}
-  if (diffInSeconds < 86400) {return `${Math.floor(diffInSeconds / 3600)}h ago`;}
+  if (diffInSeconds < 60) {
+    return "Just now";
+  }
+  if (diffInSeconds < 3600) {
+    return `${Math.floor(diffInSeconds / 60)}m ago`;
+  }
+  if (diffInSeconds < 86400) {
+    return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  }
   return `${Math.floor(diffInSeconds / 86400)}d ago`;
 }
 
@@ -138,7 +148,9 @@ export function validateLength(value, minLength, maxLength, fieldName) {
 
 export function showFieldError(fieldId, message) {
   const field = document.getElementById(fieldId);
-  if (!field) {return;}
+  if (!field) {
+    return;
+  }
 
   clearFieldState(fieldId);
   field.classList.add("error");
@@ -149,7 +161,9 @@ export function showFieldError(fieldId, message) {
 
 export function showFieldSuccess(fieldId) {
   const field = document.getElementById(fieldId);
-  if (!field) {return;}
+  if (!field) {
+    return;
+  }
 
   clearFieldState(fieldId);
   field.classList.add("success");
@@ -157,7 +171,9 @@ export function showFieldSuccess(fieldId) {
 
 export function clearFieldState(fieldId) {
   const field = document.getElementById(fieldId);
-  if (!field) {return;}
+  if (!field) {
+    return;
+  }
 
   field.classList.remove("error", "success");
   const existingError = field.parentNode.querySelector(".field-error");
@@ -168,7 +184,9 @@ export function clearFieldState(fieldId) {
 
 export function getFormData(formId) {
   const form = document.getElementById(formId);
-  if (!form) {return null;}
+  if (!form) {
+    return null;
+  }
 
   const formData = new FormData(form);
   const data = {};
@@ -185,7 +203,7 @@ export function getFormData(formId) {
 // These are kept for backward compatibility but will be deprecated
 // Import from '../services/storage-service-unified.js' instead
 
-import { storageService } from '../services/storage-service-unified.js';
+import { storageService } from "../services/storage-service-unified.js";
 
 /**
  * @deprecated Use storageService.set() from storage-service-unified.js instead
@@ -249,7 +267,9 @@ export function kebabCase(str) {
 }
 
 export function truncate(str, length = 50, suffix = "...") {
-  if (str.length <= length) {return str;}
+  if (str.length <= length) {
+    return str;
+  }
   return str.substring(0, length) + suffix;
 }
 
@@ -306,13 +326,17 @@ export function throttle(func, limit) {
 // ================================================================
 
 export function showLoading(element, text = "Loading...") {
-  if (!element) {return;}
+  if (!element) {
+    return;
+  }
   element.innerHTML = `<span aria-hidden="true">⏳</span> ${text}`;
   element.disabled = true;
 }
 
 export function hideLoading(element, originalText) {
-  if (!element) {return;}
+  if (!element) {
+    return;
+  }
   element.innerHTML = originalText;
   element.disabled = false;
 }

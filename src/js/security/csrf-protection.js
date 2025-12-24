@@ -3,18 +3,18 @@
  * Generates and manages CSRF tokens for secure API requests
  */
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 class CSRFProtection {
   constructor() {
     this.token = null;
-    this.tokenKey = '__csrf_token';
-    this.headerName = 'X-CSRF-Token';
+    this.tokenKey = "__csrf_token";
+    this.headerName = "X-CSRF-Token";
 
     // Generate token on initialization
     this.generateToken();
 
-    logger.debug('[CSRF] Protection initialized');
+    logger.debug("[CSRF] Protection initialized");
   }
 
   /**
@@ -28,17 +28,17 @@ class CSRFProtection {
 
     // Convert to hex string
     this.token = Array.from(array)
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
 
     // Store in sessionStorage (not localStorage to limit scope to session)
     try {
       sessionStorage.setItem(this.tokenKey, this.token);
     } catch (error) {
-      logger.warn('[CSRF] Could not store token in sessionStorage:', error);
+      logger.warn("[CSRF] Could not store token in sessionStorage:", error);
     }
 
-    logger.debug('[CSRF] Token generated');
+    logger.debug("[CSRF] Token generated");
     return this.token;
   }
 
@@ -56,7 +56,10 @@ class CSRFProtection {
     try {
       this.token = sessionStorage.getItem(this.tokenKey);
     } catch (error) {
-      logger.warn('[CSRF] Could not retrieve token from sessionStorage:', error);
+      logger.warn(
+        "[CSRF] Could not retrieve token from sessionStorage:",
+        error,
+      );
     }
 
     // Generate new token if none exists
@@ -72,7 +75,7 @@ class CSRFProtection {
    * Should be called periodically or after sensitive operations
    */
   rotateToken() {
-    logger.debug('[CSRF] Rotating token');
+    logger.debug("[CSRF] Rotating token");
     this.generateToken();
   }
 
@@ -80,12 +83,12 @@ class CSRFProtection {
    * Clear the CSRF token (on logout)
    */
   clearToken() {
-    logger.debug('[CSRF] Clearing token');
+    logger.debug("[CSRF] Clearing token");
     this.token = null;
     try {
       sessionStorage.removeItem(this.tokenKey);
     } catch (error) {
-      logger.warn('[CSRF] Could not remove token from sessionStorage:', error);
+      logger.warn("[CSRF] Could not remove token from sessionStorage:", error);
     }
   }
 
@@ -96,12 +99,12 @@ class CSRFProtection {
   getHeaders() {
     const token = this.getToken();
     if (!token) {
-      logger.warn('[CSRF] No token available for request');
+      logger.warn("[CSRF] No token available for request");
       return {};
     }
 
     return {
-      [this.headerName]: token
+      [this.headerName]: token,
     };
   }
 
@@ -114,7 +117,7 @@ class CSRFProtection {
     const token = this.getToken();
 
     if (!token) {
-      logger.warn('[CSRF] No token available for request');
+      logger.warn("[CSRF] No token available for request");
       return options;
     }
 
@@ -135,7 +138,7 @@ class CSRFProtection {
    * @returns {boolean} True if method requires CSRF protection
    */
   requiresProtection(method) {
-    const protectedMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+    const protectedMethods = ["POST", "PUT", "DELETE", "PATCH"];
     return protectedMethods.includes(method.toUpperCase());
   }
 
@@ -174,11 +177,11 @@ class CSRFProtection {
     const token = this.getToken();
 
     if (!token) {
-      logger.warn('[CSRF] No token available for form data');
+      logger.warn("[CSRF] No token available for form data");
       return formData;
     }
 
-    formData.append('csrf_token', token);
+    formData.append("csrf_token", token);
     return formData;
   }
 
@@ -199,11 +202,11 @@ const csrfProtection = new CSRFProtection();
 export { csrfProtection, CSRFProtection };
 
 // Make available globally for non-module scripts
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.csrfProtection = csrfProtection;
 }
 
 // Export default
 export default csrfProtection;
 
-logger.debug('[CSRF] Protection service loaded');
+logger.debug("[CSRF] Protection service loaded");

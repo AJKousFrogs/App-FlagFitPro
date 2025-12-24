@@ -365,7 +365,7 @@ html[data-theme="light"] .nav-item.active {
   .tournament-actions {
     flex-direction: column;
   }
-  
+
   .tournament-actions .btn {
     width: 100%;
   }
@@ -612,12 +612,12 @@ html[data-theme="light"] .nav-item.active {
   .tournaments-grid {
     grid-template-columns: 1fr !important;
   }
-  
+
   .tournament-tabs {
     overflow-x: auto;
     padding-bottom: var(--space-2);
   }
-  
+
   .tab-button {
     white-space: nowrap;
   }

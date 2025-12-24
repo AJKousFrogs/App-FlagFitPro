@@ -245,15 +245,27 @@ class ScheduleBuilderModal extends Modal {
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
-    
+
     // Get first day of month and number of days
     const firstDay = new Date(currentYear, currentMonth, 1).getDay();
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"];
+
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    
+
     let html = `
       <div class="calendar-header">
         <button type="button" class="calendar-nav-btn" id="prev-month-btn">
@@ -268,22 +280,25 @@ class ScheduleBuilderModal extends Modal {
       </div>
       <div class="calendar-grid">
         <div class="calendar-weekdays">
-          ${dayNames.map(day => `<div class="calendar-weekday">${day}</div>`).join("")}
+          ${dayNames.map((day) => `<div class="calendar-weekday">${day}</div>`).join("")}
         </div>
         <div class="calendar-days">
     `;
-    
+
     // Empty cells for days before month starts
     for (let i = 0; i < firstDay; i++) {
       html += '<div class="calendar-day empty"></div>';
     }
-    
+
     // Days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
       const isSelected = this.selectedGameDays.has(dateStr);
-      const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-      
+      const isToday =
+        day === today.getDate() &&
+        currentMonth === today.getMonth() &&
+        currentYear === today.getFullYear();
+
       html += `
         <div class="calendar-day ${isSelected ? "selected" : ""} ${isToday ? "today" : ""}" 
              data-date="${dateStr}" 
@@ -293,12 +308,12 @@ class ScheduleBuilderModal extends Modal {
         </div>
       `;
     }
-    
+
     html += `
         </div>
       </div>
     `;
-    
+
     return html;
   }
 
@@ -310,7 +325,7 @@ class ScheduleBuilderModal extends Modal {
     const year = today.getFullYear();
     const month = today.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
+
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       if (date.getDay() === dayOfWeek) {
@@ -351,7 +366,9 @@ class ScheduleBuilderModal extends Modal {
    * Set up form-specific event handlers
    */
   setupFormEvents() {
-    if (!this.modalElement) {return;}
+    if (!this.modalElement) {
+      return;
+    }
 
     // Tab switching
     const tabs = this.modalElement.querySelectorAll(".schedule-tab");
@@ -377,7 +394,7 @@ class ScheduleBuilderModal extends Modal {
         if (dayInput) {
           dayInput.value = gameDay === "null" ? "" : gameDay;
         }
-        
+
         // Update calendar if selecting recurring day
         if (gameDay !== "null") {
           const dayMap = { saturday: 6, sunday: 0 };
@@ -422,7 +439,7 @@ class ScheduleBuilderModal extends Modal {
    */
   switchView(view) {
     this.currentView = view;
-    
+
     // Update tabs
     const tabs = this.modalElement.querySelectorAll(".schedule-tab");
     tabs.forEach((tab) => {
@@ -432,7 +449,7 @@ class ScheduleBuilderModal extends Modal {
     // Update views
     const manualView = this.modalElement.querySelector("#manual-view");
     const uploadView = this.modalElement.querySelector("#upload-view");
-    
+
     if (manualView) {
       manualView.style.display = view === "manual" ? "block" : "none";
     }
@@ -451,7 +468,9 @@ class ScheduleBuilderModal extends Modal {
    */
   setupCalendarEvents() {
     const calendar = this.modalElement.querySelector("#game-day-calendar");
-    if (!calendar) {return;}
+    if (!calendar) {
+      return;
+    }
 
     // Day click handlers
     const dayElements = calendar.querySelectorAll(".calendar-day:not(.empty)");
@@ -465,7 +484,7 @@ class ScheduleBuilderModal extends Modal {
             this.selectedGameDays.add(date);
           }
           this.updateCalendarDisplay();
-          
+
           // Update hidden input
           const datesInput = document.getElementById("selected-game-dates");
           if (datesInput) {
@@ -478,14 +497,14 @@ class ScheduleBuilderModal extends Modal {
     // Month navigation (simplified - would need full implementation for multi-month)
     const prevBtn = calendar.querySelector("#prev-month-btn");
     const nextBtn = calendar.querySelector("#next-month-btn");
-    
+
     if (prevBtn) {
       prevBtn.addEventListener("click", () => {
         // TODO: Implement month navigation
         console.log("Previous month");
       });
     }
-    
+
     if (nextBtn) {
       nextBtn.addEventListener("click", () => {
         // TODO: Implement month navigation
@@ -499,7 +518,9 @@ class ScheduleBuilderModal extends Modal {
    */
   updateCalendarDisplay() {
     const calendar = this.modalElement.querySelector("#game-day-calendar");
-    if (!calendar) {return;}
+    if (!calendar) {
+      return;
+    }
 
     const dayElements = calendar.querySelectorAll(".calendar-day:not(.empty)");
     dayElements.forEach((dayEl) => {
@@ -530,7 +551,9 @@ class ScheduleBuilderModal extends Modal {
     const browseBtn = this.modalElement.querySelector("#browse-files-btn");
     const removeBtn = this.modalElement.querySelector("#remove-file-btn");
 
-    if (!uploadArea || !fileInput || !browseBtn) {return;}
+    if (!uploadArea || !fileInput || !browseBtn) {
+      return;
+    }
 
     // Browse button
     browseBtn.addEventListener("click", () => {
@@ -558,7 +581,7 @@ class ScheduleBuilderModal extends Modal {
     uploadArea.addEventListener("drop", (e) => {
       e.preventDefault();
       uploadArea.classList.remove("dragover");
-      
+
       const file = e.dataTransfer.files[0];
       if (file) {
         this.handleFileUpload(file);
@@ -587,7 +610,9 @@ class ScheduleBuilderModal extends Modal {
     const fileStats = this.modalElement.querySelector("#uploaded-file-stats");
     const uploadPreview = this.modalElement.querySelector("#upload-preview");
 
-    if (!fileInfo || !fileName || !fileStats) {return;}
+    if (!fileInfo || !fileName || !fileStats) {
+      return;
+    }
 
     // Show loading state
     fileName.textContent = `Processing ${file.name}...`;
@@ -607,14 +632,18 @@ class ScheduleBuilderModal extends Modal {
 
       // Show preview
       if (uploadPreview) {
-        let previewHTML = "<div style='margin-top: var(--space-3);'><strong>Preview:</strong><ul style='margin-top: var(--space-2); padding-left: var(--space-4);'>";
-        
+        let previewHTML =
+          "<div style='margin-top: var(--space-3);'><strong>Preview:</strong><ul style='margin-top: var(--space-2); padding-left: var(--space-4);'>";
+
         if (schedule.gameDays && schedule.gameDays.length > 0) {
           previewHTML += "<li><strong>Game Days:</strong> ";
-          previewHTML += schedule.gameDays.slice(0, 5).map(gd => {
-            const date = new Date(gd.date);
-            return date.toLocaleDateString();
-          }).join(", ");
+          previewHTML += schedule.gameDays
+            .slice(0, 5)
+            .map((gd) => {
+              const date = new Date(gd.date);
+              return date.toLocaleDateString();
+            })
+            .join(", ");
           if (schedule.gameDays.length > 5) {
             previewHTML += ` (+${schedule.gameDays.length - 5} more)`;
           }
@@ -638,13 +667,12 @@ class ScheduleBuilderModal extends Modal {
         });
         this.updateCalendarDisplay();
       }
-
     } catch (error) {
       console.error("Error parsing file:", error);
       fileName.textContent = `Error processing ${file.name}`;
       fileStats.textContent = error.message || "Invalid file format";
       fileStats.style.color = "var(--color-error, #ef4444)";
-      
+
       if (uploadPreview) {
         uploadPreview.innerHTML = `<div style='color: var(--color-error, #ef4444); margin-top: var(--space-2);'>${error.message}</div>`;
       }
@@ -662,10 +690,14 @@ class ScheduleBuilderModal extends Modal {
 
     // Build schedule object
     const schedule = {
-      timezone: timezoneEl ? timezoneEl.value : Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timezone: timezoneEl
+        ? timezoneEl.value
+        : Intl.DateTimeFormat().resolvedOptions().timeZone,
       preferences: {
         includeMobility: includeMobilityEl ? includeMobilityEl.checked : true,
-        includeFoamRolling: includeMobilityEl ? includeMobilityEl.checked : true,
+        includeFoamRolling: includeMobilityEl
+          ? includeMobilityEl.checked
+          : true,
       },
     };
 
@@ -676,8 +708,8 @@ class ScheduleBuilderModal extends Modal {
       schedule.workouts = this.uploadedSchedule.workouts || [];
     } else if (selectedGameDatesEl && selectedGameDatesEl.value) {
       // Calendar-selected dates
-      const dates = selectedGameDatesEl.value.split(",").filter(d => d);
-      schedule.gameDays = dates.map(date => {
+      const dates = selectedGameDatesEl.value.split(",").filter((d) => d);
+      schedule.gameDays = dates.map((date) => {
         const d = new Date(date);
         return {
           date: date,
@@ -689,9 +721,11 @@ class ScheduleBuilderModal extends Modal {
       schedule.gameDay = selectedGameDayEl.value;
       const dayMap = { saturday: 6, sunday: 0 };
       if (dayMap[schedule.gameDay]) {
-        schedule.gameDays = [{
-          dayOfWeek: dayMap[schedule.gameDay],
-        }];
+        schedule.gameDays = [
+          {
+            dayOfWeek: dayMap[schedule.gameDay],
+          },
+        ];
       }
     } else {
       schedule.gameDay = null;

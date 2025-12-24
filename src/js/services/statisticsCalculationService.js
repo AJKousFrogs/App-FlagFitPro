@@ -11,7 +11,7 @@ class StatisticsCalculationService {
   calculateCompletionPercentage(completions, attempts) {
     // Validation
     if (!Number.isInteger(completions) || !Number.isInteger(attempts)) {
-      throw new Error('Completion stats must be integers');
+      throw new Error("Completion stats must be integers");
     }
 
     if (attempts === 0) {
@@ -19,11 +19,11 @@ class StatisticsCalculationService {
     }
 
     if (completions > attempts) {
-      throw new Error('Completions cannot exceed attempts');
+      throw new Error("Completions cannot exceed attempts");
     }
 
     if (completions < 0 || attempts < 0) {
-      throw new Error('Stats cannot be negative');
+      throw new Error("Stats cannot be negative");
     }
 
     // Precise calculation with proper rounding
@@ -41,23 +41,23 @@ class StatisticsCalculationService {
   calculateDropRate(drops, targets) {
     // Validation
     if (!Number.isInteger(drops) || !Number.isInteger(targets)) {
-      throw new Error('Drop stats must be integers');
+      throw new Error("Drop stats must be integers");
     }
 
     if (targets === 0) {
       return {
         rate: 0,
-        severity: 'low',
-        recommendation: 'No targets recorded'
+        severity: "low",
+        recommendation: "No targets recorded",
       };
     }
 
     if (drops > targets) {
-      throw new Error('Drops cannot exceed targets');
+      throw new Error("Drops cannot exceed targets");
     }
 
     if (drops < 0 || targets < 0) {
-      throw new Error('Stats cannot be negative');
+      throw new Error("Stats cannot be negative");
     }
 
     // Calculate drop rate with precision
@@ -69,17 +69,19 @@ class StatisticsCalculationService {
     let recommendation;
 
     if (rounded > 15) {
-      severity = 'critical';
-      recommendation = 'Critical drop rate. Focus on hand placement and concentration drills.';
+      severity = "critical";
+      recommendation =
+        "Critical drop rate. Focus on hand placement and concentration drills.";
     } else if (rounded > 10) {
-      severity = 'high';
-      recommendation = 'High drop rate. Implement technique improvement program.';
+      severity = "high";
+      recommendation =
+        "High drop rate. Implement technique improvement program.";
     } else if (rounded > 5) {
-      severity = 'medium';
-      recommendation = 'Moderate drop rate. Maintain current technique focus.';
+      severity = "medium";
+      recommendation = "Moderate drop rate. Maintain current technique focus.";
     } else {
-      severity = 'low';
-      recommendation = 'Excellent catch consistency. Maintain current form.';
+      severity = "low";
+      recommendation = "Excellent catch consistency. Maintain current form.";
     }
 
     return { rate: rounded, severity, recommendation };
@@ -91,7 +93,7 @@ class StatisticsCalculationService {
   calculateFlagPullSuccessRate(successes, attempts) {
     // Validation
     if (!Number.isInteger(successes) || !Number.isInteger(attempts)) {
-      throw new Error('Pull stats must be integers');
+      throw new Error("Pull stats must be integers");
     }
 
     if (attempts === 0) {
@@ -99,12 +101,12 @@ class StatisticsCalculationService {
         rate: 0,
         confidence95: [0, 0],
         sampleSizeAdequate: false,
-        defensiveGrade: 'Insufficient Data'
+        defensiveGrade: "Insufficient Data",
       };
     }
 
     if (successes > attempts) {
-      throw new Error('Successes cannot exceed attempts');
+      throw new Error("Successes cannot exceed attempts");
     }
 
     // Calculate rate
@@ -116,32 +118,37 @@ class StatisticsCalculationService {
     const z = 1.96; // 95% confidence
     const denominator = 1 + (z * z) / attempts;
     const center = (p + (z * z) / (2 * attempts)) / denominator;
-    const margin = (z * Math.sqrt(p * (1 - p) / attempts + (z * z) / (4 * attempts * attempts))) / denominator;
+    const margin =
+      (z *
+        Math.sqrt(
+          (p * (1 - p)) / attempts + (z * z) / (4 * attempts * attempts),
+        )) /
+      denominator;
 
     const lowerBound = Math.max(0, (center - margin) * 100);
     const upperBound = Math.min(100, (center + margin) * 100);
     const confidence95 = [
       Number(lowerBound.toFixed(1)),
-      Number(upperBound.toFixed(1))
+      Number(upperBound.toFixed(1)),
     ];
 
     // Sample size adequacy (Cochran's rule: n*p >= 5 and n*(1-p) >= 5)
-    const sampleSizeAdequate = (attempts * p >= 5) && (attempts * (1 - p) >= 5);
+    const sampleSizeAdequate = attempts * p >= 5 && attempts * (1 - p) >= 5;
 
     // Defensive grading
     let defensiveGrade;
-    if (rounded >= 90) defensiveGrade = 'A+ (Elite)';
-    else if (rounded >= 85) defensiveGrade = 'A (Excellent)';
-    else if (rounded >= 80) defensiveGrade = 'B (Very Good)';
-    else if (rounded >= 75) defensiveGrade = 'C (Good)';
-    else if (rounded >= 70) defensiveGrade = 'D (Adequate)';
-    else defensiveGrade = 'F (Needs Improvement)';
+    if (rounded >= 90) defensiveGrade = "A+ (Elite)";
+    else if (rounded >= 85) defensiveGrade = "A (Excellent)";
+    else if (rounded >= 80) defensiveGrade = "B (Very Good)";
+    else if (rounded >= 75) defensiveGrade = "C (Good)";
+    else if (rounded >= 70) defensiveGrade = "D (Adequate)";
+    else defensiveGrade = "F (Needs Improvement)";
 
     return {
       rate: rounded,
       confidence95,
       sampleSizeAdequate,
-      defensiveGrade
+      defensiveGrade,
     };
   }
 
@@ -156,19 +163,24 @@ class StatisticsCalculationService {
         currentStreak: 0,
         longestStreak: 0,
         stretchDates: [],
-        nextOpportunity: tomorrow
+        nextOpportunity: tomorrow,
       };
     }
 
     // Normalize all dates to UTC midnight for consistent comparison
     const normalizeToUTCMidnight = (date) => {
       const d = new Date(date);
-      const normalized = new Date(Date.UTC(
-        d.getUTCFullYear(),
-        d.getUTCMonth(),
-        d.getUTCDate(),
-        0, 0, 0, 0
-      ));
+      const normalized = new Date(
+        Date.UTC(
+          d.getUTCFullYear(),
+          d.getUTCMonth(),
+          d.getUTCDate(),
+          0,
+          0,
+          0,
+          0,
+        ),
+      );
       return normalized;
     };
 
@@ -176,11 +188,11 @@ class StatisticsCalculationService {
     const workoutDates = Array.from(
       new Set(
         workouts
-          .map(w => normalizeToUTCMidnight(new Date(w.date)))
-          .map(d => d.getTime())
-      )
+          .map((w) => normalizeToUTCMidnight(new Date(w.date)))
+          .map((d) => d.getTime()),
+      ),
     )
-      .map(ts => new Date(ts))
+      .map((ts) => new Date(ts))
       .sort((a, b) => b.getTime() - a.getTime()); // Newest first
 
     const refNormalized = normalizeToUTCMidnight(referenceDate);
@@ -191,7 +203,8 @@ class StatisticsCalculationService {
 
     for (const workoutDate of workoutDates) {
       const dayDifference =
-        (expectedDate.getTime() - workoutDate.getTime()) / (1000 * 60 * 60 * 24);
+        (expectedDate.getTime() - workoutDate.getTime()) /
+        (1000 * 60 * 60 * 24);
 
       // Allow for 1-day gaps (rest days) but not 2+ days
       if (dayDifference === 0) {
@@ -227,10 +240,11 @@ class StatisticsCalculationService {
           if (currentLength > longestStreak) {
             longestStreak = currentLength;
           }
-          if (stretchStart && currentLength >= 3) { // Only track stretches of 3+
+          if (stretchStart && currentLength >= 3) {
+            // Only track stretches of 3+
             stretchDates.push({
               start: new Date(workoutDates[i + 1]),
-              end: stretchStart
+              end: stretchStart,
             });
           }
           currentLength = 1;
@@ -244,7 +258,7 @@ class StatisticsCalculationService {
     if (stretchStart && currentLength >= 3) {
       stretchDates.push({
         start: new Date(workoutDates[workoutDates.length - 1]),
-        end: stretchStart
+        end: stretchStart,
       });
     }
 
@@ -256,7 +270,7 @@ class StatisticsCalculationService {
       currentStreak,
       longestStreak,
       stretchDates: stretchDates.reverse(), // Oldest first
-      nextOpportunity
+      nextOpportunity,
     };
   }
 
@@ -279,7 +293,7 @@ class StatisticsCalculationService {
     weekEnd.setHours(23, 59, 59, 999);
 
     // Filter workouts within week
-    const weekWorkouts = workouts.filter(w => {
+    const weekWorkouts = workouts.filter((w) => {
       const workoutDate = new Date(w.date);
       return workoutDate >= weekStart && workoutDate <= weekEnd;
     });
@@ -290,7 +304,7 @@ class StatisticsCalculationService {
     let estimatedCount = 0;
     const intensityPoints = [];
 
-    weekWorkouts.forEach(workout => {
+    weekWorkouts.forEach((workout) => {
       if (workout.duration) {
         totalMinutes += workout.duration * 60; // Convert hours to minutes
         recordedCount++;
@@ -308,25 +322,31 @@ class StatisticsCalculationService {
 
     // Calculate data quality
     const totalWorkouts = weekWorkouts.length;
-    const recordedPercentage = totalWorkouts > 0 ? recordedCount / totalWorkouts : 0;
+    const recordedPercentage =
+      totalWorkouts > 0 ? recordedCount / totalWorkouts : 0;
     let dataQuality;
 
     if (recordedPercentage >= 0.9) {
-      dataQuality = 'complete';
+      dataQuality = "complete";
     } else if (recordedPercentage >= 0.6) {
-      dataQuality = 'partial';
+      dataQuality = "partial";
     } else {
-      dataQuality = 'poor';
+      dataQuality = "poor";
     }
 
     // Calculate variance in load
-    const avgIntensity = intensityPoints.length > 0
-      ? intensityPoints.reduce((a, b) => a + b) / intensityPoints.length
-      : 0;
+    const avgIntensity =
+      intensityPoints.length > 0
+        ? intensityPoints.reduce((a, b) => a + b) / intensityPoints.length
+        : 0;
 
-    const variance = intensityPoints.length > 1
-      ? intensityPoints.reduce((sum, intensity) => sum + Math.pow(intensity - avgIntensity, 2), 0) / intensityPoints.length
-      : 0;
+    const variance =
+      intensityPoints.length > 1
+        ? intensityPoints.reduce(
+            (sum, intensity) => sum + Math.pow(intensity - avgIntensity, 2),
+            0,
+          ) / intensityPoints.length
+        : 0;
 
     const totalHours = Math.round((totalMinutes / 60) * 10) / 10;
 
@@ -340,8 +360,8 @@ class StatisticsCalculationService {
       weeklyLoad: {
         totalIntensityPoints: intensityPoints.reduce((a, b) => a + b, 0),
         avgIntensityPerSession: avgIntensity,
-        varianceInLoad: Number(Math.sqrt(variance).toFixed(2))
-      }
+        varianceInLoad: Number(Math.sqrt(variance).toFixed(2)),
+      },
     };
   }
 
@@ -350,13 +370,13 @@ class StatisticsCalculationService {
    */
   getDefaultDurationByType(type) {
     const defaults = {
-      'speed': 45,
-      'strength': 60,
-      'agility': 30,
-      'endurance': 50,
-      'flag_practice': 60,
-      'technique': 45,
-      'training': 45
+      speed: 45,
+      strength: 60,
+      agility: 30,
+      endurance: 50,
+      flag_practice: 60,
+      technique: 45,
+      training: 45,
     };
     return defaults[type] || 45; // Explicit defaults per type
   }
@@ -366,20 +386,20 @@ class StatisticsCalculationService {
    */
   getIntensityScore(type, intensity) {
     const baseScores = {
-      'speed': 8,
-      'strength': 7,
-      'agility': 8,
-      'endurance': 6,
-      'flag_practice': 8,
-      'technique': 5,
-      'training': 6
+      speed: 8,
+      strength: 7,
+      agility: 8,
+      endurance: 6,
+      flag_practice: 8,
+      technique: 5,
+      training: 6,
     };
 
     const base = baseScores[type] || 6;
 
-    if (intensity === 'high') return base;
-    if (intensity === 'medium') return base * 0.7;
-    if (intensity === 'low') return base * 0.5;
+    if (intensity === "high") return base;
+    if (intensity === "medium") return base * 0.7;
+    if (intensity === "low") return base * 0.5;
 
     return base;
   }
@@ -387,4 +407,3 @@ class StatisticsCalculationService {
 
 // Export singleton instance
 export const statisticsCalculationService = new StatisticsCalculationService();
-

@@ -3,8 +3,8 @@
  * Displays achievements on the dashboard
  */
 
-(function() {
-  'use strict';
+(function () {
+  "use strict";
 
   /**
    * Create and render achievements widget
@@ -12,14 +12,16 @@
   function renderAchievementsWidget(containerId) {
     // Wait for achievements service to be available
     if (!window.achievementsService) {
-      console.log('[Achievements Widget] Waiting for achievements service...');
+      console.log("[Achievements Widget] Waiting for achievements service...");
       setTimeout(() => renderAchievementsWidget(containerId), 100);
       return;
     }
 
     const container = document.getElementById(containerId);
     if (!container) {
-      console.error(`[Achievements Widget] Container #${containerId} not found`);
+      console.error(
+        `[Achievements Widget] Container #${containerId} not found`,
+      );
       return;
     }
 
@@ -30,8 +32,8 @@
     const progress = service.getProgress();
 
     // Create widget HTML
-    const widget = document.createElement('div');
-    widget.className = 'achievements-widget';
+    const widget = document.createElement("div");
+    widget.className = "achievements-widget";
     widget.innerHTML = `
       <div class="achievements-header">
         <div class="achievements-title">
@@ -66,10 +68,10 @@
     addAchievementsStyles();
 
     // Clear and append
-    container.innerHTML = '';
+    container.innerHTML = "";
     container.appendChild(widget);
 
-    console.log('[Achievements Widget] Rendered successfully');
+    console.log("[Achievements Widget] Rendered successfully");
   }
 
   /**
@@ -78,24 +80,32 @@
   function renderAchievementsList(achievements) {
     // Sort: unlocked first, then by points
     const sorted = achievements.sort((a, b) => {
-      if (a.unlocked && !b.unlocked) {return -1;}
-      if (!a.unlocked && b.unlocked) {return 1;}
+      if (a.unlocked && !b.unlocked) {
+        return -1;
+      }
+      if (!a.unlocked && b.unlocked) {
+        return 1;
+      }
       return b.points - a.points;
     });
 
     // Show top 6 achievements
     const topAchievements = sorted.slice(0, 6);
 
-    return topAchievements.map(achievement => `
-      <div class="achievement-badge ${achievement.unlocked ? 'unlocked' : 'locked'}"
+    return topAchievements
+      .map(
+        (achievement) => `
+      <div class="achievement-badge ${achievement.unlocked ? "unlocked" : "locked"}"
            title="${achievement.description}">
         <div class="achievement-icon">${achievement.icon}</div>
         <div class="achievement-name">${achievement.name}</div>
         <div class="achievement-points">${achievement.points} pts</div>
-        ${achievement.unlocked ? '<div class="achievement-check">✓</div>' : ''}
-        ${!achievement.unlocked ? '<div class="achievement-lock">🔒</div>' : ''}
+        ${achievement.unlocked ? '<div class="achievement-check">✓</div>' : ""}
+        ${!achievement.unlocked ? '<div class="achievement-lock">🔒</div>' : ""}
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   /**
@@ -103,12 +113,12 @@
    */
   function addAchievementsStyles() {
     // Check if styles already added
-    if (document.getElementById('achievements-widget-styles')) {
+    if (document.getElementById("achievements-widget-styles")) {
       return;
     }
 
-    const style = document.createElement('style');
-    style.id = 'achievements-widget-styles';
+    const style = document.createElement("style");
+    style.id = "achievements-widget-styles";
     style.textContent = `
       .achievements-widget {
         background: var(--surface-primary, #ffffff);
@@ -346,15 +356,23 @@
   /**
    * Show all achievements in a modal
    */
-  window.showAllAchievements = function() {
-    if (!window.achievementsService) {return;}
+  window.showAllAchievements = function () {
+    if (!window.achievementsService) {
+      return;
+    }
 
     const service = window.achievementsService;
-    const categories = ['wellness', 'training', 'performance', 'social', 'special'];
+    const categories = [
+      "wellness",
+      "training",
+      "performance",
+      "social",
+      "special",
+    ];
 
     // Create modal
-    const modal = document.createElement('div');
-    modal.className = 'achievements-modal';
+    const modal = document.createElement("div");
+    modal.className = "achievements-modal";
     modal.innerHTML = `
       <div class="achievements-modal-overlay" onclick="this.parentElement.remove()"></div>
       <div class="achievements-modal-content">
@@ -378,33 +396,42 @@
           </div>
         </div>
 
-        ${categories.map(category => {
-          const categoryAchievements = service.getAchievementsByCategory(category);
-          if (categoryAchievements.length === 0) {return '';}
+        ${categories
+          .map((category) => {
+            const categoryAchievements =
+              service.getAchievementsByCategory(category);
+            if (categoryAchievements.length === 0) {
+              return "";
+            }
 
-          return `
+            return `
             <div class="category-section">
               <h3 class="category-title">${category.charAt(0).toUpperCase() + category.slice(1)}</h3>
               <div class="achievements-grid">
-                ${categoryAchievements.map(a => `
-                  <div class="achievement-badge ${a.unlocked ? 'unlocked' : 'locked'}">
+                ${categoryAchievements
+                  .map(
+                    (a) => `
+                  <div class="achievement-badge ${a.unlocked ? "unlocked" : "locked"}">
                     <div class="achievement-icon">${a.icon}</div>
                     <div class="achievement-name">${a.name}</div>
                     <div class="achievement-description">${a.description}</div>
                     <div class="achievement-points">${a.points} pts</div>
-                    ${a.unlocked ? '<div class="achievement-check">✓</div>' : ''}
-                    ${!a.unlocked ? '<div class="achievement-lock">🔒</div>' : ''}
+                    ${a.unlocked ? '<div class="achievement-check">✓</div>' : ""}
+                    ${!a.unlocked ? '<div class="achievement-lock">🔒</div>' : ""}
                   </div>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </div>
             </div>
           `;
-        }).join('')}
+          })
+          .join("")}
       </div>
     `;
 
     // Add modal styles
-    const modalStyles = document.createElement('style');
+    const modalStyles = document.createElement("style");
     modalStyles.textContent = `
       .achievements-modal {
         position: fixed;
@@ -527,20 +554,20 @@
   };
 
   // Auto-render widget if container exists
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      if (document.getElementById('achievements-widget-container')) {
-        renderAchievementsWidget('achievements-widget-container');
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      if (document.getElementById("achievements-widget-container")) {
+        renderAchievementsWidget("achievements-widget-container");
       }
     });
   } else {
-    if (document.getElementById('achievements-widget-container')) {
-      renderAchievementsWidget('achievements-widget-container');
+    if (document.getElementById("achievements-widget-container")) {
+      renderAchievementsWidget("achievements-widget-container");
     }
   }
 
   // Export for manual rendering
   window.renderAchievementsWidget = renderAchievementsWidget;
 
-  console.log('[Achievements Widget] Widget script loaded');
+  console.log("[Achievements Widget] Widget script loaded");
 })();

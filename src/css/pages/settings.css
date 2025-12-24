@@ -310,7 +310,7 @@
     font-size: var(--text-base);
   }
 
-    .form-input,
+  .form-input,
   .form-select,
   .select-input {
     font-size: var(--text-base); /* Ensure 16px on mobile */

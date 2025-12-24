@@ -342,7 +342,9 @@ export class LoadManagementService {
    * @returns {number} EWMA value
    */
   calculateEWMA(trainingHistory, timeConstant) {
-    if (trainingHistory.length === 0) {return 0;}
+    if (trainingHistory.length === 0) {
+      return 0;
+    }
 
     // Sort by date (oldest first)
     const sorted = [...trainingHistory].sort(
@@ -526,9 +528,15 @@ export class LoadManagementService {
    * @returns {string} Risk level
    */
   interpretRiskLevel(risk) {
-    if (risk < 0.2) {return "low";}
-    if (risk < 0.4) {return "moderate";}
-    if (risk < 0.7) {return "high";}
+    if (risk < 0.2) {
+      return "low";
+    }
+    if (risk < 0.4) {
+      return "moderate";
+    }
+    if (risk < 0.7) {
+      return "high";
+    }
     return "critical";
   }
 
@@ -617,7 +625,9 @@ export class LoadManagementService {
         this.getWeekStart(new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000)),
       );
 
-      if (previousWeekLoads.length === 0) {return 0;}
+      if (previousWeekLoads.length === 0) {
+        return 0;
+      }
 
       const currentTotal = currentWeekLoads.reduce(
         (sum, load) => sum + load,
@@ -628,7 +638,9 @@ export class LoadManagementService {
         0,
       );
 
-      if (previousTotal === 0) {return 0;}
+      if (previousTotal === 0) {
+        return 0;
+      }
 
       const percentChange = (currentTotal - previousTotal) / previousTotal;
 
@@ -751,7 +763,9 @@ export class LoadManagementService {
    * @returns {number} Mean value
    */
   calculateMean(values) {
-    if (values.length === 0) {return 0;}
+    if (values.length === 0) {
+      return 0;
+    }
     return values.reduce((sum, val) => sum + val, 0) / values.length;
   }
 
@@ -770,7 +784,9 @@ export class LoadManagementService {
    * @returns {number} Standard deviation
    */
   calculateStandardDeviation(values) {
-    if (values.length === 0) {return 0;}
+    if (values.length === 0) {
+      return 0;
+    }
     const mean = this.calculateMean(values);
     const variance =
       values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) /

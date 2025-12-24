@@ -217,9 +217,8 @@ class AuthManager {
 
     try {
       // First, try to restore Supabase session (this handles persistent sessions)
-      const { getSupabase, safeSupabaseQuery } = await import(
-        "./js/services/supabase-client.js"
-      );
+      const { getSupabase, safeSupabaseQuery } =
+        await import("./js/services/supabase-client.js");
       const supabase = getSupabase();
 
       if (supabase) {
@@ -385,9 +384,8 @@ class AuthManager {
       const normalizedEmail = email.trim().toLowerCase();
 
       // Import Supabase client
-      const { getSupabase, safeSupabaseQuery } = await import(
-        "./js/services/supabase-client.js"
-      );
+      const { getSupabase, safeSupabaseQuery } =
+        await import("./js/services/supabase-client.js");
       const supabase = getSupabase();
 
       if (!supabase) {
@@ -498,9 +496,8 @@ class AuthManager {
       }
 
       // Import Supabase client
-      const { getSupabase, safeSupabaseQuery } = await import(
-        "./js/services/supabase-client.js"
-      );
+      const { getSupabase, safeSupabaseQuery } =
+        await import("./js/services/supabase-client.js");
       const supabase = getSupabase();
 
       if (!supabase) {
@@ -557,9 +554,8 @@ class AuthManager {
   // Logout user
   async logout() {
     try {
-      const { getSupabase, safeSupabaseQuery } = await import(
-        "./js/services/supabase-client.js"
-      );
+      const { getSupabase, safeSupabaseQuery } =
+        await import("./js/services/supabase-client.js");
       const supabase = getSupabase();
 
       if (supabase) {
@@ -591,9 +587,8 @@ class AuthManager {
     try {
       this.showLoading(`Signing in with ${provider}...`);
 
-      const { getSupabase, safeSupabaseQuery } = await import(
-        "./js/services/supabase-client.js"
-      );
+      const { getSupabase, safeSupabaseQuery } =
+        await import("./js/services/supabase-client.js");
       const supabase = getSupabase();
 
       if (!supabase) {
@@ -670,9 +665,8 @@ class AuthManager {
 
           // If OAuth and role was pending, update user metadata
           if (isOAuth && pendingRole && !session.user.user_metadata?.role) {
-            const { getSupabase, safeSupabaseQuery } = await import(
-              "./js/services/supabase-client.js"
-            );
+            const { getSupabase, safeSupabaseQuery } =
+              await import("./js/services/supabase-client.js");
             const supabaseUpdate = getSupabase();
             if (supabaseUpdate) {
               await safeSupabaseQuery(
@@ -741,9 +735,8 @@ class AuthManager {
     try {
       this.showLoading("Sending verification email...");
 
-      const { getSupabase, safeSupabaseQuery } = await import(
-        "./js/services/supabase-client.js"
-      );
+      const { getSupabase, safeSupabaseQuery } =
+        await import("./js/services/supabase-client.js");
       const supabase = getSupabase();
 
       if (!supabase) {
@@ -849,9 +842,8 @@ class AuthManager {
 
           // Try to refresh session via Supabase
           try {
-            const { getSupabase, safeSupabaseQuery } = await import(
-              "./js/services/supabase-client.js"
-            );
+            const { getSupabase, safeSupabaseQuery } =
+              await import("./js/services/supabase-client.js");
             const supabase = getSupabase();
 
             if (supabase) {
@@ -909,9 +901,8 @@ class AuthManager {
         // JWT parsing failure - might be a Supabase token (not JWT)
         // Check if we have a valid Supabase session instead
         try {
-          const { getSupabase, safeSupabaseQuery } = await import(
-            "./js/services/supabase-client.js"
-          );
+          const { getSupabase, safeSupabaseQuery } =
+            await import("./js/services/supabase-client.js");
           const supabase = getSupabase();
 
           if (supabase) {
@@ -946,9 +937,8 @@ class AuthManager {
     // Second check: Try to restore from Supabase session if we don't have local auth
     if (!this.token || !this.user) {
       try {
-        const { getSupabase, safeSupabaseQuery } = await import(
-          "./js/services/supabase-client.js"
-        );
+        const { getSupabase, safeSupabaseQuery } =
+          await import("./js/services/supabase-client.js");
         const supabase = getSupabase();
 
         if (supabase) {

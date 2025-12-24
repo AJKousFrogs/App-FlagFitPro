@@ -10,17 +10,17 @@
  */
 function escapeHtml(str) {
   if (str === null || str === undefined) {
-    return '';
+    return "";
   }
 
   const text = String(str);
   const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;',
-    '/': '&#x2F;'
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
+    "/": "&#x2F;",
   };
 
   return text.replace(/[&<>"'/]/g, (char) => map[char]);
@@ -33,13 +33,13 @@ function escapeHtml(str) {
  */
 function sanitizeAttribute(attr) {
   if (attr === null || attr === undefined) {
-    return '';
+    return "";
   }
 
   // Remove any javascript: or data: URLs
   const str = String(attr);
   if (/^(javascript|data|vbscript):/i.test(str)) {
-    return '';
+    return "";
   }
 
   return escapeHtml(str);
@@ -52,7 +52,7 @@ function sanitizeAttribute(attr) {
  */
 function sanitizeUrl(url) {
   if (!url) {
-    return '';
+    return "";
   }
 
   const str = String(url).trim();
@@ -63,18 +63,18 @@ function sanitizeUrl(url) {
 
   if (hasProtocol && !safeProtocols.test(str)) {
     // Don't log the actual URL content in production for security
-    if (typeof logger !== 'undefined') {
-      logger.warn('[Sanitize] Blocked unsafe URL protocol');
+    if (typeof logger !== "undefined") {
+      logger.warn("[Sanitize] Blocked unsafe URL protocol");
     }
-    return '';
+    return "";
   }
 
   // Block javascript: and data: URLs (redundant check for safety)
   if (/^(javascript|data|vbscript):/i.test(str)) {
-    if (typeof logger !== 'undefined') {
-      logger.warn('[Sanitize] Blocked XSS URL attempt');
+    if (typeof logger !== "undefined") {
+      logger.warn("[Sanitize] Blocked XSS URL attempt");
     }
-    return '';
+    return "";
   }
 
   return str;
@@ -88,16 +88,16 @@ function sanitizeUrl(url) {
  * @param {string|Node} content - Text content or child node
  * @returns {HTMLElement} Safe DOM element
  */
-function createSafeElement(tag, attributes = {}, content = '') {
+function createSafeElement(tag, attributes = {}, content = "") {
   const element = document.createElement(tag);
 
   // Set attributes safely
   for (const [key, value] of Object.entries(attributes)) {
-    if (key === 'style' && typeof value === 'object') {
+    if (key === "style" && typeof value === "object") {
       Object.assign(element.style, value);
-    } else if (key === 'class' || key === 'className') {
+    } else if (key === "class" || key === "className") {
       element.className = value;
-    } else if (key === 'href' || key === 'src') {
+    } else if (key === "href" || key === "src") {
       element.setAttribute(key, sanitizeUrl(value));
     } else {
       element.setAttribute(key, sanitizeAttribute(value));
@@ -122,10 +122,10 @@ function createSafeElement(tag, attributes = {}, content = '') {
  */
 function sanitizeRichText(html) {
   if (!html) {
-    return '';
+    return "";
   }
 
-  const temp = document.createElement('div');
+  const temp = document.createElement("div");
   temp.textContent = html; // First escape everything
 
   // Then allow specific safe formatting
@@ -133,10 +133,10 @@ function sanitizeRichText(html) {
 
   // Allow safe tags: <b>, <i>, <em>, <strong>, <br>
   // This is a simple implementation - for production use DOMPurify
-  const allowedTags = ['b', 'i', 'em', 'strong', 'br'];
-  const tagPattern = new RegExp(`&lt;(/?)(${allowedTags.join('|')})&gt;`, 'gi');
+  const allowedTags = ["b", "i", "em", "strong", "br"];
+  const tagPattern = new RegExp(`&lt;(/?)(${allowedTags.join("|")})&gt;`, "gi");
 
-  sanitized = sanitized.replace(tagPattern, '<$1$2>');
+  sanitized = sanitized.replace(tagPattern, "<$1$2>");
 
   return sanitized;
 }
@@ -147,32 +147,32 @@ export {
   sanitizeAttribute,
   sanitizeUrl,
   createSafeElement,
-  sanitizeRichText
+  sanitizeRichText,
 };
 
 // Also export for CommonJS (if needed)
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     escapeHtml,
     sanitizeAttribute,
     sanitizeUrl,
     createSafeElement,
-    sanitizeRichText
+    sanitizeRichText,
   };
 }
 
 // Make available globally for non-module scripts
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.sanitize = {
     escapeHtml,
     sanitizeAttribute,
     sanitizeUrl,
     createSafeElement,
-    sanitizeRichText
+    sanitizeRichText,
   };
 }
 
 // Use logger if available (imported modules will have it)
-if (typeof logger !== 'undefined') {
-  logger.debug('[Sanitize] HTML sanitization utilities loaded');
+if (typeof logger !== "undefined") {
+  logger.debug("[Sanitize] HTML sanitization utilities loaded");
 }

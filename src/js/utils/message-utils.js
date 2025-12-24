@@ -22,9 +22,8 @@ export function showMessage(elementId, message, options = {}) {
 
   // Auto-hide logic
   const { autoHideDelay, isError } = options;
-  const delay = autoHideDelay !== undefined 
-    ? autoHideDelay 
-    : (isError ? 5000 : null);
+  const delay =
+    autoHideDelay !== undefined ? autoHideDelay : isError ? 5000 : null;
 
   if (delay !== null && delay > 0) {
     setTimeout(() => {
@@ -51,9 +50,9 @@ export function hideMessage(elementId) {
  * @param {number} autoHideDelay - Milliseconds before auto-hiding (default: 5000)
  */
 export function showError(elementId, message, autoHideDelay = 5000) {
-  showMessage(elementId, message, { 
-    autoHideDelay, 
-    isError: true 
+  showMessage(elementId, message, {
+    autoHideDelay,
+    isError: true,
   });
 }
 
@@ -64,9 +63,9 @@ export function showError(elementId, message, autoHideDelay = 5000) {
  * @param {number} autoHideDelay - Milliseconds before auto-hiding (default: null - stays visible)
  */
 export function showSuccess(elementId, message, autoHideDelay = null) {
-  showMessage(elementId, message, { 
-    autoHideDelay, 
-    isError: false 
+  showMessage(elementId, message, {
+    autoHideDelay,
+    isError: false,
   });
 }
 
@@ -81,12 +80,10 @@ export function clearMessages(errorElementId, successElementId) {
 }
 
 // Make functions globally available for backward compatibility
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.showMessage = showMessage;
   window.hideMessage = hideMessage;
   window.showError = showError;
   window.showSuccess = showSuccess;
   window.clearMessages = clearMessages;
 }
-
-

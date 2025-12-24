@@ -471,7 +471,14 @@
 
 /* Gradient Background for CTA Card */
 .u-bg-gradient-primary {
-  background: var(--gradient-primary, linear-gradient(135deg, var(--color-primary, #089949) 0%, var(--color-primary-dark, #036d35) 100%));
+  background: var(
+    --gradient-primary,
+    linear-gradient(
+      135deg,
+      var(--color-primary, #089949) 0%,
+      var(--color-primary-dark, #036d35) 100%
+    )
+  );
 }
 
 /* Responsive */
@@ -509,4 +516,3 @@
     flex-direction: column;
   }
 }
-

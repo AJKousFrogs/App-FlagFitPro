@@ -94,7 +94,9 @@ class UnifiedStorageService {
   get(key, defaultValue = null, options = {}) {
     const { usePrefix = true } = options;
 
-    if (!this.isAvailable) {return defaultValue;}
+    if (!this.isAvailable) {
+      return defaultValue;
+    }
 
     try {
       const storageKey = usePrefix ? this.getPrefixedKey(key) : key;
@@ -116,7 +118,9 @@ class UnifiedStorageService {
   remove(key, options = {}) {
     const { usePrefix = true } = options;
 
-    if (!this.isAvailable) {return false;}
+    if (!this.isAvailable) {
+      return false;
+    }
 
     try {
       const storageKey = usePrefix ? this.getPrefixedKey(key) : key;
@@ -137,7 +141,9 @@ class UnifiedStorageService {
   has(key, options = {}) {
     const { usePrefix = true } = options;
 
-    if (!this.isAvailable) {return false;}
+    if (!this.isAvailable) {
+      return false;
+    }
 
     const storageKey = usePrefix ? this.getPrefixedKey(key) : key;
     return localStorage.getItem(storageKey) !== null;
@@ -148,7 +154,9 @@ class UnifiedStorageService {
    * @param {boolean} clearAll - If true, clears ALL localStorage (use with caution)
    */
   clear(clearAll = false) {
-    if (!this.isAvailable) {return;}
+    if (!this.isAvailable) {
+      return;
+    }
 
     try {
       if (clearAll) {
@@ -172,7 +180,9 @@ class UnifiedStorageService {
    * @returns {string[]}
    */
   keys(onlyPrefixed = true) {
-    if (!this.isAvailable) {return [];}
+    if (!this.isAvailable) {
+      return [];
+    }
 
     try {
       const allKeys = Object.keys(localStorage);
@@ -324,7 +334,9 @@ class UnifiedStorageService {
    * @returns {number}
    */
   getSize() {
-    if (!this.isAvailable) {return 0;}
+    if (!this.isAvailable) {
+      return 0;
+    }
 
     let size = 0;
     try {
@@ -345,8 +357,12 @@ class UnifiedStorageService {
    */
   getSizeFormatted() {
     const bytes = this.getSize();
-    if (bytes < 1024) {return bytes + " B";}
-    if (bytes < 1024 * 1024) {return (bytes / 1024).toFixed(2) + " KB";}
+    if (bytes < 1024) {
+      return bytes + " B";
+    }
+    if (bytes < 1024 * 1024) {
+      return (bytes / 1024).toFixed(2) + " KB";
+    }
     return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   }
 }
@@ -354,9 +370,37 @@ class UnifiedStorageService {
 // Create singleton instance
 export const storageService = new UnifiedStorageService();
 // #region agent log
-const methodCheck = {hasGetOffseasonProgram:typeof storageService.getOffseasonProgram,hasGetQBProgram:typeof storageService.getQBProgram,hasSaveOffseasonProgram:typeof storageService.saveOffseasonProgram,hasSaveQBProgram:typeof storageService.saveQBProgram,allMethodsExist:typeof storageService.getOffseasonProgram==='function'&&typeof storageService.getQBProgram==='function'&&typeof storageService.saveOffseasonProgram==='function'&&typeof storageService.saveQBProgram==='function',prototypeMethods:Object.getOwnPropertyNames(Object.getPrototypeOf(storageService)).filter(m=>typeof storageService[m]==='function')};
-console.log('[DEBUG] storageService instance created with methods:', methodCheck);
-fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'storage-service-unified.js:355',message:'storageService instance created',data:methodCheck,timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix-v2',hypothesisId:'A'})}).catch(()=>{});
+const methodCheck = {
+  hasGetOffseasonProgram: typeof storageService.getOffseasonProgram,
+  hasGetQBProgram: typeof storageService.getQBProgram,
+  hasSaveOffseasonProgram: typeof storageService.saveOffseasonProgram,
+  hasSaveQBProgram: typeof storageService.saveQBProgram,
+  allMethodsExist:
+    typeof storageService.getOffseasonProgram === "function" &&
+    typeof storageService.getQBProgram === "function" &&
+    typeof storageService.saveOffseasonProgram === "function" &&
+    typeof storageService.saveQBProgram === "function",
+  prototypeMethods: Object.getOwnPropertyNames(
+    Object.getPrototypeOf(storageService),
+  ).filter((m) => typeof storageService[m] === "function"),
+};
+console.log(
+  "[DEBUG] storageService instance created with methods:",
+  methodCheck,
+);
+fetch("http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    location: "storage-service-unified.js:355",
+    message: "storageService instance created",
+    data: methodCheck,
+    timestamp: Date.now(),
+    sessionId: "debug-session",
+    runId: "post-fix-v2",
+    hypothesisId: "A",
+  }),
+}).catch(() => {});
 // #endregion
 
 // Export class for testing
@@ -364,5 +408,6 @@ export { UnifiedStorageService };
 
 // Backward compatibility exports (to be deprecated)
 export const saveToStorage = (key, data) => storageService.set(key, data);
-export const getFromStorage = (key, defaultValue) => storageService.get(key, defaultValue);
+export const getFromStorage = (key, defaultValue) =>
+  storageService.get(key, defaultValue);
 export const removeFromStorage = (key) => storageService.remove(key);

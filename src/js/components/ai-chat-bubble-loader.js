@@ -67,13 +67,13 @@ async function handleAIChat(e) {
  * Looks for data-ai-chat-container attribute
  */
 export function loadAIChatBubble() {
-  const container = document.querySelector('[data-ai-chat-container]');
+  const container = document.querySelector("[data-ai-chat-container]");
   if (!container) {
     return; // No container found, skip loading
   }
 
   // Check if already loaded
-  if (container.querySelector('.ai-chat-bubble')) {
+  if (container.querySelector(".ai-chat-bubble")) {
     return; // Already loaded
   }
 
@@ -85,10 +85,8 @@ export function loadAIChatBubble() {
 }
 
 // Auto-load on DOMContentLoaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadAIChatBubble);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", loadAIChatBubble);
 } else {
   loadAIChatBubble();
 }
-
-

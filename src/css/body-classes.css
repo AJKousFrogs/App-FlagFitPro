@@ -80,7 +80,7 @@ body {
   .page-auth {
     padding: var(--space-md);
   }
-  
+
   .page-dashboard,
   .page-app {
     padding-top: 56px; /* Smaller header on mobile */

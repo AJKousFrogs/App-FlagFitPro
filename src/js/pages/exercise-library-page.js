@@ -59,7 +59,9 @@ export class ExerciseLibraryPage {
 
   setupSearchAndFilter() {
     const searchInput = document.getElementById("exerciseSearch");
-    if (!searchInput) {return;}
+    if (!searchInput) {
+      return;
+    }
 
     // Debounce search input (300ms delay)
     const debouncedSearch = debounce((e) => {
@@ -80,7 +82,9 @@ export class ExerciseLibraryPage {
     if (filterContainer) {
       const handleFilterClick = (e) => {
         const tab = e.target.closest(".filter-tab");
-        if (!tab) {return;}
+        if (!tab) {
+          return;
+        }
 
         // Remove active class from all tabs
         filterContainer.querySelectorAll(".filter-tab").forEach((t) => {
@@ -109,7 +113,9 @@ export class ExerciseLibraryPage {
 
   setupPagination() {
     const exerciseGrid = document.getElementById("exerciseGrid");
-    if (!exerciseGrid) {return;}
+    if (!exerciseGrid) {
+      return;
+    }
 
     // Create pagination container if it doesn't exist
     let paginationContainer = document.getElementById("exercisePagination");
@@ -128,7 +134,9 @@ export class ExerciseLibraryPage {
 
   updatePaginationControls() {
     const paginationContainer = document.getElementById("exercisePagination");
-    if (!paginationContainer) {return;}
+    if (!paginationContainer) {
+      return;
+    }
 
     const totalPages = Math.ceil(
       this.filteredExercises.length / this.itemsPerPage,
@@ -165,10 +173,14 @@ export class ExerciseLibraryPage {
     // Add event listeners for pagination buttons
     const handlePaginationClick = (e) => {
       const btn = e.target.closest("[data-action]");
-      if (!btn || btn.hasAttribute("disabled")) {return;}
+      if (!btn || btn.hasAttribute("disabled")) {
+        return;
+      }
 
       const exerciseGrid = document.getElementById("exerciseGrid");
-      if (!exerciseGrid) {return;}
+      if (!exerciseGrid) {
+        return;
+      }
 
       const action = btn.dataset.action;
       if (action === "prev" && this.currentPage > 0) {
@@ -220,7 +232,9 @@ export class ExerciseLibraryPage {
 
   displayExercises() {
     const exerciseGrid = document.getElementById("exerciseGrid");
-    if (!exerciseGrid) {return;}
+    if (!exerciseGrid) {
+      return;
+    }
 
     const library = window.COMPLETE_EXERCISE_LIBRARY || {};
     if (!library || Object.keys(library).length === 0) {
@@ -328,7 +342,9 @@ export class ExerciseLibraryPage {
 
   updateStats() {
     const library = window.COMPLETE_EXERCISE_LIBRARY || {};
-    if (!library || Object.keys(library).length === 0) {return;}
+    if (!library || Object.keys(library).length === 0) {
+      return;
+    }
 
     const exercises = Object.entries(library);
     const categories = [...new Set(exercises.map(([_, ex]) => ex.category))];
@@ -346,15 +362,25 @@ export class ExerciseLibraryPage {
     const progressionsCountEl = document.getElementById("progressionsCount");
     const safetyNotesCountEl = document.getElementById("safetyNotesCount");
 
-    if (totalExercisesEl) {totalExercisesEl.textContent = exercises.length;}
-    if (categoriesCountEl) {categoriesCountEl.textContent = categories.length;}
-    if (progressionsCountEl) {progressionsCountEl.textContent = totalProgressions;}
-    if (safetyNotesCountEl) {safetyNotesCountEl.textContent = totalSafetyNotes;}
+    if (totalExercisesEl) {
+      totalExercisesEl.textContent = exercises.length;
+    }
+    if (categoriesCountEl) {
+      categoriesCountEl.textContent = categories.length;
+    }
+    if (progressionsCountEl) {
+      progressionsCountEl.textContent = totalProgressions;
+    }
+    if (safetyNotesCountEl) {
+      safetyNotesCountEl.textContent = totalSafetyNotes;
+    }
   }
 
   showLoading() {
     const exerciseGrid = document.getElementById("exerciseGrid");
-    if (!exerciseGrid) {return;}
+    if (!exerciseGrid) {
+      return;
+    }
     exerciseGrid.innerHTML = `
       <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12);">
         <div style="font-size: 2rem; margin-bottom: var(--space-4);">⏳</div>
@@ -365,7 +391,9 @@ export class ExerciseLibraryPage {
 
   showNoResults() {
     const exerciseGrid = document.getElementById("exerciseGrid");
-    if (!exerciseGrid) {return;}
+    if (!exerciseGrid) {
+      return;
+    }
     exerciseGrid.innerHTML = `
       <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-text-secondary);">
         <div style="font-size: 3rem; margin-bottom: var(--space-4);">
@@ -382,7 +410,9 @@ export class ExerciseLibraryPage {
 
   showError(message) {
     const exerciseGrid = document.getElementById("exerciseGrid");
-    if (!exerciseGrid) {return;}
+    if (!exerciseGrid) {
+      return;
+    }
     exerciseGrid.innerHTML = `
       <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-error);">
         <div style="font-size: 2rem; margin-bottom: var(--space-4);">❌</div>
@@ -395,14 +425,18 @@ export class ExerciseLibraryPage {
   openExerciseModal(name) {
     const library = window.COMPLETE_EXERCISE_LIBRARY || {};
     const exercise = library[name];
-    if (!exercise) {return;}
+    if (!exercise) {
+      return;
+    }
 
     const modal = document.getElementById("exerciseModal");
     const modalTitle = document.getElementById("modalExerciseTitle");
     const modalCategory = document.getElementById("modalExerciseCategory");
     const modalBody = document.getElementById("modalBody");
 
-    if (!modal || !modalTitle || !modalCategory || !modalBody) {return;}
+    if (!modal || !modalTitle || !modalCategory || !modalBody) {
+      return;
+    }
 
     modalTitle.textContent = name;
     // SECURITY: Sanitize exercise category to prevent XSS
@@ -501,7 +535,9 @@ export class ExerciseLibraryPage {
   }
 
   escapeHtml(text) {
-    if (!text) {return "";}
+    if (!text) {
+      return "";
+    }
     const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;

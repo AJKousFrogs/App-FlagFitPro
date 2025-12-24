@@ -24,12 +24,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const body = await req.json() as AISuggestionRequest;
+    const body = (await req.json()) as AISuggestionRequest;
 
     // Get Groq API key from environment
     // FREE: 14,400 requests/day!
     const groqApiKey = Deno.env.get("GROQ_API_KEY");
-    
+
     if (!groqApiKey) {
       console.warn("GROQ_API_KEY not set, returning mock suggestions");
       return new Response(
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
           data: getMockSuggestions(),
           source: "mock",
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
@@ -46,28 +46,32 @@ Deno.serve(async (req) => {
     const context = buildTrainingContext(body);
 
     // Call Groq API (FREE!)
-    const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${groqApiKey}`,
-        "Content-Type": "application/json",
+    const groqResponse = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${groqApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-70b-versatile", // Fast, smart, FREE
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are an expert flag football coach and sports scientist. Provide personalized training suggestions based on the athlete's profile and recent performance. Format your response as JSON with an array of suggestions, each containing: title, description, priority (high/medium/low), duration (minutes), focus areas, and reasoning.",
+            },
+            {
+              role: "user",
+              content: context,
+            },
+          ],
+          temperature: 0.7,
+          max_tokens: 1000,
+        }),
       },
-      body: JSON.stringify({
-        model: "llama-3.1-70b-versatile", // Fast, smart, FREE
-        messages: [
-          {
-            role: "system",
-            content: "You are an expert flag football coach and sports scientist. Provide personalized training suggestions based on the athlete's profile and recent performance. Format your response as JSON with an array of suggestions, each containing: title, description, priority (high/medium/low), duration (minutes), focus areas, and reasoning."
-          },
-          {
-            role: "user",
-            content: context
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 1000,
-      }),
-    });
+    );
 
     if (!groqResponse.ok) {
       throw new Error(`Groq API error: ${groqResponse.status}`);
@@ -92,12 +96,11 @@ Deno.serve(async (req) => {
         source: "groq-ai",
         model: "llama-3.1-70b",
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-
   } catch (error) {
     console.error("AI suggestions error:", error);
-    
+
     // Return mock suggestions on error
     return new Response(
       JSON.stringify({
@@ -105,34 +108,36 @@ Deno.serve(async (req) => {
         data: getMockSuggestions(),
         source: "mock-fallback",
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
 });
 
 function buildTrainingContext(body: AISuggestionRequest): string {
   const { userProfile, recentWorkouts, context } = body;
-  
-  let prompt = "Generate 3 personalized training suggestions for this athlete:\n\n";
-  
+
+  let prompt =
+    "Generate 3 personalized training suggestions for this athlete:\n\n";
+
   if (userProfile) {
     prompt += `Athlete Level: ${userProfile.level || "Intermediate"}\n`;
     prompt += `Goals: ${userProfile.goals?.join(", ") || "General fitness"}\n`;
   }
-  
+
   if (recentWorkouts && recentWorkouts.length > 0) {
     prompt += `\nRecent Training (last ${recentWorkouts.length} sessions):\n`;
     recentWorkouts.forEach((workout, i) => {
       prompt += `${i + 1}. ${workout.type || "Training"} - ${workout.duration || 45}min - Load: ${workout.load || "N/A"}\n`;
     });
   }
-  
+
   if (context) {
     prompt += `\nAdditional Context: ${context}\n`;
   }
-  
-  prompt += "\nProvide 3 training suggestions as a JSON array with: title, description, priority, duration, focus, reasoning.";
-  
+
+  prompt +=
+    "\nProvide 3 training suggestions as a JSON array with: title, description, priority, duration, focus, reasoning.";
+
   return prompt;
 }
 
@@ -142,7 +147,8 @@ function parseTextSuggestions(text: string): any[] {
     {
       id: "1",
       title: "Speed & Agility Training",
-      description: "Based on your recent activity, focus on explosive movements",
+      description:
+        "Based on your recent activity, focus on explosive movements",
       priority: "high",
       duration: 45,
       focus: ["speed", "agility", "quickness"],
@@ -182,4 +188,3 @@ function getMockSuggestions(): any[] {
     },
   ];
 }
-

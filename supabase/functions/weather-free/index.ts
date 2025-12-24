@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { latitude, longitude, city } = await req.json() as WeatherRequest;
+    const { latitude, longitude, city } = (await req.json()) as WeatherRequest;
 
     // Default to San Francisco if no location provided
     let lat = latitude || 37.7749;
@@ -31,11 +31,11 @@ Deno.serve(async (req) => {
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`,
         {
           headers: {
-            'User-Agent': 'FlagFitPro/1.0'
-          }
-        }
+            "User-Agent": "FlagFitPro/1.0",
+          },
+        },
       );
-      
+
       if (geoResponse.ok) {
         const geoData = await geoResponse.json();
         if (geoData.length > 0) {
@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     const suitability = calculateSuitability(
       current.temperature_2m,
       current.wind_speed_10m,
-      current.weather_code
+      current.weather_code,
     );
 
     return new Response(
@@ -81,14 +81,13 @@ Deno.serve(async (req) => {
           location: city || `${lat.toFixed(2)}, ${lon.toFixed(2)}`,
         },
       }),
-      { 
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      }
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
-
   } catch (error) {
     console.error("Weather error:", error);
-    
+
     // Return mock data on error
     return new Response(
       JSON.stringify({
@@ -105,9 +104,9 @@ Deno.serve(async (req) => {
           location: "Mock Data",
         },
       }),
-      { 
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      }
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   }
 });
@@ -172,7 +171,7 @@ function getWeatherCondition(code: number): {
 function calculateSuitability(
   temp: number,
   windSpeed: number,
-  weatherCode: number
+  weatherCode: number,
 ): {
   suitable: boolean;
   level: "excellent" | "good" | "fair" | "poor";
@@ -200,4 +199,3 @@ function calculateSuitability(
   // Excellent conditions
   return { suitable: true, level: "excellent" };
 }
-

@@ -39,7 +39,9 @@ class FlagFitApplication {
   }
 
   init() {
-    if (this.initialized) {return;}
+    if (this.initialized) {
+      return;
+    }
 
     // Wait for DOM to be ready
     if (document.readyState === "loading") {
@@ -122,7 +124,7 @@ class FlagFitApplication {
     // Override the stub in top-bar.js with the actual implementation
     // Ensure it's always available globally
     window.performGlobalSearch = performGlobalSearch;
-    
+
     // Initialize mobile navigation
     if (document.querySelector(".sidebar, .mobile-menu-toggle, nav")) {
       this.components.set("mobileNav", new UniversalMobileNav());

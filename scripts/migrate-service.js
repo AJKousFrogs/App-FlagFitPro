@@ -127,10 +127,7 @@ function convertPostMethod(content, endpoint, table, idField) {
 }
 
 function generateBackupFilename(servicePath) {
-  const timestamp = new Date()
-    .toISOString()
-    .replace(/[:.]/g, "-")
-    .slice(0, -5);
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, -5);
   return servicePath.replace(".ts", `.backup-${timestamp}.ts`);
 }
 

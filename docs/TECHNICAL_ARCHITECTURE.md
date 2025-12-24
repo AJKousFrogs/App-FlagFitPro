@@ -96,22 +96,24 @@ angular/src/app/
 
 ```typescript
 // Supabase Realtime integration for live updates
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class RealtimeSyncService {
   private supabase = inject(SupabaseService);
 
   subscribeToUpdates(userId: string): Observable<any> {
     return new Observable((observer) => {
-      const channel = this.supabase.getClient()
+      const channel = this.supabase
+        .getClient()
         .channel(`athletes:${userId}`)
-        .on('postgres_changes',
-          { event: '*', schema: 'public', table: 'performance_metrics' },
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "performance_metrics" },
           (payload) => {
             // Handle Olympic qualification updates
             // Process team chemistry changes
             // Update performance metrics
             observer.next(payload);
-          }
+          },
         )
         .subscribe();
 
@@ -500,14 +502,14 @@ testing:
 
 ### **Backend Technology Choices**
 
-| Technology      | Rationale                                               | Alternatives Considered     |
-| --------------- | ------------------------------------------------------- | --------------------------- |
-| Node.js         | JavaScript ecosystem consistency, excellent performance | Python Django, Ruby Rails   |
-| Express         | Lightweight, flexible, extensive middleware ecosystem   | Fastify, Koa.js, NestJS     |
-| Supabase        | Complete backend platform with PostgreSQL, auth, realtime, storage | Firebase, AWS Amplify |
-| PostgreSQL      | ACID compliance, JSONB support, excellent performance (via Supabase) | MongoDB, MySQL, NEON DB |
-| Supabase Client | Type-safe queries, RLS, excellent PostgreSQL integration | Prisma, TypeORM, Sequelize  |
-| Redis           | High-performance caching and session management         | Memcached, DynamoDB         |
+| Technology      | Rationale                                                            | Alternatives Considered    |
+| --------------- | -------------------------------------------------------------------- | -------------------------- |
+| Node.js         | JavaScript ecosystem consistency, excellent performance              | Python Django, Ruby Rails  |
+| Express         | Lightweight, flexible, extensive middleware ecosystem                | Fastify, Koa.js, NestJS    |
+| Supabase        | Complete backend platform with PostgreSQL, auth, realtime, storage   | Firebase, AWS Amplify      |
+| PostgreSQL      | ACID compliance, JSONB support, excellent performance (via Supabase) | MongoDB, MySQL, NEON DB    |
+| Supabase Client | Type-safe queries, RLS, excellent PostgreSQL integration             | Prisma, TypeORM, Sequelize |
+| Redis           | High-performance caching and session management                      | Memcached, DynamoDB        |
 
 **NOTE**: Supabase is the ONLY database platform used. No NEON DB, no PocketBase.
 

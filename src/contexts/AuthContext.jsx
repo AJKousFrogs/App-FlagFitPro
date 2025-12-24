@@ -100,9 +100,9 @@ export const AuthProvider = ({ children }) => {
   // Synchronize state with AuthManager changes
   useEffect(() => {
     const handleLogin = (user) => {
-      actions.loginSuccess({ 
-        user, 
-        token: authManager.getToken() 
+      actions.loginSuccess({
+        user,
+        token: authManager.getToken(),
       });
     };
 
@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }) => {
     authManager.onLogout(handleLogout);
 
     return () => {
-      // AuthManager doesn't currently support removing callbacks, 
+      // AuthManager doesn't currently support removing callbacks,
       // but in a real app you'd want to handle this.
     };
   }, [actions]);
@@ -126,7 +126,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         actions.checkAuthStart();
-        
+
         // Wait for AuthManager to initialize and check session
         await authManager.waitForInit();
         const isAuthenticated = await authManager.checkAuthentication();
@@ -231,14 +231,17 @@ export const AuthProvider = ({ children }) => {
     actions.clearError();
   }, [actions]);
 
-  const value = React.useMemo(() => ({
-    ...state,
-    login,
-    register,
-    logout,
-    updateProfile,
-    clearError,
-  }), [state, login, register, logout, updateProfile, clearError]);
+  const value = React.useMemo(
+    () => ({
+      ...state,
+      login,
+      register,
+      logout,
+      updateProfile,
+      clearError,
+    }),
+    [state, login, register, logout, updateProfile, clearError],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

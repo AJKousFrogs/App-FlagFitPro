@@ -4,21 +4,21 @@
  * Reduces code duplication across loader implementations
  */
 
-import { onDOMReady } from '../utils/dom-ready.js';
-import { initializeLucideIcons } from '../utils/shared.js';
+import { onDOMReady } from "../utils/dom-ready.js";
+import { initializeLucideIcons } from "../utils/shared.js";
 
 export class BaseComponentLoader {
   constructor(config) {
     this.config = {
       containerSelector: config.containerSelector,
       componentPath: config.componentPath,
-      componentName: config.componentName || 'Component',
+      componentName: config.componentName || "Component",
       autoInit: config.autoInit !== false, // Default to true
-      ...config
+      ...config,
     };
-    
+
     this.container = null;
-    
+
     if (this.config.autoInit) {
       this.init();
     }
@@ -32,7 +32,10 @@ export class BaseComponentLoader {
       await this.loadComponent();
       this.afterLoad();
     } catch (error) {
-      console.error(`[${this.config.componentName} Loader] Failed to load:`, error);
+      console.error(
+        `[${this.config.componentName} Loader] Failed to load:`,
+        error,
+      );
     }
   }
 
@@ -43,7 +46,9 @@ export class BaseComponentLoader {
     const response = await fetch(this.config.componentPath);
 
     if (!response.ok) {
-      throw new Error(`Failed to load ${this.config.componentName}: ${response.status}`);
+      throw new Error(
+        `Failed to load ${this.config.componentName}: ${response.status}`,
+      );
     }
 
     const componentHTML = await response.text();
@@ -69,8 +74,11 @@ export class BaseComponentLoader {
    * Create container element (override in subclasses if needed)
    */
   createContainer() {
-    const container = document.createElement('div');
-    container.setAttribute(this.config.containerSelector.replace(/[\[\]]/g, ''), '');
+    const container = document.createElement("div");
+    container.setAttribute(
+      this.config.containerSelector.replace(/[\[\]]/g, ""),
+      "",
+    );
     return container;
   }
 
@@ -89,7 +97,7 @@ export class BaseComponentLoader {
       initializeLucideIcons(this.container, {
         initialDelay: 100,
         maxAttempts: 50,
-        pollInterval: 100
+        pollInterval: 100,
       });
     }
   }
@@ -99,8 +107,9 @@ export class BaseComponentLoader {
    */
   static autoInit(LoaderClass, config) {
     onDOMReady(() => {
-      window[config.instanceName || config.componentName.toLowerCase() + 'Loader'] = new LoaderClass(config);
+      window[
+        config.instanceName || config.componentName.toLowerCase() + "Loader"
+      ] = new LoaderClass(config);
     });
   }
 }
-

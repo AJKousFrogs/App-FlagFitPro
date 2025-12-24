@@ -44,7 +44,14 @@ const SEARCHABLE_CONTENT = [
   // Training Protocols
   {
     label: "Morning Mobility Routine",
-    keywords: ["morning routine", "morning mobility", "mobility routine", "daily mobility", "morning", "mobility"],
+    keywords: [
+      "morning routine",
+      "morning mobility",
+      "mobility routine",
+      "daily mobility",
+      "morning",
+      "mobility",
+    ],
     type: "protocol",
     url: "training.html#schedule",
     description: "15-minute daily mobility routine with day-specific videos",
@@ -52,7 +59,13 @@ const SEARCHABLE_CONTENT = [
   },
   {
     label: "Universal Warm-Up",
-    keywords: ["warm up", "warmup", "pre-workout", "activation", "universal warm"],
+    keywords: [
+      "warm up",
+      "warmup",
+      "pre-workout",
+      "activation",
+      "universal warm",
+    ],
     type: "protocol",
     url: "training.html#schedule",
     description: "15-20 minute comprehensive warm-up protocol",
@@ -70,7 +83,12 @@ const SEARCHABLE_CONTENT = [
   // Pages
   {
     label: "Training Schedule",
-    keywords: ["training schedule", "schedule", "workout schedule", "training plan"],
+    keywords: [
+      "training schedule",
+      "schedule",
+      "workout schedule",
+      "training plan",
+    ],
     type: "page",
     url: "training.html#schedule",
     description: "View and manage your training schedule",
@@ -150,7 +168,7 @@ async function loadPlayers() {
   const now = Date.now();
 
   // Return cached data if still valid
-  if (playersCache && (now - playersCacheTime) < CACHE_DURATION) {
+  if (playersCache && now - playersCacheTime < CACHE_DURATION) {
     return playersCache;
   }
 
@@ -169,7 +187,12 @@ async function loadPlayers() {
     for (const endpoint of possibleEndpoints) {
       try {
         const response = await apiClient.get(endpoint);
-        const players = response?.data?.players || response?.data || response?.players || response || [];
+        const players =
+          response?.data?.players ||
+          response?.data ||
+          response?.players ||
+          response ||
+          [];
 
         if (Array.isArray(players) && players.length > 0) {
           playersCache = players;
@@ -206,7 +229,9 @@ async function loadPlayers() {
  * @returns {string} Normalized text
  */
 function normalizeText(text) {
-  if (!text) {return "";}
+  if (!text) {
+    return "";
+  }
   return text
     .toLowerCase()
     .normalize("NFD")
@@ -221,10 +246,12 @@ function normalizeText(text) {
  * @returns {Array} Array of search results
  */
 function searchPlayers(query, players) {
-  if (!players || players.length === 0) {return [];}
+  if (!players || players.length === 0) {
+    return [];
+  }
 
   const normalizedQuery = normalizeText(query);
-  const queryWords = normalizedQuery.split(/\s+/).filter(w => w.length > 0);
+  const queryWords = normalizedQuery.split(/\s+/).filter((w) => w.length > 0);
   const results = [];
 
   for (const player of players) {
@@ -232,7 +259,9 @@ function searchPlayers(query, players) {
     const matchedFields = [];
 
     // Get player name (handle different formats)
-    const playerNameRaw = player.name || `${player.firstName || ""} ${player.lastName || ""}`.trim();
+    const playerNameRaw =
+      player.name ||
+      `${player.firstName || ""} ${player.lastName || ""}`.trim();
     const playerName = normalizeText(playerNameRaw);
     const fullName = playerName;
     const firstName = normalizeText(player.firstName || "");
@@ -244,7 +273,10 @@ function searchPlayers(query, players) {
       matchedFields.push("name");
     }
     // Name contains query
-    else if (playerName.includes(normalizedQuery) || fullName.includes(normalizedQuery)) {
+    else if (
+      playerName.includes(normalizedQuery) ||
+      fullName.includes(normalizedQuery)
+    ) {
       score += 80;
       matchedFields.push("name");
     }
@@ -256,7 +288,11 @@ function searchPlayers(query, players) {
     // Word-by-word matching for names
     else {
       for (const word of queryWords) {
-        if (firstName.includes(word) || lastName.includes(word) || playerName.includes(word)) {
+        if (
+          firstName.includes(word) ||
+          lastName.includes(word) ||
+          playerName.includes(word)
+        ) {
           score += 30;
           if (!matchedFields.includes("name")) {
             matchedFields.push("name");
@@ -266,7 +302,9 @@ function searchPlayers(query, players) {
     }
 
     // Jersey number match
-    const jersey = String(player.jersey || player.jerseyNumber || "").toLowerCase();
+    const jersey = String(
+      player.jersey || player.jerseyNumber || "",
+    ).toLowerCase();
     if (jersey === normalizedQuery) {
       score += 60;
       matchedFields.push("jersey");
@@ -295,8 +333,13 @@ function searchPlayers(query, players) {
     // If we have a match, add to results
     if (score > 0) {
       results.push({
-        label: player.name || `${player.firstName || ""} ${player.lastName || ""}`.trim() || `Player #${player.jersey || player.jerseyNumber}`,
-        value: player.name || `${player.firstName || ""} ${player.lastName || ""}`.trim(),
+        label:
+          player.name ||
+          `${player.firstName || ""} ${player.lastName || ""}`.trim() ||
+          `Player #${player.jersey || player.jerseyNumber}`,
+        value:
+          player.name ||
+          `${player.firstName || ""} ${player.lastName || ""}`.trim(),
         type: "player",
         url: `/roster.html#player-${player.id || player.jersey || player.jerseyNumber}`,
         description: `${player.position || "Player"}${player.jersey ? ` • #${player.jersey}` : ""}${player.country ? ` • ${player.country}` : ""}`,
@@ -371,7 +414,10 @@ export async function performGlobalSearch(query) {
     }
 
     // Check description match
-    if (item.description && item.description.toLowerCase().includes(normalizedQuery)) {
+    if (
+      item.description &&
+      item.description.toLowerCase().includes(normalizedQuery)
+    ) {
       score += 15;
     }
 
@@ -570,7 +616,9 @@ async function searchGames(query) {
     const results = [];
 
     for (const game of games) {
-      const opponent = normalizeText(game.opponent || game.awayTeam?.name || game.homeTeam?.name || "");
+      const opponent = normalizeText(
+        game.opponent || game.awayTeam?.name || game.homeTeam?.name || "",
+      );
       const location = normalizeText(game.location || "");
       const date = game.gameDate || game.date || "";
 
@@ -620,7 +668,9 @@ async function searchCommunityPosts(query) {
   }
 
   try {
-    const response = await apiClient.get(API_ENDPOINTS.community.feed, { limit: 50 });
+    const response = await apiClient.get(API_ENDPOINTS.community.feed, {
+      limit: 50,
+    });
     const posts = response?.data || response || [];
 
     const normalizedQuery = normalizeText(query);
@@ -662,4 +712,3 @@ async function searchCommunityPosts(query) {
 
 // Export default function for compatibility
 export default performGlobalSearch;
-

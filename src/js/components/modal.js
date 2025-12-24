@@ -84,7 +84,9 @@ class Modal {
    * Close the modal
    */
   close() {
-    if (!this.modalElement) {return;}
+    if (!this.modalElement) {
+      return;
+    }
 
     // Animate out
     this.modalElement.classList.remove("open");
@@ -117,7 +119,9 @@ class Modal {
    * Set up event listeners
    */
   setupEvents() {
-    if (!this.modalElement) {return;}
+    if (!this.modalElement) {
+      return;
+    }
 
     // Close button
     const closeBtn = this.modalElement.querySelector("[data-modal-close]");
@@ -156,7 +160,9 @@ class Modal {
    * Focus management - move focus into modal
    */
   focusModal() {
-    if (!this.modalElement) {return;}
+    if (!this.modalElement) {
+      return;
+    }
 
     const focusableElements = this.modalElement.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
@@ -171,19 +177,25 @@ class Modal {
    * Trap focus within modal
    */
   trapFocus() {
-    if (!this.modalElement) {return;}
+    if (!this.modalElement) {
+      return;
+    }
 
     const focusableElements = this.modalElement.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
 
-    if (focusableElements.length === 0) {return;}
+    if (focusableElements.length === 0) {
+      return;
+    }
 
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
 
     const trapHandler = (e) => {
-      if (e.key !== "Tab") {return;}
+      if (e.key !== "Tab") {
+        return;
+      }
 
       if (e.shiftKey) {
         // Shift + Tab
@@ -207,7 +219,9 @@ class Modal {
    * Update modal content
    */
   updateContent(content) {
-    if (!this.modalElement) {return;}
+    if (!this.modalElement) {
+      return;
+    }
     const body = this.modalElement.querySelector(".modal-body");
     if (body) {
       body.innerHTML = content;
@@ -222,7 +236,9 @@ class Modal {
    * Update modal title
    */
   updateTitle(title) {
-    if (!this.modalElement) {return;}
+    if (!this.modalElement) {
+      return;
+    }
     const titleElement = this.modalElement.querySelector(".modal-title");
     if (titleElement) {
       titleElement.textContent = title;

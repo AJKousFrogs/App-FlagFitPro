@@ -32,13 +32,15 @@ const NOTIFICATION_PANEL_HTML = `
  * Looks for data-notification-panel-container attribute
  */
 export function loadNotificationPanel() {
-  const container = document.querySelector('[data-notification-panel-container]');
+  const container = document.querySelector(
+    "[data-notification-panel-container]",
+  );
   if (!container) {
     return; // No container found, skip loading
   }
 
   // Check if already loaded
-  if (document.getElementById('notification-panel')) {
+  if (document.getElementById("notification-panel")) {
     return; // Already loaded
   }
 
@@ -46,16 +48,14 @@ export function loadNotificationPanel() {
   container.innerHTML = NOTIFICATION_PANEL_HTML;
 
   // Initialize Lucide icons
-  if (typeof lucide !== 'undefined') {
+  if (typeof lucide !== "undefined") {
     lucide.createIcons(container);
   }
 }
 
 // Auto-load on DOMContentLoaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadNotificationPanel);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", loadNotificationPanel);
 } else {
   loadNotificationPanel();
 }
-
-

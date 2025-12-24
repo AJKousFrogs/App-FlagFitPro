@@ -54,15 +54,16 @@
         // Fallback: call API directly
         // Try Netlify Functions endpoint first, then fallback to REST API
         const baseUrl = window.location.origin;
-        const isNetlify = baseUrl.includes("netlify.app") || baseUrl.includes("netlify.com");
-        const endpoint = isNetlify 
+        const isNetlify =
+          baseUrl.includes("netlify.app") || baseUrl.includes("netlify.com");
+        const endpoint = isNetlify
           ? `${baseUrl}/.netlify/functions/notifications-count`
           : "/api/dashboard/notifications/count";
-        
+
         const response = await fetch(endpoint, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken") || ""}`,
             "Content-Type": "application/json",
           },
         });
@@ -78,7 +79,7 @@
           return data.data.unreadCount || data.data.count || 0;
         } else if (data?.unreadCount !== undefined) {
           return data.unreadCount;
-        } else if (typeof data === 'number') {
+        } else if (typeof data === "number") {
           return data;
         }
         return 0;
@@ -112,7 +113,9 @@
     const listbox = document.getElementById("search-results");
     const status = document.getElementById("search-status");
 
-    if (!input || !listbox || !status) {return;}
+    if (!input || !listbox || !status) {
+      return;
+    }
 
     let idx = -1;
     let items = [];
@@ -129,17 +132,19 @@
     // Render search results
     const render = (results = []) => {
       listbox.innerHTML = results
-        .map(
-          (r, i) => {
-            const description = r.description ? `<div class="result-description">${r.description}</div>` : "";
-            const category = r.category ? `<div class="result-category">${r.category}</div>` : "";
-            return `<div id="sr-${i}" role="option" class="result-item" aria-selected="${i === idx}">
+        .map((r, i) => {
+          const description = r.description
+            ? `<div class="result-description">${r.description}</div>`
+            : "";
+          const category = r.category
+            ? `<div class="result-category">${r.category}</div>`
+            : "";
+          return `<div id="sr-${i}" role="option" class="result-item" aria-selected="${i === idx}">
               <div class="result-label">${r.label}</div>
               ${description}
               ${category}
             </div>`;
-          },
-        )
+        })
         .join("");
 
       listbox.hidden = results.length === 0;
@@ -284,7 +289,9 @@
     const badge = document.getElementById("notification-badge");
     const live = document.getElementById("notification-live");
 
-    if (!bell) {return;}
+    if (!bell) {
+      return;
+    }
 
     // Initialize aria attributes
     bell.setAttribute("aria-expanded", "false");
@@ -293,7 +300,9 @@
 
     // Set badge count
     function setBadge(count) {
-      if (!badge || !live) {return;}
+      if (!badge || !live) {
+        return;
+      }
 
       if (count > 0) {
         badge.textContent = String(count);
@@ -320,7 +329,10 @@
         const panel = document.getElementById("notification-panel");
         if (panel && panel.classList.contains("is-open")) {
           // Use dashboardPage method if available
-          if (window.dashboardPage && window.dashboardPage.closeNotificationPanel) {
+          if (
+            window.dashboardPage &&
+            window.dashboardPage.closeNotificationPanel
+          ) {
             window.dashboardPage.closeNotificationPanel();
           } else {
             // Fallback
@@ -364,7 +376,9 @@
     const button = document.getElementById("user-menu-button");
     const menu = document.getElementById("user-menu");
 
-    if (!button || !menu) {return;}
+    if (!button || !menu) {
+      return;
+    }
 
     // Initialize aria attributes
     button.setAttribute("aria-expanded", "false");
@@ -443,7 +457,9 @@
    */
   function initScrollEffects() {
     const topBar = document.querySelector(".top-bar");
-    if (!topBar) {return;}
+    if (!topBar) {
+      return;
+    }
 
     let ticking = false;
 
@@ -482,7 +498,9 @@
    */
   function initScrollToTop() {
     const scrollButton = document.getElementById("scroll-to-top");
-    if (!scrollButton) {return;}
+    if (!scrollButton) {
+      return;
+    }
 
     let ticking = false;
 
@@ -543,7 +561,9 @@
    */
   function initThemeToggle() {
     const themeToggle = document.getElementById("header-theme-toggle");
-    if (!themeToggle) {return;}
+    if (!themeToggle) {
+      return;
+    }
 
     // Initialize toggle state based on current theme
     const currentTheme =

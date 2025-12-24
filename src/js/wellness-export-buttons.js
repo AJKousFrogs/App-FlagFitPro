@@ -3,8 +3,8 @@
  * Adds PDF/CSV export buttons to wellness page
  */
 
-(function() {
-  'use strict';
+(function () {
+  "use strict";
 
   function addExportButtons() {
     // Wait for export service
@@ -15,23 +15,27 @@
 
     // Find a good location for export buttons
     // Look for wellness form or wellness header
-    const wellnessPage = document.querySelector('.wellness-page, .wellness-container, [class*="wellness"]');
+    const wellnessPage = document.querySelector(
+      '.wellness-page, .wellness-container, [class*="wellness"]',
+    );
 
     if (!wellnessPage) {
-      console.log('[Wellness Export] Wellness container not found, will try again');
+      console.log(
+        "[Wellness Export] Wellness container not found, will try again",
+      );
       setTimeout(addExportButtons, 500);
       return;
     }
 
     // Check if buttons already added
-    if (document.getElementById('wellness-export-buttons')) {
+    if (document.getElementById("wellness-export-buttons")) {
       return;
     }
 
     // Create export buttons container
-    const exportContainer = document.createElement('div');
-    exportContainer.id = 'wellness-export-buttons';
-    exportContainer.className = 'wellness-export-buttons';
+    const exportContainer = document.createElement("div");
+    exportContainer.id = "wellness-export-buttons";
+    exportContainer.className = "wellness-export-buttons";
     exportContainer.innerHTML = `
       <div class="export-buttons-wrapper">
         <h3 class="export-title">📊 Export Your Data</h3>
@@ -62,7 +66,7 @@
     `;
 
     // Add styles
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       .wellness-export-buttons {
         margin: var(--space-6, 32px) 0;
@@ -164,46 +168,51 @@
     document.head.appendChild(style);
 
     // Insert export buttons (try to find a good spot)
-    const insertBefore = wellnessPage.querySelector('form, .wellness-form, .checkin-form');
+    const insertBefore = wellnessPage.querySelector(
+      "form, .wellness-form, .checkin-form",
+    );
     if (insertBefore) {
       insertBefore.parentNode.insertBefore(exportContainer, insertBefore);
     } else {
       wellnessPage.appendChild(exportContainer);
     }
 
-    console.log('[Wellness Export] Export buttons added');
+    console.log("[Wellness Export] Export buttons added");
   }
 
   /**
    * Handle PDF export
    */
-  window.handleWellnessExportPDF = function() {
+  window.handleWellnessExportPDF = function () {
     // Get wellness history from localStorage
-    const wellnessHistory = JSON.parse(localStorage.getItem('wellnessHistory') || '[]');
+    const wellnessHistory = JSON.parse(
+      localStorage.getItem("wellnessHistory") || "[]",
+    );
 
     if (wellnessHistory.length === 0) {
-      alert('No wellness data to export. Log some wellness check-ins first!');
+      alert("No wellness data to export. Log some wellness check-ins first!");
       return;
     }
 
     // Show loading state
-    const btn = event.target.closest('.export-btn');
+    const btn = event.target.closest(".export-btn");
     const originalHTML = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span>⏳ Generating PDF...</span>';
+    btn.innerHTML = "<span>⏳ Generating PDF...</span>";
 
     // Export with slight delay for UI feedback
     setTimeout(async () => {
-      const success = await window.exportService.exportWellnessToPDF(wellnessHistory);
+      const success =
+        await window.exportService.exportWellnessToPDF(wellnessHistory);
 
       if (success) {
-        btn.innerHTML = '<span>✅ PDF Downloaded!</span>';
+        btn.innerHTML = "<span>✅ PDF Downloaded!</span>";
         setTimeout(() => {
           btn.disabled = false;
           btn.innerHTML = originalHTML;
         }, 2000);
       } else {
-        btn.innerHTML = '<span>❌ Export Failed</span>';
+        btn.innerHTML = "<span>❌ Export Failed</span>";
         setTimeout(() => {
           btn.disabled = false;
           btn.innerHTML = originalHTML;
@@ -215,46 +224,51 @@
   /**
    * Handle CSV export
    */
-  window.handleWellnessExportCSV = function() {
+  window.handleWellnessExportCSV = function () {
     // Get wellness history from localStorage
-    const wellnessHistory = JSON.parse(localStorage.getItem('wellnessHistory') || '[]');
+    const wellnessHistory = JSON.parse(
+      localStorage.getItem("wellnessHistory") || "[]",
+    );
 
     if (wellnessHistory.length === 0) {
-      alert('No wellness data to export. Log some wellness check-ins first!');
+      alert("No wellness data to export. Log some wellness check-ins first!");
       return;
     }
 
     // Show loading state
-    const btn = event.target.closest('.export-btn');
+    const btn = event.target.closest(".export-btn");
     const originalHTML = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span>⏳ Generating CSV...</span>';
+    btn.innerHTML = "<span>⏳ Generating CSV...</span>";
 
     // Format data for CSV
-    const csvData = wellnessHistory.map(entry => ({
+    const csvData = wellnessHistory.map((entry) => ({
       Date: new Date(entry.date).toLocaleDateString(),
-      'Sleep (hours)': entry.sleep || 'N/A',
-      'Energy (1-10)': entry.energy || 'N/A',
-      'Mood (1-10)': entry.mood || 'N/A',
-      'Stress (1-10)': entry.stress || 'N/A',
-      'Soreness (1-10)': entry.soreness || 'N/A',
-      'Motivation (1-10)': entry.motivation || 'N/A',
-      'Hydration (1-10)': entry.hydration || 'N/A',
-      Notes: entry.notes || ''
+      "Sleep (hours)": entry.sleep || "N/A",
+      "Energy (1-10)": entry.energy || "N/A",
+      "Mood (1-10)": entry.mood || "N/A",
+      "Stress (1-10)": entry.stress || "N/A",
+      "Soreness (1-10)": entry.soreness || "N/A",
+      "Motivation (1-10)": entry.motivation || "N/A",
+      "Hydration (1-10)": entry.hydration || "N/A",
+      Notes: entry.notes || "",
     }));
 
     // Export with slight delay for UI feedback
     setTimeout(() => {
-      const success = window.exportService.exportToCSV(csvData, 'flagfit-wellness-data.csv');
+      const success = window.exportService.exportToCSV(
+        csvData,
+        "flagfit-wellness-data.csv",
+      );
 
       if (success) {
-        btn.innerHTML = '<span>✅ CSV Downloaded!</span>';
+        btn.innerHTML = "<span>✅ CSV Downloaded!</span>";
         setTimeout(() => {
           btn.disabled = false;
           btn.innerHTML = originalHTML;
         }, 2000);
       } else {
-        btn.innerHTML = '<span>❌ Export Failed</span>';
+        btn.innerHTML = "<span>❌ Export Failed</span>";
         setTimeout(() => {
           btn.disabled = false;
           btn.innerHTML = originalHTML;
@@ -264,11 +278,11 @@
   };
 
   // Initialize
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', addExportButtons);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", addExportButtons);
   } else {
     addExportButtons();
   }
 
-  console.log('[Wellness Export] Export buttons script loaded');
+  console.log("[Wellness Export] Export buttons script loaded");
 })();

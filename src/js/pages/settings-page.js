@@ -78,7 +78,11 @@ function loadUserSettings() {
     }
 
     // Load saved preferences
-    const savedSettings = storageService.get("flagfit_settings", {}, { usePrefix: false });
+    const savedSettings = storageService.get(
+      "flagfit_settings",
+      {},
+      { usePrefix: false },
+    );
 
     // Apply saved theme
     if (savedSettings.theme) {
@@ -121,7 +125,11 @@ function loadUserSettings() {
 
   // Load profile data from user_profile (takes precedence)
   try {
-    const profileData = storageService.get("user_profile", {}, { usePrefix: false });
+    const profileData = storageService.get(
+      "user_profile",
+      {},
+      { usePrefix: false },
+    );
     const userData = storageService.get("userData", {}, { usePrefix: false });
 
     // Load position (prefer profileData)
@@ -254,7 +262,7 @@ window.toggleSidebar = function () {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.querySelector(".menu-scrim");
     const toggle = document.getElementById("mobile-menu-toggle");
-    
+
     if (sidebar) {
       const isOpen = sidebar.classList.contains("is-open");
       if (isOpen) {
@@ -283,7 +291,7 @@ window.closeMenu = function () {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.querySelector(".menu-scrim");
     const toggle = document.getElementById("mobile-menu-toggle");
-    
+
     if (sidebar) {
       sidebar.classList.remove("is-open");
       overlay?.classList.remove("is-visible");
@@ -303,16 +311,16 @@ async function loadNotificationPreferences() {
   try {
     const { apiClient, API_ENDPOINTS } = await import("../../api-config.js");
     const prefsResponse = await apiClient.get(
-      API_ENDPOINTS.dashboard.notificationsPreferences
+      API_ENDPOINTS.dashboard.notificationsPreferences,
     );
-    
+
     if (prefsResponse && prefsResponse.success && prefsResponse.data) {
       const preferences = prefsResponse.data;
-      
+
       // Update toggle switches based on preferences
       Object.entries(preferences).forEach(([type, prefs]) => {
         const toggle = document.querySelector(
-          `[data-preference-key="${type}"]`
+          `[data-preference-key="${type}"]`,
         );
         if (toggle) {
           // Active = not muted
@@ -334,7 +342,7 @@ window.toggleNotificationPreference = async function (element, type) {
   const isActive = element.classList.contains("active");
   element.classList.toggle("active");
   const muted = !element.classList.contains("active");
-  
+
   try {
     // Import API client if not available
     if (!window.apiClient || !window.API_ENDPOINTS) {
@@ -342,34 +350,34 @@ window.toggleNotificationPreference = async function (element, type) {
       window.apiClient = apiClient;
       window.API_ENDPOINTS = API_ENDPOINTS;
     }
-    
+
     // Get current preferences
     const prefsResponse = await window.apiClient.get(
-      window.API_ENDPOINTS.dashboard.notificationsPreferences
+      window.API_ENDPOINTS.dashboard.notificationsPreferences,
     );
-    
+
     const currentPrefs = prefsResponse?.success ? prefsResponse.data : {};
-    
+
     // Update preference for this type
     const updatedPrefs = {
       ...currentPrefs,
       [type]: {
         muted,
         pushEnabled: currentPrefs[type]?.pushEnabled !== false,
-        inAppEnabled: currentPrefs[type]?.inAppEnabled !== false
-      }
+        inAppEnabled: currentPrefs[type]?.inAppEnabled !== false,
+      },
     };
-    
+
     // Save to backend
     await window.apiClient.post(
       window.API_ENDPOINTS.dashboard.notificationsPreferences,
-      { preferences: updatedPrefs }
+      { preferences: updatedPrefs },
     );
-    
+
     // Show success feedback
     if (window.ErrorHandler) {
       window.ErrorHandler.showSuccess(
-        `${type} notifications ${muted ? 'muted' : 'enabled'}`
+        `${type} notifications ${muted ? "muted" : "enabled"}`,
       );
     }
   } catch (error) {
@@ -377,7 +385,9 @@ window.toggleNotificationPreference = async function (element, type) {
     element.classList.toggle("active");
     logger.warn("Failed to update notification preference:", error);
     if (window.ErrorHandler) {
-      window.ErrorHandler.showError("Failed to update preference. Please try again.");
+      window.ErrorHandler.showError(
+        "Failed to update preference. Please try again.",
+      );
     }
   }
 };
@@ -438,7 +448,11 @@ window.saveSettings = async function (event) {
   };
 
   // Get existing profile data
-  const existingProfile = storageService.get("user_profile", {}, { usePrefix: false });
+  const existingProfile = storageService.get(
+    "user_profile",
+    {},
+    { usePrefix: false },
+  );
   const updatedProfile = { ...existingProfile, ...profileData };
   storageService.set("user_profile", updatedProfile, { usePrefix: false });
 
@@ -460,7 +474,9 @@ window.saveSettings = async function (event) {
   // Show success message
   const button =
     event?.target || document.querySelector('button[onclick*="saveSettings"]');
-  if (!button) {return;}
+  if (!button) {
+    return;
+  }
   const originalText = button.innerHTML;
   button.innerHTML =
     '<span><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Saved!';

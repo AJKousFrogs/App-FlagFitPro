@@ -3,12 +3,8 @@
  * Monitors and reports errors in production
  */
 
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:8',message:'Module loading started',data:{hasWindow:typeof window!=='undefined',hasDocument:typeof document!=='undefined',moduleType:typeof import.meta},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-// #endregion
-
-import { logger } from '../../logger.js';
-import { config } from '../config/environment.js';
+import { logger } from "../../logger.js";
+import { config } from "../config/environment.js";
 
 class SentryService {
   constructor() {
@@ -22,53 +18,39 @@ class SentryService {
    */
   async init() {
     // Only initialize in production
-    if (config.ENV !== 'production' && config.ENV !== 'staging') {
-      logger.debug('[Sentry] Skipping initialization in development');
+    if (config.ENV !== "production" && config.ENV !== "staging") {
+      logger.debug("[Sentry] Skipping initialization in development");
       return;
     }
 
     // Check if DSN is configured
     const sentryDsn = this.getSentryDsn();
-    if (!sentryDsn || sentryDsn === 'your_sentry_dsn_here') {
-      logger.warn('[Sentry] DSN not configured, error tracking disabled');
+    if (!sentryDsn || sentryDsn === "your_sentry_dsn_here") {
+      logger.warn("[Sentry] DSN not configured, error tracking disabled");
       return;
     }
 
     try {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:33',message:'Before dynamic import',data:{importSupported:typeof import!=='undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       // Dynamically import Sentry to avoid loading in development
       // Use a more defensive import pattern that handles missing packages gracefully
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:35',message:'Attempting import @sentry/browser',data:{packageName:'@sentry/browser'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       let SentryModule;
       try {
-        SentryModule = await import('@sentry/browser');
+        SentryModule = await import("@sentry/browser");
       } catch (importError) {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:38',message:'Import failed, Sentry package not available',data:{errorName:importError?.name,errorMessage:importError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
-        // #endregion
-        logger.warn('[Sentry] Package @sentry/browser not available, error tracking disabled');
+        logger.warn(
+          "[Sentry] Package @sentry/browser not available, error tracking disabled",
+        );
         return;
       }
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:42',message:'Import successful',data:{hasSentryModule:!!SentryModule,hasDefault:!!SentryModule.default},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       const Sentry = SentryModule.default || SentryModule;
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:45',message:'Attempting import @sentry/tracing',data:{packageName:'@sentry/tracing'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       let BrowserTracing;
       try {
-        const tracingModule = await import('@sentry/tracing');
+        const tracingModule = await import("@sentry/tracing");
         BrowserTracing = tracingModule.BrowserTracing;
       } catch (importError) {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:50',message:'Tracing import failed, continuing without tracing',data:{errorName:importError?.name,errorMessage:importError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
-        // #endregion
-        logger.warn('[Sentry] Package @sentry/tracing not available, continuing without tracing');
+        logger.warn(
+          "[Sentry] Package @sentry/tracing not available, continuing without tracing",
+        );
         BrowserTracing = null;
       }
 
@@ -83,7 +65,7 @@ class SentryService {
         tracesSampleRate: config.PERFORMANCE_SAMPLE_RATE || 0.1,
 
         // Release tracking (use from build process)
-        release: window._env?.APP_VERSION || 'development',
+        release: window._env?.APP_VERSION || "development",
 
         // Before sending event, filter sensitive data
         beforeSend(event, hint) {
@@ -110,21 +92,21 @@ class SentryService {
         // Ignore certain errors
         ignoreErrors: [
           // Browser extensions
-          'top.GLOBALS',
-          'chrome-extension',
-          'moz-extension',
+          "top.GLOBALS",
+          "chrome-extension",
+          "moz-extension",
 
           // Network errors (handled separately)
-          'NetworkError',
-          'Failed to fetch',
-          'Load failed',
+          "NetworkError",
+          "Failed to fetch",
+          "Load failed",
 
           // Expected errors
-          'ResizeObserver loop limit exceeded',
-          'ResizeObserver loop completed',
+          "ResizeObserver loop limit exceeded",
+          "ResizeObserver loop completed",
 
           // Ad blockers
-          'adsbygoogle',
+          "adsbygoogle",
         ],
 
         // Deny URLs (don't track errors from these)
@@ -141,9 +123,9 @@ class SentryService {
         initConfig.integrations = [
           new BrowserTracing({
             tracingOrigins: [
-              'localhost',
+              "localhost",
               window.location.hostname,
-              /^\//  // Same-origin requests
+              /^\//, // Same-origin requests
             ],
           }),
         ];
@@ -152,16 +134,12 @@ class SentryService {
       Sentry.init(initConfig);
 
       this.initialized = true;
-      logger.success('[Sentry] Error tracking initialized');
+      logger.success("[Sentry] Error tracking initialized");
 
       // Set user context if available
       this.updateUserContext();
-
     } catch (error) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:120',message:'Import error caught',data:{errorName:error?.name,errorMessage:error?.message,errorStack:error?.stack,errorToString:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
-      logger.error('[Sentry] Failed to initialize:', error);
+      logger.error("[Sentry] Failed to initialize:", error);
     }
   }
 
@@ -195,7 +173,7 @@ class SentryService {
           username: user.name,
           role: user.role,
         });
-        logger.debug('[Sentry] User context updated');
+        logger.debug("[Sentry] User context updated");
       } else {
         // Try to get user from auth
         const authManager = window.authManager;
@@ -212,7 +190,7 @@ class SentryService {
         }
       }
     } catch (error) {
-      logger.error('[Sentry] Failed to update user context:', error);
+      logger.error("[Sentry] Failed to update user context:", error);
     }
   }
 
@@ -224,9 +202,9 @@ class SentryService {
 
     try {
       this.Sentry.setUser(null);
-      logger.debug('[Sentry] User context cleared');
+      logger.debug("[Sentry] User context cleared");
     } catch (error) {
-      logger.error('[Sentry] Failed to clear user context:', error);
+      logger.error("[Sentry] Failed to clear user context:", error);
     }
   }
 
@@ -235,7 +213,7 @@ class SentryService {
    */
   captureException(error, context = {}) {
     if (!this.initialized || !this.Sentry) {
-      logger.error('[Sentry] Not initialized, error not reported:', error);
+      logger.error("[Sentry] Not initialized, error not reported:", error);
       return;
     }
 
@@ -243,22 +221,22 @@ class SentryService {
       this.Sentry.captureException(error, {
         extra: context,
         tags: {
-          component: context.component || 'unknown',
-          action: context.action || 'unknown',
+          component: context.component || "unknown",
+          action: context.action || "unknown",
         },
       });
-      logger.debug('[Sentry] Exception captured:', error.message);
+      logger.debug("[Sentry] Exception captured:", error.message);
     } catch (err) {
-      logger.error('[Sentry] Failed to capture exception:', err);
+      logger.error("[Sentry] Failed to capture exception:", err);
     }
   }
 
   /**
    * Capture a message
    */
-  captureMessage(message, level = 'info', context = {}) {
+  captureMessage(message, level = "info", context = {}) {
     if (!this.initialized || !this.Sentry) {
-      logger.warn('[Sentry] Not initialized, message not reported:', message);
+      logger.warn("[Sentry] Not initialized, message not reported:", message);
       return;
     }
 
@@ -267,9 +245,9 @@ class SentryService {
         level,
         extra: context,
       });
-      logger.debug('[Sentry] Message captured:', message);
+      logger.debug("[Sentry] Message captured:", message);
     } catch (error) {
-      logger.error('[Sentry] Failed to capture message:', error);
+      logger.error("[Sentry] Failed to capture message:", error);
     }
   }
 
@@ -285,7 +263,7 @@ class SentryService {
         ...breadcrumb,
       });
     } catch (error) {
-      logger.error('[Sentry] Failed to add breadcrumb:', error);
+      logger.error("[Sentry] Failed to add breadcrumb:", error);
     }
   }
 
@@ -298,7 +276,7 @@ class SentryService {
     try {
       this.Sentry.setContext(name, context);
     } catch (error) {
-      logger.error('[Sentry] Failed to set context:', error);
+      logger.error("[Sentry] Failed to set context:", error);
     }
   }
 
@@ -311,14 +289,14 @@ class SentryService {
     try {
       this.Sentry.setTag(key, value);
     } catch (error) {
-      logger.error('[Sentry] Failed to set tag:', error);
+      logger.error("[Sentry] Failed to set tag:", error);
     }
   }
 
   /**
    * Start a transaction (for performance monitoring)
    */
-  startTransaction(name, op = 'navigation') {
+  startTransaction(name, op = "navigation") {
     if (!this.initialized || !this.Sentry) return null;
 
     try {
@@ -327,7 +305,7 @@ class SentryService {
         op,
       });
     } catch (error) {
-      logger.error('[Sentry] Failed to start transaction:', error);
+      logger.error("[Sentry] Failed to start transaction:", error);
       return null;
     }
   }
@@ -351,10 +329,10 @@ class SentryService {
 export const sentryService = new SentryService();
 
 // Auto-initialize on import
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   // Initialize after page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
       sentryService.init();
     });
   } else {
