@@ -23,7 +23,7 @@ const getTrainingStats = async (userId) => {
 
     // Calculate statistics from real data
     const totalSessions = trainingSessions.length;
-    const totalHours =
+    const _totalHours =
       trainingSessions.reduce(
         (sum, session) => sum + (session.duration || 0),
         0,
@@ -193,7 +193,7 @@ const formatWorkoutName = (workoutType) => {
   );
 };
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Training-Stats", event);
 
   // Handle CORS preflight
@@ -234,7 +234,7 @@ exports.handler = async (event, context) => {
       let bodyData = {};
       try {
         bodyData = JSON.parse(event.body);
-      } catch (parseError) {
+      } catch (_parseError) {
         return handleValidationError("Invalid JSON in request body");
       }
 

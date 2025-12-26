@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 
 // Test email endpoint
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // Handle CORS
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -31,7 +31,7 @@ exports.handler = async (event, context) => {
     let bodyData = {};
     try {
       bodyData = JSON.parse(event.body);
-    } catch (parseError) {
+    } catch (_parseError) {
       return {
         statusCode: 400,
         headers,
@@ -39,7 +39,7 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const { email, provider = "smtp" } = bodyData;
+    const { email, provider: _provider = "smtp" } = bodyData;
 
     if (!email) {
       return {

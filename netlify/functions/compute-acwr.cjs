@@ -2,7 +2,7 @@
 // Computes ACWR using the stored procedure
 // Endpoint: /api/compute-acwr
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -17,7 +17,7 @@ const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 /**
  * Compute ACWR for an athlete
  */
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
@@ -60,7 +60,7 @@ exports.handler = async (event, context) => {
     let body;
     try {
       body = JSON.parse(event.body || "{}");
-    } catch (e) {
+    } catch (_e) {
       return handleValidationError("Invalid JSON in request body");
     }
 

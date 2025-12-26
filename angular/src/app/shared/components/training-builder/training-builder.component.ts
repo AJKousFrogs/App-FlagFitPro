@@ -812,27 +812,35 @@ export class TrainingBuilderComponent {
         s !== null && 
         typeof s === 'object' && 
         'formData' in s &&
-        s.formData !== null &&
-        typeof s.formData === 'object'
+        s['formData'] !== null &&
+        typeof s['formData'] === 'object'
       )
       .map((suggestion, index) => {
-        const formData = suggestion.formData as Record<string, unknown>;
+        const formData = suggestion['formData'] as Record<string, unknown>;
+        const suggestionId = suggestion['id'];
+        const suggestionTitle = suggestion['title'];
+        const suggestionDescription = suggestion['description'];
+        const formSessionType = formData['sessionType'];
+        const formDuration = formData['duration'];
+        const formIntensity = formData['intensity'];
+        const formEquipment = formData['equipment'];
+        
         return {
-          id: `ai-${typeof suggestion.id === 'string' ? suggestion.id : 'unknown'}-${index}`,
-          name: typeof suggestion.title === 'string' ? suggestion.title : 'Untitled Exercise',
-          category: typeof formData.sessionType === 'string' ? formData.sessionType : "mixed",
-          duration: typeof formData.duration === 'number' ? formData.duration : Math.floor(duration / 3),
+          id: `ai-${typeof suggestionId === 'string' ? suggestionId : 'unknown'}-${index}`,
+          name: typeof suggestionTitle === 'string' ? suggestionTitle : 'Untitled Exercise',
+          category: typeof formSessionType === 'string' ? formSessionType : "mixed",
+          duration: typeof formDuration === 'number' ? formDuration : Math.floor(duration / 3),
           intensity: (
-            formData.intensity === 'low' ||
-            formData.intensity === 'medium' ||
-            formData.intensity === 'high'
-              ? formData.intensity
+            formIntensity === 'low' ||
+            formIntensity === 'medium' ||
+            formIntensity === 'high'
+              ? formIntensity
               : intensity
           ) as "low" | "medium" | "high",
-          equipment: Array.isArray(formData.equipment) 
-            ? formData.equipment.filter((e): e is string => typeof e === 'string')
+          equipment: Array.isArray(formEquipment) 
+            ? formEquipment.filter((e): e is string => typeof e === 'string')
             : equipment,
-          description: typeof suggestion.description === 'string' ? suggestion.description : '',
+          description: typeof suggestionDescription === 'string' ? suggestionDescription : '',
           aiRecommended: true,
         };
       });

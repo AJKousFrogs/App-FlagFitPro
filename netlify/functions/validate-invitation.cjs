@@ -9,7 +9,7 @@ const {
   CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Validate-Invitation", event);
 
   if (event.httpMethod === "OPTIONS") {

@@ -24,7 +24,7 @@ const ALLOWED_CATEGORIES = [
   "strategy",
 ];
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Knowledge-Search", event);
 
   if (event.httpMethod === "OPTIONS") {
@@ -42,7 +42,7 @@ exports.handler = async (event, context) => {
       let bodyData = {};
       try {
         bodyData = JSON.parse(event.body);
-      } catch (parseError) {
+      } catch (_parseError) {
         return handleValidationError("Invalid JSON in request body");
       }
 
@@ -81,7 +81,7 @@ exports.handler = async (event, context) => {
         requireApproval = options.requireApproval !== false; // Default true, but can be overridden
         includeExperimental = options.includeExperimental === true; // Default false
         minQualityScore = parseFloat(options.minQualityScore) || 0.0;
-      } catch (e) {
+      } catch (_e) {
         // Use defaults if options parsing fails
       }
 

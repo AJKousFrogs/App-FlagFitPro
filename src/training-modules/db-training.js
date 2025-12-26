@@ -169,7 +169,7 @@ export class DBTrainingModule extends ComponentWithCleanup {
   /**
    * Analyze current DB performance across key areas
    */
-  async analyzeDBPerformance(playerData) {
+  analyzeDBPerformance(playerData) {
     const metrics = {
       flagPullAccuracy: this.calculateFlagPullMetrics(playerData),
       coverageEfficiency: this.calculateCoverageMetrics(playerData),
@@ -195,8 +195,8 @@ export class DBTrainingModule extends ComponentWithCleanup {
       overallLevel,
       primaryWeaknesses,
       strengths: Object.entries(metrics)
-        .filter(([_, metric]) => metric.score >= 0.8)
-        .map(([area, metric]) => area),
+        .filter(([_area, metric]) => metric.score >= 0.8)
+        .map(([area, _metric]) => area),
       readiness: this.assessCompetitiveReadiness(
         overallLevel,
         primaryWeaknesses,
@@ -293,7 +293,7 @@ export class DBTrainingModule extends ComponentWithCleanup {
    * Create weekly DB training plan
    */
   createWeeklyDBPlan(analysis) {
-    const primaryFocus = analysis.primaryWeaknesses[0]?.area || "general";
+    const _primaryFocus = analysis.primaryWeaknesses[0]?.area || "general";
 
     const weeklyPlan = {
       monday: {
@@ -445,7 +445,7 @@ export class DBTrainingModule extends ComponentWithCleanup {
   /**
    * Generate competitive scenarios for advanced training
    */
-  generateCompetitiveScenarios(playerData) {
+  generateCompetitiveScenarios(_playerData) {
     return [
       {
         name: "Red Zone Defense",
@@ -803,7 +803,7 @@ export class DBTrainingModule extends ComponentWithCleanup {
   /**
    * Create training progression timeline
    */
-  createProgressionTimeline(analysis) {
+  createProgressionTimeline(_analysis) {
     const timeline = {
       week1_2: {
         focus: "Foundation Building",

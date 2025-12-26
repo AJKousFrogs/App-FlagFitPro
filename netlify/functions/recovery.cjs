@@ -166,7 +166,7 @@ async function getRecoveryProtocols(userId) {
   // Filter and prioritize based on user metrics
   return protocols
     .filter((p) => p.suitable)
-    .sort((a, b) => {
+    .sort((a, _b) => {
       // Prioritize protocols that address current needs
       if (metrics.needsRecovery && a.type === "cryotherapy") {
         return -1;
@@ -415,7 +415,7 @@ async function handleRequest(event, context, { userId }) {
     if (body) {
       try {
         requestBody = JSON.parse(body);
-      } catch (e) {
+      } catch (_e) {
         // Body might not be JSON
       }
     }

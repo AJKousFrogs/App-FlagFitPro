@@ -13,7 +13,7 @@ const {
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("NotificationsCreate", event);
 
   // Handle CORS preflight

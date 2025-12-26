@@ -436,8 +436,8 @@ class AppPerformanceChecker {
 
   getOverallStatus() {
     const build = this.results.build.status;
-    const bundle = this.results.bundle.status;
-    const runtime = this.results.runtime.status;
+    const _bundle = this.results.bundle.status;
+    const _runtime = this.results.runtime.status;
     const memory = this.results.memory.status;
 
     if (build !== "error" && memory === "checked") {

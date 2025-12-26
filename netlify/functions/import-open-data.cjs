@@ -2,7 +2,7 @@
 // Imports open-source sport-science datasets and computes flag-football metrics
 // Endpoint: /api/import-open-data
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -66,7 +66,7 @@ function computeMetrics(raw) {
 /**
  * Import open dataset and compute metrics
  */
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
@@ -109,7 +109,7 @@ exports.handler = async (event, context) => {
     let body;
     try {
       body = JSON.parse(event.body || "{}");
-    } catch (e) {
+    } catch (_e) {
       return handleValidationError("Invalid JSON in request body");
     }
 

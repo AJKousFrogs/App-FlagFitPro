@@ -96,7 +96,7 @@ async function handleRequest(event, context, { userId }) {
     let body = {};
     try {
       body = JSON.parse(event.body || "{}");
-    } catch (parseError) {
+    } catch (_parseError) {
       return createErrorResponse("Invalid JSON in request body", 400);
     }
 

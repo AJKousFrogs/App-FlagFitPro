@@ -112,18 +112,13 @@ export class NotificationStateService {
       if (response && response.data) {
         if (Array.isArray(response.data)) {
           notifications = response.data;
-        } else if (
-          typeof response.data === 'object' &&
-          'notifications' in response.data &&
-          Array.isArray(response.data.notifications)
-        ) {
-          notifications = response.data.notifications;
-        } else if (
-          typeof response.data === 'object' &&
-          'data' in response.data &&
-          Array.isArray(response.data.data)
-        ) {
-          notifications = response.data.data;
+        } else if (typeof response.data === 'object' && response.data !== null) {
+          const dataObj = response.data as Record<string, unknown>;
+          if ('notifications' in dataObj && Array.isArray(dataObj['notifications'])) {
+            notifications = dataObj['notifications'] as Notification[];
+          } else if ('data' in dataObj && Array.isArray(dataObj['data'])) {
+            notifications = dataObj['data'] as Notification[];
+          }
         }
       } else if (Array.isArray(response)) {
         notifications = response as Notification[];
@@ -292,15 +287,19 @@ export class NotificationStateService {
 
       let count = 0;
       if (response && response.data) {
-        if (typeof response.data === 'object' && 'unreadCount' in response.data) {
-          count = response.data.unreadCount || 0;
-        } else if (typeof response.data === 'object' && 'count' in response.data) {
-          count = response.data.count || 0;
+        const dataObj = response.data as unknown as Record<string, unknown>;
+        if (typeof dataObj['unreadCount'] === 'number') {
+          count = dataObj['unreadCount'];
+        } else if (typeof dataObj['count'] === 'number') {
+          count = dataObj['count'];
         }
       } else if (typeof response === "number") {
         count = response;
-      } else if (typeof response === 'object' && response !== null && 'unreadCount' in response) {
-        count = response.unreadCount || 0;
+      } else if (typeof response === 'object' && response !== null) {
+        const respObj = response as unknown as Record<string, unknown>;
+        if (typeof respObj['unreadCount'] === 'number') {
+          count = respObj['unreadCount'];
+        }
       }
 
       // Update notifications to match server count if there's a mismatch

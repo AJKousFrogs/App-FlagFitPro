@@ -64,7 +64,7 @@ app.all("/.netlify/functions/:functionName", async (req, res) => {
     try {
       const resolvedPath = require.resolve(functionPath);
       delete require.cache[resolvedPath];
-    } catch (e) {
+    } catch (_e) {
       // Path not in cache yet, that's fine
     }
 
@@ -338,7 +338,7 @@ const bugFixer = {
   },
 
   // Auto-fix common issues
-  autoFix: async (filePath) => {
+  autoFix: (filePath) => {
     try {
       const content = fs.readFileSync(filePath, "utf8");
       let fixed = content;

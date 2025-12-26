@@ -143,7 +143,7 @@ async function networkFirstStrategy(request) {
     }
 
     return networkResponse;
-  } catch (error) {
+  } catch (_error) {
     console.log('[Service Worker] Network failed, trying cache:', request.url);
 
     // Only try cache for GET requests
@@ -191,7 +191,7 @@ self.addEventListener('push', (event) => {
     try {
       const data = event.data.json();
       notificationData = { ...notificationData, ...data };
-    } catch (error) {
+    } catch (_error) {
       notificationData.body = event.data.text();
     }
   }

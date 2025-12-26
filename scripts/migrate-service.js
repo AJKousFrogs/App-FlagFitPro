@@ -105,8 +105,8 @@ function replaceServiceInjection(content) {
   return content;
 }
 
-function convertGetMethod(content, endpoint, table, idField) {
-  const methodPattern = new RegExp(
+function _convertGetMethod(content, _endpoint, _table, _idField) {
+  const _methodPattern = new RegExp(
     `(\\w+)\\([^)]*\\): Observable<([^>]+)> {[\\s\\S]*?this\\.apiService\\.get[^}]+}`,
     "g",
   );
@@ -119,7 +119,7 @@ function convertGetMethod(content, endpoint, table, idField) {
   return content;
 }
 
-function convertPostMethod(content, endpoint, table, idField) {
+function _convertPostMethod(content, _endpoint, _table, _idField) {
   // Similar to GET - simplified conversion
   log.warn("POST method conversion requires manual review of data mapping");
 

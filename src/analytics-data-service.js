@@ -91,7 +91,7 @@ class AnalyticsDataService {
               status: xhr.status,
               json: () => Promise.resolve(data),
             });
-          } catch (e) {
+          } catch (_e) {
             reject(new Error("Invalid JSON response"));
           }
         } else {

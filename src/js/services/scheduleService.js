@@ -184,7 +184,7 @@ class ScheduleService {
     saturday.setDate(
       saturday.getDate() + (daysUntilSaturday === 0 ? 7 : daysUntilSaturday),
     );
-    const hasGameSaturday = this.isGameDay(6, saturday, scheduleSettings);
+    const _hasGameSaturday = this.isGameDay(6, saturday, scheduleSettings);
 
     // Check if there's a game on Sunday (this week)
     const sunday = new Date(date);
@@ -192,7 +192,7 @@ class ScheduleService {
     sunday.setDate(
       sunday.getDate() + (daysUntilSunday === 0 ? 7 : daysUntilSunday),
     );
-    const hasGameSunday = this.isGameDay(0, sunday, scheduleSettings);
+    const _hasGameSunday = this.isGameDay(0, sunday, scheduleSettings);
 
     // Check if game is within 1 day
     const isDayBeforeGame = this.isDaysBeforeGame(date, 1, scheduleSettings);

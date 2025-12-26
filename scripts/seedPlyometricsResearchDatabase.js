@@ -739,7 +739,7 @@ async function seedPlyometricsResearch() {
         methodology.proper_execution_guidelines,
       ];
 
-      const result = await client.query(query, values);
+      const _result = await client.query(query, values);
       console.log(
         `Inserted Verkhoshansky methodology: ${methodology.work_title}`,
       );
@@ -804,7 +804,7 @@ async function seedPlyometricsResearch() {
         research.peer_reviewed,
       ];
 
-      const result = await client.query(query, values);
+      const _result = await client.query(query, values);
       console.log(`Inserted research: ${research.title}`);
     }
 
@@ -849,7 +849,7 @@ async function seedPlyometricsResearch() {
         exercise.injury_risk_rating,
       ];
 
-      const result = await client.query(query, values);
+      const _result = await client.query(query, values);
       console.log(`Inserted exercise: ${exercise.exercise_name}`);
     }
 
@@ -897,7 +897,7 @@ async function seedPlyometricsResearch() {
         program.individual_variability_notes,
       ];
 
-      const result = await client.query(query, values);
+      const _result = await client.query(query, values);
       console.log(`Inserted training program: ${program.program_name}`);
     }
 
@@ -936,7 +936,7 @@ async function seedPlyometricsResearch() {
         guideline.next_review_date,
       ];
 
-      const result = await client.query(query, values);
+      const _result = await client.query(query, values);
       console.log(`Inserted guideline: ${guideline.title}`);
     }
 

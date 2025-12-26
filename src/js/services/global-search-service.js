@@ -4,7 +4,8 @@
  * Searches training protocols, pages, exercises, players, and more
  */
 
-import { MORNING_MOBILITY_ROUTINE } from "../data/shared-protocols.js";
+// MORNING_MOBILITY_ROUTINE available for future use
+// import { MORNING_MOBILITY_ROUTINE } from "../data/shared-protocols.js";
 
 import { logger } from '../../logger.js';
 
@@ -201,7 +202,7 @@ async function loadPlayers() {
           playersCacheTime = now;
           return players;
         }
-      } catch (error) {
+      } catch (_error) {
         // Try next endpoint
         continue;
       }
@@ -273,22 +274,19 @@ function searchPlayers(query, players) {
     if (playerName === normalizedQuery || fullName === normalizedQuery) {
       score += 100;
       matchedFields.push("name");
-    }
-    // Name contains query
-    else if (
+    } else if (
+      // Name contains query
       playerName.includes(normalizedQuery) ||
       fullName.includes(normalizedQuery)
     ) {
       score += 80;
       matchedFields.push("name");
-    }
-    // First or last name match
-    else if (firstName === normalizedQuery || lastName === normalizedQuery) {
+    } else if (firstName === normalizedQuery || lastName === normalizedQuery) {
+      // First or last name match
       score += 70;
       matchedFields.push("name");
-    }
-    // Word-by-word matching for names
-    else {
+    } else {
+      // Word-by-word matching for names
       for (const word of queryWords) {
         if (
           firstName.includes(word) ||
@@ -391,19 +389,16 @@ export async function performGlobalSearch(query) {
       if (keywordLower === normalizedQuery) {
         score += 50;
         matchedKeywords.push(keyword);
-      }
-      // Keyword contains query
-      else if (keywordLower.includes(normalizedQuery)) {
+      } else if (keywordLower.includes(normalizedQuery)) {
+        // Keyword contains query
         score += 30;
         matchedKeywords.push(keyword);
-      }
-      // Query contains keyword
-      else if (normalizedQuery.includes(keywordLower)) {
+      } else if (normalizedQuery.includes(keywordLower)) {
+        // Query contains keyword
         score += 20;
         matchedKeywords.push(keyword);
-      }
-      // Word-by-word matching
-      else {
+      } else {
+        // Word-by-word matching
         for (const word of queryWords) {
           if (keywordLower.includes(word) || word.includes(keywordLower)) {
             score += 10;

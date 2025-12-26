@@ -361,7 +361,7 @@ const handleRequest = async (req, res) => {
     let filePath;
     try {
       filePath = sanitizePath(pathname, __dirname);
-    } catch (error) {
+    } catch (_error) {
       res.writeHead(403, {
         "Content-Type": "text/plain",
         ...securityHeaders,
@@ -379,7 +379,7 @@ const handleRequest = async (req, res) => {
       await fs.access(filePath, constants.F_OK);
       // File exists - serve it
       await serveFile(req, res, filePath, ext);
-    } catch (error) {
+    } catch (_error) {
       // File not found
       // For JS/CSS/MJS files, return proper 404 (don't serve index.html)
       if (ext === ".js" || ext === ".css" || ext === ".mjs" || ext === ".map") {

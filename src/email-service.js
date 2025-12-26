@@ -41,7 +41,7 @@ class EmailService {
   }
 
   // Gmail configuration
-  async initializeGmail() {
+  initializeGmail() {
     this.transporter = nodemailer.createTransporter({
       service: "gmail",
       auth: {
@@ -52,7 +52,7 @@ class EmailService {
   }
 
   // SendGrid configuration
-  async initializeSendGrid() {
+  initializeSendGrid() {
     this.transporter = nodemailer.createTransporter({
       service: "SendGrid",
       auth: {
@@ -63,7 +63,7 @@ class EmailService {
   }
 
   // Mailgun configuration
-  async initializeMailgun() {
+  initializeMailgun() {
     this.transporter = nodemailer.createTransporter({
       service: "Mailgun",
       auth: {
@@ -74,7 +74,7 @@ class EmailService {
   }
 
   // Generic SMTP configuration
-  async initializeSMTP() {
+  initializeSMTP() {
     this.transporter = nodemailer.createTransporter({
       host: process.env.SMTP_HOST || "smtp.gmail.com",
       port: parseInt(process.env.SMTP_PORT) || 587,

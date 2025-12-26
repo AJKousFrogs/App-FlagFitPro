@@ -25,12 +25,12 @@ export class LoadingManager {
     overlay.setAttribute("aria-label", message);
 
     // Create spinner
-    const spinner = SecureDOMUtils.createElement(overlay, "div", {
+    const _spinner = SecureDOMUtils.createElement(overlay, "div", {
       className: "loading-spinner",
     });
 
     // Create message
-    const messageEl = SecureDOMUtils.createElement(overlay, "div", {
+    const _messageEl = SecureDOMUtils.createElement(overlay, "div", {
       className: "loading-message",
       textContent: message,
     });

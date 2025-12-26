@@ -1,7 +1,7 @@
 // API Configuration for FlagFit Pro
 // Handles different environments (development, production, Netlify)
 
-import { config, apiEndpoints } from "./config/environment.js";
+import { config } from "./config/environment.js";
 import { logger } from "./logger.js";
 import { csrfProtection } from "./js/security/csrf-protection.js";
 import { cacheService } from "./js/services/cache-service.js";
@@ -217,7 +217,7 @@ export const API_ENDPOINTS = {
     update: (gameId) => normalizeEndpoint(`/games/${gameId}`),
     stats: (gameId) => normalizeEndpoint(`/games/${gameId}/stats`),
     plays: (gameId) => normalizeEndpoint(`/games/${gameId}/plays`),
-    playerStats: (gameId, playerId) =>
+    playerStats: (gameId, _playerId) =>
       normalizeEndpoint(`/games/${gameId}/player-stats`),
   },
 

@@ -3,14 +3,12 @@ const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 const { applyCSRFProtection } = require("./utils/csrf-protection.cjs");
 const { validateRequestBody } = require("./validation.cjs");
 const {
-  createSuccessResponse,
-  handleServerError,
   logFunctionCall,
   CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
 // Password reset endpoint
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // Log function call
   logFunctionCall("Auth-Reset-Password", event);
 

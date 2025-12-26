@@ -28,7 +28,7 @@ export class AnswerGenerator {
     });
   }
 
-  generateDosageAnswer({ question, knowledge, articles, entities }) {
+  generateDosageAnswer({ question: _question, knowledge, articles, entities }) {
     const supplement = entities.supplements?.[0]?.toLowerCase();
     const bodyStats = entities.bodyStats || {};
 
@@ -131,7 +131,7 @@ export class AnswerGenerator {
     return answer;
   }
 
-  generateTimingAnswer({ question, knowledge, articles }) {
+  generateTimingAnswer({ question: _question, knowledge, articles }) {
     let answer = "";
 
     if (knowledge && knowledge.protocols && knowledge.protocols.timing) {
@@ -153,7 +153,7 @@ export class AnswerGenerator {
     return answer;
   }
 
-  generateSafetyAnswer({ question, knowledge, articles }) {
+  generateSafetyAnswer({ question: _question, knowledge, articles: _articles }) {
     let answer = "**Safety Information:**\n\n";
 
     if (knowledge && knowledge.safety_warnings) {
@@ -270,7 +270,7 @@ export class AnswerGenerator {
     return answer;
   }
 
-  generateComparisonAnswer({ question, knowledge, articles }) {
+  generateComparisonAnswer({ question, knowledge: _knowledge, articles }) {
     let answer = "**Comparison:**\n\n";
 
     // Extract what's being compared from question
@@ -468,7 +468,7 @@ export class AnswerGenerator {
       .join("\n\n");
   }
 
-  synthesizeGeneralAnswerFromArticles(articles, question) {
+  synthesizeGeneralAnswerFromArticles(articles, _question) {
     const topArticles = articles.slice(0, 3);
     let answer = `Based on ${articles.length} research article${articles.length !== 1 ? "s" : ""}:\n\n`;
 

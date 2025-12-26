@@ -12,10 +12,10 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
-  statSync,
+  statSync as _statSync,
   copyFileSync,
-  readFileSync,
-  writeFileSync,
+  readFileSync as _readFileSync,
+  writeFileSync as _writeFileSync,
 } from "fs";
 import { join, dirname, extname } from "path";
 import { fileURLToPath } from "url";

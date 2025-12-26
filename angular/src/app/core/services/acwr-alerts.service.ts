@@ -23,6 +23,7 @@ import {
   RiskLevel,
   PlayerACWRProfile,
   TrainingAdjustment,
+  SessionType,
 } from "../models/acwr.models";
 import { AcwrService } from "./acwr.service";
 
@@ -382,7 +383,7 @@ export class AcwrAlertsService {
   public generateAdjustment(
     playerId: string,
     plannedSession: {
-      sessionType: string;
+      sessionType: SessionType;
       plannedIntensity: number;
       plannedDuration: number;
     },

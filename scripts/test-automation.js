@@ -805,7 +805,9 @@ Generated on ${new Date(this.testResults.timestamp).toLocaleString()}
         // Server not ready yet
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+      });
     }
 
     throw new Error(`Server at ${url} not ready within ${timeoutMs}ms`);

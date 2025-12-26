@@ -6,7 +6,7 @@
  */
 
 import { spawn } from "child_process";
-import { createServer } from "http";
+import { createServer as _createServer } from "http";
 // Using native fetch (Node.js 18+)
 // import fetch from "node-fetch";
 import PortManager from "./port-manager.js";
@@ -158,14 +158,16 @@ class MCPServerManager {
           console.log(`✅ ${server.name} is ready on port ${port}`);
           return true;
         }
-      } catch (error) {
+      } catch (_error) {
         // Server not ready yet
       }
 
       console.log(
         `⏳ Waiting for ${server.name} to be ready (${attempt}/${maxAttempts})...`,
       );
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+      });
     }
 
     throw new Error(
@@ -237,7 +239,10 @@ class MCPServerManager {
   async restartServers() {
     console.log("🔄 Restarting MCP servers...\n");
     await this.stopServers();
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds
+    // Wait 2 seconds
+    await new Promise((resolve) => {
+      setTimeout(resolve, 2000);
+    });
     await this.startServers();
   }
 
@@ -246,7 +251,7 @@ class MCPServerManager {
     console.log("\n📊 MCP Server Status:");
     console.log("=".repeat(50));
 
-    Object.entries(this.servers).forEach(([key, server]) => {
+    Object.entries(this.servers).forEach(([_key, server]) => {
       const statusIcon = this.getStatusIcon(server.status);
       const portInfo = server.port ? `port ${server.port}` : "no port";
       console.log(
@@ -277,7 +282,7 @@ class MCPServerManager {
     console.log("🏥 Performing MCP server health check...\n");
 
     const healthPromises = Object.entries(this.servers).map(
-      async ([key, server]) => {
+      async ([_key, server]) => {
         if (server.status !== "running" || !server.port) {
           return { server: server.name, status: "not-running" };
         }

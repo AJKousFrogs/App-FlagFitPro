@@ -79,7 +79,7 @@ async function buildJS() {
         outdir: join(distDir, "js"),
         outExtension: { ".js": ".min.js" },
         watch: {
-          onRebuild(error, result) {
+          onRebuild(error, _result) {
             if (error) {
               console.error("❌ Rebuild failed:", error);
             } else {

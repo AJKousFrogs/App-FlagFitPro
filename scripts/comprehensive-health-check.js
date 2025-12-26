@@ -731,7 +731,7 @@ class HealthChecker {
         const startTime = Date.now();
 
         // Test query
-        const { data, error, count } = await supabase
+        const { data: _data, error, count: _count } = await supabase
           .from("users")
           .select("id", { count: "exact", head: true })
           .limit(1);

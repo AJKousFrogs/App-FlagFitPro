@@ -2,8 +2,7 @@
 // Centralized endpoint for aggregating player statistics across all games
 // Always filters data up to and including today's date
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
-const { validateQueryParams } = require("./validation.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -13,7 +12,7 @@ const {
 } = require("./utils/error-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
-const { executeQuery, parseAthleteId } = require("./utils/db-query-helper.cjs");
+const { parseAthleteId } = require("./utils/db-query-helper.cjs");
 
 /**
  * Get today's date at end of day (23:59:59) for inclusive filtering
@@ -386,7 +385,7 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
 };
 
 // Main handler
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("PlayerStats", event);
 
   // Handle CORS preflight

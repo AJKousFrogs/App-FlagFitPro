@@ -1,7 +1,8 @@
 // Knowledge Base Service
 // Queries the evidence-based knowledge database for chatbot responses
 
-import { apiClient } from "../../api-config.js";
+// apiClient available for future use
+// import { apiClient } from "../../api-config.js";
 import { logger } from "../../logger.js";
 
 class KnowledgeBaseService {
@@ -151,7 +152,7 @@ class KnowledgeBaseService {
   /**
    * Synthesize answer from multiple articles
    */
-  synthesizeAnswerFromArticles(articles, question) {
+  synthesizeAnswerFromArticles(articles, _question) {
     // Simple synthesis - can be improved with NLP
     const keyFindings = articles
       .slice(0, 3)

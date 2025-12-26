@@ -6,7 +6,7 @@
  */
 
 import { execSync } from "child_process";
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync as _readFileSync, writeFileSync as _writeFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
@@ -59,7 +59,7 @@ async function auditSecurity() {
   try {
     exec("npm audit --audit-level=moderate");
     log("✅ Security audit completed", "green");
-  } catch (error) {
+  } catch (_error) {
     log("⚠️  Security vulnerabilities found. Run: npm audit fix", "yellow");
   }
 }
@@ -69,7 +69,7 @@ async function checkOutdated() {
   try {
     exec("npm outdated", rootDir);
     exec("npm outdated", join(rootDir, "angular"));
-  } catch (error) {
+  } catch (_error) {
     // npm outdated exits with code 1 if packages are outdated (expected)
     log(
       "ℹ️  Some packages are outdated. See UPDATE_REPORT.md for details.",
@@ -83,7 +83,7 @@ async function runTests() {
   try {
     exec("npm test");
     log("✅ Tests passed!", "green");
-  } catch (error) {
+  } catch (_error) {
     log("⚠️  Some tests failed. Please review.", "yellow");
   }
 }

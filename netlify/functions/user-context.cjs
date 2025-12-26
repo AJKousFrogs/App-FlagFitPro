@@ -5,7 +5,6 @@
 const { baseHandler } = require("./utils/base-handler.cjs");
 const {
   createSuccessResponse,
-  createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
 
@@ -63,7 +62,7 @@ async function getUserContext(userId) {
     let chronicLoad = 0;
     let acwr = 1.0;
     const last7Days = [];
-    const last28Days = [];
+    const _last28Days = [];
 
     if (sessions && sessions.length > 0) {
       // Last 7 days (acute)
@@ -151,7 +150,7 @@ async function getUserContext(userId) {
     }
 
     // Get team membership (for team role)
-    const { data: teamMemberships, error: teamError } = await supabaseAdmin
+    const { data: teamMemberships, error: _teamError } = await supabaseAdmin
       .from("team_members")
       .select("team_id, role")
       .eq("user_id", userId)

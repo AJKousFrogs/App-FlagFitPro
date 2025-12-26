@@ -144,7 +144,7 @@ export function memoizeAsync(fn, options = {}) {
   const cache = new MemoizationCache(maxSize, ttl);
   const pending = new Map(); // Track pending promises
 
-  const memoized = async function (...args) {
+  const memoized = function (...args) {
     const key = keyGenerator
       ? keyGenerator(...args)
       : cache.generateKey(...args);

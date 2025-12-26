@@ -2,7 +2,7 @@
 // Returns training load data for the Training Heatmap component
 // Endpoint: /api/performance/heatmap
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -205,7 +205,7 @@ function generateMockHeatmapData(timeRange) {
   return cells;
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Performance-Heatmap", event);
 
   // Handle CORS preflight

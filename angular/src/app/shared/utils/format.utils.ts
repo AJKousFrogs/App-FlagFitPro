@@ -128,6 +128,40 @@ export function formatPercent(value: number, decimals: number = 2): string {
 }
 
 /**
+ * Format percentage (alias for formatPercent)
+ * @example
+ * formatPercentage(0.1234) // '12.34%'
+ */
+export function formatPercentage(value: number, decimals: number = 2): string {
+  return formatPercent(value, decimals);
+}
+
+/**
+ * Format average value
+ * @example
+ * formatAverage(12.345) // '12.3'
+ */
+export function formatAverage(value: number, decimals: number = 1): string {
+  return value.toFixed(decimals);
+}
+
+/**
+ * Format stat value with appropriate formatting
+ * @example
+ * formatStat(1234) // '1,234'
+ * formatStat(0.756) // '75.6%'
+ */
+export function formatStat(value: number, type: 'number' | 'percent' | 'average' = 'number'): string {
+  if (type === 'percent') {
+    return formatPercent(value);
+  }
+  if (type === 'average') {
+    return formatAverage(value);
+  }
+  return formatNumber(value);
+}
+
+/**
  * Format file size
  * @example
  * formatFileSize(1536) // '1.5 KB'

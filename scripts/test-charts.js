@@ -4,7 +4,7 @@
 // Run with: node scripts/test-charts.js
 
 import fs from "fs";
-import path from "path";
+import _path from "path";
 
 console.log("🧪 Testing FlagFit Pro Chart.js Integration...\n");
 

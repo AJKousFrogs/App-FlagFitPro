@@ -4,10 +4,9 @@
  * Adds env.js script tag and/or inline script with Supabase config
  */
 
-import fs from "fs";
+import fs, { readdirSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { readdirSync } from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -69,17 +68,15 @@ htmlFiles.forEach((filename) => {
       `${inlineEnvScript}\n    $1`,
     );
     inserted = true;
-  }
-  // Try to insert before Supabase Configuration comment
-  else if (content.includes("<!-- Supabase Configuration")) {
+  } else if (content.includes("<!-- Supabase Configuration")) {
+    // Try to insert before Supabase Configuration comment
     content = content.replace(
       /(<!-- Supabase Configuration[^>]*>)/i,
       `${inlineEnvScript}\n    $1`,
     );
     inserted = true;
-  }
-  // Try to insert before first script tag in head
-  else if (content.includes("<head>")) {
+  } else if (content.includes("<head>")) {
+    // Try to insert before first script tag in head
     const headMatch = content.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
     if (headMatch && headMatch[1].includes("<script")) {
       content = content.replace(

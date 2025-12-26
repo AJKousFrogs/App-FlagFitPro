@@ -3,7 +3,7 @@
 // Always filters data up to and including today's date
 // This is the single source of truth for training stats calculations
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -138,7 +138,7 @@ function calculateACWR(sessions, referenceDate = new Date()) {
 function calculateWeeklyVolume(sessions, referenceDate = new Date()) {
   const today =
     referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
-  const todayStr = today.toISOString().split("T")[0];
+  const _todayStr = today.toISOString().split("T")[0];
 
   // Get ISO week start (Monday)
   const getISOWeekStart = (date) => {
@@ -329,7 +329,7 @@ async function getTrainingStats(userId, options = {}) {
   }
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Training-Stats-Enhanced", event);
 
   // Handle CORS preflight

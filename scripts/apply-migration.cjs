@@ -38,7 +38,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
 }
 
 // Initialize Supabase client with service key (admin access)
-const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+const _supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false,

@@ -6,7 +6,6 @@ const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
   CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
@@ -16,7 +15,7 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {

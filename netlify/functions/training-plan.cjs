@@ -2,7 +2,7 @@
 // Generates evidence-based training plans using real data up to and including today
 // Respects periodization phases, ACWR, and domestic vs international schedules
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -16,7 +16,7 @@ const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 /**
  * Get today's date at end of day (23:59:59) for inclusive filtering
  */
-function getTodayEndOfDay() {
+function _getTodayEndOfDay() {
   const today = new Date();
   today.setHours(23, 59, 59, 999);
   return today.toISOString();
@@ -25,7 +25,7 @@ function getTodayEndOfDay() {
 /**
  * Get today's date at start of day (00:00:00)
  */
-function getTodayStartOfDay() {
+function _getTodayStartOfDay() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return today.toISOString();
@@ -36,7 +36,7 @@ function getTodayStartOfDay() {
  */
 async function calculateACWR(userId, date) {
   try {
-    const endDate = new Date(date);
+    const _endDate = new Date(date);
     const acuteStartDate = new Date(date);
     acuteStartDate.setDate(acuteStartDate.getDate() - 7);
     const chronicStartDate = new Date(date);
@@ -470,14 +470,14 @@ async function generateTrainingPlan(userId, date = new Date()) {
  * Generate sessions for a specific day based on constraints
  */
 function generateSessionsForDay({
-  today,
+  today: _today,
   acwr,
   phase,
   gameToday,
   daysToNextDomestic,
   daysToNextInternational,
-  todaySessions,
-  history,
+  todaySessions: _todaySessions,
+  history: _history,
 }) {
   const sessions = [];
   let explanation = "";
@@ -777,9 +777,9 @@ function getPhaseFocus(phase) {
 function generateTomorrowGuidance({
   tomorrow,
   acwr,
-  phase,
+  phase: _phase,
   upcomingGames,
-  history,
+  history: _history,
 }) {
   const tomorrowDate = tomorrow.toISOString().split("T")[0];
 
@@ -864,7 +864,7 @@ function generateTomorrowGuidance({
 }
 
 // Main handler
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("TrainingPlan", event);
 
   // Handle CORS preflight

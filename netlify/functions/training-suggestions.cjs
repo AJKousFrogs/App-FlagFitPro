@@ -132,14 +132,12 @@ function categorizeSessionType(sessionType) {
  */
 function generateSuggestions(analysis, params = {}) {
   const suggestions = [];
-  const { sessionTypes, totalDuration, avgScoreByCategory, totalSessions } =
+  const { totalDuration, totalSessions } =
     analysis;
 
   // Check for missing training types
   const hasSpeedTraining = totalDuration.speed > 0;
   const hasStrengthTraining = totalDuration.strength > 0;
-  const hasConditioning = totalDuration.conditioning > 0;
-  const hasSkillTraining = totalDuration.skill > 0;
   const hasRecovery = totalDuration.recovery > 0;
 
   // Suggestion 1: Speed training gap

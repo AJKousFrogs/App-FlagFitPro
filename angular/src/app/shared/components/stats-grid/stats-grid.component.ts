@@ -163,13 +163,10 @@ export class StatsGridComponent {
 
     // If no formatType specified, format as whole number
     if (!stat.formatType || stat.formatType === "none") {
-      return formatNumber(stat.value, 0, true);
+      return formatNumber(stat.value, 0);
     }
 
     // Apply formatting based on formatType
-    return formatStat(stat.value, stat.formatType, {
-      decimals: stat.decimals,
-      showZero: true,
-    });
+    return formatStat(stat.value, stat.formatType as 'number' | 'percent' | 'average');
   }
 }

@@ -75,7 +75,7 @@ export class MLPerformancePredictor {
   /**
    * Predict sprint performance for 10-25 yard distances (flag football optimized)
    */
-  async predictSprintPerformance(athleteData) {
+  predictSprintPerformance(athleteData) {
     const cacheKey = `sprint_${athleteData.playerId}_${Date.now()}`;
 
     if (this.predictionCache.has(cacheKey)) {
@@ -130,7 +130,7 @@ export class MLPerformancePredictor {
   /**
    * Predict route running skill progression
    */
-  async predictRouteProgression(skillData) {
+  predictRouteProgression(skillData) {
     try {
       const model = this.models.get("routes");
       const features = this.extractRouteFeatures(skillData);
@@ -166,7 +166,7 @@ export class MLPerformancePredictor {
   /**
    * Enhanced decision making prediction for QBs and DBs
    */
-  async predictDecisionMaking(playerData, position) {
+  predictDecisionMaking(playerData, position) {
     try {
       const model = this.models.get("decisions");
       const features = this.extractDecisionFeatures(playerData, position);
@@ -321,7 +321,7 @@ export class MLPerformancePredictor {
   /**
    * Compute neural network prediction (simplified)
    */
-  computeNeuralNetwork(features, model) {
+  computeNeuralNetwork(features, _model) {
     // Simplified neural network simulation
     const input = Object.values(features);
     let output = input.reduce(
@@ -449,7 +449,7 @@ export class MLPerformancePredictor {
   /**
    * Fallback predictions when ML fails
    */
-  getFallbackSprintPrediction(athleteData) {
+  getFallbackSprintPrediction(_athleteData) {
     return {
       predictedTime: 4.8,
       improvement: 0.05,

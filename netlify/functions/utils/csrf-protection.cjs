@@ -41,7 +41,7 @@ function extractOrigin(url) {
   try {
     const parsed = new URL(url);
     return `${parsed.protocol}//${parsed.host}`;
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }

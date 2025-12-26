@@ -73,12 +73,12 @@ export function initializeLucideIcons(container = document, options = {}) {
  * @param {boolean} allowRichText - Whether to allow rich text formatting (default: false)
  */
 export function setSafeContent(element, content, isHTML = false, allowRichText = false) {
-  if (!element) return;
+  if (!element) {return;}
 
   // Clear existing content
   element.textContent = '';
 
-  if (!content) return;
+  if (!content) {return;}
 
   if (isHTML && allowRichText) {
     // For trusted HTML content (e.g., from database, not user input)
@@ -517,7 +517,7 @@ export function getMessageStatusHtml(status) {
   `;
 }
 
-export function getMessageActionsHtml(isOwn) {
+export function getMessageActionsHtml(_isOwn) {
   return `
     <div class="message-actions" role="toolbar" aria-label="Message actions">
       <button class="action-btn-mini" aria-label="React to message">

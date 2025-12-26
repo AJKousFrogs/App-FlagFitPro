@@ -433,7 +433,7 @@ function validateRequestBody(body, schemaName) {
       data: sanitizedData,
       response: null,
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       valid: false,
       data: null,

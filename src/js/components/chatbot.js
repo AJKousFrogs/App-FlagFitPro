@@ -568,7 +568,7 @@ class FlagFitChatbot {
             const existingMessages =
               messagesContainer.querySelectorAll(".chatbot-message");
             existingMessages.forEach((msg, index) => {
-              if (index > 0) msg.remove(); // Keep welcome message
+              if (index > 0) {msg.remove();} // Keep welcome message
             });
 
             // Render stored messages
@@ -898,7 +898,7 @@ class FlagFitChatbot {
             role: "assistant",
             content: fallbackResponse,
           });
-        } catch (fallbackError) {
+        } catch (_fallbackError) {
           this.hideErrorMessage();
           this.showErrorMessage(
             "I'm having trouble processing your question. Please try rephrasing it or ask about a different topic.",
@@ -940,7 +940,7 @@ class FlagFitChatbot {
 
   showProgressIndicator() {
     const messagesContainer = document.getElementById("chatbot-messages");
-    if (!messagesContainer) return null;
+    if (!messagesContainer) {return null;}
 
     const progressBar = document.createElement("div");
     progressBar.className = "chatbot-progress-bar";
@@ -956,7 +956,7 @@ class FlagFitChatbot {
     let progress = 0;
     const interval = setInterval(() => {
       progress += 2; // Increase by 2% every ~600ms (30s total)
-      if (progress > 95) progress = 95; // Cap at 95%
+      if (progress > 95) {progress = 95;} // Cap at 95%
 
       const fill = progressBar.querySelector(".chatbot-progress-fill");
       if (fill) {
@@ -969,7 +969,7 @@ class FlagFitChatbot {
 
   showErrorMessage(message) {
     const messagesContainer = document.getElementById("chatbot-messages");
-    if (!messagesContainer) return;
+    if (!messagesContainer) {return;}
 
     // Remove existing error message if any
     const existingError = document.getElementById("chatbot-error-message");
@@ -1008,7 +1008,7 @@ class FlagFitChatbot {
     let articles = [];
 
     // Include conversation context in parsing if available
-    const contextMessages = this.conversationContext.slice(-4); // Last 4 messages for context
+    const _contextMessages = this.conversationContext.slice(-4); // Last 4 messages for context
 
     try {
       // Import question parser and answer generator
@@ -1582,7 +1582,7 @@ class FlagFitChatbot {
     }
   }
 
-  renderMessage(type, text, skipSave = false) {
+  renderMessage(type, text, _skipSave = false) {
     const messagesContainer = document.getElementById("chatbot-messages");
     if (!messagesContainer) {
       return;

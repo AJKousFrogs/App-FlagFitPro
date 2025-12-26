@@ -38,7 +38,7 @@ async function performDatabaseAudit() {
           `SELECT COUNT(*) as count FROM ${table}`,
         );
         console.log(`✅ ${table}: ${result.rows[0].count} records`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`❌ ${table}: Missing or inaccessible`);
       }
     }
@@ -61,7 +61,7 @@ async function performDatabaseAudit() {
           `SELECT COUNT(*) as count FROM ${table}`,
         );
         console.log(`✅ ${table}: ${result.rows[0].count} records`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`❌ ${table}: Missing or inaccessible`);
       }
     }
@@ -84,7 +84,7 @@ async function performDatabaseAudit() {
           `SELECT COUNT(*) as count FROM ${table}`,
         );
         console.log(`✅ ${table}: ${result.rows[0].count} records`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`❌ ${table}: Missing or inaccessible`);
       }
     }
@@ -108,7 +108,7 @@ async function performDatabaseAudit() {
           `SELECT COUNT(*) as count FROM ${table}`,
         );
         console.log(`✅ ${table}: ${result.rows[0].count} records`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`❌ ${table}: Missing or inaccessible`);
       }
     }
@@ -132,7 +132,7 @@ async function performDatabaseAudit() {
           `SELECT COUNT(*) as count FROM ${table}`,
         );
         console.log(`✅ ${table}: ${result.rows[0].count} records`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`❌ ${table}: Missing or inaccessible`);
       }
     }
@@ -158,7 +158,7 @@ async function performDatabaseAudit() {
           `SELECT COUNT(*) as count FROM ${table}`,
         );
         console.log(`✅ ${table}: ${result.rows[0].count} records`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`❌ ${table}: Missing or inaccessible`);
       }
     }
@@ -181,7 +181,7 @@ async function performDatabaseAudit() {
           `SELECT COUNT(*) as count FROM ${table}`,
         );
         console.log(`✅ ${table}: ${result.rows[0].count} records`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`❌ ${table}: Missing or inaccessible`);
       }
     }
@@ -198,7 +198,7 @@ async function performDatabaseAudit() {
           `SELECT COUNT(*) as count FROM ${table}`,
         );
         console.log(`✅ ${table}: ${result.rows[0].count} records`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`❌ ${table}: Missing or inaccessible`);
       }
     }
@@ -220,7 +220,7 @@ async function performDatabaseAudit() {
           `SELECT COUNT(*) as count FROM ${table}`,
         );
         console.log(`✅ ${table}: ${result.rows[0].count} records`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`❌ ${table}: Missing or inaccessible`);
       }
     }
@@ -272,8 +272,8 @@ async function performDatabaseAudit() {
           console.log(`✅ ${table}: Well populated (${count} records)`);
         }
       }
-    } catch (error) {
-      console.log("❌ Data quality audit failed:", error.message);
+    } catch (_error) {
+      console.log("❌ Data quality audit failed");
     }
 
     // 12. INTEGRATION POINTS AUDIT

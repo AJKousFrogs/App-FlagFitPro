@@ -345,7 +345,7 @@ export class ProfileComponent implements OnInit {
   stats = signal<Array<{ value: string; label: string }>>([]);
   activities = signal<Array<{ icon: string; title: string; time: string }>>([]);
   achievements = signal<Array<{ icon: string; title: string; description: string; date: string }>>([]);
-  performanceStats = signal<Array<{ label: string; value: string; trend: string; trendType: string }>>([]);
+  performanceStats = signal<Array<{ label: string; value: string; trend: string; trendType: "success" | "info" | "warn" | "secondary" | "contrast" | "danger" }>>([]);
 
   ngOnInit(): void {
     this.loadProfileData();

@@ -42,7 +42,7 @@ function createErrorResponse(message, statusCode = 400) {
   };
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
@@ -77,7 +77,7 @@ exports.handler = async (event, context) => {
     let bodyData = {};
     try {
       bodyData = JSON.parse(event.body || "{}");
-    } catch (parseError) {
+    } catch (_parseError) {
       return createErrorResponse("Invalid JSON in request body", 400);
     }
 

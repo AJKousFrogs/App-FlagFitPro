@@ -6,7 +6,7 @@
 import HealthChecker from "./comprehensive-health-check.js";
 import FeatureValidator from "./feature-validator.js";
 import fs from "fs/promises";
-import path from "path";
+import _path from "path";
 
 class DiagnosticSystem {
   constructor() {

@@ -34,7 +34,7 @@ async function getCoachDashboard(userId) {
         }
 
         // Get recent training sessions for ACWR calculation
-        const { data: sessions, error: sessionsError } = await supabaseAdmin
+        const { data: sessions, error: _sessionsError } = await supabaseAdmin
           .from("training_sessions")
           .select("workload, session_date")
           .eq("user_id", member.user_id)
@@ -126,7 +126,7 @@ async function getTeamInfo(userId, coachId) {
       members.map(async (member) => {
         try {
           // Get recent training sessions
-          const { data: sessions, error: sessionsError } = await supabaseAdmin
+          const { data: sessions, error: _sessionsError } = await supabaseAdmin
             .from("training_sessions")
             .select("workload, session_date")
             .eq("user_id", member.user_id)

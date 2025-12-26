@@ -142,7 +142,7 @@ exports.handler = async (event, context) => {
           let supplementData = {};
           try {
             supplementData = JSON.parse(event.body || "{}");
-          } catch (parseError) {
+          } catch (_parseError) {
             return createErrorResponse(
               "Invalid JSON in request body",
               400,

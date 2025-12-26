@@ -5,7 +5,7 @@ import { logger } from "./logger.js";
 
 // Dynamic import with fallback for older browsers
 let Chart;
-const chartLoadPromise = null;
+const _chartLoadPromise = null;
 
 // Async function to load Chart.js dynamically
 async function loadChart() {
@@ -578,10 +578,10 @@ class ChartManager {
       if (chart.options && chart.options.plugins) {
         const centerText = {
           id: "centerText",
-          afterDatasetsDraw: function (chart, args, options) {
+          afterDatasetsDraw: function (chart, _args, _options) {
             const {
               ctx,
-              chartArea: { left, right, top, bottom, width, height },
+              chartArea: { width, height },
             } = chart;
 
             ctx.save();

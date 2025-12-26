@@ -28,8 +28,8 @@ interface AuthResponse {
   success: boolean;
   data?: {
     user: unknown;
-    session: unknown;
-  };
+    session?: unknown;
+  } | User;
   message?: string;
   error?: string;
 }

@@ -339,9 +339,9 @@ export class ExerciseLibraryComponent implements OnInit {
     this.totalExercises.set(filtered.length);
   }
 
-  onPageChange(event: { page: number; rows: number }): void {
-    this.currentPage = event.page;
-    this.itemsPerPage = event.rows;
+  onPageChange(event: { page?: number; rows?: number; first?: number }): void {
+    this.currentPage = event.page ?? 0;
+    this.itemsPerPage = event.rows ?? 12;
   }
 
   getDifficultySeverity(difficulty: string): "success" | "info" | "warn" {

@@ -237,7 +237,7 @@ export class QBTrainingModule extends ComponentWithCleanup {
   /**
    * Comprehensive QB performance analysis
    */
-  async analyzeQBPerformance(playerData) {
+  analyzeQBPerformance(playerData) {
     const accuracyProfile = this.analyzeAccuracyMetrics(playerData);
     const decisionProfile = this.analyzeDecisionMetrics(playerData);
     const mechanicsProfile = this.analyzeMechanicsMetrics(playerData);
@@ -403,7 +403,7 @@ export class QBTrainingModule extends ComponentWithCleanup {
    * Create weekly QB training schedule
    */
   createWeeklyQBPlan(analysis) {
-    const primaryWeakness = analysis.primaryWeaknesses[0]?.area || "general";
+    const _primaryWeakness = analysis.primaryWeaknesses[0]?.area || "general";
 
     return {
       monday: {
@@ -543,7 +543,7 @@ export class QBTrainingModule extends ComponentWithCleanup {
   /**
    * Generate game-specific scenarios
    */
-  generateGameSimulations(playerData) {
+  generateGameSimulations(_playerData) {
     return [
       {
         name: "Two-Minute Drill Mastery",
@@ -603,7 +603,7 @@ export class QBTrainingModule extends ComponentWithCleanup {
    * Set specific performance targets
    */
   setPerformanceTargets(analysis) {
-    const currentLevel = analysis.overallLevel;
+    const _currentLevel = analysis.overallLevel;
     const targetImprovement = 0.15; // 15% improvement goal
 
     return {

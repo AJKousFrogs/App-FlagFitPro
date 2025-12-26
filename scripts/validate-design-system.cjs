@@ -24,7 +24,7 @@ const requiredCSSFiles = [
   "hover-effects.css",
 ];
 
-const requiredScripts = [
+const _requiredScripts = [
   "lucide@latest",
   "icon-helper.js",
   "theme-switcher.js",
@@ -37,7 +37,7 @@ const hardcodedSpacingPattern =
   /(padding|margin|gap|top|bottom|left|right):\s*\d+px/gi;
 const customFontPattern =
   /font-family:\s*[^'"]*['"](?!Inter|Roboto)[^'"]*['"]/gi;
-const newCardClassPattern = /class=["'][^"']*card[^"']*["']/gi;
+const _newCardClassPattern = /class=["'][^"']*card[^"']*["']/gi;
 
 function checkFile(filePath) {
   const content = fs.readFileSync(filePath, "utf8");

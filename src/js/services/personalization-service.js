@@ -158,8 +158,8 @@ class PersonalizationService {
 
     const {
       bodyStats,
-      position,
-      injuryHistory,
+      position: _position,
+      injuryHistory: _injuryHistory,
       trainingSchedule,
       hasActiveInjuries,
       activeInjuries,
@@ -319,7 +319,7 @@ class PersonalizationService {
    * Get body metrics-aware advice (for nutrition questions)
    */
   getBodyMetricsAdvice(bodyStats, parsedQuestion) {
-    const { height, weight, age } = bodyStats;
+    const { height, weight } = bodyStats;
     let advice = "";
 
     // Only add if we have meaningful data

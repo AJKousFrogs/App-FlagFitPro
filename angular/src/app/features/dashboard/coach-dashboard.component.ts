@@ -410,8 +410,18 @@ export class CoachDashboardComponent implements OnInit {
         member !== null && typeof member === 'object'
       )
       .map((member) => {
-        const acwr = typeof member.acwr === 'number' ? member.acwr : 1.0;
-        const readiness = typeof member.readiness === 'number' ? member.readiness : 75;
+        const memberAcwr = member['acwr'];
+        const memberReadiness = member['readiness'];
+        const memberId = member['id'];
+        const memberUserId = member['user_id'];
+        const memberName = member['name'];
+        const memberFullName = member['full_name'];
+        const memberPosition = member['position'];
+        const memberWorkload = member['workload'];
+        const memberTodayWorkload = member['today_workload'];
+        
+        const acwr = typeof memberAcwr === 'number' ? memberAcwr : 1.0;
+        const readiness = typeof memberReadiness === 'number' ? memberReadiness : 75;
 
         let riskFlag: "low" | "medium" | "high" = "low";
         if (acwr > 1.5 || readiness < 55) {
@@ -422,17 +432,17 @@ export class CoachDashboardComponent implements OnInit {
 
         return {
           id: 
-            typeof member.id === 'string' ? member.id :
-            typeof member.user_id === 'string' ? member.user_id :
+            typeof memberId === 'string' ? memberId :
+            typeof memberUserId === 'string' ? memberUserId :
             'unknown',
           name: 
-            typeof member.name === 'string' ? member.name :
-            typeof member.full_name === 'string' ? member.full_name :
+            typeof memberName === 'string' ? memberName :
+            typeof memberFullName === 'string' ? memberFullName :
             "Unknown",
-          position: typeof member.position === 'string' ? member.position : "N/A",
+          position: typeof memberPosition === 'string' ? memberPosition : "N/A",
           workload: 
-            typeof member.workload === 'number' ? member.workload :
-            typeof member.today_workload === 'number' ? member.today_workload :
+            typeof memberWorkload === 'number' ? memberWorkload :
+            typeof memberTodayWorkload === 'number' ? memberTodayWorkload :
             0,
           acwr,
           readiness,
@@ -498,25 +508,32 @@ export class CoachDashboardComponent implements OnInit {
         f !== null && typeof f === 'object'
       )
       .filter((f) => {
-        const dateValue = f.game_start || f.date || f.game_date;
+        const dateValue = f['game_start'] || f['date'] || f['game_date'];
         if (!dateValue) return false;
         const date = new Date(String(dateValue));
         return date >= new Date();
       })
       .map((f) => {
-        const dateValue = f.game_start || f.date || f.game_date;
+        const dateValue = f['game_start'] || f['date'] || f['game_date'];
+        const fId = f['id'];
+        const fGameId = f['game_id'];
+        const fOpponent = f['opponent'];
+        const fOpponentName = f['opponent_name'];
+        const fLocation = f['location'];
+        const fGameType = f['game_type'];
+        
         return {
           id: 
-            typeof f.id === 'string' ? f.id :
-            typeof f.game_id === 'string' ? f.game_id :
+            typeof fId === 'string' ? fId :
+            typeof fGameId === 'string' ? fGameId :
             'unknown',
           opponent: 
-            typeof f.opponent === 'string' ? f.opponent :
-            typeof f.opponent_name === 'string' ? f.opponent_name :
+            typeof fOpponent === 'string' ? fOpponent :
+            typeof fOpponentName === 'string' ? fOpponentName :
             "TBD",
           date: new Date(String(dateValue)),
-          location: typeof f.location === 'string' ? f.location : "",
-          gameType: typeof f.game_type === 'string' ? f.game_type : "Game",
+          location: typeof fLocation === 'string' ? fLocation : "",
+          gameType: typeof fGameType === 'string' ? fGameType : "Game",
         };
       })
       .sort((a, b) => a.date.getTime() - b.date.getTime())

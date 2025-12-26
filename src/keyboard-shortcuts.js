@@ -410,7 +410,7 @@ export class KeyboardShortcuts {
     // Use ErrorHandler for consistent notifications
     try {
       ErrorHandler.showInfo(message);
-    } catch (e) {
+    } catch (_e) {
       // Fallback if ErrorHandler not available
       const notification = document.createElement("div");
       notification.className = "shortcut-notification";

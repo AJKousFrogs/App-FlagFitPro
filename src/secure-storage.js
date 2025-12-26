@@ -326,7 +326,7 @@ export class SecureStorage {
         decrypted += String.fromCharCode(encryptedChar ^ keyChar);
       }
       return decrypted;
-    } catch (e) {
+    } catch (_e) {
       return null;
     }
   }
@@ -646,7 +646,7 @@ export class SecureStorage {
       try {
         const legacyUserData = localStorage.getItem("userData");
         return legacyUserData ? JSON.parse(legacyUserData) : null;
-      } catch (e) {
+      } catch (_e) {
         return null;
       }
     }
@@ -688,7 +688,7 @@ export class SecureStorage {
         this.deleteCookie(testCookie);
       }
       return supported;
-    } catch (e) {
+    } catch (_e) {
       return false;
     }
   }

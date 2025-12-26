@@ -24,7 +24,6 @@
 import { ANNUAL_TRAINING_PROGRAM } from "../../training-program-data.js";
 import {
   getAllTournaments,
-  getDaysUntilTournament,
 } from "../../tournament-schedule.js";
 
 /**
@@ -186,7 +185,7 @@ class AITrainingScheduler {
 
     // Determine if we're in taper window
     const maxTaperDays = durationConfig.max;
-    const minTaperDays = durationConfig.min;
+    const _minTaperDays = durationConfig.min;
 
     if (daysUntilEvent > maxTaperDays) {
       return null; // Not in taper window yet
@@ -229,7 +228,7 @@ class AITrainingScheduler {
    * Initial short recovery: very low volume, moderate intensity
    * Based on research: recovery phase before secondary peak
    */
-  calculatePostEventRecovery(daysSinceEvent, nextEventImportance = null) {
+  calculatePostEventRecovery(daysSinceEvent, _nextEventImportance = null) {
     const recoveryPhases = {
       "0-1": {
         volume: 0,
@@ -509,9 +508,9 @@ class AITrainingScheduler {
    * Determine training phase based on date
    */
   determinePhase(date) {
-    const year = date.getFullYear();
+    const _year = date.getFullYear();
     const month = date.getMonth() + 1; // 1-12
-    const day = date.getDate();
+    const _day = date.getDate();
 
     // December (12) - Foundation
     if (month === 12) {
@@ -746,7 +745,7 @@ class AITrainingScheduler {
   /**
    * Generate schedule for a specific day
    */
-  generateDaySchedule(dayDate, week, periodization, playerProfile, allDates) {
+  generateDaySchedule(dayDate, week, periodization, playerProfile, _allDates) {
     const daySchedule = {
       date: new Date(dayDate),
       dayOfWeek: dayDate.getDay(),
@@ -861,7 +860,7 @@ class AITrainingScheduler {
     dayDate,
     periodization,
     practiceAdjustment,
-    playerProfile,
+    _playerProfile,
   ) {
     const phase = this.determinePhase(dayDate);
     const dayOfWeek = dayDate.getDay();
@@ -940,7 +939,7 @@ class AITrainingScheduler {
   /**
    * Get training title
    */
-  getTrainingTitle(trainingType, phase) {
+  getTrainingTitle(trainingType, _phase) {
     const titles = {
       recovery: "Recovery Session",
       strength: "Strength Training",
@@ -957,7 +956,7 @@ class AITrainingScheduler {
   /**
    * Get exercises for training type
    */
-  getExercisesForType(trainingType, phase) {
+  getExercisesForType(_trainingType, _phase) {
     // This would reference the exercise library
     // For now, return basic structure
     return [];
@@ -997,7 +996,7 @@ class AITrainingScheduler {
   /**
    * Calculate overall schedule summary
    */
-  calculateScheduleSummary(weeks, playerProfile) {
+  calculateScheduleSummary(weeks, _playerProfile) {
     const totalWeeks = weeks.length;
     const totalTrainingDays = weeks.reduce(
       (sum, w) => sum + w.summary.trainingDays,

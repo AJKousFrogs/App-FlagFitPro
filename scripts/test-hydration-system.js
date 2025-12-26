@@ -89,7 +89,7 @@ async function testHydrationSystem() {
       console.log(
         `✅ Materialized view working: ${viewResult.rows[0].count} recommendations`,
       );
-    } catch (error) {
+    } catch (_error) {
       console.log(
         "⚠️ Materialized view not ready yet (this is normal for new systems)",
       );

@@ -266,7 +266,7 @@ const getHealth = async () => {
   };
 };
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // Log function call for debugging
   logFunctionCall("Dashboard", event);
 

@@ -2,7 +2,7 @@
 // Handles creation and retrieval of training sessions for the Training Builder component
 // Endpoint: /api/training/sessions
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -175,7 +175,7 @@ async function getTrainingSessions(userId, queryParams) {
   }
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Training-Sessions", event);
 
   // Handle CORS preflight
@@ -220,7 +220,7 @@ exports.handler = async (event, context) => {
       let sessionData = {};
       try {
         sessionData = JSON.parse(event.body);
-      } catch (parseError) {
+      } catch (_parseError) {
         return handleValidationError("Invalid JSON in request body");
       }
 

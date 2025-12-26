@@ -322,13 +322,11 @@ export class RegisterComponent {
         if (response.ok) {
           const result = await response.json();
           if (result.leaked) {
-            this.messageService.add({
-              severity: "error",
-              summary: "Password Security",
-              detail:
-                result.message ||
+            this.toastService.error(
+              result.message ||
                 "This password has been found in data breaches. Please choose a different password.",
-            });
+              "Password Security"
+            );
             return;
           }
         }

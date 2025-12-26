@@ -191,7 +191,7 @@ class ExportService {
         doc.setFont(undefined, "normal");
 
         // Table rows
-        wellnessData.slice(0, 30).forEach((entry, index) => {
+        wellnessData.slice(0, 30).forEach((entry, _index) => {
           // Check if we need a new page
           if (yPos > pageHeight - 20) {
             doc.addPage();

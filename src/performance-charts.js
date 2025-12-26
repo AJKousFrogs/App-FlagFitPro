@@ -95,7 +95,7 @@ export class PerformanceCharts {
   }
 
   // Load Chart.js library dynamically
-  async loadChartJS() {
+  loadChartJS() {
     if (window.Chart) {
       return;
     } // Already loaded
@@ -392,7 +392,7 @@ export class PerformanceCharts {
 
     metrics.forEach((metric) => {
       const data = wellnessHistory
-        .filter((w) => w[metric.key] != null)
+        .filter((w) => w[metric.key] !== null && w[metric.key] !== undefined)
         .map((w) => ({
           x: w.date,
           y: w[metric.key],
@@ -424,7 +424,7 @@ export class PerformanceCharts {
     if (measurementHistory.length > 0) {
       // Weight data
       const weightData = measurementHistory
-        .filter((m) => m.weight != null)
+        .filter((m) => m.weight !== null && m.weight !== undefined)
         .map((m) => ({ x: m.timestamp, y: m.weight }))
         .sort((a, b) => new Date(a.x) - new Date(b.x));
 
@@ -442,7 +442,7 @@ export class PerformanceCharts {
 
       // Body fat data
       const bodyFatData = measurementHistory
-        .filter((m) => m.bodyFat != null)
+        .filter((m) => m.bodyFat !== null && m.bodyFat !== undefined)
         .map((m) => ({ x: m.timestamp, y: m.bodyFat }))
         .sort((a, b) => new Date(a.x) - new Date(b.x));
 

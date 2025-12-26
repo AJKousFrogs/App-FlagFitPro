@@ -7,10 +7,10 @@
 
 import { Injectable, inject, signal, effect } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
-import { RealtimeChannel } from "@supabase/supabase-js";
+import { RealtimeChannel, RealtimePostgresChangesPayload, REALTIME_POSTGRES_CHANGES_LISTEN_EVENT, REALTIME_LISTEN_TYPES } from "@supabase/supabase-js";
 import { LoggerService } from "./logger.service";
 
-export interface RealtimeEvent<T = unknown> {
+export interface RealtimeEvent<T extends Record<string, unknown> = Record<string, unknown>> {
   eventType: "INSERT" | "UPDATE" | "DELETE";
   table: string;
   schema: string;
@@ -19,21 +19,12 @@ export interface RealtimeEvent<T = unknown> {
   errors: unknown;
 }
 
-export type RealtimeCallback<T = unknown> = (event: RealtimeEvent<T>) => void;
+export type RealtimeCallback<T extends Record<string, unknown> = Record<string, unknown>> = (event: RealtimeEvent<T>) => void;
 
-export interface RealtimeSubscriptionCallbacks<T = unknown> {
+export interface RealtimeSubscriptionCallbacks<T extends Record<string, unknown> = Record<string, unknown>> {
   onInsert?: (payload: RealtimeEvent<T>) => void;
   onUpdate?: (payload: RealtimeEvent<T>) => void;
   onDelete?: (payload: RealtimeEvent<T>) => void;
-}
-
-interface PostgresPayload<T = unknown> {
-  eventType: "INSERT" | "UPDATE" | "DELETE";
-  table: string;
-  schema: string;
-  new: T;
-  old: T;
-  errors: unknown;
 }
 
 @Injectable({
@@ -76,7 +67,7 @@ export class RealtimeService {
    * Generic subscribe method for any table
    * Allows subscribing to specific tables with custom callbacks
    */
-  subscribe<T = unknown>(
+  subscribe<T extends Record<string, unknown> = Record<string, unknown>>(
     tableName: string,
     filter: string,
     callbacks: RealtimeSubscriptionCallbacks<T>,
@@ -92,21 +83,21 @@ export class RealtimeService {
 
     const channel = this.supabase.client
       .channel(channelName)
-      .on(
-        "postgres_changes",
+      .on<T>(
+        REALTIME_LISTEN_TYPES.POSTGRES_CHANGES,
         {
-          event: "*",
+          event: REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.ALL,
           schema: "public",
           table: tableName,
           filter: filter,
         },
-        (payload: PostgresPayload<T>) => {
+        (payload: RealtimePostgresChangesPayload<T>) => {
           const event: RealtimeEvent<T> = {
-            eventType: payload.eventType,
+            eventType: payload.eventType as "INSERT" | "UPDATE" | "DELETE",
             table: payload.table,
             schema: payload.schema,
-            new: payload.new,
-            old: payload.old,
+            new: payload.new as T,
+            old: payload.old as T,
             errors: payload.errors,
           };
 
@@ -278,16 +269,16 @@ export class RealtimeService {
     const channel = this.supabase.client
       .channel(channelName)
       .on(
-        "postgres_changes",
+        REALTIME_LISTEN_TYPES.POSTGRES_CHANGES,
         {
-          event: "*",
+          event: REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.ALL,
           schema: "public",
           table: tableName,
           filter: filter,
         },
-        (payload: PostgresPayload) => {
+        (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           const event: RealtimeEvent = {
-            eventType: payload.eventType,
+            eventType: payload.eventType as "INSERT" | "UPDATE" | "DELETE",
             table: payload.table,
             schema: payload.schema,
             new: payload.new,

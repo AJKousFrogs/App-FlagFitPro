@@ -1051,7 +1051,7 @@ function requireSupabaseAdmin(context = "Database operation") {
 }
 
 // Helper functions for notifications
-function getNotificationTitle(type, message) {
+function getNotificationTitle(type, _message) {
   const titles = {
     training: "Training Session Reminder",
     achievement: "New Achievement Unlocked",
@@ -1116,7 +1116,7 @@ function checkEnvVars() {
   // Validate URL format
   try {
     new URL(supabaseUrl);
-  } catch (urlError) {
+  } catch (_urlError) {
     console.error("Invalid SUPABASE_URL format:", supabaseUrl);
     throw new Error(
       `Invalid SUPABASE_URL format. Expected a valid URL, got: ${supabaseUrl?.substring(0, 50)}...`,

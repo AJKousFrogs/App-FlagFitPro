@@ -49,7 +49,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
 }
 
 // Initialize Supabase client
-const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+const _supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false,
@@ -61,7 +61,7 @@ async function checkAndApplyMigration() {
     console.log("🔍 Checking current database schema...\n");
 
     // Check if columns already exist
-    const checks = {
+    const _checks = {
       username: false,
       verification_token: false,
       verification_token_expires_at: false,

@@ -2,7 +2,7 @@
 // Returns real-time performance metrics for the Performance Dashboard component
 // Endpoint: /api/performance/metrics
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -236,7 +236,7 @@ function getDefaultMetrics() {
   ];
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Performance-Metrics", event);
 
   // Handle CORS preflight

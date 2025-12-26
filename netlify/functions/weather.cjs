@@ -165,7 +165,7 @@ function getMockWeatherData(city) {
 /**
  * Main handler function
  */
-async function handleRequest(event, context, { userId }) {
+async function handleRequest(event, _context, { userId: _userId }) {
   try {
     const query = event.queryStringParameters || {};
 

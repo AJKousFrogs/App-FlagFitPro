@@ -6,7 +6,7 @@ const {
   createSuccessResponse,
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
-const { supabaseAdmin, db } = require("./supabase-client.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 
 /**
  * Create wellness check-in
@@ -149,7 +149,7 @@ exports.handler = async (event, context) => {
           let checkinData = {};
           try {
             checkinData = JSON.parse(event.body || "{}");
-          } catch (parseError) {
+          } catch (_parseError) {
             return createErrorResponse(
               "Invalid JSON in request body",
               400,

@@ -13,7 +13,7 @@ const {
   CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // Log function call
   logFunctionCall("Auth-Login", event);
 

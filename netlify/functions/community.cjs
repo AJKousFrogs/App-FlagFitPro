@@ -2,7 +2,7 @@
 // Returns community feed, posts, and leaderboard data
 
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
-const { validate, sanitize } = require("./validation.cjs");
+const { sanitize } = require("./validation.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -46,7 +46,7 @@ const getCommunityFeed = async (userId, limit = 20) => {
         .select("team_id")
         .eq("user_id", userId);
 
-      const userTeamIds = teamMemberships?.map((m) => m.team_id) || [];
+      const _userTeamIds = teamMemberships?.map((m) => m.team_id) || [];
 
       // Get blocked users (both ways)
       const { data: blockedUsers } = await supabaseAdmin
@@ -108,7 +108,7 @@ const getCommunityFeed = async (userId, limit = 20) => {
 };
 
 // Get community leaderboard
-const getCommunityLeaderboard = async (category = "overall", limit = 10) => {
+const getCommunityLeaderboard = async (_category = "overall", limit = 10) => {
   try {
     checkEnvVars();
 
@@ -251,7 +251,7 @@ const createPost = async (userId, postData) => {
   }
 };
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Community", event);
 
   // Handle CORS preflight
@@ -336,7 +336,7 @@ exports.handler = async (event, context) => {
       let postData = {};
       try {
         postData = JSON.parse(event.body || "{}");
-      } catch (parseError) {
+      } catch (_parseError) {
         return handleValidationError("Invalid JSON in request body");
       }
 

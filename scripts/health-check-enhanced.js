@@ -184,13 +184,13 @@ class HealthChecker {
 
     for (const checks of Object.values(results)) {
       totalPorts += checks.length;
-      checks.forEach((result) => {
+      for (const result of checks) {
         if (result.available) {
           availablePorts++;
         } else {
           activePorts++;
         }
-      });
+      }
     }
 
     console.log("📊 Health Check Summary:");

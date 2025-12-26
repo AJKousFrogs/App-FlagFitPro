@@ -263,7 +263,7 @@ function getResearchDataStats() {
 /**
  * Main handler function
  */
-async function handleRequest(event, context, { userId, user }) {
+async function handleRequest(event, _context, { userId: _userId, user: _user }) {
   try {
     // Extract endpoint from path
     const path = event.path.replace("/.netlify/functions/admin", "") || "/";

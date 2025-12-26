@@ -326,7 +326,7 @@ class FlagFitApplication {
     const postButtons = document.querySelectorAll(".post-btn, .comment-btn");
 
     postButtons.forEach((btn) => {
-      btn.addEventListener("click", (e) => {
+      btn.addEventListener("click", (_e) => {
         // Handle community interactions
         this.handleCommunityInteraction(btn);
       });

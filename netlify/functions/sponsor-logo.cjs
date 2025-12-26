@@ -5,7 +5,6 @@
 const https = require("https");
 const http = require("http");
 const {
-  createSuccessResponse,
   handleServerError,
   logFunctionCall,
   CORS_HEADERS,
@@ -86,7 +85,7 @@ async function fetchImageAsBase64(imageUrl) {
   });
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // Log function call
   logFunctionCall("sponsor-logo", event);
 

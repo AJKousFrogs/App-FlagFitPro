@@ -103,7 +103,7 @@ function findJsFiles(dir) {
         files.push(fullPath);
       }
     }
-  } catch (error) {
+  } catch (_error) {
     // Skip directories we can't read
   }
 

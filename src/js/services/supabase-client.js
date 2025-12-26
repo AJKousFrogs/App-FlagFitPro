@@ -157,7 +157,7 @@ class RealtimeManager {
     // Check if channel already exists
     if (this.channels.has(channelName)) {
       logger.debug(`[Realtime] Reusing existing channel: ${channelName}`);
-      const channel = this.channels.get(channelName);
+      const _channel = this.channels.get(channelName);
       return {
         unsubscribe: () => this.unsubscribe(channelName),
       };

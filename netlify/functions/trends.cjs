@@ -5,7 +5,7 @@
 // - Game-to-game performance metrics
 // Endpoint: /api/trends/:type
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -202,7 +202,7 @@ async function getGamePerformanceTrend(athleteId, games = 5) {
 /**
  * Main handler
  */
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {

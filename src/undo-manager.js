@@ -331,7 +331,7 @@ export class UndoManager {
   }
 
   // Get item data before deletion
-  getItemData(itemId, itemType) {
+  getItemData(itemId, _itemType) {
     // This would typically fetch from DOM or store
     const element = document.querySelector(`[data-item-id="${itemId}"]`);
     if (element) {

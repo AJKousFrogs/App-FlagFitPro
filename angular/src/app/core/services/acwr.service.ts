@@ -52,25 +52,26 @@ import {
 import { EvidenceConfigService } from "./evidence-config.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
-import { RealtimeChannel } from "@supabase/supabase-js";
+import { RealtimeChannel, REALTIME_LISTEN_TYPES, REALTIME_POSTGRES_CHANGES_LISTEN_EVENT, RealtimePostgresInsertPayload, RealtimePostgresUpdatePayload } from "@supabase/supabase-js";
+import { ResearchCitation } from "../config/evidence-config";
 
-interface Citation {
-  authors: string;
-  year: number;
-  title: string;
-  doi: string;
+interface LoadMonitoringRecord {
+  daily_load?: number;
+  acute_load?: number;
+  chronic_load?: number;
+  acwr?: number;
+  injury_risk_level?: string;
 }
 
 interface WorkoutLog {
+  id?: string;
   player_id: string;
+  session_id?: string;
   completed_at: string;
   rpe?: number;
   duration_minutes?: number;
   notes?: string;
-  load_monitoring?: {
-    acwr?: number;
-    chronic_load?: number;
-  };
+  load_monitoring?: LoadMonitoringRecord[];
 }
 
 @Injectable({
@@ -513,6 +514,7 @@ export class AcwrService {
   /**
    * Detect tolerance for athletes repeatedly training above thresholds without issues
    * Suggests either higher tolerance or underestimation of chronic load
+   * Note: Injury checking is done asynchronously via checkToleranceWithInjuryData()
    */
   private detectTolerance(): ToleranceDetection | undefined {
     const cfg = this.config();
@@ -538,12 +540,60 @@ export class AcwrService {
           .filter((h) => h.ratio > cfg.thresholds.dangerHigh)
           .reduce((sum, h) => sum + h.ratio, 0) / daysAboveThreshold;
 
+      // Default to investigate - injury check can be done separately via checkToleranceWithInjuryData()
+      const recommendation: "maintain" | "adjust" | "investigate" = "investigate";
+      const message =
+        `Athlete has trained above ${cfg.thresholds.dangerHigh} ACWR for ${daysAboveThreshold} consecutive days. ` +
+        `This may indicate: (1) Higher individual tolerance, (2) Underestimated chronic load, or (3) Need for personalized thresholds. ` +
+        `Monitor closely and consider adjusting thresholds if pattern continues.`;
+
+      return {
+        detected: true,
+        daysAboveThreshold,
+        averageACWRAboveThreshold: averageACWR,
+        injuryOccurred: false, // Will be updated async if needed
+        recommendation,
+        message,
+      };
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Async method to check tolerance with injury data
+   * Call this separately when you need injury-aware tolerance detection
+   */
+  public async checkToleranceWithInjuryData(): Promise<ToleranceDetection | undefined> {
+    const cfg = this.config();
+    if (!cfg.toleranceDetection.enabled) return undefined;
+
+    const history = this.historicalACWR();
+    if (history.length < cfg.toleranceDetection.consecutiveHighDays) {
+      return undefined;
+    }
+
+    const recentHistory = history.slice(0, cfg.toleranceDetection.consecutiveHighDays);
+    const daysAboveThreshold = recentHistory.filter(
+      (h) => h.ratio > cfg.thresholds.dangerHigh,
+    ).length;
+
+    if (daysAboveThreshold >= cfg.toleranceDetection.consecutiveHighDays) {
+      const averageACWR =
+        recentHistory
+          .filter((h) => h.ratio > cfg.thresholds.dangerHigh)
+          .reduce((sum, h) => sum + h.ratio, 0) / daysAboveThreshold;
+
+      const playerId = this.currentPlayerId();
+      const startDate = recentHistory[recentHistory.length - 1]?.date;
+      const endDate = recentHistory[0]?.date;
+
       // Check if injury occurred during this high-load period
-      const injuryOccurred = await this.checkForRecentInjury(
+      const injuryOccurred = playerId ? await this.checkForRecentInjury(
         playerId,
-        recentHistory[recentHistory.length - 1]?.date,
-        recentHistory[0]?.date,
-      );
+        startDate?.toISOString(),
+        endDate?.toISOString(),
+      ) : false;
 
       let recommendation: "maintain" | "adjust" | "investigate" = "investigate";
       let message = "";
@@ -845,11 +895,11 @@ export class AcwrService {
 
     return {
       preset: `${preset.name} (${preset.version})`,
-      citations: acwrConfig.citations.map((c: Citation) => ({
+      citations: acwrConfig.citations.map((c: ResearchCitation) => ({
         authors: c.authors,
         year: c.year,
         title: c.title,
-        doi: c.doi,
+        doi: c.doi || '',
       })),
       scienceNotes: acwrConfig.scienceNotes.thresholds,
       coachOverride: acwrConfig.scienceNotes.coachOverride,
@@ -1010,13 +1060,13 @@ export class AcwrService {
       this.logger.success(`[ACWR] Loaded ${sessions.length} training sessions`);
 
       // Load historical ACWR for tolerance detection
-      if (workoutLogs[0]?.load_monitoring) {
+      if (workoutLogs[0]?.load_monitoring?.length) {
         const history = workoutLogs
-          .filter((log: WorkoutLog) => log.load_monitoring?.acwr)
+          .filter((log: WorkoutLog) => log.load_monitoring?.[0]?.acwr)
           .map((log: WorkoutLog) => ({
             date: new Date(log.completed_at),
-            ratio: log.load_monitoring.acwr,
-            chronic: log.load_monitoring.chronic_load,
+            ratio: log.load_monitoring![0]!.acwr!,
+            chronic: log.load_monitoring![0]!.chronic_load!,
           }));
         this.historicalACWR.set(history);
       }
@@ -1040,17 +1090,17 @@ export class AcwrService {
 
     this.realtimeChannel = this.supabaseService.client
       .channel(`workout_logs:${userId}`)
-      .on(
-        "postgres_changes",
+      .on<WorkoutLog>(
+        REALTIME_LISTEN_TYPES.POSTGRES_CHANGES,
         {
-          event: "INSERT",
+          event: REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.INSERT,
           schema: "public",
           table: "workout_logs",
           filter: `player_id=eq.${userId}`,
         },
-        (payload) => {
+        (payload: RealtimePostgresInsertPayload<WorkoutLog>) => {
           this.logger.info("[ACWR] New workout log received", payload.new);
-          const log = payload.new as WorkoutLog;
+          const log = payload.new;
 
           const session: TrainingSession = {
             playerId: log.player_id,
@@ -1077,15 +1127,15 @@ export class AcwrService {
           );
         },
       )
-      .on(
-        "postgres_changes",
+      .on<WorkoutLog>(
+        REALTIME_LISTEN_TYPES.POSTGRES_CHANGES,
         {
-          event: "UPDATE",
+          event: REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.UPDATE,
           schema: "public",
           table: "workout_logs",
           filter: `player_id=eq.${userId}`,
         },
-        (payload) => {
+        (payload: RealtimePostgresUpdatePayload<WorkoutLog>) => {
           this.logger.info("[ACWR] Workout log updated", payload.new);
           // Reload sessions to update calculations
           this.loadPlayerSessions(userId);

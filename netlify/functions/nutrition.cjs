@@ -188,7 +188,7 @@ async function addFoodToMeal(userId, foodData) {
     // Calculate calories and nutrients
     const calories = food.energy || (food.calories || 0) * (amount || 1);
 
-    const { data, error } = await supabaseAdmin
+    const { data: _data, error } = await supabaseAdmin
       .from("nutrition_logs")
       .insert({
         user_id: userId,
@@ -230,7 +230,7 @@ async function getAINutritionSuggestions(userId) {
     const goals = await getNutritionGoals(userId);
     const meals = await getTodaysMeals(userId);
 
-    const totalCalories = meals.reduce(
+    const _totalCalories = meals.reduce(
       (sum, meal) => sum + (meal.totalCalories || 0),
       0,
     );
@@ -292,7 +292,7 @@ async function getPerformanceInsights(userId) {
       .limit(10);
 
     const meals = await getTodaysMeals(userId);
-    const goals = await getNutritionGoals(userId);
+    const _goals = await getNutritionGoals(userId);
 
     const insights = [];
 
@@ -372,7 +372,7 @@ async function handleRequest(event, context, { userId }) {
     if (body) {
       try {
         requestBody = JSON.parse(body);
-      } catch (e) {
+      } catch (_e) {
         // Body might not be JSON
       }
     }

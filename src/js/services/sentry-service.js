@@ -36,7 +36,7 @@ class SentryService {
       let SentryModule;
       try {
         SentryModule = await import("@sentry/browser");
-      } catch (importError) {
+      } catch (_importError) {
         logger.warn(
           "[Sentry] Package @sentry/browser not available, error tracking disabled",
         );
@@ -47,7 +47,7 @@ class SentryService {
       try {
         const tracingModule = await import("@sentry/tracing");
         BrowserTracing = tracingModule.BrowserTracing;
-      } catch (importError) {
+      } catch (_importError) {
         logger.warn(
           "[Sentry] Package @sentry/tracing not available, continuing without tracing",
         );
@@ -68,7 +68,7 @@ class SentryService {
         release: window._env?.APP_VERSION || "development",
 
         // Before sending event, filter sensitive data
-        beforeSend(event, hint) {
+        beforeSend(event, _hint) {
           // Remove sensitive data
           if (event.request) {
             delete event.request.cookies;

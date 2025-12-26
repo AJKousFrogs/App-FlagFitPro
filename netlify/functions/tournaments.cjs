@@ -203,7 +203,7 @@ const getTournamentsFromDB = async (type = null) => {
 };
 
 // Get leaderboard data
-const getLeaderboard = async (tournamentId = null) => {
+const getLeaderboard = async (_tournamentId = null) => {
   try {
     checkEnvVars();
 
@@ -224,7 +224,7 @@ const getLeaderboard = async (tournamentId = null) => {
   }
 };
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Tournaments", event);
 
   // Handle CORS preflight

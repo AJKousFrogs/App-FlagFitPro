@@ -4,7 +4,7 @@ import { map, tap, catchError } from "rxjs/operators";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
-import { RealtimeService } from "./realtime.service";
+import { RealtimeService, RealtimeEvent } from "./realtime.service";
 
 export interface WellnessData {
   id?: number;
@@ -59,10 +59,7 @@ interface DatabaseWellnessEntry {
   created_at: string;
 }
 
-interface RealtimePayload<T> {
-  new: T;
-  old: T;
-}
+// RealtimeEvent is now imported from realtime.service.ts
 
 interface WellnessTrend {
   metric: string;
@@ -416,7 +413,7 @@ export class WellnessService {
 
     metrics.forEach((metric) => {
       const values = data
-        .map((d) => (d as Record<string, unknown>)[metric])
+        .map((d) => (d as unknown as Record<string, unknown>)[metric])
         .filter((v): v is number => typeof v === 'number');
 
       if (values.length < 2) return;
@@ -519,16 +516,16 @@ export class WellnessService {
       "wellness_entries",
       `athlete_id=eq.${userId}`,
       {
-        onInsert: (payload: RealtimePayload<DatabaseWellnessEntry>) => {
+        onInsert: (payload: RealtimeEvent) => {
           this.logger.info("[Wellness] New entry received via realtime");
-          const newEntry = this.transformEntry(payload.new);
+          const newEntry = this.transformEntry(payload.new as unknown as DatabaseWellnessEntry);
           const current = this._wellnessData();
           this._wellnessData.set([newEntry, ...current]);
           this._averages.set(this.calculateAverages([newEntry, ...current]));
         },
-        onUpdate: (payload: RealtimePayload<DatabaseWellnessEntry>) => {
+        onUpdate: (payload: RealtimeEvent) => {
           this.logger.info("[Wellness] Entry updated via realtime");
-          const updatedEntry = this.transformEntry(payload.new);
+          const updatedEntry = this.transformEntry(payload.new as unknown as DatabaseWellnessEntry);
           const current = this._wellnessData();
           const index = current.findIndex((e) => e.id === updatedEntry.id);
 
@@ -539,10 +536,11 @@ export class WellnessService {
             this._averages.set(this.calculateAverages(updated));
           }
         },
-        onDelete: (payload: RealtimePayload<DatabaseWellnessEntry>) => {
+        onDelete: (payload: RealtimeEvent) => {
           this.logger.info("[Wellness] Entry deleted via realtime");
           const current = this._wellnessData();
-          const filtered = current.filter((e) => e.id !== payload.old.id);
+          const oldEntry = payload.old as unknown as DatabaseWellnessEntry;
+          const filtered = current.filter((e) => e.id !== oldEntry.id);
           this._wellnessData.set(filtered);
           this._averages.set(this.calculateAverages(filtered));
         },

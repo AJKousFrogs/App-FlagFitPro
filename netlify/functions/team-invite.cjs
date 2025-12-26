@@ -159,7 +159,7 @@ function getTeamInvitationTemplate(
 </html>`;
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Team-Invite", event);
 
   if (event.httpMethod === "OPTIONS") {

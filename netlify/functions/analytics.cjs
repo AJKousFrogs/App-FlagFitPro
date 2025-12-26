@@ -1,7 +1,7 @@
 // Netlify Function: Analytics API
 // Handles all analytics endpoints for performance trends, team chemistry, training distribution, etc.
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const { validateQueryParams } = require("./validation.cjs");
 const { getOrFetch, CACHE_TTL, CACHE_PREFIX } = require("./cache.cjs");
 const {
@@ -165,7 +165,7 @@ const getTeamChemistry = async (userId) => {
     }
 
     // Calculate metrics (simplified - in real app, would use more sophisticated algorithms)
-    const totalSessions = teamSessions.length;
+    const _totalSessions = teamSessions.length;
     const avgScore =
       teamSessions.length > 0
         ? teamSessions.reduce((sum, s) => sum + (s.score || 70), 0) /
@@ -659,7 +659,7 @@ function getFallbackAnalyticsSummary() {
 }
 
 // Main handler
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Analytics", event);
 
   // Handle CORS preflight

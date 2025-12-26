@@ -2,7 +2,7 @@
 // Evidence-based readiness scoring combining session-RPE, ACWR, wellness, and game proximity
 // Endpoint: /api/calc-readiness
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -155,7 +155,7 @@ function determineDataMode(wellnessIndex, threshold = 60) {
   }
   return "reduced"; // Use sleep-proxy mode
 }
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
@@ -195,7 +195,7 @@ exports.handler = async (event, context) => {
     let body;
     try {
       body = JSON.parse(event.body || "{}");
-    } catch (e) {
+    } catch (_e) {
       return handleValidationError("Invalid JSON in request body");
     }
 
@@ -218,7 +218,7 @@ exports.handler = async (event, context) => {
 
     // Get sessions from training_sessions table
     // Include both rpe and intensity_level (fallback for RPE)
-    let { data: sessions, error: sessErr } = await supabaseAdmin
+    const { data: sessions, error: sessErr } = await supabaseAdmin
       .from("training_sessions")
       .select("session_date, date, duration_minutes, rpe, intensity_level")
       .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)

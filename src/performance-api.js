@@ -31,7 +31,7 @@ export class PerformanceAPI {
     ) {
       try {
         token = await window.secureStorage.getAuthToken();
-      } catch (error) {
+      } catch (_error) {
         // Fallback to legacy method if secureStorage fails
         token = localStorage.getItem("authToken");
       }

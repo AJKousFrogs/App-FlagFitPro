@@ -111,7 +111,7 @@ const filesToUpdate = [
   { file: "exercise-library.html", active: "nav-training" },
 ];
 
-filesToUpdate.forEach(({ file, active }) => {
+filesToUpdate.forEach(({ file, active: _active }) => {
   const filePath = path.join(__dirname, "..", file);
   if (!fs.existsSync(filePath)) {
     console.log(`⚠️  ${file}: FILE NOT FOUND`);

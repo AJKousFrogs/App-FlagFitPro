@@ -21,11 +21,11 @@ const storage = {
       try {
         const parsed = JSON.parse(storedValue);
         return parsed;
-      } catch (e) {
+      } catch (_e) {
         // If parsing fails, it's likely a plain string - return as-is
         return storedValue;
       }
-    } catch (e) {
+    } catch (_e) {
       return defaultValue;
     }
   },

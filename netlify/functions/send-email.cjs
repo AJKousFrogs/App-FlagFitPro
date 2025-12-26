@@ -157,7 +157,7 @@ function getVerificationEmailTemplate(name, verificationUrl, role = "player") {
 </html>`;
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Send-Email", event);
 
   // Handle CORS preflight

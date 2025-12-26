@@ -13,7 +13,7 @@ const {
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Notifications", event);
 
   // Handle CORS preflight
@@ -26,7 +26,7 @@ exports.handler = async (event, context) => {
 
   try {
     // Get authorization header
-    const authHeader =
+    const _authHeader =
       event.headers.authorization || event.headers.Authorization;
 
     let userId = null;

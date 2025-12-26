@@ -159,7 +159,7 @@ async function demoHydrationSystem() {
         console.log(`   Evidence: ${row.evidence_level}`);
         console.log("");
       });
-    } catch (error) {
+    } catch (_error) {
       console.log("⚠️ Materialized view not ready yet");
     }
 
@@ -202,7 +202,7 @@ async function demoHydrationSystem() {
       try {
         const result = await pool.query(stat.query);
         console.log(`${stat.name}: ${result.rows[0].count}`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`${stat.name}: 0 (table not created yet)`);
       }
     }

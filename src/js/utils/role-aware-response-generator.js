@@ -18,7 +18,7 @@ class RoleAwareResponseGenerator {
    * @returns {string} - Enhanced response with role-specific content
    */
   adjustForRole(baseResponse, parsedQuestion) {
-    const { role, teamType } = this.userContext;
+    const { role, teamType: _teamType } = this.userContext;
     const { intent, entities } = parsedQuestion;
 
     let response = baseResponse;
@@ -158,7 +158,7 @@ class RoleAwareResponseGenerator {
    * Enhance response for admins
    * Admins get system-level information and governance details
    */
-  enhanceForAdmin(response, intent, entities) {
+  enhanceForAdmin(response, _intent, _entities) {
     let enhancements = "";
 
     // Add evidence and governance information
@@ -241,7 +241,7 @@ class RoleAwareResponseGenerator {
   /**
    * Get position-specific advice based on user's position
    */
-  getPositionSpecificAdvice(position, intent, entities) {
+  getPositionSpecificAdvice(position, intent, _entities) {
     if (!position) {return "";}
 
     const positionAdvice = {

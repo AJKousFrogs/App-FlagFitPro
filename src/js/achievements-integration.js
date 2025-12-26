@@ -29,9 +29,7 @@ import { logger } from '../logger.js';
   /**
    * Handle wellness check-in submission
    */
-  function handleWellnessSubmitted(event) {
-    const wellnessData = event.detail;
-
+  function handleWellnessSubmitted(_event) {
     // Get user data for achievement checking
     const userData = calculateUserData();
 

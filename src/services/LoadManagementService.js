@@ -702,7 +702,7 @@ export class LoadManagementService {
    * @param {Date} weekStartDate - Week start date
    * @returns {Promise<Array>} Array of daily loads for the week
    */
-  async getWeeklyLoads(userId, weekStartDate) {
+  getWeeklyLoads(userId, weekStartDate) {
     const weekEndDate = new Date(weekStartDate);
     weekEndDate.setDate(weekEndDate.getDate() + 7);
     return this.getTrainingLoads(userId, weekEndDate, 7);
@@ -734,7 +734,7 @@ export class LoadManagementService {
    * @param {Date} date - Assessment date
    * @returns {Promise<Object>} Recovery status data
    */
-  async getRecoveryStatus(userId, date) {
+  getRecoveryStatus(_userId, _date) {
     // Placeholder - should integrate with recovery tracking system
     return {
       recoveryScore: 0.7,
@@ -749,7 +749,7 @@ export class LoadManagementService {
    * @param {number} days - Number of days
    * @returns {Promise<Object>} Sleep metrics
    */
-  async getSleepMetrics(userId, date, days) {
+  getSleepMetrics(_userId, _date, _days) {
     // Placeholder - should integrate with sleep tracking system
     return {
       sleepDebt: 0,

@@ -241,8 +241,8 @@ export class GameTrackerComponent implements OnInit {
           }
 
           const responseObj = response as Record<string, unknown>;
-          const playersData = Array.isArray(responseObj.data) 
-            ? responseObj.data 
+          const playersData = Array.isArray(responseObj['data']) 
+            ? responseObj['data'] 
             : Array.isArray(response) 
               ? response 
               : [];
@@ -252,18 +252,27 @@ export class GameTrackerComponent implements OnInit {
               .filter((p): p is Record<string, unknown> => 
                 p !== null && typeof p === 'object'
               )
-              .map((p) => ({
-                id: 
-                  typeof p.id === 'string' ? p.id :
-                  typeof p.playerId === 'string' ? p.playerId :
-                  `player-${Math.random()}`,
-                name: 
-                  typeof p.name === 'string' ? p.name :
-                  (typeof p.firstName === 'string' && typeof p.lastName === 'string')
-                    ? `${p.firstName} ${p.lastName}`
-                    : 'Unknown Player',
-                position: typeof p.position === 'string' ? p.position : "",
-              })),
+              .map((p) => {
+                const pId = p['id'];
+                const pPlayerId = p['playerId'];
+                const pName = p['name'];
+                const pFirstName = p['firstName'];
+                const pLastName = p['lastName'];
+                const pPosition = p['position'];
+                
+                return {
+                  id: 
+                    typeof pId === 'string' ? pId :
+                    typeof pPlayerId === 'string' ? pPlayerId :
+                    `player-${Math.random()}`,
+                  name: 
+                    typeof pName === 'string' ? pName :
+                    (typeof pFirstName === 'string' && typeof pLastName === 'string')
+                      ? `${pFirstName} ${pLastName}`
+                      : 'Unknown Player',
+                  position: typeof pPosition === 'string' ? pPosition : "",
+                };
+              }),
           );
         },
         error: () => {
@@ -453,12 +462,17 @@ export class GameTrackerComponent implements OnInit {
       .pipe(takeUntilDestroyed())
       .subscribe({
         next: (response: unknown) => {
-          const gameId = 
-            response && typeof response === 'object' && 'id' in response && typeof (response as Record<string, unknown>).id === 'string'
-              ? (response as Record<string, unknown>).id as string
-              : response && typeof response === 'object' && 'game_id' in response && typeof (response as Record<string, unknown>).game_id === 'string'
-                ? (response as Record<string, unknown>).game_id as string
-                : `game-${Date.now()}`;
+          let gameId = `game-${Date.now()}`;
+          if (response && typeof response === 'object') {
+            const respObj = response as Record<string, unknown>;
+            const respId = respObj['id'];
+            const respGameId = respObj['game_id'];
+            if (typeof respId === 'string') {
+              gameId = respId;
+            } else if (typeof respGameId === 'string') {
+              gameId = respGameId;
+            }
+          }
           this.showGameForm.set(false);
           this.gameForm.reset();
           this.loadGames();
@@ -553,16 +567,24 @@ export class GameTrackerComponent implements OnInit {
     const playersInPlay: string[] = [];
 
     // Collect all player IDs involved in this play
-    if (typeof playData.quarterbackId === 'string') playersInPlay.push(playData.quarterbackId);
-    if (typeof playData.receiverId === 'string') playersInPlay.push(playData.receiverId);
-    if (typeof playData.ballCarrierId === 'string') playersInPlay.push(playData.ballCarrierId);
-    if (typeof playData.defenderId === 'string') playersInPlay.push(playData.defenderId);
-    if (typeof playData.interceptorId === 'string') playersInPlay.push(playData.interceptorId);
-    if (typeof playData.deflectedBy === 'string') playersInPlay.push(playData.deflectedBy);
+    const quarterbackId = playData['quarterbackId'];
+    const receiverId = playData['receiverId'];
+    const ballCarrierId = playData['ballCarrierId'];
+    const defenderId = playData['defenderId'];
+    const interceptorId = playData['interceptorId'];
+    const deflectedBy = playData['deflectedBy'];
+    
+    if (typeof quarterbackId === 'string') playersInPlay.push(quarterbackId);
+    if (typeof receiverId === 'string') playersInPlay.push(receiverId);
+    if (typeof ballCarrierId === 'string') playersInPlay.push(ballCarrierId);
+    if (typeof defenderId === 'string') playersInPlay.push(defenderId);
+    if (typeof interceptorId === 'string') playersInPlay.push(interceptorId);
+    if (typeof deflectedBy === 'string') playersInPlay.push(deflectedBy);
 
     // If a player is recording their own stats, mark them as present
     const currentUser = this.authService.getUser();
-    if (currentUser && playData.recorderRole === "player" && currentUser.id) {
+    const recorderRole = playData['recorderRole'];
+    if (currentUser && recorderRole === "player" && currentUser.id) {
       playersInPlay.push(currentUser.id);
     }
 

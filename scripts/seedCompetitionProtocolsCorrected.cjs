@@ -132,7 +132,7 @@ class CompetitionProtocolsSeeder {
           protocol.athlete_feedback_score,
         ];
 
-        const result = await this.pool.query(query, values);
+        const _result = await this.pool.query(query, values);
         console.log(
           `✅ Seeded European Championship ${protocol.championship_year} protocol`,
         );
@@ -263,7 +263,7 @@ class CompetitionProtocolsSeeder {
           protocol.long_term_follow_up_studies,
         ];
 
-        const result = await this.pool.query(query, values);
+        const _result = await this.pool.query(query, values);
         console.log(
           `✅ Seeded World Championship ${protocol.championship_year} protocol`,
         );

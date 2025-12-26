@@ -84,7 +84,7 @@ function processFile(filePath) {
     }
 
     // Apply replacements
-    for (const { pattern, replacement, description } of replacements) {
+    for (const { pattern, replacement, description: _description } of replacements) {
       const matches = content.match(pattern);
       if (matches) {
         content = content.replace(pattern, replacement);

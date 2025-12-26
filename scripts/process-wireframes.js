@@ -6,9 +6,8 @@
  */
 
 import fs from "fs";
-import path from "path";
+import path, { dirname } from "path";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,7 +21,7 @@ const OUTPUT_DIR = path.join(
   "components",
   "wireframes",
 );
-const TEMPLATE_DIR = path.join(__dirname, "..", "src", "templates");
+const _TEMPLATE_DIR = path.join(__dirname, "..", "src", "templates");
 
 // Wireframe mapping
 const WIREFRAME_MAPPING = {

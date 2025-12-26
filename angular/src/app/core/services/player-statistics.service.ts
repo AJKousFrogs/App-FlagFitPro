@@ -33,6 +33,15 @@ export interface PlayerGameStats {
   passDeflections: number;
 }
 
+// Extended interface for API responses that include raw accuracy arrays
+interface PlayerGameStatsApiResponse extends Partial<PlayerGameStats> {
+  id?: string;
+  date?: string;
+  hasStats?: boolean;
+  snapAccuracies?: (string | number)[];
+  throwAccuracies?: (string | number)[];
+}
+
 export interface PlayerTournamentStats extends PlayerGameStats {
   tournamentId: string;
   tournamentName: string;
@@ -112,10 +121,12 @@ export class PlayerStatisticsService {
     gameId: string,
   ): Observable<PlayerGameStats> {
     return this.apiService
-      .get<ApiResponse<PlayerGameStats>>(`/api/players/${playerId}/games/${gameId}/stats`)
+      .get<ApiResponse<PlayerGameStatsApiResponse> | PlayerGameStatsApiResponse>(`/api/players/${playerId}/games/${gameId}/stats`)
       .pipe(
-        map((response) => {
-          const stats = response.data || (response as unknown as PlayerGameStats);
+        map((response): PlayerGameStats => {
+          // Handle both ApiResponse wrapper and direct response
+          const apiResponse = response as ApiResponse<PlayerGameStatsApiResponse>;
+          const stats: PlayerGameStatsApiResponse = apiResponse.data ?? (response as PlayerGameStatsApiResponse);
           return {
             gameId: stats.gameId || gameId,
             gameDate: stats.gameDate || "",
@@ -126,10 +137,10 @@ export class PlayerStatisticsService {
             passingYards: stats.passingYards || 0,
             touchdowns: stats.touchdowns || 0,
             interceptions: stats.interceptions || 0,
-            snapAccuracy: this.calculateAverageAccuracy(
+            snapAccuracy: stats.snapAccuracy ?? this.calculateAverageAccuracy(
               stats.snapAccuracies || [],
             ),
-            throwAccuracy: this.calculateAverageAccuracy(
+            throwAccuracy: stats.throwAccuracy ?? this.calculateAverageAccuracy(
               stats.throwAccuracies || [],
             ),
             targets: stats.targets || 0,
@@ -152,12 +163,15 @@ export class PlayerStatisticsService {
    * Games where player didn't track stats are marked as missed
    */
   getPlayerAllGames(playerId: string): Observable<PlayerGameStats[]> {
-    return this.apiService.get<ApiResponse<PlayerGameStats[]>>(`/api/players/${playerId}/games`).pipe(
-      map((response) => {
-        const games = response.data || (response as unknown as PlayerGameStats[]) || [];
-        return games.map((game) => ({
-          gameId: game.gameId || game.id,
-          gameDate: game.gameDate || game.date,
+    return this.apiService.get<unknown>(`/api/players/${playerId}/games`).pipe(
+      map((response): PlayerGameStats[] => {
+        // Handle both ApiResponse wrapper and direct array
+        const apiResponse = response as ApiResponse<PlayerGameStatsApiResponse[]>;
+        const games: PlayerGameStatsApiResponse[] = apiResponse.data 
+          || (Array.isArray(response) ? response as PlayerGameStatsApiResponse[] : []);
+        return games.map((game): PlayerGameStats => ({
+          gameId: game.gameId || game.id || '',
+          gameDate: game.gameDate || game.date || '',
           opponent: game.opponent || "",
           present: game.present !== false && (game.hasStats || false), // Present only if stats were tracked
           passAttempts: game.passAttempts || 0,
@@ -200,16 +214,18 @@ export class PlayerStatisticsService {
     }
     
     return this.apiService
-      .get<ApiResponse<TournamentResponse>>(`/api/players/${playerId}/tournaments/${tournamentId}/stats`)
+      .get<unknown>(`/api/players/${playerId}/tournaments/${tournamentId}/stats`)
       .pipe(
         map((response) => {
-          const stats = response.data || (response as unknown as TournamentResponse);
+          const apiResponse = response as unknown as ApiResponse<TournamentResponse>;
+          const directResponse = response as unknown as TournamentResponse;
+          const stats: TournamentResponse = apiResponse.data || directResponse;
           const games = stats.games || [];
           const gamesPlayed = games.filter(
-            (g) => g.present && g.hasStats,
+            (g: PlayerGameStats & { hasStats?: boolean }) => g.present && g.hasStats,
           ).length;
           const gamesMissed = games.filter(
-            (g) => !g.present || !g.hasStats,
+            (g: PlayerGameStats & { hasStats?: boolean }) => !g.present || !g.hasStats,
           ).length;
 
           return {
@@ -221,6 +237,8 @@ export class PlayerStatisticsService {
             gameDate: "",
             opponent: "",
             present: true,
+            snapAccuracy: 0,
+            throwAccuracy: 0,
             ...this.aggregateGameStats(games),
           };
         }),
@@ -240,16 +258,18 @@ export class PlayerStatisticsService {
     }
     
     return this.apiService
-      .get<ApiResponse<SeasonResponse>>(`/api/players/${playerId}/seasons/${season}/stats`)
+      .get<unknown>(`/api/players/${playerId}/seasons/${season}/stats`)
       .pipe(
         map((response) => {
-          const stats = response.data || (response as unknown as SeasonResponse);
+          const apiResponse = response as unknown as ApiResponse<SeasonResponse>;
+          const directResponse = response as unknown as SeasonResponse;
+          const stats: SeasonResponse = apiResponse.data || directResponse;
           const games = stats.games || [];
           const gamesPlayed = games.filter(
-            (g) => g.present && g.hasStats,
+            (g: PlayerGameStats & { hasStats?: boolean }) => g.present && g.hasStats,
           ).length;
           const gamesMissed = games.filter(
-            (g) => !g.present || !g.hasStats,
+            (g: PlayerGameStats & { hasStats?: boolean }) => !g.present || !g.hasStats,
           ).length;
           const totalGames = gamesPlayed + gamesMissed;
           const attendanceRate =
@@ -318,14 +338,16 @@ export class PlayerStatisticsService {
     }
     
     return this.apiService
-      .get<ApiResponse<MultiSeasonResponse>>(`/api/players/${playerId}/stats/multi-season`)
+      .get<unknown>(`/api/players/${playerId}/stats/multi-season`)
       .pipe(
         map((response) => {
-          const data = response.data || (response as unknown as MultiSeasonResponse);
+          const apiResponse = response as unknown as ApiResponse<MultiSeasonResponse>;
+          const directResponse = response as unknown as MultiSeasonResponse;
+          const data: MultiSeasonResponse = apiResponse.data || directResponse;
           const seasons = data.seasons || [];
 
-          const seasonStats: PlayerSeasonStats[] = seasons.map((s) => ({
-            season: s.season,
+          const seasonStats: PlayerSeasonStats[] = seasons.map((s: Partial<PlayerSeasonStats>) => ({
+            season: s.season || '',
             gamesPlayed: s.gamesPlayed || 0,
             gamesMissed: s.gamesMissed || 0,
             totalGames: (s.gamesPlayed || 0) + (s.gamesMissed || 0),
@@ -531,7 +553,7 @@ export class PlayerStatisticsService {
     }
   }
 
-  private calculateAverageAccuracy(accuracies: string[]): number {
+  private calculateAverageAccuracy(accuracies: (string | number)[]): number {
     if (!accuracies || accuracies.length === 0) return 0;
 
     const accuracyMap: Record<string, number> = {
@@ -542,10 +564,12 @@ export class PlayerStatisticsService {
       terrible: 20,
     };
 
-    const sum = accuracies.reduce(
-      (total, acc) => total + (accuracyMap[acc.toLowerCase()] || 0),
-      0,
-    );
+    const sum = accuracies.reduce((total: number, acc) => {
+      if (typeof acc === 'number') {
+        return total + acc;
+      }
+      return total + (accuracyMap[String(acc).toLowerCase()] || 0);
+    }, 0);
     return sum / accuracies.length;
   }
 }

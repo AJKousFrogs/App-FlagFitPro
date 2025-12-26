@@ -2,9 +2,8 @@
 // Evidence-based training load monitoring, injury risk prediction, and fatigue management
 // Based on 87 peer-reviewed studies with 12,453 athletes
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
-  createSuccessResponse,
   createErrorResponse,
   handleServerError,
   logFunctionCall,

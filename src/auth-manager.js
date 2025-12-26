@@ -11,7 +11,6 @@ import { ErrorHandler } from "./error-handler.js";
 import {
   AUTH,
   ERROR_MESSAGES,
-  SUCCESS_MESSAGES,
 } from "./js/config/app-constants.js";
 import { debounce } from "./js/utils/html-escape.js";
 import { storageService } from "./js/services/storage-service-unified.js";
@@ -30,7 +29,7 @@ class AuthManager {
   }
 
   // Initialize auth manager
-  async init() {
+  init() {
     // Prevent multiple concurrent initializations
     if (this.isInitializing || this.isInitialized) {
       logger.debug(
@@ -599,7 +598,7 @@ class AuthManager {
       localStorage.setItem("pending_oauth_role", role);
 
       // Redirect to OAuth provider
-      const { data, error } = await safeSupabaseQuery(
+      const { data: _data, error } = await safeSupabaseQuery(
         supabase.auth.signInWithOAuth({
           provider: provider,
           options: {
@@ -821,7 +820,7 @@ class AuthManager {
       try {
         // Verify token is not expired
         const payload = JSON.parse(atob(this.token.split(".")[1]));
-        const tokenExpiry = payload.exp ? Math.floor(Date.now() / 1000) : null;
+        const _tokenExpiry = payload.exp ? Math.floor(Date.now() / 1000) : null;
 
         // Only log token details in development
         if (isDevelopment && shouldLog) {
@@ -924,7 +923,7 @@ class AuthManager {
               return true;
             }
           }
-        } catch (sessionError) {
+        } catch (_sessionError) {
           // Ignore session check errors
         }
 

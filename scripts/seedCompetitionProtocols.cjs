@@ -146,7 +146,7 @@ class CompetitionProtocolsSeeder {
           protocol.flag_football_specific_notes,
         ];
 
-        const result = await this.pool.query(query, values);
+        const _result = await this.pool.query(query, values);
         console.log(
           `✅ Seeded European Championship ${protocol.championship_year} protocol`,
         );
@@ -295,7 +295,7 @@ class CompetitionProtocolsSeeder {
           protocol.flag_football_specific_notes,
         ];
 
-        const result = await this.pool.query(query, values);
+        const _result = await this.pool.query(query, values);
         console.log(
           `✅ Seeded World Championship ${protocol.championship_year} protocol`,
         );
@@ -414,7 +414,7 @@ class CompetitionProtocolsSeeder {
           protocol.flag_football_specific_notes,
         ];
 
-        const result = await this.pool.query(query, values);
+        const _result = await this.pool.query(query, values);
         console.log(
           `✅ Seeded Olympic Games ${protocol.olympic_year} protocol`,
         );

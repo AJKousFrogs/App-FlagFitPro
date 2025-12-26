@@ -487,7 +487,7 @@ async function seedIsometricsDatabase() {
         exercise.post_lifting_recommendation,
       ];
 
-      const result = await pool.query(query, values);
+      const _result = await pool.query(query, values);
       console.log(`✅ Inserted exercise: ${exercise.name}`);
     }
 
@@ -526,7 +526,7 @@ async function seedIsometricsDatabase() {
         article.dosage_recommendations,
       ];
 
-      const result = await pool.query(query, values);
+      const _result = await pool.query(query, values);
       console.log(`✅ Inserted research article: ${article.title}`);
     }
 
@@ -561,7 +561,7 @@ async function seedIsometricsDatabase() {
         JSON.stringify(program.phases),
       ];
 
-      const result = await pool.query(query, values);
+      const _result = await pool.query(query, values);
       console.log(`✅ Inserted training program: ${program.name}`);
     }
 

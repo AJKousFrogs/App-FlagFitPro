@@ -1,7 +1,7 @@
 // Netlify Function: Games API
 // Handles game creation, retrieval, and statistics
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const { validate, sanitize } = require("./validation.cjs");
 const {
   createSuccessResponse,
@@ -193,7 +193,7 @@ const updateGame = async (userId, gameId, updates) => {
     }
 
     // Verify user is on this team
-    const { authorized, error: authError } = await checkTeamMembership(
+    const { authorized, error: _authError } = await checkTeamMembership(
       userId,
       game.team_id,
     );
@@ -410,7 +410,7 @@ const getPlayerGameStats = async (playerId, gameId) => {
 };
 
 // Main handler
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   logFunctionCall("Games", event);
 
   // Handle CORS preflight
@@ -448,7 +448,7 @@ exports.handler = async (event, context) => {
     ) {
       try {
         body = JSON.parse(event.body);
-      } catch (parseError) {
+      } catch (_parseError) {
         return handleValidationError("Invalid JSON in request body");
       }
     }

@@ -118,7 +118,7 @@ async function detectServer() {
       if (response.status === 200) {
         return { url: server.url, name: server.name };
       }
-    } catch (e) {
+    } catch (_e) {
       // Server not available, try next
     }
   }
@@ -153,7 +153,7 @@ async function testEndpoint(
     let parsedBody = null;
     try {
       parsedBody = JSON.parse(response.body);
-    } catch (e) {
+    } catch (_e) {
       // Not JSON, that's okay
     }
 
@@ -859,7 +859,9 @@ async function runTests() {
     }
 
     // Small delay to avoid rate limiting
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
   }
 
   const endTime = Date.now();

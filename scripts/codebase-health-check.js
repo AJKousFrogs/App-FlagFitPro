@@ -194,7 +194,7 @@ class CodebaseHealthCheck {
   async analyzeDatabaseFile(filePath) {
     try {
       const content = await fs.readFile(filePath, "utf-8");
-      const filename = path.basename(filePath);
+      const _filename = path.basename(filePath);
 
       // Check for table conflicts
       const tableMatches = content.match(
@@ -202,7 +202,7 @@ class CodebaseHealthCheck {
       );
       if (tableMatches) {
         tableMatches.forEach((match) => {
-          const tableName = match.replace(
+          const _tableName = match.replace(
             /CREATE TABLE(?:\s+IF NOT EXISTS)?\s+/i,
             "",
           );
@@ -214,7 +214,7 @@ class CodebaseHealthCheck {
     }
   }
 
-  async checkFileSpecificIssues(content, filename, fileType) {
+  async checkFileSpecificIssues(content, filename, _fileType) {
     // Check for potential errors
     const potentialErrors = [];
 

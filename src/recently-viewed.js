@@ -66,7 +66,7 @@ export class RecentlyViewed {
   getRecentItems() {
     try {
       return storageService.get(this.storageKey, [], { usePrefix: false });
-    } catch (e) {
+    } catch (_e) {
       return [];
     }
   }

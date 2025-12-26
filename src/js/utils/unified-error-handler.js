@@ -169,7 +169,7 @@ export class UnifiedErrorHandler {
       context = "Operation",
       showToUser = true,
       logLevel = "error",
-      fallbackMessage = "An error occurred. Please try again.",
+      fallbackMessage: _fallbackMessage = "An error occurred. Please try again.",
       onError = null,
       allowRetry = false,
       retryCallback = null,
@@ -256,9 +256,8 @@ export class UnifiedErrorHandler {
       severity = ErrorSeverity.WARNING;
       userMessage =
         "Network error. Please check your connection and try again.";
-    }
-    // Authentication errors
-    else if (error.status === 401 || error.message?.includes("auth")) {
+    } else if (error.status === 401 || error.message?.includes("auth")) {
+      // Authentication errors
       type = ErrorType.AUTHENTICATION;
       severity = ErrorSeverity.ERROR;
       userMessage = "Authentication failed. Please log in again.";
@@ -269,27 +268,23 @@ export class UnifiedErrorHandler {
           window.location.href = "/login.html";
         }
       }, 2000);
-    }
-    // Authorization errors
-    else if (error.status === 403) {
+    } else if (error.status === 403) {
+      // Authorization errors
       type = ErrorType.AUTHORIZATION;
       severity = ErrorSeverity.ERROR;
       userMessage = "You do not have permission to perform this action.";
-    }
-    // Not found errors
-    else if (error.status === 404) {
+    } else if (error.status === 404) {
+      // Not found errors
       type = ErrorType.NOT_FOUND;
       severity = ErrorSeverity.WARNING;
       userMessage = "The requested resource was not found.";
-    }
-    // Server errors
-    else if (error.status >= 500) {
+    } else if (error.status >= 500) {
+      // Server errors
       type = ErrorType.SERVER;
       severity = ErrorSeverity.ERROR;
       userMessage = "Server error. Please try again later.";
-    }
-    // Client errors
-    else if (error.status >= 400) {
+    } else if (error.status >= 400) {
+      // Client errors
       type = ErrorType.CLIENT;
       severity = ErrorSeverity.WARNING;
       userMessage =
@@ -357,7 +352,7 @@ export class UnifiedErrorHandler {
   /**
    * Create notification element
    */
-  createNotification(message, type, duration) {
+  createNotification(message, type, _duration) {
     const notification = document.createElement("div");
     notification.className = `error-notification ${type}`;
     notification.setAttribute("role", type === "error" ? "alert" : "status");
@@ -569,8 +564,9 @@ export class UnifiedErrorHandler {
           `[Retry] Attempt ${attempt}/${maxAttempts} failed, retrying in ${currentDelay}ms...`,
         );
 
+        const delayMs = currentDelay;
         await new Promise((resolve) => {
-          setTimeout(resolve, currentDelay);
+          setTimeout(resolve, delayMs);
         });
         currentDelay *= backoff;
       }

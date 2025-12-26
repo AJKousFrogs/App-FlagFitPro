@@ -351,11 +351,11 @@ export class ReadinessService {
 
     return {
       preset: `${preset.name} (${preset.version})`,
-      citations: readinessConfig.citations.map((c: { authors: string; year: number; title: string; journal: string; doi: string }) => ({
+      citations: readinessConfig.citations.map((c) => ({
         authors: c.authors,
         year: c.year,
         title: c.title,
-        doi: c.doi,
+        doi: c.doi || '',
       })),
       scienceNotes: {
         weightings: readinessConfig.scienceNotes.weightings,

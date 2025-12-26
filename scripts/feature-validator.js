@@ -684,12 +684,12 @@ class FeatureValidator {
       // Check HTML files for performance optimizations
       const htmlFiles = ["./index.html", "./dashboard.html"];
       let hasOptimizations = 0;
-      let totalFiles = 0;
+      let _totalFiles = 0;
 
       for (const file of htmlFiles) {
         try {
           const content = await fs.readFile(file, "utf8");
-          totalFiles++;
+          _totalFiles++;
 
           // Check for performance optimizations
           if (content.includes("defer") || content.includes("async")) {

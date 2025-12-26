@@ -3,7 +3,6 @@
 
 import { loadingManager } from "./loading-manager.js";
 import { logger } from "./logger.js";
-import { escapeHtml } from "./js/utils/sanitize.js";
 
 export class ErrorHandler {
   static init() {

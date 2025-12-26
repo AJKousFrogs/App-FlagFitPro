@@ -4,13 +4,11 @@
 const { db, checkEnvVars } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
-  handleServerError,
-  handleDatabaseError,
   logFunctionCall,
   CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // Log function call
   logFunctionCall("sponsors", event);
 
