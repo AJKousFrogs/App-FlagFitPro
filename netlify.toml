@@ -581,6 +581,53 @@
   status = 200
   force = true
 
+# API Routes for Health Check
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+  force = true
+
+# API Routes for API Documentation
+[[redirects]]
+  from = "/api/api-docs"
+  to = "/.netlify/functions/api-docs"
+  status = 200
+  force = true
+
+# API Routes for Load Management
+[[redirects]]
+  from = "/api/load-management/*"
+  to = "/.netlify/functions/load-management"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/load-management"
+  to = "/.netlify/functions/load-management"
+  status = 200
+  force = true
+
+# API Routes for Games (with /api prefix)
+[[redirects]]
+  from = "/api/games/*"
+  to = "/.netlify/functions/games"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/games"
+  to = "/.netlify/functions/games"
+  status = 200
+  force = true
+
+# API Routes for Player Stats (base endpoint)
+[[redirects]]
+  from = "/api/player-stats"
+  to = "/.netlify/functions/player-stats"
+  status = 200
+  force = true
+
 # API Routes for Fixtures
 [[redirects]]
   from = "/api/fixtures"

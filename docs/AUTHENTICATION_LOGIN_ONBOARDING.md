@@ -869,3 +869,4 @@ Supabase automatically handles token refresh:
 - [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
 
 
+

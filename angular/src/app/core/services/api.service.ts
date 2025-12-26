@@ -240,6 +240,8 @@ export const API_ENDPOINTS = {
   },
   wellness: {
     checkin: "/api/wellness/checkin",
+    latest: "/api/wellness/latest",
+    checkins: "/api/wellness/checkins",
     get: "/api/performance-data/wellness",
     post: "/api/performance-data/wellness",
   },
@@ -284,5 +286,37 @@ export const API_ENDPOINTS = {
     usdaStats: "/api/admin/usda-stats",
     researchStats: "/api/admin/research-stats",
   },
+  // Load Management endpoints
+  loadManagement: {
+    acwr: "/api/load-management/acwr",
+    monotony: "/api/load-management/monotony",
+    tsb: "/api/load-management/tsb",
+    injuryRisk: "/api/load-management/injury-risk",
+    trainingLoads: "/api/load-management/training-loads",
+  },
+  // Readiness endpoints
+  readiness: {
+    calculate: "/api/calc-readiness",
+    history: "/api/readiness-history",
+  },
+  // Games endpoints
+  games: {
+    list: "/api/games",
+    create: "/api/games",
+    details: (gameId: string) => `/api/games/${gameId}`,
+    update: (gameId: string) => `/api/games/${gameId}`,
+    stats: (gameId: string) => `/api/games/${gameId}/stats`,
+    plays: (gameId: string) => `/api/games/${gameId}/plays`,
+  },
+  // Player Stats endpoints
+  playerStats: {
+    aggregated: "/api/player-stats",
+    dateRange: "/api/player-stats/date-range",
+  },
+  // Fixtures
+  fixtures: "/api/fixtures",
+  // Health check
   health: "/api/health",
+  // API documentation
+  apiDocs: "/api/api-docs",
 };

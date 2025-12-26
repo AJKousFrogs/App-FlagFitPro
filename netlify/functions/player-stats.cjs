@@ -6,13 +6,9 @@ const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 const { parseAthleteId } = require("./utils/db-query-helper.cjs");
+// Note: authenticateRequest, applyRateLimit are handled by baseHandler
 
 /**
  * Get today's date at end of day (23:59:59) for inclusive filtering
@@ -384,103 +380,72 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
   }
 };
 
+const { baseHandler } = require("./utils/base-handler.cjs");
+
 // Main handler
-exports.handler = async (event, _context) => {
-  logFunctionCall("PlayerStats", event);
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "player-stats",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    handler: async (event, _context, { userId }) => {
+      const queryParams = event.queryStringParameters || {};
+      const path = event.path.replace("/.netlify/functions/player-stats", "");
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
+      // Get player ID (defaults to authenticated user)
+      const {
+        valid,
+        athleteId,
+        error: athleteError,
+      } = parseAthleteId(event, userId, false);
+      if (!valid) {
+        return athleteError;
+      }
 
-  // Only allow GET requests
-  if (event.httpMethod !== "GET") {
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  }
+      const playerId = queryParams.playerId || athleteId;
 
-  try {
-    checkEnvVars();
-
-    // Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "READ");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // Authenticate request
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-    const queryParams = event.queryStringParameters || {};
-
-    // Parse path to determine endpoint
-    const path = event.path.replace("/.netlify/functions/player-stats", "");
-
-    // Get player ID (defaults to authenticated user)
-    const {
-      valid,
-      athleteId,
-      error: athleteError,
-    } = parseAthleteId(event, userId, false);
-    if (!valid) {
-      return athleteError;
-    }
-
-    const playerId = queryParams.playerId || athleteId;
-
-    if (!playerId) {
-      return createErrorResponse(
-        "Player ID is required",
-        400,
-        "validation_error",
-      );
-    }
-
-    let result;
-
-    // Route handling
-    // Support both /player-stats/aggregated and /player-stats (default)
-    if (
-      path.includes("/aggregated") ||
-      path.endsWith("/aggregated") ||
-      path === "" ||
-      path === "/"
-    ) {
-      // Get aggregated stats up to and including today
-      const season = queryParams.season;
-      const teamId = queryParams.teamId;
-      result = await getPlayerAggregatedStats(playerId, { season, teamId });
-    } else if (path.includes("/date-range") || path.endsWith("/date-range")) {
-      // Get stats for specific date range
-      const startDate = queryParams.startDate
-        ? new Date(queryParams.startDate)
-        : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // Default: last 30 days
-      const endDate = queryParams.endDate
-        ? new Date(queryParams.endDate)
-        : new Date(); // Default: today
-
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      if (!playerId) {
         return createErrorResponse(
-          "Invalid date format. Use ISO 8601 format (YYYY-MM-DD)",
+          "Player ID is required",
           400,
           "validation_error",
         );
       }
 
-      result = await getPlayerStatsByDateRange(playerId, startDate, endDate);
-    } else {
-      return createErrorResponse("Endpoint not found", 404, "not_found");
-    }
+      let result;
 
-    return createSuccessResponse(result);
-  } catch (error) {
-    console.error("Error in player-stats function:", error);
-    return handleServerError(error, "PlayerStats");
-  }
+      // Route handling
+      if (
+        path.includes("/aggregated") ||
+        path.endsWith("/aggregated") ||
+        path === "" ||
+        path === "/"
+      ) {
+        const season = queryParams.season;
+        const teamId = queryParams.teamId;
+        result = await getPlayerAggregatedStats(playerId, { season, teamId });
+      } else if (path.includes("/date-range") || path.endsWith("/date-range")) {
+        const startDate = queryParams.startDate
+          ? new Date(queryParams.startDate)
+          : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const endDate = queryParams.endDate
+          ? new Date(queryParams.endDate)
+          : new Date();
+
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          return createErrorResponse(
+            "Invalid date format. Use ISO 8601 format (YYYY-MM-DD)",
+            400,
+            "validation_error",
+          );
+        }
+
+        result = await getPlayerStatsByDateRange(playerId, startDate, endDate);
+      } else {
+        return createErrorResponse("Endpoint not found", 404, "not_found");
+      }
+
+      return createSuccessResponse(result);
+    },
+  });
 };

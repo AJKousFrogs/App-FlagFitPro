@@ -1,14 +1,14 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signing in... - FlagFit Pro</title>
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
-    />
-    <link rel="stylesheet" href="../src/css/main.css" />
+    >
+    <link rel="stylesheet" href="../src/css/main.css">
     <!-- Supabase JS SDK from CDN -->
     <script
       src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"
@@ -94,6 +94,9 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
       }
+      .error-actions {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -106,7 +109,7 @@
 
       <div class="error-message" id="errorMessage"></div>
 
-      <div id="errorActions" style="display: none">
+      <div id="errorActions" class="error-actions">
         <a href="/login.html" class="btn">Return to Login</a>
       </div>
     </div>

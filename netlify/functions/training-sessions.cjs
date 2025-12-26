@@ -6,13 +6,9 @@ const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
   handleValidationError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+// Note: authenticateRequest, applyRateLimit, and CORS are handled by baseHandler
 
 /**
  * Create a training session from the Training Builder
@@ -175,83 +171,53 @@ async function getTrainingSessions(userId, queryParams) {
   }
 }
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("Training-Sessions", event);
+const { baseHandler } = require("./utils/base-handler.cjs");
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
-
-  try {
-    // Check environment variables
-    checkEnvVars();
-
-    // SECURITY: Apply rate limiting
-    const rateLimitType = event.httpMethod === "POST" ? "CREATE" : "READ";
-    const rateLimitResponse = applyRateLimit(event, rateLimitType);
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-
-    // Handle GET request - retrieve sessions
-    if (event.httpMethod === "GET") {
-      const sessions = await getTrainingSessions(
-        userId,
-        event.queryStringParameters,
-      );
-      return createSuccessResponse(sessions);
-    }
-
-    // Handle POST request - create new session
-    if (event.httpMethod === "POST") {
-      // Parse and validate request body
-      let sessionData = {};
-      try {
-        sessionData = JSON.parse(event.body);
-      } catch (_parseError) {
-        return handleValidationError("Invalid JSON in request body");
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "training-sessions",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
+    handler: async (event, _context, { userId }) => {
+      // Handle GET request - retrieve sessions
+      if (event.httpMethod === "GET") {
+        const sessions = await getTrainingSessions(
+          userId,
+          event.queryStringParameters,
+        );
+        return createSuccessResponse(sessions);
       }
 
-      // Validate required fields
-      if (
-        !sessionData.exercises ||
-        !Array.isArray(sessionData.exercises) ||
-        sessionData.exercises.length === 0
-      ) {
-        return handleValidationError("Exercises array is required");
+      // Handle POST request - create new session
+      if (event.httpMethod === "POST") {
+        // Parse and validate request body
+        let sessionData = {};
+        try {
+          sessionData = JSON.parse(event.body);
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
+
+        // Validate required fields
+        if (
+          !sessionData.exercises ||
+          !Array.isArray(sessionData.exercises) ||
+          sessionData.exercises.length === 0
+        ) {
+          return handleValidationError("Exercises array is required");
+        }
+
+        const result = await createTrainingSession(userId, sessionData);
+
+        return createSuccessResponse(
+          { session: result.session, id: result.id, note: result.note },
+          201,
+          "Training session created successfully",
+        );
       }
 
-      const result = await createTrainingSession(userId, sessionData);
-
-      return createSuccessResponse(
-        { session: result.session, id: result.id, note: result.note },
-        201,
-        "Training session created successfully",
-      );
-    }
-
-    // Method not allowed
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  } catch (error) {
-    console.error("Error in training-sessions function:", error);
-    console.error("Error stack:", error.stack);
-    console.error("Error details:", {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-    });
-    return handleServerError(error, "Training-Sessions");
-  }
+      // Method not allowed (shouldn't reach here due to allowedMethods)
+      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+    },
+  });
 };

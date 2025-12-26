@@ -7,12 +7,8 @@ const { getOrFetch, CACHE_TTL, CACHE_PREFIX } = require("./cache.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+// Note: authenticateRequest, applyRateLimit, and CORS are handled by baseHandler
 
 // Get performance trends over time
 // Always filters data up to and including today
@@ -658,128 +654,94 @@ function getFallbackAnalyticsSummary() {
   };
 }
 
+const { baseHandler } = require("./utils/base-handler.cjs");
+
 // Main handler
-exports.handler = async (event, _context) => {
-  logFunctionCall("Analytics", event);
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "analytics",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    handler: async (event, _context, { userId }) => {
+      // Parse path to determine endpoint
+      const path = event.path.replace("/.netlify/functions/analytics", "");
+      const queryParams = event.queryStringParameters || {};
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
+      // Validate query parameters
+      const validation = validateQueryParams(queryParams);
+      if (!validation.valid) {
+        return validation.response;
+      }
 
-  // Only allow GET requests
-  if (event.httpMethod !== "GET") {
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  }
+      const weeks = parseInt(queryParams.weeks) || 7;
+      const period = queryParams.period || "30days";
 
-  try {
-    // Check environment variables
-    checkEnvVars();
+      let data;
+      let cacheKey;
 
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "READ");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
+      if (
+        path.includes("/performance-trends") ||
+        path.endsWith("/performance-trends")
+      ) {
+        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:performance-trends:${weeks}`;
+        data = await getOrFetch(
+          cacheKey,
+          async () => await getPerformanceTrends(userId, weeks),
+          CACHE_TTL.ANALYTICS,
+        );
+      } else if (
+        path.includes("/team-chemistry") ||
+        path.endsWith("/team-chemistry")
+      ) {
+        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:team-chemistry`;
+        data = await getOrFetch(
+          cacheKey,
+          async () => await getTeamChemistry(userId),
+          CACHE_TTL.ANALYTICS,
+        );
+      } else if (
+        path.includes("/training-distribution") ||
+        path.endsWith("/training-distribution")
+      ) {
+        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:training-distribution:${period}`;
+        data = await getOrFetch(
+          cacheKey,
+          async () => await getTrainingDistribution(userId, period),
+          CACHE_TTL.ANALYTICS,
+        );
+      } else if (
+        path.includes("/position-performance") ||
+        path.endsWith("/position-performance")
+      ) {
+        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:position-performance`;
+        data = await getOrFetch(
+          cacheKey,
+          async () => await getPositionPerformance(userId),
+          CACHE_TTL.ANALYTICS,
+        );
+      } else if (
+        path.includes("/speed-development") ||
+        path.endsWith("/speed-development")
+      ) {
+        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:speed-development:${weeks}`;
+        data = await getOrFetch(
+          cacheKey,
+          async () => await getSpeedDevelopment(userId, weeks),
+          CACHE_TTL.ANALYTICS,
+        );
+      } else if (path.includes("/summary") || path.endsWith("/summary")) {
+        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:summary`;
+        data = await getOrFetch(
+          cacheKey,
+          async () => await getAnalyticsSummary(userId),
+          CACHE_TTL.ANALYTICS,
+        );
+      } else {
+        return createErrorResponse("Endpoint not found", 404, "not_found");
+      }
 
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-
-    // Parse path to determine endpoint
-    const path = event.path.replace("/.netlify/functions/analytics", "");
-    const queryParams = event.queryStringParameters || {};
-
-    // Validate query parameters
-    const validation = validateQueryParams(queryParams);
-    if (!validation.valid) {
-      return validation.response;
-    }
-
-    const weeks = parseInt(queryParams.weeks) || 7;
-    const period = queryParams.period || "30days";
-
-    let data;
-    let cacheKey;
-
-    if (
-      path.includes("/performance-trends") ||
-      path.endsWith("/performance-trends")
-    ) {
-      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:performance-trends:${weeks}`;
-      data = await getOrFetch(
-        cacheKey,
-        async () => await getPerformanceTrends(userId, weeks),
-        CACHE_TTL.ANALYTICS,
-      );
-    } else if (
-      path.includes("/team-chemistry") ||
-      path.endsWith("/team-chemistry")
-    ) {
-      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:team-chemistry`;
-      data = await getOrFetch(
-        cacheKey,
-        async () => await getTeamChemistry(userId),
-        CACHE_TTL.ANALYTICS,
-      );
-    } else if (
-      path.includes("/training-distribution") ||
-      path.endsWith("/training-distribution")
-    ) {
-      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:training-distribution:${period}`;
-      data = await getOrFetch(
-        cacheKey,
-        async () => await getTrainingDistribution(userId, period),
-        CACHE_TTL.ANALYTICS,
-      );
-    } else if (
-      path.includes("/position-performance") ||
-      path.endsWith("/position-performance")
-    ) {
-      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:position-performance`;
-      data = await getOrFetch(
-        cacheKey,
-        async () => await getPositionPerformance(userId),
-        CACHE_TTL.ANALYTICS,
-      );
-    } else if (
-      path.includes("/speed-development") ||
-      path.endsWith("/speed-development")
-    ) {
-      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:speed-development:${weeks}`;
-      data = await getOrFetch(
-        cacheKey,
-        async () => await getSpeedDevelopment(userId, weeks),
-        CACHE_TTL.ANALYTICS,
-      );
-    } else if (path.includes("/summary") || path.endsWith("/summary")) {
-      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:summary`;
-      data = await getOrFetch(
-        cacheKey,
-        async () => await getAnalyticsSummary(userId),
-        CACHE_TTL.ANALYTICS,
-      );
-    } else {
-      return createErrorResponse("Endpoint not found", 404, "not_found");
-    }
-
-    // Return with 5-minute cache headers (300 seconds)
-    return createSuccessResponse(data, 200, null, 300);
-  } catch (error) {
-    console.error("Error in analytics function:", error);
-    console.error("Error stack:", error.stack);
-    console.error("Error details:", {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-    });
-    return handleServerError(error, "Analytics");
-  }
+      // Return with 5-minute cache headers (300 seconds)
+      return createSuccessResponse(data, 200, null, 300);
+    },
+  });
 };

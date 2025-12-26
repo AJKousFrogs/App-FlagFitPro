@@ -1,25 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Design System Example - FlagFit Pro</title>
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap"
       rel="stylesheet"
-    />
+    >
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css" />
+    <link rel="stylesheet" href="./src/css/main.css">
+    <style>
+      .icon-inline {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .icon-nav {
+        width: 20px;
+        height: 20px;
+      }
+      .color-swatch {
+        width: 100%;
+        height: 5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .color-swatch-primary {
+        background: var(--primary-gradient);
+      }
+      .color-swatch-success {
+        background: var(--accent-green);
+      }
+      .color-swatch-error {
+        background: var(--error-red);
+      }
+      .color-swatch-warning {
+        background: var(--warning-yellow);
+      }
+    </style>
   </head>
   <body>
     <!-- Mobile Menu Toggle -->
     <button
+      type="button"
       class="mobile-menu-toggle btn-icon lg:hidden"
       id="mobile-toggle"
       aria-label="Toggle menu"
@@ -33,20 +64,12 @@
     <div class="dashboard-container">
       <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
-        <nav class="nav">
+        <nav class="nav" aria-label="Main navigation">
           <!-- Brand Section -->
           <div class="nav-section">
             <div class="p-6 border-b">
               <h2 class="text-xl font-bold text-primary">
-                <i
-                  data-lucide="activity"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                  "
-                ></i>
+                <i data-lucide="activity" class="icon-inline"></i>
                 FlagFit Pro
               </h2>
               <p class="text-sm text-muted mt-1">Olympic Training System</p>
@@ -57,22 +80,19 @@
           <div class="nav-section">
             <div class="nav-section-title">Main</div>
             <a href="/dashboard.html" class="nav-item active">
-              <i
-                data-lucide="bar-chart-3"
-                style="width: 20px; height: 20px"
-              ></i>
+              <i data-lucide="bar-chart-3" class="icon-nav"></i>
               Dashboard
             </a>
             <a href="/training.html" class="nav-item">
-              <i data-lucide="dumbbell" style="width: 20px; height: 20px"></i>
+              <i data-lucide="dumbbell" class="icon-nav"></i>
               Training
             </a>
             <a href="/tournaments.html" class="nav-item">
-              <i data-lucide="trophy" style="width: 20px; height: 20px"></i>
+              <i data-lucide="trophy" class="icon-nav"></i>
               Tournaments
             </a>
             <a href="/community.html" class="nav-item">
-              <i data-lucide="users" style="width: 20px; height: 20px"></i>
+              <i data-lucide="users" class="icon-nav"></i>
               Community
             </a>
           </div>
@@ -81,21 +101,15 @@
           <div class="nav-section">
             <div class="nav-section-title">Tools</div>
             <a href="/analytics.html" class="nav-item">
-              <i
-                data-lucide="bar-chart-3"
-                style="width: 20px; height: 20px"
-              ></i>
+              <i data-lucide="bar-chart-3" class="icon-nav"></i>
               Analytics
             </a>
             <a href="/chat.html" class="nav-item">
-              <i
-                data-lucide="message-circle"
-                style="width: 20px; height: 20px"
-              ></i>
+              <i data-lucide="message-circle" class="icon-nav"></i>
               Team Chat
             </a>
             <a href="/coach.html" class="nav-item">
-              <i data-lucide="target" style="width: 20px; height: 20px"></i>
+              <i data-lucide="target" class="icon-nav"></i>
               Coach Dashboard
             </a>
           </div>
@@ -104,7 +118,7 @@
           <div class="nav-section">
             <div class="nav-section-title">Account</div>
             <a href="/settings.html" class="nav-item">
-              <i data-lucide="settings" style="width: 20px; height: 20px"></i>
+              <i data-lucide="settings" class="icon-nav"></i>
               Settings
             </a>
             <a href="/login.html" class="nav-item">
@@ -126,21 +140,11 @@
             <p class="text-muted">Examples of all UI components and patterns</p>
           </div>
           <div class="flex gap-3">
-            <button class="btn btn-ghost">
-              <span
-                ><i
-                  data-lucide="bell"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                  "
-                ></i
-              ></span>
+            <button type="button" class="btn btn-ghost">
+              <span><i data-lucide="bell" class="icon-inline"></i></span>
               Notifications
             </button>
-            <button class="btn btn-primary">
+            <button type="button" class="btn btn-primary">
               <span>👤</span>
               Profile
             </button>
@@ -155,33 +159,25 @@
             </div>
             <div class="card-content">
               <div class="flex flex-wrap gap-3 mb-6">
-                <button class="btn btn-primary">Primary Button</button>
-                <button class="btn btn-secondary">Secondary Button</button>
-                <button class="btn btn-success">Success Button</button>
-                <button class="btn btn-danger">Danger Button</button>
-                <button class="btn btn-ghost">Ghost Button</button>
+                <button type="button" class="btn btn-primary">Primary Button</button>
+                <button type="button" class="btn btn-secondary">Secondary Button</button>
+                <button type="button" class="btn btn-success">Success Button</button>
+                <button type="button" class="btn btn-danger">Danger Button</button>
+                <button type="button" class="btn btn-ghost">Ghost Button</button>
               </div>
 
               <div class="flex flex-wrap gap-3 mb-6">
-                <button class="btn btn-primary btn-sm">Small</button>
-                <button class="btn btn-primary">Normal</button>
-                <button class="btn btn-primary btn-lg">Large</button>
+                <button type="button" class="btn btn-primary btn-sm">Small</button>
+                <button type="button" class="btn btn-primary">Normal</button>
+                <button type="button" class="btn btn-primary btn-lg">Large</button>
               </div>
 
               <div class="flex gap-3">
-                <button class="btn-icon">🏃</button>
-                <button class="btn-icon">
-                  <i
-                    data-lucide="settings"
-                    style="
-                      width: 16px;
-                      height: 16px;
-                      display: inline-block;
-                      vertical-align: middle;
-                    "
-                  ></i>
+                <button type="button" class="btn-icon" aria-label="Run">🏃</button>
+                <button type="button" class="btn-icon" aria-label="Settings">
+                  <i data-lucide="settings" class="icon-inline"></i>
                 </button>
-                <button class="btn-icon">❤️</button>
+                <button type="button" class="btn-icon" aria-label="Favorite">❤️</button>
               </div>
             </div>
           </div>
@@ -215,17 +211,7 @@
             <div class="card hover-lift">
               <div class="card-header">
                 <h4 class="card-title">Team Ranking</h4>
-                <span class="text-2xl"
-                  ><i
-                    data-lucide="trophy"
-                    style="
-                      width: 16px;
-                      height: 16px;
-                      display: inline-block;
-                      vertical-align: middle;
-                    "
-                  ></i
-                ></span>
+                <span class="text-2xl"><i data-lucide="trophy" class="icon-inline"></i></span>
               </div>
               <div class="card-content">
                 <div class="text-3xl font-bold text-success mb-2">#3</div>
@@ -245,17 +231,18 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div class="form-group">
-                    <label class="form-label">Player Name</label>
+                    <label class="form-label" for="player-name">Player Name</label>
                     <input
                       type="text"
+                      id="player-name"
                       class="form-input"
                       placeholder="Enter your name"
-                    />
+                    >
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Position</label>
-                    <select class="form-select">
+                    <label class="form-label" for="position">Position</label>
+                    <select id="position" class="form-select">
                       <option>Select position</option>
                       <option>Quarterback</option>
                       <option>Wide Receiver</option>
@@ -265,8 +252,9 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Training Goals</label>
+                    <label class="form-label" for="training-goals">Training Goals</label>
                     <textarea
+                      id="training-goals"
                       class="form-textarea"
                       placeholder="Describe your training objectives..."
                     ></textarea>
@@ -275,32 +263,30 @@
 
                 <div>
                   <div class="form-group">
-                    <label class="form-label">Email (Error State)</label>
+                    <label class="form-label" for="email-error">Email (Error State)</label>
                     <input
                       type="email"
+                      id="email-error"
                       class="form-input error"
                       value="invalid-email"
-                    />
-                    <span class="form-error"
-                      >Please enter a valid email address</span
                     >
+                    <span class="form-error">Please enter a valid email address</span>
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Password (Success State)</label>
+                    <label class="form-label" for="password-success">Password (Success State)</label>
                     <input
                       type="password"
+                      id="password-success"
                       class="form-input success"
                       value="••••••••"
-                    />
-                    <span class="form-success"
-                      >Password meets all requirements</span
                     >
+                    <span class="form-success">Password meets all requirements</span>
                   </div>
 
                   <div class="flex gap-3 mt-6">
-                    <button class="btn btn-primary">Save Changes</button>
-                    <button class="btn btn-ghost">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-ghost">Cancel</button>
                   </div>
                 </div>
               </div>
@@ -353,31 +339,19 @@
             <div class="card-content">
               <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="text-center">
-                  <div
-                    class="w-full h-20 rounded-lg mb-2"
-                    style="background: var(--primary-gradient)"
-                  ></div>
+                  <div class="color-swatch color-swatch-primary"></div>
                   <div class="text-sm font-medium">Primary Gradient</div>
                 </div>
                 <div class="text-center">
-                  <div
-                    class="w-full h-20 bg-green-500 rounded-lg mb-2"
-                    style="background: var(--accent-green)"
-                  ></div>
+                  <div class="color-swatch color-swatch-success"></div>
                   <div class="text-sm font-medium">Success Green</div>
                 </div>
                 <div class="text-center">
-                  <div
-                    class="w-full h-20 bg-red-500 rounded-lg mb-2"
-                    style="background: var(--error-red)"
-                  ></div>
+                  <div class="color-swatch color-swatch-error"></div>
                   <div class="text-sm font-medium">Error Red</div>
                 </div>
                 <div class="text-center">
-                  <div
-                    class="w-full h-20 bg-yellow-500 rounded-lg mb-2"
-                    style="background: var(--warning-yellow)"
-                  ></div>
+                  <div class="color-swatch color-swatch-warning"></div>
                   <div class="text-sm font-medium">Warning Yellow</div>
                 </div>
               </div>
@@ -460,7 +434,7 @@
     </script>
 
     <!-- Footer -->
-    <footer role="contentinfo" class="main-footer">
+    <footer class="main-footer">
       <div class="footer-content">
         <div class="footer-section">
           <h3>FlagFit Pro</h3>

@@ -6,22 +6,15 @@ const { validate, sanitize } = require("./validation.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
   handleValidationError,
   handleNotFoundError,
   handleAuthorizationError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 const {
-  authenticateRequest,
   checkTeamMembership,
   getUserTeamId,
 } = require("./utils/auth-helper.cjs");
-const {
-  applyRateLimit,
-  getRateLimitType,
-} = require("./utils/rate-limiter.cjs");
+// Note: authenticateRequest, applyRateLimit, and CORS are handled by baseHandler
 const crypto = require("crypto");
 
 // Secure game ID generation
@@ -409,104 +402,90 @@ const getPlayerGameStats = async (playerId, gameId) => {
   }
 };
 
+const { baseHandler } = require("./utils/base-handler.cjs");
+const { getRateLimitType } = require("./utils/rate-limiter.cjs");
+
 // Main handler
-exports.handler = async (event, _context) => {
-  logFunctionCall("Games", event);
-
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: CORS_HEADERS };
-  }
-
-  try {
-    // SECURITY: Apply rate limiting
-    const rateLimitType = getRateLimitType(event.httpMethod, event.path);
-    const rateLimitResponse = applyRateLimit(event, rateLimitType);
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-
-    // SECURITY: Safe path parsing with regex
-    const pathMatch = event.path.match(
-      /^\/\.netlify\/functions\/games\/?(.*)$/,
-    );
-    const path = pathMatch ? pathMatch[1] : "";
-
-    // Parse request body for POST/PUT
-    let body = {};
-    if (
-      event.body &&
-      (event.httpMethod === "POST" || event.httpMethod === "PUT")
-    ) {
-      try {
-        body = JSON.parse(event.body);
-      } catch (_parseError) {
-        return handleValidationError("Invalid JSON in request body");
-      }
-    }
-
-    const queryParams = event.queryStringParameters || {};
-    let result;
-
-    // SECURITY: Use explicit route matching instead of path.includes()
-    if (event.httpMethod === "POST" && (path === "" || path === "/")) {
-      result = await createGame(userId, body);
-    } else if (event.httpMethod === "GET" && (path === "" || path === "/")) {
-      result = await getGames(userId, queryParams);
-    } else if (
-      event.httpMethod === "GET" &&
-      path.match(/^([A-Z0-9_-]+)\/stats$/i)
-    ) {
-      const gameId = path.match(/^([A-Z0-9_-]+)\/stats$/i)[1];
-      result = await getGameStats(gameId);
-    } else if (
-      event.httpMethod === "GET" &&
-      path.match(/^([A-Z0-9_-]+)\/player-stats$/i)
-    ) {
-      const gameId = path.match(/^([A-Z0-9_-]+)\/player-stats$/i)[1];
-      const playerId = queryParams.playerId;
-      if (!playerId) {
-        return handleValidationError("Player ID is required");
-      }
-      result = await getPlayerGameStats(playerId, gameId);
-    } else if (event.httpMethod === "GET" && path.match(/^([A-Z0-9_-]+)$/i)) {
-      const gameId = path.match(/^([A-Z0-9_-]+)$/i)[1];
-      result = await getGameDetails(gameId);
-    } else if (event.httpMethod === "PUT" && path.match(/^([A-Z0-9_-]+)$/i)) {
-      const gameId = path.match(/^([A-Z0-9_-]+)$/i)[1];
-      result = await updateGame(userId, gameId, body);
-    } else if (
-      event.httpMethod === "POST" &&
-      path.match(/^([A-Z0-9_-]+)\/plays$/i)
-    ) {
-      const gameId = path.match(/^([A-Z0-9_-]+)\/plays$/i)[1];
-      result = await savePlay(gameId, body);
-    } else {
-      return createErrorResponse("Endpoint not found", 404, "not_found");
-    }
-
-    return createSuccessResponse(result);
-  } catch (error) {
-    console.error("Error in games function:", error);
-
-    if (error.message && error.message.includes("not found")) {
-      return handleNotFoundError(
-        error.message.replace("Game with ID ", "").replace(" not found", ""),
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "games",
+    allowedMethods: ["GET", "POST", "PUT"],
+    rateLimitType: getRateLimitType(event.httpMethod, event.path),
+    handler: async (event, _context, { userId }) => {
+      // SECURITY: Safe path parsing with regex
+      const pathMatch = event.path.match(
+        /^\/\.netlify\/functions\/games\/?(.*)$/,
       );
-    }
+      const path = pathMatch ? pathMatch[1] : "";
 
-    if (error.message && error.message.includes("permission")) {
-      return handleAuthorizationError(error.message);
-    }
+      // Parse request body for POST/PUT
+      let body = {};
+      if (
+        event.body &&
+        (event.httpMethod === "POST" || event.httpMethod === "PUT")
+      ) {
+        try {
+          body = JSON.parse(event.body);
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
+      }
 
-    return handleServerError(error, "Games");
-  }
+      const queryParams = event.queryStringParameters || {};
+      let result;
+
+      try {
+        // SECURITY: Use explicit route matching instead of path.includes()
+        if (event.httpMethod === "POST" && (path === "" || path === "/")) {
+          result = await createGame(userId, body);
+        } else if (event.httpMethod === "GET" && (path === "" || path === "/")) {
+          result = await getGames(userId, queryParams);
+        } else if (
+          event.httpMethod === "GET" &&
+          path.match(/^([A-Z0-9_-]+)\/stats$/i)
+        ) {
+          const gameId = path.match(/^([A-Z0-9_-]+)\/stats$/i)[1];
+          result = await getGameStats(gameId);
+        } else if (
+          event.httpMethod === "GET" &&
+          path.match(/^([A-Z0-9_-]+)\/player-stats$/i)
+        ) {
+          const gameId = path.match(/^([A-Z0-9_-]+)\/player-stats$/i)[1];
+          const playerId = queryParams.playerId;
+          if (!playerId) {
+            return handleValidationError("Player ID is required");
+          }
+          result = await getPlayerGameStats(playerId, gameId);
+        } else if (event.httpMethod === "GET" && path.match(/^([A-Z0-9_-]+)$/i)) {
+          const gameId = path.match(/^([A-Z0-9_-]+)$/i)[1];
+          result = await getGameDetails(gameId);
+        } else if (event.httpMethod === "PUT" && path.match(/^([A-Z0-9_-]+)$/i)) {
+          const gameId = path.match(/^([A-Z0-9_-]+)$/i)[1];
+          result = await updateGame(userId, gameId, body);
+        } else if (
+          event.httpMethod === "POST" &&
+          path.match(/^([A-Z0-9_-]+)\/plays$/i)
+        ) {
+          const gameId = path.match(/^([A-Z0-9_-]+)\/plays$/i)[1];
+          result = await savePlay(gameId, body);
+        } else {
+          return createErrorResponse("Endpoint not found", 404, "not_found");
+        }
+
+        return createSuccessResponse(result);
+      } catch (error) {
+        if (error.message && error.message.includes("not found")) {
+          return handleNotFoundError(
+            error.message.replace("Game with ID ", "").replace(" not found", ""),
+          );
+        }
+
+        if (error.message && error.message.includes("permission")) {
+          return handleAuthorizationError(error.message);
+        }
+
+        throw error; // Let baseHandler handle other errors
+      }
+    },
+  });
 };

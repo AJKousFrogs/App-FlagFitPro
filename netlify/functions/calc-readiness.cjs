@@ -5,14 +5,9 @@
 const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
-  createErrorResponse,
-  handleServerError,
   handleValidationError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+// Note: authenticateRequest, applyRateLimit are handled by baseHandler
 
 /**
  * Calculate readiness score for an athlete
@@ -155,52 +150,23 @@ function determineDataMode(wellnessIndex, threshold = 60) {
   }
   return "reduced"; // Use sleep-proxy mode
 }
-exports.handler = async (event, _context) => {
-  // CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-      body: "",
-    };
-  }
+const { baseHandler } = require("./utils/base-handler.cjs");
 
-  logFunctionCall("calc-readiness", event.httpMethod);
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "calc-readiness",
+    allowedMethods: ["POST"],
+    rateLimitType: "CREATE",
+    handler: async (event, _context, { userId }) => {
+      let body;
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch (_e) {
+        return handleValidationError("Invalid JSON in request body");
+      }
 
-  try {
-    checkEnvVars();
-
-    if (event.httpMethod !== "POST") {
-      return createErrorResponse(
-        "Method not allowed. Use POST to calculate readiness.",
-        405,
-        "method_not_allowed",
-      );
-    }
-
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "CREATE");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-
-    let body;
-    try {
-      body = JSON.parse(event.body || "{}");
-    } catch (_e) {
-      return handleValidationError("Invalid JSON in request body");
-    }
-
-    // If athleteId not provided, use authenticated user's ID
-    const { athleteId = userId, day } = body;
+      // If athleteId not provided, use authenticated user's ID
+      const { athleteId = userId, day } = body;
 
     if (!athleteId) {
       return handleValidationError("athleteId is required");
@@ -492,7 +458,6 @@ exports.handler = async (event, _context) => {
         proximity: proximityWeight,
       },
     });
-  } catch (error) {
-    return handleServerError(error, "calc-readiness");
-  }
+    },
+  });
 };

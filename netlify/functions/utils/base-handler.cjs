@@ -28,6 +28,7 @@
  * };
  */
 
+const crypto = require("crypto");
 const { checkEnvVars } = require("../supabase-client.cjs");
 const {
   createErrorResponse,
@@ -37,6 +38,13 @@ const {
 } = require("./error-handler.cjs");
 const { authenticateRequest } = require("./auth-helper.cjs");
 const { applyRateLimit } = require("./rate-limiter.cjs");
+
+/**
+ * Generate a unique request ID for tracking
+ */
+function generateRequestId() {
+  return `req_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
+}
 
 /**
  * Base handler middleware
@@ -62,6 +70,9 @@ async function baseHandler(event, context, options = {}) {
     onAuth = null,
   } = options;
 
+  // Generate unique request ID for tracking
+  const requestId = event.headers?.["x-request-id"] || generateRequestId();
+  
   // Performance monitoring - start timer
   const startTime = Date.now();
 
@@ -125,8 +136,9 @@ async function baseHandler(event, context, options = {}) {
     // Performance monitoring - calculate duration
     const duration = Date.now() - startTime;
     
-    // Log performance metrics
-    console.log(`[PERFORMANCE] ${functionName}: ${duration}ms`, {
+    // Log performance metrics with request ID
+    console.log(`[PERFORMANCE] ${functionName} [${requestId}]: ${duration}ms`, {
+      requestId,
       method: event.httpMethod,
       path: event.path,
       userId: userId || "anonymous",
@@ -134,23 +146,35 @@ async function baseHandler(event, context, options = {}) {
       timestamp: new Date().toISOString(),
     });
 
-    // Add performance headers to response
+    // Add performance and tracking headers to response
     if (response && response.headers) {
       response.headers["X-Response-Time"] = `${duration}ms`;
       response.headers["X-Function-Name"] = functionName;
+      response.headers["X-Request-Id"] = requestId;
     }
 
     // Alert on slow responses (>1000ms)
     if (duration > 1000) {
-      console.warn(`[SLOW RESPONSE] ${functionName} took ${duration}ms`);
+      console.warn(`[SLOW RESPONSE] ${functionName} [${requestId}] took ${duration}ms`);
     }
 
     return response;
   } catch (error) {
     // Calculate duration even for errors
     const duration = Date.now() - startTime;
-    console.error(`[ERROR] ${functionName} failed after ${duration}ms:`, error);
-    return handleServerError(error, functionName);
+    console.error(`[ERROR] ${functionName} [${requestId}] failed after ${duration}ms:`, {
+      requestId,
+      error: error.message,
+      stack: error.stack,
+      duration,
+    });
+    
+    const errorResponse = handleServerError(error, functionName);
+    // Add request ID to error response for debugging
+    if (errorResponse && errorResponse.headers) {
+      errorResponse.headers["X-Request-Id"] = requestId;
+    }
+    return errorResponse;
   }
 }
 

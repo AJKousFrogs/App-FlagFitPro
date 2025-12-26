@@ -22,7 +22,7 @@ export default defineConfig({
         ["list"],
       ],
   use: {
-    baseURL: "http://localhost:4000",
+    baseURL: process.env.BASE_URL || "http://localhost:4200",
     trace: process.env.CI ? "retain-on-failure" : "on-first-retry",
     screenshot: "only-on-failure",
     video: process.env.CI ? "retain-on-failure" : "off",
@@ -61,9 +61,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "PORT=4000 npm run dev",
-    url: "http://localhost:4000",
-    reuseExistingServer: !process.env.CI,
+    command: "npm run dev",
+    url: "http://localhost:4200",
+    reuseExistingServer: true,
     timeout: 120 * 1000,
     stdout: "ignore",
     stderr: "pipe",

@@ -1,13 +1,13 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FlagFit Pro - Coach Team Management Dashboard (Black & White)</title>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>FlagFit Pro - Coach Team Management Dashboard (Black &amp; White)</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap"
       rel="stylesheet"
-    />
+    >
     <style>
       /* Black and White Coach Design System with Poppins Typography */
       * {
@@ -152,7 +152,7 @@
         border: 2px solid #1a1a1a;
       }
 
-      /* Header & Navigation */
+      /* Header &amp; Navigation */
       .coach-header {
         background-color: #ffffff;
         border-bottom: 2px solid #e5e5e5;
@@ -701,10 +701,10 @@
         </div>
 
         <div class="coach-tabs">
-          <button class="coach-tab active">Team Management</button>
-          <button class="coach-tab">Training</button>
-          <button class="coach-tab">Games</button>
-          <button class="coach-tab">Analytics</button>
+          <button type="button" class="coach-tab active">Team Management</button>
+          <button type="button" class="coach-tab">Training</button>
+          <button type="button" class="coach-tab">Games</button>
+          <button type="button" class="coach-tab">Analytics</button>
         </div>
 
         <div class="coach-profile">
@@ -798,7 +798,7 @@
             <span>👥</span>
             Player Roster Management
           </h2>
-          <button class="cta-primary">Add Player</button>
+          <button type="button" class="cta-primary">Add Player</button>
         </div>
 
         <div class="players-grid">
@@ -833,9 +833,9 @@
             </div>
 
             <div class="player-actions">
-              <button class="action-btn">View Profile</button>
-              <button class="action-btn">Edit</button>
-              <button class="action-btn">Stats</button>
+              <button type="button" class="action-btn">View Profile</button>
+              <button type="button" class="action-btn">Edit</button>
+              <button type="button" class="action-btn">Stats</button>
             </div>
           </div>
 
@@ -870,9 +870,9 @@
             </div>
 
             <div class="player-actions">
-              <button class="action-btn">View Profile</button>
-              <button class="action-btn">Edit</button>
-              <button class="action-btn">Stats</button>
+              <button type="button" class="action-btn">View Profile</button>
+              <button type="button" class="action-btn">Edit</button>
+              <button type="button" class="action-btn">Stats</button>
             </div>
           </div>
 
@@ -907,9 +907,9 @@
             </div>
 
             <div class="player-actions">
-              <button class="action-btn">View Profile</button>
-              <button class="action-btn">Edit</button>
-              <button class="action-btn">Injury Report</button>
+              <button type="button" class="action-btn">View Profile</button>
+              <button type="button" class="action-btn">Edit</button>
+              <button type="button" class="action-btn">Injury Report</button>
             </div>
           </div>
 
@@ -944,9 +944,9 @@
             </div>
 
             <div class="player-actions">
-              <button class="action-btn">View Profile</button>
-              <button class="action-btn">Edit</button>
-              <button class="action-btn">Stats</button>
+              <button type="button" class="action-btn">View Profile</button>
+              <button type="button" class="action-btn">Edit</button>
+              <button type="button" class="action-btn">Stats</button>
             </div>
           </div>
         </div>
@@ -959,7 +959,7 @@
             <span>🤝</span>
             Team Chemistry Management
           </h2>
-          <button class="cta-primary">AI Analysis</button>
+          <button type="button" class="cta-primary">AI Analysis</button>
         </div>
 
         <div class="chemistry-grid">
@@ -1043,7 +1043,7 @@
             <span>🏆</span>
             Olympic Readiness Assessment
           </h2>
-          <button class="cta-primary">Full Report</button>
+          <button type="button" class="cta-primary">Full Report</button>
         </div>
 
         <div class="olympic-metrics">
@@ -1180,7 +1180,7 @@
           const chemistryScore = document.querySelector(
             ".overview-card .card-metric",
           );
-          if (chemistryScore && chemistryScore.textContent.includes("/10")) {
+          if (chemistryScore &amp;&amp; chemistryScore.textContent.includes("/10")) {
             // Simulate minor chemistry fluctuations
             const currentScore = parseFloat(chemistryScore.textContent);
             const variation = (Math.random() - 0.5) * 0.1;

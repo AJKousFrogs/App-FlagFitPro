@@ -1,38 +1,53 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Service Test - FlagFit Pro</title>
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
-    />
+    >
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css" />
+    <link rel="stylesheet" href="./src/css/main.css">
     <!-- Page-specific styles -->
-    <link rel="stylesheet" href="./src/css/pages/email-test.css" />
+    <link rel="stylesheet" href="./src/css/pages/email-test.css">
 
     <script
       src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
       crossorigin="anonymous"
       defer
     ></script>
+    <style>
+      .test-header {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+      .test-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        margin-bottom: 10px;
+      }
+      .test-description {
+        color: var(--color-text-secondary);
+        margin-bottom: 30px;
+      }
+      .test-divider {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--color-border-secondary);
+      }
+      .btn-spacing {
+        margin-right: 10px;
+      }
+    </style>
   </head>
   <body>
     <div class="test-container">
-      <div style="font-size: 2rem; margin-bottom: 10px">📧</div>
-      <h1
-        style="
-          font-size: 1.8rem;
-          font-weight: 700;
-          color: var(--color-text-primary);
-          margin-bottom: 10px;
-        "
-      >
-        Email Service Test
-      </h1>
-      <p style="color: var(--color-text-secondary); margin-bottom: 30px">
+      <div class="test-header">📧</div>
+      <h1 class="test-title">Email Service Test</h1>
+      <p class="test-description">
         Test your email configuration and send a test email to verify everything
         is working.
       </p>
@@ -40,7 +55,7 @@
       <div
         id="statusIndicator"
         class="status-indicator status-info"
-        style="display: none"
+        hidden
       ></div>
 
       <form id="testForm">
@@ -52,7 +67,7 @@
             class="form-input"
             placeholder="your.email@example.com"
             required
-          />
+          >
         </div>
 
         <button
@@ -65,19 +80,12 @@
         </button>
       </form>
 
-      <div id="testResults" class="test-results" style="display: none"></div>
+      <div id="testResults" class="test-results" hidden></div>
 
-      <div
-        style="
-          margin-top: 30px;
-          padding-top: 20px;
-          border-top: 1px solid var(--color-border-secondary);
-        "
-      >
+      <div class="test-divider">
         <a
           href="/reset-password.html"
-          class="btn btn-secondary"
-          style="margin-right: 10px"
+          class="btn btn-secondary btn-spacing"
         >
           <i data-lucide="key"></i>
           Test Password Reset
@@ -175,7 +183,7 @@
         const statusIndicator = document.getElementById("statusIndicator");
         statusIndicator.textContent = message;
         statusIndicator.className = `status-indicator status-${type}`;
-        statusIndicator.style.display = "block";
+        statusIndicator.hidden = false;
       }
 
       function showResults(result) {
@@ -205,7 +213,7 @@
         }
 
         testResults.innerHTML = html;
-        testResults.style.display = "block";
+        testResults.hidden = false;
       }
 
       function showConfigHelp(result) {
@@ -220,7 +228,7 @@
                     <li>Create Gmail App Password at <a href="https://myaccount.google.com/" target="_blank">Google Account Settings</a></li>
                     <li>Add to your <code>.env</code> file:</li>
                 </ol>
-                <pre style="background: #f1f1f1; padding: 10px; border-radius: 4px; font-size: 12px;">
+                <pre class="code-block">
 GMAIL_EMAIL=your.email@gmail.com
 GMAIL_APP_PASSWORD=your_16_char_app_password
 FROM_EMAIL=noreply@flagfitpro.com
@@ -234,12 +242,12 @@ APP_URL=http://localhost:4000</pre>
             `;
 
         testResults.innerHTML = html;
-        testResults.style.display = "block";
+        testResults.hidden = false;
       }
     </script>
 
     <!-- Footer -->
-    <footer role="contentinfo" class="main-footer">
+    <footer class="main-footer">
       <div class="footer-content">
         <div class="footer-section">
           <h3>FlagFit Pro</h3>

@@ -1,8 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Filter Button Wireframes - FlagFit Pro Community</title>
     <style>
       /* Ultra-Minimal Wireframe Design System */
@@ -204,10 +204,10 @@
       <h2 class="section-title">1. Default State - "All Games" Active</h2>
       <div class="filter-container">
         <label class="filter-label">Film Room Filters:</label>
-        <button class="filter-btn active">All Games</button>
-        <button class="filter-btn">Offense</button>
-        <button class="filter-btn">Defense</button>
-        <button class="filter-btn">Special Teams</button>
+        <button type="button" class="filter-btn active">All Games</button>
+        <button type="button" class="filter-btn">Offense</button>
+        <button type="button" class="filter-btn">Defense</button>
+        <button type="button" class="filter-btn">Special Teams</button>
       </div>
       <div class="content-area">
         <div class="film-grid">
@@ -239,10 +239,10 @@
       <h2 class="section-title">2. "Offense" Filter Active</h2>
       <div class="filter-container">
         <label class="filter-label">Film Room Filters:</label>
-        <button class="filter-btn">All Games</button>
-        <button class="filter-btn active">Offense</button>
-        <button class="filter-btn">Defense</button>
-        <button class="filter-btn">Special Teams</button>
+        <button type="button" class="filter-btn">All Games</button>
+        <button type="button" class="filter-btn active">Offense</button>
+        <button type="button" class="filter-btn">Defense</button>
+        <button type="button" class="filter-btn">Special Teams</button>
       </div>
       <div class="content-area">
         <div class="film-grid">
@@ -274,10 +274,10 @@
       <h2 class="section-title">3. "Defense" Filter Active</h2>
       <div class="filter-container">
         <label class="filter-label">Film Room Filters:</label>
-        <button class="filter-btn">All Games</button>
-        <button class="filter-btn">Offense</button>
-        <button class="filter-btn active">Defense</button>
-        <button class="filter-btn">Special Teams</button>
+        <button type="button" class="filter-btn">All Games</button>
+        <button type="button" class="filter-btn">Offense</button>
+        <button type="button" class="filter-btn active">Defense</button>
+        <button type="button" class="filter-btn">Special Teams</button>
       </div>
       <div class="content-area">
         <div class="film-grid">
@@ -311,10 +311,10 @@
       <h2 class="section-title">4. "Special Teams" Filter Active</h2>
       <div class="filter-container">
         <label class="filter-label">Film Room Filters:</label>
-        <button class="filter-btn">All Games</button>
-        <button class="filter-btn">Offense</button>
-        <button class="filter-btn">Defense</button>
-        <button class="filter-btn active">Special Teams</button>
+        <button type="button" class="filter-btn">All Games</button>
+        <button type="button" class="filter-btn">Offense</button>
+        <button type="button" class="filter-btn">Defense</button>
+        <button type="button" class="filter-btn active">Special Teams</button>
       </div>
       <div class="content-area">
         <div class="film-grid">
@@ -339,10 +339,10 @@
       <h2 class="section-title">5. Loading State</h2>
       <div class="filter-container">
         <label class="filter-label">Film Room Filters:</label>
-        <button class="filter-btn">All Games</button>
-        <button class="filter-btn loading">Offense</button>
-        <button class="filter-btn">Defense</button>
-        <button class="filter-btn">Special Teams</button>
+        <button type="button" class="filter-btn">All Games</button>
+        <button type="button" class="filter-btn loading">Offense</button>
+        <button type="button" class="filter-btn">Defense</button>
+        <button type="button" class="filter-btn">Special Teams</button>
       </div>
       <div class="content-area">
         <div class="content-placeholder">Loading offensive film content...</div>
@@ -354,14 +354,14 @@
       <h2 class="section-title">6. Empty State (No Content)</h2>
       <div class="filter-container">
         <label class="filter-label">Film Room Filters:</label>
-        <button class="filter-btn">All Games</button>
-        <button class="filter-btn">Offense</button>
-        <button class="filter-btn active">Defense</button>
-        <button class="filter-btn">Special Teams</button>
+        <button type="button" class="filter-btn">All Games</button>
+        <button type="button" class="filter-btn">Offense</button>
+        <button type="button" class="filter-btn active">Defense</button>
+        <button type="button" class="filter-btn">Special Teams</button>
       </div>
       <div class="content-area">
         <div class="content-placeholder">
-          No defensive film content available yet.<br />
+          No defensive film content available yet.<br>
           Check back later or contact your coach.
         </div>
       </div>
@@ -372,14 +372,14 @@
       <h2 class="section-title">7. Disabled State</h2>
       <div class="filter-container">
         <label class="filter-label">Film Room Filters:</label>
-        <button class="filter-btn active">All Games</button>
-        <button class="filter-btn">Offense</button>
-        <button class="filter-btn disabled">Defense</button>
-        <button class="filter-btn disabled">Special Teams</button>
+        <button type="button" class="filter-btn active">All Games</button>
+        <button type="button" class="filter-btn">Offense</button>
+        <button type="button" class="filter-btn disabled">Defense</button>
+        <button type="button" class="filter-btn disabled">Special Teams</button>
       </div>
       <div class="content-area">
         <div class="content-placeholder">
-          Defense and Special Teams filters are temporarily unavailable.<br />
+          Defense and Special Teams filters are temporarily unavailable.<br>
           Please try again later.
         </div>
       </div>
@@ -396,13 +396,13 @@
         <div class="primitive-card">
           <div class="primitive-title">Button Component</div>
           <div class="primitive-example">
-            <button class="filter-btn">Example Button</button>
+            <button type="button" class="filter-btn">Example Button</button>
           </div>
           <div class="primitive-description">
             <strong>Props:</strong> variant (default, active, disabled,
-            loading), size (sm, md, lg), onClick handler<br />
+            loading), size (sm, md, lg), onClick handler<br>
             <strong>States:</strong> default, hover, active, disabled,
-            loading<br />
+            loading<br>
             <strong>Accessibility:</strong> ARIA labels, keyboard navigation,
             focus states
           </div>
@@ -412,16 +412,16 @@
           <div class="primitive-title">Button Group</div>
           <div class="primitive-example">
             <div style="display: flex; gap: 8px">
-              <button class="filter-btn active">All</button>
-              <button class="filter-btn">Filter 1</button>
-              <button class="filter-btn">Filter 2</button>
+              <button type="button" class="filter-btn active">All</button>
+              <button type="button" class="filter-btn">Filter 1</button>
+              <button type="button" class="filter-btn">Filter 2</button>
             </div>
           </div>
           <div class="primitive-description">
             <strong>Props:</strong> children (buttons), orientation (horizontal,
-            vertical), spacing<br />
+            vertical), spacing<br>
             <strong>Behavior:</strong> single selection, multiple selection,
-            exclusive selection<br />
+            exclusive selection<br>
             <strong>Accessibility:</strong> role="group", aria-label for group
           </div>
         </div>
@@ -429,12 +429,12 @@
         <div class="primitive-card">
           <div class="primitive-title">Loading Spinner</div>
           <div class="primitive-example">
-            <button class="filter-btn loading">Loading...</button>
+            <button type="button" class="filter-btn loading">Loading...</button>
           </div>
           <div class="primitive-description">
             <strong>Props:</strong> size, color, variant (dots, spinner,
-            skeleton)<br />
-            <strong>States:</strong> loading, error, success<br />
+            skeleton)<br>
+            <strong>States:</strong> loading, error, success<br>
             <strong>Accessibility:</strong> aria-live, loading announcements
           </div>
         </div>
@@ -445,9 +445,9 @@
             <div class="content-placeholder">No content available</div>
           </div>
           <div class="primitive-description">
-            <strong>Props:</strong> icon, title, description, action button<br />
+            <strong>Props:</strong> icon, title, description, action button<br>
             <strong>Variants:</strong> no data, error, no results, no
-            permissions<br />
+            permissions<br>
             <strong>Accessibility:</strong> descriptive text, action suggestions
           </div>
         </div>
@@ -480,8 +480,8 @@
             </div>
           </div>
           <div class="primitive-description">
-            <strong>Props:</strong> columns, gap, responsive breakpoints<br />
-            <strong>Variants:</strong> masonry, list, cards, table<br />
+            <strong>Props:</strong> columns, gap, responsive breakpoints<br>
+            <strong>Variants:</strong> masonry, list, cards, table<br>
             <strong>Accessibility:</strong> grid landmarks, keyboard navigation
           </div>
         </div>
@@ -489,13 +489,13 @@
         <div class="primitive-card">
           <div class="primitive-title">Transition Animation</div>
           <div class="primitive-example">
-            <button class="filter-btn" style="transition: all 0.2s ease">
+            <button type="button" class="filter-btn" style="transition: all 0.2s ease">
               Hover Me
             </button>
           </div>
           <div class="primitive-description">
-            <strong>Props:</strong> duration, easing, delay, properties<br />
-            <strong>Types:</strong> fade, slide, scale, color<br />
+            <strong>Props:</strong> duration, easing, delay, properties<br>
+            <strong>Types:</strong> fade, slide, scale, color<br>
             <strong>Accessibility:</strong> respect reduced motion preferences
           </div>
         </div>

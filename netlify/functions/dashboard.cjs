@@ -9,8 +9,7 @@ const {
   logFunctionCall,
   CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+// Note: authenticateRequest and applyRateLimit are now handled by baseHandler
 const { getTimeAgo } = require("./utils/date-utils.cjs");
 
 // Get real dashboard data from Supabase database
@@ -266,93 +265,55 @@ const getHealth = async () => {
   };
 };
 
-exports.handler = async (event, _context) => {
-  // Log function call for debugging
-  logFunctionCall("Dashboard", event);
+const { baseHandler } = require("./utils/base-handler.cjs");
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "dashboard",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    handler: async (event, _context, { userId }) => {
+      // Parse path to determine endpoint
+      const path = event.path.replace("/.netlify/functions/dashboard", "");
 
-  // Only allow GET requests
-  if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Method not allowed",
-      }),
-    };
-  }
+      // Route to appropriate handler
+      if (
+        path.includes("/training-calendar") ||
+        path.endsWith("/training-calendar")
+      ) {
+        const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:training-calendar`;
+        const data = await getOrFetch(
+          cacheKey,
+          async () => await getTrainingCalendar(userId),
+          CACHE_TTL.DASHBOARD,
+        );
+        return createSuccessResponse(data);
+      }
 
-  try {
-    checkEnvVars();
+      if (path.includes("/team-chemistry") || path.endsWith("/team-chemistry")) {
+        const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:team-chemistry`;
+        const data = await getOrFetch(
+          cacheKey,
+          async () => await getTeamChemistry(userId),
+          CACHE_TTL.DASHBOARD,
+        );
+        return createSuccessResponse(data);
+      }
 
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "READ");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
+      if (path.includes("/health") || path.endsWith("/health")) {
+        const data = await getHealth();
+        return createSuccessResponse(data);
+      }
 
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-
-    // Parse path to determine endpoint
-    const path = event.path.replace("/.netlify/functions/dashboard", "");
-
-    // Route to appropriate handler
-    if (
-      path.includes("/training-calendar") ||
-      path.endsWith("/training-calendar")
-    ) {
-      const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:training-calendar`;
-      const data = await getOrFetch(
+      // Default: return overview
+      const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:overview`;
+      const dashboardData = await getOrFetch(
         cacheKey,
-        async () => await getTrainingCalendar(userId),
+        async () => await getDashboardData(userId),
         CACHE_TTL.DASHBOARD,
       );
-      return createSuccessResponse(data);
-    }
 
-    if (path.includes("/team-chemistry") || path.endsWith("/team-chemistry")) {
-      const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:team-chemistry`;
-      const data = await getOrFetch(
-        cacheKey,
-        async () => await getTeamChemistry(userId),
-        CACHE_TTL.DASHBOARD,
-      );
-      return createSuccessResponse(data);
-    }
-
-    if (path.includes("/health") || path.endsWith("/health")) {
-      const data = await getHealth();
-      return createSuccessResponse(data);
-    }
-
-    // Default: return overview
-    const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:overview`;
-    const dashboardData = await getOrFetch(
-      cacheKey,
-      async () => await getDashboardData(userId),
-      CACHE_TTL.DASHBOARD,
-    );
-
-    return createSuccessResponse(dashboardData);
-  } catch (error) {
-    console.error("Error in dashboard function:", error);
-    return handleServerError(error, "Dashboard");
-  }
+      return createSuccessResponse(dashboardData);
+    },
+  });
 };

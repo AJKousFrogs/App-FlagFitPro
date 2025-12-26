@@ -5,12 +5,9 @@
 const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createErrorResponse,
-  handleServerError,
-  logFunctionCall,
   CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+// Note: authenticateRequest, applyRateLimit are handled by baseHandler
 const { getWeekStart } = require("./utils/date-utils.cjs");
 
 const supabase = supabaseAdmin; // Alias for compatibility
@@ -450,72 +447,45 @@ async function handleTrainingLoads(method, userId, query) {
   };
 }
 
+const { baseHandler } = require("./utils/base-handler.cjs");
+
 /**
  * Main handler
  */
-exports.handler = async (event, _context) => {
-  logFunctionCall("Load-Management", event);
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "load-management",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    handler: async (event, _context, { userId }) => {
+      const { httpMethod, path, queryStringParameters } = event;
+      const pathSegments = path.split("/").filter(Boolean);
+      const endpoint = pathSegments[pathSegments.length - 1];
+      const query = queryStringParameters || {};
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
+      let response;
 
-  try {
-    checkEnvVars();
+      switch (endpoint) {
+        case "acwr":
+          response = await handleACWR(httpMethod, userId, query);
+          break;
+        case "monotony":
+          response = await handleMonotony(httpMethod, userId, query);
+          break;
+        case "tsb":
+          response = await handleTSB(httpMethod, userId, query);
+          break;
+        case "injury-risk":
+          response = await handleInjuryRisk(httpMethod, userId, query);
+          break;
+        case "training-loads":
+          response = await handleTrainingLoads(httpMethod, userId, query);
+          break;
+        default:
+          response = createErrorResponse("Endpoint not found", 404, "not_found");
+      }
 
-    const { httpMethod, path, queryStringParameters } = event;
-    const pathSegments = path.split("/").filter(Boolean);
-    const endpoint = pathSegments[pathSegments.length - 1];
-
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "READ");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-    const query = queryStringParameters || {};
-
-    let response;
-
-    switch (endpoint) {
-      case "acwr":
-        response = await handleACWR(httpMethod, userId, query);
-        break;
-      case "monotony":
-        response = await handleMonotony(httpMethod, userId, query);
-        break;
-      case "tsb":
-        response = await handleTSB(httpMethod, userId, query);
-        break;
-      case "injury-risk":
-        response = await handleInjuryRisk(httpMethod, userId, query);
-        break;
-      case "training-loads":
-        response = await handleTrainingLoads(httpMethod, userId, query);
-        break;
-      default:
-        response = createErrorResponse("Endpoint not found", 404, "not_found");
-        // Convert to old format for consistency
-        response = {
-          statusCode: response.statusCode,
-          headers: response.headers,
-          body: response.body,
-        };
-    }
-
-    return response;
-  } catch (error) {
-    return handleServerError(error, "Load-Management");
-  }
+      return response;
+    },
+  });
 };

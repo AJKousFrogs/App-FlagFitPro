@@ -132,10 +132,11 @@ export class WellnessService {
 
     return from(
       (async () => {
+        // Query using both athlete_id and user_id for compatibility
         const { data, error } = await this.supabaseService.client
           .from("wellness_entries")
           .select("*")
-          .eq("athlete_id", userId)
+          .or(`athlete_id.eq.${userId},user_id.eq.${userId}`)
           .gte("date", cutoffDate.toISOString().split("T")[0])
           .order("date", { ascending: false });
 
@@ -298,8 +299,10 @@ export class WellnessService {
       return of({ success: false, error: "Not authenticated" });
     }
 
+    // Set both athlete_id and user_id for compatibility
     const wellnessEntry = {
       athlete_id: userId,
+      user_id: userId,
       date: data.date || new Date().toISOString().split("T")[0],
       sleep_quality: data.sleep,
       energy_level: data.energy,
@@ -512,9 +515,10 @@ export class WellnessService {
    * Subscribe to realtime wellness updates
    */
   private subscribeToWellnessUpdates(userId: string): void {
+    // Subscribe to changes for both athlete_id and user_id
     this.realtimeService.subscribe(
       "wellness_entries",
-      `athlete_id=eq.${userId}`,
+      `or(athlete_id.eq.${userId},user_id.eq.${userId})`,
       {
         onInsert: (payload: RealtimeEvent) => {
           this.logger.info("[Wellness] New entry received via realtime");

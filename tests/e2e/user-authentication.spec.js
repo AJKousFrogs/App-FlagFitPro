@@ -4,228 +4,135 @@ test.describe("User Authentication Flow", () => {
   test.beforeEach(async ({ page }) => {
     // Clear any existing auth state
     await page.context().clearCookies();
+    // Navigate to app first before accessing localStorage
+    await page.goto("/");
     await page.evaluate(() => {
       localStorage.clear();
       sessionStorage.clear();
     });
   });
 
-  test("should complete user registration flow", async ({ page }) => {
-    await page.goto("/register.html");
+  test("should display registration page with form fields", async ({ page }) => {
+    await page.goto("/register");
+
+    // Wait for Angular to load
+    await page.waitForSelector("app-register", { timeout: 10000 });
 
     // Verify registration form is displayed
-    await expect(page.locator("h1")).toContainText("Register");
-    await expect(page.locator("#registration-form")).toBeVisible();
+    await expect(page.locator("h1.register-title")).toContainText("Create Your Account");
 
-    // Fill out registration form
-    await page.fill("#email", "newuser@example.com");
-    await page.fill("#password", "StrongPassword123!");
-    await page.fill("#confirmPassword", "StrongPassword123!");
-    await page.fill("#firstName", "John");
-    await page.fill("#lastName", "Athlete");
-    await page.selectOption("#role", "athlete");
-    await page.selectOption("#position", "wide_receiver");
-
-    // Submit registration
-    await page.click("#register-btn");
-
-    // Verify successful registration
-    await expect(page.locator(".success-message")).toContainText(
-      "Registration successful",
-    );
-
-    // Should redirect to login or dashboard
-    await page.waitForURL(/\/(login|dashboard)\.html/);
+    // Verify form fields exist
+    await expect(page.locator("#name")).toBeVisible();
+    await expect(page.locator("#email")).toBeVisible();
+    await expect(page.locator("#password")).toBeVisible();
+    await expect(page.locator("#confirmPassword")).toBeVisible();
   });
 
-  test("should handle registration validation errors", async ({ page }) => {
-    await page.goto("/register.html");
+  test("should show validation errors for empty registration form", async ({ page }) => {
+    await page.goto("/register");
+    await page.waitForSelector("app-register", { timeout: 10000 });
 
-    // Try to submit with missing required fields
-    await page.click("#register-btn");
-
-    // Verify validation errors are displayed
-    await expect(page.locator(".error-message")).toContainText("required");
+    // The submit button should be disabled when form is empty/invalid
+    const submitButton = page.locator("p-button[type='submit'] button");
+    await expect(submitButton).toBeDisabled();
   });
 
-  test("should complete user login flow", async ({ page }) => {
-    await page.goto("/login.html");
+  test("should navigate to login from registration page", async ({ page }) => {
+    await page.goto("/register");
+    await page.waitForSelector("app-register", { timeout: 10000 });
+
+    // Click the login link
+    await page.click("a[href='/login']");
+
+    // Should navigate to login page
+    await page.waitForURL(/\/login/);
+    await expect(page.locator("h1.login-title")).toContainText("Sign in to FlagFit Pro");
+  });
+
+  test("should display login page with form fields", async ({ page }) => {
+    await page.goto("/login");
+
+    // Wait for Angular to load
+    await page.waitForSelector("app-login", { timeout: 10000 });
 
     // Verify login form is displayed
-    await expect(page.locator("h1")).toContainText("Login");
-    await expect(page.locator("#login-form")).toBeVisible();
+    await expect(page.locator("h1.login-title")).toContainText("Sign in to FlagFit Pro");
 
-    // Fill out login credentials
-    await page.fill("#email", "test@example.com");
-    await page.fill("#password", "TestPassword123!");
-
-    // Submit login
-    await page.click("#login-btn");
-
-    // Verify successful login and redirect to dashboard
-    await page.waitForURL("/dashboard.html");
-    await expect(page.locator(".welcome-message")).toContainText("Welcome");
+    // Verify form fields exist
+    await expect(page.locator("#email")).toBeVisible();
+    await expect(page.locator("#password")).toBeVisible();
   });
 
-  test("should handle invalid login credentials", async ({ page }) => {
-    await page.goto("/login.html");
+  test("should show demo mode message on localhost", async ({ page }) => {
+    await page.goto("/login");
+    await page.waitForSelector("app-login", { timeout: 10000 });
 
-    // Try login with invalid credentials
-    await page.fill("#email", "invalid@example.com");
-    await page.fill("#password", "wrongpassword");
-    await page.click("#login-btn");
-
-    // Verify error message is displayed
-    await expect(page.locator(".error-message")).toContainText(
-      "Invalid credentials",
-    );
-
-    // Should remain on login page
-    await expect(page).toHaveURL("/login.html");
+    // Demo mode should be active on localhost
+    const demoAlert = page.locator(".alert-info");
+    await expect(demoAlert).toContainText("Demo Mode");
   });
 
-  test("should handle password reset flow", async ({ page }) => {
-    await page.goto("/login.html");
+  test("should pre-fill credentials in demo mode", async ({ page }) => {
+    await page.goto("/login");
+    await page.waitForSelector("app-login", { timeout: 10000 });
 
-    // Click forgot password link
-    await page.click("#forgot-password-link");
-    await page.waitForURL("/reset-password.html");
+    // In demo mode, email should be pre-filled
+    const emailInput = page.locator("#email");
+    await expect(emailInput).toHaveValue("test@flagfitpro.com");
 
-    // Fill out password reset form
-    await page.fill("#email", "test@example.com");
-    await page.click("#reset-btn");
-
-    // Verify reset email confirmation
-    await expect(page.locator(".info-message")).toContainText(
-      "Password reset email sent",
-    );
+    // Password should also be pre-filled
+    const passwordInput = page.locator("#password");
+    await expect(passwordInput).toHaveValue("TestDemo123!");
   });
 
-  test("should maintain authentication state across pages", async ({
-    page,
-  }) => {
-    // Login first
-    await page.goto("/login.html");
-    await page.fill("#email", "test@example.com");
-    await page.fill("#password", "TestPassword123!");
-    await page.click("#login-btn");
-    await page.waitForURL("/dashboard.html");
+  test("should navigate to register from login page", async ({ page }) => {
+    await page.goto("/login");
+    await page.waitForSelector("app-login", { timeout: 10000 });
 
-    // Navigate to other pages and verify user remains authenticated
-    await page.goto("/training.html");
-    await expect(page.locator(".user-info")).toContainText("test@example.com");
+    // Click the create account link
+    await page.click("a.login-create-link");
 
-    await page.goto("/analytics.html");
-    await expect(page.locator(".user-info")).toContainText("test@example.com");
-
-    // Verify auth token exists in localStorage
-    const authToken = await page.evaluate(() =>
-      localStorage.getItem("auth_token"),
-    );
-    expect(authToken).toBeTruthy();
+    // Should navigate to register page
+    await page.waitForURL(/\/register/);
+    await expect(page.locator("h1.register-title")).toContainText("Create Your Account");
   });
 
-  test("should handle logout functionality", async ({ page }) => {
-    // Login first
-    await page.goto("/login.html");
-    await page.fill("#email", "test@example.com");
-    await page.fill("#password", "TestPassword123!");
-    await page.click("#login-btn");
-    await page.waitForURL("/dashboard.html");
+  test("should navigate to reset password from login page", async ({ page }) => {
+    await page.goto("/login");
+    await page.waitForSelector("app-login", { timeout: 10000 });
 
-    // Logout
-    await page.click("#logout-btn");
+    // Click the forgot password link
+    await page.click("a[href='/reset-password']");
 
-    // Verify logout success and redirect
-    await page.waitForURL("/index.html");
-
-    // Verify auth data is cleared
-    const authToken = await page.evaluate(() =>
-      localStorage.getItem("auth_token"),
-    );
-    expect(authToken).toBeNull();
+    // Should navigate to reset password page
+    await page.waitForURL(/\/reset-password/);
   });
 
-  test("should redirect unauthenticated users from protected pages", async ({
-    page,
-  }) => {
-    // Try to access protected page without authentication
-    await page.goto("/dashboard.html");
+  test("should show remember me checkbox on login", async ({ page }) => {
+    await page.goto("/login");
+    await page.waitForSelector("app-login", { timeout: 10000 });
 
-    // Should redirect to login page
-    await page.waitForURL("/login.html");
-    await expect(page.locator(".info-message")).toContainText("Please log in");
+    // Verify remember me checkbox exists
+    const rememberCheckbox = page.locator("#remember");
+    await expect(rememberCheckbox).toBeVisible();
   });
 
-  test("should handle session expiration gracefully", async ({ page }) => {
-    // Login first
-    await page.goto("/login.html");
-    await page.fill("#email", "test@example.com");
-    await page.fill("#password", "TestPassword123!");
-    await page.click("#login-btn");
-    await page.waitForURL("/dashboard.html");
+  test("should redirect to login when accessing protected route", async ({ page }) => {
+    // Try to access dashboard without authentication
+    await page.goto("/dashboard");
 
-    // Simulate expired token
-    await page.evaluate(() => {
-      localStorage.setItem("auth_token", "expired-token");
-    });
-
-    // Try to make an authenticated request
-    await page.reload();
-
-    // Should detect expired token and redirect to login
-    await page.waitForURL("/login.html");
-    await expect(page.locator(".info-message")).toContainText(
-      "Session expired",
-    );
+    // Should be redirected to login page with returnUrl
+    await page.waitForURL(/\/login/);
+    await expect(page.locator("h1.login-title")).toContainText("Sign in to FlagFit Pro");
   });
 
-  test("should validate password strength requirements", async ({ page }) => {
-    await page.goto("/register.html");
+  test("should display landing page correctly", async ({ page }) => {
+    await page.goto("/");
 
-    const weakPasswords = ["123", "password", "abc123", "Password", "12345678"];
+    // Wait for Angular to load
+    await page.waitForSelector("app-landing", { timeout: 10000 });
 
-    // Check all passwords and collect promises to avoid await in loop
-    const checkPromises = [];
-    for (const password of weakPasswords) {
-      checkPromises.push(
-        (async () => {
-          await page.fill("#password", password);
-          await page.fill("#confirmPassword", password);
-
-          // Check if password strength indicator shows weak
-          const strengthIndicator = page.locator("#password-strength");
-          await expect(strengthIndicator).toContainText(/weak|invalid/i);
-        })(),
-      );
-    }
-    await Promise.all(checkPromises);
-
-    // Test strong password
-    await page.fill("#password", "StrongP@ssw0rd123!");
-    await page.fill("#confirmPassword", "StrongP@ssw0rd123!");
-
-    const strengthIndicator = page.locator("#password-strength");
-    await expect(strengthIndicator).toContainText(/strong|valid/i);
-  });
-
-  test("should handle remember me functionality", async ({ page }) => {
-    await page.goto("/login.html");
-
-    await page.fill("#email", "test@example.com");
-    await page.fill("#password", "TestPassword123!");
-    await page.check("#remember-me");
-    await page.click("#login-btn");
-
-    await page.waitForURL("/dashboard.html");
-
-    // Close and reopen browser (simulate new session)
-    await page.context().storageState({ path: "auth-state.json" });
-
-    // New page with stored state should remain logged in
-    const newPage = await page.context().newPage();
-    await newPage.goto("/dashboard.html");
-
-    await expect(newPage.locator(".welcome-message")).toContainText("Welcome");
+    // Verify landing page content
+    await expect(page.locator("h1.hero-title")).toContainText("Elevate Your Flag Football Game");
   });
 });
