@@ -8,7 +8,11 @@ import {
 
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
+import { ButtonModule } from "primeng/button";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 
 interface TeamStat {
@@ -39,25 +43,49 @@ interface Player {
   selector: "app-roster",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardModule, TagModule, MainLayoutComponent],
+  imports: [CardModule, TagModule, ButtonModule, ProgressSpinnerModule, MainLayoutComponent, PageHeaderComponent, EmptyStateComponent],
   template: `
     <app-main-layout>
       <div class="roster-page">
-        <!-- Team Header Card -->
-        <p-card class="team-header-card">
-          <div class="team-badge">
-            <span>International</span>
-            <span class="separator">•</span>
-            <span>Flag Football</span>
-          </div>
-          <h2 class="team-title">International Flag Football Team</h2>
-          <p class="team-description">
-            Meet our world-class athletes and coaching staff representing 12
-            countries
-          </p>
-        </p-card>
+        <!-- Page Header -->
+        <app-page-header
+          title="Team Roster"
+          subtitle="Meet our world-class athletes and coaching staff representing 12 countries"
+          icon="pi-users"
+        >
+          <p-button
+            label="Add Player"
+            icon="pi pi-plus"
+            (onClick)="openAddPlayer()"
+          ></p-button>
+        </app-page-header>
 
-        <!-- Team Overview Stats -->
+        <!-- Loading State -->
+        @if (isLoading()) {
+          <div class="loading-state">
+            <p-progressSpinner 
+              [style]="{ width: '50px', height: '50px' }"
+              strokeWidth="4"
+            ></p-progressSpinner>
+            <p class="loading-message">Loading roster data...</p>
+          </div>
+        }
+
+        <!-- Empty State -->
+        @if (!isLoading() && playersByPosition().length === 0) {
+          <app-empty-state
+            title="No Players Found"
+            message="Your roster is empty. Add players to get started."
+            icon="pi-users"
+            actionLabel="Add First Player"
+            actionIcon="pi pi-plus"
+            [actionHandler]="openAddPlayer.bind(this)"
+          ></app-empty-state>
+        }
+
+        <!-- Content -->
+        @if (!isLoading() && playersByPosition().length > 0) {
+          <!-- Team Overview Stats -->
         <p-card class="overview-card">
           <ng-template pTemplate="header">
             <h2 class="card-title">
@@ -189,6 +217,7 @@ interface Player {
             </div>
           </div>
         }
+        }
       </div>
     </app-main-layout>
   `,
@@ -198,36 +227,23 @@ interface Player {
         padding: var(--space-6);
       }
 
-      .team-header-card {
-        margin-bottom: var(--space-6);
+      .loading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-12);
+        min-height: 300px;
       }
 
-      .team-badge {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        font-size: 0.875rem;
-        font-weight: 500;
+      .loading-message {
+        margin-top: var(--space-4);
+        font-size: var(--font-body-md);
         color: var(--text-secondary);
-        margin-bottom: var(--space-4);
       }
 
       .separator {
         opacity: 0.5;
-      }
-
-      .team-title {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: var(--space-4);
-        color: var(--text-primary);
-      }
-
-      .team-description {
-        font-size: 1rem;
-        color: var(--text-secondary);
-        line-height: 1.6;
-        margin: 0;
       }
 
       .overview-card {
@@ -238,8 +254,8 @@ interface Player {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-bold);
         margin: 0;
         color: var(--text-primary);
       }
@@ -267,16 +283,16 @@ interface Player {
       }
 
       .overview-value {
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: var(--font-heading-2xl);
+        font-weight: var(--font-weight-bold);
         color: var(--color-brand-primary);
         margin-bottom: var(--space-2);
       }
 
       .overview-label {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
       }
 
       .position-section {
@@ -287,8 +303,8 @@ interface Player {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-bold);
         margin-bottom: var(--space-6);
         color: var(--text-primary);
       }
@@ -313,7 +329,7 @@ interface Player {
       .staff-card:hover,
       .player-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-lg);
       }
 
       .player-header {
@@ -330,15 +346,15 @@ interface Player {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
-        font-size: 1.125rem;
-        color: white;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-body-lg);
+        color: var(--color-text-on-primary);
         background: linear-gradient(
           135deg,
           var(--color-brand-primary),
           var(--color-brand-secondary)
         );
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-md);
         flex-shrink: 0;
       }
 
@@ -348,21 +364,21 @@ interface Player {
       }
 
       .player-name {
-        font-size: 1.125rem;
-        font-weight: 600;
+        font-size: var(--font-body-lg);
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-1);
         color: var(--text-primary);
       }
 
       .player-position {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
         margin-bottom: var(--space-1);
       }
 
       .player-meta {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         display: flex;
         align-items: center;
@@ -384,14 +400,14 @@ interface Player {
       }
 
       .stat-value {
-        font-weight: 700;
-        font-size: 1.125rem;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-body-lg);
         color: var(--color-brand-primary);
         margin-bottom: var(--space-1);
       }
 
       .stat-label {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-secondary);
       }
 
@@ -402,14 +418,14 @@ interface Player {
       }
 
       .achievements-title {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-secondary);
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
         margin-bottom: var(--space-2);
       }
 
       .achievement-item {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-primary);
         margin-bottom: var(--space-1);
       }
@@ -429,13 +445,13 @@ interface Player {
       }
 
       .detail-label {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-secondary);
       }
 
       .detail-value {
-        font-size: 0.875rem;
-        font-weight: 600;
+        font-size: var(--font-body-sm);
+        font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
       }
 
@@ -460,6 +476,7 @@ interface Player {
 export class RosterComponent implements OnInit {
   private apiService = inject(ApiService);
 
+  isLoading = signal(true);
   teamStats = signal<TeamStat[]>([]);
   coachingStaff = signal<StaffMember[]>([]);
   playersByPosition = signal<Array<{
@@ -471,7 +488,13 @@ export class RosterComponent implements OnInit {
     this.loadRosterData();
   }
 
+  openAddPlayer(): void {
+    // TODO: Implement add player modal
+    console.log('Open add player modal');
+  }
+
   loadRosterData(): void {
+    this.isLoading.set(true);
     // Load team stats
     this.teamStats.set([
       { value: "20", label: "Total Players" },
@@ -549,6 +572,11 @@ export class RosterComponent implements OnInit {
         ],
       },
     ]);
+    
+    // Simulate loading delay
+    setTimeout(() => {
+      this.isLoading.set(false);
+    }, 500);
   }
 
   getInitials(name: string): string {

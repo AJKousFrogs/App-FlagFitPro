@@ -273,8 +273,8 @@ interface Play {
         height: 100vh;
         display: flex;
         flex-direction: column;
-        background: #1a5c1a;
-        color: white;
+        background: var(--color-brand-primary-hover);
+        color: var(--color-text-on-primary);
         overflow: hidden;
       }
 
@@ -295,25 +295,25 @@ interface Play {
       }
 
       .score {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: #fff;
+        font-size: var(--font-display-lg);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-text-on-primary);
       }
 
       .game-clock {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.25rem;
+        gap: var(--space-1);
       }
 
       .time {
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: var(--text-2xl);
+        font-weight: var(--font-weight-semibold);
       }
 
       .quarter {
-        font-size: 0.875rem;
+        font-size: var(--text-sm);
         opacity: 0.8;
       }
 
@@ -341,9 +341,9 @@ interface Play {
 
       .player-marker {
         cursor: pointer;
-        stroke: #ffffff;
+        stroke: var(--color-text-on-primary);
         stroke-width: 2;
-        transition: r 0.2s ease;
+        transition: r var(--transition-base);
       }
 
       .player-marker:hover {
@@ -361,13 +361,13 @@ interface Play {
 
       .field-action {
         background: rgba(0, 0, 0, 0.8);
-        color: white;
-        border: 2px solid #fff;
-        padding: 0.75rem 1rem;
-        border-radius: 2rem;
-        font-weight: 600;
+        color: var(--color-text-on-primary);
+        border: 2px solid var(--surface-primary);
+        padding: var(--space-3) var(--space-4);
+        border-radius: var(--radius-2xl);
+        font-weight: var(--font-weight-semibold);
         backdrop-filter: blur(10px);
-        transition: transform 0.2s ease;
+        transition: transform var(--transition-base);
         cursor: pointer;
       }
 
@@ -396,8 +396,8 @@ interface Play {
       }
 
       .play-counter {
-        font-weight: 600;
-        color: #fff;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-on-primary);
       }
 
       .play-form {

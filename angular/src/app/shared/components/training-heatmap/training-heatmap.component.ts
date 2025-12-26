@@ -185,27 +185,27 @@ interface HeatmapCell {
       }
 
       .heatmap-cell.intensity-1 {
-        background: #d0f0eb;
+        background: var(--primitive-primary-100);
       }
 
       .heatmap-cell.intensity-2 {
-        background: #a0e4d7;
+        background: var(--primitive-primary-200);
       }
 
       .heatmap-cell.intensity-3 {
-        background: #70d8c3;
+        background: var(--primitive-primary-300);
       }
 
       .heatmap-cell.intensity-4 {
-        background: #40ccaf;
+        background: var(--primitive-primary-400);
       }
 
       .heatmap-cell.intensity-5 {
-        background: #10c96b;
+        background: var(--primitive-primary-500);
       }
 
       .heatmap-cell.intensity-6 {
-        background: #0ab85a;
+        background: var(--primitive-primary-600);
       }
 
       .heatmap-cell.intensity-7 {
@@ -213,9 +213,9 @@ interface HeatmapCell {
       }
 
       .cell-value {
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: white;
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-on-primary);
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
       }
 
@@ -244,27 +244,27 @@ interface HeatmapCell {
       }
 
       .gradient-step.intensity-1 {
-        background: #d0f0eb;
+        background: var(--primitive-primary-100);
       }
 
       .gradient-step.intensity-2 {
-        background: #a0e4d7;
+        background: var(--primitive-primary-200);
       }
 
       .gradient-step.intensity-3 {
-        background: #70d8c3;
+        background: var(--primitive-primary-300);
       }
 
       .gradient-step.intensity-4 {
-        background: #40ccaf;
+        background: var(--primitive-primary-400);
       }
 
       .gradient-step.intensity-5 {
-        background: #10c96b;
+        background: var(--primitive-primary-500);
       }
 
       .gradient-step.intensity-6 {
-        background: #0ab85a;
+        background: var(--primitive-primary-600);
       }
 
       .gradient-step.intensity-7 {
@@ -272,8 +272,8 @@ interface HeatmapCell {
       }
 
       .legend-label {
-        font-size: 0.875rem;
-        color: var(--p-text-color-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
       }
 
       .detail-content {

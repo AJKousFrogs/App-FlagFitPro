@@ -189,8 +189,8 @@ import { LoggerService } from "../../core/services/logger.service";
       }
 
       .metric-header i {
-        font-size: 1.25rem;
-        color: var(--p-primary-600);
+        font-size: var(--icon-lg);
+        color: var(--color-brand-primary);
       }
 
       .metric-value {

@@ -558,7 +558,7 @@ import { AuthService } from "../../core/services/auth.service";
 
       .tournament-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-lg);
       }
 
       .tournament-header {
@@ -578,14 +578,14 @@ import { AuthService } from "../../core/services/auth.service";
       }
 
       .tournament-title {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: var(--font-heading-sm);
+        font-weight: var(--font-weight-semibold);
         margin: var(--space-2) 0;
         color: var(--text-primary);
       }
 
       .tournament-subtitle {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin: 0;
         text-transform: capitalize;
@@ -623,7 +623,7 @@ import { AuthService } from "../../core/services/auth.service";
       }
 
       .info-label {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-secondary);
       }
 
@@ -638,13 +638,13 @@ import { AuthService } from "../../core/services/auth.service";
       }
 
       .countdown-value {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-bold);
         color: var(--color-brand-primary);
       }
 
       .countdown-label {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 
@@ -653,7 +653,7 @@ import { AuthService } from "../../core/services/auth.service";
         background: var(--p-surface-50);
         border-radius: var(--p-border-radius);
         margin-bottom: var(--space-4);
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 
@@ -689,9 +689,9 @@ import { AuthService } from "../../core/services/auth.service";
       }
 
       .form-field label {
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
         color: var(--text-primary);
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
       }
 
       .w-full {

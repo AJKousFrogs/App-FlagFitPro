@@ -400,15 +400,15 @@ interface CoachVisibilityRecord {
       }
 
       .stat-card.risk-high {
-        border-left: 4px solid #ef4444;
+        border-left: 4px solid var(--color-status-error);
       }
 
       .stat-card.pending {
-        border-left: 4px solid #f59e0b;
+        border-left: 4px solid var(--color-status-warning);
       }
 
       .stat-card.total {
-        border-left: 4px solid #3b82f6;
+        border-left: 4px solid var(--color-status-info);
       }
 
       .stat-icon {
@@ -417,23 +417,23 @@ interface CoachVisibilityRecord {
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
+        border-radius: var(--radius-full);
         background: var(--p-surface-100);
       }
 
       .stat-card.risk-high .stat-icon {
-        background: rgba(239, 68, 68, 0.1);
-        color: #ef4444;
+        background: var(--color-status-error-subtle);
+        color: var(--color-status-error);
       }
 
       .stat-card.pending .stat-icon {
-        background: rgba(245, 158, 11, 0.1);
-        color: #f59e0b;
+        background: var(--color-status-warning-subtle);
+        color: var(--color-status-warning);
       }
 
       .stat-card.total .stat-icon {
-        background: rgba(59, 130, 246, 0.1);
-        color: #3b82f6;
+        background: var(--color-status-info-subtle);
+        color: var(--color-status-info);
       }
 
       .stat-content {
@@ -442,14 +442,14 @@ interface CoachVisibilityRecord {
       }
 
       .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--text-primary);
+        font-size: var(--text-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
       }
 
       .stat-label {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
+        font-size: var(--text-xs);
+        color: var(--color-text-secondary);
       }
 
       .card-header {
@@ -464,17 +464,17 @@ interface CoachVisibilityRecord {
         align-items: center;
         gap: var(--space-2);
         margin: 0;
-        font-size: 1rem;
-        font-weight: 600;
+        font-size: var(--text-base);
+        font-weight: var(--font-weight-semibold);
       }
 
       .alert-count {
-        background: #ef4444;
-        color: white;
+        background: var(--color-status-error);
+        color: var(--color-text-on-primary);
         padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
+        border-radius: var(--radius-xl);
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-semibold);
       }
 
       .alerts-list {
@@ -494,8 +494,8 @@ interface CoachVisibilityRecord {
       }
 
       .alert-item.unviewed {
-        border-left: 3px solid #ef4444;
-        background: rgba(239, 68, 68, 0.05);
+        border-left: 3px solid var(--color-status-error);
+        background: var(--color-status-error-subtle);
       }
 
       .alert-icon {
@@ -523,13 +523,13 @@ interface CoachVisibilityRecord {
       }
 
       .player-name {
-        font-weight: 600;
-        color: var(--text-primary);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
       }
 
       .alert-message {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
         margin: 0 0 var(--space-2) 0;
         line-height: 1.4;
       }
@@ -537,8 +537,8 @@ interface CoachVisibilityRecord {
       .alert-meta {
         display: flex;
         gap: var(--space-4);
-        font-size: 0.75rem;
-        color: var(--text-tertiary);
+        font-size: var(--text-xs);
+        color: var(--color-text-muted);
       }
 
       .alert-meta span {
@@ -560,20 +560,20 @@ interface CoachVisibilityRecord {
       }
 
       .empty-state i {
-        font-size: 3rem;
+        font-size: var(--icon-3xl);
         color: var(--p-surface-300);
         margin-bottom: var(--space-4);
       }
 
       .empty-state p {
-        font-weight: 600;
-        color: var(--text-primary);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
         margin: 0 0 var(--space-2) 0;
       }
 
       .empty-state span {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
       }
 
       .player-cell {
@@ -585,14 +585,14 @@ interface CoachVisibilityRecord {
       .player-avatar {
         width: 28px;
         height: 28px;
-        border-radius: 50%;
+        border-radius: var(--radius-full);
         background: var(--color-brand-primary);
-        color: white;
+        color: var(--color-text-on-primary);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.75rem;
-        font-weight: 600;
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-semibold);
       }
 
       .reason-cell {
@@ -603,8 +603,8 @@ interface CoachVisibilityRecord {
       }
 
       .date-cell {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
       }
 
       .action-buttons {
@@ -619,8 +619,8 @@ interface CoachVisibilityRecord {
       }
 
       .dialog-context {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
         margin: 0;
       }
 
@@ -628,26 +628,26 @@ interface CoachVisibilityRecord {
         display: flex;
         gap: var(--space-3);
         padding: var(--space-3);
-        background: rgba(245, 158, 11, 0.1);
+        background: var(--color-status-warning-subtle);
         border-radius: var(--p-border-radius);
-        color: #b45309;
+        color: var(--color-status-warning);
       }
 
       .override-warning i {
-        font-size: 1.25rem;
+        font-size: var(--text-xl);
         flex-shrink: 0;
       }
 
       .override-warning p {
         margin: 0;
-        font-size: 0.875rem;
+        font-size: var(--text-sm);
         line-height: 1.4;
       }
 
       .field-label {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--text-primary);
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
         margin-bottom: var(--space-1);
       }
 

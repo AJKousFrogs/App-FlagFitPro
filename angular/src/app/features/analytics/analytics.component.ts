@@ -672,8 +672,8 @@ interface Metric {
       .loading-placeholder {
         padding: var(--space-8);
         text-align: center;
-        color: var(--text-secondary);
-        font-size: 0.875rem;
+        color: var(--color-text-secondary);
+        font-size: var(--text-sm);
       }
 
       .analytics-page {
@@ -688,15 +688,15 @@ interface Metric {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: var(--font-heading-2xl);
+        font-weight: var(--font-weight-bold);
         margin-bottom: var(--space-2);
-        color: var(--text-primary);
+        color: var(--color-text-primary);
       }
 
       .page-subtitle {
-        font-size: 1.125rem;
-        color: var(--text-secondary);
+        font-size: var(--text-lg);
+        color: var(--color-text-secondary);
       }
 
       .metrics-grid {
@@ -717,36 +717,36 @@ interface Metric {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--p-primary-50);
-        color: var(--p-primary-600);
-        border-radius: 50%;
-        font-size: 1.5rem;
+        background: var(--color-brand-primary-subtle);
+        color: var(--color-brand-primary);
+        border-radius: var(--radius-full);
+        font-size: var(--text-2xl);
       }
 
       .metric-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-primary);
+        font-size: var(--text-3xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
         margin-bottom: var(--space-2);
       }
 
       .metric-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
         margin-bottom: var(--space-2);
       }
 
       .metric-trend {
-        font-size: 0.875rem;
-        font-weight: 500;
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-medium);
       }
 
       .trend-positive {
-        color: var(--color-success);
+        color: var(--color-status-success);
       }
 
       .trend-negative {
-        color: var(--color-warning);
+        color: var(--color-status-warning);
       }
 
       .charts-grid {
@@ -772,8 +772,8 @@ interface Metric {
       }
 
       .chart-title {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: var(--text-xl);
+        font-weight: var(--font-weight-semibold);
         margin: 0;
       }
 
@@ -801,15 +801,15 @@ interface Metric {
       }
 
       .insight-value {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--text-2xl);
+        font-weight: var(--font-weight-bold);
         color: var(--color-brand-primary);
         margin-bottom: var(--space-1);
       }
 
       .insight-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
       }
 
       @media (max-width: 768px) {
@@ -848,19 +848,19 @@ interface Metric {
       }
 
       .stat-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
         margin-bottom: var(--space-2);
       }
 
       .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--text-2xl);
+        font-weight: var(--font-weight-bold);
         color: var(--color-brand-primary);
       }
 
       .stat-value.error {
-        color: var(--color-error);
+        color: var(--color-status-error);
       }
 
       .stats-grid {
@@ -879,9 +879,9 @@ interface Metric {
       .stat-card h4,
       .stat-card h5 {
         margin: 0 0 var(--space-4) 0;
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: var(--text-primary);
+        font-size: var(--text-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
       }
 
       .stat-row {
@@ -896,19 +896,19 @@ interface Metric {
       }
 
       .stat-row span {
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
       }
 
       .stat-row strong {
-        color: var(--text-primary);
-        font-weight: 600;
+        color: var(--color-text-primary);
+        font-weight: var(--font-weight-semibold);
       }
 
       .multi-season-stats h4 {
         margin: var(--space-6) 0 var(--space-4) 0;
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--text-primary);
+        font-size: var(--text-xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
       }
     `,
   ],

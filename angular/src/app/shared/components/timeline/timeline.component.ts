@@ -88,8 +88,8 @@ export interface TimelineItem {
       }
 
       .timeline-marker i {
-        color: white;
-        font-size: 0.75rem;
+        color: var(--color-text-on-primary);
+        font-size: var(--icon-xs);
       }
 
       .timeline-content {

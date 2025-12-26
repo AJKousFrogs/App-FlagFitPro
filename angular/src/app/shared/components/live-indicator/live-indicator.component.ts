@@ -26,10 +26,10 @@ import { CommonModule } from "@angular/common";
         align-items: center;
         gap: 6px;
         padding: 4px 10px;
-        border-radius: 12px;
-        background: rgba(239, 68, 68, 0.1);
+        border-radius: var(--radius-xl);
+        background: var(--color-status-error-subtle);
         opacity: 0.5;
-        transition: opacity 0.3s ease;
+        transition: opacity var(--transition-base);
       }
 
       .live-indicator.live-active {
@@ -39,8 +39,8 @@ import { CommonModule } from "@angular/common";
       .live-dot {
         width: 8px;
         height: 8px;
-        border-radius: 50%;
-        background: #ef4444;
+        border-radius: var(--radius-full);
+        background: var(--color-status-error);
         position: relative;
       }
 
@@ -67,8 +67,8 @@ import { CommonModule } from "@angular/common";
         left: -4px;
         right: -4px;
         bottom: -4px;
-        border-radius: 50%;
-        background: #ef4444;
+        border-radius: var(--radius-full);
+        background: var(--color-status-error);
         opacity: 0.3;
         animation: ripple 2s infinite;
       }
@@ -85,19 +85,19 @@ import { CommonModule } from "@angular/common";
       }
 
       .live-text {
-        font-size: 11px;
-        font-weight: 700;
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-bold);
         letter-spacing: 0.5px;
-        color: #ef4444;
+        color: var(--color-status-error);
         text-transform: uppercase;
       }
 
       .live-indicator:not(.live-active) .live-text {
-        color: #9ca3af;
+        color: var(--color-text-muted);
       }
 
       .live-indicator:not(.live-active) .live-dot {
-        background: #9ca3af;
+        background: var(--color-text-muted);
       }
     `,
   ],

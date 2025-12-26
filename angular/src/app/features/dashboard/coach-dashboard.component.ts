@@ -223,24 +223,24 @@ interface UpcomingFixture {
       }
 
       .stat-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
         margin-bottom: var(--space-2);
       }
 
       .stat-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-primary);
+        font-size: var(--text-3xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
       }
 
       .stat-value.risk-value {
-        color: #ef4444;
+        color: var(--color-status-error);
       }
 
       .stat-subtitle {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
+        font-size: var(--text-xs);
+        color: var(--color-text-secondary);
         margin-top: var(--space-1);
       }
 
@@ -276,14 +276,14 @@ interface UpcomingFixture {
       }
 
       .fixture-day {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--text-2xl);
+        font-weight: var(--font-weight-bold);
         color: var(--color-brand-primary);
       }
 
       .fixture-month {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
+        font-size: var(--text-xs);
+        color: var(--color-text-secondary);
         text-transform: uppercase;
       }
 
@@ -292,50 +292,50 @@ interface UpcomingFixture {
       }
 
       .fixture-title {
-        font-weight: 600;
-        color: var(--text-primary);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
         margin-bottom: var(--space-1);
       }
 
       .fixture-details {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
       }
 
       .no-fixtures {
         text-align: center;
         padding: var(--space-6);
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
       }
 
       .acwr-green {
-        color: #22c55e;
-        font-weight: 600;
+        color: var(--color-status-success);
+        font-weight: var(--font-weight-semibold);
       }
 
       .acwr-yellow {
-        color: #eab308;
-        font-weight: 600;
+        color: var(--color-status-warning);
+        font-weight: var(--font-weight-semibold);
       }
 
       .acwr-red {
-        color: #ef4444;
-        font-weight: 600;
+        color: var(--color-status-error);
+        font-weight: var(--font-weight-semibold);
       }
 
       .readiness-high {
-        color: #22c55e;
-        font-weight: 600;
+        color: var(--color-status-success);
+        font-weight: var(--font-weight-semibold);
       }
 
       .readiness-medium {
-        color: #eab308;
-        font-weight: 600;
+        color: var(--color-status-warning);
+        font-weight: var(--font-weight-semibold);
       }
 
       .readiness-low {
-        color: #ef4444;
-        font-weight: 600;
+        color: var(--color-status-error);
+        font-weight: var(--font-weight-semibold);
       }
 
       @media (max-width: 768px) {
@@ -479,7 +479,7 @@ export class CoachDashboardComponent implements OnInit {
         {
           label: "Workload (AU)",
           data: workloads,
-          backgroundColor: "#10c96b",
+          backgroundColor: "rgb(var(--ds-primary-green-rgb))",
         },
       ],
     });

@@ -12,8 +12,10 @@ import { ButtonModule } from "primeng/button";
 import { AvatarModule } from "primeng/avatar";
 import { TagModule } from "primeng/tag";
 import { Tabs, TabPanel } from "primeng/tabs";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AuthService } from "../../core/services/auth.service";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 
@@ -29,14 +31,28 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
     TagModule,
     Tabs,
     TabPanel,
+    ProgressSpinnerModule,
     MainLayoutComponent,
     StatsGridComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
       <div class="profile-page">
-        <!-- Profile Header -->
-        <div class="profile-header">
+        <!-- Loading State -->
+        @if (isLoading()) {
+          <div class="loading-state">
+            <p-progressSpinner 
+              [style]="{ width: '50px', height: '50px' }"
+              strokeWidth="4"
+            ></p-progressSpinner>
+            <p class="loading-message">Loading profile...</p>
+          </div>
+        }
+
+        @if (!isLoading()) {
+          <!-- Profile Header -->
+          <div class="profile-header">
           <div class="profile-avatar-section">
             <p-avatar
               [label]="userInitials()"
@@ -83,39 +99,56 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
                 <ng-template pTemplate="header">
                   <h3>Recent Activity</h3>
                 </ng-template>
-                <div class="activity-list">
-                  @for (
-                    activity of activities();
-                    track trackByActivityTitle($index, activity)
-                  ) {
-                    <div class="activity-item">
-                      <div class="activity-icon">{{ activity.icon }}</div>
-                      <div class="activity-content">
-                        <div class="activity-title">{{ activity.title }}</div>
-                        <div class="activity-time">{{ activity.time }}</div>
+                @if (activities().length === 0) {
+                  <app-empty-state
+                    title="No Recent Activity"
+                    message="Your activity will appear here once you start training."
+                    icon="pi-clock"
+                    [compact]="true"
+                  ></app-empty-state>
+                } @else {
+                  <div class="activity-list">
+                    @for (
+                      activity of activities();
+                      track trackByActivityTitle($index, activity)
+                    ) {
+                      <div class="activity-item">
+                        <div class="activity-icon">{{ activity.icon }}</div>
+                        <div class="activity-content">
+                          <div class="activity-title">{{ activity.title }}</div>
+                          <div class="activity-time">{{ activity.time }}</div>
+                        </div>
                       </div>
-                    </div>
-                  }
-                </div>
+                    }
+                  </div>
+                }
               </p-card>
             </div>
           </p-tabpanel>
           <p-tabpanel header="Achievements" leftIcon="pi pi-trophy">
-            <div class="achievements-grid">
-              @for (
-                achievement of achievements();
-                track trackByAchievementTitle($index, achievement)
-              ) {
-                <p-card class="achievement-card">
-                  <div class="achievement-icon">{{ achievement.icon }}</div>
-                  <h4 class="achievement-title">{{ achievement.title }}</h4>
-                  <p class="achievement-description">
-                    {{ achievement.description }}
-                  </p>
-                  <div class="achievement-date">{{ achievement.date }}</div>
-                </p-card>
-              }
-            </div>
+            @if (achievements().length === 0) {
+              <app-empty-state
+                title="No Achievements Yet"
+                message="Complete training sessions and reach milestones to earn achievements."
+                icon="pi-trophy"
+              ></app-empty-state>
+            } @else {
+              <div class="achievements-grid">
+                @for (
+                  achievement of achievements();
+                  track trackByAchievementTitle($index, achievement)
+                ) {
+                  <p-card class="achievement-card">
+                    <div class="achievement-icon">{{ achievement.icon }}</div>
+                    <h4 class="achievement-title">{{ achievement.title }}</h4>
+                    <p class="achievement-description">
+                      {{ achievement.description }}
+                    </p>
+                    <div class="achievement-date">{{ achievement.date }}</div>
+                  </p-card>
+                }
+              </div>
+            }
           </p-tabpanel>
           <p-tabpanel header="Statistics" leftIcon="pi pi-bar-chart">
             <p-card>
@@ -140,6 +173,7 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
             </p-card>
           </p-tabpanel>
         </p-tabs>
+        }
       </div>
     </app-main-layout>
   `,
@@ -147,6 +181,21 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
     `
       .profile-page {
         padding: var(--space-6);
+      }
+
+      .loading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-12);
+        min-height: 300px;
+      }
+
+      .loading-message {
+        margin-top: var(--space-4);
+        font-size: var(--font-body-md);
+        color: var(--text-secondary);
       }
 
       .profile-header {
@@ -157,7 +206,7 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
         background: var(--surface-primary);
         border-radius: var(--p-border-radius);
         margin-bottom: var(--space-6);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow-sm);
       }
 
       .profile-avatar-section {
@@ -177,20 +226,20 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
       }
 
       .profile-name {
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: var(--font-heading-2xl);
+        font-weight: var(--font-weight-bold);
         margin-bottom: var(--space-2);
         color: var(--text-primary);
       }
 
       .profile-role {
-        font-size: 1rem;
+        font-size: var(--font-body-md);
         color: var(--text-secondary);
         margin-bottom: var(--space-1);
       }
 
       .profile-email {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin: 0;
       }
@@ -207,14 +256,14 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
       }
 
       .stat-value {
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: var(--font-heading-2xl);
+        font-weight: var(--font-weight-bold);
         color: var(--color-brand-primary);
         margin-bottom: var(--space-2);
       }
 
       .stat-label {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 
@@ -242,17 +291,17 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
       }
 
       .activity-icon {
-        font-size: 2rem;
+        font-size: var(--icon-3xl);
       }
 
       .activity-title {
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
         margin-bottom: var(--space-1);
       }
 
       .activity-time {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 
@@ -273,25 +322,25 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
       }
 
       .achievement-icon {
-        font-size: 3rem;
+        font-size: var(--icon-4xl);
         margin-bottom: var(--space-3);
       }
 
       .achievement-title {
-        font-size: 1.125rem;
-        font-weight: 600;
+        font-size: var(--font-body-lg);
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-2);
         color: var(--text-primary);
       }
 
       .achievement-description {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin-bottom: var(--space-3);
       }
 
       .achievement-date {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-secondary);
       }
 
@@ -309,14 +358,14 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
       }
 
       .performance-stat .stat-label {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin-bottom: var(--space-2);
       }
 
       .performance-stat .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-bold);
         color: var(--text-primary);
         margin-bottom: var(--space-2);
       }
@@ -338,6 +387,7 @@ export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private apiService = inject(ApiService);
 
+  isLoading = signal(true);
   userName = signal("Loading...");
   userEmail = signal("Loading...");
   userRole = signal("Player");
@@ -352,6 +402,7 @@ export class ProfileComponent implements OnInit {
   }
 
   loadProfileData(): void {
+    this.isLoading.set(true);
     const user = this.authService.getUser();
     if (user) {
       this.userName.set(user.name || user.email || "User");
@@ -402,6 +453,11 @@ export class ProfileComponent implements OnInit {
       { label: "Speed Score", value: "92", trend: "+8", trendType: "success" },
       { label: "Strength Score", value: "78", trend: "+3", trendType: "info" },
     ]);
+
+    // Simulate loading delay
+    setTimeout(() => {
+      this.isLoading.set(false);
+    }, 500);
   }
 
   getInitials(name: string): string {

@@ -165,11 +165,11 @@ import { ButtonModule } from "primeng/button";
       }
 
       .action-btn.delete {
-        background: #ef4444;
+        background: var(--color-status-error);
       }
 
       .action-btn i {
-        font-size: 1rem;
+        font-size: var(--icon-md);
       }
 
       @media (min-width: 768px) {

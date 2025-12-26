@@ -281,15 +281,15 @@ import {
       }
 
       .text-green-600 {
-        color: #16a34a;
+        color: var(--color-status-success);
       }
 
       .text-yellow-600 {
-        color: #ca8a04;
+        color: var(--color-status-warning);
       }
 
       .text-red-600 {
-        color: #dc2626;
+        color: var(--color-status-error);
       }
     `,
   ],

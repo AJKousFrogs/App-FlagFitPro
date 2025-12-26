@@ -28,28 +28,28 @@ export type TrafficLightStatus = "green" | "yellow" | "red" | "orange";
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--space-2);
       }
 
       .traffic-light {
         width: 24px;
         height: 64px;
-        background: #2c3e50;
-        border-radius: 12px;
+        background: var(--color-neutral-800);
+        border-radius: var(--radius-xl);
         padding: 4px;
         display: flex;
         flex-direction: column;
         gap: 4px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow-sm);
       }
 
       .light {
         flex: 1;
-        border-radius: 50%;
+        border-radius: var(--radius-full);
         opacity: 0.3;
         transition:
-          opacity 0.3s ease,
-          box-shadow 0.3s ease;
+          opacity var(--transition-base),
+          box-shadow var(--transition-base);
       }
 
       .light.active {
@@ -58,42 +58,42 @@ export type TrafficLightStatus = "green" | "yellow" | "red" | "orange";
       }
 
       .light.green {
-        background: #22c55e;
+        background: var(--color-status-success);
       }
 
       .light.yellow {
-        background: #eab308;
+        background: var(--color-status-warning);
       }
 
       .light.orange {
-        background: #f97316;
+        background: var(--color-status-warning);
       }
 
       .light.red {
-        background: #ef4444;
+        background: var(--color-status-error);
       }
 
       .label {
-        font-size: 0.75rem;
-        font-weight: 600;
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-semibold);
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
 
       .label.green {
-        color: #22c55e;
+        color: var(--color-status-success);
       }
 
       .label.yellow {
-        color: #eab308;
+        color: var(--color-status-warning);
       }
 
       .label.orange {
-        color: #f97316;
+        color: var(--color-status-warning);
       }
 
       .label.red {
-        color: #ef4444;
+        color: var(--color-status-error);
       }
     `,
   ],

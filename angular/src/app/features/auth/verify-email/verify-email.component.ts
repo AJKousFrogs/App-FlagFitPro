@@ -120,7 +120,7 @@ import { ToastModule } from "primeng/toast";
       }
 
       .verify-email-logo i {
-        font-size: 3rem;
+        font-size: var(--icon-3xl);
         color: var(--color-brand-primary);
       }
 

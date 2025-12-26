@@ -147,14 +147,14 @@ interface Exercise {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-2);
         color: var(--text-primary);
       }
 
       .page-subtitle {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin: 0;
       }
@@ -207,20 +207,20 @@ interface Exercise {
       }
 
       .exercise-name {
-        font-size: 1.125rem;
-        font-weight: 600;
+        font-size: var(--font-body-lg);
+        font-weight: var(--font-weight-semibold);
         margin: 0;
         color: var(--text-primary);
       }
 
       .exercise-category {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin-bottom: var(--space-2);
       }
 
       .exercise-description {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-primary);
         line-height: 1.6;
         margin-bottom: var(--space-3);

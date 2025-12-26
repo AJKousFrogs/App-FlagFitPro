@@ -219,14 +219,14 @@ import { AuthService } from "../../core/services/auth.service";
       }
 
       .page-title-section h1 {
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-2);
         color: var(--text-primary);
       }
 
       .page-title-section p {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin: 0;
       }
@@ -248,12 +248,12 @@ import { AuthService } from "../../core/services/auth.service";
       }
 
       .section-icon {
-        font-size: 1.5rem;
+        font-size: var(--icon-2xl);
       }
 
       .section-title {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: var(--font-heading-sm);
+        font-weight: var(--font-weight-semibold);
         margin: 0;
         color: var(--text-primary);
       }

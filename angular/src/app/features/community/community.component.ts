@@ -288,14 +288,14 @@ interface Comment {
       }
 
       .page-title {
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-2);
         color: var(--text-primary);
       }
 
       .page-subtitle {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin: 0;
       }
@@ -347,7 +347,7 @@ interface Comment {
       }
 
       .post-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-lg);
       }
 
       .post-header {
@@ -368,7 +368,7 @@ interface Comment {
       }
 
       .post-meta {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 
@@ -390,7 +390,7 @@ interface Comment {
       .engagement-stats {
         display: flex;
         gap: var(--space-4);
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin-bottom: var(--space-3);
       }
@@ -421,20 +421,20 @@ interface Comment {
       }
 
       .comment-author {
-        font-weight: 600;
-        font-size: 0.875rem;
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-body-sm);
         color: var(--text-primary);
         margin-bottom: var(--space-1);
       }
 
       .comment-text {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-primary);
         margin-bottom: var(--space-1);
       }
 
       .comment-time {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-secondary);
       }
 
@@ -452,8 +452,8 @@ interface Comment {
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        font-size: 1.125rem;
-        font-weight: 600;
+        font-size: var(--font-body-lg);
+        font-weight: var(--font-weight-semibold);
         margin: 0;
         color: var(--text-primary);
       }
@@ -487,7 +487,7 @@ interface Comment {
       }
 
       .leaderboard-score {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 
@@ -516,7 +516,7 @@ interface Comment {
       }
 
       .topic-count {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 

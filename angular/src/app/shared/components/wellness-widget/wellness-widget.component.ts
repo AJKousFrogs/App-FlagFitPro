@@ -202,7 +202,7 @@ interface WellnessMetric {
       }
 
       .metric-item i {
-        font-size: 1.25rem;
+        font-size: var(--icon-lg);
       }
 
       .metric-info {
@@ -232,8 +232,8 @@ interface WellnessMetric {
       }
 
       .no-data i {
-        font-size: 2rem;
-        color: var(--text-tertiary);
+        font-size: var(--icon-2xl);
+        color: var(--color-text-muted);
       }
 
       .no-data p {

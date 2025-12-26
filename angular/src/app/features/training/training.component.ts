@@ -257,25 +257,25 @@ interface Workout {
       .hero-badge {
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         opacity: 0.9;
         margin-bottom: var(--space-4);
       }
 
       .hero-title {
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-size: var(--font-display-sm);
+        font-weight: var(--font-weight-bold);
         margin-bottom: var(--space-4);
       }
 
       .hero-subtitle {
-        font-size: 1.25rem;
+        font-size: var(--font-heading-sm);
         opacity: 0.9;
         margin-bottom: var(--space-6);
       }
 
       .hero-note {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         opacity: 0.7;
       }
 
@@ -295,8 +295,8 @@ interface Workout {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-bold);
         margin-bottom: var(--space-4);
         color: var(--color-brand-primary);
       }
@@ -322,8 +322,8 @@ interface Workout {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-bold);
         margin: 0;
       }
 
@@ -353,13 +353,13 @@ interface Workout {
       }
 
       .session-time {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-secondary);
       }
 
       .session-title {
-        font-size: 0.875rem;
-        font-weight: 500;
+        font-size: var(--font-body-sm);
+        font-weight: var(--font-weight-medium);
         color: var(--text-primary);
       }
 
@@ -395,19 +395,19 @@ interface Workout {
 
       .workout-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-lg);
       }
 
       .workout-card.swiping-right {
         transform: translateX(100px);
         opacity: 0.7;
-        background: rgba(16, 201, 107, 0.1);
+        background: var(--color-brand-primary-subtle);
       }
 
       .workout-card.swiping-left {
         transform: translateX(-100px);
         opacity: 0.7;
-        background: rgba(241, 196, 15, 0.1);
+        background: var(--color-status-warning-light);
       }
 
       .workout-card::before {
@@ -427,9 +427,9 @@ interface Workout {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(16, 201, 107, 0.9);
-        color: white;
-        font-weight: 600;
+        background: var(--color-brand-primary);
+        color: var(--color-text-on-primary);
+        font-weight: var(--font-weight-semibold);
         opacity: 1;
       }
 
@@ -438,9 +438,9 @@ interface Workout {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(241, 196, 15, 0.9);
-        color: white;
-        font-weight: 600;
+        background: var(--color-status-warning);
+        color: var(--color-text-on-primary);
+        font-weight: var(--font-weight-semibold);
         opacity: 1;
       }
 
@@ -451,8 +451,8 @@ interface Workout {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
-        color: white;
+        font-size: var(--icon-2xl);
+        color: var(--color-text-on-primary);
       }
 
       .workout-content {
@@ -460,13 +460,13 @@ interface Workout {
       }
 
       .workout-title {
-        font-size: 1.125rem;
-        font-weight: 600;
+        font-size: var(--font-body-lg);
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-2);
       }
 
       .workout-description {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin-bottom: var(--space-3);
       }
@@ -474,7 +474,7 @@ interface Workout {
       .workout-meta {
         display: flex;
         gap: var(--space-4);
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-secondary);
       }
 
@@ -494,16 +494,16 @@ interface Workout {
       }
 
       .achievement-icon {
-        font-size: 2rem;
+        font-size: var(--icon-3xl);
       }
 
       .achievement-title {
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
       }
 
       .achievement-date {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 

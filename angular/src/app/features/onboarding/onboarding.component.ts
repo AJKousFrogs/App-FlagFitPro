@@ -213,7 +213,7 @@ interface OnboardingStep {
       }
 
       .goal-card i {
-        font-size: 2rem;
+        font-size: var(--icon-2xl);
         display: block;
         margin-bottom: var(--space-2);
         color: var(--color-brand-primary);

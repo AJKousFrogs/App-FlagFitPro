@@ -195,14 +195,14 @@ interface Channel {
       }
 
       .chat-title {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: var(--font-heading-sm);
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-1);
         color: var(--text-primary);
       }
 
       .chat-subtitle {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin: 0;
       }
@@ -241,8 +241,8 @@ interface Channel {
       }
 
       .section-title {
-        font-size: 1rem;
-        font-weight: 600;
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-semibold);
         margin: 0;
         color: var(--text-primary);
       }
@@ -322,13 +322,13 @@ interface Channel {
       }
 
       .message-author {
-        font-weight: 600;
-        font-size: 0.875rem;
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-body-sm);
         color: var(--text-primary);
       }
 
       .message-time {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-secondary);
       }
 

@@ -157,11 +157,11 @@ interface PerformanceMetric {
       .metric-info {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--space-2);
       }
 
       .metric-info i {
-        font-size: 1.5rem;
+        font-size: var(--icon-xl);
       }
 
       .metric-info h4 {

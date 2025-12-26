@@ -224,20 +224,20 @@ interface FeedbackData {
         border: 1px solid var(--p-surface-200);
         border-radius: var(--p-border-radius);
         background: transparent;
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all var(--transition-base);
       }
 
       .feedback-btn:hover:not(.disabled) {
         background: var(--p-surface-100);
-        color: var(--text-primary);
+        color: var(--color-text-primary);
       }
 
       .feedback-btn.selected {
         background: var(--color-brand-primary);
         border-color: var(--color-brand-primary);
-        color: white;
+        color: var(--color-text-on-primary);
       }
 
       .feedback-btn.disabled {
@@ -254,8 +254,8 @@ interface FeedbackData {
         display: flex;
         align-items: center;
         gap: var(--space-1);
-        font-size: 0.75rem;
-        color: #22c55e;
+        font-size: var(--text-xs);
+        color: var(--color-status-success);
       }
 
       .dialog-content {
@@ -265,16 +265,16 @@ interface FeedbackData {
       }
 
       .dialog-intro {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
         margin: 0;
       }
 
       .section-label {
         display: block;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--text-primary);
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
         margin-bottom: var(--space-2);
       }
 
@@ -295,12 +295,12 @@ interface FeedbackData {
         align-items: center;
         gap: var(--space-2);
         cursor: pointer;
-        font-size: 0.875rem;
+        font-size: var(--text-sm);
       }
 
       .type-label i {
         width: 16px;
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
       }
 
       .outcome-question {
@@ -319,10 +319,10 @@ interface FeedbackData {
         border: 1px solid var(--p-surface-200);
         border-radius: var(--p-border-radius);
         background: transparent;
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
         cursor: pointer;
-        transition: all 0.2s;
-        font-size: 0.875rem;
+        transition: all var(--transition-base);
+        font-size: var(--text-sm);
       }
 
       .outcome-btn:hover {
@@ -332,7 +332,7 @@ interface FeedbackData {
       .outcome-btn.selected {
         background: var(--color-brand-primary);
         border-color: var(--color-brand-primary);
-        color: white;
+        color: var(--color-text-on-primary);
       }
 
       @media (max-width: 480px) {
@@ -342,7 +342,7 @@ interface FeedbackData {
         }
 
         .feedback-btn i {
-          font-size: 0.875rem;
+          font-size: var(--text-sm);
         }
       }
     `,

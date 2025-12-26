@@ -319,10 +319,10 @@ declare global {
     `
       .training-companion {
         position: fixed;
-        bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
-        right: 1rem;
-        z-index: 1000;
-        transition: all 0.3s ease;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-4));
+        right: var(--space-4);
+        z-index: var(--z-index-dropdown);
+        transition: all var(--transition-slow);
       }
 
       .ai-avatar {
@@ -334,13 +334,13 @@ declare global {
         position: relative;
         width: 64px;
         height: 64px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: var(--radius-full);
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-primary-hover) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        transition: transform 0.2s ease;
+        box-shadow: var(--shadow-md);
+        transition: transform var(--transition-base);
       }
 
       .avatar-container:hover {
@@ -348,8 +348,8 @@ declare global {
       }
 
       .avatar-image {
-        font-size: 2rem;
-        color: white;
+        font-size: var(--text-3xl);
+        color: var(--color-text-on-primary);
         z-index: 2;
       }
 
@@ -357,8 +357,8 @@ declare global {
         position: absolute;
         width: 100%;
         height: 100%;
-        border-radius: 50%;
-        border: 2px solid rgba(102, 126, 234, 0.6);
+        border-radius: var(--radius-full);
+        border: 2px solid rgba(var(--ds-primary-green-rgb), 0.6);
         animation: pulse-ring 2s ease-out infinite;
       }
 
@@ -383,22 +383,22 @@ declare global {
         right: 0;
         width: 16px;
         height: 16px;
-        border-radius: 50%;
-        border: 2px solid white;
-        background: #6c757d;
+        border-radius: var(--radius-full);
+        border: 2px solid var(--surface-primary);
+        background: var(--color-text-secondary);
       }
 
       .status-indicator[data-status="listening"] {
-        background: #28a745;
+        background: var(--color-status-success);
         animation: blink 1s ease-in-out infinite;
       }
 
       .status-indicator[data-status="processing"] {
-        background: #ffc107;
+        background: var(--color-status-warning);
       }
 
       .status-indicator[data-status="active"] {
-        background: #007bff;
+        background: var(--color-status-info);
       }
 
       @keyframes blink {
@@ -417,12 +417,12 @@ declare global {
         right: 0;
         min-width: 200px;
         max-width: 300px;
-        padding: 1rem;
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        color: #333;
-        font-size: 0.875rem;
+        padding: var(--space-4);
+        background: var(--surface-primary);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-md);
+        color: var(--color-text-primary);
+        font-size: var(--text-sm);
       }
 
       .speech-bubble::after {
@@ -434,14 +434,14 @@ declare global {
         height: 0;
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
-        border-top: 8px solid white;
+        border-top: 8px solid var(--surface-primary);
       }
 
       .bubble-actions {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
+        gap: var(--space-2);
+        margin-top: var(--space-2);
       }
 
       .companion-interface {
@@ -452,13 +452,13 @@ declare global {
         max-width: 400px;
         max-height: 80vh;
         overflow-y: auto;
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        padding: 1.5rem;
+        background: var(--surface-primary);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-lg);
+        padding: var(--space-6);
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: var(--space-6);
       }
 
       .insights-panel h4,
@@ -466,58 +466,58 @@ declare global {
       .performance-feedback h4 {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-        color: #333;
+        gap: var(--space-2);
+        margin-bottom: var(--space-4);
+        color: var(--color-text-primary);
       }
 
       .insight-cards {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: var(--space-4);
       }
 
       .insight-card {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background: #f8f9fa;
-        border-left: 4px solid #6c757d;
+        padding: var(--space-4);
+        border-radius: var(--radius-lg);
+        background: var(--surface-secondary);
+        border-left: 4px solid var(--color-text-secondary);
       }
 
       .insight-card.priority {
-        border-left-color: #dc3545;
-        background: #fff5f5;
+        border-left-color: var(--color-status-error);
+        background: var(--color-status-error-subtle);
       }
 
       .insight-header {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
+        gap: var(--space-2);
+        margin-bottom: var(--space-2);
       }
 
       .insight-type {
-        font-weight: 600;
-        font-size: 0.875rem;
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--text-sm);
         text-transform: uppercase;
-        color: #6c757d;
+        color: var(--color-text-secondary);
       }
 
       .insight-text {
-        margin: 0.5rem 0;
-        color: #333;
+        margin: var(--space-2) 0;
+        color: var(--color-text-primary);
       }
 
       .insight-actions {
         display: flex;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
+        gap: var(--space-2);
+        margin-top: var(--space-2);
       }
 
       .voice-controls {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: var(--space-2);
       }
 
       .voice-button {
@@ -525,67 +525,67 @@ declare global {
       }
 
       .voice-feedback {
-        padding: 0.5rem;
-        background: #f8f9fa;
-        border-radius: 0.25rem;
-        font-size: 0.75rem;
-        color: #6c757d;
+        padding: var(--space-2);
+        background: var(--surface-secondary);
+        border-radius: var(--radius-sm);
+        font-size: var(--text-xs);
+        color: var(--color-text-secondary);
       }
 
       .recommendation-card {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background: #f8f9fa;
+        padding: var(--space-4);
+        border-radius: var(--radius-lg);
+        background: var(--surface-secondary);
       }
 
       .recommendation-content h5 {
-        margin: 0 0 0.5rem 0;
-        color: #333;
+        margin: 0 0 var(--space-2) 0;
+        color: var(--color-text-primary);
       }
 
       .recommendation-content p {
-        margin: 0.5rem 0;
-        color: #666;
-        font-size: 0.875rem;
+        margin: var(--space-2) 0;
+        color: var(--color-text-secondary);
+        font-size: var(--text-sm);
       }
 
       .recommendation-metrics {
         display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
+        gap: var(--space-4);
+        margin-top: var(--space-4);
       }
 
       .metric {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: var(--space-1);
       }
 
       .metric-label {
-        font-size: 0.75rem;
-        color: #6c757d;
+        font-size: var(--text-xs);
+        color: var(--color-text-secondary);
       }
 
       .metric-value {
-        font-weight: 600;
-        color: #28a745;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-brand-primary);
       }
 
       .recommendation-actions {
         display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
+        gap: var(--space-2);
+        margin-top: var(--space-4);
       }
 
       .performance-feedback {
-        padding-top: 1rem;
-        border-top: 1px solid #e9ecef;
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--color-border-primary);
       }
 
       .feedback-meters {
         display: flex;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: var(--space-4);
         justify-content: center;
       }
 
@@ -593,21 +593,21 @@ declare global {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--space-2);
       }
 
       .meter label {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #333;
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
       }
 
       .metric-trend {
         display: flex;
         align-items: center;
-        gap: 0.25rem;
-        font-size: 0.75rem;
-        color: #6c757d;
+        gap: var(--space-1);
+        font-size: var(--text-xs);
+        color: var(--color-text-secondary);
       }
 
       .training-companion.minimized .companion-interface {
@@ -616,7 +616,7 @@ declare global {
 
       @media (max-width: 768px) {
         .companion-interface {
-          width: calc(100vw - 2rem);
+          width: calc(100vw - var(--space-8));
           max-width: none;
         }
       }
@@ -926,9 +926,9 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
   }
 
   getMetricColor(value: number): string {
-    if (value >= 80) return "#28a745";
-    if (value >= 60) return "#ffc107";
-    return "#dc3545";
+    if (value >= 80) return "var(--color-status-success)";
+    if (value >= 60) return "var(--color-status-warning)";
+    return "var(--color-status-error)";
   }
 
   hasQuickActions(): boolean {

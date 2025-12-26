@@ -176,20 +176,20 @@ import { ButtonModule } from "primeng/button";
         background: var(--color-brand-light);
         border-radius: 50%;
         color: var(--color-brand-primary);
-        font-size: 2rem;
+        font-size: var(--icon-3xl);
       }
 
       .hero-badge {
         padding: var(--space-2) var(--space-4);
         background: var(--surface-secondary);
         border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 600;
+        font-size: var(--font-body-sm);
+        font-weight: var(--font-weight-semibold);
       }
 
       .hero-title {
-        font-size: 3.5rem;
-        font-weight: 800;
+        font-size: var(--font-display-lg);
+        font-weight: var(--font-weight-extrabold);
         margin-bottom: var(--space-6);
         line-height: 1.1;
       }
@@ -199,7 +199,7 @@ import { ButtonModule } from "primeng/button";
       }
 
       .hero-description {
-        font-size: 1.25rem;
+        font-size: var(--font-heading-sm);
         color: var(--text-secondary);
         margin-bottom: var(--space-8);
         max-width: 600px;
@@ -225,13 +225,13 @@ import { ButtonModule } from "primeng/button";
       }
 
       .hero-stat-number {
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-size: var(--font-display-sm);
+        font-weight: var(--font-weight-bold);
         color: var(--color-brand-primary);
       }
 
       .hero-stat-label {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 
@@ -251,13 +251,13 @@ import { ButtonModule } from "primeng/button";
       }
 
       .features-title {
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-size: var(--font-display-sm);
+        font-weight: var(--font-weight-bold);
         margin-bottom: var(--space-4);
       }
 
       .features-subtitle {
-        font-size: 1.125rem;
+        font-size: var(--font-body-lg);
         color: var(--text-secondary);
       }
 
@@ -284,17 +284,17 @@ import { ButtonModule } from "primeng/button";
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        font-size: 1.5rem;
+        font-size: var(--icon-2xl);
       }
 
       .feature-icon-analytics {
-        background: rgba(8, 153, 73, 0.1);
+        background: var(--color-brand-primary-subtle);
         color: var(--color-brand-primary);
       }
 
       .feature-card-title {
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-3);
       }
 

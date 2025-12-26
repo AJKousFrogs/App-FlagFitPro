@@ -259,8 +259,8 @@ interface EquipmentOption {
       }
 
       .session-type-option i {
-        font-size: 1.25rem;
-        color: var(--p-primary-color);
+        font-size: var(--icon-lg);
+        color: var(--color-brand-primary);
       }
 
       .option-label {
@@ -291,7 +291,7 @@ interface EquipmentOption {
       }
 
       .weather-indicator i {
-        color: var(--p-primary-color);
+        color: var(--color-brand-primary);
       }
 
       .switch-label {
@@ -323,7 +323,7 @@ interface EquipmentOption {
       }
 
       .equipment-option i {
-        font-size: 1.125rem;
+        font-size: var(--icon-lg);
       }
 
       .form-actions {

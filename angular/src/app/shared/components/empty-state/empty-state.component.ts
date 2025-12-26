@@ -26,8 +26,8 @@ import { ButtonModule } from "primeng/button";
       }
       @if (actionLabel() && actionHandler()) {
         <p-button
-          [label]="actionLabel()"
-          [icon]="actionIcon()"
+          [label]="actionLabel() || ''"
+          [icon]="actionIcon() || undefined"
           (onClick)="actionHandler()!()"
           [outlined]="true"
         ></p-button>
@@ -52,36 +52,36 @@ import { ButtonModule } from "primeng/button";
       }
 
       .empty-icon {
-        font-size: 4rem;
+        font-size: var(--icon-5xl);
         margin-bottom: var(--space-4);
         opacity: 0.5;
       }
 
       .empty-state.compact .empty-icon {
-        font-size: 2.5rem;
+        font-size: var(--icon-4xl);
         margin-bottom: var(--space-3);
       }
 
       .empty-title {
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
         margin-bottom: var(--space-2);
       }
 
       .empty-state.compact .empty-title {
-        font-size: 1.25rem;
+        font-size: var(--font-heading-sm);
       }
 
       .empty-message {
-        font-size: 1rem;
+        font-size: var(--font-body-md);
         color: var(--text-secondary);
         margin-bottom: var(--space-4);
         max-width: 500px;
       }
 
       .empty-state.compact .empty-message {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         margin-bottom: var(--space-3);
       }
 
@@ -92,15 +92,15 @@ import { ButtonModule } from "primeng/button";
         }
 
         .empty-icon {
-          font-size: 3rem;
+          font-size: var(--icon-4xl);
         }
 
         .empty-title {
-          font-size: 1.25rem;
+          font-size: var(--font-heading-sm);
         }
 
         .empty-message {
-          font-size: 0.875rem;
+          font-size: var(--font-body-sm);
         }
       }
     `,

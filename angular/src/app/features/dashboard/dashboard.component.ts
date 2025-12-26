@@ -92,7 +92,7 @@ import { HeaderService } from "../../core/services/header.service";
       }
 
       .activity-time {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 
@@ -117,13 +117,13 @@ import { HeaderService } from "../../core/services/header.service";
       }
 
       .session-day {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-bold);
         color: var(--color-brand-primary);
       }
 
       .session-month {
-        font-size: 0.75rem;
+        font-size: var(--font-body-xs);
         color: var(--text-secondary);
         text-transform: uppercase;
       }
@@ -138,7 +138,7 @@ import { HeaderService } from "../../core/services/header.service";
       }
 
       .session-time {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
     `,

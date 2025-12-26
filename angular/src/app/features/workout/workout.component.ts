@@ -176,14 +176,14 @@ interface Workout {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-2);
         color: var(--text-primary);
       }
 
       .page-subtitle {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin: 0;
       }
@@ -200,8 +200,8 @@ interface Workout {
 
       .workout-header h3 {
         margin: 0;
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: var(--font-heading-sm);
+        font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
       }
 
@@ -231,7 +231,7 @@ interface Workout {
       .exercise-details {
         display: flex;
         gap: var(--space-2);
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
       }
 
@@ -282,7 +282,7 @@ interface Workout {
 
       .workout-date,
       .workout-stats {
-        font-size: 0.875rem;
+        font-size: var(--font-body-sm);
         color: var(--text-secondary);
         margin: 0;
       }

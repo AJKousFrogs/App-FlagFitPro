@@ -120,7 +120,7 @@ import {
       }
 
       .breadcrumb-item i {
-        font-size: 0.875rem;
+        font-size: var(--icon-sm);
       }
 
       .breadcrumb-link {
@@ -152,7 +152,7 @@ import {
       }
 
       .quick-action-item i {
-        font-size: 0.875rem;
+        font-size: var(--icon-sm);
       }
 
       @media (max-width: 768px) {

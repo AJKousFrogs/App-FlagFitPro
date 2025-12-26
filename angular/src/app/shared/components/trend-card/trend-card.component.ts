@@ -54,20 +54,20 @@ export interface TrendData {
       .trend-header {
         display: flex;
         align-items: flex-start;
-        gap: 1rem;
-        margin-bottom: 1rem;
+        gap: var(--space-4);
+        margin-bottom: var(--space-4);
       }
 
       .trend-icon {
         width: 48px;
         height: 48px;
-        border-radius: 12px;
-        background: var(--p-primary-50);
-        color: var(--p-primary-600);
+        border-radius: var(--radius-xl);
+        background: var(--color-brand-primary-subtle);
+        color: var(--color-brand-primary);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: var(--text-2xl);
         flex-shrink: 0;
       }
 
@@ -76,53 +76,53 @@ export interface TrendData {
       }
 
       .trend-title {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin: 0 0 0.25rem 0;
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin: 0 0 var(--space-1) 0;
       }
 
       .trend-subtitle {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
+        font-size: var(--text-xs);
+        color: var(--color-text-secondary);
         margin: 0;
       }
 
       .trend-body {
-        margin-top: 1rem;
+        margin-top: var(--space-4);
       }
 
       .trend-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
+        font-size: var(--text-3xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--space-2);
       }
 
       .trend-change {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 600;
+        gap: var(--space-2);
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-semibold);
       }
 
       .trend-change.up {
-        color: #22c55e;
+        color: var(--color-status-success);
       }
 
       .trend-change.down {
-        color: #ef4444;
+        color: var(--color-status-error);
       }
 
       .trend-change.stable {
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
       }
 
       .change-label {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-        font-weight: normal;
+        font-size: var(--text-xs);
+        color: var(--color-text-secondary);
+        font-weight: var(--font-weight-normal);
       }
     `,
   ],

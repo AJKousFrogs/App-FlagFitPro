@@ -110,25 +110,27 @@ import { CommonModule } from "@angular/common";
       }
 
       .btn-danger {
-        background-color: var(--p-error-color);
-        color: var(--p-text-on-error-color, #fff);
-        border-color: var(--p-error-color);
+        background-color: var(--color-status-error);
+        color: var(--color-text-on-primary);
+        border-color: var(--color-status-error);
       }
 
       .btn-danger:hover:not(:disabled) {
-        background-color: var(--p-error-color-hover, #d32f2f);
-        border-color: var(--p-error-color-hover, #d32f2f);
+        background-color: var(--color-status-error);
+        border-color: var(--color-status-error);
+        filter: brightness(0.9);
       }
 
       .btn-success {
-        background-color: var(--p-success-color, #4caf50);
-        color: var(--p-text-on-success-color, #fff);
-        border-color: var(--p-success-color, #4caf50);
+        background-color: var(--color-status-success);
+        color: var(--color-text-on-primary);
+        border-color: var(--color-status-success);
       }
 
       .btn-success:hover:not(:disabled) {
-        background-color: var(--p-success-color-hover, #45a049);
-        border-color: var(--p-success-color-hover, #45a049);
+        background-color: var(--color-status-success);
+        border-color: var(--color-status-success);
+        filter: brightness(0.9);
       }
 
       /* Sizes */

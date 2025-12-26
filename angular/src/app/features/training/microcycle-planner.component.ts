@@ -235,19 +235,19 @@ interface DayPlan {
       }
 
       .text-red-600 {
-        color: #dc2626;
+        color: var(--color-status-error);
       }
 
       .text-yellow-500 {
-        color: #eab308;
+        color: var(--color-status-warning);
       }
 
       .text-green-500 {
-        color: #22c55e;
+        color: var(--color-status-success);
       }
 
       .text-orange-500 {
-        color: #f97316;
+        color: var(--color-status-warning);
       }
     `,
   ],
@@ -528,9 +528,9 @@ export class MicrocyclePlannerComponent implements OnInit {
   }
 
   getSprintLoadColor(load: number): string {
-    if (load >= 15) return "#f97316"; // orange
-    if (load >= 8) return "#22c55e"; // green
-    return "#3b82f6"; // blue
+    if (load >= 15) return "var(--color-status-warning)"; // orange
+    if (load >= 8) return "var(--color-status-success)"; // green
+    return "var(--color-status-info)"; // blue
   }
 
   getACWRColor(acwr: number): string {

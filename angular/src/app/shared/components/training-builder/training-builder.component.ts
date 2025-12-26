@@ -347,8 +347,8 @@ interface Goal {
       }
 
       .goal-card i {
-        font-size: 2rem;
-        margin-bottom: 1rem;
+        font-size: var(--icon-2xl);
+        margin-bottom: var(--space-4);
       }
 
       .goal-card h4 {
@@ -405,15 +405,15 @@ interface Goal {
       }
 
       .intensity-indicator.intensity-low {
-        background: #10c96b;
+        background: var(--color-status-success);
       }
 
       .intensity-indicator.intensity-medium {
-        background: #f1c40f;
+        background: var(--color-status-warning);
       }
 
       .intensity-indicator.intensity-high {
-        background: #ef4444;
+        background: var(--color-status-error);
       }
 
       .weather-notice {
@@ -472,11 +472,11 @@ interface Goal {
       }
 
       .marker-warmup {
-        background: #f1c40f;
+        background: var(--color-status-warning);
       }
 
       .marker-cooldown {
-        background: #10c96b;
+        background: var(--color-brand-primary);
       }
 
       .timeline-card {
