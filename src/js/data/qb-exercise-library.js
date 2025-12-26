@@ -1,7 +1,16 @@
 /**
- * QB-Specific Exercise Library
- * Specialized exercises for quarterback development
- * Focuses on: Arm strength, shoulder health, hip flexibility, throwing mechanics
+ * ⚠️ DEPRECATED: QB-Specific Exercise Library (Legacy)
+ * 
+ * This static exercise library is deprecated.
+ * QB exercises are now stored in the database `exercises` table.
+ * 
+ * Use the API to fetch QB-specific exercises:
+ *   GET /api/training-programs/exercises?sessionId={sessionId}
+ * 
+ * See /src/data/qb-training/DEPRECATED.md for migration guide.
+ * This file will be removed in Q2 2026.
+ * 
+ * @deprecated Use database via API
  */
 
 /**

@@ -5,17 +5,12 @@
 // - Game-to-game performance metrics
 // Endpoint: /api/trends/:type
 
-const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
-  handleValidationError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 const { getWeekNumber } = require("./utils/date-utils.cjs");
 
 /**
@@ -202,78 +197,43 @@ async function getGamePerformanceTrend(athleteId, games = 5) {
 /**
  * Main handler
  */
-exports.handler = async (event, _context) => {
-  // CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-      body: "",
-    };
-  }
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "trends",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: true,
+    handler: async (event, _context, { userId }) => {
+      // Parse path parameters
+      const pathParts = event.path.split("/").filter((p) => p);
+      const trendType = pathParts[pathParts.length - 1];
 
-  logFunctionCall("trends", event.httpMethod);
+      // Parse query parameters
+      const athleteId = event.queryStringParameters?.athleteId || userId;
+      const weeks = parseInt(event.queryStringParameters?.weeks || "4", 10);
+      const games = parseInt(event.queryStringParameters?.games || "5", 10);
 
-  try {
-    checkEnvVars();
+      let result;
 
-    if (event.httpMethod !== "GET") {
-      return createErrorResponse(
-        "Method not allowed. Use GET to retrieve trends.",
-        405,
-        "method_not_allowed",
-      );
-    }
+      switch (trendType) {
+        case "change-of-direction":
+          result = await getChangeOfDirectionTrend(athleteId, weeks);
+          break;
+        case "sprint-volume":
+          result = await getSprintVolumeTrend(athleteId, weeks);
+          break;
+        case "game-performance":
+          result = await getGamePerformanceTrend(athleteId, games);
+          break;
+        default:
+          return createErrorResponse(
+            `Unknown trend type: ${trendType}. Supported: change-of-direction, sprint-volume, game-performance`,
+            400,
+            "invalid_trend_type"
+          );
+      }
 
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "READ");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-
-    // Parse path parameters
-    const pathParts = event.path.split("/").filter((p) => p);
-    const trendType = pathParts[pathParts.length - 1]; // e.g., 'change-of-direction', 'sprint-volume', 'game-performance'
-
-    // Parse query parameters
-    // If athleteId not provided, use authenticated user's ID
-    const athleteId = event.queryStringParameters?.athleteId || userId;
-    const weeks = parseInt(event.queryStringParameters?.weeks || "4", 10);
-    const games = parseInt(event.queryStringParameters?.games || "5", 10);
-
-    if (!athleteId) {
-      return handleValidationError("athleteId query parameter is required");
-    }
-
-    let result;
-
-    switch (trendType) {
-      case "change-of-direction":
-        result = await getChangeOfDirectionTrend(athleteId, weeks);
-        break;
-      case "sprint-volume":
-        result = await getSprintVolumeTrend(athleteId, weeks);
-        break;
-      case "game-performance":
-        result = await getGamePerformanceTrend(athleteId, games);
-        break;
-      default:
-        return createErrorResponse(
-          400,
-          `Unknown trend type: ${trendType}. Supported: change-of-direction, sprint-volume, game-performance`,
-        );
-    }
-
-    return createSuccessResponse(result);
-  } catch (error) {
-    return handleServerError(error, "trends");
-  }
+      return createSuccessResponse(result);
+    },
+  });
 };

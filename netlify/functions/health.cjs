@@ -5,7 +5,8 @@
 // This endpoint does NOT require authentication and is rate-limited separately
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
-const { CORS_HEADERS } = require("./utils/error-handler.cjs");
+const { createSuccessResponse, createErrorResponse } = require("./utils/error-handler.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
 // Check database connectivity
 async function checkDatabase() {
@@ -74,92 +75,46 @@ function getSystemInfo() {
   };
 }
 
-exports.handler = async (event, _context) => {
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-      body: "",
-    };
-  }
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "health",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: false, // Health checks should be public
+    handler: async (event, _context, { requestId }) => {
+      const startTime = Date.now();
 
-  // Only allow GET requests
-  if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers: CORS_HEADERS,
-      body: JSON.stringify({
-        success: false,
-        error: "Method not allowed",
-      }),
-    };
-  }
+      // Run health checks in parallel
+      const [dbHealth, authHealth] = await Promise.all([
+        checkDatabase(),
+        checkAuth(),
+      ]);
 
-  const startTime = Date.now();
-  const requestId = `health_${Date.now()}`;
+      const totalLatency = Date.now() - startTime;
 
-  try {
-    // Run health checks in parallel
-    const [dbHealth, authHealth] = await Promise.all([
-      checkDatabase(),
-      checkAuth(),
-    ]);
+      // Determine overall status
+      const overallStatus =
+        dbHealth.status === "healthy" && authHealth.status === "healthy"
+          ? "healthy"
+          : "degraded";
 
-    const totalLatency = Date.now() - startTime;
-
-    // Determine overall status
-    const overallStatus =
-      dbHealth.status === "healthy" && authHealth.status === "healthy"
-        ? "healthy"
-        : "degraded";
-
-    const response = {
-      success: true,
-      status: overallStatus,
-      timestamp: new Date().toISOString(),
-      requestId,
-      version: "1.0.0",
-      checks: {
-        database: dbHealth,
-        auth: authHealth,
-      },
-      system: getSystemInfo(),
-      totalLatency,
-    };
-
-    // Use appropriate status code
-    const statusCode = overallStatus === "healthy" ? 200 : 503;
-
-    return {
-      statusCode,
-      headers: {
-        ...CORS_HEADERS,
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "X-Request-Id": requestId,
-        "X-Response-Time": `${totalLatency}ms`,
-      },
-      body: JSON.stringify(response),
-    };
-  } catch (error) {
-    console.error(`[HEALTH CHECK ERROR] [${requestId}]:`, error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        ...CORS_HEADERS,
-        "Content-Type": "application/json",
-        "X-Request-Id": requestId,
-      },
-      body: JSON.stringify({
-        success: false,
-        status: "unhealthy",
-        error: "Health check failed",
-        requestId,
+      const response = {
+        status: overallStatus,
         timestamp: new Date().toISOString(),
-      }),
-    };
-  }
+        version: "1.0.0",
+        checks: {
+          database: dbHealth,
+          auth: authHealth,
+        },
+        system: getSystemInfo(),
+        totalLatency,
+      };
+
+      // Use appropriate status code
+      const statusCode = overallStatus === "healthy" ? 200 : 503;
+
+      return createSuccessResponse(response, requestId, statusCode);
+    },
+  });
 };
 

@@ -1,52 +1,41 @@
 // Netlify Function: Create Notification
 // Creates a notification in the database (for push notifications to sync with in-app)
 
-const { db, checkEnvVars } = require("./supabase-client.cjs");
+const { db } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
-  handleValidationError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("NotificationsCreate", event);
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "notifications-create",
+    allowedMethods: ["POST"],
+    rateLimitType: "CREATE",
+    requireAuth: true,
+    handler: async (event, _context, { userId, requestId }) => {
+      let body;
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch {
+        return createErrorResponse(
+          "Invalid JSON in request body",
+          400,
+          "invalid_json",
+          requestId
+        );
+      }
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
-
-  try {
-    checkEnvVars();
-
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "CREATE");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-
-    if (event.httpMethod === "POST") {
-      const body = JSON.parse(event.body || "{}");
       const { type, message, priority } = body;
 
       if (!type || !message) {
-        return handleValidationError("type and message are required");
+        return createErrorResponse(
+          "type and message are required",
+          400,
+          "validation_error",
+          requestId
+        );
       }
 
       // Check user preferences - don't create if muted
@@ -55,45 +44,29 @@ exports.handler = async (event, _context) => {
 
       if (typePrefs && typePrefs.muted) {
         // Still create in DB but don't show push notification
-        // This allows users to see muted notifications in history
         const notification = await db.notifications.createNotification(userId, {
           type,
           message,
           priority: priority || "medium",
         });
 
-        return createSuccessResponse({
-          ...notification,
-          muted: true,
-          message: "Notification created but muted per user preferences",
-        });
-      }
-
-      try {
-        const notification = await db.notifications.createNotification(userId, {
-          type,
-          message,
-          priority: priority || "medium",
-        });
-
-        return createSuccessResponse(notification);
-      } catch (dbError) {
-        console.error("Database error:", dbError);
-        return createErrorResponse(
-          "Failed to create notification",
-          500,
-          "database_error",
+        return createSuccessResponse(
+          {
+            ...notification,
+            muted: true,
+            message: "Notification created but muted per user preferences",
+          },
+          requestId
         );
       }
-    } else {
-      return createErrorResponse(
-        "Method not allowed",
-        405,
-        "method_not_allowed",
-      );
-    }
-  } catch (error) {
-    console.error("Error in notifications-create function:", error);
-    return handleServerError(error, "NotificationsCreate");
-  }
+
+      const notification = await db.notifications.createNotification(userId, {
+        type,
+        message,
+        priority: priority || "medium",
+      });
+
+      return createSuccessResponse(notification, requestId);
+    },
+  });
 };

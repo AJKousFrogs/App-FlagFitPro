@@ -9,49 +9,92 @@ const {
 const { supabaseAdmin } = require("./supabase-client.cjs");
 
 /**
+ * Common foods database for quick lookup
+ * Used when USDA API is not configured
+ */
+const COMMON_FOODS_DB = {
+  chicken: { energy: 165, protein: 31, carbohydrates: 0, fat: 3.6, category: "Protein" },
+  "chicken breast": { energy: 165, protein: 31, carbohydrates: 0, fat: 3.6, category: "Protein" },
+  beef: { energy: 250, protein: 26, carbohydrates: 0, fat: 15, category: "Protein" },
+  salmon: { energy: 208, protein: 20, carbohydrates: 0, fat: 13, category: "Protein" },
+  eggs: { energy: 155, protein: 13, carbohydrates: 1.1, fat: 11, category: "Protein" },
+  egg: { energy: 78, protein: 6, carbohydrates: 0.6, fat: 5, category: "Protein" },
+  rice: { energy: 130, protein: 2.7, carbohydrates: 28, fat: 0.3, category: "Grains" },
+  "brown rice": { energy: 112, protein: 2.6, carbohydrates: 24, fat: 0.9, category: "Grains" },
+  pasta: { energy: 131, protein: 5, carbohydrates: 25, fat: 1.1, category: "Grains" },
+  bread: { energy: 265, protein: 9, carbohydrates: 49, fat: 3.2, category: "Grains" },
+  oatmeal: { energy: 68, protein: 2.4, carbohydrates: 12, fat: 1.4, category: "Grains" },
+  banana: { energy: 89, protein: 1.1, carbohydrates: 23, fat: 0.3, category: "Fruits" },
+  apple: { energy: 52, protein: 0.3, carbohydrates: 14, fat: 0.2, category: "Fruits" },
+  orange: { energy: 47, protein: 0.9, carbohydrates: 12, fat: 0.1, category: "Fruits" },
+  broccoli: { energy: 34, protein: 2.8, carbohydrates: 7, fat: 0.4, category: "Vegetables" },
+  spinach: { energy: 23, protein: 2.9, carbohydrates: 3.6, fat: 0.4, category: "Vegetables" },
+  "sweet potato": { energy: 86, protein: 1.6, carbohydrates: 20, fat: 0.1, category: "Vegetables" },
+  milk: { energy: 42, protein: 3.4, carbohydrates: 5, fat: 1, category: "Dairy" },
+  yogurt: { energy: 59, protein: 10, carbohydrates: 3.6, fat: 0.7, category: "Dairy" },
+  "greek yogurt": { energy: 59, protein: 10, carbohydrates: 3.6, fat: 0.7, category: "Dairy" },
+  cheese: { energy: 402, protein: 25, carbohydrates: 1.3, fat: 33, category: "Dairy" },
+  almonds: { energy: 579, protein: 21, carbohydrates: 22, fat: 50, category: "Nuts" },
+  "peanut butter": { energy: 588, protein: 25, carbohydrates: 20, fat: 50, category: "Nuts" },
+  avocado: { energy: 160, protein: 2, carbohydrates: 9, fat: 15, category: "Fats" },
+  "olive oil": { energy: 884, protein: 0, carbohydrates: 0, fat: 100, category: "Fats" },
+  "protein shake": { energy: 120, protein: 24, carbohydrates: 3, fat: 1, category: "Supplements" },
+  "whey protein": { energy: 120, protein: 24, carbohydrates: 3, fat: 1, category: "Supplements" },
+};
+
+/**
  * Search USDA FoodData Central database
- * Note: In production, this would integrate with USDA API
- * For now, returns mock data based on query
+ * 
+ * FUTURE: Integrate with USDA FoodData Central API
+ * API Key required: https://fdc.nal.usda.gov/api-key-signup.html
+ * 
+ * For now, uses a local common foods database with accurate nutritional data
  */
 async function searchUSDAFoods(query) {
-  // TODO: Integrate with USDA FoodData Central API
-  // For now, return mock data
-  const mockFoods = [
-    {
-      fdcId: 1001,
-      description: `${query} - Raw`,
-      foodCategory: "Vegetables",
-      energy: 25,
-      protein: 2,
-      carbohydrates: 5,
-      fat: 0.2,
-      fiber: 2,
-      sugars: 3,
-      sodium: 5,
-      calcium: 20,
-      iron: 0.5,
-      vitaminC: 10,
-    },
-    {
-      fdcId: 1002,
-      description: `${query} - Cooked`,
-      foodCategory: "Vegetables",
-      energy: 35,
-      protein: 2.5,
-      carbohydrates: 7,
-      fat: 0.3,
-      fiber: 2.5,
-      sugars: 4,
-      sodium: 8,
-      calcium: 25,
-      iron: 0.6,
-      vitaminC: 8,
-    },
-  ];
+  const searchTerm = query.toLowerCase().trim();
+  const results = [];
+  let fdcIdCounter = 1000;
 
-  return mockFoods.filter((food) =>
-    food.description.toLowerCase().includes(query.toLowerCase()),
-  );
+  // Search in common foods database
+  for (const [foodName, nutrients] of Object.entries(COMMON_FOODS_DB)) {
+    if (foodName.includes(searchTerm) || searchTerm.includes(foodName)) {
+      results.push({
+        fdcId: fdcIdCounter++,
+        description: foodName.charAt(0).toUpperCase() + foodName.slice(1),
+        foodCategory: nutrients.category,
+        energy: nutrients.energy,
+        protein: nutrients.protein,
+        carbohydrates: nutrients.carbohydrates,
+        fat: nutrients.fat,
+        fiber: nutrients.fiber || 0,
+        sugars: nutrients.sugars || 0,
+        sodium: nutrients.sodium || 0,
+        servingSize: "100g",
+        source: "local_db",
+      });
+    }
+  }
+
+  // If no exact matches, provide generic entry for the search term
+  if (results.length === 0) {
+    results.push({
+      fdcId: fdcIdCounter++,
+      description: `${query} (custom entry)`,
+      foodCategory: "Custom",
+      energy: 0,
+      protein: 0,
+      carbohydrates: 0,
+      fat: 0,
+      fiber: 0,
+      sugars: 0,
+      sodium: 0,
+      servingSize: "100g",
+      source: "custom",
+      note: "Enter nutritional values manually for accurate tracking",
+    });
+  }
+
+  return results;
 }
 
 /**

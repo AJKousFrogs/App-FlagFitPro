@@ -1,5 +1,44 @@
 // Netlify Function: Admin API
 // Handles admin-only operations: health metrics, data syncs, backups, statistics
+//
+// =============================================================================
+// FUTURE FEATURES DOCUMENTATION
+// =============================================================================
+//
+// The following sync functions are currently returning MOCK DATA and are
+// planned for future implementation:
+//
+// 1. USDA Food Data Sync (syncUSDAData)
+//    - Purpose: Sync nutritional data from USDA FoodData Central API
+//    - API: https://fdc.nal.usda.gov/api-guide.html
+//    - Requirements: USDA API key (free registration)
+//    - Tables needed: usda_foods, usda_nutrients
+//    - Implementation: Schedule daily/weekly sync via Netlify scheduled functions
+//
+// 2. Research Data Sync (syncResearchData)
+//    - Purpose: Sync sports science research and recovery protocols
+//    - Sources: PubMed API, custom research database
+//    - Tables needed: research_studies, recovery_protocols
+//    - Implementation: Manual trigger or scheduled sync
+//
+// 3. Database Backup (createDatabaseBackup)
+//    - Purpose: Create point-in-time backups of the database
+//    - Implementation: Use Supabase's built-in backup features or pg_dump
+//    - Storage: Supabase Storage or external cloud storage (S3, GCS)
+//    - Note: Supabase Pro plan includes automatic daily backups
+//
+// 4. Sync Status Tracking (getSyncStatus)
+//    - Purpose: Track status of all data sync operations
+//    - Tables needed: sync_logs
+//    - Schema: { id, source, timestamp, result, severity, records_updated, error_message }
+//
+// To implement these features:
+// 1. Create necessary database tables via migrations
+// 2. Add required API keys to environment variables
+// 3. Replace mock functions with actual API calls
+// 4. Set up scheduled functions in netlify.toml if needed
+//
+// =============================================================================
 
 const { baseHandler } = require("./utils/base-handler.cjs");
 const {
@@ -118,17 +157,32 @@ async function getHealthMetrics() {
 
 /**
  * Sync USDA food data
- * Note: In production, this would call USDA FoodData Central API
+ *
+ * FUTURE FEATURE: This function currently returns mock data.
+ *
+ * To implement:
+ * 1. Register for USDA FoodData Central API key at https://fdc.nal.usda.gov/api-key-signup.html
+ * 2. Add USDA_API_KEY to environment variables
+ * 3. Create usda_foods table: { fdc_id, description, category, nutrients JSONB }
+ * 4. Implement paginated fetch from USDA API
+ * 5. Log sync results to sync_logs table
+ *
+ * @returns {Object} Mock sync result (PLACEHOLDER)
  */
 function syncUSDAData() {
   try {
     // TODO: Implement actual USDA API sync
-    // For now, return success with mock data
+    // Example implementation:
+    // const response = await fetch(`https://api.nal.usda.gov/fdc/v1/foods/list?api_key=${process.env.USDA_API_KEY}`);
+    // const foods = await response.json();
+    // await supabaseAdmin.from('usda_foods').upsert(foods);
+
     const mockResult = {
       success: true,
       recordsUpdated: 1250,
       timestamp: new Date().toISOString(),
-      message: "USDA data sync completed (mock)",
+      message: "USDA data sync completed (MOCK - not yet implemented)",
+      _isMock: true,
     };
 
     // In production, would update a sync_logs table
@@ -141,17 +195,31 @@ function syncUSDAData() {
 
 /**
  * Sync research data
- * Note: In production, this would sync from research databases
+ *
+ * FUTURE FEATURE: This function currently returns mock data.
+ *
+ * To implement:
+ * 1. Define research data sources (PubMed, custom database, etc.)
+ * 2. Create research_studies table: { id, title, authors, abstract, category, doi, published_date }
+ * 3. Create recovery_protocols table: { id, name, description, duration, effectiveness_score }
+ * 4. Implement API fetching or data import logic
+ * 5. Log sync results to sync_logs table
+ *
+ * @returns {Object} Mock sync result (PLACEHOLDER)
  */
 function syncResearchData() {
   try {
     // TODO: Implement actual research database sync
-    // For now, return success with mock data
+    // Example implementation:
+    // const studies = await fetchFromResearchAPI();
+    // await supabaseAdmin.from('research_studies').upsert(studies);
+
     const mockResult = {
       success: true,
       recordsUpdated: 45,
       timestamp: new Date().toISOString(),
-      message: "Research data sync completed (mock)",
+      message: "Research data sync completed (MOCK - not yet implemented)",
+      _isMock: true,
     };
 
     // In production, would update a sync_logs table
@@ -164,19 +232,37 @@ function syncResearchData() {
 
 /**
  * Create database backup
- * Note: In production, this would trigger actual backup process
+ *
+ * FUTURE FEATURE: This function currently returns mock data.
+ *
+ * To implement:
+ * Option A - Supabase Pro Plan:
+ *   - Use Supabase's automatic daily backups (included in Pro plan)
+ *   - Access via Supabase Dashboard > Settings > Database > Backups
+ *
+ * Option B - Manual backup:
+ *   1. Set up a secure server with pg_dump access
+ *   2. Create a scheduled function to run pg_dump
+ *   3. Upload to Supabase Storage or external cloud storage
+ *   4. Log backup metadata to database_backups table
+ *
+ * @returns {Object} Mock backup info (PLACEHOLDER)
  */
 function createDatabaseBackup() {
   try {
     // TODO: Implement actual backup process
-    // For now, return mock backup info
+    // Note: Supabase Pro plan includes automatic daily backups
+    // For manual backups, consider using pg_dump with Supabase connection string
+
     const timestamp = new Date().toISOString().split("T")[0];
     const backupInfo = {
       filename: `backup-${timestamp}.sql`,
       size: 2456789, // bytes
       timestamp: new Date().toISOString(),
       status: "completed",
-      message: "Backup created successfully (mock)",
+      message: "Backup created successfully (MOCK - not yet implemented)",
+      _isMock: true,
+      _note: "Consider upgrading to Supabase Pro for automatic daily backups",
     };
 
     return backupInfo;
@@ -188,32 +274,73 @@ function createDatabaseBackup() {
 
 /**
  * Get sync status for all data sources
+ *
+ * FUTURE FEATURE: This function currently returns mock data.
+ *
+ * To implement:
+ * 1. Create sync_logs table:
+ *    CREATE TABLE sync_logs (
+ *      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+ *      source TEXT NOT NULL,
+ *      timestamp TIMESTAMPTZ DEFAULT NOW(),
+ *      result TEXT NOT NULL, -- 'success', 'failure', 'partial'
+ *      severity TEXT NOT NULL, -- 'success', 'warning', 'error'
+ *      records_updated INTEGER DEFAULT 0,
+ *      error_message TEXT,
+ *      created_at TIMESTAMPTZ DEFAULT NOW()
+ *    );
+ * 2. Update sync functions to log results to this table
+ * 3. Query this table instead of returning mock data
+ *
+ * @returns {Array} Mock sync status (PLACEHOLDER)
  */
-function getSyncStatus() {
+async function getSyncStatus() {
   try {
-    // TODO: Query actual sync_logs table if it exists
-    // For now, return mock data
+    // Try to query actual sync_logs table
+    const { data, error } = await supabaseAdmin
+      .from("sync_logs")
+      .select("*")
+      .order("timestamp", { ascending: false })
+      .limit(10);
+
+    if (!error && data && data.length > 0) {
+      return data.map((log) => ({
+        source: log.source,
+        timestamp: log.timestamp,
+        result: log.result,
+        severity: log.severity,
+        recordsUpdated: log.records_updated,
+      }));
+    }
+
+    // Fallback to mock data if table doesn't exist or is empty
     return [
       {
         source: "USDA Foods",
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-        result: "success",
-        severity: "success",
-        recordsUpdated: 1250,
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        result: "pending",
+        severity: "warning",
+        recordsUpdated: 0,
+        _isMock: true,
+        _note: "Sync not yet implemented - create sync_logs table",
       },
       {
         source: "Research Studies",
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-        result: "success",
-        severity: "success",
-        recordsUpdated: 45,
+        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        result: "pending",
+        severity: "warning",
+        recordsUpdated: 0,
+        _isMock: true,
+        _note: "Sync not yet implemented - create sync_logs table",
       },
       {
         source: "Recovery Protocols",
-        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
-        result: "success",
-        severity: "success",
-        recordsUpdated: 8,
+        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+        result: "pending",
+        severity: "warning",
+        recordsUpdated: 0,
+        _isMock: true,
+        _note: "Sync not yet implemented - create sync_logs table",
       },
     ];
   } catch (error) {
@@ -224,16 +351,40 @@ function getSyncStatus() {
 
 /**
  * Get USDA data statistics
+ *
+ * FUTURE FEATURE: This function currently returns mock data.
+ *
+ * To implement:
+ * 1. Create usda_foods table with USDA data
+ * 2. Query actual counts from the table
+ *
+ * @returns {Object} Mock USDA stats (PLACEHOLDER)
  */
-function getUSDADataStats() {
+async function getUSDADataStats() {
   try {
-    // TODO: Query actual USDA data table if it exists
-    // For now, return mock stats
+    // Try to query actual usda_foods table
+    const { count, error } = await supabaseAdmin
+      .from("usda_foods")
+      .select("*", { count: "exact", head: true });
+
+    if (!error && count !== null) {
+      return {
+        totalFoods: count,
+        lastUpdated: new Date().toISOString(),
+        categories: 25, // Would need separate query
+        nutrientsTracked: 150,
+        _isMock: false,
+      };
+    }
+
+    // Fallback to mock stats if table doesn't exist
     return {
-      totalFoods: 376000,
-      lastUpdated: new Date().toISOString(),
-      categories: 25,
-      nutrientsTracked: 150,
+      totalFoods: 0,
+      lastUpdated: null,
+      categories: 0,
+      nutrientsTracked: 0,
+      _isMock: true,
+      _note: "USDA data not yet synced - table does not exist or is empty",
     };
   } catch (error) {
     // Log error and re-throw
@@ -243,16 +394,44 @@ function getUSDADataStats() {
 
 /**
  * Get research data statistics
+ *
+ * FUTURE FEATURE: This function currently returns mock data.
+ *
+ * To implement:
+ * 1. Create research_studies and recovery_protocols tables
+ * 2. Query actual counts from the tables
+ *
+ * @returns {Object} Mock research stats (PLACEHOLDER)
  */
-function getResearchDataStats() {
+async function getResearchDataStats() {
   try {
-    // TODO: Query actual research data table if it exists
-    // For now, return mock stats
+    // Try to query actual research_studies table
+    const { count: studiesCount, error: studiesError } = await supabaseAdmin
+      .from("research_studies")
+      .select("*", { count: "exact", head: true });
+
+    const { count: protocolsCount, error: protocolsError } = await supabaseAdmin
+      .from("recovery_protocols")
+      .select("*", { count: "exact", head: true });
+
+    if (!studiesError && !protocolsError && studiesCount !== null) {
+      return {
+        totalStudies: studiesCount || 0,
+        lastUpdated: new Date().toISOString(),
+        categories: 12, // Would need separate query
+        protocolsTracked: protocolsCount || 0,
+        _isMock: false,
+      };
+    }
+
+    // Fallback to mock stats if tables don't exist
     return {
-      totalStudies: 1250,
-      lastUpdated: new Date().toISOString(),
-      categories: 12,
-      protocolsTracked: 85,
+      totalStudies: 0,
+      lastUpdated: null,
+      categories: 0,
+      protocolsTracked: 0,
+      _isMock: true,
+      _note: "Research data not yet synced - tables do not exist or are empty",
     };
   } catch (error) {
     // Log error and re-throw

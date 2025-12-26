@@ -2,16 +2,12 @@
 // Returns training load data for the Training Heatmap component
 // Endpoint: /api/performance/heatmap
 
-const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
 /**
  * Calculate intensity level from training session data
@@ -60,20 +56,22 @@ async function getHeatmapData(userId, timeRange) {
         startDate.setMonth(endDate.getMonth() - 6);
     }
 
-    // Get training sessions in date range
+    // Get training sessions in date range (handle both athlete_id and user_id columns)
     const { data: sessions, error } = await supabaseAdmin
       .from("training_sessions")
       .select("*")
-      .eq("user_id", userId)
+      .or(`athlete_id.eq.${userId},user_id.eq.${userId}`)
       .gte("session_date", startDate.toISOString().split("T")[0])
       .lte("session_date", endDate.toISOString().split("T")[0])
       .order("session_date", { ascending: true });
 
     if (error && error.code !== "42P01") {
+      console.error("[performance-heatmap] Error fetching sessions:", error);
       throw error;
     }
 
     const trainingSessions = sessions || [];
+    console.log(`[performance-heatmap] Found ${trainingSessions.length} sessions for user ${userId}`);
 
     // Group sessions by date
     const sessionsByDate = {};
@@ -205,62 +203,31 @@ function generateMockHeatmapData(timeRange) {
   return cells;
 }
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("Performance-Heatmap", event);
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "performance-heatmap",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: true,
+    handler: async (event, _context, { userId }) => {
+      const timeRange = event.queryStringParameters?.timeRange || "6months";
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
+      // Get heatmap data
+      const cells = await getHeatmapData(userId, timeRange);
 
-  try {
-    // Only allow GET requests
-    if (event.httpMethod !== "GET") {
-      return createErrorResponse(
-        "Method not allowed",
-        405,
-        "method_not_allowed",
-      );
-    }
+      // Return real data (even if empty) - no mock data fallback
+      // This ensures the frontend shows accurate state
+      const hasTrainingData = cells.some((cell) => cell.sessions > 0);
 
-    // Check environment variables
-    checkEnvVars();
-
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "READ");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-    const timeRange = event.queryStringParameters?.timeRange || "6months";
-
-    // Get heatmap data
-    let cells = await getHeatmapData(userId, timeRange);
-
-    // If no data, return mock data for development
-    if (cells.length === 0) {
-      cells = generateMockHeatmapData(timeRange);
-    }
-
-    return createSuccessResponse({ cells, timeRange });
-  } catch (error) {
-    console.error("Error in performance-heatmap function:", error);
-    console.error("Error stack:", error.stack);
-    console.error("Error details:", {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-    });
-    return handleServerError(error, "Performance-Heatmap");
-  }
+      return createSuccessResponse({
+        cells,
+        timeRange,
+        hasData: hasTrainingData,
+        totalSessions: cells.reduce((sum, c) => sum + c.sessions, 0),
+        message: hasTrainingData
+          ? null
+          : "No training sessions found. Log sessions to see your training heatmap.",
+      });
+    },
+  });
 };

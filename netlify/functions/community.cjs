@@ -6,14 +6,9 @@ const { sanitize } = require("./validation.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
-  handleAuthenticationError,
-  handleValidationError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 // Get community feed from database with privacy filtering
 const getCommunityFeed = async (userId, limit = 20) => {
@@ -251,112 +246,105 @@ const createPost = async (userId, postData) => {
   }
 };
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("Community", event);
+exports.handler = async (event, context) => {
+  // Community has special auth handling: optional for GET, required for POST
+  const rateLimitType = event.httpMethod === "POST" ? "CREATE" : "READ";
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
+  return baseHandler(event, context, {
+    functionName: "community",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: rateLimitType,
+    requireAuth: false, // We handle auth manually for flexibility
+    handler: async (event, _context, { requestId }) => {
+      // SECURITY: Authentication (optional for GET, required for POST)
+      let userId = null;
+      const authHeader =
+        event.headers.authorization || event.headers.Authorization;
 
-  try {
-    // SECURITY: Apply rate limiting
-    const rateLimitType = event.httpMethod === "POST" ? "CREATE" : "READ";
-    const rateLimitResponse = applyRateLimit(event, rateLimitType);
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authentication (optional for GET, required for POST)
-    let userId = null;
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
-
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      const auth = await authenticateRequest(event);
-      if (auth.success) {
-        userId = auth.user.id;
-      } else {
-        // For GET requests, continue without auth (show public feed)
-        // For POST requests, return auth error
-        if (event.httpMethod === "POST") {
-          return auth.error;
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        const auth = await authenticateRequest(event);
+        if (auth.success) {
+          userId = auth.user.id;
+        } else if (event.httpMethod === "POST") {
+          return createErrorResponse(
+            "Authentication required to create posts",
+            401,
+            "auth_required",
+            requestId
+          );
         }
       }
-    }
 
-    const queryParams = event.queryStringParameters || {};
-    const { feed, leaderboard, postId, like, limit, category } = queryParams;
+      const queryParams = event.queryStringParameters || {};
+      const { feed, leaderboard, postId, like, limit, category } = queryParams;
 
-    // Handle different endpoints
-    if (event.httpMethod === "GET") {
-      // Handle feed request
-      if (feed === "true" || feed === true) {
+      // Handle GET requests
+      if (event.httpMethod === "GET") {
+        if (feed === "true" || feed === true) {
+          const feedData = await getCommunityFeed(userId, parseInt(limit) || 20);
+          return createSuccessResponse({ posts: feedData }, requestId);
+        }
+
+        if (leaderboard === "true" || leaderboard === true) {
+          const leaderboardData = await getCommunityLeaderboard(
+            category || "overall",
+            parseInt(limit) || 10
+          );
+          return createSuccessResponse(leaderboardData, requestId);
+        }
+
+        if (postId) {
+          return createSuccessResponse({ comments: [] }, requestId);
+        }
+
         const feedData = await getCommunityFeed(userId, parseInt(limit) || 20);
-        return createSuccessResponse({ posts: feedData });
+        return createSuccessResponse({ posts: feedData }, requestId);
       }
 
-      // Handle leaderboard request
-      if (leaderboard === "true" || leaderboard === true) {
-        const leaderboardData = await getCommunityLeaderboard(
-          category || "overall",
-          parseInt(limit) || 10,
+      // Handle POST requests
+      if (event.httpMethod === "POST") {
+        if (!userId) {
+          return createErrorResponse(
+            "Authentication required to create posts",
+            401,
+            "auth_required",
+            requestId
+          );
+        }
+
+        if (like) {
+          return createSuccessResponse(
+            { message: "Post liked" },
+            requestId
+          );
+        }
+
+        let postData = {};
+        try {
+          postData = JSON.parse(event.body || "{}");
+        } catch {
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+            requestId
+          );
+        }
+
+        const newPost = await createPost(userId, postData);
+        return createSuccessResponse(
+          { ...newPost, message: "Post created successfully" },
+          requestId,
+          201
         );
-        return createSuccessResponse(leaderboardData);
       }
 
-      // Handle comments request
-      if (postId) {
-        // Return empty comments for now
-        return createSuccessResponse({ comments: [] });
-      }
-
-      // Default: return feed
-      const feedData = await getCommunityFeed(userId, parseInt(limit) || 20);
-      return createSuccessResponse({ posts: feedData });
-    }
-
-    if (event.httpMethod === "POST") {
-      // SECURITY: Require authentication for all POST operations
-      if (!userId) {
-        return handleAuthenticationError(
-          "Authentication required to create posts",
-        );
-      }
-
-      // Handle like request
-      if (like) {
-        return createSuccessResponse(null, 200, "Post liked");
-      }
-
-      // Parse and validate request body
-      let postData = {};
-      try {
-        postData = JSON.parse(event.body || "{}");
-      } catch (_parseError) {
-        return handleValidationError("Invalid JSON in request body");
-      }
-
-      const newPost = await createPost(userId, postData);
-
-      return createSuccessResponse(newPost, 201, "Post created successfully");
-    }
-
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  } catch (error) {
-    // Handle validation errors
-    if (
-      error.message &&
-      (error.message.includes("required") ||
-        error.message.includes("must be") ||
-        error.message.includes("Invalid"))
-    ) {
-      return handleValidationError(error.message);
-    }
-
-    return handleServerError(error, "Community");
-  }
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+        requestId
+      );
+    },
+  });
 };

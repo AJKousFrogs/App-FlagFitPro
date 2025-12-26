@@ -2,16 +2,11 @@
 // Returns real-time performance metrics for the Performance Dashboard component
 // Endpoint: /api/performance/metrics
 
-const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
-  createErrorResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
 /**
  * Calculate performance trends from historical data
@@ -236,57 +231,19 @@ function getDefaultMetrics() {
   ];
 }
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("Performance-Metrics", event);
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "performance-metrics",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: true,
+    handler: async (event, _context, { userId, requestId }) => {
+      const athleteId = event.queryStringParameters?.athleteId || userId;
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
+      // Get performance metrics
+      const metrics = await getPerformanceMetrics(athleteId);
 
-  try {
-    // Only allow GET requests
-    if (event.httpMethod !== "GET") {
-      return createErrorResponse(
-        "Method not allowed",
-        405,
-        "method_not_allowed",
-      );
-    }
-
-    // Check environment variables
-    checkEnvVars();
-
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "READ");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-    const athleteId = event.queryStringParameters?.athleteId || userId;
-
-    // Get performance metrics
-    const metrics = await getPerformanceMetrics(athleteId);
-
-    return createSuccessResponse({ metrics });
-  } catch (error) {
-    console.error("Error in performance-metrics function:", error);
-    console.error("Error stack:", error.stack);
-    console.error("Error details:", {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-    });
-    return handleServerError(error, "Performance-Metrics");
-  }
+      return createSuccessResponse({ metrics }, requestId);
+    },
+  });
 };

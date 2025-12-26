@@ -214,14 +214,37 @@ CONTEXT7_API_KEY=your_api_key_here
 MCP_CONTEXT7_PORT=3000
 MCP_SEQUENTIAL_THOUGHT_PORT=3001
 
+# AI Coaching (Groq - FREE tier: 14,400 requests/day)
+GROQ_API_KEY=gsk_your_groq_api_key_here
+
 # Development
 VITE_DEV_PORT=4000
 VITE_ENABLE_MCP=true
 VITE_ENABLE_DEVTOOLS=true
 
-# Database
-DATABASE_URL=your_database_url
+# Database (Supabase - ONLY database system)
+SUPABASE_URL=your_supabase_url
+SUPABASE_SERVICE_KEY=your_service_key
+SUPABASE_ANON_KEY=your_anon_key
+JWT_SECRET=your_jwt_secret
 ```
+
+## AI Coaching System
+
+The AI coaching system uses **Groq** as the LLM provider (FREE tier):
+
+### Features
+- **Safety Tier System**: 3-tier risk classification (low/medium/high)
+- **Groq Integration**: Llama 3.1 models with 14,400 free requests/day
+- **Coach Visibility**: Coaches can monitor AI recommendations to players
+- **Feedback Loop**: Users can rate AI responses for improvement
+
+### Components
+- `netlify/functions/ai-chat.cjs` - Main AI chat endpoint
+- `netlify/functions/utils/groq-client.cjs` - Groq LLM client
+- `netlify/functions/utils/ai-safety-classifier.cjs` - Risk classification
+- `angular/src/app/shared/components/ai-coach-visibility/` - Coach dashboard
+- `angular/src/app/shared/components/ai-feedback/` - User feedback UI
 
 ## Troubleshooting
 

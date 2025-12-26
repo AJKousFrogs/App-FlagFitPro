@@ -7,12 +7,8 @@ const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
 /**
  * Get today's date for inclusive filtering
@@ -329,37 +325,13 @@ async function getTrainingStats(userId, options = {}) {
   }
 }
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("Training-Stats-Enhanced", event);
-
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
-
-  try {
-    // Check environment variables
-    checkEnvVars();
-
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "READ");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-
-    // Handle GET request - return training stats
-    if (event.httpMethod === "GET") {
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "training-stats-enhanced",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: true,
+    handler: async (event, _context, { userId, requestId }) => {
       const queryParams = event.queryStringParameters || {};
       const options = {
         startDate: queryParams.startDate,
@@ -367,13 +339,7 @@ exports.handler = async (event, _context) => {
       };
 
       const trainingStats = await getTrainingStats(userId, options);
-      return createSuccessResponse(trainingStats);
-    }
-
-    // Method not allowed
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  } catch (error) {
-    console.error("Error in training-stats-enhanced function:", error);
-    return handleServerError(error, "Training-Stats-Enhanced");
-  }
+      return createSuccessResponse(trainingStats, requestId);
+    },
+  });
 };

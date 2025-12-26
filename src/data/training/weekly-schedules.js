@@ -1,3 +1,23 @@
+/**
+ * ⚠️ DEPRECATED: This static data file is deprecated.
+ * 
+ * Weekly schedules are now stored in the database:
+ *   - training_weeks table
+ *   - training_session_templates table
+ * 
+ * Use the TrainingProgramService to fetch:
+ *   await programService.fetchTrainingWeeks(phaseId);
+ *   await programService.fetchSessionTemplates(weekId);
+ * 
+ * Or via API:
+ *   GET /api/training-programs/weeks?phaseId={phaseId}
+ *   GET /api/training-programs/sessions?weekId={weekId}
+ * 
+ * See /src/data/DEPRECATED.md for full migration guide.
+ * This file will be removed in Q2 2026.
+ * 
+ * @deprecated Use database via TrainingProgramService or API
+ */
 export const WEEKLY_SCHEDULES = {
   foundation: {
     week1: {

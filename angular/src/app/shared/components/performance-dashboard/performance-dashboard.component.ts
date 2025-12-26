@@ -7,6 +7,7 @@ import {
   computed,
   ChangeDetectionStrategy,
   inject,
+  DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -265,6 +266,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
   realTimeEnabled = input<boolean>(true);
 
   private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private destroy$ = new Subject<void>();
   private logger = inject(LoggerService);
 
@@ -379,7 +381,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
     // Try to load from API
     this.apiService
       .get("/api/performance/metrics", { athleteId })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (response.success && response.data) {

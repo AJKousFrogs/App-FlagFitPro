@@ -4,123 +4,102 @@
 const { getSupabaseClient } = require("./utils/auth-helper.cjs");
 const {
   createSuccessResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
+  createErrorResponse,
+  handleNotFoundError,
 } = require("./utils/error-handler.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("Validate-Invitation", event);
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "validate-invitation",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: false, // Invitation validation should be public
+    handler: async (event, _context, { requestId }) => {
+      const token = event.queryStringParameters?.token;
 
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: CORS_HEADERS };
-  }
+      if (!token) {
+        return createErrorResponse(
+          "Token is required",
+          400,
+          "validation_error",
+          requestId
+        );
+      }
 
-  if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers: CORS_HEADERS,
-      body: JSON.stringify({ success: false, error: "Method not allowed" }),
-    };
-  }
+      const supabase = getSupabaseClient();
 
-  try {
-    const token = event.queryStringParameters?.token;
-
-    if (!token) {
-      return {
-        statusCode: 400,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Token is required" }),
-      };
-    }
-
-    const supabase = getSupabaseClient();
-
-    const { data: invitation, error: inviteError } = await supabase
-      .from("team_invitations")
-      .select(
-        `
-        id,
-        team_id,
-        email,
-        role,
-        position,
-        jersey_number,
-        status,
-        expires_at,
-        teams (
-          id,
-          name,
-          description,
-          league,
-          season,
-          home_city
-        )
-      `,
-      )
-      .eq("token", token)
-      .single();
-
-    if (inviteError || !invitation) {
-      return {
-        statusCode: 404,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid invitation token",
-        }),
-      };
-    }
-
-    if (invitation.status === "accepted") {
-      return {
-        statusCode: 400,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "This invitation has already been accepted",
-        }),
-      };
-    }
-
-    const now = new Date();
-    const expiresAt = new Date(invitation.expires_at);
-
-    if (now > expiresAt || invitation.status === "expired") {
-      await supabase
+      const { data: invitation, error: inviteError } = await supabase
         .from("team_invitations")
-        .update({ status: "expired" })
-        .eq("id", invitation.id);
+        .select(
+          `
+          id,
+          team_id,
+          email,
+          role,
+          position,
+          jersey_number,
+          status,
+          expires_at,
+          teams (
+            id,
+            name,
+            description,
+            league,
+            season,
+            home_city
+          )
+        `
+        )
+        .eq("token", token)
+        .single();
 
-      return {
-        statusCode: 400,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "This invitation has expired",
-        }),
-      };
-    }
+      if (inviteError || !invitation) {
+        return handleNotFoundError("Invitation", requestId);
+      }
 
-    return createSuccessResponse(
-      {
-        invitation: {
-          id: invitation.id,
-          email: invitation.email,
-          role: invitation.role,
-          position: invitation.position,
-          jerseyNumber: invitation.jersey_number,
-          status: invitation.status,
-          expiresAt: invitation.expires_at,
-          team: invitation.teams,
+      if (invitation.status === "accepted") {
+        return createErrorResponse(
+          "This invitation has already been accepted",
+          400,
+          "invitation_accepted",
+          requestId
+        );
+      }
+
+      const now = new Date();
+      const expiresAt = new Date(invitation.expires_at);
+
+      if (now > expiresAt || invitation.status === "expired") {
+        await supabase
+          .from("team_invitations")
+          .update({ status: "expired" })
+          .eq("id", invitation.id);
+
+        return createErrorResponse(
+          "This invitation has expired",
+          400,
+          "invitation_expired",
+          requestId
+        );
+      }
+
+      return createSuccessResponse(
+        {
+          invitation: {
+            id: invitation.id,
+            email: invitation.email,
+            role: invitation.role,
+            position: invitation.position,
+            jerseyNumber: invitation.jersey_number,
+            status: invitation.status,
+            expiresAt: invitation.expires_at,
+            team: invitation.teams,
+          },
+          message: "Invitation is valid",
         },
-      },
-      200,
-      "Invitation is valid",
-    );
-  } catch (error) {
-    console.error("Error validating invitation:", error);
-    return handleServerError(error, "Failed to validate invitation");
-  }
+        requestId
+      );
+    },
+  });
 };

@@ -2,6 +2,7 @@ import {
   ApplicationConfig,
   provideZonelessChangeDetection,
   isDevMode,
+  ErrorHandler,
 } from "@angular/core";
 import {
   provideRouter,
@@ -22,6 +23,10 @@ import { LoadMonitoringService } from "./core/services/load-monitoring.service";
 import { AcwrAlertsService } from "./core/services/acwr-alerts.service";
 import { CoreWebVitalsService } from "./core/services/core-web-vitals.service";
 import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.strategy";
+import {
+  ErrorTrackingService,
+  GlobalErrorHandler,
+} from "./core/services/error-tracking.service";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -54,5 +59,8 @@ export const appConfig: ApplicationConfig = {
     AcwrAlertsService,
     CoreWebVitalsService,
     AuthAwarePreloadStrategy, // Register the preloading strategy
+    // Error tracking and monitoring (Sentry integration)
+    ErrorTrackingService,
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
   ],
 };

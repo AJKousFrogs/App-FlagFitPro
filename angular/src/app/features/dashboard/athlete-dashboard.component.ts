@@ -5,6 +5,7 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
@@ -249,6 +250,7 @@ export class AthleteDashboardComponent
   private headerService = inject(HeaderService);
   private trainingDataService = inject(TrainingDataService);
   private logger = inject(LoggerService);
+  private destroyRef = inject(DestroyRef);
 
   athleteId = signal<string | undefined>(undefined);
   todayWorkload = signal<number>(0);
@@ -310,7 +312,7 @@ export class AthleteDashboardComponent
         // Reload readiness when it changes
         this.readinessService
           .calculateToday(userId)
-          .pipe(takeUntilDestroyed())
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe();
       },
     );
@@ -348,7 +350,7 @@ export class AthleteDashboardComponent
     // Load readiness
     this.readinessService
       .calculateToday(userId)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
 
     // Load trend data
@@ -367,7 +369,7 @@ export class AthleteDashboardComponent
         endDate: todayStr,
         limit: 50,
       })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (sessions) => {
           const workload = sessions.reduce((sum: number, session: { rpe?: number; intensity_level?: number; duration_minutes?: number; duration?: number }) => {
@@ -390,7 +392,7 @@ export class AthleteDashboardComponent
         includeUpcoming: true,
         limit: 1,
       })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (sessions) => {
           if (sessions && sessions.length > 0) {
@@ -417,7 +419,7 @@ export class AthleteDashboardComponent
     // Load change of direction trend
     this.trendsService
       .getChangeOfDirectionTrend(userId)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
           trends.push({
@@ -450,7 +452,7 @@ export class AthleteDashboardComponent
     // Load sprint volume trend
     this.trendsService
       .getSprintVolumeTrend(userId)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
           trends.push({
@@ -482,7 +484,7 @@ export class AthleteDashboardComponent
     // Load game performance trend
     this.trendsService
       .getGamePerformanceTrend(userId, 5)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
           trends.push({

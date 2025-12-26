@@ -1,3 +1,20 @@
+/**
+ * ⚠️ DEPRECATED: Static Tournament Schedule (Legacy)
+ * 
+ * Tournament data is now managed in the database `tournaments` table.
+ * Admin/coaches can add, edit, and delete tournaments via the app.
+ * 
+ * Use the TournamentService (Angular) or API to access tournaments:
+ *   GET /api/tournaments
+ *   GET /api/tournaments?year=2026
+ *   GET /api/tournaments/{id}
+ * 
+ * This file is maintained for legacy HTML pages only.
+ * Will be removed when all pages are migrated to Angular.
+ * 
+ * @deprecated Use database via TournamentService or /api/tournaments endpoint
+ */
+
 // Official 2026-2027 International Flag Football Tournament Schedule
 // Real tournament dates and locations for the international team
 

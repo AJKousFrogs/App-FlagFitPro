@@ -182,6 +182,13 @@ export const API_ENDPOINTS = {
     suggestions: "/api/training/suggestions",
     sessions: "/api/training/sessions",
     createSession: "/api/training/sessions",
+    // Annual Training Programs (Database-driven)
+    programs: "/api/training-programs",
+    programPhases: "/api/training-programs/phases",
+    programWeeks: "/api/training-programs/weeks",
+    programSessions: "/api/training-programs/sessions",
+    programExercises: "/api/training-programs/exercises",
+    programCurrentWeek: "/api/training-programs/current-week",
   },
   performance: {
     metrics: "/api/performance/metrics",
@@ -319,4 +326,10 @@ export const API_ENDPOINTS = {
   health: "/api/health",
   // API documentation
   apiDocs: "/api/api-docs",
+  // AI Chat endpoints (with safety tiers)
+  aiChat: {
+    send: "/api/ai/chat",
+    session: (sessionId: string) => `/api/ai/chat/session/${sessionId}`,
+    feedback: "/api/ai/feedback",
+  },
 };

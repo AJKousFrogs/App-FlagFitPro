@@ -5,6 +5,7 @@ import {
   computed,
   ChangeDetectionStrategy,
   effect,
+  DestroyRef,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
@@ -226,15 +227,19 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
 
   loginForm: FormGroup;
   isLoading = signal(false);
   csrfToken = signal("");
   isDemoMode = signal(false);
   submitted = signal(false);
+  
+  // Track form validity as a signal (updated on statusChanges)
+  formValid = signal(false);
 
-  // Computed form state signals
-  isFormValid = computed(() => this.loginForm.valid);
+  // Computed form state signals  
+  isFormValid = computed(() => this.formValid());
   emailError = computed(() => {
     const control = this.loginForm.get("email");
     return control && (this.submitted() || control.touched)
@@ -254,21 +259,22 @@ export class LoginComponent {
       password: ["", [Validators.required, Validators.minLength(8)]],
       remember: [false],
     });
+    
+    // Track form status changes and update signal
+    this.loginForm.statusChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.formValid.set(this.loginForm.valid);
+      });
 
-    // Check if demo mode
+    // Don't auto-fill demo credentials - let user enter real credentials
     if (typeof window !== "undefined") {
       const demoMode =
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1";
 
       this.isDemoMode.set(demoMode);
-
-      if (demoMode) {
-        this.loginForm.patchValue({
-          email: "test@flagfitpro.com",
-          password: "TestDemo123!",
-        });
-      }
+      // Removed auto-fill of demo credentials
     }
 
     // Generate CSRF token
@@ -276,7 +282,7 @@ export class LoginComponent {
 
     // Watch form validity changes
     effect(() => {
-      if (this.loginForm.valid && this.submitted()) {
+      if (this.formValid() && this.submitted()) {
         // Form became valid after submission
         this.submitted.set(false);
       }
@@ -313,7 +319,7 @@ export class LoginComponent {
 
     this.authService
       .login(credentials)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: { success?: boolean; error?: string }) => {
           if (response.success) {

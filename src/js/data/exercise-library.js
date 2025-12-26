@@ -1,7 +1,18 @@
 /**
- * Comprehensive Exercise Library
- * Complete exercise database for flag football training
- * Used by both WR/DB and QB programs
+ * ⚠️ DEPRECATED: Comprehensive Exercise Library (Legacy)
+ * 
+ * This static exercise library is deprecated.
+ * Exercises are now stored in the database `exercises` table.
+ * 
+ * Use the API to fetch exercises:
+ *   GET /api/training-programs/exercises?sessionId={sessionId}
+ * 
+ * Or query the database directly via Supabase client.
+ * 
+ * See /src/data/DEPRECATED.md for full migration guide.
+ * This file will be removed in Q2 2026.
+ * 
+ * @deprecated Use database via API
  */
 
 /**

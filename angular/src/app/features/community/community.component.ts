@@ -4,6 +4,7 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
@@ -529,6 +530,7 @@ interface Comment {
 })
 export class CommunityComponent implements OnInit {
   private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   newPostContent = "";
   posts = signal<Post[]>([]);
@@ -627,7 +629,7 @@ export class CommunityComponent implements OnInit {
 
     this.apiService
       .post(API_ENDPOINTS.community.createPost, newPost)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.posts.update((posts) => [newPost, ...posts]);

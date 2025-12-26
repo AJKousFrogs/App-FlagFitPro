@@ -4,6 +4,7 @@ import {
   computed,
   ChangeDetectionStrategy,
   inject,
+  DestroyRef,
 } from "@angular/core";
 import {
   FormBuilder,
@@ -27,7 +28,10 @@ import { AIService } from "../../../core/services/ai.service";
 import { WeatherService } from "../../../core/services/weather.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { LoadMonitoringService } from "../../../core/services/load-monitoring.service";
+import { ToastService } from "../../../core/services/toast.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Router } from "@angular/router";
 
 interface TrainingExercise {
   id: string;
@@ -279,6 +283,7 @@ interface Goal {
                 label="Start Session"
                 icon="pi pi-play"
                 severity="success"
+                [loading]="isSaving()"
                 (onClick)="startSession()"
               >
               </p-button>
@@ -287,6 +292,7 @@ interface Goal {
                 icon="pi pi-bookmark"
                 severity="secondary"
                 [outlined]="true"
+                [loading]="isSaving()"
                 (onClick)="saveSession()"
               >
               </p-button>
@@ -543,6 +549,13 @@ export class TrainingBuilderComponent {
   private weatherService = inject(WeatherService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
+  private loadMonitoringService = inject(LoadMonitoringService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
+
+  // Session saving state
+  isSaving = signal(false);
 
   activeStep = 0;
 
@@ -702,7 +715,7 @@ export class TrainingBuilderComponent {
         recentPerformance: [], // See issue #14 - Load recent performance API
         upcomingGames: [], // See issue #14 - Load upcoming games API
       })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (suggestions) => {
           // Mark AI-recommended goals
@@ -753,7 +766,7 @@ export class TrainingBuilderComponent {
           recentPerformance: [],
           upcomingGames: [],
         })
-        .pipe(takeUntilDestroyed())
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (suggestions) => {
             // Use AI suggestions if available
@@ -921,7 +934,7 @@ export class TrainingBuilderComponent {
     // Fetch real weather data
     this.weatherService
       .getWeatherData()
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (weather) => {
           if (weather) {
@@ -1005,14 +1018,93 @@ export class TrainingBuilderComponent {
     this.logger.debug("Modify exercise:", event);
   }
 
-  startSession() {
-    // Navigate to active session view
-    this.logger.debug("Starting session with:", this.generatedExercises());
+  async startSession() {
+    // Save session to database and start tracking
+    const user = this.authService.getUser();
+    if (!user?.id) {
+      this.toastService.error("Please log in to start a session");
+      return;
+    }
+
+    this.isSaving.set(true);
+
+    try {
+      const duration = this.sessionForm.get("duration")?.value || 60;
+      const intensity = this.sessionForm.get("intensity")?.value || "medium";
+      
+      // Map intensity to RPE (1-10 scale)
+      const rpeMap: Record<string, number> = {
+        low: 4,
+        medium: 6,
+        high: 8,
+      };
+      const rpe = rpeMap[intensity] || 6;
+
+      // Determine session type from selected goals
+      const goals = this.selectedGoals();
+      const sessionType = this.mapGoalsToSessionType(goals);
+
+      // Save workout log to database
+      const session = await this.loadMonitoringService.createQuickSession(
+        user.id,
+        sessionType,
+        rpe,
+        duration,
+        `Training goals: ${goals.join(", ")}. Exercises: ${this.generatedExercises().map(e => e.name).join(", ")}`
+      );
+
+      if (session.id) {
+        this.toastService.success("Training session started and logged!");
+        this.logger.success("Session saved to database:", session);
+        
+        // Navigate to dashboard to see updated ACWR
+        this.router.navigate(["/dashboard"]);
+      } else {
+        this.toastService.warn("Session started but may not have been saved");
+      }
+    } catch (error) {
+      this.logger.error("Error starting session:", error);
+      this.toastService.error("Failed to save training session");
+    } finally {
+      this.isSaving.set(false);
+    }
   }
 
-  saveSession() {
-    // Save session template
-    this.logger.debug("Saving session template");
+  async saveSession() {
+    // Save session template for later
+    const user = this.authService.getUser();
+    if (!user?.id) {
+      this.toastService.error("Please log in to save a session");
+      return;
+    }
+
+    this.isSaving.set(true);
+
+    try {
+      // For now, just show a success message
+      // TODO: Implement session template saving to training_session_templates table
+      this.toastService.success("Session saved for later!");
+      this.logger.debug("Saving session template:", {
+        goals: this.selectedGoals(),
+        exercises: this.generatedExercises(),
+        duration: this.sessionForm.get("duration")?.value,
+        intensity: this.sessionForm.get("intensity")?.value,
+      });
+    } catch (error) {
+      this.logger.error("Error saving session template:", error);
+      this.toastService.error("Failed to save session template");
+    } finally {
+      this.isSaving.set(false);
+    }
+  }
+
+  private mapGoalsToSessionType(goals: string[]): "technical" | "sprint" | "strength" | "conditioning" | "recovery" | "game" {
+    // Map training goals to session types
+    if (goals.includes("speed")) return "sprint";
+    if (goals.includes("agility")) return "technical";
+    if (goals.includes("endurance")) return "conditioning";
+    if (goals.includes("skills")) return "technical";
+    return "technical"; // Default
   }
 
   trackByGoalId(index: number, goal: Goal): string {

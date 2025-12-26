@@ -2,7 +2,8 @@
 // Provides interactive API documentation for the Flag Football app
 // Endpoint: /api/api-docs
 
-const { CORS_HEADERS } = require("./utils/error-handler.cjs");
+const { CORS_HEADERS, createSuccessResponse } = require("./utils/error-handler.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
 // API endpoint definitions
 const API_ENDPOINTS = {
@@ -295,64 +296,44 @@ const AUTH_INFO = {
   refreshToken: "Available via Supabase client",
 };
 
-exports.handler = async (event, _context) => {
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-      body: "",
-    };
-  }
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "api-docs",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: false, // API docs should be public
+    handler: async (event, _context, { requestId }) => {
+      const queryParams = event.queryStringParameters || {};
+      const format = queryParams.format || "json";
 
-  // Only allow GET requests
-  if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers: CORS_HEADERS,
-      body: JSON.stringify({
-        success: false,
-        error: "Method not allowed",
-      }),
-    };
-  }
+      const documentation = {
+        title: "Flag Football Performance App API",
+        version: "1.0.0",
+        baseUrl: "/.netlify/functions",
+        description:
+          "API documentation for the Flag Football Performance tracking application",
+        authentication: AUTH_INFO,
+        rateLimits: RATE_LIMITS,
+        endpoints: API_ENDPOINTS,
+        timestamp: new Date().toISOString(),
+      };
 
-  const queryParams = event.queryStringParameters || {};
-  const format = queryParams.format || "json";
+      // Return HTML if requested
+      if (format === "html") {
+        return {
+          statusCode: 200,
+          headers: {
+            ...CORS_HEADERS,
+            "Content-Type": "text/html",
+          },
+          body: generateHtmlDocs(documentation),
+        };
+      }
 
-  const documentation = {
-    title: "Flag Football Performance App API",
-    version: "1.0.0",
-    baseUrl: "/.netlify/functions",
-    description: "API documentation for the Flag Football Performance tracking application",
-    authentication: AUTH_INFO,
-    rateLimits: RATE_LIMITS,
-    endpoints: API_ENDPOINTS,
-    timestamp: new Date().toISOString(),
-  };
-
-  // Return HTML if requested
-  if (format === "html") {
-    return {
-      statusCode: 200,
-      headers: {
-        ...CORS_HEADERS,
-        "Content-Type": "text/html",
-      },
-      body: generateHtmlDocs(documentation),
-    };
-  }
-
-  // Default: return JSON
-  return {
-    statusCode: 200,
-    headers: {
-      ...CORS_HEADERS,
-      "Content-Type": "application/json",
-      "Cache-Control": "public, max-age=3600",
+      // Default: return JSON
+      return createSuccessResponse(documentation, requestId);
     },
-    body: JSON.stringify(documentation, null, 2),
-  };
+  });
 };
 
 // Generate simple HTML documentation

@@ -15,7 +15,9 @@
   VITE_SUPABASE_URL = "https://pvziciccwxgftcielknm.supabase.co"
   VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU"
   VITE_ENABLE_ANALYTICS = "false"
-  VITE_ENABLE_SENTRY = "false"
+  # Sentry Error Monitoring - Set VITE_SENTRY_DSN in Netlify UI for production
+  # To enable: Set VITE_SENTRY_DSN to your Sentry DSN in Netlify Environment Variables
+  VITE_ENABLE_SENTRY = "true"
 
 # SECURITY: Enhanced security headers for production
 [[headers]]
@@ -705,6 +707,126 @@
 [[redirects]]
   from = "/api/training/stats-enhanced"
   to = "/.netlify/functions/training-stats-enhanced"
+  status = 200
+  force = true
+
+# API Routes for Training Programs (Annual Program Data)
+[[redirects]]
+  from = "/api/training-programs"
+  to = "/.netlify/functions/training-programs"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training-programs/*"
+  to = "/.netlify/functions/training-programs"
+  status = 200
+  force = true
+
+# API Routes for Smart Training Recommendations
+[[redirects]]
+  from = "/api/smart-training"
+  to = "/.netlify/functions/smart-training-recommendations"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/smart-training/*"
+  to = "/.netlify/functions/smart-training-recommendations"
+  status = 200
+  force = true
+
+# API Routes for AI Chat (with safety tiers)
+[[redirects]]
+  from = "/api/ai/chat"
+  to = "/.netlify/functions/ai-chat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/ai/chat/*"
+  to = "/.netlify/functions/ai-chat"
+  status = 200
+  force = true
+
+# API Routes for AI Feedback
+[[redirects]]
+  from = "/api/ai/feedback"
+  to = "/.netlify/functions/ai-feedback"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/ai/feedback/*"
+  to = "/.netlify/functions/ai-feedback"
+  status = 200
+  force = true
+
+# API Routes for Performance Trends
+[[redirects]]
+  from = "/api/performance/trends"
+  to = "/.netlify/functions/trends"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/performance/trends/*"
+  to = "/.netlify/functions/trends"
+  status = 200
+  force = true
+
+# API Routes for Training Stats Enhanced
+[[redirects]]
+  from = "/training-stats-enhanced"
+  to = "/.netlify/functions/training-stats-enhanced"
+  status = 200
+  force = true
+
+# API Routes for User Profile
+[[redirects]]
+  from = "/api/user/profile"
+  to = "/.netlify/functions/user-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/user/profile/*"
+  to = "/.netlify/functions/user-profile"
+  status = 200
+  force = true
+
+# API Routes for Auth Reset Password
+[[redirects]]
+  from = "/api/auth/reset-password"
+  to = "/.netlify/functions/auth-reset-password"
+  status = 200
+  force = true
+
+# API Routes for Auth Login
+[[redirects]]
+  from = "/api/auth/login"
+  to = "/.netlify/functions/auth-login"
+  status = 200
+  force = true
+
+# API Routes for Accept Invitation
+[[redirects]]
+  from = "/api/accept-invitation"
+  to = "/.netlify/functions/accept-invitation"
+  status = 200
+  force = true
+
+# API Routes for Validate Invitation
+[[redirects]]
+  from = "/api/validate-invitation"
+  to = "/.netlify/functions/validate-invitation"
+  status = 200
+  force = true
+
+# API Routes for Team Invite
+[[redirects]]
+  from = "/api/team-invite"
+  to = "/.netlify/functions/team-invite"
   status = 200
   force = true
 

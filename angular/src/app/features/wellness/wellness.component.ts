@@ -4,8 +4,9 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
-
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -17,6 +18,7 @@ import { StatsGridComponent } from "../../shared/components/stats-grid/stats-gri
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { WellnessService } from "../../core/services/wellness.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { ToastService } from "../../core/services/toast.service";
 
 interface WellnessMetric {
   label: string;
@@ -126,6 +128,7 @@ interface WellnessMetric {
             <p-button
               label="Submit Check-in"
               icon="pi pi-check"
+              [loading]="isSubmitting()"
               (onClick)="submitCheckIn()"
             ></p-button>
           </div>
@@ -209,6 +212,10 @@ interface WellnessMetric {
 export class WellnessComponent implements OnInit {
   private wellnessService = inject(WellnessService);
   private logger = inject(LoggerService);
+  private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
+
+  isSubmitting = signal(false);
 
   metrics = signal<WellnessMetric[]>([]);
   wellnessStats = signal<any[]>([]);
@@ -228,7 +235,9 @@ export class WellnessComponent implements OnInit {
 
   loadWellnessData(): void {
     // Fetch wellness data from service
-    this.wellnessService.getWellnessData("7d").subscribe({
+    this.wellnessService.getWellnessData("7d")
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
         if (response.success && response.data && response.data.length > 0) {
           const latestData = response.data[0];
@@ -398,6 +407,14 @@ export class WellnessComponent implements OnInit {
   }
 
   submitCheckIn(): void {
+    // Validate input
+    if (!this.checkInData.sleepHours || this.checkInData.sleepHours <= 0) {
+      this.toastService.warn("Please enter your sleep hours");
+      return;
+    }
+
+    this.isSubmitting.set(true);
+
     // Convert form data to wellness check-in format
     const wellnessData = {
       sleep: this.checkInData.sleepHours,
@@ -406,17 +423,25 @@ export class WellnessComponent implements OnInit {
       date: new Date().toISOString().split("T")[0],
     };
 
-    this.wellnessService.logWellness(wellnessData).subscribe({
+    this.wellnessService.logWellness(wellnessData)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
+        this.isSubmitting.set(false);
         if (response.success) {
+          this.toastService.success("Wellness check-in saved!");
           // Reset form
           this.checkInData = { sleepHours: 0, energyLevel: 5, mood: 5 };
           // Reload wellness data to show updated stats
           this.loadWellnessData();
+        } else {
+          this.toastService.error(response.error || "Failed to save check-in");
         }
       },
       error: (err) => {
+        this.isSubmitting.set(false);
         this.logger.error("Error submitting wellness check-in:", err);
+        this.toastService.error("Failed to save wellness check-in");
       },
     });
   }

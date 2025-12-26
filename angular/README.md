@@ -1,18 +1,22 @@
 # FlagFit Pro - Angular 21 Application
 
-This is the Angular 21 version of FlagFit Pro, migrated from vanilla HTML/JavaScript to a modern Angular application with PrimeNG components.
+**Version:** 2.0  
+**Last Updated:** December 26, 2025  
+**Status:** ✅ ~90% Production Ready
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 18+
 - Angular CLI 21
 
 ### Installation
 
 ```bash
-# Install Angular CLI globally (if not already installed)
+# Install Angular CLI globally
 npm install -g @angular/cli@21
 
 # Navigate to angular directory
@@ -27,129 +31,292 @@ npm start
 
 The application will be available at `http://localhost:4200`
 
-## 📚 Style Guide
+---
 
-**Comprehensive coding standards and best practices for Angular 21**
+## 📊 Project Statistics
 
-- **[STYLE_GUIDE.md](./STYLE_GUIDE.md)** - Complete style guide with examples
-- **[STYLE_GUIDE_QUICK_REFERENCE.md](./STYLE_GUIDE_QUICK_REFERENCE.md)** - Quick reference card
+| Metric | Count |
+|--------|-------|
+| **Core Services** | 45+ |
+| **Feature Components** | 25+ |
+| **Shared Components** | 15+ |
+| **Lines of Code (Services)** | 10,000+ |
+| **ACWR Service** | 1,273 lines |
 
-Key topics covered:
-
-- Code formatting and TypeScript standards
-- Angular 21 patterns (signals, standalone components, inject())
-- Component and service guidelines
-- State management patterns
-- File organization and naming conventions
-- SCSS/CSS guidelines
-- Testing standards
-- Accessibility requirements
-- Performance best practices
-
-## 🔍 Angular DevTools
-
-Angular 21 includes enhanced debugging capabilities. See [ANGULAR_DEVTOOLS_SETUP.md](./ANGULAR_DEVTOOLS_SETUP.md) for complete setup instructions.
-
-**Quick Setup**:
-
-1. Install [Angular DevTools browser extension](https://chromewebstore.google.com/detail/angular-devtools/ienfalfjdbdpebioblfackkekamfmbnh)
-2. Open your app in development mode
-3. Open browser DevTools (F12) → Look for "Angular" tab
-
-**Features Available**:
-
-- 🔍 Visual Signal Graph Explorer
-- ⚡ Real-time Change Detection Tracing
-- 🧠 Hydration Troubleshooting
-- 🔄 Component-level Load-Time Analysis
-- 🧰 Router Event Inspector
-- 🎯 Better Profiling for Slow Components
+---
 
 ## 📁 Project Structure
 
 ```
-angular/
-├── src/
-│   ├── app/
-│   │   ├── core/              # Core services, guards, interceptors
-│   │   │   ├── guards/
-│   │   │   ├── interceptors/
-│   │   │   └── services/
-│   │   ├── shared/            # Shared components
-│   │   │   └── components/
-│   │   │       ├── sidebar/
-│   │   │       ├── header/
-│   │   │       └── layout/
-│   │   └── features/          # Feature modules
-│   │       ├── auth/
-│   │       ├── dashboard/
-│   │       ├── training/
-│   │       └── ...
-│   ├── assets/
-│   │   └── styles/           # Design system styles
-│   └── environments/         # Environment configuration
-├── angular.json
-├── package.json
-└── tsconfig.json
+angular/src/app/
+├── core/                           # Singleton services & utilities
+│   ├── services/                   # 45+ injectable services
+│   │   ├── acwr.service.ts         # 1,273 lines - ACWR calculations
+│   │   ├── acwr-alerts.service.ts  # Load alert management
+│   │   ├── ai-chat.service.ts      # AI coaching chat
+│   │   ├── api.service.ts          # HTTP client + 335 lines
+│   │   ├── auth.service.ts         # Authentication
+│   │   ├── supabase.service.ts     # Supabase client
+│   │   ├── notification-state.service.ts  # Signal-based state
+│   │   ├── wellness.service.ts     # 582 lines
+│   │   ├── nutrition.service.ts    # 713 lines
+│   │   └── ... (35+ more)
+│   ├── guards/
+│   │   ├── auth.guard.ts
+│   │   └── role.guard.ts
+│   ├── interceptors/
+│   │   ├── auth.interceptor.ts
+│   │   ├── cache.interceptor.ts
+│   │   └── error.interceptor.ts
+│   ├── view-models/
+│   │   ├── base.view-model.ts
+│   │   ├── reactive.view-model.ts
+│   │   ├── dashboard.view-model.ts
+│   │   └── analytics.view-model.ts
+│   └── models/
+│       ├── acwr.models.ts
+│       └── ...
+├── features/                       # Feature modules (25+)
+│   ├── acwr-dashboard/             # ✅ ACWR monitoring UI
+│   ├── training/                   # ✅ 10 training components
+│   │   ├── training.component.ts
+│   │   ├── ai-training-scheduler/
+│   │   ├── smart-training-form/
+│   │   ├── qb-throwing-tracker/
+│   │   ├── goal-based-planner.component.ts
+│   │   └── ...
+│   ├── analytics/                  # ✅ Performance analytics
+│   │   ├── analytics.component.ts
+│   │   └── enhanced-analytics/
+│   ├── dashboard/                  # ✅ Dashboard variants
+│   │   ├── dashboard.component.ts
+│   │   ├── athlete-dashboard.component.ts
+│   │   └── coach-dashboard.component.ts
+│   ├── wellness/                   # ✅ Wellness tracking
+│   ├── game-tracker/               # ✅ Game statistics
+│   │   ├── game-tracker.component.ts
+│   │   └── live-game-tracker.component.ts
+│   ├── tournaments/                # ✅ Tournament management
+│   ├── auth/                       # ✅ Authentication
+│   │   ├── login/
+│   │   ├── register/
+│   │   ├── reset-password/
+│   │   └── verify-email/
+│   ├── profile/                    # ✅ User profile
+│   ├── settings/                   # ✅ Settings
+│   ├── chat/                       # ✅ AI chat
+│   ├── coach/                      # ✅ Coach features
+│   ├── community/                  # ✅ Community
+│   ├── roster/                     # ✅ Team roster
+│   ├── team/                       # ✅ Team management
+│   ├── onboarding/                 # ✅ User onboarding
+│   ├── exercise-library/           # ✅ Exercise library
+│   ├── performance-tracking/       # ✅ Performance
+│   ├── workout/                    # ✅ Workouts
+│   └── landing/                    # ✅ Landing page
+└── shared/                         # Shared components
+    ├── components/
+    │   ├── ai-coach-visibility/    # Coach AI monitoring
+    │   ├── ai-feedback/            # AI feedback UI
+    │   ├── traffic-light-risk/     # ACWR visualization
+    │   ├── progressive-stats/      # Stats display
+    │   ├── nutrition-dashboard/
+    │   ├── recovery-dashboard/
+    │   ├── performance-dashboard/
+    │   ├── training-builder/
+    │   ├── header/
+    │   ├── sidebar/
+    │   └── ...
+    ├── utils/
+    │   ├── form.utils.ts
+    │   ├── form-submit.utils.ts
+    │   └── status.utils.ts
+    └── models/
+        └── design-tokens.ts
 ```
+
+---
+
+## 🔧 Key Services
+
+### ACWR Service (1,273 lines)
+
+Evidence-based injury prevention using EWMA model:
+
+```typescript
+import { AcwrService } from '@core/services/acwr.service';
+
+@Component({...})
+export class MyComponent {
+  private acwrService = inject(AcwrService);
+  
+  // Reactive signals
+  acwrRatio = this.acwrService.acwrRatio;
+  riskZone = this.acwrService.riskZone;
+  dataQuality = this.acwrService.dataQuality;
+  
+  // Check if training is safe
+  canTrainHard = computed(() => 
+    this.acwrRatio() <= 1.5 && this.riskZone().level !== 'danger-zone'
+  );
+}
+```
+
+### AI Chat Service
+
+AI coaching with safety tiers:
+
+```typescript
+import { AiChatService } from '@core/services/ai-chat.service';
+
+@Component({...})
+export class ChatComponent {
+  private chatService = inject(AiChatService);
+  
+  loading = this.chatService.loading;
+  messages = this.chatService.messages;
+  
+  sendMessage(text: string) {
+    this.chatService.sendMessage({ message: text })
+      .subscribe(response => {
+        if (response.acwr_safety?.blocked) {
+          // High-intensity blocked due to ACWR
+          this.showSafetyWarning(response.acwr_safety.reason);
+        }
+      });
+  }
+}
+```
+
+### Notification State Service (Signal-Based)
+
+```typescript
+import { NotificationStateService } from '@core/services/notification-state.service';
+
+@Component({...})
+export class HeaderComponent {
+  private notificationState = inject(NotificationStateService);
+  
+  // Reactive signals
+  unreadCount = this.notificationState.unreadCount;
+  notifications = this.notificationState.notifications;
+  loading = this.notificationState.loading;
+}
+```
+
+---
 
 ## 🎨 Design System
 
-The application uses a custom design system built on:
+### Design Tokens
 
-- **PrimeNG**: UI component library
-- **SCSS**: Styling with CSS custom properties
-- **Design Tokens**: Semantic token system for theming
+Located in `src/app/shared/models/design-tokens.ts`:
 
-### Key Design Tokens
+```typescript
+export const DESIGN_TOKENS = {
+  colors: {
+    brand: {
+      primary: '#089949',
+      secondary: '#10c96b',
+    },
+    status: {
+      success: '#22c55e',
+      warning: '#f59e0b',
+      error: '#ef4444',
+    },
+  },
+  spacing: {
+    xs: '4px',
+    sm: '8px',
+    md: '16px',
+    lg: '24px',
+  },
+  typography: {
+    fontFamily: "'Poppins', sans-serif",
+  },
+};
+```
 
-- Primary Color: `#089949` (Green)
-- Secondary Color: `#10c96b` (Light Green)
-- Spacing: 8-point grid system
-- Typography: Poppins font family
+### CSS Custom Properties
 
-## 🔌 API Integration
+```scss
+:root {
+  --color-primary: #089949;
+  --color-secondary: #10c96b;
+  --spacing-8: 8px;
+  --spacing-16: 16px;
+  --font-family: 'Poppins', sans-serif;
+}
+```
 
-All API connections from the original HTML files are integrated:
+---
 
-- **Auth Service**: Login, Register, Logout, Token Management
-- **API Service**: Centralized HTTP client with interceptors
-- **Endpoints**: All endpoints from `api-config.js` are available
+## ⚡ Angular 21 Features Used
 
-### API Configuration
+### Zoneless Change Detection
 
-The API service auto-detects the environment:
+```typescript
+// app.config.ts
+provideZonelessChangeDetection()
+```
 
-- **Development**: Uses mock API or localhost:3001
-- **Netlify**: Uses Netlify Functions
-- **Production**: Auto-detects based on hostname
+### Signals Throughout
 
-## 📦 Key Features
+```typescript
+// State
+stats = signal<Stat[]>([]);
+loading = signal(false);
 
-### ✅ Completed
+// Computed
+totalStats = computed(() => this.stats().reduce((sum, s) => sum + s.value, 0));
 
-- [x] Angular 21 project setup
-- [x] PrimeNG 21 integration
-- [x] Core services (Auth, API)
-- [x] Shared components (Sidebar, Header, Layout)
-- [x] Auth module (Login, Register, Reset Password)
-- [x] Dashboard component
-- [x] Routing and guards
-- [x] Design system styles
-- [x] Angular DevTools configuration
-- [x] Zoneless change detection (experimental)
+// Effects
+effect(() => console.log('Stats changed:', this.stats()));
+```
 
-### 🚧 In Progress
+### Modern Control Flow
 
-- [ ] Training module
-- [ ] Analytics module
-- [ ] Roster module
-- [ ] Tournaments module
-- [ ] Community module
-- [ ] Chat module
-- [ ] Coach module
-- [ ] Profile/Settings module
-- [ ] Remaining feature modules
+```html
+@if (loading()) {
+  <p-progressSpinner />
+} @else {
+  @for (item of items(); track item.id) {
+    <app-item [data]="item" />
+  }
+}
+```
+
+### Standalone Components
+
+All components use `standalone: true`:
+
+```typescript
+@Component({
+  selector: 'app-my-component',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, CardModule, ButtonModule],
+})
+```
+
+---
+
+## 🔍 Angular DevTools
+
+### Setup
+
+1. Install [Angular DevTools browser extension](https://chromewebstore.google.com/detail/angular-devtools/ienfalfjdbdpebioblfackkekamfmbnh)
+2. Open app in development mode
+3. Open browser DevTools (F12) → "Angular" tab
+
+### Features
+
+- 🔍 Visual Signal Graph Explorer
+- ⚡ Real-time Change Detection Tracing
+- 🔄 Component-level Load-Time Analysis
+- 🧭 Router Event Inspector
+
+---
 
 ## 🛠️ Development
 
@@ -165,80 +332,81 @@ npm run build
 npm test
 ```
 
-### Code Generation
+### Generate Component
 
 ```bash
-# Generate a new component
 ng generate component features/my-feature
+```
 
-# Generate a new service
+### Generate Service
+
+```bash
 ng generate service core/services/my-service
 ```
 
-## 📝 Migration Notes
+---
 
-### API Endpoints
+## 📦 PrimeNG 21
 
-All API endpoints are preserved from the original `api-config.js`:
+### Key Points
 
-- Authentication endpoints
-- Dashboard endpoints
-- Training endpoints
-- Analytics endpoints
-- Community endpoints
-- Tournament endpoints
-- And more...
+- **No `provideAnimations()`** - PrimeNG 21 uses CSS animations
+- **80+ KB bundle savings**
+- **Individual imports** for tree-shaking
 
-### Component Mapping
+### Common Components
 
-| Original HTML    | Angular Component    | Status |
-| ---------------- | -------------------- | ------ |
-| `index.html`     | `LandingComponent`   | ✅     |
-| `login.html`     | `LoginComponent`     | ✅     |
-| `register.html`  | `RegisterComponent`  | ✅     |
-| `dashboard.html` | `DashboardComponent` | ✅     |
-| `training.html`  | `TrainingComponent`  | 🚧     |
-| `analytics.html` | `AnalyticsComponent` | 🚧     |
-| ...              | ...                  | ...    |
+```typescript
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { ChartModule } from 'primeng/chart';
+import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
+```
 
-## 🔐 Authentication
+---
 
-The authentication system includes:
+## 📚 Documentation
 
-- JWT token management
-- CSRF protection
-- Session management
-- Auto-redirect on auth state change
-- Route guards
+| Document | Description |
+|----------|-------------|
+| [STYLE_GUIDE.md](./STYLE_GUIDE.md) | Coding standards |
+| [ANGULAR_DEVTOOLS_SETUP.md](./ANGULAR_DEVTOOLS_SETUP.md) | DevTools setup |
+| [ACWR_IMPLEMENTATION_GUIDE.md](./ACWR_IMPLEMENTATION_GUIDE.md) | ACWR service docs |
+| [../ANGULAR_PRIMENG_GUIDE.md](../ANGULAR_PRIMENG_GUIDE.md) | Best practices |
+| [../docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) | System architecture |
+| [../docs/UTILITIES.md](../docs/UTILITIES.md) | Services API |
 
-## 🎯 Next Steps
+---
 
-1. Complete remaining feature modules
-2. Add unit tests
-3. Add E2E tests
-4. Optimize bundle size
-5. Add PWA support
-6. Performance optimization
+## ✅ Feature Status
 
-## 📚 Resources
+| Feature | Status | Components |
+|---------|--------|------------|
+| **Authentication** | ✅ Complete | 4 components |
+| **Dashboard** | ✅ Complete | 3 variants |
+| **Training** | ✅ Complete | 10 components |
+| **ACWR Monitoring** | ✅ Complete | Dashboard + alerts |
+| **Analytics** | ✅ Complete | 2 components |
+| **Wellness** | ✅ Complete | 1 component |
+| **Game Tracker** | ✅ Complete | 2 components |
+| **AI Chat** | ✅ Complete | With safety tiers |
+| **Tournaments** | ✅ Complete | 1 component |
+| **Community** | ✅ Complete | 1 component |
+| **Profile/Settings** | ✅ Complete | 2 components |
+| **Coach Features** | ✅ Complete | 2 components |
 
-- [Angular 21 Documentation](https://angular.dev)
-- [PrimeNG 21 Documentation](https://primeng.org)
-- [Angular DevTools Setup Guide](./ANGULAR_DEVTOOLS_SETUP.md)
-- [Design System Documentation](../DESIGN_SYSTEM_DOCUMENTATION.md)
-- [Angular 21 Migration Guide](./ANGULAR_21_MIGRATION.md)
+---
 
 ## 🤝 Contributing
 
-When adding new features:
+1. Follow Angular 21 patterns (signals, standalone, OnPush)
+2. Use PrimeNG components
+3. Follow design tokens
+4. Add TypeScript types
+5. Use signal-based state management
 
-1. Follow Angular style guide
-2. Use PrimeNG components when possible
-3. Follow the design system tokens
-4. Add proper TypeScript types
-5. Use reactive forms for forms
-6. Implement proper error handling
+---
 
-## 📄 License
-
-MIT License - See LICENSE file for details
+**Last Updated:** December 26, 2025

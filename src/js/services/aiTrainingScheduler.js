@@ -1,4 +1,25 @@
 /**
+ * ⚠️ DEPRECATED: AI-Powered Training Scheduler (Legacy)
+ * 
+ * This scheduler uses deprecated static data files.
+ * For new development, use:
+ *   - /api/smart-training endpoint (recommended)
+ *   - smart-training-recommendations.cjs (backend)
+ * 
+ * The new smart-training endpoint provides:
+ *   - Tournament-aware periodization
+ *   - ACWR-based load management
+ *   - Injury-aware training modifications
+ *   - Evidence-based tapering
+ * 
+ * This file is maintained for legacy HTML pages only.
+ * Will be removed when all pages are migrated to Angular.
+ * 
+ * @deprecated Use /api/smart-training endpoint
+ * 
+ * ---
+ * 
+ * Original Documentation:
  * AI-Powered Training Scheduler
  * Intelligently adjusts training periodization based on:
  * - Tournament dates

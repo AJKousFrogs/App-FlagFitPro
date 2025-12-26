@@ -1,234 +1,220 @@
-# 🏈 FlagFit Pro - Flag Football Training Platform
+# 🏈 FlagFit Pro - Professional Flag Football Training Platform
 
-_Professional-grade training platform with advanced analytics and AI-powered insights_
+[![Angular](https://img.shields.io/badge/Angular-21.0-red.svg)](https://angular.dev/)
+[![PrimeNG](https://img.shields.io/badge/PrimeNG-21.0-blue.svg)](https://primeng.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green.svg)](https://supabase.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
-[![Angular](https://img.shields.io/badge/Angular-21.0+-red.svg)](https://angular.dev/)
-[![PrimeNG](https://img.shields.io/badge/PrimeNG-21.0+-blue.svg)](https://primeng.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
+**Professional-grade training platform with AI coaching, ACWR load monitoring, and Olympic qualification tracking.**
 
-## 🚀 Overview
+---
 
-FlagFit Pro is a comprehensive training platform that combines modern web technologies with sports science to deliver personalized training experiences, advanced performance analytics, and team management tools.
+## 🎯 Project Status: ~85% Production Ready
 
-## ✨ Latest Features (2024)
+| Component | Status | Details |
+|-----------|--------|---------|
+| **Database Schema** | ✅ 100% | 53+ migrations, RLS policies, real-time subscriptions |
+| **Backend API** | ✅ 100% | 69 Netlify Functions, rate limiting, error handling |
+| **Angular Frontend** | ✅ 90% | 40+ components, signal-based state, PrimeNG UI |
+| **AI Coaching** | ✅ 100% | Groq LLM + 3-tier safety + ACWR integration |
+| **ACWR Monitoring** | ✅ 100% | 1,273-line service with Gabbett 2016 thresholds |
+| **Testing** | 🔄 20% | Unit tests in progress |
 
-### 🎨 Complete Wireframe Integration
+---
 
-- **Black & White Design System**: Professional wireframe-based UI with Poppins typography
-- **Four Core Pages**: Dashboard, Training, Community, Tournaments with wireframe layouts
-- **Interactive Navigation**: Active state handling and responsive design
-- **ChatWidget**: AI coach chat with typing indicators and quick actions
+## ✨ Key Features
 
-### 🤖 AI Coaching System
+### 🤖 AI Coaching with ACWR Safety Integration
 
-- **Interactive Chat**: Real-time AI coaching with contextual responses
-- **Training Recommendations**: Personalized workout suggestions
-- **Performance Insights**: AI-powered analytics and progress tracking
-- **Quick Actions**: Training tips, nutrition advice, recovery guidance
+- **Groq LLM Integration**: FREE tier with 14,400 requests/day
+- **3-Tier Safety System**: Risk classification (low/medium/high) with appropriate disclaimers
+- **ACWR Safety Override**: Automatically blocks high-intensity recommendations when athlete ACWR > 1.5
+- **Coach Visibility Dashboard**: Coaches monitor AI recommendations to players
+- **Evidence-Based Knowledge**: 120+ peer-reviewed studies integrated
+
+### 📊 ACWR Load Monitoring (Sports Science)
+
+Based on Gabbett (2016) research - "The training-injury prevention paradox":
+
+| ACWR Range | Risk Zone | Color | AI Behavior |
+|------------|-----------|-------|-------------|
+| < 0.80 | Under-training | 🟠 Orange | Can recommend more training |
+| 0.80 - 1.30 | Sweet Spot | 🟢 Green | All recommendations allowed |
+| 1.30 - 1.50 | Elevated | 🟡 Yellow | Allowed with monitoring |
+| > 1.50 | Danger | 🔴 Red | **BLOCKS high-intensity** |
+| > 1.80 | Critical | 🔴 Red | **Recommends rest only** |
 
 ### 🏆 Olympic Preparation
 
 - **LA28 Qualification Path**: Structured progression tracking
 - **Tournament Management**: Competition tracking and results
 - **Performance Analytics**: Advanced metrics and visualizations
-- **Team Management**: Ljubljana Frogs team integration
+- **Position-Specific Metrics**: QB, WR, DB, LB tracking
 
-### 🛠️ Technical Excellence
+### 🎨 Modern UI/UX
 
-- **FilterManager**: Advanced interactive filtering system
-- **Accessibility**: ARIA compliance, keyboard navigation, screen reader support
-- **Performance**: Optimized loading states and smooth animations
-- **Security**: CSP headers, XSS protection, and secure authentication
+- **PrimeNG 21**: Native CSS animations (80+ KB bundle savings)
+- **Zoneless Change Detection**: No Zone.js overhead
+- **Signal-Based Reactivity**: Angular 21 signals throughout
+- **Responsive Design**: Mobile-first with Poppins typography
+
+---
 
 ## 🛠 Technology Stack
 
-**PRIMARY STACK: Angular 21 + PrimeNG 21**
-
-- **Frontend Framework**: Angular 21 (Standalone Components)
-- **UI Component Library**: PrimeNG 21
-- **Icons**: PrimeIcons + Lucide Angular
-- **Charts**: PrimeNG Charts (Chart.js wrapper)
-- **Forms**: Angular Reactive Forms
-- **State Management**: Angular Signals + RxJS
-- **Styling**: SCSS with CSS Custom Properties
-- **Build**: Angular CLI with ESBuild
-
-**Backend & Infrastructure**:
-
-- **Backend**: Node.js + Express
-- **Database**: Supabase PostgreSQL
-- **Authentication**: JWT with Angular Guards & Interceptors
-- **API**: RESTful API with Netlify Functions
-- **Real-Time**: Supabase Realtime subscriptions
-
-**Legacy Files**:
-
-- The root directory contains legacy vanilla HTML/CSS/JS files from the original implementation
-- These are maintained for reference but **Angular 21 + PrimeNG 21 is the primary development stack**
-
-## 📁 Project Structure
+### Frontend (Angular 21)
 
 ```
-flagfit-pro/
-├── angular/                    # PRIMARY: Angular 21 + PrimeNG 21 application
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── core/          # Core services, guards, interceptors
-│   │   │   ├── shared/        # Shared components
-│   │   │   └── features/      # Feature modules
-│   │   └── assets/
-│   ├── angular.json
-│   └── package.json
-├── src/                        # Legacy vanilla HTML/CSS/JS (reference only)
-│   ├── css/
-│   ├── js/
-│   └── components/
-├── netlify/                    # Netlify Functions (backend API)
-│   └── functions/
-└── docs/                       # Documentation
+angular/src/app/
+├── core/                    # 45+ services
+│   ├── services/
+│   │   ├── acwr.service.ts         # 1,273 lines - ACWR calculations
+│   │   ├── ai-chat.service.ts      # AI coaching with safety
+│   │   ├── supabase.service.ts     # Auth + database
+│   │   └── ... (40+ more)
+│   ├── interceptors/        # Auth, cache, error
+│   └── view-models/         # Signal-based state
+├── features/                # 25+ feature modules
+│   ├── acwr-dashboard/      # Load monitoring UI
+│   ├── training/            # 10+ training components
+│   ├── analytics/           # Performance analytics
+│   └── ... (20+ more)
+└── shared/                  # Reusable components
 ```
+
+### Backend (Netlify Functions)
+
+```
+netlify/functions/
+├── ai-chat.cjs              # AI coaching with ACWR safety
+├── ai-safety-classifier.cjs # 3-tier risk classification
+├── load-management.cjs      # ACWR, monotony, TSB
+├── training-plan.cjs        # Periodized training
+├── smart-training-recommendations.cjs
+└── ... (69 total functions)
+```
+
+### Database (Supabase PostgreSQL)
+
+- **53+ migration files** with comprehensive schema
+- **Row Level Security (RLS)** policies throughout
+- **Real-time subscriptions** for live updates
+- **Knowledge base** with evidence grading
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 18+
 - Angular CLI 21
+- Supabase account
 
 ### Installation
 
 ```bash
-# Install Angular CLI globally
-npm install -g @angular/cli@21
+# Clone repository
+git clone <repo-url>
+cd flagfit-pro
 
-# Navigate to angular directory
+# Install Angular dependencies
 cd angular
-
-# Install dependencies
 npm install
 
 # Start development server
 npm start
 ```
 
-The Angular application will be available at `http://localhost:4200`
+The app will be available at `http://localhost:4200`
 
-## ✨ Key Features
+### Environment Variables
 
-### 🏆 Performance Analytics
+Set in Netlify UI (Site Settings → Environment Variables):
 
-- AI-Powered Predictions with advanced ML models
-- Evidence-Based Research integration
-- Flag Football Specific metrics and analytics
-- Real-Time Processing ready for GPS/wearable integration
-- Interactive Visualizations with PrimeNG Charts
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `SUPABASE_URL` | Supabase project URL | ✅ Yes |
+| `SUPABASE_SERVICE_KEY` | Supabase service role key | ✅ Yes |
+| `SUPABASE_ANON_KEY` | Supabase anon key | ✅ Yes |
+| `JWT_SECRET` | JWT signing secret | ✅ Yes |
+| `GROQ_API_KEY` | Groq API key for AI | ⚠️ Optional |
 
-### 🥗 Nutrition Intelligence
+Get your FREE Groq API key at: https://console.groq.com/
 
-- USDA Database Integration
-- Precision Hydration tracking
-- Evidence-Based Supplements recommendations
-- Personalized Strategies with biomarker integration
+---
 
-### 🤝 Team Chemistry
+## 📁 Project Structure
 
-- Relationship Analytics
-- Communication Metrics
-- Network Visualization
-- Performance Impact correlation
+```
+flagfit-pro/
+├── angular/                 # PRIMARY: Angular 21 + PrimeNG 21
+│   ├── src/app/
+│   │   ├── core/           # Services, guards, interceptors
+│   │   ├── features/       # Feature modules (25+)
+│   │   └── shared/         # Shared components
+│   └── package.json
+├── netlify/functions/       # Backend API (69 functions)
+├── database/               # SQL migrations (53+)
+├── docs/                   # Documentation
+└── supabase/              # Supabase config
+```
 
-### 📊 Advanced Analytics Dashboard
+---
 
-- Real-Time Streaming data
-- Predictive Insights with confidence intervals
-- Flag Football Optimization
-- Research Integration
-- Mobile Responsive design
+## 📊 Angular Services Overview
 
-### 🎯 Core Functionality
+### Core Services (45+)
 
-#### 🏈 Dashboard
+| Service | Lines | Purpose |
+|---------|-------|---------|
+| `acwr.service.ts` | 1,273 | ACWR calculations with EWMA |
+| `acwr-alerts.service.ts` | 434 | Load alerts and warnings |
+| `ai-chat.service.ts` | 270 | AI coaching chat |
+| `wellness.service.ts` | 582 | Wellness tracking |
+| `nutrition.service.ts` | 713 | Nutrition management |
+| `training-stats-calculation.service.ts` | 363 | Training statistics |
+| `notification-state.service.ts` | 394 | Signal-based notifications |
 
-- **Performance Overview**: Training metrics and progress charts
-- **Today's Training**: Recommended exercises and schedules
-- **Team Updates**: Ljubljana Frogs team communications
-- **Interactive Cards**: Hover effects and responsive layout
+### Feature Components (25+)
 
-#### 🏃‍♂️ Training
+| Feature | Components | Status |
+|---------|------------|--------|
+| **Training** | 10 components | ✅ Complete |
+| **Analytics** | 2 components | ✅ Complete |
+| **Dashboard** | 3 components | ✅ Complete |
+| **ACWR Dashboard** | 1 component | ✅ Complete |
+| **Game Tracker** | 2 components | ✅ Complete |
+| **Wellness** | 1 component | ✅ Complete |
+| **Auth** | 4 components | ✅ Complete |
+| **Profile/Settings** | 2 components | ✅ Complete |
 
-- **Personalized Workouts**: AI-recommended training sessions
-- **Skill Categories**: Speed & Agility, Route Running, Defensive Drills
-- **Progress Tracking**: Duration and difficulty monitoring
-- **Customization**: Personalized training adjustments
+---
 
-#### 🤝 Community
+## 🔒 Security Features
 
-- **Discussion Forums**: Player interaction and knowledge sharing
-- **Team Leaderboard**: Performance rankings and achievements
-- **Social Features**: Player connections and team chemistry
-- **Real-time Updates**: Live discussions and notifications
+- **Supabase Auth**: JWT token management with Angular guards
+- **Row Level Security**: Database-level access control
+- **CSRF Protection**: Built-in CSRF protection
+- **Rate Limiting**: API endpoint protection
+- **Input Validation**: Server-side validation middleware
+- **AI Safety Tiers**: Risk classification for AI responses
 
-#### 🏆 Tournaments
+---
 
-- **LA28 Olympic Path**: Qualification tracking and requirements
-- **Upcoming Events**: Tournament schedules and registration
-- **Results History**: Competition performance tracking
-- **Achievement System**: Awards and milestone recognition
+## 📚 Documentation
 
-#### 💬 AI Coach Chat
+| Document | Description |
+|----------|-------------|
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design and dependencies |
+| [UTILITIES.md](docs/UTILITIES.md) | Angular services API reference |
+| [AI_COACHING_SYSTEM_REVAMP.md](docs/AI_COACHING_SYSTEM_REVAMP.md) | AI safety system documentation |
+| [angular/README.md](angular/README.md) | Angular-specific documentation |
+| [ANGULAR_PRIMENG_GUIDE.md](ANGULAR_PRIMENG_GUIDE.md) | Angular 21 + PrimeNG best practices |
 
-- **Contextual Responses**: Intelligent coaching suggestions
-- **Quick Actions**: Training tips, nutrition, recovery advice
-- **Interactive Interface**: Typing indicators and smooth animations
-- **Persistent Sessions**: Chat history and context retention
+---
 
-## 🎨 Design System
-
-The application uses a comprehensive design system built on:
-
-- **PrimeNG**: Production-ready UI components
-- **SCSS**: Styling with CSS custom properties
-- **Design Tokens**: Semantic token system for theming
-- **Accessibility**: WCAG 2.1 AA compliant
-
-### Typography
-
-- **Primary Font**: Poppins (300, 400, 500, 600, 700, 800)
-- **Hierarchy**: h1 (2.5rem), h2 (1.875rem), h3 (1.5rem)
-- **Color Scheme**: Black (#1a1a1a) on White (#ffffff)
-
-### Components
-
-- **Buttons**: Primary (black) and Secondary (white) with hover effects
-- **Cards**: Wireframe-style with borders and responsive layout
-- **Navigation**: Sticky header with active state indicators
-- **Chat**: Floating widget with smooth animations
-
-### Responsive Design
-
-- **Desktop**: Full wireframe layout with grid systems
-- **Tablet**: Adapted layouts with touch optimization
-- **Mobile**: Stacked layouts with mobile-first approach
-
-See [DESIGN_SYSTEM_DOCUMENTATION.md](./DESIGN_SYSTEM_DOCUMENTATION.md) for complete details.
-
-## 🔌 API Integration
-
-All API connections are integrated through Angular services:
-
-- **Auth Service**: Login, Register, Logout, Token Management
-- **API Service**: Centralized HTTP client with interceptors
-- **Feature Services**: Training, Analytics, Community, Tournaments, etc.
-
-### API Configuration
-
-The API service auto-detects the environment:
-
-- **Development**: Uses mock API or localhost:3001
-- **Netlify**: Uses Netlify Functions
-- **Production**: Auto-detects based on hostname
-
-## 📦 Development
+## 🧪 Development
 
 ### Build
 
@@ -244,126 +230,28 @@ cd angular
 npm test
 ```
 
-### Code Generation
+### Generate Component
 
 ```bash
 cd angular
-
-# Generate a new component
 ng generate component features/my-feature
-
-# Generate a new service
-ng generate service core/services/my-service
 ```
 
-### Code Quality Features
-
-- **FilterManager**: Advanced interactive filtering with accessibility
-- **Error Boundaries**: Comprehensive error handling
-- **Performance Optimization**: Loading states and smooth transitions
-- **Accessibility**: ARIA compliance and keyboard navigation
-- **Security**: CSP headers and XSS protection
-
-## 🚀 Deployment
-
-### Production Ready
-
-- **Vite Build**: Optimized production builds
-- **Service Worker**: PWA capabilities and offline support
-- **Performance**: Lazy loading and code splitting
-- **Security**: Comprehensive security headers
-
-### Environment Configuration
-
-```bash
-# Set up environment variables
-cp .env.example .env
-# Configure your settings
-```
-
-## 🔒 Security & Privacy
-
-### Security Features
-
-- **Content Security Policy**: XSS and injection protection
-- **Authentication**: JWT token management with Angular Guards
-- **Data Protection**: Secure local storage handling
-- **Error Handling**: Graceful error boundaries
-- **CSRF Protection**: Built-in CSRF protection
-- **Session Management**: Secure session handling
-
-### Privacy Compliance
-
-- **Data Minimization**: Only necessary data collection
-- **User Control**: Clear data management options
-- **Transparent Processing**: Open source and auditable
-- **Secure Communications**: HTTPS enforcement
-
-## 📱 Accessibility
-
-### WCAG Compliance
-
-- **Keyboard Navigation**: Full keyboard accessibility
-- **Screen Readers**: ARIA labels and live regions
-- **Focus Management**: Logical tab order and focus indicators
-- **High Contrast**: Accessible color combinations
-
-### Interactive Features
-
-- **Skip Links**: Quick navigation for assistive technology
-- **Live Regions**: Dynamic content announcements
-- **Button States**: Clear active and disabled states
-- **Form Validation**: Accessible error messages
-
-## 🔐 Authentication
-
-The authentication system includes:
-
-- JWT token management
-- CSRF protection
-- Session management
-- Auto-redirect on auth state change
-- Route guards
-
-## 🎯 Migration Status
-
-The project is migrating from vanilla HTML/CSS/JS to Angular 21 + PrimeNG 21:
-
-- ✅ Angular 21 project setup
-- ✅ PrimeNG 21 integration
-- ✅ Core services (Auth, API)
-- ✅ Shared components (Sidebar, Header, Layout)
-- ✅ Auth module (Login, Register, Reset Password)
-- ✅ Dashboard component
-- 🚧 Remaining feature modules in progress
-
-## 📚 Documentation
-
-- [Angular README](./angular/README.md) - Angular-specific documentation
-- [Design System](./DESIGN_SYSTEM_DOCUMENTATION.md) - Complete design system guide
-- [Migration Plan](./ANGULAR_MIGRATION_PLAN.md) - Migration from vanilla HTML/JS
-- [Technical Architecture](./docs/TECHNICAL_ARCHITECTURE.md) - System architecture
+---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please:
+1. Follow Angular 21 style guide
+2. Use PrimeNG components when possible
+3. Implement signal-based state management
+4. Add proper TypeScript types
+5. Follow the ACWR safety patterns for training recommendations
 
-1. Follow the wireframe-based design system
-2. Maintain accessibility standards
-3. Write clean, documented code
-4. Test interactive features thoroughly
-5. Follow the existing code patterns
+---
 
 ## 📄 License
 
-MIT License - See LICENSE file for details
-
-## 🙏 Acknowledgments
-
-- HTML wireframe designs for comprehensive UI structure
-- Angular and PrimeNG communities for excellent development tools
-- Accessibility guidelines from W3C and WCAG
-- Olympic flag football community for inspiration
+MIT License - See [LICENSE.md](docs/LICENSE.md) for details
 
 ---
 
@@ -371,6 +259,6 @@ MIT License - See LICENSE file for details
 
 **Built with ❤️ for Olympic flag football excellence**
 
-[Live Demo](https://app-new-flag.netlify.app/) • [Documentation](docs/) • [Contributing](CONTRIBUTING.md) • [License](LICENSE.md)
+[Live Demo](https://app-new-flag.netlify.app/) • [Documentation](docs/) • [Angular App](angular/)
 
 </div>

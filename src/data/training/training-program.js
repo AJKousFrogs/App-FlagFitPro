@@ -1,3 +1,17 @@
+/**
+ * ⚠️ DEPRECATED: This static data file is deprecated.
+ * 
+ * Use the TrainingProgramService to fetch program data from the database:
+ *   import { TrainingProgramService } from '@core/services/training-program.service';
+ *   await programService.fetchFullProgram('program-id');
+ * 
+ * Or via API: GET /api/training-programs?id={programId}&full=true
+ * 
+ * See /src/data/DEPRECATED.md for full migration guide.
+ * This file will be removed in Q2 2026.
+ * 
+ * @deprecated Use database via TrainingProgramService or API
+ */
 export const TRAINING_PROGRAM = {
   programInfo: {
     title: "COMPLETE FLAG FOOTBALL OFFSEASON TRAINING PROGRAM",

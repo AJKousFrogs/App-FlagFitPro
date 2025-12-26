@@ -695,7 +695,7 @@ export class NutritionService {
   getNutrientSources(nutrient: string): string[] {
     const sources: Record<string, string[]> = {
       protein: ["Chicken Breast", "Greek Yogurt", "Eggs", "Salmon", "Lentils"],
-      "vitamin C": [
+      "vitamin c": [
         "Oranges",
         "Strawberries",
         "Bell Peppers",

@@ -1,5 +1,17 @@
-// Training Program Engine
-// Handles workout progression, phase transitions, and exercise variations
+/**
+ * ⚠️ DEPRECATED: Training Program Engine (Legacy)
+ * 
+ * This engine uses deprecated static data files.
+ * For new development, use:
+ *   - TrainingProgramService (Angular)
+ *   - /api/training-programs endpoint
+ *   - /api/smart-training endpoint for recommendations
+ * 
+ * This file is maintained for legacy HTML pages only.
+ * Will be removed when all pages are migrated to Angular.
+ * 
+ * @deprecated Use TrainingProgramService or API endpoints
+ */
 
 import { WEEKLY_SCHEDULES } from "./data/training/index.js";
 import { logger } from "./logger.js";

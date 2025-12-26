@@ -60,8 +60,39 @@ async function getCoachDashboard(userId) {
           workload = acute; // Weekly workload
         }
 
-        // Calculate readiness (mock for now - would use wellness data)
-        const readiness = Math.max(50, Math.min(100, 85 - (acwr - 1.0) * 20));
+        // Calculate readiness from wellness data
+        let readiness = 75; // Default baseline
+        try {
+          // Get latest wellness entry for this user
+          const { data: wellnessData } = await supabaseAdmin
+            .from("wellness_entries")
+            .select("sleep_quality, energy_level, stress_level, muscle_soreness, mood")
+            .or(`athlete_id.eq.${member.user_id},user_id.eq.${member.user_id}`)
+            .order("date", { ascending: false })
+            .limit(1);
+
+          if (wellnessData && wellnessData.length > 0) {
+            const w = wellnessData[0];
+            // Calculate wellness score (average of positive metrics, inverse stress/soreness)
+            const sleepScore = (w.sleep_quality || 5) * 10;
+            const energyScore = (w.energy_level || 5) * 10;
+            const stressScore = (10 - (w.stress_level || 5)) * 10; // Inverse
+            const sorenessScore = (10 - (w.muscle_soreness || 5)) * 10; // Inverse
+            const moodScore = (w.mood || 5) * 10;
+            
+            const wellnessAvg = (sleepScore + energyScore + stressScore + sorenessScore + moodScore) / 5;
+            
+            // Combine wellness with ACWR impact
+            const acwrPenalty = Math.abs(acwr - 1.0) * 15; // Penalty for being far from optimal ACWR
+            readiness = Math.max(30, Math.min(100, wellnessAvg - acwrPenalty));
+          } else {
+            // Fallback: estimate from ACWR only
+            readiness = Math.max(50, Math.min(100, 85 - (acwr - 1.0) * 20));
+          }
+        } catch (wellnessErr) {
+          console.warn(`Could not fetch wellness for user ${member.user_id}:`, wellnessErr.message);
+          readiness = Math.max(50, Math.min(100, 85 - (acwr - 1.0) * 20));
+        }
 
         squadMembers.push({
           id: userData.id,

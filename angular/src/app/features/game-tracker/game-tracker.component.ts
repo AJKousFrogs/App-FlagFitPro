@@ -459,7 +459,7 @@ export class GameTrackerComponent implements OnInit {
     const gameData = this.gameForm.value;
     this.apiService
       .post("/api/tournaments/games", gameData)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: unknown) => {
           let gameId = `game-${Date.now()}`;
@@ -543,7 +543,7 @@ export class GameTrackerComponent implements OnInit {
     // Save play
     this.apiService
       .post("/api/game-events", playData)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.plays.update((plays) => [...plays, playData as Play]);
@@ -597,7 +597,7 @@ export class GameTrackerComponent implements OnInit {
           playerId: playerId,
           present: true,
         })
-        .pipe(takeUntilDestroyed())
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe();
     });
   }
@@ -613,7 +613,7 @@ export class GameTrackerComponent implements OnInit {
   deletePlay(playId: string): void {
     this.apiService
       .delete(`/api/game-events/${playId}`)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.plays.update((plays) => plays.filter((p) => p.id !== playId));

@@ -48,6 +48,10 @@ JWT_SECRET=your-secret-key-change-in-production
 
 # API Configuration
 VITE_API_BASE_URL=http://localhost:3001
+
+# AI Coaching (Groq - FREE tier: 14,400 requests/day)
+# Get your key at: https://console.groq.com/
+GROQ_API_KEY=gsk_your_groq_api_key_here
 ```
 
 ### 3. Get Your Supabase Credentials
@@ -95,6 +99,16 @@ curl http://localhost:3001/api/health
 | Method | Endpoint      | Description      |
 | ------ | ------------- | ---------------- |
 | GET    | `/api/health` | API health check |
+
+### AI Coaching Endpoints
+
+| Method | Endpoint            | Description                    |
+| ------ | ------------------- | ------------------------------ |
+| POST   | `/api/ai/chat`      | Send message to AI coach       |
+| POST   | `/api/ai/feedback`  | Submit feedback on AI response |
+| GET    | `/api/ai/feedback`  | Get feedback statistics        |
+
+**Note**: AI coaching uses Groq's FREE tier (14,400 requests/day). Set `GROQ_API_KEY` environment variable.
 
 ## Database Schema
 

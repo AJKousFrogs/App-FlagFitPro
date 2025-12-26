@@ -1,8 +1,157 @@
 # AI Coaching System Revamp
 
-**Version**: 1.0  
-**Last Updated**: January 2025  
-**Status**: ✅ Implementation Guide
+**Version**: 2.0  
+**Last Updated**: December 26, 2025  
+**Status**: ✅ Fully Implemented with ACWR Safety Integration
+
+## Implementation Status
+
+| Feature | Status | Location |
+|---------|--------|----------|
+| Safety Tier Classification | ✅ Implemented | `netlify/functions/utils/ai-safety-classifier.cjs` |
+| Risk Level Determination | ✅ Implemented | `ai-safety-classifier.cjs` |
+| Intent Classification | ✅ Implemented | `ai-safety-classifier.cjs` |
+| Disclaimer Templates | ✅ Implemented | `ai-safety-classifier.cjs` |
+| AI Chat Endpoint | ✅ Implemented | `netlify/functions/ai-chat.cjs` |
+| **🆕 ACWR Safety Override** | ✅ Implemented | `netlify/functions/ai-chat.cjs` |
+| Knowledge Base Search | ✅ Implemented | `netlify/functions/knowledge-search.cjs` |
+| Knowledge Base Table | ✅ Implemented | `knowledge_base_entries` table in Supabase |
+| AI Chat Sessions Table | ✅ Implemented | `ai_chat_sessions` table in Supabase |
+| AI Messages Table | ✅ Implemented | `ai_messages` table in Supabase |
+| AI Recommendations Table | ✅ Implemented | `ai_recommendations` table in Supabase |
+| AI Feedback Table | ✅ Implemented | `ai_feedback` table in Supabase |
+| AI Coach Visibility Table | ✅ Implemented | `ai_coach_visibility` table in Supabase |
+| Smart Training Recommendations | ✅ Implemented | `netlify/functions/smart-training-recommendations.cjs` |
+| API Redirects | ✅ Implemented | `netlify.toml` |
+| RLS Policies | ✅ Implemented | Database migration |
+| **LLM Integration (Groq)** | ✅ Implemented | `netlify/functions/utils/groq-client.cjs` |
+| AI Feedback Endpoint | ✅ Implemented | `netlify/functions/ai-feedback.cjs` |
+| Coach Visibility Dashboard | ✅ Implemented | `angular/src/app/shared/components/ai-coach-visibility/` |
+| Feedback Loop UI | ✅ Implemented | `angular/src/app/shared/components/ai-feedback/` |
+
+---
+
+## 🆕 ACWR Safety Integration (v2.0)
+
+The AI coaching system now integrates with the ACWR (Acute:Chronic Workload Ratio) monitoring system to **automatically block dangerous training recommendations** when athletes are in high-risk zones.
+
+### How It Works
+
+1. **User Context Enrichment**: When a user sends a message, the system calculates their current ACWR from training session data
+2. **High-Intensity Detection**: The system identifies if the query is about high-intensity training (sprints, explosive work, max effort, etc.)
+3. **Safety Override**: If ACWR > 1.5 AND the query is about high-intensity training, the system:
+   - Escalates the risk level to HIGH
+   - Blocks the high-intensity recommendation
+   - Provides recovery-focused alternatives
+   - Explains the safety rationale with sports science context
+
+### ACWR Thresholds (Gabbett 2016)
+
+| ACWR Range | Risk Zone | AI Behavior |
+|------------|-----------|-------------|
+| < 0.8 | Detraining | ✅ Can recommend increased training |
+| 0.8 - 1.3 | Optimal (Sweet Spot) | ✅ All recommendations allowed |
+| 1.3 - 1.5 | Caution | ✅ Allowed with monitoring advice |
+| > 1.5 | Danger | ⛔ **BLOCKS high-intensity recommendations** |
+| > 1.8 | Critical | ⛔ **BLOCKS all training, recommends rest** |
+
+### High-Intensity Keywords Detected
+
+The system detects these keywords to identify high-intensity training requests:
+
+```javascript
+const HIGH_INTENSITY_KEYWORDS = [
+  "sprint", "explosive", "plyometric", "max effort", "maximum",
+  "high intensity", "hiit", "tabata", "power", "speed work",
+  "all out", "100%", "full speed", "intense", "hard workout",
+  "heavy", "max weight", "1rm", "pr attempt", "personal record",
+  "competition", "game day", "match prep", "peak performance",
+];
+```
+
+### Example: ACWR Safety Override in Action
+
+**User Query**: "What's a good explosive sprint workout for today?"
+
+**Without ACWR Safety** (old behavior):
+> Here's an explosive sprint workout: 8x40m sprints at 100% effort with 90 seconds rest...
+
+**With ACWR Safety** (new behavior, ACWR = 1.6):
+> ## ⚠️ Training Load Alert
+> 
+> I understand you're asking about high-intensity training, but I need to prioritize your safety.
+> 
+> **Your current ACWR is 1.6 (danger zone)**
+> 
+> Based on sports science research (Gabbett 2016), athletes with ACWR above 1.5 have significantly increased injury risk. The optimal "sweet spot" is between 0.8 and 1.3.
+> 
+> ### 🔄 Recommended Alternatives
+> Instead of high-intensity work, consider:
+> - **Low-intensity technique drills** (50-60% effort)
+> - **Mobility and flexibility work**
+> - **Recovery activities** (foam rolling, light swimming)
+> - **Mental training** (film study, visualization)
+> 
+> ### 📅 When Can You Train Hard Again?
+> Once your ACWR returns to the 0.8-1.3 range (typically 3-7 days with proper load management), you can safely resume high-intensity training.
+
+### API Response with ACWR Safety Data
+
+```json
+{
+  "answer_markdown": "...",
+  "risk_level": "high",
+  "acwr_safety": {
+    "blocked": true,
+    "reason": "Your current ACWR is 1.6 (danger zone). High-intensity training is not recommended until your workload ratio returns to the safe range (0.8-1.3).",
+    "current_acwr": 1.6,
+    "risk_zone": "danger",
+    "original_risk_level": "low"
+  },
+  "metadata": {
+    "acwr": {
+      "ratio": 1.6,
+      "riskZone": "danger",
+      "canRecommendHighIntensity": false
+    }
+  }
+}
+```
+
+---
+
+## LLM Integration: Groq (FREE Tier)
+
+The AI coaching system uses **Groq** as the LLM provider, offering:
+
+- **14,400 FREE requests/day**
+- **Models**: Llama 3.1 70B (complex), Llama 3.1 8B (fast), Mixtral, Gemma
+- **OpenAI-compatible API**
+
+### Configuration
+
+Set the `GROQ_API_KEY` environment variable in Netlify:
+
+```bash
+# In Netlify UI: Site Settings → Environment Variables
+GROQ_API_KEY=gsk_your_api_key_here
+```
+
+Get your free API key at: https://console.groq.com/
+
+### Rate Limits (Free Tier)
+
+| Limit | Value |
+|-------|-------|
+| Requests/minute | 30 |
+| Requests/day | 14,400 |
+| Tokens/minute | 6,000 |
+
+### Fallback Behavior
+
+If Groq is not configured or rate-limited, the system falls back to:
+1. Knowledge base synthesis (curated responses)
+2. Safe default responses with disclaimers
 
 ---
 

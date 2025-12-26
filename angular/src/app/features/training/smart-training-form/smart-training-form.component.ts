@@ -5,7 +5,9 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import {
   FormBuilder,
@@ -356,6 +358,7 @@ export class SmartTrainingFormComponent implements OnInit {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private destroyRef = inject(DestroyRef);
 
   aiSuggestions = signal<TrainingSuggestion[]>([]);
   weatherData = signal<WeatherData | null>(null);
@@ -445,6 +448,7 @@ export class SmartTrainingFormComponent implements OnInit {
         recentPerformance: [], // See issue #14 - Load recent performance API
         upcomingGames: [], // See issue #14 - Load upcoming games API
       })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (suggestions) => {
           this.aiSuggestions.set(suggestions);
@@ -456,7 +460,9 @@ export class SmartTrainingFormComponent implements OnInit {
   }
 
   private async loadWeatherData() {
-    this.weatherService.getWeatherData().subscribe({
+    this.weatherService.getWeatherData()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (weather) => {
         this.weatherData.set(weather);
       },
@@ -468,9 +474,11 @@ export class SmartTrainingFormComponent implements OnInit {
 
   private setupFormWatchers() {
     // Update recommended equipment when session type changes
-    this.trainingForm.get("sessionType")?.valueChanges.subscribe((type) => {
-      this.updateRecommendedEquipment(type);
-    });
+    this.trainingForm.get("sessionType")?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((type) => {
+        this.updateRecommendedEquipment(type);
+      });
   }
 
   private updateRecommendedEquipment(sessionType: string) {

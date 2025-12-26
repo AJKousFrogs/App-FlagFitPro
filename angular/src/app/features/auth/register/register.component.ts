@@ -3,6 +3,7 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
@@ -228,6 +229,7 @@ export class RegisterComponent {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private destroyRef = inject(DestroyRef);
 
   registerForm: FormGroup;
   isLoading = signal(false);
@@ -348,7 +350,7 @@ export class RegisterComponent {
 
     this.authService
       .register(registerData)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (response.success) {

@@ -1,7 +1,7 @@
 # Error Handling Guide
 
-**Version**: 1.0  
-**Last Updated**: January 2025  
+**Version**: 2.0  
+**Last Updated**: December 2025  
 **Status**: ✅ Production Ready
 
 ---
@@ -13,10 +13,12 @@ This guide explains the standardized error handling patterns used across the Fla
 ### Key Features
 
 - **Unified Error Handling**: Consistent error responses across backend and frontend
-- **Structured Error Format**: Standardized error response structure
+- **Structured Error Format**: Standardized error response structure with request IDs
+- **baseHandler Pattern**: Centralized middleware for all Netlify functions
 - **Automatic Logging**: Function call logging and error tracking
 - **User-Friendly Messages**: Clear error messages for users
 - **Retry Logic**: Built-in retry mechanisms for network operations
+- **Rate Limiting**: Built-in rate limiting per endpoint type
 
 ## Architecture
 
@@ -107,6 +109,58 @@ All error responses follow this structure:
 | `handleConflictError(message)`  | 409         | Duplicate resource       |
 | `handleDatabaseError(error)`    | 500         | Database errors          |
 | `handleServerError(error)`      | 500         | General server errors    |
+
+---
+
+## baseHandler Pattern (Recommended)
+
+The `baseHandler` pattern provides a standardized middleware for all Netlify functions, handling CORS, authentication, rate limiting, and error handling automatically.
+
+### Location
+
+`netlify/functions/utils/base-handler.cjs`
+
+### Usage
+
+```javascript
+const { baseHandler } = require("./utils/base-handler.cjs");
+const { createSuccessResponse, createErrorResponse } = require("./utils/error-handler.cjs");
+
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "my-function",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "READ", // READ, CREATE, UPDATE, DELETE
+    requireAuth: true,
+    handler: async (event, _context, { userId, requestId }) => {
+      // Your business logic here
+      const data = await fetchData(userId);
+      return createSuccessResponse(data, requestId);
+    },
+  });
+};
+```
+
+### Features
+
+| Feature | Description |
+|---------|-------------|
+| CORS | Automatic CORS headers for all responses |
+| Authentication | JWT validation with user ID extraction |
+| Rate Limiting | Configurable per endpoint type |
+| Request ID | Unique ID for request tracking |
+| Error Handling | Consistent error responses |
+| Logging | Automatic request/response logging |
+
+### Configuration Options
+
+| Option | Type | Required | Description |
+|--------|------|----------|-------------|
+| `functionName` | string | Yes | Name for logging |
+| `allowedMethods` | string[] | Yes | HTTP methods allowed |
+| `rateLimitType` | string | Yes | Rate limit tier |
+| `requireAuth` | boolean | Yes | Require authentication |
+| `handler` | function | Yes | Business logic function |
 
 ---
 

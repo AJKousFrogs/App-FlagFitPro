@@ -1,3 +1,14 @@
+/**
+ * ⚠️ DEPRECATED: This static data file is deprecated.
+ * 
+ * Use the TrainingProgramService to fetch program data from the database:
+ *   import { TrainingProgramService } from '@core/services/training-program.service';
+ *   await programService.fetchFullProgram('ffffffff-ffff-ffff-ffff-ffffffffffff');
+ * 
+ * Or via API: GET /api/training-programs?id=ffffffff-ffff-ffff-ffff-ffffffffffff&full=true
+ * 
+ * This file will be removed in a future version.
+ */
 export const ANNUAL_TRAINING_PROGRAM = {
   programInfo: {
     title: "LJUBLJANA FROGS - COMPLETE ANNUAL TRAINING PROGRAM",

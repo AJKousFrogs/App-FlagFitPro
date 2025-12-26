@@ -1,17 +1,12 @@
 // Netlify Function: Training Statistics
 // Returns user training data and progress using Supabase
 
-const { db, checkEnvVars } = require("./supabase-client.cjs");
+const { db } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
-  handleValidationError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 const { getTimeAgo } = require("./utils/date-utils.cjs");
 
 // Get real training data from Supabase database
@@ -193,76 +188,66 @@ const formatWorkoutName = (workoutType) => {
   );
 };
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("Training-Stats", event);
-
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
-
-  try {
-    // Check environment variables
-    checkEnvVars();
-
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "READ");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-
-    // Handle GET request - return training stats
-    if (event.httpMethod === "GET") {
-      const trainingStats = await getTrainingStats(userId);
-      return createSuccessResponse(trainingStats);
-    }
-
-    // Handle POST request - complete training session
-    if (event.httpMethod === "POST") {
-      // Parse and validate request body
-      let bodyData = {};
-      try {
-        bodyData = JSON.parse(event.body);
-      } catch (_parseError) {
-        return handleValidationError("Invalid JSON in request body");
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "training-stats",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
+    requireAuth: true,
+    handler: async (event, _context, { userId, requestId }) => {
+      // Handle GET request - return training stats
+      if (event.httpMethod === "GET") {
+        const trainingStats = await getTrainingStats(userId);
+        return createSuccessResponse(trainingStats, requestId);
       }
 
-      const { workoutType, duration, score } = bodyData;
+      // Handle POST request - complete training session
+      if (event.httpMethod === "POST") {
+        let bodyData = {};
+        try {
+          bodyData = JSON.parse(event.body || "{}");
+        } catch {
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+            requestId
+          );
+        }
 
-      // Validate input
-      if (!workoutType || !duration) {
-        return handleValidationError("Workout type and duration are required");
+        const { workoutType, duration, score } = bodyData;
+
+        // Validate input
+        if (!workoutType || !duration) {
+          return createErrorResponse(
+            "Workout type and duration are required",
+            400,
+            "validation_error",
+            requestId
+          );
+        }
+
+        // Save to Supabase database
+        const sessionData = await db.training.createSession({
+          user_id: userId,
+          workout_type: workoutType,
+          duration: parseInt(duration),
+          score: score || Math.floor(Math.random() * 20) + 80,
+        });
+
+        return createSuccessResponse(
+          { ...sessionData, message: "Training session completed successfully" },
+          requestId,
+          201
+        );
       }
 
-      // Save to Supabase database
-      const sessionData = await db.training.createSession({
-        user_id: userId,
-        workout_type: workoutType,
-        duration: parseInt(duration),
-        score: score || Math.floor(Math.random() * 20) + 80,
-      });
-
-      return createSuccessResponse(
-        sessionData,
-        201,
-        "Training session completed successfully",
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+        requestId
       );
-    }
-
-    // Method not allowed
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  } catch (error) {
-    return handleServerError(error, "Training-Stats");
-  }
+    },
+  });
 };

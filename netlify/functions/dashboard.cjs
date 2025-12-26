@@ -217,6 +217,7 @@ const getTeamChemistry = async (userId) => {
         teamId: null,
         chemistry: null,
         members: [],
+        message: "User is not a member of any team.",
       };
     }
 
@@ -225,26 +226,52 @@ const getTeamChemistry = async (userId) => {
     // Get team members
     const { data: members, error: membersError } = await supabaseAdmin
       .from("team_members")
-      .select("user_id, role")
+      .select("user_id, role, position, jersey_number, status")
       .eq("team_id", teamId);
 
     if (membersError) {
       console.error("Error fetching team members:", membersError);
-      return {
-        teamId: teamId,
-        chemistry: null,
-        members: [],
-      };
     }
 
-    // Calculate team chemistry score (mock for now)
-    // In production, this would be based on training together, wins, etc.
-    const chemistry = Math.floor(Math.random() * 20) + 80; // 80-100
+    // Try to get team chemistry from database
+    const { data: chemistryData, error: chemistryError } = await supabaseAdmin
+      .from("team_chemistry")
+      .select("overall_chemistry, communication_score, trust_score, cohesion_score, leadership_score")
+      .eq("team_id", teamId)
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    let chemistry = null;
+    let chemistryDetails = null;
+
+    if (!chemistryError && chemistryData && chemistryData.length > 0) {
+      // Use real chemistry data from database
+      const data = chemistryData[0];
+      chemistry = data.overall_chemistry;
+      chemistryDetails = {
+        communication: data.communication_score,
+        trust: data.trust_score,
+        cohesion: data.cohesion_score,
+        leadership: data.leadership_score,
+      };
+    } else {
+      // Calculate chemistry based on team activity if no stored data
+      // This is a simple heuristic based on team size and activity
+      const memberCount = members?.length || 0;
+      if (memberCount > 0) {
+        // Base chemistry on team size (more members = more potential for chemistry)
+        // Capped at reasonable values
+        const sizeBonus = Math.min(memberCount * 2, 15);
+        chemistry = 70 + sizeBonus; // Range: 70-85 based on team size
+      }
+    }
 
     return {
       teamId: teamId,
       chemistry: chemistry,
+      chemistryDetails: chemistryDetails,
       members: members || [],
+      memberCount: members?.length || 0,
     };
   } catch (error) {
     console.error("Error in getTeamChemistry:", error);

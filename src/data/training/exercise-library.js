@@ -1,3 +1,21 @@
+/**
+ * ⚠️ DEPRECATED: This static data file is deprecated.
+ * 
+ * Exercises are now stored in the database:
+ *   - exercises table (master list)
+ *   - session_exercises table (exercises in sessions)
+ * 
+ * Use the TrainingProgramService to fetch:
+ *   await programService.fetchSessionExercises(sessionId);
+ * 
+ * Or via API:
+ *   GET /api/training-programs/exercises?sessionId={sessionId}
+ * 
+ * See /src/data/DEPRECATED.md for full migration guide.
+ * This file will be removed in Q2 2026.
+ * 
+ * @deprecated Use database via TrainingProgramService or API
+ */
 export const EXERCISE_LIBRARY = {
   // Posterior Chain Exercises
   "Nordic Curls": {

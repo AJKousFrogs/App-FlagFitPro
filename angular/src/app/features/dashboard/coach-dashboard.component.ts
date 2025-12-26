@@ -4,6 +4,7 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
@@ -349,6 +350,7 @@ export class CoachDashboardComponent implements OnInit {
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
   private headerService = inject(HeaderService);
+  private destroyRef = inject(DestroyRef);
 
   squadSize = signal<number>(0);
   avgWorkload = signal<number>(0);
@@ -387,7 +389,7 @@ export class CoachDashboardComponent implements OnInit {
   loadSquadData(userId: string): void {
     this.apiService
       .get(API_ENDPOINTS.coach.team, { coachId: userId })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (response.success && response.data) {
@@ -486,7 +488,7 @@ export class CoachDashboardComponent implements OnInit {
   loadUpcomingFixtures(userId: string): void {
     this.apiService
       .get(API_ENDPOINTS.coach.games, { coachId: userId })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (response.success && response.data) {

@@ -6,12 +6,8 @@ const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
 /**
  * Get today's date at end of day (23:59:59) for inclusive filtering
@@ -864,59 +860,33 @@ function generateTomorrowGuidance({
 }
 
 // Main handler
-exports.handler = async (event, _context) => {
-  logFunctionCall("TrainingPlan", event);
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "training-plan",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: true,
+    handler: async (event, _context, { userId, requestId }) => {
+      const queryParams = event.queryStringParameters || {};
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
-
-  // Only allow GET requests
-  if (event.httpMethod !== "GET") {
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  }
-
-  try {
-    checkEnvVars();
-
-    // Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "READ");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // Authenticate request
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-    const queryParams = event.queryStringParameters || {};
-
-    // Parse date (defaults to today)
-    let targetDate = new Date();
-    if (queryParams.date) {
-      targetDate = new Date(queryParams.date);
-      if (isNaN(targetDate.getTime())) {
-        return createErrorResponse(
-          "Invalid date format. Use ISO 8601 format (YYYY-MM-DD)",
-          400,
-          "validation_error",
-        );
+      // Parse date (defaults to today)
+      let targetDate = new Date();
+      if (queryParams.date) {
+        targetDate = new Date(queryParams.date);
+        if (isNaN(targetDate.getTime())) {
+          return createErrorResponse(
+            "Invalid date format. Use ISO 8601 format (YYYY-MM-DD)",
+            400,
+            "validation_error",
+            requestId
+          );
+        }
       }
-    }
 
-    // Generate training plan
-    const plan = await generateTrainingPlan(userId, targetDate);
+      // Generate training plan
+      const plan = await generateTrainingPlan(userId, targetDate);
 
-    return createSuccessResponse(plan);
-  } catch (error) {
-    console.error("Error in training-plan function:", error);
-    return handleServerError(error, "TrainingPlan");
-  }
+      return createSuccessResponse(plan, requestId);
+    },
+  });
 };

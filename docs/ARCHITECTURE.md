@@ -1,646 +1,498 @@
-# 🏗️ Flag Football App - Logical Architecture
+# 🏗️ FlagFit Pro - System Architecture
 
-**Version**: 2.0  
-**Last Updated**: December 2024  
-**Status**: ✅ Production Ready
-
-_Comprehensive System Design and Dependencies - Updated for Angular 21 + PrimeNG 21 + Supabase_
+**Version:** 2.1  
+**Last Updated:** December 26, 2025  
+**Status:** ✅ Production Ready (~85% Complete)
 
 ---
-
-## Overview
-
-This document provides a complete overview of the Flag Football Training App's logical architecture, including system design, dependencies, open-source API endpoints, data flow, security architecture, and deployment architecture.
 
 ## 📋 Table of Contents
 
 1. [System Overview](#system-overview)
-2. [Logical Architecture](#logical-architecture)
-3. [Core Dependencies](#core-dependencies)
-4. [Open-Source API Endpoints](#open-source-api-endpoints)
-5. [Data Flow Architecture](#data-flow-architecture)
-6. [Security Architecture](#security-architecture)
-7. [Deployment Architecture](#deployment-architecture)
+2. [Architecture Layers](#architecture-layers)
+3. [Angular Frontend Architecture](#angular-frontend-architecture)
+4. [Backend Architecture](#backend-architecture)
+5. [Database Architecture](#database-architecture)
+6. [AI Safety Architecture](#ai-safety-architecture)
+7. [State Management](#state-management)
+8. [Security Architecture](#security-architecture)
+9. [Deployment Architecture](#deployment-architecture)
+
+---
 
 ## 🎯 System Overview
 
 ### Mission Statement
 
-A comprehensive flag football management platform that prioritizes **player safety**, **performance tracking**, and **community engagement** through modern web technologies and data-driven insights.
+A comprehensive flag football training platform that prioritizes **athlete safety**, **performance tracking**, and **AI-powered coaching** through modern web technologies and sports science research.
 
 ### Core Principles
 
-- **Safety First**: Emergency protocols and injury prevention
-- **Data Integrity**: Backup, recovery, and consistency
-- **User Experience**: Intuitive, responsive, accessible design
-- **Performance**: Fast, reliable, scalable architecture
-- **Community**: Team building and social features
-
-## 🏗️ Logical Architecture
-
-### 1. **Presentation Layer** (Client-Side)
-
-```
-┌─────────────────────────────────────────────┐
-│              PRESENTATION LAYER             │
-├─────────────────────────────────────────────┤
-│  🖥️  Angular 21 Frontend Application      │
-│  ├── 📱 Mobile-Responsive Components       │
-│  ├── 🎨 PrimeNG 21 + SCSS Design Tokens   │
-│  ├── 🔄 State Management (Angular Signals) │
-│  ├── 🧭 Routing (Angular Router)          │
-│  ├── ⚡ Zoneless Change Detection          │
-│  └── 📊 Data Visualization (Chart.js)     │
-├─────────────────────────────────────────────┤
-│  🔔 Real-time Notifications                │
-│  ├── 📲 Push Notifications (Web API)       │
-│  ├── 📧 Email Integration                  │
-│  ├── 📱 SMS Gateway                        │
-│  └── 🔊 In-App Notifications              │
-├─────────────────────────────────────────────┤
-│  🛡️ Progressive Web App Features           │
-│  ├── 📴 Offline Capabilities               │
-│  ├── 💾 Service Worker                     │
-│  ├── 📱 App-like Experience                │
-│  └── 🔄 Background Sync                    │
-└─────────────────────────────────────────────┘
-```
-
-### 2. **Application Layer** (Business Logic)
-
-```
-┌─────────────────────────────────────────────┐
-│             APPLICATION LAYER               │
-├─────────────────────────────────────────────┤
-│  🎯 Core Services                          │
-│  ├── 👤 User Management Service            │
-│  ├── 🏈 Training & Performance Service     │
-│  ├── 🏥 Safety & Medical Service           │
-│  ├── 💾 Backup & Recovery Service          │
-│  ├── 🔔 Notification Service              │
-│  ├── 📊 Analytics Service                  │
-│  ├── 👥 Team Management Service            │
-│  └── 🎮 Game Management Service            │
-├─────────────────────────────────────────────┤
-│  🔌 Integration Services                   │
-│  ├── 🌤️ Weather API Integration            │
-│  ├── 📍 Location Services                  │
-│  ├── 📹 Video Analysis Service             │
-│  ├── 📱 Mobile Device Integration          │
-│  ├── 📊 Statistics & Analytics             │
-│  └── 🔗 Third-party Integrations          │
-├─────────────────────────────────────────────┤
-│  🛡️ Cross-cutting Concerns                │
-│  ├── 🔒 Authentication & Authorization     │
-│  ├── 📝 Logging & Monitoring              │
-│  ├── ⚠️ Error Handling                     │
-│  ├── 🔧 Configuration Management           │
-│  ├── 🧪 Testing Framework                  │
-│  └── 🚀 Performance Optimization          │
-└─────────────────────────────────────────────┘
-```
-
-### 3. **Data Layer** (Persistence & External APIs)
-
-```
-┌─────────────────────────────────────────────┐
-│                DATA LAYER                   │
-├─────────────────────────────────────────────┤
-│  🗄️ Primary Database (Supabase PostgreSQL) │
-│  ├── 👤 User Profiles & Authentication     │
-│  ├── 🏈 Training Data & Performance        │
-│  ├── 🏥 Medical & Emergency Information    │
-│  ├── 👥 Team & Community Data              │
-│  ├── 🎮 Game Statistics & History          │
-│  ├── 💾 Backup Metadata                    │
-│  └── 🔔 Notification Preferences          │
-├─────────────────────────────────────────────┤
-│  📦 Caching Layer                          │
-│  ├── 🔄 Local Storage (Browser)            │
-│  ├── 📱 IndexedDB (Offline Data)           │
-│  ├── ⚡ Memory Cache (Session)             │
-│  └── 🌐 CDN Cache (Static Assets)          │
-├─────────────────────────────────────────────┤
-│  🌐 External APIs & Services               │
-│  ├── 🌤️ Weather Data (OpenWeatherMap)      │
-│  ├── 📍 Geolocation (HTML5 Geolocation)    │
-│  ├── 📧 Email Service (EmailJS/SendGrid)   │
-│  ├── 📱 SMS Gateway (Twilio)               │
-│  ├── 📹 Video Processing (CloudFlare)      │
-│  ├── 📊 Sports Statistics (Free APIs)      │
-│  └── 🗺️ Maps & Navigation (OpenStreetMap)  │
-└─────────────────────────────────────────────┘
-```
-
-## 🔧 Core Dependencies
-
-### 1. **Frontend Framework & UI**
-
-```json
-{
-  "primary": {
-    "@angular/core": "^21.0.6",
-    "@angular/common": "^21.0.6",
-    "@angular/router": "^21.0.6",
-    "@angular/platform-browser": "^21.0.6"
-  },
-  "ui_framework": {
-    "primeng": "^21.0.2",
-    "primeicons": "^7.0.0",
-    "@angular/material": "^21.0.6",
-    "@angular/cdk": "^21.0.6"
-  },
-  "visualization": {
-    "chart.js": "^4.5.1"
-  },
-  "styling": {
-    "scss": "Native Angular SCSS",
-    "design_tokens": "CSS Custom Properties"
-  }
-}
-```
-
-### 2. **State Management & Data Fetching**
-
-```json
-{
-  "state_management": {
-    "angular_signals": "Native Angular 21 Signals",
-    "rxjs": "~7.8.2",
-    "computed": "Angular computed() for derived state",
-    "effect": "Angular effect() for side effects"
-  },
-  "forms": {
-    "@angular/forms": "^21.0.6",
-    "reactive_forms": "Angular Reactive Forms",
-    "signal_forms": "Angular 21 signal-based forms"
-  },
-  "validation": {
-    "angular_validators": "Built-in Angular validators",
-    "custom_validators": "Type-safe custom validators"
-  }
-}
-```
-
-### 3. **Database & Backend**
-
-```json
-{
-  "database": {
-    "@supabase/supabase-js": "^2.88.0",
-    "postgresql": "Supabase PostgreSQL (managed)",
-    "realtime": "Supabase Realtime subscriptions"
-  },
-  "auth": {
-    "supabase_auth": "Built-in Supabase Auth",
-    "jsonwebtoken": "^9.0.2",
-    "oauth": "Supabase OAuth providers"
-  },
-  "backend": {
-    "express": "^5.2.1",
-    "netlify_functions": "Serverless functions",
-    "nodejs": "Runtime environment"
-  },
-  "file_handling": {
-    "supabase_storage": "Supabase Storage"
-  }
-}
-```
-
-### 4. **Real-time & Communication**
-
-```json
-{
-  "realtime": {
-    "supabase_realtime": "Supabase Realtime channels",
-    "websockets": "Native WebSocket support"
-  },
-  "notifications": {
-    "web-push": "^3.6.7",
-    "supabase_notifications": "Supabase push notifications"
-  },
-  "communication": {
-    "nodemailer": "^7.0.11",
-    "emailjs": "EmailJS integration (optional)"
-  }
-}
-```
-
-### 5. **Media & Analytics**
-
-```json
-{
-  "media": {
-    "@angular/youtube-player": "^21.0.0",
-    "video_js": "HTML5 Video support",
-    "webcam": "WebRTC API integration"
-  },
-  "analytics": {
-    "custom_analytics": "Custom tracking service"
-  },
-  "performance": {
-    "angular_devtools": "Angular DevTools",
-    "performance_monitor": "Custom performance monitoring"
-  }
-}
-```
-
-### 6. **Development & Testing**
-
-```json
-{
-  "testing": {
-    "vitest": "^4.0.15",
-    "@angular/core/testing": "Angular Testing Utilities",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3"
-  },
-  "development": {
-    "@angular/cli": "^21.0.4",
-    "@angular-devkit/build-angular": "^21.0.4",
-    "typescript": "~5.9.3",
-    "eslint": "^9.19.0",
-    "prettier": "^3.4.2"
-  },
-  "monitoring": {
-    "angular_devtools": "Built-in Angular DevTools",
-    "performance_monitoring": "Custom load monitoring"
-  }
-}
-```
-
-## 🌐 Open-Source API Endpoints
-
-### 1. **Weather & Environmental Data**
-
-```javascript
-// OpenWeatherMap API (Free tier: 1000 calls/day)
-const WEATHER_APIs = {
-  current: "https://api.openweathermap.org/data/2.5/weather",
-  forecast: "https://api.openweathermap.org/data/2.5/forecast",
-  alerts: "https://api.openweathermap.org/data/2.5/onecall",
-  usage: "Game day weather, practice conditions, safety alerts",
-};
-
-// UV Index API (Free)
-const UV_API = {
-  endpoint: "https://api.openuv.io/api/v1/uv",
-  usage: "Player safety during outdoor activities",
-};
-
-// Air Quality API (Free)
-const AIR_QUALITY_API = {
-  endpoint: "https://api.openweathermap.org/data/2.5/air_pollution",
-  usage: "Exercise safety recommendations",
-};
-```
-
-### 2. **Location & Mapping Services**
-
-```javascript
-// OpenStreetMap & Nominatim (Free, unlimited)
-const LOCATION_APIs = {
-  geocoding: "https://nominatim.openstreetmap.org/search",
-  reverse_geocoding: "https://nominatim.openstreetmap.org/reverse",
-  maps: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-  usage: "Field locations, emergency services, travel planning",
-};
-
-// IP Geolocation (Free tier: 1000 requests/month)
-const IP_LOCATION_API = {
-  endpoint: "https://ipapi.co/json/",
-  usage: "Auto-detect user location for local weather/services",
-};
-```
-
-### 3. **Sports & Fitness APIs**
-
-```javascript
-// Sports Statistics APIs
-const SPORTS_APIs = {
-  // TheSportsDB (Free)
-  sports_db: {
-    endpoint: "https://www.thesportsdb.com/api/v1/json/3",
-    usage: "Professional flag football stats, team inspiration",
-  },
-
-  // Strava API (Free tier)
-  strava: {
-    endpoint: "https://www.strava.com/api/v3",
-    usage: "Fitness tracking integration, running stats",
-  },
-
-  // Nutritionix API (Free tier: 500 calls/day)
-  nutrition: {
-    endpoint: "https://trackapi.nutritionix.com/v2",
-    usage: "Player nutrition tracking, meal planning",
-  },
-};
-```
-
-### 4. **Communication & Notifications**
-
-```javascript
-// Email Services
-const EMAIL_APIs = {
-  // EmailJS (Free tier: 200 emails/month)
-  emailjs: {
-    endpoint: "https://api.emailjs.com/api/v1.0/email/send",
-    usage: "Team notifications, emergency alerts",
-  },
-
-  // Resend (Free tier: 3000 emails/month)
-  resend: {
-    endpoint: "https://api.resend.com/emails",
-    usage: "Transactional emails, newsletters",
-  },
-};
-
-// SMS Services
-const SMS_APIs = {
-  // Twilio (Pay-as-you-go, $0.0075/SMS)
-  twilio: {
-    endpoint:
-      "https://api.twilio.com/2010-04-01/Accounts/{AccountSid}/Messages",
-    usage: "Emergency alerts, important notifications",
-  },
-
-  // TextBelt (Free tier: 1 text/day, $0.15/text after)
-  textbelt: {
-    endpoint: "https://textbelt.com/text",
-    usage: "Simple SMS notifications",
-  },
-};
-```
-
-### 5. **Media & Content APIs**
-
-```javascript
-// Image & Video Processing
-const MEDIA_APIs = {
-  // Cloudinary (Free tier: 25GB storage, 25GB bandwidth)
-  cloudinary: {
-    endpoint: "https://api.cloudinary.com/v1_1/{cloud_name}",
-    usage: "Image optimization, video processing, storage",
-  },
-
-  // Uploadcare (Free tier: 3GB storage, 30GB traffic)
-  uploadcare: {
-    endpoint: "https://upload.uploadcare.com/base/",
-    usage: "File uploads, image transformations",
-  },
-
-  // YouTube Data API (Free quota: 10,000 units/day)
-  youtube: {
-    endpoint: "https://www.googleapis.com/youtube/v3",
-    usage: "Training video integration, technique tutorials",
-  },
-};
-```
-
-### 6. **Health & Fitness APIs**
-
-```javascript
-// Health Data APIs
-const HEALTH_APIs = {
-  // Heart Rate API (via Web Bluetooth)
-  heart_rate: {
-    endpoint: "Web Bluetooth API",
-    usage: "Real-time heart rate monitoring during training",
-  },
-
-  // BMI Calculator API (Free)
-  bmi_calculator: {
-    endpoint: "https://fitness-calculator.p.rapidapi.com/bmi",
-    usage: "Player health assessments",
-  },
-
-  // Exercise Database (Free)
-  exercise_db: {
-    endpoint: "https://exercisedb.p.rapidapi.com",
-    usage: "Training exercise library, workout planning",
-  },
-};
-```
-
-### 7. **Emergency & Safety APIs**
-
-```javascript
-// Emergency Services APIs
-const EMERGENCY_APIs = {
-  // Emergency Services Locator (Free)
-  emergency_services: {
-    endpoint: "https://overpass-api.de/api/interpreter",
-    usage: "Find nearest hospitals, urgent care centers",
-  },
-
-  // FEMA Disaster API (Free)
-  fema_disasters: {
-    endpoint: "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries",
-    usage: "Weather emergency alerts, safety warnings",
-  },
-
-  // Red Cross Safety Tips API (Free)
-  red_cross: {
-    endpoint:
-      "https://www.redcross.org/get-help/how-to-prepare-for-emergencies",
-    usage: "Safety protocol guidelines, first aid tips",
-  },
-};
-```
-
-### 8. **Analytics & Performance APIs**
-
-```javascript
-// Analytics & Monitoring
-const ANALYTICS_APIs = {
-  // Google Analytics 4 (Free)
-  google_analytics: {
-    endpoint: "https://www.googletagmanager.com/gtag/js",
-    usage: "User behavior analytics, app performance",
-  },
-
-  // PostHog (Free tier: 1M events/month)
-  posthog: {
-    endpoint: "https://app.posthog.com",
-    usage: "Product analytics, feature flags, A/B testing",
-  },
-
-  // Mixpanel (Free tier: 100K events/month)
-  mixpanel: {
-    endpoint: "https://api.mixpanel.com",
-    usage: "Event tracking, user journey analysis",
-  },
-};
-```
-
-## 🔄 Data Flow Architecture
-
-### 1. **User Interaction Flow**
-
-```
-User Action → Component → Service Layer → Database/API → Response → State Update → UI Refresh
-     ↓
-Emergency Detection → Immediate Notification → Backup Creation → Alert Broadcast
-```
-
-### 2. **Real-time Data Flow**
-
-```
-Training Session → Performance Capture → Real-time Analysis →
-Live Updates → Team Notifications → Historical Storage
-```
-
-### 3. **Safety Protocol Flow**
-
-```
-Incident Detection → Emergency Protocol → Contact Notification →
-Backup Creation → Medical Response → Documentation → Follow-up
-```
-
-## 🔒 Security Architecture
-
-### 1. **Authentication & Authorization**
-
-```typescript
-interface SecurityLayers {
-  authentication: {
-    provider: "Custom JWT";
-    methods: ["email/password", "OAuth", "magic_links"];
-    mfa: boolean;
-  };
-  authorization: {
-    model: "RBAC"; // Role-Based Access Control
-    roles: ["player", "coach", "admin", "medical_staff"];
-    permissions: string[];
-  };
-  data_protection: {
-    encryption: "AES-256";
-    backup_encryption: boolean;
-    pii_handling: "GDPR_compliant";
-  };
-}
-```
-
-### 2. **Data Security Measures**
-
-- **End-to-end encryption** for sensitive medical data
-- **Role-based access control** for different user types
-- **Audit logging** for all data access and modifications
-- **Automated backup encryption** with secure key management
-- **GDPR compliance** for data privacy and user rights
-
-## 🚀 Deployment Architecture
-
-### 1. **Infrastructure Stack**
-
-```yaml
-hosting:
-  primary: "Netlify" # Auto-scaling, global CDN, SSR support
-  alternative: "Other platforms" # Alternative deployment options
-
-database:
-  primary: "Supabase PostgreSQL" # Managed PostgreSQL with RLS
-  backup: "Automated daily backups with point-in-time recovery"
-  realtime: "Supabase Realtime subscriptions"
-
-cdn:
-  assets: "Netlify CDN"
-  media: "Supabase Storage CDN"
-
-monitoring:
-  errors: "Sentry (optional)"
-  performance: "Angular DevTools + Custom monitoring"
-  uptime: "Netlify health checks"
-```
-
-### 2. **Environment Configuration**
-
-```typescript
-interface Environments {
-  development: {
-    database: "local_supabase_instance";
-    apis: "sandbox_endpoints";
-    features: "all_enabled";
-    angular: "development_mode";
-  };
-  staging: {
-    database: "staging_supabase_project";
-    apis: "production_endpoints";
-    features: "feature_flags_controlled";
-    angular: "production_build";
-  };
-  production: {
-    database: "production_supabase_project";
-    apis: "production_endpoints";
-    features: "stable_only";
-    monitoring: "full_observability";
-    angular: "production_optimized";
-  };
-}
-```
-
-## 📊 Performance Optimization Strategy
-
-### 1. **Frontend Optimization**
-
-- **Code splitting** by routes and features
-- **Lazy loading** for heavy components
-- **Image optimization** with WebP and responsive images
-- **Service worker** for offline functionality and caching
-- **Bundle analysis** and size monitoring
-
-### 2. **Database Optimization**
-
-- **Connection pooling** with Supabase
-- **Query optimization** with proper indexing
-- **Read replicas** for analytics queries
-- **Caching strategy** for frequently accessed data
-
-### 3. **API Optimization**
-
-- **Request batching** for multiple API calls
-- **Response caching** with appropriate TTL
-- **Rate limiting** and quota management
-- **Fallback strategies** for API failures
-
-## 🔮 Future Architecture Considerations
-
-### 1. **Scalability Plans**
-
-- **Microservices migration** as the app grows
-- **Event-driven architecture** for real-time features
-- **Multi-region deployment** for global users
-- **Container orchestration** with Kubernetes
-
-### 2. **Advanced Features**
-
-- **Machine learning** for performance prediction
-- **IoT integration** for wearable devices
-- **AR/VR training** modules
-- **Blockchain** for achievement verification
-
-## 🔗 **Related Documentation**
-
-- [Backend Setup](BACKEND_SETUP.md) - Backend API setup guide
-- [Database Setup](DATABASE_SETUP.md) - Database configuration
-- [API Documentation](API_DOCUMENTATION.md) - Complete API reference
-- [Authentication Pattern](AUTHENTICATION_PATTERN.md) - Authentication architecture
-
-## 📝 **Changelog**
-
-- **v2.0 (2024-12)**: Updated to Angular 21 + PrimeNG 21 + Supabase
-  - Migrated to Angular 21
-  - Updated UI framework to PrimeNG 21
-  - Migrated database to Supabase PostgreSQL
-  - Updated state management to Angular Signals
-  - Implemented zoneless change detection
-  - Updated all dependencies to latest versions
-- **v1.0 (2024-12)**: Initial architecture documentation
-  - Comprehensive system design documented
-  - Open-source API endpoints cataloged
-  - Security and deployment architecture defined
+- **Safety First**: ACWR monitoring, AI safety tiers, injury prevention
+- **Evidence-Based**: 120+ peer-reviewed studies integrated
+- **Real-Time**: Supabase subscriptions for live updates
+- **Modern Stack**: Angular 21 signals, zoneless change detection
+- **Scalable**: Serverless backend, managed database
 
 ---
 
-_This architecture document serves as the blueprint for building a scalable, secure, and feature-rich flag football management platform that prioritizes player safety and performance._
+## 🏗️ Architecture Layers
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    PRESENTATION LAYER                           │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  Angular 21 Frontend                                     │   │
+│  │  ├── 25+ Feature Components (standalone)                 │   │
+│  │  ├── 45+ Core Services (signal-based)                    │   │
+│  │  ├── PrimeNG 21 UI Components                           │   │
+│  │  ├── Zoneless Change Detection                          │   │
+│  │  └── SCSS Design System                                 │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    APPLICATION LAYER                            │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  Netlify Functions (69 serverless functions)             │   │
+│  │  ├── AI Chat with ACWR Safety Integration               │   │
+│  │  ├── Load Management (ACWR, Monotony, TSB)              │   │
+│  │  ├── Smart Training Recommendations                      │   │
+│  │  ├── Authentication & Authorization                      │   │
+│  │  └── Rate Limiting & Error Handling                     │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      DATA LAYER                                 │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  Supabase PostgreSQL                                     │   │
+│  │  ├── 53+ Migration Files                                │   │
+│  │  ├── Row Level Security (RLS) Policies                  │   │
+│  │  ├── Real-time Subscriptions                            │   │
+│  │  ├── Knowledge Base with Evidence Grading               │   │
+│  │  └── AI Chat Sessions & Recommendations                 │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   EXTERNAL SERVICES                             │
+│  ├── Groq LLM (FREE 14,400 req/day)                            │
+│  ├── OpenWeatherMap API                                         │
+│  └── Supabase Auth (OAuth providers)                           │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🅰️ Angular Frontend Architecture
+
+### Directory Structure
+
+```
+angular/src/app/
+├── core/                           # Singleton services & utilities
+│   ├── services/                   # 45+ injectable services
+│   │   ├── acwr.service.ts         # 1,273 lines - ACWR calculations
+│   │   ├── acwr-alerts.service.ts  # Load alert management
+│   │   ├── ai-chat.service.ts      # AI coaching chat
+│   │   ├── api.service.ts          # HTTP client + endpoints
+│   │   ├── auth.service.ts         # Authentication
+│   │   ├── supabase.service.ts     # Supabase client
+│   │   ├── notification-state.service.ts  # Signal-based state
+│   │   ├── wellness.service.ts     # Wellness tracking
+│   │   └── ... (35+ more)
+│   ├── guards/                     # Route guards
+│   │   ├── auth.guard.ts
+│   │   └── role.guard.ts
+│   ├── interceptors/               # HTTP interceptors
+│   │   ├── auth.interceptor.ts
+│   │   ├── cache.interceptor.ts
+│   │   └── error.interceptor.ts
+│   ├── view-models/                # Signal-based ViewModels
+│   │   ├── base.view-model.ts
+│   │   ├── reactive.view-model.ts
+│   │   ├── dashboard.view-model.ts
+│   │   └── analytics.view-model.ts
+│   └── models/                     # TypeScript interfaces
+│       ├── acwr.models.ts
+│       └── ...
+├── features/                       # Feature modules (25+)
+│   ├── acwr-dashboard/             # ACWR monitoring UI
+│   ├── training/                   # 10 training components
+│   │   ├── training.component.ts
+│   │   ├── ai-training-scheduler/
+│   │   ├── smart-training-form/
+│   │   ├── qb-throwing-tracker/
+│   │   └── ...
+│   ├── analytics/                  # Performance analytics
+│   ├── dashboard/                  # Dashboard variants
+│   ├── wellness/                   # Wellness tracking
+│   ├── game-tracker/               # Game statistics
+│   ├── tournaments/                # Tournament management
+│   ├── auth/                       # Authentication
+│   └── ... (15+ more)
+└── shared/                         # Shared components
+    ├── components/
+    │   ├── ai-coach-visibility/    # Coach AI monitoring
+    │   ├── ai-feedback/            # AI feedback UI
+    │   ├── traffic-light-risk/     # ACWR visualization
+    │   ├── progressive-stats/      # Stats display
+    │   └── ...
+    └── utils/
+        ├── form.utils.ts
+        ├── form-submit.utils.ts
+        └── status.utils.ts
+```
+
+### Key Services
+
+| Service | Lines | Purpose |
+|---------|-------|---------|
+| `acwr.service.ts` | 1,273 | EWMA-based ACWR calculations, risk zones, tolerance detection |
+| `acwr-alerts.service.ts` | 434 | Alert generation, danger zone detection |
+| `ai-chat.service.ts` | 270 | AI coaching with safety tiers |
+| `wellness.service.ts` | 582 | Sleep, mood, stress tracking |
+| `nutrition.service.ts` | 713 | Macro/micro tracking, meal plans |
+| `notification-state.service.ts` | 394 | Signal-based notification state |
+| `training-stats-calculation.service.ts` | 363 | Volume, intensity, ACWR calculations |
+
+### Component Architecture
+
+All components use:
+
+- **Standalone**: `standalone: true` (no NgModules)
+- **OnPush**: `changeDetection: ChangeDetectionStrategy.OnPush`
+- **Signals**: `signal()`, `computed()`, `effect()`
+- **inject()**: Functional dependency injection
+
+```typescript
+@Component({
+  selector: 'app-acwr-dashboard',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, CardModule, ChartModule, ...],
+  template: `...`
+})
+export class AcwrDashboardComponent {
+  private acwrService = inject(AcwrService);
+  
+  // Reactive signals
+  acwrRatio = this.acwrService.acwrRatio;
+  riskZone = this.acwrService.riskZone;
+  
+  // Computed signals
+  canTrainHard = computed(() => 
+    this.acwrRatio() <= 1.5 && this.riskZone().level !== 'danger-zone'
+  );
+}
+```
+
+---
+
+## ⚙️ Backend Architecture
+
+### Netlify Functions Structure
+
+```
+netlify/functions/
+├── ai-chat.cjs                     # AI coaching with ACWR safety
+├── utils/
+│   ├── ai-safety-classifier.cjs    # 3-tier risk classification
+│   ├── groq-client.cjs             # Groq LLM integration
+│   ├── base-handler.cjs            # Standardized handler pattern
+│   └── error-handler.cjs           # Error response utilities
+├── load-management.cjs             # ACWR, monotony, TSB
+├── training-plan.cjs               # Periodized training
+├── smart-training-recommendations.cjs
+├── calc-readiness.cjs              # Readiness score
+├── training-stats-enhanced.cjs     # Enhanced statistics
+├── coach.cjs                       # Coach endpoints
+├── knowledge-search.cjs            # Knowledge base search
+└── ... (69 total functions)
+```
+
+### Base Handler Pattern
+
+All functions use standardized `baseHandler`:
+
+```javascript
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: 'ai-chat',
+    allowedMethods: ['POST'],
+    rateLimitType: 'CREATE',
+    requireAuth: true,
+    handler: async (event, _context, { userId, requestId }) => {
+      // Function logic
+    }
+  });
+};
+```
+
+### API Endpoints
+
+| Category | Endpoints | Description |
+|----------|-----------|-------------|
+| **AI Coaching** | `/api/ai/chat`, `/api/ai/feedback` | AI chat with safety |
+| **Load Management** | `/api/load-management/acwr`, `/monotony`, `/tsb` | ACWR calculations |
+| **Training** | `/api/training-stats`, `/training-plan` | Training data |
+| **Readiness** | `/api/calc-readiness`, `/readiness-history` | Readiness scores |
+| **Recommendations** | `/api/smart-training-recommendations` | AI recommendations |
+
+---
+
+## 🗄️ Database Architecture
+
+### Supabase PostgreSQL Schema
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     CORE TABLES                                 │
+├─────────────────────────────────────────────────────────────────┤
+│  users                    │  User accounts & profiles           │
+│  user_profiles            │  Extended profile data              │
+│  teams                    │  Team management                    │
+│  team_members             │  Team membership                    │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                   TRAINING TABLES                               │
+├─────────────────────────────────────────────────────────────────┤
+│  training_sessions        │  Session logs with RPE              │
+│  training_programs        │  Periodized programs                │
+│  training_phases          │  Mesocycle phases                   │
+│  training_weeks           │  Weekly planning                    │
+│  exercises                │  Exercise library                   │
+│  workout_logs             │  Detailed workout data              │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                  AI COACHING TABLES                             │
+├─────────────────────────────────────────────────────────────────┤
+│  ai_chat_sessions         │  Chat session management            │
+│  ai_messages              │  Chat messages with metadata        │
+│  ai_recommendations       │  AI recommendation tracking         │
+│  ai_feedback              │  User feedback on AI                │
+│  ai_coach_visibility      │  Coach monitoring of AI             │
+│  knowledge_base_entries   │  Curated knowledge with evidence    │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                   ANALYTICS TABLES                              │
+├─────────────────────────────────────────────────────────────────┤
+│  load_monitoring          │  Daily load tracking                │
+│  wellness_entries         │  Sleep, mood, stress                │
+│  injuries                 │  Injury tracking                    │
+│  game_stats               │  Game performance                   │
+│  position_specific_metrics│  Position-based metrics             │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Row Level Security (RLS)
+
+All tables have RLS policies:
+
+```sql
+-- Users can only access their own data
+CREATE POLICY "Users can view own data" ON training_sessions
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- Coaches can view team member data
+CREATE POLICY "Coaches can view team data" ON training_sessions
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM team_members 
+      WHERE team_members.team_id = training_sessions.team_id
+      AND team_members.user_id = auth.uid()
+      AND team_members.role = 'coach'
+    )
+  );
+```
+
+---
+
+## 🛡️ AI Safety Architecture
+
+### Safety Tier Classification
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                 AI SAFETY PIPELINE                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  1. KEYWORD CLASSIFICATION                                      │
+│     ├── Tier 1 (Low): technique, warm-up, drills               │
+│     ├── Tier 2 (Medium): injury, recovery, pain                │
+│     └── Tier 3 (High): supplements, dosage, medical            │
+│                                                                 │
+│  2. ACWR SAFETY OVERRIDE (NEW in v2.0)                         │
+│     ├── Calculate user's current ACWR                          │
+│     ├── Detect high-intensity keywords in query                │
+│     └── Block if ACWR > 1.5 AND high-intensity query           │
+│                                                                 │
+│  3. RESPONSE GENERATION                                         │
+│     ├── Groq LLM (Llama 3.1 70B)                               │
+│     ├── Knowledge base fallback                                │
+│     └── Safety-filtered content                                │
+│                                                                 │
+│  4. DISCLAIMER INJECTION                                        │
+│     ├── Low: None                                              │
+│     ├── Medium: "Consult healthcare professional"              │
+│     └── High: Full medical disclaimer                          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### ACWR Thresholds (Gabbett 2016)
+
+| ACWR Range | Risk Zone | AI Behavior |
+|------------|-----------|-------------|
+| < 0.80 | Under-training | ✅ Can recommend more training |
+| 0.80 - 1.30 | Sweet Spot | ✅ All recommendations allowed |
+| 1.30 - 1.50 | Elevated | ✅ Allowed with monitoring advice |
+| > 1.50 | Danger | ⛔ **BLOCKS high-intensity** |
+| > 1.80 | Critical | ⛔ **Recommends rest only** |
+
+### High-Intensity Keywords Detected
+
+```javascript
+const HIGH_INTENSITY_KEYWORDS = [
+  "sprint", "explosive", "plyometric", "max effort",
+  "high intensity", "hiit", "power", "speed work",
+  "all out", "100%", "full speed", "intense",
+  "heavy", "max weight", "1rm", "pr attempt"
+];
+```
+
+---
+
+## 📊 State Management
+
+### Signal-Based Architecture
+
+FlagFit Pro uses **Angular Signals** (not NgRx):
+
+```typescript
+// Service with signals
+@Injectable({ providedIn: 'root' })
+export class NotificationStateService {
+  // State signals
+  private readonly notifications = signal<Notification[]>([]);
+  private readonly loading = signal<boolean>(false);
+  
+  // Computed signals (derived state)
+  readonly unreadCount = computed(() => 
+    this.notifications().filter(n => !n.read).length
+  );
+  
+  // Combined state
+  readonly state = computed<NotificationState>(() => ({
+    notifications: this.notifications(),
+    unreadCount: this.unreadCount(),
+    loading: this.loading(),
+  }));
+}
+```
+
+### ViewModel Pattern
+
+```typescript
+@Injectable()
+export abstract class BaseViewModel {
+  protected destroyRef = inject(DestroyRef);
+  
+  // Common state
+  loading = signal(false);
+  error = signal<string | null>(null);
+  
+  // RxJS → Signal bridge
+  protected subscribe<T>(
+    observable: Observable<T>,
+    callbacks: { next?: (v: T) => void; error?: (e: unknown) => void }
+  ): void {
+    observable.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(callbacks);
+  }
+}
+```
+
+---
+
+## 🔒 Security Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                   SECURITY LAYERS                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  FRONTEND                                                       │
+│  ├── Angular Guards (auth.guard, role.guard)                   │
+│  ├── HTTP Interceptors (auth, error)                           │
+│  └── Input sanitization                                        │
+│                                                                 │
+│  BACKEND                                                        │
+│  ├── JWT verification                                          │
+│  ├── Rate limiting (5-10 req/5min for algorithms)              │
+│  ├── Input validation middleware                               │
+│  └── Error handling with request IDs                           │
+│                                                                 │
+│  DATABASE                                                       │
+│  ├── Row Level Security (RLS) policies                         │
+│  ├── Supabase Auth integration                                 │
+│  └── Encrypted connections (SSL/TLS)                           │
+│                                                                 │
+│  AI SAFETY                                                      │
+│  ├── 3-tier risk classification                                │
+│  ├── ACWR safety override                                      │
+│  └── Content filtering                                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🚀 Deployment Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    NETLIFY                                      │
+│  ├── Angular SPA (dist/)                                       │
+│  ├── Serverless Functions (netlify/functions/)                 │
+│  ├── Edge Functions (optional)                                 │
+│  └── CDN Distribution                                          │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   SUPABASE                                      │
+│  ├── PostgreSQL Database                                       │
+│  ├── Auth Service                                              │
+│  ├── Real-time Subscriptions                                   │
+│  └── Storage (optional)                                        │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  EXTERNAL APIS                                  │
+│  ├── Groq LLM (FREE 14,400 req/day)                            │
+│  └── OpenWeatherMap                                            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📚 Related Documentation
+
+- [UTILITIES.md](./UTILITIES.md) - Angular services API reference
+- [AI_COACHING_SYSTEM_REVAMP.md](./AI_COACHING_SYSTEM_REVAMP.md) - AI safety documentation
+- [angular/README.md](../angular/README.md) - Angular-specific docs
+- [ANGULAR_PRIMENG_GUIDE.md](../ANGULAR_PRIMENG_GUIDE.md) - Best practices
+
+---
+
+**Last Updated:** December 26, 2025

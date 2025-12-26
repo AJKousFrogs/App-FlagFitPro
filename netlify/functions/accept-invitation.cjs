@@ -4,129 +4,159 @@
 const { getSupabaseClient } = require("./utils/auth-helper.cjs");
 const {
   createSuccessResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
+  createErrorResponse,
+  handleNotFoundError,
 } = require("./utils/error-handler.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("Accept-Invitation", event);
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "accept-invitation",
+    allowedMethods: ["POST"],
+    rateLimitType: "CREATE",
+    requireAuth: true,
+    handler: async (event, _context, { userId, requestId }) => {
+      let body;
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch {
+        return createErrorResponse(
+          "Invalid JSON in request body",
+          400,
+          "invalid_json",
+          requestId
+        );
+      }
 
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: CORS_HEADERS };
-  }
+      const { token } = body;
 
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      headers: CORS_HEADERS,
-      body: JSON.stringify({ success: false, error: "Method not allowed" }),
-    };
-  }
+      if (!token) {
+        return createErrorResponse(
+          "Token is required",
+          400,
+          "validation_error",
+          requestId
+        );
+      }
 
-  try {
-    const { token } = JSON.parse(event.body || "{}");
+      const supabase = getSupabaseClient();
 
-    if (!token) {
-      return {
-        statusCode: 400,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({ success: false, error: "Token is required" }),
-      };
-    }
+      // Get user info
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("email")
+        .eq("id", userId)
+        .single();
 
-    const authHeader = event.headers.authorization;
-    if (!authHeader) {
-      return {
-        statusCode: 401,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "Authentication required",
-        }),
-      };
-    }
+      // Fallback: get email from auth
+      let userEmail;
+      if (userError || !userData) {
+        const authHeader = event.headers.authorization;
+        const authToken = authHeader?.replace("Bearer ", "");
+        if (authToken) {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser(authToken);
+          userEmail = user?.email;
+        }
+      } else {
+        userEmail = userData.email;
+      }
 
-    const supabase = getSupabaseClient();
+      if (!userEmail) {
+        return createErrorResponse(
+          "Could not determine user email",
+          400,
+          "user_error",
+          requestId
+        );
+      }
 
-    const authToken = authHeader.replace("Bearer ", "");
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser(authToken);
+      // Get invitation
+      const { data: invitation, error: inviteError } = await supabase
+        .from("team_invitations")
+        .select("*")
+        .eq("token", token)
+        .single();
 
-    if (authError || !user) {
-      return {
-        statusCode: 401,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid authentication token",
-        }),
-      };
-    }
+      if (inviteError || !invitation) {
+        return handleNotFoundError("Invitation", requestId);
+      }
 
-    const { data: invitation, error: inviteError } = await supabase
-      .from("team_invitations")
-      .select("*")
-      .eq("token", token)
-      .single();
+      if (invitation.email.toLowerCase() !== userEmail.toLowerCase()) {
+        return createErrorResponse(
+          "This invitation was sent to a different email address",
+          403,
+          "forbidden",
+          requestId
+        );
+      }
 
-    if (inviteError || !invitation) {
-      return {
-        statusCode: 404,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid invitation token",
-        }),
-      };
-    }
+      if (invitation.status === "accepted") {
+        return createErrorResponse(
+          "This invitation has already been accepted",
+          400,
+          "invitation_accepted",
+          requestId
+        );
+      }
 
-    if (invitation.email.toLowerCase() !== user.email.toLowerCase()) {
-      return {
-        statusCode: 403,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "This invitation was sent to a different email address",
-        }),
-      };
-    }
+      const now = new Date();
+      const expiresAt = new Date(invitation.expires_at);
 
-    if (invitation.status === "accepted") {
-      return {
-        statusCode: 400,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "This invitation has already been accepted",
-        }),
-      };
-    }
+      if (now > expiresAt || invitation.status === "expired") {
+        return createErrorResponse(
+          "This invitation has expired",
+          400,
+          "invitation_expired",
+          requestId
+        );
+      }
 
-    const now = new Date();
-    const expiresAt = new Date(invitation.expires_at);
+      // Check if already a member
+      const { data: existingMember } = await supabase
+        .from("team_members")
+        .select("id")
+        .eq("team_id", invitation.team_id)
+        .eq("user_id", userId)
+        .single();
 
-    if (now > expiresAt || invitation.status === "expired") {
-      return {
-        statusCode: 400,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "This invitation has expired",
-        }),
-      };
-    }
+      if (existingMember) {
+        await supabase
+          .from("team_invitations")
+          .update({
+            status: "accepted",
+            accepted_at: new Date().toISOString(),
+          })
+          .eq("id", invitation.id);
 
-    const { data: existingMember } = await supabase
-      .from("team_members")
-      .select("id")
-      .eq("team_id", invitation.team_id)
-      .eq("user_id", user.id)
-      .single();
+        return createErrorResponse(
+          "You are already a member of this team",
+          400,
+          "already_member",
+          requestId
+        );
+      }
 
-    if (existingMember) {
+      // Add user to team
+      const { data: teamMember, error: memberError } = await supabase
+        .from("team_members")
+        .insert({
+          user_id: userId,
+          team_id: invitation.team_id,
+          role: invitation.role,
+          position: invitation.position,
+          jersey_number: invitation.jersey_number,
+          status: "active",
+        })
+        .select()
+        .single();
+
+      if (memberError) {
+        throw new Error("Failed to add you to the team");
+      }
+
+      // Update invitation status
       await supabase
         .from("team_invitations")
         .update({
@@ -135,60 +165,15 @@ exports.handler = async (event, _context) => {
         })
         .eq("id", invitation.id);
 
-      return {
-        statusCode: 400,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "You are already a member of this team",
-        }),
-      };
-    }
-
-    const { data: teamMember, error: memberError } = await supabase
-      .from("team_members")
-      .insert({
-        user_id: user.id,
-        team_id: invitation.team_id,
-        role: invitation.role,
-        position: invitation.position,
-        jersey_number: invitation.jersey_number,
-        status: "active",
-      })
-      .select()
-      .single();
-
-    if (memberError) {
-      // Re-throw error
-      return {
-        statusCode: 500,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "Failed to add you to the team",
-        }),
-      };
-    }
-
-    await supabase
-      .from("team_invitations")
-      .update({
-        status: "accepted",
-        accepted_at: new Date().toISOString(),
-      })
-      .eq("id", invitation.id);
-
-    return createSuccessResponse(
-      {
-        teamId: invitation.team_id,
-        memberId: teamMember.id,
-        role: invitation.role,
-      },
-      200,
-      "Successfully joined the team",
-    );
-  } catch (error) {
-    // Re-throw error
-    return handleServerError(error, "Failed to accept invitation");
-  }
+      return createSuccessResponse(
+        {
+          teamId: invitation.team_id,
+          memberId: teamMember.id,
+          role: invitation.role,
+          message: "Successfully joined the team",
+        },
+        requestId
+      );
+    },
+  });
 };

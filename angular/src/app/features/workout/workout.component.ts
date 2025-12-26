@@ -4,6 +4,7 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
@@ -304,6 +305,7 @@ interface Workout {
 })
 export class WorkoutComponent implements OnInit {
   private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   activeWorkout = signal<Workout | null>(null);
   workoutHistory = signal<Workout[]>([]);
@@ -386,7 +388,7 @@ export class WorkoutComponent implements OnInit {
     const workout = this.activeWorkout()!;
     this.apiService
       .put(`/api/training/workouts/${workout.id}`, workout)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           // Workout saved successfully

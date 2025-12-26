@@ -1,6 +1,6 @@
-import { Component, signal, ChangeDetectionStrategy } from "@angular/core";
+import { Component, signal, ChangeDetectionStrategy, inject } from "@angular/core";
 
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 
 interface NavItem {
   label: string;
@@ -140,6 +140,8 @@ interface NavItem {
   ],
 })
 export class SidebarComponent {
+  private router = inject(Router);
+  
   isOpen = signal(false);
 
   navItems: NavItem[] = [
@@ -212,7 +214,7 @@ export class SidebarComponent {
   ];
 
   navigateToDashboard(): void {
-    // Navigation handled by router
+    this.router.navigate(['/dashboard']);
   }
 
   toggleSidebar(): void {

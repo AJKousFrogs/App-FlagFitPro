@@ -1,5 +1,17 @@
-// QB Training Program Engine
-// Handles dual-track QB training system with lower body foundation + QB-specific upper body
+/**
+ * ⚠️ DEPRECATED: QB Training Program Engine (Legacy)
+ * 
+ * This engine uses deprecated static data files.
+ * For new development, use:
+ *   - TrainingProgramService (Angular)
+ *   - /api/training-programs endpoint (with QB position filter)
+ *   - /api/smart-training endpoint for recommendations
+ * 
+ * This file is maintained for legacy HTML pages only.
+ * Will be removed when all pages are migrated to Angular.
+ * 
+ * @deprecated Use TrainingProgramService or API endpoints
+ */
 
 import {
   QB_TRAINING_PROGRAM,

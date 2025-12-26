@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
 
-import { RouterOutlet } from "@angular/router";
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { HeaderComponent } from "../header/header.component";
 import { QuickActionsFABComponent } from "../quick-actions-fab/quick-actions-fab.component";
@@ -11,7 +10,6 @@ import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumb
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    RouterOutlet,
     SidebarComponent,
     HeaderComponent,
     QuickActionsFABComponent,
@@ -24,7 +22,7 @@ import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumb
         <app-header (toggleSidebar)="sidebar.toggleSidebar()"></app-header>
         <app-smart-breadcrumbs></app-smart-breadcrumbs>
         <div class="content-wrapper">
-          <router-outlet></router-outlet>
+          <ng-content></ng-content>
         </div>
       </main>
       <app-quick-actions-fab></app-quick-actions-fab>

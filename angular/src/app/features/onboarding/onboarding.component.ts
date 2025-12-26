@@ -17,6 +17,8 @@ import { ToastModule } from "primeng/toast";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { SupabaseService } from "../../core/services/supabase.service";
+import { AuthService } from "../../core/services/auth.service";
 
 interface OnboardingStep {
   label: string;
@@ -230,9 +232,12 @@ interface OnboardingStep {
 export class OnboardingComponent implements OnInit {
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private supabaseService = inject(SupabaseService);
+  private authService = inject(AuthService);
 
   currentStep = signal(0);
   isCompleting = signal(false);
+  isLoading = signal(true);
 
   positions = [
     { label: "Quarterback (QB)", value: "QB" },
@@ -273,8 +278,38 @@ export class OnboardingComponent implements OnInit {
     { label: "Experience", completed: false },
   ]);
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // Load existing user data if available
+    await this.loadUserProfile();
+  }
+
+  private async loadUserProfile(): Promise<void> {
+    this.isLoading.set(true);
+    try {
+      const user = this.supabaseService.currentUser();
+      if (!user) {
+        this.router.navigate(["/login"]);
+        return;
+      }
+
+      // Fetch existing user profile from public.users table
+      const { data, error } = await this.supabaseService.client
+        .from("users")
+        .select("full_name, first_name, last_name, position, experience_level")
+        .eq("email", user.email)
+        .single();
+
+      if (data && !error) {
+        // Pre-fill form with existing data
+        this.onboardingData.name = data.full_name || `${data.first_name || ""} ${data.last_name || ""}`.trim();
+        this.onboardingData.position = data.position;
+        this.onboardingData.experience = data.experience_level;
+      }
+    } catch (error) {
+      console.error("Failed to load user profile:", error);
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   toggleGoal(goalId: string): void {
@@ -305,11 +340,51 @@ export class OnboardingComponent implements OnInit {
     this.isCompleting.set(true);
 
     try {
-      // See issue #5 - Implement onboarding data persistence API
-      // await this.apiService.completeOnboarding(this.onboardingData);
+      const user = this.supabaseService.currentUser();
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Parse name into first and last name
+      const nameParts = this.onboardingData.name.trim().split(" ");
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      // Update user profile in public.users table
+      const { error: updateError } = await this.supabaseService.client
+        .from("users")
+        .update({
+          full_name: this.onboardingData.name,
+          first_name: firstName,
+          last_name: lastName,
+          position: this.onboardingData.position,
+          experience_level: this.onboardingData.experience,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("email", user.email);
+
+      if (updateError) {
+        // If no row exists, try to insert
+        const { error: insertError } = await this.supabaseService.client
+          .from("users")
+          .insert({
+            email: user.email,
+            full_name: this.onboardingData.name,
+            first_name: firstName,
+            last_name: lastName,
+            position: this.onboardingData.position,
+            experience_level: this.onboardingData.experience,
+            is_active: true,
+            email_verified: true,
+          });
+
+        if (insertError) {
+          throw new Error(`Failed to save profile: ${insertError.message}`);
+        }
+      }
+
+      // Save training goals to user preferences (if table exists)
+      // This can be expanded later with a user_preferences table
 
       this.toastService.success("Your profile has been set up successfully.", "Welcome!");
 

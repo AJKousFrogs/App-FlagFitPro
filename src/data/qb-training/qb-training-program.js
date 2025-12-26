@@ -1,3 +1,17 @@
+/**
+ * ⚠️ DEPRECATED: This static data file is deprecated.
+ * 
+ * QB training program data is now stored in the database:
+ *   - training_programs table (with position_id for QB)
+ *   - training_phases, training_weeks, etc.
+ * 
+ * Use the TrainingProgramService or API to fetch QB-specific data.
+ * 
+ * See /src/data/qb-training/DEPRECATED.md for migration guide.
+ * This file will be removed in Q2 2026.
+ * 
+ * @deprecated Use database via TrainingProgramService or API
+ */
 export const QB_TRAINING_PROGRAM = {
   programInfo: {
     title: "COMPLETE QUARTERBACK FLAG FOOTBALL TRAINING PROGRAM",

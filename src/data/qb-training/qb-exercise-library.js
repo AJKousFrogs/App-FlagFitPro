@@ -1,3 +1,13 @@
+/**
+ * ⚠️ DEPRECATED: This static data file is deprecated.
+ * 
+ * QB exercises are now stored in the database exercises table.
+ * 
+ * See /src/data/qb-training/DEPRECATED.md for migration guide.
+ * This file will be removed in Q2 2026.
+ * 
+ * @deprecated Use database via TrainingProgramService or API
+ */
 export const QB_EXERCISE_LIBRARY = {
   // Rotator Cuff Exercises
   "Band External Rotation": {
