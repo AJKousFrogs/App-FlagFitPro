@@ -60,33 +60,45 @@ interface WellnessMetric {
         <!-- Wellness Metrics -->
         <app-stats-grid [stats]="wellnessStats()"></app-stats-grid>
 
-        <!-- Wellness Charts -->
+        <!-- Wellness Charts - Lazy loaded for performance -->
         <div class="charts-grid">
-          <p-card class="chart-card">
-            <ng-template pTemplate="header">
-              <h3>Sleep Quality</h3>
-            </ng-template>
-            @if (sleepChartData()) {
-              <p-chart
-                type="line"
-                [data]="sleepChartData()"
-                [options]="chartOptions"
-              ></p-chart>
-            }
-          </p-card>
+          @defer (on viewport) {
+            <p-card class="chart-card">
+              <ng-template pTemplate="header">
+                <h3>Sleep Quality</h3>
+              </ng-template>
+              @if (sleepChartData()) {
+                <p-chart
+                  type="line"
+                  [data]="sleepChartData()"
+                  [options]="chartOptions"
+                ></p-chart>
+              }
+            </p-card>
+          } @placeholder {
+            <p-card class="chart-card chart-loading">
+              <div class="loading-text">Loading sleep data...</div>
+            </p-card>
+          }
 
-          <p-card class="chart-card">
-            <ng-template pTemplate="header">
-              <h3>Recovery Score</h3>
-            </ng-template>
-            @if (recoveryChartData()) {
-              <p-chart
-                type="bar"
-                [data]="recoveryChartData()"
-                [options]="chartOptions"
-              ></p-chart>
-            }
-          </p-card>
+          @defer (on viewport) {
+            <p-card class="chart-card">
+              <ng-template pTemplate="header">
+                <h3>Recovery Score</h3>
+              </ng-template>
+              @if (recoveryChartData()) {
+                <p-chart
+                  type="bar"
+                  [data]="recoveryChartData()"
+                  [options]="chartOptions"
+                ></p-chart>
+              }
+            </p-card>
+          } @placeholder {
+            <p-card class="chart-card chart-loading">
+              <div class="loading-text">Loading recovery data...</div>
+            </p-card>
+          }
         </div>
 
         <!-- Daily Check-in -->
@@ -177,6 +189,17 @@ interface WellnessMetric {
 
       .chart-card {
         min-height: 300px;
+      }
+
+      .chart-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .loading-text {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
       }
 
       .checkin-card {

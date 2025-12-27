@@ -18,6 +18,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { AvatarModule } from "primeng/avatar";
 import { MenuModule } from "primeng/menu";
 import { BadgeModule } from "primeng/badge";
+import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import {
   HeaderService,
@@ -25,6 +26,7 @@ import {
 } from "../../../core/services/header.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
 import { SearchService } from "../../../core/services/search.service";
+import { ThemeService } from "../../../core/services/theme.service";
 import { MenuItem } from "primeng/api";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SearchPanelComponent } from "../search-panel/search-panel.component";
@@ -41,6 +43,7 @@ import { NotificationsPanelComponent } from "../notifications-panel/notification
     AvatarModule,
     MenuModule,
     BadgeModule,
+    TooltipModule,
     SearchPanelComponent,
     NotificationsPanelComponent,
   ],
@@ -174,18 +177,16 @@ import { NotificationsPanelComponent } from "../notifications-panel/notification
         <!-- Theme Toggle -->
         <div class="theme-toggle">
           <p-button
-            [icon]="isDarkTheme() ? 'pi pi-sun' : 'pi pi-moon'"
+            [icon]="themeIcon()"
             [text]="true"
             [rounded]="true"
-            (onClick)="toggleTheme()"
-            [ariaLabel]="
-              isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'
-            "
+            (onClick)="cycleTheme()"
+            [ariaLabel]="themeAriaLabel()"
             class="header-icon-btn"
+            [pTooltip]="themeTooltip()"
+            tooltipPosition="bottom"
           ></p-button>
-          <span class="theme-label">{{
-            isDarkTheme() ? "Dark" : "Light"
-          }}</span>
+          <span class="theme-label">{{ themeLabel() }}</span>
         </div>
 
         <!-- User Menu -->
@@ -397,6 +398,7 @@ import { NotificationsPanelComponent } from "../notifications-panel/notification
 })
 export class HeaderComponent {
   private authService = inject(AuthService);
+  private themeService = inject(ThemeService);
   private headerService = inject(HeaderService);
   private notificationService = inject(NotificationStateService);
   private searchService = inject(SearchService);
@@ -412,7 +414,32 @@ export class HeaderComponent {
   searchQuery = model("");
 
   notificationCount = signal(0);
-  isDarkTheme = signal(false);
+  // Theme computed signals from service
+  isDarkTheme = computed(() => this.themeService.isDark());
+  themeMode = computed(() => this.themeService.mode());
+  
+  themeIcon = computed(() => {
+    const mode = this.themeService.mode();
+    if (mode === "auto") return "pi pi-desktop";
+    return mode === "dark" ? "pi pi-sun" : "pi pi-moon";
+  });
+  
+  themeLabel = computed(() => {
+    const mode = this.themeService.mode();
+    if (mode === "auto") return "Auto";
+    return mode === "dark" ? "Dark" : "Light";
+  });
+  
+  themeTooltip = computed(() => {
+    const mode = this.themeService.mode();
+    if (mode === "light") return "Switch to Dark mode";
+    if (mode === "dark") return "Switch to Auto mode";
+    return "Switch to Light mode";
+  });
+  
+  themeAriaLabel = computed(() => {
+    return `Current theme: ${this.themeLabel()}. Click to change.`;
+  });
   userInitials = signal("JD");
   currentSection = signal("");
   currentPage = signal("");
@@ -450,7 +477,6 @@ export class HeaderComponent {
   constructor() {
     // Angular 21: Initialize data in constructor
     this.updateBreadcrumbs();
-    this.loadThemePreference();
     this.loadUserData();
     this.loadNotifications();
 
@@ -462,14 +488,7 @@ export class HeaderComponent {
       }
     });
 
-    // Angular 21: Use effect() for theme changes
-    effect(() => {
-      const isDark = this.isDarkTheme();
-      document.body.classList.toggle("dark-theme", isDark);
-      if (typeof localStorage !== "undefined") {
-        localStorage.setItem("theme", isDark ? "dark" : "light");
-      }
-    });
+    // Theme is now managed by ThemeService
   }
 
   onToggleSidebar(): void {
@@ -498,9 +517,12 @@ export class HeaderComponent {
     this.router.navigate(["/settings"]);
   }
 
+  cycleTheme(): void {
+    this.themeService.cycleMode();
+  }
+
   toggleTheme(): void {
-    this.isDarkTheme.update((current) => !current);
-    // Theme changes are handled by effect() in constructor
+    this.themeService.toggle();
   }
 
   logout(): void {
@@ -516,10 +538,19 @@ export class HeaderComponent {
   }
 
   onLogoError(event: Event): void {
-    // Fallback if logo image doesn't exist
+    // Fallback if logo image doesn't exist - show text logo
     const img = event.target as HTMLImageElement;
     img.style.display = "none";
-    // Could show text logo as fallback
+    
+    // Create fallback text logo
+    const logoContainer = img.parentElement;
+    if (logoContainer && !logoContainer.querySelector('.logo-text')) {
+      const textLogo = document.createElement('span');
+      textLogo.className = 'logo-text';
+      textLogo.innerHTML = '<i class="pi pi-football" style="margin-right: 8px; color: var(--ds-primary-green);"></i>FlagFit Pro';
+      textLogo.style.cssText = 'font-weight: 700; font-size: 1.25rem; color: var(--text-primary); display: flex; align-items: center;';
+      logoContainer.appendChild(textLogo);
+    }
   }
 
   private updateBreadcrumbs(): void {
@@ -552,14 +583,6 @@ export class HeaderComponent {
     }
   }
 
-  private loadThemePreference(): void {
-    if (typeof localStorage !== "undefined") {
-      const savedTheme = localStorage.getItem("theme");
-      const isDark = savedTheme === "dark";
-      this.isDarkTheme.set(isDark);
-      // Theme application handled by effect()
-    }
-  }
 
   private loadUserData(): void {
     const user = this.authService.getUser();

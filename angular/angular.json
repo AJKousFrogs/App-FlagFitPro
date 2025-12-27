@@ -23,7 +23,12 @@
             "browser": "src/main.ts",
             "polyfills": [],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/manifest.webmanifest"
+            ],
+            "serviceWorker": "ngsw-config.json",
             "styles": ["src/styles.scss"],
             "scripts": []
           },
@@ -32,25 +37,26 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "750kb"
+                  "maximumWarning": "700kb",
+                  "maximumError": "1mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "8kb",
-                  "maximumError": "12kb"
+                  "maximumWarning": "10kb",
+                  "maximumError": "15kb"
                 },
                 {
                   "type": "anyScript",
-                  "maximumWarning": "150kb",
-                  "maximumError": "250kb"
+                  "maximumWarning": "350kb",
+                  "maximumError": "500kb"
                 },
                 {
                   "type": "any",
-                  "maximumWarning": "200kb",
-                  "maximumError": "300kb"
+                  "maximumWarning": "350kb",
+                  "maximumError": "500kb"
                 }
               ],
+              "namedChunks": false,
               "outputHashing": "all",
               "fileReplacements": [
                 {

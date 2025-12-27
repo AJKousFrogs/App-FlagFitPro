@@ -6,6 +6,9 @@ export interface HeaderConfig {
   searchPosition?: "left" | "center" | "right";
   showBreadcrumbs?: boolean;
   variant?: "default" | "compact" | "minimal";
+  title?: string;
+  showBackButton?: boolean;
+  backRoute?: string;
 }
 
 @Injectable({
@@ -34,6 +37,13 @@ export class HeaderService {
       ...current,
       ...newConfig,
     }));
+  }
+
+  /**
+   * Set config - alias for updateConfig for compatibility
+   */
+  setConfig(newConfig: Partial<HeaderConfig>) {
+    this.updateConfig(newConfig);
   }
 
   // Preset configurations

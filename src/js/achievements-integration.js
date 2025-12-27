@@ -20,8 +20,14 @@ import { logger } from '../logger.js';
     // Listen for wellness submissions
     document.addEventListener("wellnessSubmitted", handleWellnessSubmitted);
 
-    // Listen for training completions
+    // Listen for training completions (individual blocks)
     document.addEventListener("trainingCompleted", handleTrainingCompleted);
+    
+    // Listen for full training session completions
+    document.addEventListener("trainingSessionCompleted", handleFullSessionCompleted);
+    
+    // Listen for achievement unlock events (for UI updates)
+    document.addEventListener("achievementUnlocked", handleAchievementUnlocked);
 
     logger.info("[Achievements Integration] Ready");
   }
@@ -227,6 +233,84 @@ import { logger } from '../logger.js';
     const lastWeek = sorted.slice(0, 7);
 
     return lastWeek.every((entry) => entry.sleep >= 8);
+  }
+
+  /**
+   * Handle full training session completion
+   */
+  function handleFullSessionCompleted(event) {
+    const sessionData = event.detail;
+    logger.info("[Achievements Integration] Full session completed:", sessionData);
+
+    // Update training history in localStorage
+    const trainingHistory = JSON.parse(
+      localStorage.getItem("trainingHistory") || "[]"
+    );
+    
+    trainingHistory.push({
+      date: sessionData.completedAt || new Date().toISOString(),
+      startTime: sessionData.completedAt,
+      sessionType: sessionData.sessionType,
+      duration: sessionData.totalDuration,
+      blocksCompleted: sessionData.blocksCompleted,
+    });
+    
+    localStorage.setItem("trainingHistory", JSON.stringify(trainingHistory));
+
+    // Calculate user data and check achievements
+    const userData = calculateUserData();
+    
+    // Add session-specific data
+    if (sessionData.isMorning) {
+      userData.morningWorkouts = (userData.morningWorkouts || 0) + 1;
+    } else if (sessionData.isEvening) {
+      userData.eveningWorkouts = (userData.eveningWorkouts || 0) + 1;
+    }
+
+    const newAchievements = window.achievementsService.checkAchievements(userData);
+
+    if (newAchievements.length > 0) {
+      logger.info(
+        `[Achievements] Unlocked ${newAchievements.length} new achievement(s) from session completion!`
+      );
+      refreshAchievementsWidget();
+    }
+  }
+
+  /**
+   * Handle achievement unlock events (for UI updates)
+   */
+  function handleAchievementUnlocked(event) {
+    const { achievement, totalPoints, progress } = event.detail;
+    logger.info(
+      `[Achievements Integration] Achievement unlocked: ${achievement.name} (+${achievement.points} pts)`
+    );
+    logger.info(`[Achievements Integration] Total: ${totalPoints} pts, Progress: ${progress}%`);
+    
+    // Refresh the achievements widget
+    refreshAchievementsWidget();
+    
+    // Show a toast/notification if available
+    if (window.showToast) {
+      window.showToast({
+        severity: 'success',
+        summary: '🏆 Achievement Unlocked!',
+        detail: `${achievement.name} - ${achievement.description}`,
+        life: 5000,
+      });
+    }
+  }
+
+  /**
+   * Refresh the achievements widget if it exists
+   */
+  function refreshAchievementsWidget() {
+    if (
+      window.renderAchievementsWidget &&
+      document.getElementById("achievements-widget-container")
+    ) {
+      window.renderAchievementsWidget("achievements-widget-container");
+    }
   }
 
   // Initialize

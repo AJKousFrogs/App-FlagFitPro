@@ -2,9 +2,10 @@
 // Evidence-based readiness scoring combining session-RPE, ACWR, wellness, and game proximity
 // Endpoint: /api/calc-readiness
 
-const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
+  createErrorResponse,
   handleValidationError,
 } = require("./utils/error-handler.cjs");
 // Note: authenticateRequest, applyRateLimit are handled by baseHandler

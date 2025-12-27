@@ -58,16 +58,80 @@
   for = "/*.css"
   [headers.values]
     Cross-Origin-Resource-Policy = "same-site"
+    Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
   for = "/*.js"
   [headers.values]
     Cross-Origin-Resource-Policy = "same-site"
+    Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
   for = "/src/**/*"
   [headers.values]
     Cross-Origin-Resource-Policy = "same-site"
+
+# PWA Service Worker - no caching
+[[headers]]
+  for = "/ngsw-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/ngsw.json"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# PWA Manifest
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "public, max-age=86400"
+
+# Static assets - long cache
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Fonts - long cache
+[[headers]]
+  for = "/*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.woff"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Images - long cache
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# HTML - short cache for SPA
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
 
 # API Routes for Dashboard (must come before page redirects)
 [[redirects]]
@@ -86,6 +150,36 @@
 [[redirects]]
   from = "/api/dashboard/overview"
   to = "/.netlify/functions/dashboard"
+  status = 200
+  force = true
+
+# ============================================================================
+# CHAT & COMMUNITY API ROUTES
+# ============================================================================
+
+# Chat API - Channel and message operations
+[[redirects]]
+  from = "/api/chat/*"
+  to = "/.netlify/functions/chat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/chat"
+  to = "/.netlify/functions/chat"
+  status = 200
+  force = true
+
+# Coach Activity API - Activity feed for coaches
+[[redirects]]
+  from = "/api/coach-activity/*"
+  to = "/.netlify/functions/coach-activity"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/coach-activity"
+  to = "/.netlify/functions/coach-activity"
   status = 200
   force = true
 
@@ -827,6 +921,101 @@
 [[redirects]]
   from = "/api/team-invite"
   to = "/.netlify/functions/team-invite"
+  status = 200
+  force = true
+
+# API Routes for Achievements
+[[redirects]]
+  from = "/api/achievements"
+  to = "/.netlify/functions/achievements"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/achievements/*"
+  to = "/.netlify/functions/achievements"
+  status = 200
+  force = true
+
+# API Routes for Daily Training
+[[redirects]]
+  from = "/api/daily-training"
+  to = "/.netlify/functions/daily-training"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/daily-training/*"
+  to = "/.netlify/functions/daily-training"
+  status = 200
+  force = true
+
+# ============================================================================
+# TEAM MANAGEMENT API ROUTES
+# ============================================================================
+
+# Attendance API - Practice attendance tracking
+[[redirects]]
+  from = "/api/attendance/*"
+  to = "/.netlify/functions/attendance"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/attendance"
+  to = "/.netlify/functions/attendance"
+  status = 200
+  force = true
+
+# Depth Chart API - Roster depth chart management
+[[redirects]]
+  from = "/api/depth-chart/*"
+  to = "/.netlify/functions/depth-chart"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/depth-chart"
+  to = "/.netlify/functions/depth-chart"
+  status = 200
+  force = true
+
+# Equipment API - Gear and equipment tracking
+[[redirects]]
+  from = "/api/equipment/*"
+  to = "/.netlify/functions/equipment"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/equipment"
+  to = "/.netlify/functions/equipment"
+  status = 200
+  force = true
+
+# Officials API - Referee scheduling
+[[redirects]]
+  from = "/api/officials/*"
+  to = "/.netlify/functions/officials"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/officials"
+  to = "/.netlify/functions/officials"
+  status = 200
+  force = true
+
+# Push Notifications API
+[[redirects]]
+  from = "/api/push/*"
+  to = "/.netlify/functions/push"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/push"
+  to = "/.netlify/functions/push"
   status = 200
   force = true
 

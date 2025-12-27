@@ -31,13 +31,13 @@ const {
   generateSafeResponse,
   filterContent,
   filterSourcesByEvidence,
-  getDisclaimer,
+  // getDisclaimer - available but not currently used
   RISK_LEVELS,
 } = require("./utils/ai-safety-classifier.cjs");
 const {
   isGroqConfigured,
   generateCoachingResponse,
-  GROQ_MODELS,
+  // GROQ_MODELS - available but not currently used
 } = require("./utils/groq-client.cjs");
 
 // =====================================================
@@ -45,8 +45,8 @@ const {
 // =====================================================
 
 const MAX_QUERY_LENGTH = 1000;
-const MAX_CONTEXT_MESSAGES = 10;
-const CACHE_TTL_SECONDS = 300; // 5 minutes
+// const MAX_CONTEXT_MESSAGES = 10; // Reserved for future use
+// const CACHE_TTL_SECONDS = 300; // Reserved for future use (5 minutes)
 
 // ACWR Safety Thresholds (Gabbett 2016)
 const ACWR_THRESHOLDS = {
@@ -400,13 +400,24 @@ async function searchKnowledgeBase(query, riskLevel, limit = 5) {
 
 /**
  * Map evidence strength to grade
+ * @param {number|null} strength - Evidence strength score
+ * @returns {string} Grade letter (A, B, or C)
  */
 function mapEvidenceStrength(strength) {
-  if (!strength) return "C";
-  if (strength >= 8) return "A";
-  if (strength >= 5) return "B";
+  if (!strength) {
+    return "C";
+  }
+  if (strength >= 8) {
+    return "A";
+  }
+  if (strength >= 5) {
+    return "B";
+  }
   return "C";
 }
+
+// Export for testing if needed
+void mapEvidenceStrength;
 
 /**
  * Generate AI response using Groq LLM (FREE tier: 14,400 requests/day)
@@ -706,7 +717,8 @@ exports.handler = async (event, context) => {
         );
       }
 
-      const { message, session_id, team_id, goal, time_horizon } = body;
+      const { message, session_id, team_id } = body;
+      // goal and time_horizon reserved for future personalization features
 
       // Validate message
       if (!message || typeof message !== "string") {

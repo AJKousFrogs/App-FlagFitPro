@@ -29,6 +29,13 @@ import { LoggerService } from "./logger.service";
 // INTERFACES
 // ============================================================================
 
+export interface SprintProtocolRequirements {
+  minimumACWR: number;
+  minimumTrainingAge: string;
+  prerequisiteStrength: string[];
+  prerequisiteConditioning: string[];
+}
+
 export interface SprintProtocol {
   name: string;
   description: string;
@@ -45,6 +52,16 @@ export interface SprintProtocol {
   contraindications: string[];
   evidenceBase: SprintResearchReference[];
   flagFootballApplication: string;
+  requirements?: SprintProtocolRequirements;
+  variations?: SprintVariation[];
+  technique?: string[];
+}
+
+export interface SprintVariation {
+  name: string;
+  description: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  focus: string;
 }
 
 export type SprintQuality =
@@ -75,6 +92,7 @@ export interface SprintPhaseGuidelines {
   resistedSprints: boolean;
   flyingSprints: boolean;
   hillSprints: boolean;
+  stairSprints?: boolean; // Only when ACWR >= 0.8 and athlete is well-conditioned
   recommendedProtocols: string[];
   avoidProtocols: string[];
   recoveryConsiderations: string[];
@@ -720,9 +738,9 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       "Within 48 hours of competition",
     ],
     evidenceBase: [
-      SPRINT_RESEARCH.clark_2019,
-      SPRINT_RESEARCH.morin_2016,
-      SPRINT_RESEARCH.haugen_2019,
+      SPRINT_RESEARCH["clark_2019"],
+      SPRINT_RESEARCH["morin_2016"],
+      SPRINT_RESEARCH["haugen_2019"],
     ],
     flagFootballApplication: "The first 5-10m burst is used on every play - routes, rushes, scrambles. This is the most transferable sprint quality for flag football.",
   },
@@ -746,8 +764,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       "Beginners (need 6+ months sprint training first)",
     ],
     evidenceBase: [
-      SPRINT_RESEARCH.petrakos_2016,
-      SPRINT_RESEARCH.lockie_2012,
+      SPRINT_RESEARCH["petrakos_2016"],
+      SPRINT_RESEARCH["lockie_2012"],
     ],
     flagFootballApplication: "Develops the horizontal force needed to explode off the line. Especially valuable for WRs, rushers, and QBs escaping pressure.",
   },
@@ -774,8 +792,8 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       "Poor sprint mechanics",
     ],
     evidenceBase: [
-      SPRINT_RESEARCH.haugen_2019,
-      SPRINT_RESEARCH.ross_2001,
+      SPRINT_RESEARCH["haugen_2019"],
+      SPRINT_RESEARCH["ross_2001"],
     ],
     flagFootballApplication: "Used for long routes (go routes, posts) and breakaway plays. While less frequent than acceleration, max velocity separates elite players.",
   },
@@ -797,7 +815,7 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       "High accumulated fatigue",
       "Competition within 72 hours",
     ],
-    evidenceBase: [SPRINT_RESEARCH.haugen_2019],
+    evidenceBase: [SPRINT_RESEARCH["haugen_2019"]],
     flagFootballApplication: "Mimics route running where you accelerate, maintain, then accelerate again (e.g., double moves).",
   },
 
@@ -821,7 +839,7 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       "Pre-competition (too fatiguing)",
       "Recovery-focused phases",
     ],
-    evidenceBase: [SPRINT_RESEARCH.buchheit_2010],
+    evidenceBase: [SPRINT_RESEARCH["buchheit_2010"]],
     flagFootballApplication: "Flag football involves 20-40 sprints per game with incomplete recovery. RSA training builds the capacity to maintain speed across an entire game and tournament.",
   },
 
@@ -845,7 +863,7 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       "Knee pain or instability",
       "Acute quadriceps strain",
     ],
-    evidenceBase: [SPRINT_RESEARCH.rumpf_2016],
+    evidenceBase: [SPRINT_RESEARCH["rumpf_2016"]],
     flagFootballApplication: "Every cut, route break, and defensive reaction requires rapid deceleration. Poor deceleration = ACL risk. This is non-negotiable training.",
   },
 
@@ -870,8 +888,82 @@ const SPRINT_PROTOCOLS: Record<string, SprintProtocol> = {
       "Within 7 days of competition",
       "Accumulated fatigue",
     ],
-    evidenceBase: [SPRINT_RESEARCH.haugen_2019],
+    evidenceBase: [SPRINT_RESEARCH["haugen_2019"]],
     flagFootballApplication: "Builds the 'reserve tank' for late-game situations. Use in off-season and July reload phase only.",
+  },
+
+  // ========================================
+  // STAIR SPRINTS (ADVANCED)
+  // ========================================
+  stair_sprints: {
+    name: "Stair Sprints",
+    description: "High-intensity stair running that develops explosive power, hip flexor strength, and cardiovascular conditioning. ADVANCED protocol requiring proper training base.",
+    targetQuality: "acceleration",
+    distances: [20, 30, 40], // Approximate stair count or meters
+    sets: 3,
+    repsPerSet: 4,
+    restBetweenReps: 90,
+    restBetweenSets: 180,
+    workToRestRatio: "1:15-20",
+    intensity: "maximal",
+    frequency: "1x per week maximum",
+    progressionModel: "Start with 2 sets of 3 reps. Progress to 3x4 over 4-6 weeks. Focus on single-step sprints before double-step.",
+    contraindications: [
+      "ACWR below 0.8 - athlete not conditioned enough",
+      "Knee pain or instability",
+      "Ankle issues or recent sprains",
+      "Hip flexor strain or tightness",
+      "Beginners (need 12+ months training base)",
+      "Within 72 hours of competition",
+      "Excessive fatigue (RPE > 7 from previous session)",
+    ],
+    requirements: {
+      minimumACWR: 0.8,
+      minimumTrainingAge: "12 months",
+      prerequisiteStrength: [
+        "Single-leg squat with control",
+        "30+ consecutive bodyweight squats",
+        "Nordic curl competency",
+      ],
+      prerequisiteConditioning: [
+        "Consistent sprint training for 8+ weeks",
+        "No lower body injuries in past 6 weeks",
+        "Demonstrated recovery capacity",
+      ],
+    },
+    variations: [
+      {
+        name: "Single-step stair sprints",
+        description: "Every step, maximum speed",
+        difficulty: "intermediate",
+        focus: "Turnover speed and ankle stiffness",
+      },
+      {
+        name: "Double-step stair sprints",
+        description: "Skip every other step",
+        difficulty: "advanced",
+        focus: "Hip flexor power and stride length",
+      },
+      {
+        name: "Lateral stair bounds",
+        description: "Side-to-side up stairs",
+        difficulty: "advanced",
+        focus: "Lateral power and hip abductors",
+      },
+    ],
+    technique: [
+      "Drive knees high with each step",
+      "Stay on balls of feet - no heel contact",
+      "Pump arms aggressively",
+      "Lean slightly forward into the stairs",
+      "Maintain rhythm and control",
+      "Walk down for recovery (never run down)",
+    ],
+    evidenceBase: [
+      SPRINT_RESEARCH["morin_2016"],
+      SPRINT_RESEARCH["clark_2019"],
+    ],
+    flagFootballApplication: "Develops explosive hip flexor power critical for acceleration. The incline forces greater knee drive and horizontal force production. Reserve for well-conditioned athletes only.",
   },
 };
 
@@ -1094,11 +1186,13 @@ const PHASE_GUIDELINES: Record<string, SprintPhaseGuidelines> = {
     resistedSprints: true,
     flyingSprints: true,
     hillSprints: true,
+    stairSprints: true, // ACWR >= 0.8 required - athletes should be well-conditioned by this phase
     recommendedProtocols: [
       "short_acceleration",
       "resisted_acceleration",
       "flying_sprints",
       "speed_endurance",
+      "stair_sprints",
     ],
     avoidProtocols: [],
     recoveryConsiderations: [
@@ -1106,6 +1200,7 @@ const PHASE_GUIDELINES: Record<string, SprintPhaseGuidelines> = {
       "Higher volume to build reserve for second half of season",
       "Address any speed deficits from competition phase",
       "Monitor fatigue closely - don't overtrain",
+      "Stair sprints only if ACWR >= 0.8 and athlete is well-conditioned",
     ],
   },
   peak: {

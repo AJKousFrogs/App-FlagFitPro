@@ -2875,7 +2875,7 @@ export class TrainingVideoDatabaseService {
         return {
           morning: morningMobility,
           mainActivity: "Tournament Games",
-          evening: null,
+          evening: undefined,
           notes: [
             "Light morning mobility only",
             "Save energy for games",

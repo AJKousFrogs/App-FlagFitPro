@@ -1,0 +1,1098 @@
+/* ================================================================
+   FLAGFIT PRO - PRIMENG 21 THEME CONFIGURATION
+   Premium theme customization for PrimeNG components
+   ================================================================
+   
+   Angular 21 + PrimeNG 21 Theme System
+   
+   Features:
+   - CSS-based animations (no @angular/animations overhead)
+   - Dark mode support
+   - Design system token integration
+   - Premium micro-interactions
+   ================================================================ */
+
+/* ================================================================
+   PRIMENG CSS LAYER
+   Ensure proper cascade order
+   ================================================================ */
+
+@layer primeng-theme {
+  /* ================================================================
+     BUTTON COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-button {
+    font-family: var(--font-family-sans);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-lg);
+    transition: 
+      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    
+    /* Ripple effect base */
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at center,
+        rgba(255, 255, 255, 0.3) 0%,
+        transparent 70%
+      );
+      transform: scale(0);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+      pointer-events: none;
+    }
+    
+    &:active::before {
+      transform: scale(2.5);
+      opacity: 1;
+      transition: transform 0s, opacity 0s;
+    }
+  }
+  
+  @media (hover: hover) and (pointer: fine) {
+    .p-button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.15),
+        0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .p-button:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Primary Button */
+  .p-button-primary,
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-success):not(.p-button-info):not(.p-button-warning):not(.p-button-danger):not(.p-button-help):not(.p-button-contrast) {
+    background: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: var(--ds-primary-green-hover);
+        border-color: var(--ds-primary-green-hover);
+      }
+    }
+    
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
+    }
+  }
+  
+  /* Secondary Button */
+  .p-button-secondary {
+    background: var(--surface-primary);
+    border-color: var(--color-border-primary);
+    color: var(--ds-primary-green);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: var(--surface-secondary);
+        border-color: var(--ds-primary-green);
+        color: var(--ds-primary-green-hover);
+      }
+    }
+  }
+  
+  /* Outlined Button */
+  .p-button-outlined {
+    background: transparent;
+    border: 2px solid var(--ds-primary-green);
+    color: var(--ds-primary-green);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: rgba(var(--ds-primary-green-rgb), 0.08);
+        border-color: var(--ds-primary-green-hover);
+        color: var(--ds-primary-green-hover);
+      }
+    }
+  }
+  
+  /* Text Button */
+  .p-button-text {
+    background: transparent;
+    border-color: transparent;
+    color: var(--ds-primary-green);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: rgba(var(--ds-primary-green-rgb), 0.08);
+        color: var(--ds-primary-green-hover);
+      }
+    }
+  }
+  
+  /* Danger Button */
+  .p-button-danger {
+    background: var(--color-status-error);
+    border-color: var(--color-status-error);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: #dc2626;
+        border-color: #dc2626;
+      }
+    }
+    
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.3);
+    }
+  }
+  
+  /* Success Button */
+  .p-button-success {
+    background: var(--color-status-success);
+    border-color: var(--color-status-success);
+    color: var(--color-text-primary);
+    
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(var(--primitive-success-500-rgb), 0.3);
+    }
+  }
+  
+  /* Button Sizes */
+  .p-button-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .p-button-lg {
+    padding: 0.875rem 1.5rem;
+    font-size: 1.125rem;
+  }
+  
+  /* Icon Button */
+  .p-button-icon-only {
+    padding: 0.75rem;
+    
+    &.p-button-rounded {
+      border-radius: 50%;
+    }
+  }
+  
+  /* ================================================================
+     CARD COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-card {
+    background: var(--surface-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border-subtle);
+    overflow: hidden;
+    transition: 
+      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  
+  @media (hover: hover) and (pointer: fine) {
+    .p-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 
+        0 12px 40px -10px rgba(0, 0, 0, 0.15),
+        0 4px 15px -5px rgba(0, 0, 0, 0.1);
+      border-color: rgba(var(--ds-primary-green-rgb), 0.2);
+    }
+  }
+  
+  .p-card-header {
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--color-border-secondary);
+    background: var(--surface-secondary);
+  }
+  
+  .p-card-body {
+    padding: var(--space-5);
+  }
+  
+  .p-card-content {
+    padding: 0;
+  }
+  
+  .p-card-footer {
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--color-border-secondary);
+    background: var(--surface-secondary);
+  }
+  
+  .p-card-title {
+    font-size: var(--font-heading-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+  
+  .p-card-subtitle {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+  }
+  
+  /* ================================================================
+     DIALOG/MODAL COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-dialog {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+    animation: dialog-scale-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  @keyframes dialog-scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  .p-dialog-mask {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    animation: backdrop-fade-in 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  
+  @keyframes backdrop-fade-in {
+    from {
+      opacity: 0;
+      backdrop-filter: blur(0);
+    }
+    to {
+      opacity: 1;
+      backdrop-filter: blur(4px);
+    }
+  }
+  
+  .p-dialog-header {
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--color-border-secondary);
+    background: var(--surface-primary);
+  }
+  
+  .p-dialog-title {
+    font-size: var(--font-heading-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+  
+  .p-dialog-content {
+    padding: var(--space-5);
+    background: var(--surface-primary);
+  }
+  
+  .p-dialog-footer {
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--color-border-secondary);
+    background: var(--surface-secondary);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+  }
+  
+  .p-dialog-header-close {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-lg);
+    transition: 
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--surface-tertiary);
+        transform: scale(1.1);
+      }
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+  
+  /* ================================================================
+     TOAST COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-toast {
+    opacity: 1;
+  }
+  
+  .p-toast-message {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    animation: toast-slide-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+  
+  @keyframes toast-slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(100%) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
+  
+  .p-toast-message-success {
+    background: linear-gradient(135deg, var(--color-status-success-light) 0%, var(--surface-primary) 100%);
+    border-left: 4px solid var(--color-status-success);
+  }
+  
+  .p-toast-message-info {
+    background: linear-gradient(135deg, var(--ds-primary-green-subtle) 0%, var(--surface-primary) 100%);
+    border-left: 4px solid var(--ds-primary-green);
+  }
+  
+  .p-toast-message-warn {
+    background: linear-gradient(135deg, var(--color-status-warning-light) 0%, var(--surface-primary) 100%);
+    border-left: 4px solid var(--color-status-warning);
+  }
+  
+  .p-toast-message-error {
+    background: linear-gradient(135deg, var(--color-status-error-light) 0%, var(--surface-primary) 100%);
+    border-left: 4px solid var(--color-status-error);
+  }
+  
+  .p-toast-message-content {
+    padding: var(--space-4);
+  }
+  
+  .p-toast-close-button {
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-md);
+    transition: 
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+        transform: scale(1.1);
+      }
+    }
+  }
+  
+  /* ================================================================
+     MENU COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-menu {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border-secondary);
+    overflow: hidden;
+    animation: menu-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: top left;
+  }
+  
+  @keyframes menu-scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  .p-menuitem {
+    margin: var(--space-1);
+  }
+  
+  .p-menuitem-link {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    transition: 
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      padding-left 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--ds-primary-green-subtle);
+        color: var(--ds-primary-green);
+        padding-left: calc(var(--space-4) + 4px);
+      }
+    }
+    
+    &:focus-visible {
+      box-shadow: inset 0 0 0 2px var(--ds-primary-green);
+    }
+  }
+  
+  .p-menuitem-icon {
+    margin-right: var(--space-3);
+    color: var(--color-text-secondary);
+    transition: color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  
+  .p-menuitem-link:hover .p-menuitem-icon {
+    color: var(--ds-primary-green);
+  }
+  
+  .p-menu-separator {
+    margin: var(--space-2) var(--space-3);
+    border-color: var(--color-border-secondary);
+  }
+  
+  /* ================================================================
+     DROPDOWN COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-dropdown {
+    border-radius: var(--radius-lg);
+    border-color: var(--color-border-primary);
+    transition: 
+      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+    &:hover:not(.p-disabled) {
+      border-color: var(--ds-primary-green);
+    }
+    
+    &.p-focus {
+      border-color: var(--ds-primary-green);
+      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);
+    }
+  }
+  
+  .p-dropdown-panel {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border-secondary);
+    animation: dropdown-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: top center;
+  }
+  
+  @keyframes dropdown-scale-in {
+    from {
+      opacity: 0;
+      transform: scaleY(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+  }
+  
+  .p-dropdown-item {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    margin: var(--space-1);
+    transition: 
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+    &:hover {
+      background: var(--ds-primary-green-subtle);
+      color: var(--ds-primary-green);
+    }
+    
+    &.p-highlight {
+      background: var(--ds-primary-green);
+      color: var(--color-text-on-primary);
+    }
+  }
+  
+  /* ================================================================
+     INPUT COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-inputtext {
+    border-radius: var(--radius-lg);
+    border-color: var(--color-border-primary);
+    padding: var(--space-3) var(--space-4);
+    transition: 
+      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+    &:hover:not(:disabled):not(:focus) {
+      border-color: var(--color-text-secondary);
+    }
+    
+    &:focus {
+      border-color: var(--ds-primary-green);
+      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);
+    }
+    
+    &.p-invalid {
+      border-color: var(--color-status-error);
+      
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.2);
+      }
+    }
+  }
+  
+  .p-inputtext::placeholder {
+    color: var(--color-text-muted);
+  }
+  
+  /* Float Label Enhancement */
+  .p-float-label {
+    .p-inputtext:focus ~ label,
+    .p-inputtext.p-filled ~ label {
+      color: var(--ds-primary-green);
+      transform: translateY(-1.5rem) scale(0.85);
+    }
+  }
+  
+  /* ================================================================
+     CHECKBOX & RADIO ENHANCEMENTS
+     ================================================================ */
+  
+  .p-checkbox {
+    .p-checkbox-box {
+      border-radius: var(--radius-md);
+      border-color: var(--color-border-primary);
+      transition: 
+        background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+        border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+        transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      
+      &:hover {
+        border-color: var(--ds-primary-green);
+      }
+      
+      &.p-highlight {
+        background: var(--ds-primary-green);
+        border-color: var(--ds-primary-green);
+        
+        .p-checkbox-icon {
+          animation: checkbox-check 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+      }
+    }
+    
+    &:not(.p-disabled):hover .p-checkbox-box {
+      transform: scale(1.05);
+    }
+  }
+  
+  @keyframes checkbox-check {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  
+  .p-radiobutton {
+    .p-radiobutton-box {
+      border-color: var(--color-border-primary);
+      transition: 
+        background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+        border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+        transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      
+      &:hover {
+        border-color: var(--ds-primary-green);
+      }
+      
+      &.p-highlight {
+        border-color: var(--ds-primary-green);
+        
+        .p-radiobutton-icon {
+          background: var(--ds-primary-green);
+          animation: radio-select 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+      }
+    }
+    
+    &:not(.p-disabled):hover .p-radiobutton-box {
+      transform: scale(1.05);
+    }
+  }
+  
+  @keyframes radio-select {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  
+  /* ================================================================
+     SWITCH/TOGGLE ENHANCEMENTS
+     ================================================================ */
+  
+  .p-inputswitch {
+    .p-inputswitch-slider {
+      border-radius: var(--radius-full);
+      transition: background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      
+      &::before {
+        border-radius: 50%;
+        transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+    }
+    
+    &.p-inputswitch-checked .p-inputswitch-slider {
+      background: var(--ds-primary-green);
+    }
+    
+    &:hover:not(.p-disabled) .p-inputswitch-slider::before {
+      transform: scale(1.1);
+    }
+  }
+  
+  /* ================================================================
+     BADGE COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-badge {
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-semibold);
+    animation: badge-pop-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  @keyframes badge-pop-in {
+    from {
+      transform: scale(0);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  .p-badge-success {
+    background: var(--color-status-success);
+    color: var(--color-text-primary);
+  }
+  
+  .p-badge-info {
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+  }
+  
+  .p-badge-warning {
+    background: var(--color-status-warning);
+    color: var(--color-text-primary);
+  }
+  
+  .p-badge-danger {
+    background: var(--color-status-error);
+    color: var(--color-text-on-primary);
+  }
+  
+  /* ================================================================
+     TAG COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-tag {
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-medium);
+    padding: var(--space-1) var(--space-3);
+  }
+  
+  .p-tag-success {
+    background: var(--color-status-success-light);
+    color: var(--color-status-success);
+  }
+  
+  .p-tag-info {
+    background: var(--ds-primary-green-subtle);
+    color: var(--ds-primary-green);
+  }
+  
+  .p-tag-warning {
+    background: var(--color-status-warning-light);
+    color: #92400e;
+  }
+  
+  .p-tag-danger {
+    background: var(--color-status-error-light);
+    color: var(--color-status-error);
+  }
+  
+  /* ================================================================
+     TOOLTIP COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-tooltip {
+    .p-tooltip-text {
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-body-sm);
+      box-shadow: var(--shadow-md);
+      animation: tooltip-fade-in 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  }
+  
+  @keyframes tooltip-fade-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  /* ================================================================
+     DATATABLE COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-datatable {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border-secondary);
+  }
+  
+  .p-datatable-header {
+    background: var(--surface-secondary);
+    border-bottom: 1px solid var(--color-border-secondary);
+    padding: var(--space-4);
+  }
+  
+  .p-datatable-thead > tr > th {
+    background: var(--surface-secondary);
+    border-bottom: 2px solid var(--color-border-primary);
+    padding: var(--space-4);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    transition: background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+    &.p-sortable-column:hover {
+      background: var(--surface-tertiary);
+    }
+  }
+  
+  .p-datatable-tbody > tr {
+    transition: 
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      transform 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--ds-primary-green-ultra-subtle);
+        transform: translateX(4px);
+      }
+    }
+    
+    &.p-highlight {
+      background: var(--ds-primary-green-subtle);
+      color: var(--ds-primary-green);
+    }
+  }
+  
+  .p-datatable-tbody > tr > td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border-secondary);
+  }
+  
+  /* ================================================================
+     ACCORDION COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-accordion {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .p-accordion-header {
+    .p-accordion-header-link {
+      padding: var(--space-4) var(--space-5);
+      transition: 
+        background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+        color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background: var(--ds-primary-green-subtle);
+          color: var(--ds-primary-green);
+        }
+      }
+    }
+    
+    .p-accordion-toggle-icon {
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    &.p-highlight .p-accordion-toggle-icon {
+      transform: rotate(180deg);
+    }
+  }
+  
+  .p-accordion-content {
+    padding: var(--space-5);
+    animation: accordion-expand 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  @keyframes accordion-expand {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* ================================================================
+     TABVIEW COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-tabview {
+    .p-tabview-nav {
+      border-bottom: 2px solid var(--color-border-secondary);
+    }
+    
+    .p-tabview-nav-link {
+      padding: var(--space-4) var(--space-5);
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: 
+        color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+        border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(.p-highlight) {
+          color: var(--ds-primary-green);
+          border-color: rgba(var(--ds-primary-green-rgb), 0.3);
+        }
+      }
+    }
+    
+    .p-tabview-nav-link.p-highlight {
+      color: var(--ds-primary-green);
+      border-color: var(--ds-primary-green);
+    }
+    
+    .p-tabview-panel {
+      padding: var(--space-5);
+      animation: tab-fade-in 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+  }
+  
+  @keyframes tab-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* ================================================================
+     SIDEBAR COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-sidebar {
+    box-shadow: var(--shadow-xl);
+    
+    &.p-sidebar-left {
+      animation: sidebar-slide-left 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    &.p-sidebar-right {
+      animation: sidebar-slide-right 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  }
+  
+  @keyframes sidebar-slide-left {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes sidebar-slide-right {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  
+  .p-sidebar-header {
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--color-border-secondary);
+  }
+  
+  .p-sidebar-content {
+    padding: var(--space-5);
+  }
+  
+  .p-sidebar-close {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-lg);
+    transition: 
+      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--surface-tertiary);
+        transform: scale(1.1);
+      }
+    }
+  }
+  
+  /* ================================================================
+     PROGRESSBAR COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-progressbar {
+    border-radius: var(--radius-full);
+    height: 8px;
+    background: var(--surface-tertiary);
+    overflow: hidden;
+  }
+  
+  .p-progressbar-value {
+    border-radius: var(--radius-full);
+    background: linear-gradient(
+      90deg,
+      var(--ds-primary-green) 0%,
+      var(--ds-primary-green-light) 100%
+    );
+    transition: width 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+      );
+      animation: progress-shine 2s infinite;
+    }
+  }
+  
+  @keyframes progress-shine {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  
+  /* ================================================================
+     AVATAR COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-avatar {
+    transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+  
+  .p-avatar-group {
+    .p-avatar {
+      border: 2px solid var(--surface-primary);
+      transition: 
+        transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        z-index 0ms;
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          transform: scale(1.15) translateY(-4px);
+          z-index: 10;
+        }
+      }
+    }
+  }
+  
+  /* ================================================================
+     CHIP COMPONENT ENHANCEMENTS
+     ================================================================ */
+  
+  .p-chip {
+    border-radius: var(--radius-full);
+    padding: var(--space-1) var(--space-3);
+    transition: 
+      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-sm);
+      }
+    }
+  }
+  
+  .p-chip-remove-icon {
+    transition: 
+      color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--color-status-error);
+        transform: scale(1.2);
+      }
+    }
+  }
+}
+
+/* ================================================================
+   DARK MODE ADJUSTMENTS
+   ================================================================ */
+
+[data-theme="dark"],
+.dark-theme {
+  .p-dialog-mask {
+    background: rgba(0, 0, 0, 0.7);
+  }
+  
+  .p-card:hover {
+    box-shadow: 
+      0 12px 40px -10px rgba(0, 0, 0, 0.5),
+      0 4px 15px -5px rgba(0, 0, 0, 0.3);
+  }
+  
+  .p-button:hover:not(:disabled) {
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* ================================================================
+   END OF PRIMENG THEME
+   ================================================================ */

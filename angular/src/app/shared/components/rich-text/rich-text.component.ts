@@ -4,9 +4,11 @@ import {
   output,
   forwardRef,
   signal,
+  computed,
   ChangeDetectionStrategy,
   viewChild,
   ElementRef,
+  inject,
 } from "@angular/core";
 import {
   ControlValueAccessor,
@@ -14,6 +16,7 @@ import {
   FormsModule,
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 
 /**
  * Rich Text Editor Component - Angular 21
@@ -117,7 +120,7 @@ import { CommonModule } from "@angular/common";
           [attr.spellcheck]="spellcheck()"
           (input)="onInput()"
           (blur)="onBlur()"
-          [innerHTML]="value()"
+          [innerHTML]="sanitizedValue()"
         ></div>
       </div>
       @if (helpText() && !errorMessage()) {
@@ -235,6 +238,8 @@ import { CommonModule } from "@angular/common";
   ],
 })
 export class RichTextComponent implements ControlValueAccessor {
+  private sanitizer = inject(DomSanitizer);
+  
   contentEditable = viewChild<ElementRef<HTMLDivElement>>("contentEditable");
 
   // Configuration
@@ -250,8 +255,50 @@ export class RichTextComponent implements ControlValueAccessor {
   private onChangeFn = (value: string) => {};
   private onTouchedFn = () => {};
 
+  // Sanitized HTML for safe rendering
+  sanitizedValue = computed<SafeHtml>(() => {
+    const rawValue = this.value();
+    // Sanitize HTML to prevent XSS attacks
+    return this.sanitizer.bypassSecurityTrustHtml(this.sanitizeHtml(rawValue));
+  });
+
   // Events
   changed = output<string>();
+
+  /**
+   * Basic HTML sanitization - allows only safe formatting tags
+   * Strips potentially dangerous elements like script, iframe, etc.
+   */
+  private sanitizeHtml(html: string): string {
+    if (!html) return '';
+    
+    // Create a temporary element to parse HTML
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    
+    // Remove potentially dangerous elements
+    const dangerousTags = ['script', 'iframe', 'object', 'embed', 'form', 'input', 'button'];
+    dangerousTags.forEach(tag => {
+      const elements = temp.getElementsByTagName(tag);
+      while (elements.length > 0) {
+        elements[0].parentNode?.removeChild(elements[0]);
+      }
+    });
+    
+    // Remove event handlers from all elements
+    const allElements = temp.getElementsByTagName('*');
+    for (let i = 0; i < allElements.length; i++) {
+      const el = allElements[i];
+      const attrs = Array.from(el.attributes);
+      attrs.forEach(attr => {
+        if (attr.name.startsWith('on') || attr.name === 'href' && attr.value.startsWith('javascript:')) {
+          el.removeAttribute(attr.name);
+        }
+      });
+    }
+    
+    return temp.innerHTML;
+  }
 
   onInput(): void {
     const element = this.contentEditable()?.nativeElement;

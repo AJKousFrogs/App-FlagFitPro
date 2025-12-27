@@ -10,7 +10,7 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
-import { Tabs } from "primeng/tabs";
+import { Tabs, TabPanel } from "primeng/tabs";
 import { expandCollapse } from "../../animations/app.animations";
 import { StatItem } from "../stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
@@ -52,6 +52,7 @@ export interface ProgressiveStatItem extends StatItem {
     ButtonModule,
     TagModule,
     Tabs,
+    TabPanel,
   ],
   template: `
     <div class="progressive-stats">
@@ -103,7 +104,7 @@ export interface ProgressiveStatItem extends StatItem {
               <div class="stat-details" [@expandCollapse]>
                 <!-- Level 3: Deep Dive Charts -->
                 @if (showDeepDive() === stat.id && hasChartData(stat)) {
-                  <p-tabView class="stat-tabs">
+                  <p-tabs class="stat-tabs">
                     <p-tabpanel header="Trends" leftIcon="pi pi-chart-line">
                       @if (stat.trendData) {
                         <div class="chart-container">
@@ -163,7 +164,7 @@ export interface ProgressiveStatItem extends StatItem {
                         <div class="no-data">No benchmark data available</div>
                       }
                     </p-tabpanel>
-                  </p-tabView>
+                  </p-tabs>
                 }
 
                 <div class="action-buttons">

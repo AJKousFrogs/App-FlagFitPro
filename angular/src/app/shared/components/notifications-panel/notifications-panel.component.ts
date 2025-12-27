@@ -481,9 +481,9 @@ export class NotificationsPanelComponent {
   }
 
   viewAllNotifications(): void {
-    // For now, just close the panel since there's no dedicated notifications page
-    // In the future, navigate to /notifications when that page is created
-    this.toastService.info("All notifications are shown in this panel");
+    // Navigate to settings page with notifications tab active
+    // Since there's no dedicated notifications page, redirect to settings
+    this.router.navigate(['/settings'], { queryParams: { tab: 'notifications' } });
     this.close();
   }
 

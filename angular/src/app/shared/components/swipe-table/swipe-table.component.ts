@@ -17,7 +17,19 @@ import { ButtonModule } from "primeng/button";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TableModule, ButtonModule],
   template: `
-    <div class="swipe-table-container" #tableContainer>
+    <div 
+      class="swipe-table-container" 
+      #tableContainer
+      role="region"
+      [attr.aria-label]="tableLabel()"
+      [attr.aria-describedby]="'table-instructions-' + tableId"
+    >
+      <!-- Screen reader instructions -->
+      <span [id]="'table-instructions-' + tableId" class="sr-only">
+        On mobile devices, swipe left on a row to reveal edit and delete actions.
+        On desktop, use the action buttons in the Actions column.
+      </span>
+      
       <p-table
         [value]="data()"
         [scrollable]="true"
@@ -28,9 +40,9 @@ import { ButtonModule } from "primeng/button";
         <ng-template pTemplate="header">
           <tr>
             @for (col of columns(); track col.field) {
-              <th>{{ col.header }}</th>
+              <th scope="col" [attr.aria-sort]="null">{{ col.header }}</th>
             }
-            <th class="actions-header">Actions</th>
+            <th scope="col" class="actions-header">Actions</th>
           </tr>
         </ng-template>
 
@@ -46,31 +58,36 @@ import { ButtonModule } from "primeng/button";
                 ? 'translateX(-' + swipeDistance + 'px)'
                 : 'translateX(0)'
             "
+            [attr.aria-rowindex]="rowIndex + 1"
           >
             @for (col of columns(); track col.field) {
-              <td>
+              <td [attr.data-label]="col.header">
                 {{ getFieldValue(row, col.field) }}
               </td>
             }
-            <td class="actions-cell">
+            <td class="actions-cell" data-label="Actions">
               <!-- Swipe actions overlay -->
               <div
                 class="swipe-actions"
                 [class.visible]="
                   swipingIndex === rowIndex && swipeDistance > 60
                 "
+                role="group"
+                aria-label="Row actions"
               >
                 <button
                   class="action-btn edit"
                   (click)="editRow(row)"
-                  aria-label="Edit row"
+                  [attr.aria-label]="'Edit row ' + (rowIndex + 1)"
+                  type="button"
                 >
                   <i class="pi pi-pencil" aria-hidden="true"></i>
                 </button>
                 <button
                   class="action-btn delete"
                   (click)="deleteRow(row)"
-                  aria-label="Delete row"
+                  [attr.aria-label]="'Delete row ' + (rowIndex + 1)"
+                  type="button"
                 >
                   <i class="pi pi-trash" aria-hidden="true"></i>
                 </button>
@@ -81,12 +98,17 @@ import { ButtonModule } from "primeng/button";
 
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td [attr.colspan]="columns().length + 1" class="text-center">
+            <td [attr.colspan]="columns().length + 1" class="text-center" role="status">
               No data available
             </td>
           </tr>
         </ng-template>
       </p-table>
+      
+      <!-- Live region for screen reader announcements -->
+      <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {{ announcement() }}
+      </div>
     </div>
   `,
   styles: [
@@ -172,6 +194,30 @@ import { ButtonModule } from "primeng/button";
         font-size: var(--icon-md);
       }
 
+      /* Screen reader only utility */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* Focus styles for keyboard navigation */
+      .action-btn:focus {
+        outline: 2px solid var(--p-primary-color);
+        outline-offset: 2px;
+      }
+
+      .action-btn:focus-visible {
+        outline: 2px solid var(--p-primary-color);
+        outline-offset: 2px;
+      }
+
       @media (min-width: 768px) {
         .swipe-row {
           transition: none;
@@ -196,8 +242,15 @@ export class SwipeTableComponent<T = Record<string, unknown>> {
   columns = input<Array<{ field: string; header: string }>>([]);
   onEdit = input<(row: T) => void>();
   onDelete = input<(row: T) => void>();
+  tableLabel = input<string>('Data table');
 
   @ViewChild("tableContainer") tableContainer!: ElementRef;
+
+  // Unique ID for accessibility
+  tableId = Math.random().toString(36).substr(2, 9);
+  
+  // Announcement for screen readers
+  announcement = signal<string>('');
 
   swipingIndex: number | null = null;
   swipeDistance = 0;
@@ -250,6 +303,7 @@ export class SwipeTableComponent<T = Record<string, unknown>> {
     const editFn = this.onEdit();
     if (editFn) {
       editFn(row);
+      this.announcement.set('Edit action triggered');
     }
     this.resetSwipe();
   }
@@ -258,6 +312,7 @@ export class SwipeTableComponent<T = Record<string, unknown>> {
     const deleteFn = this.onDelete();
     if (deleteFn) {
       deleteFn(row);
+      this.announcement.set('Delete action triggered');
     }
     this.resetSwipe();
   }

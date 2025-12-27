@@ -44,6 +44,18 @@ import { ButtonModule } from "primeng/button";
         padding: var(--space-12);
         text-align: center;
         min-height: 300px;
+        animation: empty-state-fade-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes empty-state-fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .empty-state.compact {
@@ -55,6 +67,18 @@ import { ButtonModule } from "primeng/button";
         font-size: var(--icon-5xl);
         margin-bottom: var(--space-4);
         opacity: 0.5;
+        animation: empty-icon-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+      }
+
+      @keyframes empty-icon-bounce {
+        from {
+          opacity: 0;
+          transform: scale(0.5);
+        }
+        to {
+          opacity: 0.5;
+          transform: scale(1);
+        }
       }
 
       .empty-state.compact .empty-icon {
@@ -67,6 +91,18 @@ import { ButtonModule } from "primeng/button";
         font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
         margin-bottom: var(--space-2);
+        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+      }
+
+      @keyframes empty-text-slide {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .empty-state.compact .empty-title {
@@ -78,11 +114,16 @@ import { ButtonModule } from "primeng/button";
         color: var(--text-secondary);
         margin-bottom: var(--space-4);
         max-width: 500px;
+        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
       }
 
       .empty-state.compact .empty-message {
         font-size: var(--font-body-sm);
         margin-bottom: var(--space-3);
+      }
+
+      :host ::ng-deep p-button {
+        animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both;
       }
 
       @media (max-width: 768px) {
@@ -101,6 +142,16 @@ import { ButtonModule } from "primeng/button";
 
         .empty-message {
           font-size: var(--font-body-sm);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .empty-state,
+        .empty-icon,
+        .empty-title,
+        .empty-message,
+        :host ::ng-deep p-button {
+          animation: none;
         }
       }
     `,

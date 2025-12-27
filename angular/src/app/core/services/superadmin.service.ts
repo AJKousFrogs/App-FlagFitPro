@@ -3,6 +3,7 @@ import { SupabaseService } from './supabase.service';
 import { AuthService } from './auth.service';
 import { from, Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
+import { LoggerService } from './logger.service';
 
 export interface ApprovalRequest {
   id: string;
@@ -58,6 +59,7 @@ export interface SuperadminStats {
 export class SuperadminService {
   private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
+  private logger = inject(LoggerService);
 
   // Signals for reactive state
   isSuperadmin = signal<boolean>(false);
@@ -148,7 +150,7 @@ export class SuperadminService {
 
       this.pendingApprovals.set(approvals);
     } catch (error) {
-      console.error('Error loading pending approvals:', error);
+      this.logger.error('Error loading pending approvals:', error);
     } finally {
       this.isLoading.set(false);
     }
@@ -191,7 +193,7 @@ export class SuperadminService {
         activeTeams: approvedTeams || 0
       });
     } catch (error) {
-      console.error('Error loading stats:', error);
+      this.logger.error('Error loading stats:', error);
     }
   }
 
@@ -224,7 +226,7 @@ export class SuperadminService {
         this.loadStats();
       }),
       catchError(error => {
-        console.error('Error approving team:', error);
+        this.logger.error('Error approving team:', error);
         return of(false);
       })
     );
@@ -246,7 +248,7 @@ export class SuperadminService {
         this.loadStats();
       }),
       catchError(error => {
-        console.error('Error rejecting team:', error);
+        this.logger.error('Error rejecting team:', error);
         return of(false);
       })
     );
@@ -269,7 +271,7 @@ export class SuperadminService {
         this.loadStats();
       }),
       catchError(error => {
-        console.error('Error approving admin role:', error);
+        this.logger.error('Error approving admin role:', error);
         return of(false);
       })
     );
@@ -294,7 +296,7 @@ export class SuperadminService {
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error('Error adding superadmin:', error);
+      this.logger.error('Error adding superadmin:', error);
       return false;
     }
   }
@@ -312,7 +314,7 @@ export class SuperadminService {
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error('Error removing superadmin:', error);
+      this.logger.error('Error removing superadmin:', error);
       return false;
     }
   }
@@ -347,7 +349,7 @@ export class SuperadminService {
       this.loadStats();
       return true;
     } catch (error) {
-      console.error('Error suspending team:', error);
+      this.logger.error('Error suspending team:', error);
       return false;
     }
   }
@@ -369,7 +371,7 @@ export class SuperadminService {
       this.loadStats();
       return true;
     } catch (error) {
-      console.error('Error reinstating team:', error);
+      this.logger.error('Error reinstating team:', error);
       return false;
     }
   }

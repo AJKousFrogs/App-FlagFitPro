@@ -1,7 +1,7 @@
 /**
  * FlagFit Pro - Achievements Service
  * Gamification system for tracking milestones and motivating users
- * 100% FREE - Uses localStorage
+ * Now with database sync for cross-device persistence
  */
 
 import { storageService } from "./services/storage-service-unified.js";
@@ -12,8 +12,127 @@ class AchievementsService {
   constructor() {
     this.storageKey = "flagfit_achievements";
     this.historyKey = "flagfit_achievement_history";
+    this.syncedKey = "flagfit_achievements_synced";
     this.achievements = this.defineAchievements();
     this.loadUnlockedAchievements();
+    this.isSyncing = false;
+    
+    // Auto-sync with database when user is authenticated
+    this.initDatabaseSync();
+  }
+
+  /**
+   * Initialize database sync
+   * Attempts to sync localStorage achievements with database
+   */
+  async initDatabaseSync() {
+    // Wait for API client to be available
+    if (!window.apiClient) {
+      setTimeout(() => this.initDatabaseSync(), 1000);
+      return;
+    }
+
+    try {
+      // Check if we've already synced in this session
+      const alreadySynced = sessionStorage.getItem(this.syncedKey);
+      if (alreadySynced) {
+        logger.info("[Achievements] Already synced this session");
+        return;
+      }
+
+      await this.syncWithDatabase();
+      sessionStorage.setItem(this.syncedKey, "true");
+    } catch (error) {
+      logger.warn("[Achievements] Database sync failed, using localStorage:", error);
+    }
+  }
+
+  /**
+   * Sync achievements with database
+   * - Fetches achievements from database
+   * - Merges with localStorage achievements
+   * - Uploads any missing achievements to database
+   */
+  async syncWithDatabase() {
+    if (this.isSyncing) return;
+    this.isSyncing = true;
+
+    try {
+      logger.info("[Achievements] Starting database sync...");
+
+      // Fetch achievements from database
+      const response = await window.apiClient.get("/api/achievements");
+      
+      if (!response || !response.success) {
+        throw new Error("Failed to fetch achievements from database");
+      }
+
+      const dbAchievements = response.data.achievements || [];
+      const dbUnlockedIds = dbAchievements
+        .filter(a => a.unlocked)
+        .map(a => a.id);
+
+      // Get local unlocked achievements
+      const localUnlockedIds = Object.keys(this.achievements)
+        .filter(id => this.achievements[id].unlocked);
+
+      // Merge: Mark any DB achievements as unlocked locally
+      let newFromDb = 0;
+      dbUnlockedIds.forEach(id => {
+        if (this.achievements[id] && !this.achievements[id].unlocked) {
+          this.achievements[id].unlocked = true;
+          const dbAchievement = dbAchievements.find(a => a.id === id);
+          this.achievements[id].unlockedAt = dbAchievement?.unlockedAt;
+          newFromDb++;
+        }
+      });
+
+      if (newFromDb > 0) {
+        logger.info(`[Achievements] Loaded ${newFromDb} achievements from database`);
+        this.saveUnlockedAchievements();
+      }
+
+      // Find achievements that exist locally but not in DB
+      const localOnly = localUnlockedIds.filter(id => !dbUnlockedIds.includes(id));
+      
+      if (localOnly.length > 0) {
+        logger.info(`[Achievements] Uploading ${localOnly.length} local achievements to database`);
+        const history = this.getHistory();
+        
+        await window.apiClient.put("/api/achievements", {
+          achievementIds: localOnly,
+          history: history,
+        });
+      }
+
+      logger.info("[Achievements] Database sync complete");
+    } catch (error) {
+      logger.error("[Achievements] Database sync error:", error);
+      throw error;
+    } finally {
+      this.isSyncing = false;
+    }
+  }
+
+  /**
+   * Sync a single achievement to database
+   */
+  async syncAchievementToDatabase(achievement) {
+    if (!window.apiClient) {
+      logger.warn("[Achievements] API client not available, skipping DB sync");
+      return;
+    }
+
+    try {
+      await window.apiClient.post("/api/achievements", {
+        achievementId: achievement.id,
+        unlockedAt: achievement.unlockedAt,
+      });
+      logger.info(`[Achievements] Synced "${achievement.name}" to database`);
+    } catch (error) {
+      logger.warn(`[Achievements] Failed to sync "${achievement.name}" to database:`, error);
+      // Achievement is still saved locally, will sync later
+    }
   }
 
   /**
@@ -288,6 +407,9 @@ class AchievementsService {
         // Save to history
         this.addToHistory(achievement);
 
+        // Sync to database
+        this.syncAchievementToDatabase(achievement);
+
         // Show notification if available
         if (
           window.notificationManager &&
@@ -295,6 +417,22 @@ class AchievementsService {
         ) {
           window.notificationManager.notifyAchievement(achievement);
         }
+
+        // Dispatch custom event for other components
+        document.dispatchEvent(new CustomEvent('achievementUnlocked', {
+          detail: {
+            achievement: {
+              id: achievement.id,
+              name: achievement.name,
+              description: achievement.description,
+              icon: achievement.icon,
+              points: achievement.points,
+              category: achievement.category,
+            },
+            totalPoints: this.getTotalPoints(),
+            progress: this.getProgress(),
+          }
+        }));
 
         logger.info(`[Achievements] Unlocked: ${achievement.name}`);
       }

@@ -9,6 +9,7 @@ import { MainLayoutComponent } from '../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SuperadminService } from '../../core/services/superadmin.service';
 import { AuthService } from '../../core/services/auth.service';
+import { LoggerService } from '../../core/services/logger.service';
 
 interface SuperadminUser {
   user_id: string;
@@ -676,6 +677,7 @@ interface SuperadminUser {
 export class SuperadminSettingsComponent implements OnInit {
   private superadminService = inject(SuperadminService);
   private authService = inject(AuthService);
+  private logger = inject(LoggerService);
 
   // State
   superadmins = signal<SuperadminUser[]>([]);
@@ -707,7 +709,7 @@ export class SuperadminSettingsComponent implements OnInit {
         email: a.user_id === this.authService.currentUser()?.id ? this.currentUserEmail() : 'aljosa@ljubljanafrogs.si'
       })));
     } catch (error) {
-      console.error('Error loading superadmins:', error);
+      this.logger.error('Error loading superadmins:', error);
     } finally {
       this.isLoading.set(false);
     }

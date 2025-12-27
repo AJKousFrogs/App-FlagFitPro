@@ -1,13 +1,10 @@
 // Netlify Function: Dashboard Data
 // Returns user dashboard statistics and activity using Supabase
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { db, supabaseAdmin } = require("./supabase-client.cjs");
 const { getOrFetch, CACHE_TTL, CACHE_PREFIX } = require("./cache.cjs");
 const {
   createSuccessResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 // Note: authenticateRequest and applyRateLimit are now handled by baseHandler
 const { getTimeAgo } = require("./utils/date-utils.cjs");

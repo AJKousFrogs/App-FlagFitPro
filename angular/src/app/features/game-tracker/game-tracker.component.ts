@@ -29,6 +29,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
+import { ToastService } from "../../core/services/toast.service";
 
 interface Game {
   id: string;
@@ -117,6 +118,7 @@ export class GameTrackerComponent implements OnInit {
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
+  private toastService = inject(ToastService);
 
   showGameForm = signal(false);
   games = signal<Game[]>([]);
@@ -551,6 +553,10 @@ export class GameTrackerComponent implements OnInit {
           // Mark players as present if they're tracking their own stats
           this.markPlayersPresent(playData);
 
+          // Notify coaches that stats were uploaded (database trigger handles this,
+          // but we can show local feedback)
+          this.showStatsUploadedFeedback(playData);
+
           this.playForm.reset({
             playType: "",
             half: this.playForm.get("half")?.value || 1,
@@ -561,6 +567,23 @@ export class GameTrackerComponent implements OnInit {
           // Error handled by error interceptor
         },
       });
+  }
+
+  /**
+   * Show feedback when stats are uploaded
+   * The database trigger automatically notifies coaches
+   */
+  private showStatsUploadedFeedback(playData: Record<string, unknown>): void {
+    const playType = playData['playType'] as string;
+    const yardsGained = playData['yardsGained'] as number | undefined;
+    
+    let message = `Play recorded: ${this.formatPlayType(playType)}`;
+    if (yardsGained !== undefined) {
+      message += ` (${yardsGained} yards)`;
+    }
+    
+    // Show success toast
+    this.toastService.success(message, { life: 2000 });
   }
 
   private markPlayersPresent(playData: Record<string, unknown>): void {
@@ -636,13 +659,21 @@ export class GameTrackerComponent implements OnInit {
     return `${minutes}:${secs.toString().padStart(2, "0")}`;
   }
 
+  /**
+   * Format play type for display
+   */
   formatPlayType(playType: string): string {
     const types: Record<string, string> = {
+      pass: "Pass Play",
       pass_play: "Pass Play",
+      run: "Run Play",
       run_play: "Run Play",
       flag_pull: "Flag Pull",
+      touchdown: "Touchdown",
       interception: "Interception",
       pass_deflection: "Pass Deflection",
+      sack: "Sack",
+      penalty: "Penalty",
     };
     return types[playType] || playType;
   }
@@ -731,6 +762,35 @@ export class GameTrackerComponent implements OnInit {
     // Scroll to games list
     const element = document.querySelector(".games-list-card");
     element?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  viewGameDetails(game: Game): void {
+    // Load plays for this game and show details
+    this.activeGameId.set(game.id);
+    this.teamScore.set(parseInt(game.score.split('-')[0]) || 0);
+    this.opponentScore.set(parseInt(game.score.split('-')[1]) || 0);
+    
+    // Load plays for this game
+    this.apiService
+      .get(`/api/games/${game.id}/plays`)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          if (response.success && Array.isArray(response.data)) {
+            this.plays.set(response.data as Play[]);
+          }
+        },
+        error: () => {
+          // If API fails, just show empty plays
+          this.plays.set([]);
+        },
+      });
+    
+    // Scroll to play tracker
+    setTimeout(() => {
+      const element = document.querySelector(".play-tracker-card");
+      element?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
   }
 
   getResultSeverity(

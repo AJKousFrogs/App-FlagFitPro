@@ -888,8 +888,13 @@ export class PerformanceDataService {
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
         this.downloadBlob(blob, `performance-data-${new Date().toISOString().split("T")[0]}.json`);
       } else {
-        // Convert to CSV
-        const csvContent = this.convertToCSV(exportData);
+        // Convert to CSV - extract only array data
+        const csvData: Record<string, unknown[]> = {
+          trainingSessions: exportData.trainingSessions,
+          wellnessLogs: exportData.wellnessLogs,
+          bodyMeasurements: exportData.bodyMeasurements,
+        };
+        const csvContent = this.convertToCSV(csvData);
         const blob = new Blob([csvContent], { type: "text/csv" });
         this.downloadBlob(blob, `performance-data-${new Date().toISOString().split("T")[0]}.csv`);
       }

@@ -573,8 +573,11 @@
   }
 }
 
-/* Manual Dark Mode Toggle */
-[data-theme="dark"] {
+/* Manual Dark Mode Toggle - supports both data-theme attribute and .dark-theme class */
+[data-theme="dark"],
+.dark-theme,
+html.dark-theme,
+body.dark-theme {
   /* Surface Colors - Dark Mode */
   --surface-primary: var(--primitive-neutral-900);
   --surface-secondary: var(--primitive-neutral-800);
@@ -588,6 +591,8 @@
   --color-text-muted: var(--primitive-neutral-500);
   --color-text-disabled: var(--primitive-neutral-600);
   --color-text-on-white: #ffffff;
+  --text-primary: #ffffff;
+  --text-secondary: var(--primitive-neutral-400);
 
   /* Border Colors - Dark Mode */
   --color-border-primary: rgba(255, 255, 255, 0.1);
@@ -599,10 +604,35 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.6);
+
+  /* PrimeNG Surface Variables - Dark Mode */
+  --p-surface-0: #171717;
+  --p-surface-50: #1f1f1f;
+  --p-surface-100: #262626;
+  --p-surface-200: #333333;
+  --p-surface-300: #404040;
+  --p-surface-400: #525252;
+  --p-surface-500: #737373;
+  --p-surface-600: #a3a3a3;
+  --p-surface-700: #d4d4d4;
+  --p-surface-800: #e5e5e5;
+  --p-surface-900: #f5f5f5;
+  --p-text-color: #ffffff;
+  --p-text-color-secondary: #a3a3a3;
+  --p-surface-border: rgba(255, 255, 255, 0.1);
+  
+  /* Card and Component Backgrounds */
+  --p-card-background: var(--primitive-neutral-800);
+  --p-content-background: var(--primitive-neutral-900);
+  --p-highlight-background: rgba(16, 201, 107, 0.2);
+  --p-highlight-text-color: #10c96b;
 }
 
-/* Manual Light Mode Toggle */
-[data-theme="light"] {
+/* Manual Light Mode Toggle - supports both data-theme attribute and .light-theme class */
+[data-theme="light"],
+.light-theme,
+html.light-theme,
+body.light-theme {
   /* Surface Colors - Light Mode */
   --surface-primary: #ffffff;
   --surface-secondary: #f8faf9;
@@ -616,6 +646,8 @@
   --color-text-muted: var(--primitive-neutral-500);
   --color-text-disabled: var(--primitive-neutral-400);
   --color-text-on-white: var(--color-brand-primary);
+  --text-primary: var(--primitive-neutral-900);
+  --text-secondary: var(--primitive-neutral-600);
 
   /* Border Colors - Light Mode */
   --color-border-primary: var(--primitive-neutral-300);
@@ -627,6 +659,28 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
   --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.15);
+
+  /* PrimeNG Surface Variables - Light Mode */
+  --p-surface-0: #ffffff;
+  --p-surface-50: #f8faf9;
+  --p-surface-100: #f1f5f4;
+  --p-surface-200: #e2e8f0;
+  --p-surface-300: #cbd5e1;
+  --p-surface-400: #94a3b8;
+  --p-surface-500: #64748b;
+  --p-surface-600: #475569;
+  --p-surface-700: #334155;
+  --p-surface-800: #1e293b;
+  --p-surface-900: #0f172a;
+  --p-text-color: #0f172a;
+  --p-text-color-secondary: #64748b;
+  --p-surface-border: #e2e8f0;
+  
+  /* Card and Component Backgrounds */
+  --p-card-background: #ffffff;
+  --p-content-background: #ffffff;
+  --p-highlight-background: rgba(16, 201, 107, 0.1);
+  --p-highlight-text-color: #089949;
 }
 
 /* ================================================================

@@ -8,11 +8,10 @@
 // - Injury risk factors: Hulin 2016, Milewski 2014
 // - Recovery metrics: Saw et al. 2016
 
-const { supabaseAdmin, checkEnvVars } = require("./supabase-client.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 const {
   createSuccessResponse,
-  createErrorResponse,
 } = require("./utils/error-handler.cjs");
 
 // =====================================================

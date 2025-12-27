@@ -68,65 +68,113 @@ import { CommonModule } from "@angular/common";
       .form-group {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: var(--space-2, 0.5rem);
       }
 
       label {
-        font-weight: 600;
-        color: var(--p-text-color);
-        font-size: 0.875rem;
+        font-weight: var(--font-weight-semibold, 600);
+        color: var(--color-text-primary, var(--p-text-color));
+        font-size: var(--font-body-sm, 0.875rem);
+        transition: color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
       }
 
       .form-control {
         width: 100%;
-        padding: 0.75rem;
-        border: 1px solid var(--p-surface-border);
-        border-radius: var(--p-border-radius);
-        font-size: 1rem;
-        transition:
-          border-color 0.2s,
-          box-shadow 0.2s;
+        padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+        border: 1px solid var(--color-border-primary, var(--p-surface-border));
+        border-radius: var(--radius-lg, var(--p-border-radius));
+        font-size: var(--font-body-md, 1rem);
         font-family: inherit;
+        background: var(--surface-primary, white);
+        color: var(--color-text-primary, var(--p-text-color));
+        transition:
+          border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+          box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+          background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      }
+
+      .form-control::placeholder {
+        color: var(--color-text-muted, var(--p-text-color-secondary));
+      }
+
+      .form-control:hover:not(:disabled):not(:focus) {
+        border-color: var(--color-text-secondary, var(--p-surface-400));
       }
 
       .form-control:focus {
         outline: none;
-        border-color: var(--p-primary-color);
-        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+        border-color: var(--ds-primary-green, var(--p-primary-color));
+        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb, 8, 153, 73), 0.2);
       }
 
       .form-control:disabled {
-        background-color: var(--p-surface-100);
+        background-color: var(--surface-secondary, var(--p-surface-100));
         cursor: not-allowed;
         opacity: 0.6;
       }
 
       .form-control.is-invalid {
-        border-color: var(--p-error-color);
+        border-color: var(--color-status-error, var(--p-error-color));
+        animation: input-shake 0.4s ease-in-out;
+      }
+
+      @keyframes input-shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+        20%, 40%, 60%, 80% { transform: translateX(4px); }
       }
 
       .form-control.is-invalid:focus {
-        border-color: var(--p-error-color);
-        box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
+        border-color: var(--color-status-error, var(--p-error-color));
+        box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.2);
       }
 
       .form-control.is-valid {
-        border-color: var(--p-success-color, #4caf50);
+        border-color: var(--color-status-success, var(--p-success-color, #4caf50));
       }
 
       .form-control.is-valid:focus {
-        border-color: var(--p-success-color, #4caf50);
-        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+        border-color: var(--color-status-success, var(--p-success-color, #4caf50));
+        box-shadow: 0 0 0 3px rgba(var(--primitive-success-500-rgb, 76, 175, 80), 0.2);
       }
 
       .form-help {
-        font-size: 0.75rem;
-        color: var(--p-text-color-secondary);
+        font-size: var(--font-body-xs, 0.75rem);
+        color: var(--color-text-secondary, var(--p-text-color-secondary));
+        line-height: 1.4;
       }
 
       .form-error {
-        font-size: 0.75rem;
-        color: var(--p-error-color);
+        font-size: var(--font-body-xs, 0.75rem);
+        color: var(--color-status-error, var(--p-error-color));
+        display: flex;
+        align-items: center;
+        gap: var(--space-1, 0.25rem);
+        animation: error-fade-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes error-fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .form-control,
+        label,
+        .form-error {
+          transition: none;
+          animation: none;
+        }
+
+        .form-control.is-invalid {
+          animation: none;
+        }
       }
     `,
   ],

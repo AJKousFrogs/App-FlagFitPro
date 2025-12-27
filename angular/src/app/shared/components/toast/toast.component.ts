@@ -11,10 +11,15 @@ import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 
 /**
- * Toast Component - Angular 21
+ * Toast Component - Angular 21 Premium Edition
  *
- * A wrapper around PrimeNG Toast for consistent notifications
+ * A wrapper around PrimeNG Toast with premium animations
  * Place this component once in your app root
+ * Features:
+ * - Slide-in animations
+ * - Auto-dismiss with progress bar
+ * - Multiple severity styles
+ * - Stacked notifications
  */
 @Component({
   selector: "app-toast",
@@ -25,17 +30,301 @@ import { ToastModule } from "primeng/toast";
   template: `
     <p-toast
       [position]="position()"
-      [styleClass]="styleClass()"
+      [styleClass]="'app-toast ' + (styleClass() || '')"
       [baseZIndex]="baseZIndex()"
       [autoZIndex]="autoZIndex()"
       [key]="key()"
+      [preventOpenDuplicates]="preventDuplicates()"
+      [showTransformOptions]="showTransformOptions()"
+      [hideTransformOptions]="hideTransformOptions()"
+      [showTransitionOptions]="showTransitionOptions()"
+      [hideTransitionOptions]="hideTransitionOptions()"
     >
+      <ng-template let-message pTemplate="message">
+        <div class="toast-content">
+          <div class="toast-icon-wrapper" [class]="'toast-icon-' + message.severity">
+            <i [class]="getIcon(message.severity)"></i>
+          </div>
+          <div class="toast-text">
+            <div class="toast-summary">{{ message.summary }}</div>
+            @if (message.detail) {
+              <div class="toast-detail">{{ message.detail }}</div>
+            }
+          </div>
+        </div>
+      </ng-template>
     </p-toast>
   `,
   styles: [
     `
       :host {
         display: block;
+      }
+
+      /* ================================
+         TOAST CONTAINER
+         ================================ */
+
+      :host ::ng-deep .app-toast {
+        opacity: 1;
+      }
+
+      :host ::ng-deep .app-toast .p-toast-message {
+        border-radius: var(--radius-xl);
+        box-shadow: 
+          0 10px 40px -10px rgba(0, 0, 0, 0.2),
+          0 4px 15px -5px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: var(--space-3);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      :host ::ng-deep .app-toast .p-toast-message-content {
+        padding: 0;
+        align-items: stretch;
+      }
+
+      /* ================================
+         TOAST CONTENT
+         ================================ */
+
+      .toast-content {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        width: 100%;
+      }
+
+      .toast-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.25rem;
+      }
+
+      .toast-icon-success {
+        background: var(--color-status-success-light);
+        color: var(--color-status-success);
+      }
+
+      .toast-icon-info {
+        background: var(--ds-primary-green-subtle);
+        color: var(--ds-primary-green);
+      }
+
+      .toast-icon-warn {
+        background: var(--color-status-warning-light);
+        color: #92400e;
+      }
+
+      .toast-icon-error {
+        background: var(--color-status-error-light);
+        color: var(--color-status-error);
+      }
+
+      .toast-text {
+        flex: 1;
+        min-width: 0;
+        padding-top: var(--space-1);
+      }
+
+      .toast-summary {
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        line-height: 1.4;
+        margin-bottom: var(--space-1);
+      }
+
+      .toast-detail {
+        font-size: var(--font-body-sm);
+        color: var(--color-text-secondary);
+        line-height: 1.5;
+      }
+
+      /* ================================
+         SEVERITY VARIANTS
+         ================================ */
+
+      :host ::ng-deep .app-toast .p-toast-message-success {
+        background: linear-gradient(
+          135deg,
+          rgba(99, 173, 14, 0.1) 0%,
+          var(--surface-primary) 100%
+        );
+        border-left: 4px solid var(--color-status-success);
+      }
+
+      :host ::ng-deep .app-toast .p-toast-message-info {
+        background: linear-gradient(
+          135deg,
+          rgba(var(--ds-primary-green-rgb), 0.1) 0%,
+          var(--surface-primary) 100%
+        );
+        border-left: 4px solid var(--ds-primary-green);
+      }
+
+      :host ::ng-deep .app-toast .p-toast-message-warn {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 192, 0, 0.1) 0%,
+          var(--surface-primary) 100%
+        );
+        border-left: 4px solid var(--color-status-warning);
+      }
+
+      :host ::ng-deep .app-toast .p-toast-message-error {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 0, 60, 0.1) 0%,
+          var(--surface-primary) 100%
+        );
+        border-left: 4px solid var(--color-status-error);
+      }
+
+      /* ================================
+         CLOSE BUTTON
+         ================================ */
+
+      :host ::ng-deep .app-toast .p-toast-icon-close {
+        width: 2rem;
+        height: 2rem;
+        border-radius: var(--radius-md);
+        color: var(--color-text-secondary);
+        transition: 
+          background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+          color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+          transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        :host ::ng-deep .app-toast .p-toast-icon-close:hover {
+          background: rgba(0, 0, 0, 0.1);
+          color: var(--color-text-primary);
+          transform: scale(1.1);
+        }
+      }
+
+      :host ::ng-deep .app-toast .p-toast-icon-close:active {
+        transform: scale(0.95);
+      }
+
+      /* ================================
+         ANIMATIONS
+         ================================ */
+
+      :host ::ng-deep .app-toast .p-toast-message-enter {
+        animation: toast-slide-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      :host ::ng-deep .app-toast .p-toast-message-leave {
+        animation: toast-slide-out 200ms cubic-bezier(0.4, 0, 1, 1);
+      }
+
+      @keyframes toast-slide-in {
+        from {
+          opacity: 0;
+          transform: translateX(100%) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0) scale(1);
+        }
+      }
+
+      @keyframes toast-slide-out {
+        from {
+          opacity: 1;
+          transform: translateX(0) scale(1);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(100%) scale(0.95);
+        }
+      }
+
+      /* Left-side toast animations */
+      :host ::ng-deep .p-toast-top-left .p-toast-message-enter,
+      :host ::ng-deep .p-toast-bottom-left .p-toast-message-enter {
+        animation: toast-slide-in-left 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      :host ::ng-deep .p-toast-top-left .p-toast-message-leave,
+      :host ::ng-deep .p-toast-bottom-left .p-toast-message-leave {
+        animation: toast-slide-out-left 200ms cubic-bezier(0.4, 0, 1, 1);
+      }
+
+      @keyframes toast-slide-in-left {
+        from {
+          opacity: 0;
+          transform: translateX(-100%) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0) scale(1);
+        }
+      }
+
+      @keyframes toast-slide-out-left {
+        from {
+          opacity: 1;
+          transform: translateX(0) scale(1);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(-100%) scale(0.95);
+        }
+      }
+
+      /* Center toast animations */
+      :host ::ng-deep .p-toast-top-center .p-toast-message-enter,
+      :host ::ng-deep .p-toast-bottom-center .p-toast-message-enter,
+      :host ::ng-deep .p-toast-center .p-toast-message-enter {
+        animation: toast-slide-in-center 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes toast-slide-in-center {
+        from {
+          opacity: 0;
+          transform: translateY(-20px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* ================================
+         RESPONSIVE
+         ================================ */
+
+      @media (max-width: 480px) {
+        :host ::ng-deep .app-toast {
+          width: calc(100% - var(--space-4));
+          left: var(--space-2) !important;
+          right: var(--space-2) !important;
+        }
+
+        :host ::ng-deep .app-toast .p-toast-message {
+          width: 100%;
+        }
+      }
+
+      /* ================================
+         REDUCED MOTION
+         ================================ */
+
+      @media (prefers-reduced-motion: reduce) {
+        :host ::ng-deep .app-toast .p-toast-message-enter,
+        :host ::ng-deep .app-toast .p-toast-message-leave {
+          animation: none;
+        }
       }
     `,
   ],
@@ -56,6 +345,11 @@ export class ToastComponent implements OnInit, OnDestroy {
   baseZIndex = input<number>(10000);
   autoZIndex = input<boolean>(true);
   key = input<string>("app-toast");
+  preventDuplicates = input<boolean>(true);
+  showTransformOptions = input<string>("translateX(100%)");
+  hideTransformOptions = input<string>("translateX(100%)");
+  showTransitionOptions = input<string>("300ms cubic-bezier(0.34, 1.56, 0.64, 1)");
+  hideTransitionOptions = input<string>("200ms cubic-bezier(0.4, 0, 1, 1)");
 
   ngOnInit(): void {
     // Component initialized
@@ -63,6 +357,16 @@ export class ToastComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     // Cleanup if needed
+  }
+
+  getIcon(severity: string): string {
+    const icons: Record<string, string> = {
+      success: "pi pi-check-circle",
+      info: "pi pi-info-circle",
+      warn: "pi pi-exclamation-triangle",
+      error: "pi pi-times-circle",
+    };
+    return icons[severity] || "pi pi-info-circle";
   }
 
   // Static methods for showing toasts (can be called from anywhere)

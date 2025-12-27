@@ -1,0 +1,145 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nicholasbraun/performance-budgets/main/schema.json",
+  "description": "FlagFit Pro Performance Budget Configuration",
+  "version": "1.0.0",
+  "budgets": {
+    "javascript": {
+      "initial": {
+        "warning": "700KB",
+        "error": "1MB",
+        "description": "Initial JavaScript bundle (main + vendor)"
+      },
+      "lazy": {
+        "warning": "350KB",
+        "error": "500KB",
+        "description": "Individual lazy-loaded chunk"
+      },
+      "total": {
+        "warning": "3MB",
+        "error": "5MB",
+        "description": "Total JavaScript (all chunks)"
+      }
+    },
+    "css": {
+      "initial": {
+        "warning": "100KB",
+        "error": "150KB",
+        "description": "Initial CSS bundle"
+      },
+      "component": {
+        "warning": "10KB",
+        "error": "15KB",
+        "description": "Individual component styles"
+      }
+    },
+    "images": {
+      "hero": {
+        "warning": "200KB",
+        "error": "500KB",
+        "description": "Hero/banner images"
+      },
+      "thumbnail": {
+        "warning": "50KB",
+        "error": "100KB",
+        "description": "Thumbnail images"
+      },
+      "icon": {
+        "warning": "5KB",
+        "error": "10KB",
+        "description": "Icon images"
+      }
+    },
+    "fonts": {
+      "total": {
+        "warning": "300KB",
+        "error": "500KB",
+        "description": "Total font files"
+      },
+      "perFamily": {
+        "warning": "100KB",
+        "error": "150KB",
+        "description": "Per font family"
+      }
+    }
+  },
+  "metrics": {
+    "lighthouse": {
+      "performance": {
+        "warning": 80,
+        "error": 60,
+        "description": "Lighthouse Performance Score"
+      },
+      "accessibility": {
+        "warning": 90,
+        "error": 80,
+        "description": "Lighthouse Accessibility Score"
+      },
+      "bestPractices": {
+        "warning": 90,
+        "error": 80,
+        "description": "Lighthouse Best Practices Score"
+      },
+      "seo": {
+        "warning": 90,
+        "error": 80,
+        "description": "Lighthouse SEO Score"
+      }
+    },
+    "coreWebVitals": {
+      "LCP": {
+        "warning": "2.5s",
+        "error": "4s",
+        "description": "Largest Contentful Paint"
+      },
+      "FID": {
+        "warning": "100ms",
+        "error": "300ms",
+        "description": "First Input Delay"
+      },
+      "CLS": {
+        "warning": 0.1,
+        "error": 0.25,
+        "description": "Cumulative Layout Shift"
+      },
+      "INP": {
+        "warning": "200ms",
+        "error": "500ms",
+        "description": "Interaction to Next Paint"
+      },
+      "TTFB": {
+        "warning": "800ms",
+        "error": "1800ms",
+        "description": "Time to First Byte"
+      }
+    }
+  },
+  "rules": {
+    "noInlineStyles": {
+      "enabled": true,
+      "maxInlineStyleSize": "1KB",
+      "description": "Avoid large inline styles"
+    },
+    "lazyLoadImages": {
+      "enabled": true,
+      "description": "Images below fold should be lazy loaded"
+    },
+    "preconnectExternalDomains": {
+      "enabled": true,
+      "domains": [
+        "https://fonts.googleapis.com",
+        "https://fonts.gstatic.com",
+        "https://*.supabase.co"
+      ],
+      "description": "Preconnect to known external domains"
+    },
+    "avoidRenderBlockingResources": {
+      "enabled": true,
+      "description": "Critical CSS should be inlined"
+    },
+    "useModernImageFormats": {
+      "enabled": true,
+      "preferredFormats": ["webp", "avif"],
+      "description": "Use modern image formats for better compression"
+    }
+  }
+}

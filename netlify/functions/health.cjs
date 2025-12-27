@@ -5,14 +5,14 @@
 // This endpoint does NOT require authentication and is rate-limited separately
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
-const { createSuccessResponse, createErrorResponse } = require("./utils/error-handler.cjs");
+const { createSuccessResponse } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
 // Check database connectivity
 async function checkDatabase() {
   try {
     const startTime = Date.now();
-    const { data, error } = await supabaseAdmin
+    const { error } = await supabaseAdmin
       .from("users")
       .select("id")
       .limit(1);

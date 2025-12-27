@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
@@ -49,6 +50,7 @@ interface Metric {
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     CardModule,
     ButtonModule,
     ChartModule,
@@ -98,8 +100,13 @@ interface Metric {
                       label="Export"
                       [outlined]="true"
                       size="small"
+                      (onClick)="exportChart('performance')"
                     ></p-button>
-                    <p-button label="Customize" size="small"></p-button>
+                    <p-button 
+                      label="Customize" 
+                      size="small"
+                      (onClick)="customizeChart('performance')"
+                    ></p-button>
                   </div>
                 </div>
               </ng-template>
@@ -144,8 +151,13 @@ interface Metric {
                       label="Details"
                       [outlined]="true"
                       size="small"
+                      (onClick)="viewChartDetails('chemistry')"
                     ></p-button>
-                    <p-button label="Improve" size="small"></p-button>
+                    <p-button 
+                      label="Improve" 
+                      size="small"
+                      (onClick)="showImprovementTips('chemistry')"
+                    ></p-button>
                   </div>
                 </div>
               </ng-template>
@@ -190,8 +202,13 @@ interface Metric {
                       label="Filter"
                       [outlined]="true"
                       size="small"
+                      (onClick)="filterTrainingData()"
                     ></p-button>
-                    <p-button label="Schedule" size="small"></p-button>
+                    <p-button 
+                      label="Schedule" 
+                      size="small"
+                      [routerLink]="['/training/schedule']"
+                    ></p-button>
                   </div>
                 </div>
               </ng-template>
@@ -236,8 +253,13 @@ interface Metric {
                       label="Benchmarks"
                       [outlined]="true"
                       size="small"
+                      (onClick)="showBenchmarks()"
                     ></p-button>
-                    <p-button label="Optimize" size="small"></p-button>
+                    <p-button 
+                      label="Optimize" 
+                      size="small"
+                      (onClick)="showOptimizationTips()"
+                    ></p-button>
                   </div>
                 </div>
               </ng-template>
@@ -1417,5 +1439,74 @@ export class AnalyticsComponent implements OnInit {
 
   trackByMetricLabel(index: number, metric: Metric): string {
     return metric.label;
+  }
+
+  // Chart action methods
+  exportChart(chartType: string): void {
+    this.logger.info(`Exporting ${chartType} chart data`);
+    // Export chart data as CSV/JSON
+    const data = this.getChartDataForExport(chartType);
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${chartType}-analytics-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  customizeChart(chartType: string): void {
+    this.logger.info(`Customizing ${chartType} chart`);
+    // For now, show a message - in future could open a customization dialog
+    alert(`Chart customization for ${chartType} coming soon! You can adjust time periods using the dropdowns above.`);
+  }
+
+  viewChartDetails(chartType: string): void {
+    this.logger.info(`Viewing details for ${chartType}`);
+    // Navigate to enhanced analytics with the specific chart focus
+    const queryParams = { focus: chartType };
+    window.location.href = `/analytics/enhanced?focus=${chartType}`;
+  }
+
+  showImprovementTips(area: string): void {
+    const tips: Record<string, string> = {
+      chemistry: 'Focus on team communication drills, trust-building exercises, and collaborative training sessions.',
+      performance: 'Track your progress consistently, set incremental goals, and ensure adequate recovery.',
+      speed: 'Incorporate interval training, plyometrics, and proper warm-up routines.',
+    };
+    alert(tips[area] || 'Continue consistent training and track your progress.');
+  }
+
+  filterTrainingData(): void {
+    this.logger.info('Opening training data filter');
+    // For now, show available filter options
+    alert('Filter options: Last 7 days, Last 30 days, Last 90 days, Season. Use the dropdown selectors to filter data.');
+  }
+
+  showBenchmarks(): void {
+    this.logger.info('Showing position benchmarks');
+    alert('Position Benchmarks:\n\nQB: 4.5s 40-yard, 85% completion rate\nWR: 4.4s 40-yard, 90% catch rate\nRB: 4.6s 40-yard, 5+ YPC\nDB: 4.5s 40-yard, 3+ flag pulls/game');
+  }
+
+  showOptimizationTips(): void {
+    this.logger.info('Showing optimization tips');
+    alert('Optimization Tips:\n\n1. Focus on your weakest metrics\n2. Increase training frequency gradually\n3. Track rest and recovery\n4. Review game film weekly\n5. Work with position-specific drills');
+  }
+
+  private getChartDataForExport(chartType: string): unknown {
+    switch (chartType) {
+      case 'performance':
+        return this.performanceChartData();
+      case 'chemistry':
+        return this.chemistryChartData();
+      case 'distribution':
+        return this.distributionChartData();
+      case 'position':
+        return this.positionChartData();
+      case 'speed':
+        return this.speedChartData();
+      default:
+        return { error: 'Unknown chart type' };
+    }
   }
 }

@@ -12,6 +12,12 @@
 /* Layout System - Reusable layout patterns */
 @use "./assets/styles/layout-system.scss" as *;
 
+/* Premium Interactions - Advanced animations and hover effects */
+@use "./assets/styles/premium-interactions.scss" as *;
+
+/* PrimeNG Theme - Premium component styling */
+@use "./assets/styles/primeng-theme.scss" as *;
+
 /* PrimeIcons - CSS file, must use @import */
 @import "primeicons/primeicons.css";
 
@@ -32,10 +38,159 @@
   line-height: var(--line-height-normal);
   color: var(--color-text-primary);
   background-color: var(--surface-primary);
+  color-scheme: light dark;
+}
+
+html {
+  /* Smooth theme transitions */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  background-color: var(--surface-primary);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme transition for major elements */
+.app-header,
+.sidebar,
+.p-card,
+.p-dialog,
+.p-menu,
+.p-toast {
+  transition: background-color 0.3s ease, 
+              border-color 0.3s ease, 
+              color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+/* Disable transitions during initial load to prevent flash */
+html.no-transitions,
+html.no-transitions * {
+  transition: none !important;
+}
+
+/* ================================================================
+   VIEW TRANSITION STYLES
+   Premium page transitions using View Transitions API
+   ================================================================ */
+
+/* Base View Transition Settings */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Fade Transition (Default) */
+::view-transition-old(root) {
+  animation-name: vt-fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: vt-fade-in;
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Slide Transitions */
+[data-transition-type="slide"] ::view-transition-old(root) {
+  animation-name: vt-slide-out-left;
+}
+
+[data-transition-type="slide"] ::view-transition-new(root) {
+  animation-name: vt-slide-in-right;
+}
+
+@keyframes vt-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes vt-slide-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+/* Scale Transition */
+[data-transition-type="scale"] ::view-transition-old(root) {
+  animation-name: vt-scale-out;
+}
+
+[data-transition-type="scale"] ::view-transition-new(root) {
+  animation-name: vt-scale-in;
+}
+
+@keyframes vt-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes vt-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+/* View Transition Name Utilities */
+.vt-hero { view-transition-name: hero-image; }
+.vt-card { view-transition-name: card; }
+.vt-header { view-transition-name: header; }
+.vt-sidebar { view-transition-name: sidebar; }
+.vt-main { view-transition-name: main-content; }
+.vt-title { view-transition-name: page-title; }
+.vt-avatar { view-transition-name: avatar; }
+.vt-none { view-transition-name: none; }
+
+/* Reduced Motion Support for View Transitions */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
 }

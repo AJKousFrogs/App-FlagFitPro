@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 
 import { RouterModule } from "@angular/router";
+import { DatePipe, TitleCasePipe } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { AvatarModule } from "primeng/avatar";
@@ -18,6 +19,21 @@ import { StatsGridComponent } from "../../shared/components/stats-grid/stats-gri
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AuthService } from "../../core/services/auth.service";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { SupabaseService } from "../../core/services/supabase.service";
+import { ToastService } from "../../core/services/toast.service";
+import { LoggerService } from "../../core/services/logger.service";
+
+interface PendingInvitation {
+  id: string;
+  teamId: string;
+  teamName: string;
+  role: string;
+  message?: string;
+  invitedBy: string;
+  createdAt: string;
+  expiresAt: string;
+  isExpired: boolean;
+}
 
 @Component({
   selector: "app-profile",
@@ -35,6 +51,8 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
     MainLayoutComponent,
     StatsGridComponent,
     EmptyStateComponent,
+    DatePipe,
+    TitleCasePipe,
   ],
   template: `
     <app-main-layout>
@@ -71,6 +89,7 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
               [text]="true"
               styleClass="avatar-edit-btn"
               ariaLabel="Change profile picture"
+              (onClick)="changeProfilePicture()"
             ></p-button>
           </div>
           <div class="profile-info">
@@ -171,6 +190,79 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
                 }
               </div>
             </p-card>
+          </p-tabpanel>
+          <p-tabpanel [header]="'Invitations' + (pendingInvitations().length > 0 ? ' (' + pendingInvitations().length + ')' : '')" leftIcon="pi pi-envelope">
+            <div class="invitations-section">
+              @if (loadingInvitations()) {
+                <div class="loading-invitations">
+                  <p-progressSpinner [style]="{ width: '30px', height: '30px' }" strokeWidth="4"></p-progressSpinner>
+                  <span>Loading invitations...</span>
+                </div>
+              } @else if (pendingInvitations().length === 0) {
+                <app-empty-state
+                  title="No Pending Invitations"
+                  message="You don't have any team invitations at the moment."
+                  icon="pi-envelope"
+                ></app-empty-state>
+              } @else {
+                <div class="invitations-list">
+                  @for (invitation of pendingInvitations(); track invitation.id) {
+                    <p-card class="invitation-card">
+                      <div class="invitation-content">
+                        <div class="invitation-header">
+                          <h4>{{ invitation.teamName }}</h4>
+                          <p-tag 
+                            [value]="invitation.role | titlecase"
+                            severity="info"
+                          ></p-tag>
+                        </div>
+                        <p class="invitation-message">
+                          @if (invitation.message) {
+                            "{{ invitation.message }}"
+                          } @else {
+                            You've been invited to join this team as a {{ invitation.role }}.
+                          }
+                        </p>
+                        <div class="invitation-meta">
+                          <span><i class="pi pi-user"></i> Invited by {{ invitation.invitedBy }}</span>
+                          <span><i class="pi pi-calendar"></i> {{ invitation.createdAt | date:'mediumDate' }}</span>
+                          @if (invitation.isExpired) {
+                            <p-tag value="Expired" severity="danger"></p-tag>
+                          } @else {
+                            <span class="expires-soon">Expires {{ invitation.expiresAt | date:'mediumDate' }}</span>
+                          }
+                        </div>
+                        <div class="invitation-actions">
+                          @if (!invitation.isExpired) {
+                            <p-button
+                              label="Accept"
+                              icon="pi pi-check"
+                              (onClick)="acceptInvitation(invitation)"
+                              [loading]="processingInvitation() === invitation.id"
+                            ></p-button>
+                            <p-button
+                              label="Decline"
+                              icon="pi pi-times"
+                              [outlined]="true"
+                              severity="secondary"
+                              (onClick)="declineInvitation(invitation)"
+                              [loading]="processingInvitation() === invitation.id"
+                            ></p-button>
+                          } @else {
+                            <p-button
+                              label="Request New Invitation"
+                              icon="pi pi-refresh"
+                              [outlined]="true"
+                              (onClick)="requestNewInvitation(invitation)"
+                            ></p-button>
+                          }
+                        </div>
+                      </div>
+                    </p-card>
+                  }
+                </div>
+              }
+            </div>
           </p-tabpanel>
         </p-tabs>
         }
@@ -370,6 +462,87 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
         margin-bottom: var(--space-2);
       }
 
+      /* Invitations Section */
+      .invitations-section {
+        margin-top: var(--space-4);
+      }
+
+      .loading-invitations {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-3);
+        padding: var(--space-8);
+        color: var(--text-secondary);
+      }
+
+      .invitations-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .invitation-card {
+        border-left: 4px solid var(--color-brand-primary);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .invitation-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .invitation-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .invitation-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .invitation-header h4 {
+        margin: 0;
+        font-size: var(--font-heading-sm);
+        color: var(--text-primary);
+      }
+
+      .invitation-message {
+        font-style: italic;
+        color: var(--text-secondary);
+        margin: 0;
+        padding: var(--space-3);
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+      }
+
+      .invitation-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .invitation-meta span {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .expires-soon {
+        color: var(--color-status-warning);
+      }
+
+      .invitation-actions {
+        display: flex;
+        gap: var(--space-3);
+        margin-top: var(--space-2);
+      }
+
       @media (max-width: 768px) {
         .profile-header {
           flex-direction: column;
@@ -379,6 +552,21 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
         .profile-stats {
           grid-template-columns: repeat(2, 1fr);
         }
+
+        .invitation-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-2);
+        }
+
+        .invitation-meta {
+          flex-direction: column;
+          gap: var(--space-2);
+        }
+
+        .invitation-actions {
+          flex-direction: column;
+        }
       }
     `,
   ],
@@ -386,6 +574,9 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private apiService = inject(ApiService);
+  private supabaseService = inject(SupabaseService);
+  private toastService = inject(ToastService);
+  private logger = inject(LoggerService);
 
   isLoading = signal(true);
   userName = signal("Loading...");
@@ -396,9 +587,15 @@ export class ProfileComponent implements OnInit {
   activities = signal<Array<{ icon: string; title: string; time: string }>>([]);
   achievements = signal<Array<{ icon: string; title: string; description: string; date: string }>>([]);
   performanceStats = signal<Array<{ label: string; value: string; trend: string; trendType: "success" | "info" | "warn" | "secondary" | "contrast" | "danger" }>>([]);
+  
+  // Invitations
+  pendingInvitations = signal<PendingInvitation[]>([]);
+  loadingInvitations = signal(false);
+  processingInvitation = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadProfileData();
+    this.loadPendingInvitations();
   }
 
   loadProfileData(): void {
@@ -479,5 +676,127 @@ export class ProfileComponent implements OnInit {
 
   trackByPerformanceStatLabel(index: number, stat: { label: string; value: string; trend: string; trendType: string }): string {
     return stat.label || index.toString();
+  }
+
+  changeProfilePicture(): void {
+    // Create file input to select image
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e: Event) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // For now, show a message - in production, upload to Supabase Storage
+        this.logger.info('Selected file:', file.name);
+        // TODO: Implement actual image upload to Supabase Storage
+        alert('Profile picture upload coming soon! Selected: ' + file.name);
+      }
+    };
+    input.click();
+  }
+
+  // ============================================================================
+  // INVITATIONS
+  // ============================================================================
+
+  async loadPendingInvitations(): Promise<void> {
+    this.loadingInvitations.set(true);
+    
+    try {
+      const user = this.authService.currentUser();
+      if (!user?.email) return;
+
+      const { data, error } = await this.supabaseService.client
+        .from('team_invitations')
+        .select(`
+          id,
+          team_id,
+          role,
+          message,
+          status,
+          expires_at,
+          created_at,
+          teams:team_id(name),
+          inviter:invited_by(raw_user_meta_data)
+        `)
+        .eq('email', user.email)
+        .in('status', ['pending', 'expired'])
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        if (error.code !== '42P01') throw error;
+        return;
+      }
+
+      const invitations: PendingInvitation[] = (data || []).map((inv: any) => ({
+        id: inv.id,
+        teamId: inv.team_id,
+        teamName: inv.teams?.name || 'Unknown Team',
+        role: inv.role,
+        message: inv.message,
+        invitedBy: inv.inviter?.raw_user_meta_data?.full_name || 'Team Admin',
+        createdAt: inv.created_at,
+        expiresAt: inv.expires_at,
+        isExpired: new Date(inv.expires_at) < new Date()
+      }));
+
+      this.pendingInvitations.set(invitations);
+    } catch (error) {
+      this.logger.error('Error loading invitations:', error);
+    } finally {
+      this.loadingInvitations.set(false);
+    }
+  }
+
+  async acceptInvitation(invitation: PendingInvitation): Promise<void> {
+    this.processingInvitation.set(invitation.id);
+    
+    try {
+      // Call the accept_team_invitation function
+      const { error } = await this.supabaseService.client
+        .rpc('accept_team_invitation', { p_invitation_id: invitation.id });
+
+      if (error) throw error;
+
+      this.toastService.success(`You've joined ${invitation.teamName}!`);
+      
+      // Remove from list
+      this.pendingInvitations.update(invs => invs.filter(i => i.id !== invitation.id));
+      
+      // Reload profile data to reflect new team membership
+      this.loadProfileData();
+    } catch (error: any) {
+      this.logger.error('Error accepting invitation:', error);
+      this.toastService.error(error.message || 'Failed to accept invitation');
+    } finally {
+      this.processingInvitation.set(null);
+    }
+  }
+
+  async declineInvitation(invitation: PendingInvitation): Promise<void> {
+    this.processingInvitation.set(invitation.id);
+    
+    try {
+      // Call the decline_team_invitation function
+      const { error } = await this.supabaseService.client
+        .rpc('decline_team_invitation', { p_invitation_id: invitation.id });
+
+      if (error) throw error;
+
+      this.toastService.info('Invitation declined');
+      
+      // Remove from list
+      this.pendingInvitations.update(invs => invs.filter(i => i.id !== invitation.id));
+    } catch (error: any) {
+      this.logger.error('Error declining invitation:', error);
+      this.toastService.error(error.message || 'Failed to decline invitation');
+    } finally {
+      this.processingInvitation.set(null);
+    }
+  }
+
+  requestNewInvitation(invitation: PendingInvitation): void {
+    // This would typically send a notification to the team admin
+    this.toastService.info(`A request has been sent to ${invitation.teamName} for a new invitation.`);
   }
 }

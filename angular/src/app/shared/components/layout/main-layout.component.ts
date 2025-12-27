@@ -4,6 +4,8 @@ import { SidebarComponent } from "../sidebar/sidebar.component";
 import { HeaderComponent } from "../header/header.component";
 import { QuickActionsFABComponent } from "../quick-actions-fab/quick-actions-fab.component";
 import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumbs.component";
+import { BottomNavComponent } from "../bottom-nav/bottom-nav.component";
+import { OfflineBannerComponent } from "../offline-banner/offline-banner.component";
 
 @Component({
   selector: "app-main-layout",
@@ -14,8 +16,13 @@ import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumb
     HeaderComponent,
     QuickActionsFABComponent,
     SmartBreadcrumbsComponent,
+    BottomNavComponent,
+    OfflineBannerComponent,
   ],
   template: `
+    <!-- Offline Banner -->
+    <app-offline-banner></app-offline-banner>
+    
     <div class="dashboard-container">
       <app-sidebar #sidebar></app-sidebar>
       <main class="main-content">
@@ -25,7 +32,12 @@ import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumb
           <ng-content></ng-content>
         </div>
       </main>
-      <app-quick-actions-fab></app-quick-actions-fab>
+      
+      <!-- Quick Actions FAB (hidden on mobile, bottom nav takes over) -->
+      <app-quick-actions-fab class="desktop-only"></app-quick-actions-fab>
+      
+      <!-- Mobile Bottom Navigation -->
+      <app-bottom-nav></app-bottom-nav>
     </div>
   `,
   styles: [
@@ -47,6 +59,22 @@ import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumb
         flex: 1;
         padding: var(--space-6);
         overflow-y: auto;
+      }
+
+      /* Hide FAB on mobile - bottom nav handles navigation */
+      .desktop-only {
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .desktop-only {
+          display: none;
+        }
+        
+        .content-wrapper {
+          padding: var(--space-4);
+          padding-bottom: calc(var(--space-4) + 80px); /* Space for bottom nav */
+        }
       }
 
       @media (max-width: 1024px) {

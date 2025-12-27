@@ -1,6 +1,6 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject, signal, afterNextRender } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 
@@ -14,60 +14,74 @@ import { ButtonModule } from "primeng/button";
       <div class="hero-background">
         <div class="hero-gradient-1"></div>
         <div class="hero-gradient-2"></div>
+        <div class="hero-particles">
+          @for (particle of particles; track particle.id) {
+            <div 
+              class="particle"
+              [style.left.%]="particle.x"
+              [style.top.%]="particle.y"
+              [style.animation-delay]="particle.delay + 's'"
+              [style.animation-duration]="particle.duration + 's'"
+            ></div>
+          }
+        </div>
       </div>
 
       <div class="hero-container">
-        <div class="hero-content">
-          <div class="hero-logo-wrapper">
+        <div class="hero-content" [class.hero-content-visible]="isLoaded()">
+          <div class="hero-logo-wrapper animate-item" style="--delay: 0">
             <div class="hero-logo">
               <i class="pi pi-football"></i>
             </div>
             <div class="hero-badge">🏆 Pro Platform</div>
           </div>
 
-          <h1 class="hero-title">
+          <h1 class="hero-title animate-item" style="--delay: 1">
             Elevate Your
             <span class="hero-title-accent">Flag Football</span>
             Game
           </h1>
 
-          <p class="hero-description">
+          <p class="hero-description animate-item" style="--delay: 2">
             The ultimate training and competition platform for serious players.
             Track performance, join tournaments, and connect with a community
             that shares your passion for the game.
           </p>
 
-          <div class="hero-actions">
+          <div class="hero-actions animate-item" style="--delay: 3">
             <p-button
               label="Get Started Free"
               icon="pi pi-arrow-right"
+              iconPos="right"
               [routerLink]="['/register']"
-              styleClass="p-button-lg"
+              styleClass="p-button-lg hero-btn-primary"
             ></p-button>
             <p-button
               label="Sign In"
               icon="pi pi-sign-in"
               [routerLink]="['/login']"
               [outlined]="true"
-              styleClass="p-button-lg"
+              styleClass="p-button-lg hero-btn-secondary"
             ></p-button>
           </div>
 
-          <div class="hero-stats">
-            <div class="hero-stat">
-              <div class="hero-stat-number">10K+</div>
-              <div class="hero-stat-label">Active Players</div>
-            </div>
-            <div class="hero-stat">
-              <div class="hero-stat-number">500+</div>
-              <div class="hero-stat-label">Tournaments</div>
-            </div>
-            <div class="hero-stat">
-              <div class="hero-stat-number">50K+</div>
-              <div class="hero-stat-label">Training Sessions</div>
-            </div>
+          <div class="hero-stats animate-item" style="--delay: 4">
+            @for (stat of heroStats; track stat.label) {
+              <div class="hero-stat" [style.--stat-delay]="$index">
+                <div class="hero-stat-number">{{ stat.value }}</div>
+                <div class="hero-stat-label">{{ stat.label }}</div>
+              </div>
+            }
           </div>
         </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="scroll-indicator animate-item" style="--delay: 5" [class.visible]="isLoaded()">
+        <div class="scroll-mouse">
+          <div class="scroll-wheel"></div>
+        </div>
+        <span>Scroll to explore</span>
       </div>
     </section>
 
@@ -96,7 +110,7 @@ import { ButtonModule } from "primeng/button";
               </ng-template>
               <h3 class="feature-card-title">{{ feature.title }}</h3>
               <p class="feature-card-description">{{ feature.description }}</p>
-              <div class="feature-card-link">
+              <div class="feature-card-link" (click)="navigateToFeature(feature.id)">
                 <span>Learn more</span>
                 <i class="pi pi-arrow-right"></i>
               </div>
@@ -105,46 +119,146 @@ import { ButtonModule } from "primeng/button";
         </div>
       </div>
     </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+      <div class="footer-container">
+        <div class="footer-grid">
+          <!-- Brand -->
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <i class="pi pi-football"></i>
+              <span>FlagFit Pro</span>
+            </div>
+            <p class="footer-tagline">
+              The ultimate training and competition platform for flag football athletes.
+            </p>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a routerLink="/login">Sign In</a></li>
+              <li><a routerLink="/register">Get Started</a></li>
+              <li><a href="#features" (click)="scrollToFeatures($event)">Features</a></li>
+            </ul>
+          </div>
+
+          <!-- Resources -->
+          <div class="footer-links">
+            <h4>Resources</h4>
+            <ul>
+              <li><a href="/docs/PRIVACY_POLICY.md" target="_blank">Privacy Policy</a></li>
+              <li><a href="/docs/TERMS_OF_USE.md" target="_blank">Terms of Use</a></li>
+              <li><a href="mailto:support&#64;flagfitpro.com">Contact Support</a></li>
+            </ul>
+          </div>
+
+          <!-- Social -->
+          <div class="footer-social">
+            <h4>Connect With Us</h4>
+            <div class="social-icons">
+              <a href="https://twitter.com" target="_blank" aria-label="Twitter">
+                <i class="pi pi-twitter"></i>
+              </a>
+              <a href="https://instagram.com" target="_blank" aria-label="Instagram">
+                <i class="pi pi-instagram"></i>
+              </a>
+              <a href="https://youtube.com" target="_blank" aria-label="YouTube">
+                <i class="pi pi-youtube"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; {{ currentYear }} FlagFit Pro. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
   `,
   styles: [
     `
+      /* ===== HERO SECTION ===== */
       .hero-section {
         position: relative;
-        min-height: 90vh;
+        min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         overflow: hidden;
+        background: linear-gradient(135deg, var(--surface-primary) 0%, var(--surface-secondary) 100%);
       }
 
       .hero-background {
         position: absolute;
         inset: 0;
         z-index: 0;
+        overflow: hidden;
       }
 
       .hero-gradient-1,
       .hero-gradient-2 {
         position: absolute;
         border-radius: 50%;
-        filter: blur(100px);
-        opacity: 0.3;
+        filter: blur(120px);
+        opacity: 0.4;
+        animation: float 20s ease-in-out infinite;
       }
 
       .hero-gradient-1 {
-        width: 500px;
-        height: 500px;
+        width: 600px;
+        height: 600px;
         background: var(--color-brand-primary);
-        top: -200px;
+        top: -250px;
         right: -200px;
+        animation-delay: 0s;
       }
 
       .hero-gradient-2 {
-        width: 400px;
-        height: 400px;
+        width: 500px;
+        height: 500px;
         background: var(--color-brand-secondary);
-        bottom: -150px;
+        bottom: -200px;
         left: -150px;
+        animation-delay: -10s;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25% { transform: translate(30px, -30px) scale(1.05); }
+        50% { transform: translate(-20px, 20px) scale(0.95); }
+        75% { transform: translate(20px, 10px) scale(1.02); }
+      }
+
+      /* Particle effects */
+      .hero-particles {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--color-brand-primary);
+        border-radius: 50%;
+        opacity: 0.3;
+        animation: particle-float 15s ease-in-out infinite;
+      }
+
+      @keyframes particle-float {
+        0%, 100% { 
+          transform: translateY(0) scale(1);
+          opacity: 0.3;
+        }
+        50% { 
+          transform: translateY(-100px) scale(1.5);
+          opacity: 0.6;
+        }
       }
 
       .hero-container {
@@ -159,6 +273,20 @@ import { ButtonModule } from "primeng/button";
         text-align: center;
       }
 
+      /* Staggered animation for hero content */
+      .animate-item {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transition-delay: calc(var(--delay, 0) * 0.15s);
+      }
+
+      .hero-content-visible .animate-item {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
       .hero-logo-wrapper {
         display: flex;
         flex-direction: column;
@@ -168,76 +296,201 @@ import { ButtonModule } from "primeng/button";
       }
 
       .hero-logo {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--color-brand-light);
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
         border-radius: 50%;
-        color: var(--color-brand-primary);
-        font-size: var(--icon-3xl);
+        color: white;
+        font-size: 2.5rem;
+        box-shadow: 0 20px 40px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.3);
+        animation: logo-pulse 3s ease-in-out infinite;
+      }
+
+      @keyframes logo-pulse {
+        0%, 100% { 
+          transform: scale(1);
+          box-shadow: 0 20px 40px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.3);
+        }
+        50% { 
+          transform: scale(1.05);
+          box-shadow: 0 25px 50px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.4);
+        }
       }
 
       .hero-badge {
-        padding: var(--space-2) var(--space-4);
-        background: var(--surface-secondary);
-        border-radius: 20px;
+        padding: var(--space-2) var(--space-5);
+        background: linear-gradient(135deg, rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1) 0%, rgba(var(--color-brand-secondary-rgb, 139, 92, 246), 0.1) 100%);
+        border: 1px solid rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2);
+        border-radius: 50px;
         font-size: var(--font-body-sm);
         font-weight: var(--font-weight-semibold);
+        backdrop-filter: blur(10px);
+        animation: badge-glow 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes badge-glow {
+        0% { box-shadow: 0 0 20px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1); }
+        100% { box-shadow: 0 0 30px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2); }
       }
 
       .hero-title {
-        font-size: var(--font-display-lg);
+        font-size: clamp(2.5rem, 8vw, var(--font-display-xl, 4.5rem));
         font-weight: var(--font-weight-extrabold);
         margin-bottom: var(--space-6);
         line-height: 1.1;
+        letter-spacing: -0.02em;
       }
 
       .hero-title-accent {
-        color: var(--color-brand-primary);
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       .hero-description {
         font-size: var(--font-heading-sm);
         color: var(--text-secondary);
-        margin-bottom: var(--space-8);
-        max-width: 600px;
+        margin-bottom: var(--space-10);
+        max-width: 650px;
         margin-left: auto;
         margin-right: auto;
+        line-height: 1.7;
       }
 
       .hero-actions {
         display: flex;
         gap: var(--space-4);
         justify-content: center;
-        margin-bottom: var(--space-12);
+        flex-wrap: wrap;
+        margin-bottom: var(--space-14);
+      }
+
+      /* Premium button styles */
+      :host ::ng-deep .hero-btn-primary {
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%) !important;
+        border: none !important;
+        box-shadow: 0 10px 30px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+
+      :host ::ng-deep .hero-btn-primary:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0 15px 40px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.4) !important;
+      }
+
+      :host ::ng-deep .hero-btn-secondary {
+        border-color: var(--color-brand-primary) !important;
+        color: var(--color-brand-primary) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+
+      :host ::ng-deep .hero-btn-secondary:hover {
+        background: rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1) !important;
+        transform: translateY(-3px) !important;
       }
 
       .hero-stats {
         display: flex;
-        gap: var(--space-8);
+        gap: var(--space-10);
         justify-content: center;
+        flex-wrap: wrap;
       }
 
       .hero-stat {
         text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: stat-appear 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        animation-delay: calc(0.8s + var(--stat-delay, 0) * 0.1s);
+      }
+
+      @keyframes stat-appear {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .hero-stat-number {
         font-size: var(--font-display-sm);
         font-weight: var(--font-weight-bold);
-        color: var(--color-brand-primary);
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       .hero-stat-label {
         font-size: var(--font-body-sm);
         color: var(--text-secondary);
+        margin-top: var(--space-1);
       }
 
+      /* Scroll indicator */
+      .scroll-indicator {
+        position: absolute;
+        bottom: var(--space-8);
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-2);
+        opacity: 0;
+        transition: opacity 0.6s ease;
+      }
+
+      .scroll-indicator.visible {
+        opacity: 1;
+        animation: bounce 2s ease-in-out infinite;
+      }
+
+      @keyframes bounce {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(10px); }
+      }
+
+      .scroll-mouse {
+        width: 24px;
+        height: 40px;
+        border: 2px solid var(--text-tertiary);
+        border-radius: 12px;
+        position: relative;
+      }
+
+      .scroll-wheel {
+        width: 4px;
+        height: 8px;
+        background: var(--text-tertiary);
+        border-radius: 2px;
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: scroll-wheel 1.5s ease-in-out infinite;
+      }
+
+      @keyframes scroll-wheel {
+        0%, 100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        50% { opacity: 0.3; transform: translateX(-50%) translateY(10px); }
+      }
+
+      .scroll-indicator span {
+        font-size: var(--font-body-xs);
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      /* ===== FEATURES SECTION ===== */
       .features-section {
-        padding: var(--space-16) var(--space-6);
+        padding: var(--space-20) var(--space-6);
         background: var(--surface-secondary);
+        position: relative;
       }
 
       .features-container {
@@ -247,49 +500,84 @@ import { ButtonModule } from "primeng/button";
 
       .features-header {
         text-align: center;
-        margin-bottom: var(--space-12);
+        margin-bottom: var(--space-16);
       }
 
       .features-title {
         font-size: var(--font-display-sm);
         font-weight: var(--font-weight-bold);
         margin-bottom: var(--space-4);
+        letter-spacing: -0.02em;
       }
 
       .features-subtitle {
         font-size: var(--font-body-lg);
         color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto;
       }
 
       .features-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: var(--space-6);
+        gap: var(--space-8);
       }
 
-      .feature-card {
+      :host ::ng-deep .feature-card {
         text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: var(--radius-xl) !important;
+        overflow: hidden;
+      }
+
+      :host ::ng-deep .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+      }
+
+      :host ::ng-deep .feature-card .p-card-body {
+        padding: var(--space-8) !important;
       }
 
       .feature-card-icon {
         display: flex;
         justify-content: center;
-        margin-bottom: var(--space-4);
+        padding-top: var(--space-6);
       }
 
       .feature-icon-wrapper {
-        width: 64px;
-        height: 64px;
+        width: 80px;
+        height: 80px;
         display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        font-size: var(--icon-2xl);
+        font-size: 2rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      :host ::ng-deep .feature-card:hover .feature-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
       }
 
       .feature-icon-analytics {
-        background: var(--color-brand-primary-subtle);
-        color: var(--color-brand-primary);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.2) 100%);
+        color: #3b82f6;
+      }
+
+      .feature-icon-tournament {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.2) 100%);
+        color: #f59e0b;
+      }
+
+      .feature-icon-community {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.2) 100%);
+        color: #10b981;
+      }
+
+      .feature-icon-training {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.2) 100%);
+        color: #8b5cf6;
       }
 
       .feature-card-title {
@@ -300,22 +588,272 @@ import { ButtonModule } from "primeng/button";
 
       .feature-card-description {
         color: var(--text-secondary);
-        margin-bottom: var(--space-4);
+        margin-bottom: var(--space-6);
+        line-height: 1.6;
       }
 
       .feature-card-link {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        justify-content: center;
         gap: var(--space-2);
         color: var(--color-brand-primary);
         font-weight: 600;
         cursor: pointer;
+        transition: all 0.3s ease;
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-md);
+      }
+
+      .feature-card-link:hover {
+        background: rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1);
+        gap: var(--space-3);
+      }
+
+      .feature-card-link i {
+        transition: transform 0.3s ease;
+      }
+
+      .feature-card-link:hover i {
+        transform: translateX(4px);
+      }
+
+      /* ===== FOOTER ===== */
+      .landing-footer {
+        background: var(--surface-primary);
+        border-top: 1px solid var(--border-color);
+        padding: var(--space-16) var(--space-6) var(--space-8);
+      }
+
+      .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: var(--space-10);
+        margin-bottom: var(--space-10);
+      }
+
+      .footer-brand {
+        max-width: 320px;
+      }
+
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-bold);
+        margin-bottom: var(--space-4);
+      }
+
+      .footer-logo i {
+        font-size: 1.75rem;
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .footer-logo span {
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .footer-tagline {
+        color: var(--text-secondary);
+        font-size: var(--font-body-sm);
+        line-height: 1.7;
+        margin: 0;
+      }
+
+      .footer-links h4,
+      .footer-social h4 {
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+        margin: 0 0 var(--space-5) 0;
+      }
+
+      .footer-links ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .footer-links li {
+        margin-bottom: var(--space-3);
+      }
+
+      .footer-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: var(--font-body-sm);
+        transition: all 0.2s ease;
+        display: inline-block;
+      }
+
+      .footer-links a:hover {
+        color: var(--color-brand-primary);
+        transform: translateX(4px);
+      }
+
+      .social-icons {
+        display: flex;
+        gap: var(--space-3);
+      }
+
+      .social-icons a {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--surface-secondary);
+        color: var(--text-secondary);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 1.1rem;
+      }
+
+      .social-icons a:hover {
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        color: white;
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.3);
+      }
+
+      .footer-bottom {
+        padding-top: var(--space-8);
+        border-top: 1px solid var(--border-color);
+        text-align: center;
+      }
+
+      .footer-bottom p {
+        color: var(--text-tertiary);
+        font-size: var(--font-body-sm);
+        margin: 0;
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 1024px) {
+        .hero-stats {
+          gap: var(--space-6);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero-section {
+          min-height: auto;
+          padding: var(--space-20) 0 var(--space-16);
+        }
+
+        .hero-logo {
+          width: 80px;
+          height: 80px;
+          font-size: 2rem;
+        }
+
+        .hero-actions {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .hero-stats {
+          flex-direction: column;
+          gap: var(--space-4);
+        }
+
+        .scroll-indicator {
+          display: none;
+        }
+
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: var(--space-8);
+        }
+
+        .footer-brand {
+          grid-column: 1 / -1;
+          max-width: none;
+          text-align: center;
+        }
+
+        .footer-logo {
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .footer-grid {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .social-icons {
+          justify-content: center;
+        }
+
+        .features-grid {
+          gap: var(--space-6);
+        }
+      }
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .hero-gradient-1,
+        .hero-gradient-2,
+        .particle,
+        .hero-logo,
+        .hero-badge,
+        .animate-item,
+        .hero-stat,
+        .scroll-indicator,
+        .scroll-wheel {
+          animation: none !important;
+        }
+
+        .animate-item {
+          opacity: 1;
+          transform: none;
+        }
+
+        .hero-stat {
+          opacity: 1;
+          transform: none;
+        }
       }
     `,
   ],
 })
 export class LandingComponent {
+  private router = inject(Router);
+  
+  // Signals for reactive state
+  isLoaded = signal(false);
+  
+  currentYear = new Date().getFullYear();
+
+  // Hero stats data
+  heroStats = [
+    { value: '10K+', label: 'Active Players' },
+    { value: '500+', label: 'Tournaments' },
+    { value: '50K+', label: 'Training Sessions' },
+  ];
+
+  // Particle data for background animation
+  particles = Array.from({ length: 20 }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    delay: Math.random() * 5,
+    duration: 10 + Math.random() * 10,
+  }));
+
   features = [
     {
       id: "analytics",
@@ -347,7 +885,43 @@ export class LandingComponent {
     },
   ];
 
+  constructor() {
+    // Trigger animations after component renders
+    afterNextRender(() => {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        this.isLoaded.set(true);
+      }, 100);
+    });
+  }
+
   trackByFeatureId(index: number, feature: { id: string }): string {
     return feature.id;
+  }
+
+  scrollToFeatures(event: Event): void {
+    event.preventDefault();
+    const featuresSection = document.querySelector('.features-section');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  navigateToFeature(featureId: string): void {
+    // Map feature IDs to their corresponding routes
+    const featureRoutes: Record<string, string> = {
+      analytics: '/analytics',
+      tournament: '/tournaments',
+      community: '/community',
+      training: '/training',
+    };
+
+    const route = featureRoutes[featureId];
+    if (route) {
+      // Navigate to register first (since these are protected routes)
+      this.router.navigate(['/register'], { 
+        queryParams: { redirect: route } 
+      });
+    }
   }
 }

@@ -5,10 +5,13 @@ import {
   computed,
   ChangeDetectionStrategy,
   OnInit,
+  OnDestroy,
+  effect,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
+import { Subject, debounceTime } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -27,6 +30,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { AuthService } from "../../core/services/auth.service";
+import { LoggerService } from "../../core/services/logger.service";
 
 interface OnboardingStep {
   label: string;
@@ -77,7 +81,18 @@ interface InjuryEntry {
           <!-- Progress bar -->
           <div class="progress-section">
             <p-progressBar [value]="progress()" [showValue]="false" styleClass="onboarding-progress"></p-progressBar>
-            <span class="progress-text">{{ progress() }}% complete</span>
+            <div class="progress-info">
+              <span class="progress-text">{{ progress() }}% complete</span>
+              @if (lastSaved()) {
+                <span class="auto-save-indicator" [class.saving]="isSaving()">
+                  @if (isSaving()) {
+                    <i class="pi pi-spin pi-spinner"></i> Saving...
+                  } @else {
+                    <i class="pi pi-check-circle"></i> Draft saved
+                  }
+                </span>
+              }
+            </div>
           </div>
 
           <p-steps [model]="steps()" [activeIndex]="currentStep()" [readonly]="false"></p-steps>
@@ -219,7 +234,9 @@ interface InjuryEntry {
                             [class.selected]="onboardingData.throwingArm === arm.value"
                             (click)="onboardingData.throwingArm = arm.value"
                           >
-                            <i class="pi pi-check" *ngIf="onboardingData.throwingArm === arm.value"></i>
+                            @if (onboardingData.throwingArm === arm.value) {
+                              <i class="pi pi-check"></i>
+                            }
                             {{ arm.label }}
                           </div>
                         }
@@ -790,656 +807,25 @@ interface InjuryEntry {
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      /* ============================================
-         ONBOARDING - MODERN UI/UX STYLES
-         ============================================ */
-      
-      .onboarding-page {
-        padding: var(--space-4);
-        max-width: 900px;
-        margin: 0 auto;
-      }
-
-      .onboarding-card {
-        margin-top: var(--space-4);
-        border-radius: 16px;
-        overflow: hidden;
-      }
-
-      /* Progress Section */
-      .progress-section {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        margin-bottom: var(--space-4);
-        padding-bottom: var(--space-3);
-        border-bottom: 1px solid var(--p-surface-100);
-      }
-
-      .progress-text {
-        font-size: 0.85rem;
-        color: var(--text-secondary);
-        white-space: nowrap;
-      }
-
-      :host ::ng-deep .onboarding-progress {
-        height: 6px;
-        border-radius: 3px;
-        flex: 1;
-      }
-
-      /* Content Area */
-      .onboarding-content {
-        margin-top: var(--space-5);
-        min-height: 480px;
-      }
-
-      /* Step Header */
-      .step-header {
-        display: flex;
-        align-items: flex-start;
-        gap: var(--space-4);
-        margin-bottom: var(--space-5);
-      }
-
-      .step-icon {
-        font-size: 2rem;
-        color: var(--color-brand-primary);
-        background: var(--color-brand-primary-light);
-        padding: var(--space-3);
-        border-radius: 12px;
-      }
-
-      .step-icon.success {
-        color: var(--color-success);
-        background: var(--color-success-light);
-      }
-
-      .step-header h3 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0;
-        color: var(--text-primary);
-      }
-
-      .step-description {
-        color: var(--text-secondary);
-        margin: var(--space-1) 0 0 0;
-        font-size: 0.95rem;
-      }
-
-      /* Animation */
-      .animate-fade-in {
-        animation: fadeIn 0.3s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      /* Form Grid */
-      .form-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-4);
-      }
-
-      .form-grid .span-2 {
-        grid-column: span 2;
-      }
-
-      .imperial-grid {
-        grid-template-columns: 1fr 1fr 2fr;
-      }
-
-      .form-group {
-        margin-bottom: 0;
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: var(--space-2);
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 0.9rem;
-      }
-
-      .form-group label small {
-        font-weight: 400;
-        color: var(--text-secondary);
-      }
-
-      .required {
-        color: var(--color-warning);
-      }
-
-      .field-hint {
-        font-size: 0.85rem;
-        color: var(--text-secondary);
-        margin: 0 0 var(--space-2) 0;
-      }
-
-      .age-hint {
-        display: block;
-        margin-top: var(--space-1);
-        color: var(--color-brand-primary);
-        font-weight: 500;
-      }
-
-      /* Jersey Input */
-      .jersey-input {
-        max-width: 100px;
-      }
-
-      .jersey-field {
-        text-align: center;
-        font-size: 1.25rem;
-        font-weight: 700;
-      }
-
-      /* Unit Toggle */
-      .unit-toggle {
-        display: flex;
-        gap: var(--space-3);
-        margin-top: var(--space-2);
-      }
-
-      .unit-option {
-        flex: 1;
-        padding: var(--space-4);
-        border: 2px solid var(--p-surface-200);
-        border-radius: 12px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .unit-option i {
-        font-size: 1.5rem;
-        color: var(--text-secondary);
-      }
-
-      .unit-option:hover {
-        border-color: var(--color-brand-primary);
-        background: var(--p-surface-50);
-      }
-
-      .unit-option.selected {
-        border-color: var(--color-brand-primary);
-        background: linear-gradient(135deg, var(--color-brand-primary-light), transparent);
-      }
-
-      .unit-option.selected i {
-        color: var(--color-brand-primary);
-      }
-
-      .unit-option span {
-        display: block;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .unit-option small {
-        color: var(--text-secondary);
-        font-size: 0.8rem;
-      }
-
-      /* Arm Toggle (for QBs) */
-      .arm-toggle {
-        display: flex;
-        gap: var(--space-2);
-      }
-
-      .arm-option {
-        flex: 1;
-        padding: var(--space-3);
-        border: 2px solid var(--p-surface-200);
-        border-radius: 8px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: var(--space-2);
-      }
-
-      .arm-option:hover {
-        border-color: var(--color-brand-primary);
-      }
-
-      .arm-option.selected {
-        border-color: var(--color-brand-primary);
-        background: var(--color-brand-primary);
-        color: white;
-      }
-
-      /* Goals Grid */
-      .goals-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-3);
-      }
-
-      .goal-card {
-        padding: var(--space-4);
-        border: 2px solid var(--p-surface-200);
-        border-radius: 12px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        position: relative;
-      }
-
-      .goal-card:hover {
-        border-color: var(--color-brand-primary);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      }
-
-      .goal-card.selected {
-        border-color: var(--color-brand-primary);
-        background: linear-gradient(135deg, var(--color-brand-primary-light), transparent);
-      }
-
-      .goal-card i {
-        font-size: 2rem;
-        display: block;
-        margin-bottom: var(--space-2);
-        color: var(--color-brand-primary);
-      }
-
-      .goal-card .check-badge {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        font-size: 1rem;
-        color: var(--color-success);
-      }
-
-      /* Days Grid */
-      .days-grid {
-        display: flex;
-        gap: var(--space-2);
-        margin-top: var(--space-2);
-      }
-
-      .day-chip {
-        padding: var(--space-2) var(--space-3);
-        border: 2px solid var(--p-surface-200);
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-size: 0.9rem;
-        font-weight: 500;
-      }
-
-      .day-chip:hover {
-        border-color: var(--color-brand-primary);
-      }
-
-      .day-chip.selected {
-        border-color: var(--color-brand-primary);
-        background: var(--color-brand-primary);
-        color: white;
-      }
-
-      /* Equipment Grid */
-      .equipment-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: var(--space-3);
-      }
-
-      .equipment-card {
-        padding: var(--space-3);
-        border: 2px solid var(--p-surface-200);
-        border-radius: 10px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--space-1);
-      }
-
-      .equipment-card:hover {
-        border-color: var(--color-brand-primary);
-      }
-
-      .equipment-card.selected {
-        border-color: var(--color-brand-primary);
-        background: var(--color-brand-primary-light);
-      }
-
-      .equipment-card.none-card.selected {
-        border-color: var(--text-secondary);
-        background: var(--p-surface-100);
-      }
-
-      .equipment-card i {
-        font-size: 1.25rem;
-        color: var(--color-brand-primary);
-      }
-
-      .equipment-card span {
-        font-size: 0.8rem;
-        font-weight: 500;
-      }
-
-      .equipment-card .check-icon {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        font-size: 0.75rem;
-        color: var(--color-success);
-      }
-
-      /* Checkbox Grid (Injury History) */
-      .checkbox-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-2);
-      }
-
-      .checkbox-card {
-        padding: var(--space-3);
-        border: 2px solid var(--p-surface-200);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        font-size: 0.85rem;
-      }
-
-      .checkbox-card:hover {
-        border-color: var(--color-brand-primary);
-      }
-
-      .checkbox-card.selected {
-        border-color: var(--color-warning);
-        background: var(--color-warning-light);
-      }
-
-      .checkbox-card.none-selected.selected {
-        border-color: var(--color-success);
-        background: var(--color-success-light);
-      }
-
-      .checkbox-card i {
-        color: var(--color-warning);
-      }
-
-      .checkbox-card.none-selected i {
-        color: var(--color-success);
-      }
-
-      /* Injury Input */
-      .injury-input-row {
-        display: flex;
-        gap: var(--space-2);
-        margin-bottom: var(--space-3);
-      }
-
-      .injury-area-select {
-        flex: 2;
-      }
-
-      .injury-severity-select {
-        flex: 1;
-      }
-
-      .injury-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-2);
-      }
-
-      .injury-chip {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        padding: var(--space-2) var(--space-3);
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 500;
-      }
-
-      .injury-chip.severity-minor {
-        background: var(--color-info-light);
-        color: var(--color-info);
-      }
-
-      .injury-chip.severity-moderate {
-        background: var(--color-warning-light);
-        color: var(--color-warning);
-      }
-
-      .injury-chip.severity-severe {
-        background: var(--color-danger-light);
-        color: var(--color-danger);
-      }
-
-      .injury-chip i {
-        cursor: pointer;
-        opacity: 0.7;
-      }
-
-      .injury-chip i:hover {
-        opacity: 1;
-      }
-
-      /* Preference Options */
-      .preference-options {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: var(--space-3);
-        margin-top: var(--space-2);
-      }
-
-      .preference-options.compact {
-        grid-template-columns: repeat(4, 1fr);
-      }
-
-      .preference-card {
-        padding: var(--space-3);
-        border: 2px solid var(--p-surface-200);
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: var(--space-1);
-      }
-
-      .preference-card:hover {
-        border-color: var(--color-brand-primary);
-      }
-
-      .preference-card.selected {
-        border-color: var(--color-brand-primary);
-        background: linear-gradient(135deg, var(--color-brand-primary-light), transparent);
-      }
-
-      .preference-card i {
-        font-size: 1.25rem;
-        color: var(--color-brand-primary);
-      }
-
-      .preference-label {
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 0.85rem;
-      }
-
-      .preference-desc {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-      }
-
-      /* Info Box */
-      .info-box {
-        display: flex;
-        align-items: flex-start;
-        gap: var(--space-3);
-        padding: var(--space-4);
-        background: var(--color-info-light);
-        border-radius: 10px;
-        color: var(--color-info);
-        font-size: 0.9rem;
-        margin-top: var(--space-4);
-      }
-
-      .info-box.success {
-        background: var(--color-success-light);
-        color: var(--color-success);
-      }
-
-      .info-box i {
-        font-size: 1.25rem;
-        flex-shrink: 0;
-      }
-
-      /* Summary Grid */
-      .summary-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-3);
-      }
-
-      .summary-card {
-        background: var(--p-surface-50);
-        border-radius: 12px;
-        padding: var(--space-4);
-        border: 1px solid var(--p-surface-100);
-      }
-
-      .summary-card h4 {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        margin: 0 0 var(--space-3) 0;
-        color: var(--color-brand-primary);
-        font-size: 0.9rem;
-        font-weight: 600;
-      }
-
-      .summary-content {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2);
-      }
-
-      .summary-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.85rem;
-      }
-
-      .summary-row .label {
-        color: var(--text-secondary);
-      }
-
-      .summary-row .value {
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .jersey-badge {
-        background: var(--color-brand-primary);
-        color: white;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 0.9rem;
-      }
-
-      .summary-note {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        padding: var(--space-4);
-        background: var(--color-info-light);
-        border-radius: 10px;
-        color: var(--color-info);
-        font-size: 0.9rem;
-        margin-top: var(--space-4);
-      }
-
-      .summary-note.success {
-        background: var(--color-success-light);
-        color: var(--color-success);
-      }
-
-      /* Actions */
-      .onboarding-actions {
-        display: flex;
-        justify-content: space-between;
-        margin-top: var(--space-6);
-        padding-top: var(--space-4);
-        border-top: 1px solid var(--p-surface-200);
-      }
-
-      /* Responsive */
-      @media (max-width: 768px) {
-        .form-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .form-grid .span-2 {
-          grid-column: span 1;
-        }
-
-        .goals-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .equipment-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-
-        .checkbox-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .preference-options {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .summary-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .days-grid {
-          flex-wrap: wrap;
-        }
-      }
-    `,
-  ],
+  styleUrls: ["./onboarding.component.scss"],
 })
-export class OnboardingComponent implements OnInit {
+export class OnboardingComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
+  private logger = inject(LoggerService);
 
   currentStep = signal(0);
   isCompleting = signal(false);
   isLoading = signal(true);
+  lastSaved = signal<Date | null>(null);
+  isSaving = signal(false);
+
+  // Auto-save subject
+  private autoSaveSubject = new Subject<void>();
+  private autoSaveSubscription: any;
+  private readonly STORAGE_KEY = "flagfit_onboarding_draft";
 
   // Team options
   teams = [
@@ -1755,7 +1141,90 @@ export class OnboardingComponent implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
+    // Set up auto-save with debounce
+    this.autoSaveSubscription = this.autoSaveSubject
+      .pipe(debounceTime(2000)) // Save after 2 seconds of no changes
+      .subscribe(() => {
+        this.saveDraft();
+      });
+
+    // Load saved draft first
+    this.loadDraft();
+    
+    // Then load user profile
     await this.loadUserProfile();
+  }
+
+  ngOnDestroy(): void {
+    // Save draft when leaving
+    this.saveDraft();
+    
+    if (this.autoSaveSubscription) {
+      this.autoSaveSubscription.unsubscribe();
+    }
+  }
+
+  // Trigger auto-save when data changes
+  triggerAutoSave(): void {
+    this.autoSaveSubject.next();
+  }
+
+  // Save draft to localStorage
+  private saveDraft(): void {
+    try {
+      this.isSaving.set(true);
+      const draft = {
+        currentStep: this.currentStep(),
+        data: this.onboardingData,
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(draft));
+      this.lastSaved.set(new Date());
+      this.isSaving.set(false);
+    } catch (error) {
+      this.logger.error("Failed to save draft:", error);
+      this.isSaving.set(false);
+    }
+  }
+
+  // Load draft from localStorage
+  private loadDraft(): void {
+    try {
+      const saved = localStorage.getItem(this.STORAGE_KEY);
+      if (saved) {
+        const draft = JSON.parse(saved);
+        
+        // Restore data
+        Object.assign(this.onboardingData, draft.data);
+        
+        // Restore current step
+        if (draft.currentStep !== undefined) {
+          this.currentStep.set(draft.currentStep);
+          
+          // Mark previous steps as completed
+          const steps = this.steps();
+          for (let i = 0; i < draft.currentStep; i++) {
+            steps[i].completed = true;
+          }
+          this.steps.set([...steps]);
+        }
+        
+        // Convert date strings back to Date objects
+        if (this.onboardingData.dateOfBirth) {
+          this.onboardingData.dateOfBirth = new Date(this.onboardingData.dateOfBirth);
+        }
+        
+        this.lastSaved.set(new Date(draft.savedAt));
+        this.toastService.info("Your previous progress has been restored", "Welcome back!");
+      }
+    } catch (error) {
+      this.logger.error("Failed to load draft:", error);
+    }
+  }
+
+  // Clear draft after successful completion
+  private clearDraft(): void {
+    localStorage.removeItem(this.STORAGE_KEY);
   }
 
   private async loadUserProfile(): Promise<void> {
@@ -1779,7 +1248,7 @@ export class OnboardingComponent implements OnInit {
         this.onboardingData.experience = data.experience_level;
       }
     } catch (error) {
-      console.error("Failed to load user profile:", error);
+      this.logger.error("Failed to load user profile:", error);
     } finally {
       this.isLoading.set(false);
     }
@@ -1883,12 +1352,18 @@ export class OnboardingComponent implements OnInit {
       steps[this.currentStep()].completed = true;
       this.steps.set([...steps]);
       this.currentStep.set(this.currentStep() + 1);
+      
+      // Auto-save on step change
+      this.saveDraft();
     }
   }
 
   previousStep(): void {
     if (this.currentStep() > 0) {
       this.currentStep.set(this.currentStep() - 1);
+      
+      // Auto-save on step change
+      this.saveDraft();
     }
   }
 
@@ -2031,6 +1506,9 @@ export class OnboardingComponent implements OnInit {
       // Save training preferences (schedule, mobility, recovery)
       await this.saveTrainingPreferences(user.email!);
 
+      // Clear the draft after successful completion
+      this.clearDraft();
+      
       this.toastService.success("Your profile and training preferences have been set up!", "Welcome to FlagFit Pro!");
 
       setTimeout(() => {
@@ -2078,7 +1556,7 @@ export class OnboardingComponent implements OnInit {
         .upsert(preferences, { onConflict: "email" });
 
       if (error) {
-        console.log("Saving preferences to localStorage:", error.message);
+        this.logger.info("Saving preferences to localStorage:", error.message);
         localStorage.setItem("flagfit_preferences", JSON.stringify(preferences));
       }
     } catch (e) {

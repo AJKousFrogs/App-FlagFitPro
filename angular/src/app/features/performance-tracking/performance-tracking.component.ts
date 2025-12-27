@@ -6,16 +6,22 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 
+import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
+import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
+import { InputNumberModule } from "primeng/inputnumber";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { ToastService } from "../../core/services/toast.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 
 interface PerformanceMetric {
   name: string;
@@ -29,11 +35,15 @@ interface PerformanceMetric {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    FormsModule,
     CardModule,
     ButtonModule,
     ChartModule,
     TableModule,
     TagModule,
+    DialogModule,
+    InputTextModule,
+    InputNumberModule,
     MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent,
@@ -58,31 +68,43 @@ interface PerformanceMetric {
 
         <!-- Performance Charts -->
         <div class="charts-grid">
-          <p-card class="chart-card">
-            <ng-template pTemplate="header">
-              <h3>Performance Over Time</h3>
-            </ng-template>
-            @if (performanceChartData()) {
-              <p-chart
-                type="line"
-                [data]="performanceChartData()"
-                [options]="chartOptions"
-              ></p-chart>
-            }
-          </p-card>
+          @defer (on viewport) {
+            <p-card class="chart-card">
+              <ng-template pTemplate="header">
+                <h3>Performance Over Time</h3>
+              </ng-template>
+              @if (performanceChartData()) {
+                <p-chart
+                  type="line"
+                  [data]="performanceChartData()"
+                  [options]="chartOptions"
+                ></p-chart>
+              }
+            </p-card>
+          } @placeholder {
+            <p-card class="chart-card">
+              <div class="loading-placeholder">Loading performance chart...</div>
+            </p-card>
+          }
 
-          <p-card class="chart-card">
-            <ng-template pTemplate="header">
-              <h3>Speed Metrics</h3>
-            </ng-template>
-            @if (speedChartData()) {
-              <p-chart
-                type="bar"
-                [data]="speedChartData()"
-                [options]="chartOptions"
-              ></p-chart>
-            }
-          </p-card>
+          @defer (on viewport) {
+            <p-card class="chart-card">
+              <ng-template pTemplate="header">
+                <h3>Speed Metrics</h3>
+              </ng-template>
+              @if (speedChartData()) {
+                <p-chart
+                  type="bar"
+                  [data]="speedChartData()"
+                  [options]="chartOptions"
+                ></p-chart>
+              }
+            </p-card>
+          } @placeholder {
+            <p-card class="chart-card">
+              <div class="loading-placeholder">Loading speed metrics...</div>
+            </p-card>
+          }
         </div>
 
         <!-- Performance History Table -->
@@ -124,6 +146,86 @@ interface PerformanceMetric {
           </p-table>
         </p-card>
       </div>
+
+      <!-- Log Performance Dialog -->
+      <p-dialog
+        header="Log Performance"
+        [(visible)]="showLogDialog"
+        [modal]="true"
+        [style]="{ width: '500px' }"
+        [closable]="true"
+      >
+        <div class="log-form">
+          <div class="p-field mb-4">
+            <label for="dash40" class="p-label">40-Yard Dash (seconds)</label>
+            <p-inputNumber
+              id="dash40"
+              [(ngModel)]="newPerformance.dash40"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+              mode="decimal"
+              placeholder="e.g., 4.45"
+              styleClass="w-full"
+            ></p-inputNumber>
+          </div>
+          <div class="p-field mb-4">
+            <label for="vertical" class="p-label">Vertical Jump (inches)</label>
+            <p-inputNumber
+              id="vertical"
+              [(ngModel)]="newPerformance.vertical"
+              [minFractionDigits]="1"
+              mode="decimal"
+              placeholder="e.g., 38"
+              styleClass="w-full"
+            ></p-inputNumber>
+          </div>
+          <div class="p-field mb-4">
+            <label for="broad" class="p-label">Broad Jump (inches)</label>
+            <p-inputNumber
+              id="broad"
+              [(ngModel)]="newPerformance.broad"
+              [minFractionDigits]="1"
+              mode="decimal"
+              placeholder="e.g., 122"
+              styleClass="w-full"
+            ></p-inputNumber>
+          </div>
+          <div class="p-field mb-4">
+            <label for="bench" class="p-label">Bench Press (lbs)</label>
+            <p-inputNumber
+              id="bench"
+              [(ngModel)]="newPerformance.bench"
+              mode="decimal"
+              placeholder="e.g., 225"
+              styleClass="w-full"
+            ></p-inputNumber>
+          </div>
+          <div class="p-field mb-4">
+            <label for="notes" class="p-label">Notes (optional)</label>
+            <input
+              id="notes"
+              type="text"
+              pInputText
+              [(ngModel)]="newPerformance.notes"
+              placeholder="Any notes about this session"
+              class="w-full"
+            />
+          </div>
+        </div>
+        <ng-template pTemplate="footer">
+          <p-button
+            label="Cancel"
+            [text]="true"
+            (onClick)="showLogDialog = false"
+          ></p-button>
+          <p-button
+            label="Save Performance"
+            icon="pi pi-check"
+            [loading]="isSaving()"
+            (onClick)="savePerformance()"
+          ></p-button>
+        </ng-template>
+      </p-dialog>
     </app-main-layout>
   `,
   styles: [
@@ -183,12 +285,25 @@ interface PerformanceMetric {
 })
 export class PerformanceTrackingComponent implements OnInit {
   private apiService = inject(ApiService);
+  private toastService = inject(ToastService);
+  private supabaseService = inject(SupabaseService);
 
   metrics = signal<PerformanceMetric[]>([]);
   performanceStats = signal<any[]>([]);
   performanceChartData = signal<any>(null);
   speedChartData = signal<any>(null);
   performanceHistory = signal<any[]>([]);
+  
+  // Dialog state
+  showLogDialog = false;
+  isSaving = signal(false);
+  newPerformance = {
+    dash40: null as number | null,
+    vertical: null as number | null,
+    broad: null as number | null,
+    bench: null as number | null,
+    notes: '',
+  };
 
   chartOptions = DEFAULT_CHART_OPTIONS;
 
@@ -288,7 +403,111 @@ export class PerformanceTrackingComponent implements OnInit {
   }
 
   openLogDialog(): void {
-    // Open log performance dialog - implementation pending
+    // Reset form and open dialog
+    this.newPerformance = {
+      dash40: null,
+      vertical: null,
+      broad: null,
+      bench: null,
+      notes: '',
+    };
+    this.showLogDialog = true;
+  }
+
+  async savePerformance(): Promise<void> {
+    // Validate at least one metric is entered
+    if (!this.newPerformance.dash40 && !this.newPerformance.vertical && 
+        !this.newPerformance.broad && !this.newPerformance.bench) {
+      this.toastService.warn('Please enter at least one performance metric');
+      return;
+    }
+
+    this.isSaving.set(true);
+
+    try {
+      const user = this.supabaseService.getCurrentUser();
+      if (!user) {
+        this.toastService.error('Please log in to save performance');
+        return;
+      }
+
+      // Calculate overall score (simple average based on benchmarks)
+      const score = this.calculateScore();
+
+      // Save to Supabase
+      const { error } = await this.supabaseService.client
+        .from('performance_records')
+        .insert({
+          user_id: user.id,
+          dash_40: this.newPerformance.dash40,
+          vertical_jump: this.newPerformance.vertical,
+          broad_jump: this.newPerformance.broad,
+          bench_press: this.newPerformance.bench,
+          notes: this.newPerformance.notes,
+          overall_score: score,
+          recorded_at: new Date().toISOString(),
+        });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Add to local history
+      const newRecord = {
+        date: new Date().toISOString().split('T')[0],
+        dash40: this.newPerformance.dash40 ? `${this.newPerformance.dash40}s` : '-',
+        vertical: this.newPerformance.vertical ? `${this.newPerformance.vertical}"` : '-',
+        broad: this.newPerformance.broad ? `${Math.floor(this.newPerformance.broad / 12)}'${this.newPerformance.broad % 12}"` : '-',
+        bench: this.newPerformance.bench ? `${this.newPerformance.bench} lbs` : '-',
+        score: score,
+      };
+
+      this.performanceHistory.update(history => [newRecord, ...history]);
+
+      this.toastService.success('Performance logged successfully!');
+      this.showLogDialog = false;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to save performance';
+      this.toastService.error(message);
+    } finally {
+      this.isSaving.set(false);
+    }
+  }
+
+  private calculateScore(): number {
+    // Simple scoring based on typical flag football benchmarks
+    let totalPoints = 0;
+    let metrics = 0;
+
+    if (this.newPerformance.dash40) {
+      // 4.4s = 100, 5.0s = 60
+      const dashScore = Math.max(0, Math.min(100, 100 - ((this.newPerformance.dash40 - 4.4) / 0.6) * 40));
+      totalPoints += dashScore;
+      metrics++;
+    }
+
+    if (this.newPerformance.vertical) {
+      // 40" = 100, 28" = 60
+      const vertScore = Math.max(0, Math.min(100, 60 + ((this.newPerformance.vertical - 28) / 12) * 40));
+      totalPoints += vertScore;
+      metrics++;
+    }
+
+    if (this.newPerformance.broad) {
+      // 130" = 100, 100" = 60
+      const broadScore = Math.max(0, Math.min(100, 60 + ((this.newPerformance.broad - 100) / 30) * 40));
+      totalPoints += broadScore;
+      metrics++;
+    }
+
+    if (this.newPerformance.bench) {
+      // 250 = 100, 150 = 60
+      const benchScore = Math.max(0, Math.min(100, 60 + ((this.newPerformance.bench - 150) / 100) * 40));
+      totalPoints += benchScore;
+      metrics++;
+    }
+
+    return metrics > 0 ? Math.round(totalPoints / metrics) : 0;
   }
 
   getTrendSeverity(trendType: string): string {

@@ -562,6 +562,9 @@ export class NutritionDashboardComponent {
   }
 
   addSuggestedFood(suggestion: AINutritionSuggestion) {
+    if (!suggestion.food) {
+      return;
+    }
     firstValueFrom(
       this.nutritionService.addFoodToCurrentMeal(suggestion.food),
     ).then(() => {

@@ -1,0 +1,563 @@
+.periodization-dashboard {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+
+    i {
+      color: var(--primary-color);
+    }
+  }
+
+  .subtitle {
+    color: var(--text-color-secondary);
+    font-size: 1.1rem;
+  }
+}
+
+:host ::ng-deep .phase-card {
+  margin-bottom: 2rem;
+
+  .p-card-header {
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-700));
+    border-radius: 6px 6px 0 0;
+  }
+}
+
+.phase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+
+  .phase-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .phase-week {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  .phase-date {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+}
+
+:host ::ng-deep .phase-tag {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.phase-content {
+  .phase-description {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-color-secondary);
+    margin-bottom: 1.5rem;
+  }
+}
+
+.focus-areas {
+  margin-bottom: 1.5rem;
+
+  h4 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: var(--text-color-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  .chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+:host ::ng-deep .focus-chip {
+  &.primary {
+    background: var(--primary-100);
+    color: var(--primary-700);
+  }
+
+  &.secondary {
+    background: var(--surface-200);
+    color: var(--text-color-secondary);
+  }
+}
+
+.load-targets {
+  margin-bottom: 1.5rem;
+
+  h4 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: var(--text-color-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  .load-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+:host ::ng-deep .load-bar {
+  height: 8px;
+  border-radius: 4px;
+}
+
+.acwr-status {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+
+  &.acwr-optimal {
+    background: var(--green-50);
+    border: 1px solid var(--green-200);
+  }
+
+  &.acwr-caution {
+    background: var(--yellow-50);
+    border: 1px solid var(--yellow-200);
+  }
+
+  &.acwr-danger {
+    background: var(--red-50);
+    border: 1px solid var(--red-200);
+  }
+
+  .acwr-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+
+    .acwr-label {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    .acwr-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+  }
+
+  .acwr-recommendation {
+    font-size: 0.9rem;
+    color: var(--text-color-secondary);
+  }
+}
+
+:host ::ng-deep .training-tabs {
+  margin-bottom: 2rem;
+}
+
+.weekly-schedule {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.day-card {
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--surface-50);
+  border: 1px solid var(--surface-200);
+
+  &.session-training {
+    border-left: 4px solid var(--primary-color);
+  }
+
+  &.session-game {
+    border-left: 4px solid var(--orange-500);
+    background: var(--orange-50);
+  }
+
+  &.session-recovery {
+    border-left: 4px solid var(--green-500);
+    background: var(--green-50);
+  }
+
+  &.session-rest {
+    border-left: 4px solid var(--gray-400);
+    background: var(--surface-100);
+  }
+
+  .day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+
+    .day-name {
+      font-weight: 600;
+    }
+  }
+
+  .day-content {
+    font-size: 0.85rem;
+    color: var(--text-color-secondary);
+
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+
+      i {
+        font-size: 0.8rem;
+      }
+    }
+
+    .day-notes {
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+  }
+}
+
+.weekly-totals {
+  background: var(--surface-50);
+  padding: 1.5rem;
+  border-radius: 8px;
+
+  h4 {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .totals-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    text-align: center;
+
+    .total-item {
+      .total-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .total-label {
+        font-size: 0.8rem;
+        color: var(--text-color-secondary);
+      }
+    }
+  }
+}
+
+.sprint-protocols {
+  .sprint-header {
+    margin-bottom: 1.5rem;
+
+    h3 {
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: var(--text-color-secondary);
+    }
+  }
+
+  .sprint-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    .feature {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      background: var(--surface-100);
+      color: var(--text-color-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &.active {
+        background: var(--green-100);
+        color: var(--green-700);
+      }
+
+      i {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  h4 {
+    margin: 1rem 0 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: var(--text-color-secondary);
+  }
+
+  .protocols-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    &.avoid :host ::ng-deep .protocol-chip {
+      background: var(--red-100);
+      color: var(--red-700);
+    }
+  }
+}
+
+:host ::ng-deep .protocol-chip {
+  background: var(--primary-100);
+  color: var(--primary-700);
+}
+
+.sprint-tips {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--surface-50);
+  border-radius: 8px;
+
+  h4 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--surface-200);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+.annual-timeline {
+  padding: 2rem 0;
+  overflow-x: auto;
+}
+
+:host ::ng-deep .phase-timeline {
+  .p-timeline-event-content {
+    text-align: center;
+  }
+}
+
+.timeline-marker {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+.timeline-content {
+  .timeline-month {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .timeline-phase {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-color-secondary);
+  }
+}
+
+.phase-detail {
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .phase-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    .metric {
+      text-align: center;
+      padding: 1rem;
+      background: var(--surface-50);
+      border-radius: 8px;
+
+      .metric-label {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--text-color-secondary);
+        margin-bottom: 0.25rem;
+      }
+
+      .metric-value {
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        text-transform: capitalize;
+      }
+    }
+  }
+
+  h5 {
+    margin-bottom: 0.5rem;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.5rem;
+
+    li {
+      margin-bottom: 0.25rem;
+    }
+  }
+}
+
+.evidence-section {
+  .evidence-intro {
+    margin-bottom: 1.5rem;
+    color: var(--text-color-secondary);
+    line-height: 1.6;
+  }
+
+  .research-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .research-card {
+    padding: 1.5rem;
+    background: var(--surface-50);
+    border-radius: 8px;
+    border: 1px solid var(--surface-200);
+
+    .research-header {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .research-title {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .research-journal {
+      display: block;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--text-color-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .research-finding,
+    .research-application {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+
+      strong {
+        color: var(--primary-color);
+      }
+    }
+  }
+}
+
+:host ::ng-deep .adjustments-card {
+  margin-bottom: 1.5rem;
+
+  .adjustments-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--surface-200);
+      font-size: 1rem;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+.warnings-section {
+  .warning-item {
+    padding: 1rem;
+    background: var(--yellow-50);
+    border: 1px solid var(--yellow-200);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    i {
+      color: var(--yellow-600);
+      font-size: 1.2rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .periodization-dashboard {
+    padding: 1rem;
+  }
+
+  .weekly-schedule {
+    grid-template-columns: 1fr;
+  }
+
+  .weekly-totals .totals-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .phase-detail .phase-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .research-cards {
+    grid-template-columns: 1fr;
+  }
+}

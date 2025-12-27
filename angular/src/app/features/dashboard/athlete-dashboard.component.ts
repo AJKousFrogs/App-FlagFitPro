@@ -8,6 +8,7 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { ButtonModule } from "primeng/button";
@@ -55,6 +56,7 @@ interface TrainingSession {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    RouterModule,
     CardModule,
     TagModule,
     ButtonModule,
@@ -75,6 +77,12 @@ interface TrainingSession {
           subtitle="Your performance overview for today"
         >
           <div class="flex items-center gap-3">
+            <p-button
+              label="Today's Practice"
+              icon="pi pi-play"
+              routerLink="/training/daily"
+              styleClass="p-button-success"
+            ></p-button>
             <app-live-indicator
               [isLive]="realtimeService.isConnected()"
             ></app-live-indicator>

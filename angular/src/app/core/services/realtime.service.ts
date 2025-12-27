@@ -251,6 +251,84 @@ export class RealtimeService {
   }
 
   /**
+   * Subscribe to channel messages (for new chat system)
+   */
+  subscribeToChannelMessages(
+    channelId: string,
+    callback: RealtimeCallback,
+  ): () => void {
+    if (!channelId) {
+      this.logger.warn("Cannot subscribe: No channel ID provided");
+      return () => {};
+    }
+
+    return this.createSubscription(
+      `channel_messages_${channelId}`,
+      "chat_messages",
+      `channel_id=eq.${channelId}`,
+      callback,
+    );
+  }
+
+  /**
+   * Subscribe to notifications for a user
+   */
+  subscribeToNotifications(callback: RealtimeCallback): () => void {
+    const userId = this.supabase.currentUser()?.id;
+    if (!userId) {
+      this.logger.warn("Cannot subscribe: No user logged in");
+      return () => {};
+    }
+
+    return this.createSubscription(
+      `notifications_${userId}`,
+      "notifications",
+      `user_id=eq.${userId}`,
+      callback,
+    );
+  }
+
+  /**
+   * Subscribe to coach activity log
+   */
+  subscribeToCoachActivity(
+    teamId: string,
+    callback: RealtimeCallback,
+  ): () => void {
+    if (!teamId) {
+      this.logger.warn("Cannot subscribe: No team ID provided");
+      return () => {};
+    }
+
+    return this.createSubscription(
+      `coach_activity_${teamId}`,
+      "coach_activity_log",
+      `team_id=eq.${teamId}`,
+      callback,
+    );
+  }
+
+  /**
+   * Subscribe to channel updates (new channels, archived, etc.)
+   */
+  subscribeToChannels(
+    teamId: string,
+    callback: RealtimeCallback,
+  ): () => void {
+    if (!teamId) {
+      this.logger.warn("Cannot subscribe: No team ID provided");
+      return () => {};
+    }
+
+    return this.createSubscription(
+      `channels_${teamId}`,
+      "channels",
+      `team_id=eq.${teamId}`,
+      callback,
+    );
+  }
+
+  /**
    * Generic subscription creator
    */
   private createSubscription(

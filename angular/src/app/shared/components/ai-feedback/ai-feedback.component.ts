@@ -1,8 +1,7 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   signal,
   ChangeDetectionStrategy,
   inject,
@@ -15,6 +14,7 @@ import { TextareaModule } from "primeng/textarea";
 import { RadioButtonModule } from "primeng/radiobutton";
 import { TooltipModule } from "primeng/tooltip";
 import { ApiService } from "../../../core/services/api.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 /**
  * Feedback types for AI responses
@@ -59,7 +59,7 @@ interface FeedbackData {
     TooltipModule,
   ],
   template: `
-    <div class="ai-feedback" [class.compact]="compact">
+    <div class="ai-feedback" [class.compact]="compact()">
       <!-- Quick Feedback Buttons -->
       <div class="quick-feedback">
         <button
@@ -84,7 +84,7 @@ interface FeedbackData {
         >
           <i class="pi pi-thumbs-down"></i>
         </button>
-        @if (!compact) {
+        @if (!compact()) {
           <button
             class="feedback-btn text-btn"
             [class.disabled]="submitted()"
@@ -350,12 +350,15 @@ interface FeedbackData {
 })
 export class AiFeedbackComponent {
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
-  @Input({ required: true }) messageId!: string;
-  @Input() sessionId?: string;
-  @Input() compact = false;
+  // Angular 21: Use input() signals instead of @Input()
+  messageId = input.required<string>();
+  sessionId = input<string | undefined>(undefined);
+  compact = input<boolean>(false);
 
-  @Output() feedbackSubmitted = new EventEmitter<FeedbackData>();
+  // Angular 21: Use output() signal instead of @Output() EventEmitter
+  feedbackSubmitted = output<FeedbackData>();
 
   // State
   selectedFeedback = signal<FeedbackType | null>(null);
@@ -408,8 +411,8 @@ export class AiFeedbackComponent {
     outcome?: string | null
   ): Promise<void> {
     const feedbackData: FeedbackData = {
-      message_id: this.messageId,
-      chat_session_id: this.sessionId,
+      message_id: this.messageId(),
+      chat_session_id: this.sessionId(),
       feedback_type: type,
       feedback_reason: reason || undefined,
       outcome: outcome || undefined,
@@ -424,7 +427,7 @@ export class AiFeedbackComponent {
       this.submitted.set(true);
       this.feedbackSubmitted.emit(feedbackData);
     } catch (error) {
-      console.error("Error submitting feedback:", error);
+      this.logger.error("Error submitting feedback:", error);
       // Still mark as submitted locally to prevent spam
       this.selectedFeedback.set(type);
       this.submitted.set(true);

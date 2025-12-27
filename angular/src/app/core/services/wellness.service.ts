@@ -329,9 +329,26 @@ export class WellnessService {
         this.logger.success("[Wellness] Entry logged:", insertedData.id);
         return { success: true, data: insertedData };
       }),
-      tap(() => {
+      tap((result) => {
         // Refresh wellness data after successful post
         this.getWellnessData("30d").subscribe();
+        
+        // Dispatch wellnessSubmitted event for achievements integration
+        if (result.success) {
+          document.dispatchEvent(new CustomEvent('wellnessSubmitted', {
+            detail: {
+              date: wellnessEntry.date,
+              sleep: wellnessEntry.sleep_quality,
+              energy: wellnessEntry.energy_level,
+              stress: wellnessEntry.stress_level,
+              soreness: wellnessEntry.muscle_soreness,
+              motivation: wellnessEntry.motivation_level,
+              mood: wellnessEntry.mood,
+              hydration: wellnessEntry.hydration_level,
+            }
+          }));
+          this.logger.info("[Wellness] Dispatched wellnessSubmitted event");
+        }
       }),
       catchError((error) => {
         this.logger.error("[Wellness] Failed to log entry:", error);

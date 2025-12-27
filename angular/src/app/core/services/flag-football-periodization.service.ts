@@ -62,7 +62,8 @@ export type TrainingFocus =
   | "deceleration"
   | "injury_prevention"
   | "mobility"
-  | "recovery";
+  | "recovery"
+  | "core";
 
 export type ExerciseCategory =
   | "sprint"
@@ -350,7 +351,7 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       "Sleep optimization (8-9 hours)",
       "Stress reduction",
     ],
-    evidenceBase: [EVIDENCE_BASE.bompa_2009],
+    evidenceBase: [EVIDENCE_BASE["bompa_2009"]],
   },
 
   // ========================================
@@ -419,9 +420,9 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       "Ankle mobility work",
     ],
     evidenceBase: [
-      EVIDENCE_BASE.bompa_2009,
-      EVIDENCE_BASE.comfort_2014,
-      EVIDENCE_BASE.suchomel_2016,
+      EVIDENCE_BASE["bompa_2009"],
+      EVIDENCE_BASE["comfort_2014"],
+      EVIDENCE_BASE["suchomel_2016"],
     ],
   },
 
@@ -493,9 +494,9 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       "Thoracic spine mobility",
     ],
     evidenceBase: [
-      EVIDENCE_BASE.suchomel_2016,
-      EVIDENCE_BASE.comfort_2014,
-      EVIDENCE_BASE.issurin_2010,
+      EVIDENCE_BASE["suchomel_2016"],
+      EVIDENCE_BASE["comfort_2014"],
+      EVIDENCE_BASE["issurin_2010"],
     ],
   },
 
@@ -566,9 +567,9 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       "Hip flexor mobility (for sprint mechanics)",
     ],
     evidenceBase: [
-      EVIDENCE_BASE.asadi_2017,
-      EVIDENCE_BASE.haugen_2019,
-      EVIDENCE_BASE.brughelli_2008,
+      EVIDENCE_BASE["asadi_2017"],
+      EVIDENCE_BASE["haugen_2019"],
+      EVIDENCE_BASE["brughelli_2008"],
     ],
   },
 
@@ -636,9 +637,9 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       "Hydration and nutrition optimization",
     ],
     evidenceBase: [
-      EVIDENCE_BASE.haugen_2019,
-      EVIDENCE_BASE.asadi_2017,
-      EVIDENCE_BASE.gabbett_2016,
+      EVIDENCE_BASE["haugen_2019"],
+      EVIDENCE_BASE["asadi_2017"],
+      EVIDENCE_BASE["gabbett_2016"],
     ],
   },
 
@@ -706,9 +707,9 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       "Monitor ACWR weekly",
     ],
     evidenceBase: [
-      EVIDENCE_BASE.turner_2014,
-      EVIDENCE_BASE.gabbett_2016,
-      EVIDENCE_BASE.mujika_2003,
+      EVIDENCE_BASE["turner_2014"],
+      EVIDENCE_BASE["gabbett_2016"],
+      EVIDENCE_BASE["mujika_2003"],
     ],
   },
 
@@ -778,9 +779,9 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       "This is your 'extra layer' of durability",
     ],
     evidenceBase: [
-      EVIDENCE_BASE.issurin_2010,
-      EVIDENCE_BASE.gabbett_2016,
-      EVIDENCE_BASE.haugen_2019,
+      EVIDENCE_BASE["issurin_2010"],
+      EVIDENCE_BASE["gabbett_2016"],
+      EVIDENCE_BASE["haugen_2019"],
     ],
   },
 
@@ -847,9 +848,9 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       "Mental preparation",
     ],
     evidenceBase: [
-      EVIDENCE_BASE.mujika_2003,
-      EVIDENCE_BASE.issurin_2010,
-      EVIDENCE_BASE.haugen_2019,
+      EVIDENCE_BASE["mujika_2003"],
+      EVIDENCE_BASE["issurin_2010"],
+      EVIDENCE_BASE["haugen_2019"],
     ],
   },
 
@@ -914,8 +915,8 @@ const ANNUAL_PHASES: Record<string, PhaseConfig> = {
       "Address any issues before they worsen",
     ],
     evidenceBase: [
-      EVIDENCE_BASE.turner_2014,
-      EVIDENCE_BASE.gabbett_2016,
+      EVIDENCE_BASE["turner_2014"],
+      EVIDENCE_BASE["gabbett_2016"],
     ],
   },
 };
@@ -953,28 +954,28 @@ export class FlagFootballPeriodizationService {
 
     switch (month) {
       case 11: // November
-        return ANNUAL_PHASES.november_recovery;
+        return ANNUAL_PHASES["november_recovery"];
       case 12: // December
-        return ANNUAL_PHASES.december_foundation;
+        return ANNUAL_PHASES["december_foundation"];
       case 1: // January
-        return ANNUAL_PHASES.january_strength;
+        return ANNUAL_PHASES["january_strength"];
       case 2: // February
-        return ANNUAL_PHASES.february_power;
+        return ANNUAL_PHASES["february_power"];
       case 3: // March
-        return ANNUAL_PHASES.march_explosive;
+        return ANNUAL_PHASES["march_explosive"];
       case 4: // April
       case 5: // May
       case 6: // June
-        return ANNUAL_PHASES.competition_maintenance;
+        return ANNUAL_PHASES["competition_maintenance"];
       case 7: // July - MID-SEASON RELOAD
-        return ANNUAL_PHASES.july_reload;
+        return ANNUAL_PHASES["july_reload"];
       case 8: // August
-        return ANNUAL_PHASES.august_peak;
+        return ANNUAL_PHASES["august_peak"];
       case 9: // September
       case 10: // October
-        return ANNUAL_PHASES.late_season;
+        return ANNUAL_PHASES["late_season"];
       default:
-        return ANNUAL_PHASES.december_foundation;
+        return ANNUAL_PHASES["december_foundation"];
     }
   }
 

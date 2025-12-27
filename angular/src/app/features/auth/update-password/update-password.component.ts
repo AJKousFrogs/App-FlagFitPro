@@ -22,6 +22,7 @@ import { MessageModule } from "primeng/message";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "../../../core/services/toast.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 /**
  * Update Password Component
@@ -255,6 +256,7 @@ export class UpdatePasswordComponent implements OnInit {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private supabaseService = inject(SupabaseService);
+  private logger = inject(LoggerService);
 
   passwordForm: FormGroup;
   isLoading = signal(false);
@@ -294,7 +296,7 @@ export class UpdatePasswordComponent implements OnInit {
       const { data: { session }, error } = await this.supabaseService.client.auth.getSession();
 
       if (error) {
-        console.error("Error checking recovery session:", error);
+        this.logger.error("Error checking recovery session:", error);
         this.isValidRecoverySession.set(false);
         return;
       }
@@ -328,7 +330,7 @@ export class UpdatePasswordComponent implements OnInit {
         }
       }
     } catch (err) {
-      console.error("Error in recovery session check:", err);
+      this.logger.error("Error in recovery session check:", err);
       this.isValidRecoverySession.set(false);
     } finally {
       this.isCheckingSession.set(false);
@@ -423,7 +425,7 @@ export class UpdatePasswordComponent implements OnInit {
         this.router.navigate(["/login"]);
       }, 2000);
     } catch (error: unknown) {
-      console.error("Password update error:", error);
+      this.logger.error("Password update error:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Failed to update password";
       this.toastService.error(errorMessage);

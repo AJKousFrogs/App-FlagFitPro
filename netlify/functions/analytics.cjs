@@ -1,7 +1,7 @@
 // Netlify Function: Analytics API
 // Handles all analytics endpoints for performance trends, team chemistry, training distribution, etc.
 
-const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const { validateQueryParams } = require("./validation.cjs");
 const { getOrFetch, CACHE_TTL, CACHE_PREFIX } = require("./cache.cjs");
 const {

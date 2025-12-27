@@ -426,7 +426,7 @@ export class BodyWeightLoadService {
     recommendation: string;
   } {
     const currentBMI = this.calculateBMI(currentWeight, heightCm);
-    const profile = POSITION_WEIGHT_PROFILES[position] || POSITION_WEIGHT_PROFILES.WR;
+    const profile = POSITION_WEIGHT_PROFILES[position] || POSITION_WEIGHT_PROFILES["WR"];
 
     const inRange = currentBMI >= profile.minBMI && currentBMI <= profile.maxBMI;
 

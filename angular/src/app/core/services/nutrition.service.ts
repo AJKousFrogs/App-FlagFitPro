@@ -52,11 +52,17 @@ export interface MealFood {
 }
 
 export interface AINutritionSuggestion {
-  name: string;
-  benefit: string;
+  id?: string;
+  type?: string;
+  name?: string;
+  title?: string;
+  benefit?: string;
+  description?: string;
   priority: "high" | "medium" | "low";
-  food: USDAFood;
-  reason: string;
+  food?: USDAFood;
+  reason?: string;
+  confidence?: number;
+  actionItems?: string[];
 }
 
 export interface PerformanceInsight {

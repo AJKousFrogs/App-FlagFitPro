@@ -38,6 +38,9 @@ export const environment = {
     url: getEnvValue('SUPABASE_URL', DEFAULTS.SUPABASE_URL),
     anonKey: getEnvValue('SUPABASE_ANON_KEY', DEFAULTS.SUPABASE_ANON_KEY),
   },
+  // VAPID public key for push notifications (generate your own for production)
+  // To generate: npx web-push generate-vapid-keys
+  vapidPublicKey: '',
   // Angular DevTools configuration
   devtools: {
     enabled: true,

@@ -13,6 +13,7 @@ import { ButtonModule } from "primeng/button";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { ApiService } from "../../../core/services/api.service";
 
 export interface SubSkill {
   name: string;

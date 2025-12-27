@@ -5,21 +5,36 @@
     <title>FlagFit Pro</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Professional flag football training and performance tracking platform" />
+    <meta name="theme-color" content="#3B82F6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
+    
+    <!-- Favicon -->
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
     />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    
+    <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://*.supabase.co" />
+    <link rel="dns-prefetch" href="https://*.supabase.co" />
+    
+    <!-- Fonts with display=swap for better CLS -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <!-- Supabase Performance Optimization -->
-    <link rel="preconnect" href="https://*.supabase.co" />
-    <link rel="dns-prefetch" href="https://*.supabase.co" />
   </head>
   <body>
     <app-root></app-root>
+    <noscript>Please enable JavaScript to use FlagFit Pro.</noscript>
   </body>
 </html>

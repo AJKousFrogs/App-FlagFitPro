@@ -111,6 +111,15 @@ export const trainingRoutes: Routes = [
     data: { preload: true, priority: "high" },
   },
   {
+    path: "training/daily",
+    loadComponent: () =>
+      import("../../features/training/daily-training/daily-training.component").then(
+        (m) => m.DailyTrainingComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "high" },
+  },
+  {
     path: "workout",
     loadComponent: () =>
       import("../../features/workout/workout.component").then(
@@ -198,6 +207,14 @@ export const trainingRoutes: Routes = [
       ),
     canActivate: [authGuard],
   },
+  {
+    path: "training/videos",
+    loadComponent: () =>
+      import("../../features/exercise-library/exercise-library.component").then(
+        (m) => m.ExerciseLibraryComponent,
+      ),
+    canActivate: [authGuard],
+  },
 ];
 
 /**
@@ -266,6 +283,38 @@ export const teamRoutes: Routes = [
     loadComponent: () =>
       import("../../features/team/team-create/team-create.component").then(
         (m) => m.TeamCreateComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "attendance",
+    loadComponent: () =>
+      import("../../features/attendance/attendance.component").then(
+        (m) => m.AttendanceComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "depth-chart",
+    loadComponent: () =>
+      import("../../features/depth-chart/depth-chart.component").then(
+        (m) => m.DepthChartComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "equipment",
+    loadComponent: () =>
+      import("../../features/equipment/equipment.component").then(
+        (m) => m.EquipmentComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "officials",
+    loadComponent: () =>
+      import("../../features/officials/officials.component").then(
+        (m) => m.OfficialsComponent,
       ),
     canActivate: [authGuard],
   },

@@ -15,23 +15,25 @@
 import {
   Directive,
   ElementRef,
-  Input,
-  OnChanges,
+  input,
+  effect,
   OnDestroy,
-  SimpleChanges,
   HostListener,
+  inject,
 } from '@angular/core';
 
 @Directive({
   selector: '[appFocusTrap]',
   standalone: true,
 })
-export class FocusTrapDirective implements OnChanges, OnDestroy {
-  @Input() isActive = false;
-  @Input() returnFocusOnDeactivate = true;
+export class FocusTrapDirective implements OnDestroy {
+  // Angular 21: Use input() signals instead of @Input()
+  isActive = input<boolean>(false);
+  returnFocusOnDeactivate = input<boolean>(true);
 
   private previouslyFocusedElement: HTMLElement | null = null;
   private focusableElements: HTMLElement[] = [];
+  private el = inject(ElementRef<HTMLElement>);
 
   // Selector for all focusable elements
   private readonly FOCUSABLE_SELECTOR = `
@@ -43,16 +45,15 @@ export class FocusTrapDirective implements OnChanges, OnDestroy {
     [tabindex]:not([tabindex="-1"])
   `;
 
-  constructor(private el: ElementRef<HTMLElement>) {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isActive']) {
-      if (this.isActive) {
+  constructor() {
+    // Angular 21: Use effect() for reactive changes instead of OnChanges
+    effect(() => {
+      if (this.isActive()) {
         this.activate();
       } else {
         this.deactivate();
       }
-    }
+    });
   }
 
   ngOnDestroy(): void {
@@ -61,7 +62,7 @@ export class FocusTrapDirective implements OnChanges, OnDestroy {
 
   @HostListener('keydown', ['$event'])
   handleKeydown(event: KeyboardEvent): void {
-    if (!this.isActive) return;
+    if (!this.isActive()) return;
 
     if (event.key === 'Tab') {
       this.handleTabKey(event);
@@ -88,7 +89,7 @@ export class FocusTrapDirective implements OnChanges, OnDestroy {
 
   private deactivate(): void {
     // Return focus to previously focused element
-    if (this.returnFocusOnDeactivate && this.previouslyFocusedElement) {
+    if (this.returnFocusOnDeactivate() && this.previouslyFocusedElement) {
       setTimeout(() => {
         this.previouslyFocusedElement?.focus();
       }, 0);

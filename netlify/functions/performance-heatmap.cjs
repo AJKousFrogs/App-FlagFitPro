@@ -5,7 +5,6 @@
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
-  createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 

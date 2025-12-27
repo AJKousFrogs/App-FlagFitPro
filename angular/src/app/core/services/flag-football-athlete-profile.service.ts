@@ -1139,45 +1139,45 @@ export class FlagFootballAthleteProfileService {
 
     // Score each benchmark
     if (benchmarks.sprint10m) {
-      scores.speed10m = this.scoreBenchmark(
+      scores["speed10m"] = this.scoreBenchmark(
         benchmarks.sprint10m,
         requirements.benchmarks.sprint10m
       );
-      if (scores.speed10m >= 80) strengths.push("Elite acceleration (10m)");
-      if (scores.speed10m < 50) {
+      if (scores["speed10m"] >= 80) strengths.push("Elite acceleration (10m)");
+      if (scores["speed10m"] < 50) {
         weaknesses.push("10m sprint needs improvement");
         priorities.push("Acceleration training");
       }
     }
 
     if (benchmarks.sprint20m) {
-      scores.speed20m = this.scoreBenchmark(
+      scores["speed20m"] = this.scoreBenchmark(
         benchmarks.sprint20m,
         requirements.benchmarks.sprint20m
       );
-      if (scores.speed20m >= 80) strengths.push("Excellent 20m speed");
-      if (scores.speed20m < 50) weaknesses.push("20m sprint needs work");
+      if (scores["speed20m"] >= 80) strengths.push("Excellent 20m speed");
+      if (scores["speed20m"] < 50) weaknesses.push("20m sprint needs work");
     }
 
     if (benchmarks.verticalJump) {
-      scores.power = this.scoreBenchmark(
+      scores["power"] = this.scoreBenchmark(
         benchmarks.verticalJump,
         requirements.benchmarks.verticalJump
       );
-      if (scores.power >= 80) strengths.push("Elite vertical power");
-      if (scores.power < 50) {
+      if (scores["power"] >= 80) strengths.push("Elite vertical power");
+      if (scores["power"] < 50) {
         weaknesses.push("Vertical jump below average");
         priorities.push("Plyometric training");
       }
     }
 
     if (benchmarks.proAgility505) {
-      scores.agility = this.scoreBenchmark(
+      scores["agility"] = this.scoreBenchmark(
         benchmarks.proAgility505,
         requirements.benchmarks.proAgility505
       );
-      if (scores.agility >= 80) strengths.push("Elite change of direction");
-      if (scores.agility < 50) {
+      if (scores["agility"] >= 80) strengths.push("Elite change of direction");
+      if (scores["agility"] < 50) {
         weaknesses.push("Agility needs improvement");
         priorities.push("COD and deceleration training");
       }
@@ -1185,35 +1185,35 @@ export class FlagFootballAthleteProfileService {
 
     if (benchmarks.relativeSquat || profile.relativeStrength) {
       const relSquat = benchmarks.relativeSquat || profile.relativeStrength || 0;
-      scores.strength = this.scoreBenchmark(
+      scores["strength"] = this.scoreBenchmark(
         relSquat,
         requirements.benchmarks.relativeSquat
       );
-      if (scores.strength >= 80) strengths.push("Elite relative strength");
-      if (scores.strength < 50) {
+      if (scores["strength"] >= 80) strengths.push("Elite relative strength");
+      if (scores["strength"] < 50) {
         weaknesses.push("Relative strength below average");
         priorities.push("Strength training (focus on relative, not bulk)");
       }
     }
 
     if (profile.bodyFatPercentage) {
-      scores.bodyComp = this.scoreBenchmark(
+      scores["bodyComp"] = this.scoreBenchmark(
         profile.bodyFatPercentage,
         requirements.benchmarks.bodyFatPercentage
       );
-      if (scores.bodyComp >= 80) strengths.push("Optimal body composition");
-      if (scores.bodyComp < 50) {
+      if (scores["bodyComp"] >= 80) strengths.push("Optimal body composition");
+      if (scores["bodyComp"] < 50) {
         weaknesses.push("Body composition needs attention");
         recommendations.push("Focus on lean mass maintenance, reduce excess body fat");
       }
     }
 
     // Calculate overall scores
-    const speedScore = ((scores.speed10m || 50) + (scores.speed20m || 50)) / 2;
-    const agilityScore = scores.agility || 50;
-    const powerScore = scores.power || 50;
-    const strengthScore = scores.strength || 50;
-    const bodyCompositionScore = scores.bodyComp || 50;
+    const speedScore = ((scores["speed10m"] || 50) + (scores["speed20m"] || 50)) / 2;
+    const agilityScore = scores["agility"] || 50;
+    const powerScore = scores["power"] || 50;
+    const strengthScore = scores["strength"] || 50;
+    const bodyCompositionScore = scores["bodyComp"] || 50;
 
     // Endurance estimation (if repeated sprint data available)
     let enduranceScore = 50;
@@ -1236,7 +1236,7 @@ export class FlagFootballAthleteProfileService {
     );
 
     // Injury risk assessment
-    if (scores.strength && scores.strength < 50) {
+    if (scores["strength"] && scores["strength"] < 50) {
       injuryRisks.push("Low relative strength increases injury risk (Suchomel et al. 2016)");
     }
     if (benchmarks.relativeSquat && benchmarks.relativeSquat < 1.5) {

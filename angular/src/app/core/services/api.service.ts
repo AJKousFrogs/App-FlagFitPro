@@ -332,4 +332,62 @@ export const API_ENDPOINTS = {
     session: (sessionId: string) => `/api/ai/chat/session/${sessionId}`,
     feedback: "/api/ai/feedback",
   },
+  // Attendance endpoints
+  attendance: {
+    events: "/api/attendance/events",
+    createEvent: "/api/attendance/events",
+    eventDetails: (eventId: string) => `/api/attendance/events/${eventId}`,
+    eventAttendance: (eventId: string) => `/api/attendance/events/${eventId}/attendance`,
+    record: "/api/attendance/record",
+    recordBulk: "/api/attendance/record/bulk",
+    playerStats: (playerId: string) => `/api/attendance/stats/player/${playerId}`,
+    teamStats: (teamId: string) => `/api/attendance/stats/team/${teamId}`,
+    absenceRequest: "/api/attendance/absence-request",
+    absenceRequests: "/api/attendance/absence-requests",
+  },
+  // Depth Chart endpoints
+  depthChart: {
+    templates: "/api/depth-chart/templates",
+    templateDetails: (templateId: string) => `/api/depth-chart/templates/${templateId}`,
+    templateHistory: (templateId: string) => `/api/depth-chart/templates/${templateId}/history`,
+    unassigned: (templateId: string) => `/api/depth-chart/templates/${templateId}/unassigned`,
+    entries: "/api/depth-chart/entries",
+    entry: (entryId: string) => `/api/depth-chart/entries/${entryId}`,
+    swap: "/api/depth-chart/entries/swap",
+    initialize: "/api/depth-chart/initialize",
+  },
+  // Equipment endpoints
+  equipment: {
+    items: "/api/equipment/items",
+    item: (itemId: string) => `/api/equipment/items/${itemId}`,
+    itemHistory: (itemId: string) => `/api/equipment/items/${itemId}/history`,
+    assignments: "/api/equipment/assignments",
+    playerAssignments: (playerId: string) => `/api/equipment/player/${playerId}/assignments`,
+    checkout: "/api/equipment/checkout",
+    checkoutBulk: "/api/equipment/checkout/bulk",
+    return: "/api/equipment/return",
+    summary: (teamId: string) => `/api/equipment/summary/${teamId}`,
+    alerts: (teamId: string) => `/api/equipment/alerts/${teamId}`,
+  },
+  // Officials endpoints
+  officials: {
+    list: "/api/officials",
+    details: (officialId: string) => `/api/officials/${officialId}`,
+    games: (officialId: string) => `/api/officials/${officialId}/games`,
+    availability: (officialId: string) => `/api/officials/${officialId}/availability`,
+    available: "/api/officials/available",
+    schedule: "/api/officials/schedule",
+    gameOfficials: (gameId: string) => `/api/officials/game/${gameId}`,
+    assignment: (assignmentId: string) => `/api/officials/assignments/${assignmentId}`,
+    paymentSummary: "/api/officials/payments/summary",
+  },
+  // Push Notification endpoints
+  push: {
+    register: "/api/push/register",
+    unregister: "/api/push/unregister",
+    preferences: "/api/push/preferences",
+    devices: "/api/push/devices",
+    device: (tokenId: string) => `/api/push/devices/${tokenId}`,
+    test: "/api/push/test",
+  },
 };

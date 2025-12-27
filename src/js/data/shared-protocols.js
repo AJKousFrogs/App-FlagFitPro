@@ -82,38 +82,46 @@ export const MORNING_MOBILITY_ROUTINE = {
 /**
  * Universal Warm-Up Protocol
  * Used before EVERY training session
- * 15-20 minutes
+ * 20 minutes - comprehensive protocol to properly prepare the body
  */
 export const UNIVERSAL_WARMUP = {
   title: "Universal Warm-Up (Every Session)",
-  description: "Complete warm-up protocol for all training sessions",
-  duration: "15-20 minutes",
+  description:
+    "Complete 20-minute warm-up protocol for all training sessions. This is NON-NEGOTIABLE for injury prevention and optimal performance.",
+  duration: "20 minutes",
   phases: [
     {
-      title: "Phase 1: General Activation",
-      duration: 5,
-      purpose: "Increase heart rate, body temperature, and neural activation",
+      title: "Phase 1: General Activation & Cardiovascular Prep",
+      duration: 8,
+      purpose:
+        "Increase heart rate, body temperature, and neural activation through sustained cardiovascular work",
       exercises: [
         {
-          name: "Light jog",
-          duration: "2 minutes",
-          intensity: "50-60% effort",
-          cues: ["Relaxed pace", "Focus on breathing", "Warm up gradually"],
-        },
-        {
           name: "Jump rope",
-          duration: "2 minutes",
-          intensity: "Moderate",
-          cues: ["Light on feet", "Relaxed shoulders", "Rhythm focus"],
+          duration: "5 minutes",
+          intensity: "Moderate to moderate-high",
+          variations: [
+            "Basic bounce (2 min)",
+            "Alternating feet (1 min)",
+            "High knees (1 min)",
+            "Double unders or fast singles (1 min)",
+          ],
+          cues: [
+            "Light on feet",
+            "Relaxed shoulders",
+            "Rhythm focus",
+            "Stay on balls of feet",
+            "Breathe steadily",
+          ],
+          benefits: [
+            "Full body warm-up",
+            "Ankle stiffness development",
+            "Coordination",
+            "Cardiovascular activation",
+          ],
         },
         {
-          name: "Dynamic stretching",
-          duration: "1 minute",
-          exercises: ["Arm swings", "Leg swings", "Torso rotations"],
-          cues: ["Controlled movements", "Gradually increase range"],
-        },
-        {
-          name: "Plank",
+          name: "Plank series",
           duration: "3 minutes total",
           breakdown: [
             { variation: "Standard plank", duration: "1.5 minutes" },
@@ -122,128 +130,148 @@ export const UNIVERSAL_WARMUP = {
           ],
           cues: ["Straight body line", "Engaged core", "Control breathing"],
         },
+      ],
+    },
+    {
+      title: "Phase 2: Resistance Band Activation",
+      duration: 5,
+      purpose:
+        "Activate key muscle groups and movement patterns with resistance bands",
+      equipment: ["Light to medium resistance band (loop or long band)"],
+      exercises: [
+        {
+          name: "Band pull-aparts",
+          sets: 2,
+          reps: 15,
+          focus: "Upper back and posterior shoulder activation",
+          cues: [
+            "Arms straight",
+            "Squeeze shoulder blades",
+            "Control the return",
+          ],
+        },
+        {
+          name: "Band external rotations",
+          sets: 2,
+          reps: "12 each arm",
+          focus: "Rotator cuff activation",
+          cues: [
+            "Elbow at 90°",
+            "Elbow pinned to side",
+            "Rotate outward against band",
+          ],
+        },
+        {
+          name: "Band monster walks",
+          sets: 2,
+          reps: "10 steps each direction",
+          focus: "Glute medius and hip stability",
+          cues: [
+            "Band around ankles or above knees",
+            "Athletic stance",
+            "Constant tension",
+            "Controlled steps",
+          ],
+        },
+        {
+          name: "Band squats",
+          sets: 2,
+          reps: 10,
+          focus: "Glute activation with resistance",
+          cues: [
+            "Band above knees",
+            "Push knees out against band",
+            "Full depth",
+            "Chest up",
+          ],
+        },
+        {
+          name: "Band hip flexor march",
+          sets: 2,
+          reps: "10 each leg",
+          focus: "Hip flexor activation for sprint mechanics",
+          cues: [
+            "Band around feet",
+            "Drive knee up against resistance",
+            "Hold at top briefly",
+            "Controlled descent",
+          ],
+        },
+        {
+          name: "Band glute bridges",
+          sets: 2,
+          reps: 10,
+          focus: "Glute activation with hip abduction",
+          cues: [
+            "Band above knees",
+            "Drive hips up",
+            "Push knees out at top",
+            "Squeeze glutes",
+          ],
+        },
+      ],
+    },
+    {
+      title: "Phase 3: Dynamic Stretching & Mobility",
+      duration: 4,
+      purpose: "Prepare joints and muscles through dynamic movement patterns",
+      exercises: [
+        {
+          name: "Dynamic stretching sequence",
+          duration: "2 minutes",
+          exercises: [
+            "Arm circles (forward and backward)",
+            "Leg swings (sagittal and frontal)",
+            "Torso rotations",
+            "Hip circles",
+          ],
+          cues: ["Controlled movements", "Gradually increase range"],
+        },
         {
           name: "Copenhagen Plank",
           duration: "45s each side",
           sets: 1,
           focus: "Adductor and core strength",
           cues: ["Top leg on bench", "Straight body", "Hold position"],
-          notes: ["Advanced exercise", "Critical for injury prevention"],
+          notes: ["Advanced exercise", "Critical for groin injury prevention"],
+        },
+        {
+          name: "World's greatest stretch",
+          reps: "3 each side",
+          focus: "Full body mobility",
+          cues: [
+            "Lunge position",
+            "Elbow to instep",
+            "Rotate and reach up",
+            "Hold each position 3-5s",
+          ],
         },
       ],
     },
     {
-      title: "Phase 2: Lower Body Chain Activation",
-      duration: 10,
-      purpose: "Activate ankle, knee, hip, and quad complex",
-      sections: [
+      title: "Phase 4: Final Movement Prep",
+      duration: 3,
+      purpose: "Final lower body activation and movement preparation",
+      exercises: [
         {
-          title: "Ankle Complex",
-          duration: 2,
-          importance: "Foundation of all movement",
-          exercises: [
-            {
-              name: "Ankle circles",
-              reps: "10 each direction",
-              cues: ["Point toes", "Full circles", "Both ankles"],
-            },
-            {
-              name: "Calf raises",
-              sets: 2,
-              reps: 10,
-              tempo: "2s up, 2s down",
-              cues: ["Full range", "Control descent", "Balance"],
-            },
-            {
-              name: "Tibialis raises",
-              sets: 2,
-              reps: 10,
-              focus: "Anterior lower leg",
-              cues: ["Toes to shins", "Control movement", "Feel the burn"],
-            },
-            {
-              name: "Single-leg balance",
-              duration: "20s each",
-              progression: ["Eyes open", "Eyes closed (advanced)"],
-              cues: ["Stable ankle", "Slight knee bend", "Engage core"],
-            },
-          ],
+          name: "Ankle circles + Calf raises",
+          reps: "10 circles each direction, then 10 calf raises",
+          cues: ["Full range", "Control descent", "Both ankles"],
         },
         {
-          title: "Knee Stability",
-          duration: 2,
-          importance: "Prevent knee injuries",
-          exercises: [
-            {
-              name: "Mini-band walks",
-              sets: 2,
-              reps: 10,
-              directions: ["Lateral", "Forward", "Backward"],
-              cues: ["Athletic stance", "Constant tension", "Controlled steps"],
-            },
-            {
-              name: "Single-leg mini squats",
-              sets: 2,
-              reps: "6 each",
-              cues: ["Knee tracks over toe", "Controlled descent", "Balance"],
-            },
-          ],
+          name: "Walking lunges",
+          reps: "8 each leg",
+          cues: ["Upright torso", "Back knee down", "Control"],
         },
         {
-          title: "Hip Complex",
-          duration: 3,
-          importance: "Power source for all movement",
-          exercises: [
-            {
-              name: "Hip circles",
-              reps: "10 each direction",
-              cues: ["Full range", "Controlled", "Both hips"],
-            },
-            {
-              name: "Leg swings (all directions)",
-              reps: "10 each",
-              variations: ["Sagittal", "Frontal", "Transverse"],
-              cues: ["Relaxed leg", "Increase range gradually"],
-            },
-            {
-              name: "Glute bridges",
-              sets: 2,
-              reps: 10,
-              cues: ["Squeeze glutes", "Full hip extension", "Hold top"],
-            },
-          ],
+          name: "Bodyweight squats",
+          reps: 10,
+          cues: ["Full depth", "Chest up", "Knees out"],
         },
         {
-          title: "Quadriceps Prep",
-          duration: 3,
-          importance: "Prepare for loading",
-          exercises: [
-            {
-              name: "Walking lunges",
-              reps: "10 each leg",
-              cues: ["Upright torso", "Back knee down", "Control"],
-            },
-            {
-              name: "Dynamic quad stretches",
-              duration: "30s each",
-              cues: ["Pull heel to glute", "Stand tall", "Both legs"],
-            },
-            {
-              name: "Bodyweight squats",
-              reps: 10,
-              cues: ["Full depth", "Chest up", "Knees out"],
-            },
-            {
-              name: "Sled push or treadmill",
-              options: [
-                { exercise: "Sled push", distance: "100m" },
-                { exercise: "Treadmill forward", distance: "1km" },
-                { exercise: "Treadmill backpedal", distance: "500m" },
-              ],
-              purpose: "General conditioning warm-up",
-              cues: ["Moderate pace", "Focus on form", "Breathing rhythm"],
-            },
-          ],
+          name: "Single-leg balance",
+          duration: "15s each leg",
+          cues: ["Stable ankle", "Slight knee bend", "Engage core"],
         },
       ],
     },
@@ -320,9 +348,11 @@ export const UNIVERSAL_WARMUP = {
 
   notes: [
     "NEVER skip the warm-up - this is injury prevention",
-    "Takes 15-20 minutes but saves months of injury time",
+    "Takes 20 minutes but saves months of injury time",
+    "The 5-minute jump rope is essential for cardiovascular prep and ankle stiffness",
+    "Resistance band work activates key muscle groups before training",
     "Adjust intensity based on session to follow",
-    "If short on time, minimum is Phase 1 + 2 (15 min)",
+    "If short on time, minimum is Phase 1 + 2 (13 min) - but full protocol is strongly recommended",
   ],
 };
 
@@ -796,8 +826,8 @@ export const SESSION_STRUCTURE = {
     },
     {
       phase: "Warm-Up",
-      duration: "15-20 min",
-      protocol: "Universal Warm-Up (all 3 phases)",
+      duration: "20 min",
+      protocol: "Universal Warm-Up (all 4 phases: Jump rope, Resistance bands, Dynamic stretching, Movement prep)",
       importance: "NON-NEGOTIABLE",
     },
     {

@@ -8,10 +8,6 @@ import {
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
-import { ButtonModule } from "primeng/button";
-import { TagModule } from "primeng/tag";
 import { AthleteDashboardComponent } from "./athlete-dashboard.component";
 import { CoachDashboardComponent } from "./coach-dashboard.component";
 import { AuthService } from "../../core/services/auth.service";
@@ -23,10 +19,6 @@ import { HeaderService } from "../../core/services/header.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
-    ChartModule,
-    ButtonModule,
-    TagModule,
     AthleteDashboardComponent,
     CoachDashboardComponent,
   ],

@@ -268,6 +268,133 @@ export class ContextService {
         },
       ],
     },
+    "/profile": {
+      label: "Profile",
+      icon: "pi-user",
+      parent: "/dashboard",
+      quickActions: [
+        {
+          label: "Edit Profile",
+          icon: "pi-pencil",
+          route: "/settings",
+        },
+        {
+          label: "View Stats",
+          icon: "pi-chart-line",
+          route: "/analytics",
+        },
+        {
+          label: "Achievements",
+          icon: "pi-trophy",
+          route: "/profile",
+        },
+      ],
+    },
+    "/game-tracker": {
+      label: "Game Tracker",
+      icon: "pi-flag",
+      parent: "/dashboard",
+      quickActions: [
+        {
+          label: "New Game",
+          icon: "pi-plus",
+          route: "/game-tracker",
+        },
+        {
+          label: "View Schedule",
+          icon: "pi-calendar",
+          route: "/game-tracker",
+        },
+        {
+          label: "Game Stats",
+          icon: "pi-chart-bar",
+          route: "/analytics",
+        },
+      ],
+    },
+    "/chat": {
+      label: "Chat",
+      icon: "pi-comments",
+      parent: "/dashboard",
+      quickActions: [
+        {
+          label: "New Message",
+          icon: "pi-plus",
+          route: "/chat",
+        },
+        {
+          label: "Team Chat",
+          icon: "pi-users",
+          route: "/chat",
+        },
+      ],
+    },
+    "/community": {
+      label: "Community",
+      icon: "pi-globe",
+      parent: "/dashboard",
+      quickActions: [
+        {
+          label: "Browse Posts",
+          icon: "pi-list",
+          route: "/community",
+        },
+        {
+          label: "Create Post",
+          icon: "pi-plus",
+          route: "/community",
+        },
+        {
+          label: "Events",
+          icon: "pi-calendar",
+          route: "/community",
+        },
+      ],
+    },
+    "/depth-chart": {
+      label: "Depth Chart",
+      icon: "pi-sitemap",
+      parent: "/dashboard",
+      quickActions: [
+        {
+          label: "Edit Chart",
+          icon: "pi-pencil",
+          route: "/depth-chart",
+        },
+        {
+          label: "View Roster",
+          icon: "pi-users",
+          route: "/roster",
+        },
+        {
+          label: "Print Chart",
+          icon: "pi-print",
+          action: () => window.print(),
+        },
+      ],
+    },
+    "/onboarding": {
+      label: "Setup",
+      icon: "pi-user-plus",
+      quickActions: [],
+    },
+    "/exercise-library": {
+      label: "Exercise Library",
+      icon: "pi-book",
+      parent: "/training",
+      quickActions: [
+        {
+          label: "Add Exercise",
+          icon: "pi-plus",
+          route: "/exercise-library",
+        },
+        {
+          label: "Filter by Category",
+          icon: "pi-filter",
+          route: "/exercise-library",
+        },
+      ],
+    },
   };
 
   /**

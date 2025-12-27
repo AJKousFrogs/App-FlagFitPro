@@ -5,16 +5,20 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { Router } from "@angular/router";
 
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { ToastModule } from "primeng/toast";
+import { DialogModule } from "primeng/dialog";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { TrainingBuilderComponent } from "../../shared/components/training-builder/training-builder.component";
+import { WorkoutCalendarComponent, WorkoutEntry } from "../../shared/components/workout-calendar/workout-calendar.component";
+import { RestTimerComponent } from "../../shared/components/rest-timer/rest-timer.component";
 import {
   SwipeGestureDirective,
   SwipeEvent,
@@ -56,9 +60,12 @@ interface Workout {
     TagModule,
     ProgressBarModule,
     ToastModule,
+    DialogModule,
     MainLayoutComponent,
     StatsGridComponent,
     TrainingBuilderComponent,
+    WorkoutCalendarComponent,
+    RestTimerComponent,
     SwipeGestureDirective,
   ],
   template: `
@@ -527,6 +534,7 @@ export class TrainingComponent implements OnInit {
   private toastService = inject(ToastService);
   private headerService = inject(HeaderService);
   private supabaseService = inject(SupabaseService);
+  private router = inject(Router);
 
   userName = signal("Alex");
   stats = signal<StatCard[]>([]);
@@ -677,12 +685,20 @@ export class TrainingComponent implements OnInit {
   }
 
   toggleScheduleView(): void {
-    // Toggle schedule view - implementation pending
+    // Navigate to full schedule view
+    this.router.navigate(['/training/schedule']);
   }
 
   startWorkout(workout: Workout): void {
-    // Start workout - implementation pending
+    // Navigate to workout page with workout context
     this.toastService.info(`Starting ${workout.title}`);
+    this.router.navigate(['/workout'], { 
+      queryParams: { 
+        type: workout.type, 
+        title: workout.title,
+        duration: workout.duration 
+      } 
+    });
   }
 
   onSwipeRight(event: SwipeEvent, workout: Workout): void {

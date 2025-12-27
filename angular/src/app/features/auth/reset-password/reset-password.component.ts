@@ -19,6 +19,7 @@ import { MessageModule } from "primeng/message";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "../../../core/services/toast.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
   selector: "app-reset-password",
@@ -159,6 +160,7 @@ export class ResetPasswordComponent {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private supabaseService = inject(SupabaseService);
+  private logger = inject(LoggerService);
 
   resetForm: FormGroup;
   isLoading = signal(false);
@@ -217,7 +219,7 @@ export class ResetPasswordComponent {
         this.router.navigate(["/login"]);
       }, 2000);
     } catch (error: unknown) {
-      console.error("Password reset error:", error);
+      this.logger.error("Password reset error:", error);
       // Don't reveal if email exists or not for security
       this.toastService.success(
         "If an account exists with this email, you will receive a reset link."

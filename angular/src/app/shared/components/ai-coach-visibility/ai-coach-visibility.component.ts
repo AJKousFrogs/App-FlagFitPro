@@ -20,6 +20,7 @@ import { SkeletonModule } from "primeng/skeleton";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 /**
  * AI Recommendation from the backend
@@ -672,6 +673,7 @@ export class AiCoachVisibilityComponent implements OnInit {
   private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
+  private logger = inject(LoggerService);
 
   @Input() teamId?: string;
 
@@ -712,7 +714,7 @@ export class AiCoachVisibilityComponent implements OnInit {
         this.loadHighRiskAlerts(),
       ]);
     } catch (error) {
-      console.error("Error loading AI coach visibility data:", error);
+      this.logger.error("Error loading AI coach visibility data:", error);
     } finally {
       this.loading.set(false);
     }
@@ -758,7 +760,7 @@ export class AiCoachVisibilityComponent implements OnInit {
       const { data, error } = await query;
 
       if (error) {
-        console.warn("Error loading recommendations:", error);
+        this.logger.warn("Error loading recommendations:", error);
         return;
       }
 
@@ -783,7 +785,7 @@ export class AiCoachVisibilityComponent implements OnInit {
         this.recommendations.set([]);
       }
     } catch (error) {
-      console.error("Error loading recommendations:", error);
+      this.logger.error("Error loading recommendations:", error);
       this.recommendations.set([]);
     }
   }
@@ -818,7 +820,7 @@ export class AiCoachVisibilityComponent implements OnInit {
       const { data, error } = await query;
 
       if (error) {
-        console.warn("Error loading alerts:", error);
+        this.logger.warn("Error loading alerts:", error);
         return;
       }
 
@@ -842,7 +844,7 @@ export class AiCoachVisibilityComponent implements OnInit {
         this.highRiskAlerts.set([]);
       }
     } catch (error) {
-      console.error("Error loading alerts:", error);
+      this.logger.error("Error loading alerts:", error);
       this.highRiskAlerts.set([]);
     }
   }
@@ -899,7 +901,7 @@ export class AiCoachVisibilityComponent implements OnInit {
 
       this.toastService.success("Note saved successfully");
     } catch (error) {
-      console.error("Error saving note:", error);
+      this.logger.error("Error saving note:", error);
       this.toastService.error("Failed to save note");
     }
 
@@ -947,7 +949,7 @@ export class AiCoachVisibilityComponent implements OnInit {
 
       this.toastService.success("Recommendation overridden");
     } catch (error) {
-      console.error("Error overriding recommendation:", error);
+      this.logger.error("Error overriding recommendation:", error);
       this.toastService.error("Failed to override recommendation");
     }
 
@@ -971,7 +973,7 @@ export class AiCoachVisibilityComponent implements OnInit {
         this.highRiskAlerts.set([...alerts]);
       }
     } catch (error) {
-      console.error("Error marking as viewed:", error);
+      this.logger.error("Error marking as viewed:", error);
     }
   }
 

@@ -19,21 +19,32 @@ export const QB_ENHANCED_WARMUP = {
 
   phases: [
     {
-      title: "Phase 1: General Activation",
-      duration: 8,
-      purpose: "Increase body temperature and activate nervous system",
+      title: "Phase 1: Cardiovascular Prep & Core",
+      duration: 10,
+      purpose: "Increase body temperature, activate nervous system, and build core stability",
       exercises: [
         {
-          name: "Light jog",
-          duration: "2 minutes",
-          intensity: "50-60% effort",
-          cues: ["Relaxed pace", "Focus on breathing", "Gradual warm-up"],
+          name: "Jump rope",
+          duration: "5 minutes",
+          intensity: "Moderate to moderate-high",
+          variations: [
+            "Basic bounce (2 min)",
+            "Alternating feet (1 min)",
+            "High knees (1 min)",
+            "Fast singles (1 min)",
+          ],
+          focus: "Coordination and footwork",
+          cues: ["Light on feet", "Relaxed shoulders", "Rhythm", "Stay on balls of feet"],
         },
         {
-          name: "Jump rope",
-          duration: "2 minutes",
-          focus: "Coordination and footwork",
-          cues: ["Light on feet", "Relaxed shoulders", "Rhythm"],
+          name: "Plank series",
+          duration: "3 minutes total",
+          breakdown: [
+            "Standard plank - 1.5 minutes",
+            "Right side plank - 45s",
+            "Left side plank - 45s",
+          ],
+          cues: ["Straight body line", "Engaged core", "Control breathing"],
         },
         {
           name: "Arm circles (progressive)",
@@ -50,12 +61,6 @@ export const QB_ENHANCED_WARMUP = {
             "Control movement",
             "Both directions",
           ],
-        },
-        {
-          name: "Dynamic stretching",
-          duration: "2 minutes",
-          exercises: ["Arm swings", "Torso rotations", "Leg swings"],
-          cues: ["Controlled movements", "Full range gradually"],
         },
       ],
     },

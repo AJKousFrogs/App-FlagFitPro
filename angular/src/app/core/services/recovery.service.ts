@@ -35,6 +35,11 @@ export interface RecoveryProtocol {
   studyCount: number;
   benefits: string[];
   steps: ProtocolStep[];
+  type?: string;
+  equipment?: string[];
+  targetMuscles?: string[];
+  intensity?: string;
+  icon?: string;
 }
 
 export interface ProtocolStep {
@@ -407,11 +412,15 @@ export class RecoveryService {
         return data.map((p) => ({
           id: p.id,
           name: p.name,
-          type: p.type || "active",
-          duration: p.duration || 20,
           description: p.description || "",
+          category: p.category || "General",
+          duration: p.duration || 20,
+          priority: (p.priority as "high" | "medium" | "low") || "medium",
+          evidenceLevel: p.evidence_level || "Moderate",
+          studyCount: p.study_count || 0,
           benefits: p.benefits || [],
           steps: p.steps || [],
+          type: p.type || "active",
           equipment: p.equipment || [],
           targetMuscles: p.target_muscles || [],
           intensity: p.intensity || "low",

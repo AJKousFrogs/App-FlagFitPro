@@ -30,10 +30,18 @@ import { MessageService } from 'primeng/api';
 export interface ToastOptions {
   severity?: 'success' | 'info' | 'warn' | 'error';
   summary?: string;
-  detail: string;
+  detail?: string;
   life?: number;
   sticky?: boolean;
   closable?: boolean;
+}
+
+/**
+ * Options that can be passed as second argument to toast methods
+ */
+export interface ToastMethodOptions {
+  life?: number;
+  sticky?: boolean;
 }
 
 @Injectable({
@@ -45,61 +53,90 @@ export class ToastService {
   /**
    * Show a success notification
    * @param detail - The message to display
-   * @param summary - Optional summary (defaults to 'Success')
+   * @param summaryOrOptions - Optional summary string or options object
    * @param life - Optional lifetime in ms (defaults to 3000)
    */
-  success(detail: string, summary = 'Success', life = 3000): void {
+  success(detail: string, summaryOrOptions?: string | ToastMethodOptions, life = 3000): void {
+    const { summary, lifeMs, sticky } = this.parseArgs(summaryOrOptions, 'Success', life);
     this.messageService.add({
       severity: 'success',
       summary,
       detail,
-      life,
+      life: lifeMs,
+      sticky,
     });
   }
 
   /**
    * Show an error notification
    * @param detail - The error message to display
-   * @param summary - Optional summary (defaults to 'Error')
+   * @param summaryOrOptions - Optional summary string or options object
    * @param life - Optional lifetime in ms (defaults to 5000)
    */
-  error(detail: string, summary = 'Error', life = 5000): void {
+  error(detail: string, summaryOrOptions?: string | ToastMethodOptions, life = 5000): void {
+    const { summary, lifeMs, sticky } = this.parseArgs(summaryOrOptions, 'Error', life);
     this.messageService.add({
       severity: 'error',
       summary,
       detail,
-      life,
+      life: lifeMs,
+      sticky,
     });
   }
 
   /**
    * Show a warning notification
    * @param detail - The warning message to display
-   * @param summary - Optional summary (defaults to 'Warning')
+   * @param summaryOrOptions - Optional summary string or options object
    * @param life - Optional lifetime in ms (defaults to 4000)
    */
-  warn(detail: string, summary = 'Warning', life = 4000): void {
+  warn(detail: string, summaryOrOptions?: string | ToastMethodOptions, life = 4000): void {
+    const { summary, lifeMs, sticky } = this.parseArgs(summaryOrOptions, 'Warning', life);
     this.messageService.add({
       severity: 'warn',
       summary,
       detail,
-      life,
+      life: lifeMs,
+      sticky,
     });
   }
 
   /**
    * Show an info notification
    * @param detail - The info message to display
-   * @param summary - Optional summary (defaults to 'Info')
+   * @param summaryOrOptions - Optional summary string or options object
    * @param life - Optional lifetime in ms (defaults to 3000)
    */
-  info(detail: string, summary = 'Info', life = 3000): void {
+  info(detail: string, summaryOrOptions?: string | ToastMethodOptions, life = 3000): void {
+    const { summary, lifeMs, sticky } = this.parseArgs(summaryOrOptions, 'Info', life);
     this.messageService.add({
       severity: 'info',
       summary,
       detail,
-      life,
+      life: lifeMs,
+      sticky,
     });
+  }
+
+  /**
+   * Parse arguments to support both old and new API signatures
+   */
+  private parseArgs(
+    summaryOrOptions: string | ToastMethodOptions | undefined,
+    defaultSummary: string,
+    defaultLife: number
+  ): { summary: string; lifeMs: number; sticky?: boolean } {
+    if (typeof summaryOrOptions === 'string') {
+      return { summary: summaryOrOptions, lifeMs: defaultLife };
+    }
+    if (typeof summaryOrOptions === 'object') {
+      return {
+        summary: defaultSummary,
+        lifeMs: summaryOrOptions.life ?? defaultLife,
+        sticky: summaryOrOptions.sticky,
+      };
+    }
+    return { summary: defaultSummary, lifeMs: defaultLife };
   }
 
   /**

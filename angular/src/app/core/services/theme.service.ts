@@ -1,0 +1,297 @@
+/**
+ * Theme Service
+ *
+ * Centralized theme management for the application.
+ * Handles light/dark mode toggle, system preference detection,
+ * and persistence to localStorage and Supabase.
+ */
+
+import { Injectable, signal, effect, computed, inject } from "@angular/core";
+import { SupabaseService } from "./supabase.service";
+import { LoggerService } from "./logger.service";
+
+export type ThemeMode = "light" | "dark" | "auto";
+
+interface ThemeState {
+  mode: ThemeMode;
+  resolvedTheme: "light" | "dark";
+}
+
+const THEME_STORAGE_KEY = "flagfit_theme";
+const THEME_META_COLOR_LIGHT = "#3B82F6";
+const THEME_META_COLOR_DARK = "#1e293b";
+
+@Injectable({
+  providedIn: "root",
+})
+export class ThemeService {
+  private supabase = inject(SupabaseService);
+  private logger = inject(LoggerService);
+
+  // State signals
+  private _mode = signal<ThemeMode>("auto");
+  private _systemPreference = signal<"light" | "dark">("light");
+
+  // Public computed signals
+  mode = this._mode.asReadonly();
+  
+  resolvedTheme = computed<"light" | "dark">(() => {
+    const mode = this._mode();
+    if (mode === "auto") {
+      return this._systemPreference();
+    }
+    return mode;
+  });
+
+  isDark = computed(() => this.resolvedTheme() === "dark");
+  isLight = computed(() => this.resolvedTheme() === "light");
+
+  // Media query for system preference
+  private mediaQuery: MediaQueryList | null = null;
+
+  constructor() {
+    // Initialize on client side only
+    if (typeof window !== "undefined") {
+      // Disable transitions during initial load
+      document.documentElement.classList.add("no-transitions");
+      
+      this.initializeSystemPreference();
+      this.loadSavedPreference();
+      
+      // Apply theme on changes
+      effect(() => {
+        const theme = this.resolvedTheme();
+        this.applyTheme(theme);
+      });
+      
+      // Re-enable transitions after initial load
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.documentElement.classList.remove("no-transitions");
+        });
+      });
+    }
+  }
+
+  /**
+   * Set theme mode
+   */
+  setMode(mode: ThemeMode): void {
+    this._mode.set(mode);
+    this.savePreference(mode);
+    this.logger.debug(`[ThemeService] Theme mode set to: ${mode}`);
+  }
+
+  /**
+   * Toggle between light and dark (ignores auto)
+   */
+  toggle(): void {
+    const current = this.resolvedTheme();
+    const newMode = current === "dark" ? "light" : "dark";
+    this.setMode(newMode);
+  }
+
+  /**
+   * Cycle through modes: light -> dark -> auto -> light
+   */
+  cycleMode(): void {
+    const current = this._mode();
+    const modes: ThemeMode[] = ["light", "dark", "auto"];
+    const currentIndex = modes.indexOf(current);
+    const nextIndex = (currentIndex + 1) % modes.length;
+    this.setMode(modes[nextIndex]);
+  }
+
+  /**
+   * Initialize system preference detection
+   */
+  private initializeSystemPreference(): void {
+    if (typeof window === "undefined" || !window.matchMedia) {
+      return;
+    }
+
+    this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    this._systemPreference.set(this.mediaQuery.matches ? "dark" : "light");
+
+    // Listen for system preference changes
+    const handler = (e: MediaQueryListEvent) => {
+      this._systemPreference.set(e.matches ? "dark" : "light");
+      this.logger.debug(`[ThemeService] System preference changed to: ${e.matches ? "dark" : "light"}`);
+    };
+
+    // Use addEventListener for modern browsers
+    if (this.mediaQuery.addEventListener) {
+      this.mediaQuery.addEventListener("change", handler);
+    } else {
+      // Fallback for older browsers
+      this.mediaQuery.addListener(handler);
+    }
+  }
+
+  /**
+   * Load saved preference from localStorage
+   */
+  private loadSavedPreference(): void {
+    try {
+      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      if (saved && ["light", "dark", "auto"].includes(saved)) {
+        this._mode.set(saved as ThemeMode);
+        this.logger.debug(`[ThemeService] Loaded saved theme: ${saved}`);
+      }
+    } catch (error) {
+      this.logger.warn("[ThemeService] Failed to load saved theme preference");
+    }
+  }
+
+  /**
+   * Save preference to localStorage and optionally to Supabase
+   */
+  private savePreference(mode: ThemeMode): void {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, mode);
+      
+      // Also save to Supabase if user is authenticated
+      this.saveToSupabase(mode);
+    } catch (error) {
+      this.logger.warn("[ThemeService] Failed to save theme preference");
+    }
+  }
+
+  /**
+   * Save preference to Supabase user settings
+   */
+  private async saveToSupabase(mode: ThemeMode): Promise<void> {
+    try {
+      const user = this.supabase.currentUser();
+      if (!user) return;
+
+      const { error } = await this.supabase.client
+        .from("user_settings")
+        .upsert({
+          user_id: user.id,
+          theme: mode,
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: "user_id",
+        });
+
+      if (error) {
+        this.logger.debug("[ThemeService] Could not save theme to Supabase:", error.message);
+      }
+    } catch (error) {
+      // Silently fail - localStorage is the primary storage
+    }
+  }
+
+  /**
+   * Load preference from Supabase (call after auth)
+   */
+  async loadFromSupabase(): Promise<void> {
+    try {
+      const user = this.supabase.currentUser();
+      if (!user) return;
+
+      const { data, error } = await this.supabase.client
+        .from("user_settings")
+        .select("theme")
+        .eq("user_id", user.id)
+        .single();
+
+      if (data?.theme && ["light", "dark", "auto"].includes(data.theme)) {
+        this._mode.set(data.theme as ThemeMode);
+        localStorage.setItem(THEME_STORAGE_KEY, data.theme);
+        this.logger.debug(`[ThemeService] Loaded theme from Supabase: ${data.theme}`);
+      }
+    } catch (error) {
+      // Silently fail - localStorage preference is used
+    }
+  }
+
+  /**
+   * Apply theme to DOM
+   */
+  private applyTheme(theme: "light" | "dark"): void {
+    if (typeof document === "undefined") return;
+
+    const root = document.documentElement;
+    const body = document.body;
+
+    // Set data-theme attribute (used by CSS)
+    root.setAttribute("data-theme", theme);
+    body.setAttribute("data-theme", theme);
+
+    // Also set class for backwards compatibility
+    body.classList.remove("light-theme", "dark-theme");
+    body.classList.add(`${theme}-theme`);
+
+    // Update meta theme-color for mobile browsers
+    this.updateMetaThemeColor(theme);
+
+    // Update PrimeNG theme
+    this.updatePrimeNGTheme(theme);
+
+    this.logger.debug(`[ThemeService] Applied theme: ${theme}`);
+  }
+
+  /**
+   * Update meta theme-color for mobile browser chrome
+   */
+  private updateMetaThemeColor(theme: "light" | "dark"): void {
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute(
+        "content",
+        theme === "dark" ? THEME_META_COLOR_DARK : THEME_META_COLOR_LIGHT
+      );
+    }
+  }
+
+  /**
+   * Update PrimeNG theme dynamically
+   */
+  private updatePrimeNGTheme(theme: "light" | "dark"): void {
+    // PrimeNG 21 uses CSS variables, so the data-theme attribute should handle it
+    // But we can also update specific PrimeNG surface variables if needed
+    const root = document.documentElement;
+    
+    if (theme === "dark") {
+      root.style.setProperty("--p-surface-0", "#171717");
+      root.style.setProperty("--p-surface-50", "#1f1f1f");
+      root.style.setProperty("--p-surface-100", "#262626");
+      root.style.setProperty("--p-surface-200", "#333333");
+      root.style.setProperty("--p-surface-300", "#404040");
+      root.style.setProperty("--p-surface-400", "#525252");
+      root.style.setProperty("--p-surface-500", "#737373");
+      root.style.setProperty("--p-surface-600", "#a3a3a3");
+      root.style.setProperty("--p-surface-700", "#d4d4d4");
+      root.style.setProperty("--p-surface-800", "#e5e5e5");
+      root.style.setProperty("--p-surface-900", "#f5f5f5");
+      root.style.setProperty("--p-text-color", "#ffffff");
+      root.style.setProperty("--p-text-color-secondary", "#a3a3a3");
+    } else {
+      root.style.setProperty("--p-surface-0", "#ffffff");
+      root.style.setProperty("--p-surface-50", "#f8faf9");
+      root.style.setProperty("--p-surface-100", "#f1f5f4");
+      root.style.setProperty("--p-surface-200", "#e2e8f0");
+      root.style.setProperty("--p-surface-300", "#cbd5e1");
+      root.style.setProperty("--p-surface-400", "#94a3b8");
+      root.style.setProperty("--p-surface-500", "#64748b");
+      root.style.setProperty("--p-surface-600", "#475569");
+      root.style.setProperty("--p-surface-700", "#334155");
+      root.style.setProperty("--p-surface-800", "#1e293b");
+      root.style.setProperty("--p-surface-900", "#0f172a");
+      root.style.setProperty("--p-text-color", "#0f172a");
+      root.style.setProperty("--p-text-color-secondary", "#64748b");
+    }
+  }
+
+  /**
+   * Get current theme state for debugging
+   */
+  getState(): ThemeState {
+    return {
+      mode: this._mode(),
+      resolvedTheme: this.resolvedTheme(),
+    };
+  }
+}

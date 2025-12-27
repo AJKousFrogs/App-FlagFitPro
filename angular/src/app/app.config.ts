@@ -11,6 +11,7 @@ import {
   withPreloading,
   withDebugTracing,
 } from "@angular/router";
+import { provideServiceWorker } from "@angular/service-worker";
 // Removed provideAnimations() - PrimeNG v21 uses CSS animations (80+ KB bundle savings)
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { MessageService } from "primeng/api";
@@ -62,5 +63,10 @@ export const appConfig: ApplicationConfig = {
     // Error tracking and monitoring (Sentry integration)
     ErrorTrackingService,
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    // Service Worker for PWA support (offline caching, push notifications)
+    provideServiceWorker("ngsw-worker.js", {
+      enabled: !isDevMode(),
+      registrationStrategy: "registerWhenStable:30000", // Register after app is stable or 30s
+    }),
   ],
 };

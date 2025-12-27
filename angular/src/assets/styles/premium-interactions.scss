@@ -1,0 +1,1072 @@
+/* ================================================================
+   FLAGFIT PRO - PREMIUM INTERACTIONS & ANIMATIONS
+   Advanced hover effects, micro-interactions, and motion design
+   ================================================================
+   
+   Angular 21 + PrimeNG 21 Premium UX Enhancement
+   
+   Features:
+   - GPU-accelerated CSS animations
+   - Micro-interactions for delightful UX
+   - Hover effects with proper touch device handling
+   - Reduced motion support
+   - Dark mode compatible
+   ================================================================ */
+
+/* ================================================================
+   CSS CUSTOM PROPERTIES - ANIMATION TOKENS
+   ================================================================ */
+
+:root {
+  /* Animation Durations */
+  --anim-instant: 100ms;
+  --anim-fast: 150ms;
+  --anim-normal: 200ms;
+  --anim-slow: 300ms;
+  --anim-slower: 400ms;
+  --anim-slowest: 500ms;
+  
+  /* Premium Easing Functions */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-micro-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Stagger Delays */
+  --stagger-fast: 50ms;
+  --stagger-normal: 75ms;
+  --stagger-slow: 100ms;
+}
+
+/* ================================================================
+   HOVER LIFT EFFECT
+   Premium card and button lift on hover
+   ================================================================ */
+
+.hover-lift {
+  transition: transform var(--anim-normal) var(--ease-micro-bounce),
+              box-shadow var(--anim-normal) var(--ease-smooth);
+  will-change: transform, box-shadow;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 10px 40px -10px rgba(0, 0, 0, 0.15),
+      0 4px 15px -5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .hover-lift:active {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 5px 20px -5px rgba(0, 0, 0, 0.12),
+      0 2px 8px -3px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* Subtle lift variant */
+.hover-lift-subtle {
+  transition: transform var(--anim-fast) var(--ease-smooth),
+              box-shadow var(--anim-fast) var(--ease-smooth);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift-subtle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* ================================================================
+   HOVER GLOW EFFECT
+   Subtle glow on hover for interactive elements
+   ================================================================ */
+
+.hover-glow {
+  position: relative;
+  transition: all var(--anim-normal) var(--ease-smooth);
+}
+
+.hover-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity var(--anim-normal) var(--ease-smooth);
+  pointer-events: none;
+  box-shadow: 0 0 30px rgba(var(--ds-primary-green-rgb), 0.3);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-glow:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Primary glow variant */
+.hover-glow-primary::after {
+  box-shadow: 0 0 30px rgba(var(--ds-primary-green-rgb), 0.4);
+}
+
+/* Success glow variant */
+.hover-glow-success::after {
+  box-shadow: 0 0 30px rgba(var(--primitive-success-500-rgb), 0.4);
+}
+
+/* Error glow variant */
+.hover-glow-error::after {
+  box-shadow: 0 0 30px rgba(var(--primitive-error-500-rgb), 0.4);
+}
+
+/* ================================================================
+   HOVER SCALE EFFECT
+   Subtle scale on hover for buttons and icons
+   ================================================================ */
+
+.hover-scale {
+  transition: transform var(--anim-fast) var(--ease-micro-bounce);
+  will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+  
+  .hover-scale:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Subtle scale variant */
+.hover-scale-subtle {
+  transition: transform var(--anim-fast) var(--ease-smooth);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-scale-subtle:hover {
+    transform: scale(1.02);
+  }
+}
+
+/* ================================================================
+   HOVER SHINE EFFECT
+   Premium shine sweep effect on hover
+   ================================================================ */
+
+.hover-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.hover-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
+  transition: left var(--anim-slower) var(--ease-out-quart);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-shine:hover::before {
+    left: 100%;
+  }
+}
+
+/* ================================================================
+   HOVER BORDER EFFECT
+   Animated border on hover
+   ================================================================ */
+
+.hover-border {
+  position: relative;
+  transition: border-color var(--anim-normal) var(--ease-smooth);
+}
+
+.hover-border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ds-primary-green);
+  border-radius: inherit;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: all var(--anim-normal) var(--ease-micro-bounce);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-border:hover::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ================================================================
+   PRESS EFFECT
+   Tactile press feedback for buttons
+   ================================================================ */
+
+.press-effect {
+  transition: transform var(--anim-instant) var(--ease-smooth);
+  will-change: transform;
+}
+
+.press-effect:active {
+  transform: scale(0.97);
+}
+
+/* Touch device optimization */
+@media (hover: none) and (pointer: coarse) {
+  .press-effect:active {
+    transform: scale(0.95);
+  }
+}
+
+/* ================================================================
+   RIPPLE EFFECT
+   Material-style ripple on click
+   ================================================================ */
+
+.ripple {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  padding-top: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--ds-primary-green-rgb), 0.3) 0%,
+    transparent 70%
+  );
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ripple:active::after {
+  animation: ripple-effect 0.6s var(--ease-out-expo);
+}
+
+@keyframes ripple-effect {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* White ripple for dark backgrounds */
+.ripple-white::after {
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.4) 0%,
+    transparent 70%
+  );
+}
+
+/* ================================================================
+   MAGNETIC HOVER EFFECT
+   Subtle magnetic pull effect on hover
+   ================================================================ */
+
+.magnetic {
+  transition: transform var(--anim-fast) var(--ease-out-expo);
+  will-change: transform;
+}
+
+/* ================================================================
+   FOCUS RING ANIMATIONS
+   Premium focus states for accessibility
+   ================================================================ */
+
+.focus-ring {
+  outline: none;
+  position: relative;
+}
+
+.focus-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid var(--ds-primary-green);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all var(--anim-fast) var(--ease-micro-bounce);
+  pointer-events: none;
+}
+
+.focus-ring:focus-visible::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ================================================================
+   LOADING ANIMATIONS
+   Premium loading states
+   ================================================================ */
+
+/* Skeleton pulse */
+.skeleton-pulse {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    var(--surface-secondary) 25%,
+    var(--surface-tertiary) 50%,
+    var(--surface-secondary) 75%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Shimmer effect */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Spinner */
+.spinner-rotate {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pulsing dot */
+.pulse-dot {
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+}
+
+/* ================================================================
+   ENTRANCE ANIMATIONS
+   Page and component entrance effects
+   ================================================================ */
+
+/* Fade in */
+.animate-fade-in {
+  animation: fade-in var(--anim-slow) var(--ease-out-expo) forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade up */
+.animate-fade-up {
+  animation: fade-up var(--anim-slow) var(--ease-micro-bounce) forwards;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade down */
+.animate-fade-down {
+  animation: fade-down var(--anim-slow) var(--ease-micro-bounce) forwards;
+}
+
+@keyframes fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade left */
+.animate-fade-left {
+  animation: fade-left var(--anim-slow) var(--ease-micro-bounce) forwards;
+}
+
+@keyframes fade-left {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade right */
+.animate-fade-right {
+  animation: fade-right var(--anim-slow) var(--ease-micro-bounce) forwards;
+}
+
+@keyframes fade-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale in */
+.animate-scale-in {
+  animation: scale-in var(--anim-slow) var(--ease-micro-bounce) forwards;
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pop in */
+.animate-pop-in {
+  animation: pop-in var(--anim-slow) var(--ease-overshoot) forwards;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Bounce in */
+.animate-bounce-in {
+  animation: bounce-in var(--anim-slowest) var(--ease-bounce) forwards;
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ================================================================
+   STAGGER ANIMATIONS
+   Cascading entrance effects for lists
+   ================================================================ */
+
+.stagger-children > * {
+  opacity: 0;
+  animation: fade-up var(--anim-slow) var(--ease-micro-bounce) forwards;
+}
+
+/* Generate stagger delays */
+@for $i from 1 through 20 {
+  .stagger-children > *:nth-child(#{$i}) {
+    animation-delay: calc(#{$i - 1} * var(--stagger-normal));
+  }
+}
+
+/* Fast stagger variant */
+.stagger-children-fast > * {
+  opacity: 0;
+  animation: fade-up var(--anim-slow) var(--ease-micro-bounce) forwards;
+}
+
+@for $i from 1 through 20 {
+  .stagger-children-fast > *:nth-child(#{$i}) {
+    animation-delay: calc(#{$i - 1} * var(--stagger-fast));
+  }
+}
+
+/* Slow stagger variant */
+.stagger-children-slow > * {
+  opacity: 0;
+  animation: fade-up var(--anim-slow) var(--ease-micro-bounce) forwards;
+}
+
+@for $i from 1 through 20 {
+  .stagger-children-slow > *:nth-child(#{$i}) {
+    animation-delay: calc(#{$i - 1} * var(--stagger-slow));
+  }
+}
+
+/* ================================================================
+   ATTENTION ANIMATIONS
+   Animations to draw user attention
+   ================================================================ */
+
+/* Pulse */
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Heartbeat */
+.animate-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.15);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.15);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
+/* Shake */
+.animate-shake {
+  animation: shake var(--anim-slower) ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+/* Wiggle */
+.animate-wiggle {
+  animation: wiggle var(--anim-slow) ease-in-out;
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+}
+
+/* Bounce */
+.animate-bounce {
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Ping (notification indicator) */
+.animate-ping {
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* ================================================================
+   HIGHLIGHT ANIMATIONS
+   For emphasizing updated content
+   ================================================================ */
+
+.animate-highlight {
+  animation: highlight var(--anim-slowest) ease-out;
+}
+
+@keyframes highlight {
+  0% {
+    background-color: transparent;
+  }
+  30% {
+    background-color: rgba(var(--ds-primary-green-rgb), 0.2);
+  }
+  70% {
+    background-color: rgba(var(--ds-primary-green-rgb), 0.2);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* Success highlight */
+.animate-highlight-success {
+  animation: highlight-success var(--anim-slowest) ease-out;
+}
+
+@keyframes highlight-success {
+  0%, 100% {
+    background-color: transparent;
+  }
+  30%, 70% {
+    background-color: rgba(var(--primitive-success-500-rgb), 0.2);
+  }
+}
+
+/* Error highlight */
+.animate-highlight-error {
+  animation: highlight-error var(--anim-slowest) ease-out;
+}
+
+@keyframes highlight-error {
+  0%, 100% {
+    background-color: transparent;
+  }
+  30%, 70% {
+    background-color: rgba(var(--primitive-error-500-rgb), 0.2);
+  }
+}
+
+/* ================================================================
+   PRIMENG COMPONENT ENHANCEMENTS
+   Premium animations for PrimeNG components
+   ================================================================ */
+
+/* Enhanced PrimeNG Button */
+:host ::ng-deep .p-button,
+.p-button {
+  transition: 
+    transform var(--anim-fast) var(--ease-micro-bounce),
+    box-shadow var(--anim-fast) var(--ease-smooth),
+    background-color var(--anim-fast) var(--ease-smooth),
+    border-color var(--anim-fast) var(--ease-smooth);
+  will-change: transform, box-shadow;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :host ::ng-deep .p-button:hover:not(:disabled),
+  .p-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+:host ::ng-deep .p-button:active:not(:disabled),
+.p-button:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Enhanced PrimeNG Card */
+:host ::ng-deep .p-card,
+.p-card {
+  transition: 
+    transform var(--anim-normal) var(--ease-micro-bounce),
+    box-shadow var(--anim-normal) var(--ease-smooth);
+  will-change: transform, box-shadow;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :host ::ng-deep .p-card:hover,
+  .p-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Enhanced PrimeNG Dialog */
+:host ::ng-deep .p-dialog,
+.p-dialog {
+  animation: dialog-enter var(--anim-slow) var(--ease-micro-bounce);
+}
+
+@keyframes dialog-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+:host ::ng-deep .p-dialog-mask,
+.p-dialog-mask {
+  animation: backdrop-fade var(--anim-normal) var(--ease-smooth);
+}
+
+@keyframes backdrop-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Enhanced PrimeNG Toast */
+:host ::ng-deep .p-toast-message,
+.p-toast-message {
+  animation: toast-enter var(--anim-slow) var(--ease-micro-bounce);
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Enhanced PrimeNG Menu */
+:host ::ng-deep .p-menu,
+.p-menu {
+  animation: menu-enter var(--anim-normal) var(--ease-micro-bounce);
+  transform-origin: top left;
+}
+
+@keyframes menu-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Enhanced PrimeNG Menu Items */
+:host ::ng-deep .p-menuitem-link,
+.p-menuitem-link {
+  transition: 
+    background-color var(--anim-fast) var(--ease-smooth),
+    color var(--anim-fast) var(--ease-smooth),
+    padding-left var(--anim-fast) var(--ease-smooth);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :host ::ng-deep .p-menuitem-link:hover,
+  .p-menuitem-link:hover {
+    padding-left: calc(var(--space-4) + 4px);
+  }
+}
+
+/* Enhanced PrimeNG Dropdown */
+:host ::ng-deep .p-dropdown-panel,
+.p-dropdown-panel {
+  animation: dropdown-enter var(--anim-normal) var(--ease-micro-bounce);
+  transform-origin: top center;
+}
+
+@keyframes dropdown-enter {
+  from {
+    opacity: 0;
+    transform: scaleY(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* Enhanced PrimeNG Tooltip */
+:host ::ng-deep .p-tooltip,
+.p-tooltip {
+  animation: tooltip-enter var(--anim-fast) var(--ease-micro-bounce);
+}
+
+@keyframes tooltip-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Enhanced PrimeNG DataTable Rows */
+:host ::ng-deep .p-datatable-tbody > tr,
+.p-datatable-tbody > tr {
+  transition: 
+    background-color var(--anim-fast) var(--ease-smooth),
+    transform var(--anim-fast) var(--ease-smooth);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :host ::ng-deep .p-datatable-tbody > tr:hover,
+  .p-datatable-tbody > tr:hover {
+    transform: translateX(4px);
+  }
+}
+
+/* Enhanced PrimeNG Accordion */
+:host ::ng-deep .p-accordion-content,
+.p-accordion-content {
+  animation: accordion-expand var(--anim-slow) var(--ease-micro-bounce);
+}
+
+@keyframes accordion-expand {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced PrimeNG Tab Panel */
+:host ::ng-deep .p-tabview-panel,
+.p-tabview-panel {
+  animation: tab-enter var(--anim-normal) var(--ease-smooth);
+}
+
+@keyframes tab-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Enhanced PrimeNG Sidebar */
+:host ::ng-deep .p-sidebar,
+.p-sidebar {
+  animation: sidebar-enter var(--anim-slow) var(--ease-micro-bounce);
+}
+
+@keyframes sidebar-enter {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+:host ::ng-deep .p-sidebar-right,
+.p-sidebar-right {
+  animation: sidebar-right-enter var(--anim-slow) var(--ease-micro-bounce);
+}
+
+@keyframes sidebar-right-enter {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ================================================================
+   REDUCED MOTION SUPPORT
+   Respect user preferences for reduced motion
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .hover-lift:hover,
+  .hover-scale:hover,
+  .hover-lift-subtle:hover,
+  .hover-scale-subtle:hover {
+    transform: none;
+  }
+  
+  .animate-pulse,
+  .animate-heartbeat,
+  .animate-bounce,
+  .animate-ping,
+  .skeleton-pulse,
+  .shimmer::after,
+  .spinner-rotate,
+  .pulse-dot {
+    animation: none;
+  }
+}
+
+/* ================================================================
+   UTILITY CLASSES
+   Quick access to common animation behaviors
+   ================================================================ */
+
+/* Disable animations temporarily */
+.no-animation {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Force GPU acceleration */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Animation delay utilities */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+.delay-900 { animation-delay: 900ms; }
+.delay-1000 { animation-delay: 1000ms; }
+
+/* Animation duration utilities */
+.duration-fast { animation-duration: var(--anim-fast) !important; }
+.duration-normal { animation-duration: var(--anim-normal) !important; }
+.duration-slow { animation-duration: var(--anim-slow) !important; }
+.duration-slower { animation-duration: var(--anim-slower) !important; }
+
+/* Transition duration utilities */
+.transition-fast { transition-duration: var(--anim-fast) !important; }
+.transition-normal { transition-duration: var(--anim-normal) !important; }
+.transition-slow { transition-duration: var(--anim-slow) !important; }
+.transition-slower { transition-duration: var(--anim-slower) !important; }
+
+/* ================================================================
+   END OF PREMIUM INTERACTIONS
+   ================================================================ */

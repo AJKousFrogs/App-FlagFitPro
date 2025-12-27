@@ -4,12 +4,23 @@ import { Observable, throwError, from, of } from "rxjs";
 import { tap, catchError, map } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 
+export interface UserMetadata {
+  full_name?: string;
+  name?: string;
+  role?: string;
+  team_id?: string;
+  avatar_url?: string;
+  position?: string;
+  [key: string]: unknown;
+}
+
 export interface User {
   id: string;
   email: string;
   name?: string;
   role?: string;
   isSuperadmin?: boolean;
+  user_metadata?: UserMetadata;
 }
 
 export interface LoginCredentials {
@@ -62,11 +73,13 @@ export class AuthService {
       // Use untracked for state updates to prevent effect from tracking its own writes
       untracked(() => {
         if (user) {
+          const metadata = user.user_metadata as UserMetadata | undefined;
           const appUser: User = {
             id: user.id,
             email: user.email ?? "",
-            name: user.user_metadata?.["name"] ?? user.email,
-            role: user.user_metadata?.["role"] ?? "user",
+            name: metadata?.["name"] ?? metadata?.["full_name"] ?? user.email,
+            role: metadata?.["role"] ?? "user",
+            user_metadata: metadata,
           };
           this.currentUser.set(appUser);
           this.isAuthenticated.set(true);

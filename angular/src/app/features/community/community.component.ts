@@ -3,21 +3,28 @@ import {
   OnInit,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
   DestroyRef,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 import { ScrollingModule } from "@angular/cdk/scrolling";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { Textarea } from "primeng/textarea";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
+import { TagModule } from "primeng/tag";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { AnnouncementsBannerComponent } from "../../shared/components/announcements-banner/announcements-banner.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { AuthService } from "../../core/services/auth.service";
+import { TeamNotificationService } from "../../core/services/team-notification.service";
+import { LoggerService } from "../../core/services/logger.service";
 
 interface Post {
   id: string;
@@ -47,14 +54,17 @@ interface Comment {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
+    RouterModule,
     ScrollingModule,
     CardModule,
     ButtonModule,
     Textarea,
     AvatarModule,
     BadgeModule,
+    TagModule,
     MainLayoutComponent,
     PageHeaderComponent,
+    AnnouncementsBannerComponent,
   ],
   template: `
     <app-main-layout>
@@ -63,12 +73,26 @@ interface Comment {
           title="Community Hub"
           subtitle="Connect with the flag football community"
         >
-          <p-button
-            label="Create Post"
-            icon="pi pi-plus"
-            (onClick)="scrollToCreatePost()"
-          ></p-button>
+          <div class="header-actions">
+            <p-button
+              label="Team Chat"
+              icon="pi pi-comments"
+              [outlined]="true"
+              routerLink="/chat"
+            ></p-button>
+            <p-button
+              label="Create Post"
+              icon="pi pi-plus"
+              (onClick)="scrollToCreatePost()"
+            ></p-button>
+          </div>
         </app-page-header>
+
+        <!-- Announcements Banner -->
+        <app-announcements-banner
+          (viewed)="onAnnouncementViewed($event)"
+          (acknowledged)="onAnnouncementAcknowledged($event)"
+        ></app-announcements-banner>
 
         <div class="community-grid">
           <!-- Feed Container -->
@@ -90,16 +114,19 @@ interface Comment {
                     icon="pi pi-image"
                     [text]="true"
                     label="Photo"
+                    (onClick)="attachPhoto()"
                   ></p-button>
                   <p-button
                     icon="pi pi-video"
                     [text]="true"
                     label="Video"
+                    (onClick)="attachVideo()"
                   ></p-button>
                   <p-button
                     icon="pi pi-chart-bar"
                     [text]="true"
                     label="Poll"
+                    (onClick)="createPoll()"
                   ></p-button>
                 </div>
                 <p-button
@@ -176,6 +203,7 @@ interface Comment {
                         icon="pi pi-share-alt"
                         [text]="true"
                         label="Share"
+                        (onClick)="sharePost(post)"
                       >
                       </p-button>
                     </div>
@@ -530,7 +558,10 @@ interface Comment {
 })
 export class CommunityComponent implements OnInit {
   private apiService = inject(ApiService);
+  private authService = inject(AuthService);
+  private notificationService = inject(TeamNotificationService);
   private destroyRef = inject(DestroyRef);
+  private logger = inject(LoggerService);
 
   newPostContent = "";
   posts = signal<Post[]>([]);
@@ -545,8 +576,25 @@ export class CommunityComponent implements OnInit {
     count: number;
   }>>([]);
 
+  // Check if user is a coach
+  readonly isCoach = computed(() => {
+    const user = this.authService.getUser();
+    const metadata = (user as any)?.user_metadata;
+    return metadata?.role === "coach" || metadata?.role === "assistant_coach";
+  });
+
   ngOnInit(): void {
     this.loadCommunityData();
+  }
+
+  // Handle announcement events
+  onAnnouncementViewed(announcementId: string): void {
+    this.logger.info("Announcement viewed:", announcementId);
+    // Navigation to chat handled by router
+  }
+
+  onAnnouncementAcknowledged(announcementId: string): void {
+    this.logger.info("Announcement acknowledged:", announcementId);
   }
 
   loadCommunityData(): void {
@@ -668,5 +716,73 @@ export class CommunityComponent implements OnInit {
 
   trackByTopicName(index: number, topic: { name: string; count: number }): string {
     return topic.name;
+  }
+
+  // Post attachment methods
+  attachPhoto(): void {
+    // Create file input and trigger click
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e: Event) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // For now, add a placeholder to the post content
+        this.newPostContent += `\n[📷 Photo: ${file.name}]`;
+      }
+    };
+    input.click();
+  }
+
+  attachVideo(): void {
+    // Create file input for video
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'video/*';
+    input.onchange = (e: Event) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        this.newPostContent += `\n[🎥 Video: ${file.name}]`;
+      }
+    };
+    input.click();
+  }
+
+  createPoll(): void {
+    // Add poll placeholder to content
+    const pollQuestion = prompt('Enter your poll question:');
+    if (pollQuestion) {
+      const option1 = prompt('Enter option 1:') || 'Yes';
+      const option2 = prompt('Enter option 2:') || 'No';
+      this.newPostContent += `\n\n📊 Poll: ${pollQuestion}\n• ${option1}\n• ${option2}`;
+    }
+  }
+
+  sharePost(post: Post): void {
+    // Use Web Share API if available, otherwise copy to clipboard
+    const shareData = {
+      title: `Post by ${post.author}`,
+      text: post.content,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch(() => {
+        // Fallback to clipboard
+        this.copyToClipboard(post);
+      });
+    } else {
+      this.copyToClipboard(post);
+    }
+  }
+
+  private copyToClipboard(post: Post): void {
+    const text = `${post.author} says: "${post.content}" - Shared from FlagFit Pro`;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Post copied to clipboard!');
+      post.shares += 1;
+    }).catch(() => {
+      alert('Unable to share. Please try again.');
+    });
   }
 }
