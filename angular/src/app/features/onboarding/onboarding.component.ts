@@ -16,7 +16,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { StepsModule } from "primeng/steps";
 import { ToastModule } from "primeng/toast";
-import { CalendarModule } from "primeng/calendar";
+import { DatePicker } from "primeng/datepicker";
 import { CheckboxModule } from "primeng/checkbox";
 import { FileUploadModule } from "primeng/fileupload";
 import { AvatarModule } from "primeng/avatar";
@@ -54,7 +54,7 @@ interface InjuryEntry {
     Select,
     StepsModule,
     ToastModule,
-    CalendarModule,
+    DatePicker,
     CheckboxModule,
     FileUploadModule,
     AvatarModule,
@@ -109,7 +109,7 @@ interface InjuryEntry {
                   
                   <div class="form-group">
                     <label for="dob">Date of Birth <span class="required">*</span></label>
-                    <p-calendar
+                    <p-datepicker
                       id="dob"
                       [(ngModel)]="onboardingData.dateOfBirth"
                       [maxDate]="maxDate"
@@ -118,7 +118,7 @@ interface InjuryEntry {
                       placeholder="Select date"
                       [showIcon]="true"
                       styleClass="w-full"
-                    ></p-calendar>
+                    ></p-datepicker>
                     @if (calculatedAge()) {
                       <small class="age-hint">Age: {{ calculatedAge() }} years ({{ getAgeGroup() }})</small>
                     }
@@ -747,7 +747,7 @@ interface InjuryEntry {
                       </div>
                       <div class="summary-row">
                         <span class="label">Rest Days</span>
-                        <span class="value">{{ restDayOptions.find(o => o.value === onboardingData.restDayPreference)?.label }}</span>
+                        <span class="value">{{ getRestDayOptionLabel(onboardingData.restDayPreference) }}</span>
                       </div>
                     </div>
                   </div>
@@ -1922,6 +1922,11 @@ export class OnboardingComponent implements OnInit {
     return option ? `${option.label} - ${option.description}` : value;
   }
 
+  getRestDayOptionLabel(value: string): string {
+    const option = this.restDayOptions.find(o => o.value === value);
+    return option?.label || value;
+  }
+
   getHeightDisplay(): string {
     if (this.onboardingData.unitSystem === "metric") {
       return this.onboardingData.heightCm ? `${this.onboardingData.heightCm} cm` : "?";
@@ -2029,7 +2034,14 @@ export class OnboardingComponent implements OnInit {
       this.toastService.success("Your profile and training preferences have been set up!", "Welcome to FlagFit Pro!");
 
       setTimeout(() => {
-        this.router.navigate(["/dashboard"]);
+        // Check for post-onboarding redirect (e.g., team invitation)
+        const postOnboardingRedirect = sessionStorage.getItem("postOnboardingRedirect");
+        if (postOnboardingRedirect) {
+          sessionStorage.removeItem("postOnboardingRedirect");
+          this.router.navigateByUrl(postOnboardingRedirect);
+        } else {
+          this.router.navigate(["/dashboard"]);
+        }
       }, 1000);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to complete setup. Please try again.";

@@ -5,13 +5,14 @@ import {
   inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { ProgressBarModule } from "primeng/progressbar";
 import { ButtonModule } from "primeng/button";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
-import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ToastService } from "../../../core/services/toast.service";
 
 export interface SubSkill {
   name: string;
@@ -278,10 +279,37 @@ export class InteractiveSkillsRadarComponent {
     }
   }
 
+  private router = inject(Router);
+  private toastService = inject(ToastService);
+
   startSkillDrill(subSkill: SubSkill): void {
-    // See issue #18 - Implement skill drill functionality with video demos
     this.logger.debug(`Starting drill for: ${subSkill.name}`);
-    // This could navigate to a training page or open a modal
+
+    // Navigate to training with the skill context
+    this.toastService.info(`Loading drills for ${subSkill.name}...`);
+
+    // Map skill names to exercise categories/types
+    const skillToCategory: Record<string, string> = {
+      "Route Running": "agility",
+      "Catching": "catching",
+      "Blocking": "strength",
+      "Throwing Accuracy": "throwing",
+      "Arm Strength": "throwing",
+      "Decision Making": "mental",
+      "Field Vision": "mental",
+      "Speed": "speed",
+      "Agility": "agility",
+      "Endurance": "conditioning",
+      "Tackling": "defense",
+      "Coverage": "defense",
+    };
+
+    const category = skillToCategory[subSkill.name] || "general";
+
+    // Navigate to exercise library filtered by skill
+    this.router.navigate(["/exercises"], {
+      queryParams: { category, skill: subSkill.name },
+    });
   }
 
   trackBySubSkillName(index: number, subSkill: SubSkill): string {

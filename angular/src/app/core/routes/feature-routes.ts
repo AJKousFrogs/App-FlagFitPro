@@ -46,10 +46,24 @@ export const publicRoutes: Routes = [
       ),
   },
   {
+    path: "update-password",
+    loadComponent: () =>
+      import("../../features/auth/update-password/update-password.component").then(
+        (m) => m.UpdatePasswordComponent,
+      ),
+  },
+  {
     path: "verify-email",
     loadComponent: () =>
       import("../../features/auth/verify-email/verify-email.component").then(
         (m) => m.VerifyEmailComponent,
+      ),
+  },
+  {
+    path: "auth/callback",
+    loadComponent: () =>
+      import("../../features/auth/auth-callback/auth-callback.component").then(
+        (m) => m.AuthCallbackComponent,
       ),
   },
   {
@@ -149,6 +163,38 @@ export const trainingRoutes: Routes = [
     loadComponent: () =>
       import("../../features/training/ai-training-scheduler/ai-training-scheduler.component").then(
         (m) => m.AiTrainingSchedulerComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/log",
+    loadComponent: () =>
+      import("../../features/training/training-log/training-log.component").then(
+        (m) => m.TrainingLogComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/safety",
+    loadComponent: () =>
+      import("../../features/training/training-safety/training-safety.component").then(
+        (m) => m.TrainingSafetyComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/smart-form",
+    loadComponent: () =>
+      import("../../features/training/smart-training-form/smart-training-form.component").then(
+        (m) => m.SmartTrainingFormComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/session/:id",
+    loadComponent: () =>
+      import("../../features/training/training-schedule/training-schedule.component").then(
+        (m) => m.TrainingScheduleComponent,
       ),
     canActivate: [authGuard],
   },
@@ -319,6 +365,14 @@ export const profileRoutes: Routes = [
       ),
     canActivate: [authGuard],
   },
+  {
+    path: "settings/profile",
+    loadComponent: () =>
+      import("../../features/settings/settings.component").then(
+        (m) => m.SettingsComponent,
+      ),
+    canActivate: [authGuard],
+  },
 ];
 
 /**
@@ -378,6 +432,9 @@ export const featureRoutes: Routes = [
   ...profileRoutes,
   {
     path: "**",
-    redirectTo: "",
+    loadComponent: () =>
+      import("../../features/not-found/not-found.component").then(
+        (m) => m.NotFoundComponent,
+      ),
   },
 ];

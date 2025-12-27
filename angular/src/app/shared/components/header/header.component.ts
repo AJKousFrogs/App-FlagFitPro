@@ -7,6 +7,7 @@ import {
   computed,
   effect,
   model,
+  ViewChild,
 } from "@angular/core";
 
 import { Router, RouterModule, NavigationEnd } from "@angular/router";
@@ -23,8 +24,11 @@ import {
   HeaderConfig,
 } from "../../../core/services/header.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
+import { SearchService } from "../../../core/services/search.service";
 import { MenuItem } from "primeng/api";
 import { LoggerService } from "../../../core/services/logger.service";
+import { SearchPanelComponent } from "../search-panel/search-panel.component";
+import { NotificationsPanelComponent } from "../notifications-panel/notifications-panel.component";
 
 @Component({
   selector: "app-header",
@@ -37,6 +41,8 @@ import { LoggerService } from "../../../core/services/logger.service";
     AvatarModule,
     MenuModule,
     BadgeModule,
+    SearchPanelComponent,
+    NotificationsPanelComponent,
   ],
   template: `
     <header class="app-header" [class]="headerClass()">
@@ -196,6 +202,12 @@ import { LoggerService } from "../../../core/services/logger.service";
         ></p-avatar>
       </div>
     </header>
+
+    <!-- Search Panel -->
+    <app-search-panel></app-search-panel>
+
+    <!-- Notifications Panel -->
+    <app-notifications-panel #notificationsPanel></app-notifications-panel>
   `,
   styles: [
     `
@@ -387,8 +399,11 @@ export class HeaderComponent {
   private authService = inject(AuthService);
   private headerService = inject(HeaderService);
   private notificationService = inject(NotificationStateService);
+  private searchService = inject(SearchService);
   private router = inject(Router);
   private logger = inject(LoggerService);
+
+  @ViewChild('notificationsPanel') notificationsPanel!: NotificationsPanelComponent;
 
   // Angular 21: Use output() signal instead of @Output() EventEmitter
   toggleSidebar = output<void>();
@@ -463,16 +478,20 @@ export class HeaderComponent {
 
   onSearch(): void {
     if (this.searchQuery().trim()) {
-      // Implement search logic
-      this.logger.debug("Searching for:", this.searchQuery());
-      // See issue #19 - Implement global search functionality
+      // Open search panel with query
+      this.searchService.open();
+      this.searchService.search(this.searchQuery());
+    } else {
+      // Just open search panel
+      this.searchService.open();
     }
   }
 
   toggleNotifications(): void {
     // Toggle notifications panel
-    // See issue #20 - Implement notifications panel toggle
-    this.logger.debug("Toggle notifications");
+    if (this.notificationsPanel) {
+      this.notificationsPanel.toggle();
+    }
   }
 
   openSettings(): void {

@@ -16,9 +16,12 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ToastModule } from "primeng/toast";
+import { SelectModule } from "primeng/select";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ToastService } from "../../../core/services/toast.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { AuthService } from "../../../core/services/auth.service";
 
 @Component({
   selector: "app-team-create",
@@ -31,6 +34,7 @@ import { ToastService } from "../../../core/services/toast.service";
     ButtonModule,
     InputTextModule,
     ToastModule,
+    SelectModule,
     MainLayoutComponent,
     PageHeaderComponent,
   ],
@@ -85,6 +89,32 @@ import { ToastService } from "../../../core/services/toast.service";
                 placeholder="City, State"
                 class="w-full"
               />
+            </div>
+
+            <div class="form-group">
+              <label for="sport">Sport</label>
+              <p-select
+                id="sport"
+                formControlName="sport"
+                [options]="sportOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select sport"
+                styleClass="w-full"
+              ></p-select>
+            </div>
+
+            <div class="form-group">
+              <label for="visibility">Team Visibility</label>
+              <p-select
+                id="visibility"
+                formControlName="visibility"
+                [options]="visibilityOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select visibility"
+                styleClass="w-full"
+              ></p-select>
             </div>
 
             <div class="form-actions">
@@ -149,13 +179,31 @@ export class TeamCreateComponent {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private toastService = inject(ToastService);
+  private supabaseService = inject(SupabaseService);
+  private authService = inject(AuthService);
 
   isSubmitting = signal(false);
+
+  sportOptions = [
+    { label: "Flag Football", value: "flag_football" },
+    { label: "Football", value: "football" },
+    { label: "Soccer", value: "soccer" },
+    { label: "Basketball", value: "basketball" },
+    { label: "Volleyball", value: "volleyball" },
+    { label: "Other", value: "other" },
+  ];
+
+  visibilityOptions = [
+    { label: "Public - Anyone can find and request to join", value: "public" },
+    { label: "Private - Invite only", value: "private" },
+  ];
 
   teamForm: FormGroup = this.fb.group({
     name: ["", [Validators.required, Validators.minLength(3)]],
     description: [""],
     location: [""],
+    sport: ["flag_football"],
+    visibility: ["public"],
   });
 
   isFieldInvalid(fieldName: string): boolean {
@@ -184,18 +232,57 @@ export class TeamCreateComponent {
 
     try {
       const formData = this.teamForm.value;
+      const currentUser = this.authService.getUser();
 
-      // See issue #3 - Implement team creation API
-      // const response = await this.apiService.createTeam(formData);
+      if (!currentUser?.id) {
+        this.toastService.error("You must be logged in to create a team.");
+        return;
+      }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Create team in Supabase
+      const { data: team, error: teamError } = await this.supabaseService.client
+        .from("teams")
+        .insert({
+          name: formData.name,
+          description: formData.description || null,
+          location: formData.location || null,
+          sport: formData.sport,
+          visibility: formData.visibility,
+          owner_id: currentUser.id,
+          created_by: currentUser.id,
+        })
+        .select()
+        .single();
+
+      if (teamError) {
+        throw new Error(teamError.message);
+      }
+
+      // Add creator as team member with owner role
+      const { error: memberError } = await this.supabaseService.client
+        .from("team_members")
+        .insert({
+          team_id: team.id,
+          user_id: currentUser.id,
+          role: "owner",
+          status: "active",
+          joined_at: new Date().toISOString(),
+        });
+
+      if (memberError) {
+        // Rollback team creation if member insert fails
+        await this.supabaseService.client
+          .from("teams")
+          .delete()
+          .eq("id", team.id);
+        throw new Error("Failed to add you as team owner. Please try again.");
+      }
 
       this.toastService.success(`${formData.name} has been created successfully!`);
 
-      // Redirect to roster page
+      // Redirect to roster page with the new team
       setTimeout(() => {
-        this.router.navigate(["/roster"]);
+        this.router.navigate(["/roster"], { queryParams: { team: team.id } });
       }, 1000);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to create team. Please try again.";

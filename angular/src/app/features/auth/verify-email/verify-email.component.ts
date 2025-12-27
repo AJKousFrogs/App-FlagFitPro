@@ -12,13 +12,27 @@ import { ButtonModule } from "primeng/button";
 import { MessageModule } from "primeng/message";
 import { ToastService } from "../../../core/services/toast.service";
 import { ToastModule } from "primeng/toast";
+import { SupabaseService } from "../../../core/services/supabase.service";
 
+/**
+ * Verify Email Component
+ *
+ * Handles email verification callback from Supabase.
+ * When users click the verification link in their email, Supabase redirects
+ * them here with tokens in the URL hash fragment.
+ *
+ * Flow:
+ * 1. User clicks verification link in email
+ * 2. Supabase redirects to /verify-email#access_token=...&type=signup
+ * 3. This component detects the tokens and verifies the session
+ * 4. User is redirected to dashboard on success
+ */
 @Component({
   selector: "app-verify-email",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule, CardModule, ButtonModule, MessageModule, ToastModule],
-  
+
   template: `
     <p-toast></p-toast>
     <div class="verify-email-page">
@@ -55,10 +69,7 @@ import { ToastModule } from "primeng/toast";
           </div>
         } @else if (verificationError()) {
           <div class="error-state">
-            <p-message
-              severity="error"
-              [text]="verificationError()"
-            ></p-message>
+            <p-message severity="error" [text]="verificationError()"></p-message>
             <p-button
               label="Resend Verification Email"
               icon="pi pi-send"
@@ -164,61 +175,167 @@ export class VerifyEmailComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
+  private supabaseService = inject(SupabaseService);
 
   isVerifying = signal(false);
   isVerified = signal(false);
   verificationError = signal<string | undefined>(undefined);
   isResending = signal(false);
+  private userEmail = signal<string | null>(null);
 
   ngOnInit(): void {
-    // Check for token in query params
-    const token = this.route.snapshot.queryParams["token"];
-    if (token) {
-      this.verifyEmail(token);
+    // Check for hash fragment from Supabase email verification
+    // Supabase sends: /verify-email#access_token=...&type=signup&...
+    this.handleSupabaseCallback();
+  }
+
+  /**
+   * Handle Supabase email verification callback
+   * Supabase redirects with tokens in the URL hash fragment
+   */
+  private async handleSupabaseCallback(): Promise<void> {
+    const hash = window.location.hash;
+
+    if (!hash || hash.length < 2) {
+      // No hash fragment - user landed here directly
+      // Check if they're already authenticated
+      const session = this.supabaseService.getSession();
+      if (session?.user?.email_confirmed_at) {
+        this.isVerified.set(true);
+      }
+      return;
+    }
+
+    // Parse the hash fragment
+    const params = new URLSearchParams(hash.substring(1));
+    const type = params.get("type");
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
+    const errorDescription = params.get("error_description");
+
+    // Check for errors
+    if (errorDescription) {
+      this.verificationError.set(decodeURIComponent(errorDescription));
+      return;
+    }
+
+    // Check if this is a signup/email verification callback
+    if (type === "signup" || type === "email_change" || type === "magiclink") {
+      if (accessToken && refreshToken) {
+        await this.verifyWithTokens(accessToken, refreshToken);
+      } else {
+        this.verificationError.set(
+          "Invalid verification link. Please request a new one.",
+        );
+      }
     }
   }
 
-  async verifyEmail(token: string): Promise<void> {
+  /**
+   * Verify the email using the tokens from Supabase
+   */
+  private async verifyWithTokens(
+    accessToken: string,
+    refreshToken: string,
+  ): Promise<void> {
     this.isVerifying.set(true);
     this.verificationError.set(undefined);
 
     try {
-      // See issue #1 - Implement email verification API endpoint
-      // const response = await this.apiService.verifyEmail(token);
+      // Set the session using the tokens from the URL
+      const { data, error } = await this.supabaseService.client.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (error) {
+        throw error;
+      }
 
-      this.isVerified.set(true);
-      this.isVerifying.set(false);
+      if (data.session?.user) {
+        // Store the email for potential resend
+        this.userEmail.set(data.session.user.email ?? null);
 
-      this.toastService.success("Your email has been verified successfully!", "Email Verified");
+        // Check if email is now confirmed
+        if (data.session.user.email_confirmed_at) {
+          this.isVerified.set(true);
+          this.toastService.success(
+            "Your email has been verified successfully!",
+            "Email Verified",
+          );
 
-      // Redirect to dashboard after 2 seconds
-      setTimeout(() => {
-        this.router.navigate(["/dashboard"]);
-      }, 2000);
+          // Clear the hash from the URL
+          window.history.replaceState(null, "", window.location.pathname);
+
+          // Redirect to dashboard after 2 seconds
+          setTimeout(() => {
+            this.router.navigate(["/dashboard"]);
+          }, 2000);
+        } else {
+          // Email not confirmed yet (shouldn't happen normally)
+          this.verificationError.set(
+            "Email verification pending. Please try again.",
+          );
+        }
+      } else {
+        this.verificationError.set(
+          "Verification failed. The link may have expired.",
+        );
+      }
     } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Verification failed. Please try again.";
+      this.verificationError.set(message);
+    } finally {
       this.isVerifying.set(false);
-      this.verificationError.set(
-        error instanceof Error ? error.message : "Verification failed. Please try again.",
-      );
     }
   }
 
+  /**
+   * Resend verification email
+   */
   async resendVerification(): Promise<void> {
     this.isResending.set(true);
 
     try {
-      // See issue #2 - Implement resend verification email API
-      // await this.apiService.resendVerificationEmail();
+      // Get email from current user or stored email
+      const email =
+        this.userEmail() ||
+        this.supabaseService.getCurrentUser()?.email ||
+        null;
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (!email) {
+        this.toastService.error(
+          "No email address found. Please try logging in again.",
+        );
+        this.router.navigate(["/login"]);
+        return;
+      }
 
-      this.toastService.success("Verification email has been sent. Please check your inbox.", "Email Sent");
+      // Resend verification email using Supabase
+      const { error } = await this.supabaseService.client.auth.resend({
+        type: "signup",
+        email: email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/verify-email`,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      this.toastService.success(
+        "Verification email has been sent. Please check your inbox.",
+        "Email Sent",
+      );
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to send verification email. Please try again.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to send verification email. Please try again.";
       this.toastService.error(message);
     } finally {
       this.isResending.set(false);

@@ -16,6 +16,9 @@
 
 import { Injectable, signal, computed, effect, inject } from "@angular/core";
 import { LoggerService } from "./logger.service";
+import { AuthService } from "./auth.service";
+import { SupabaseService } from "./supabase.service";
+import { NotificationStateService } from "./notification-state.service";
 import {
   LoadAlert,
   ACWRData,
@@ -34,6 +37,9 @@ export class AcwrAlertsService {
   // Inject dependencies using inject() for Angular 21 best practices
   private readonly acwrService = inject(AcwrService);
   private logger = inject(LoggerService);
+  private authService = inject(AuthService);
+  private supabaseService = inject(SupabaseService);
+  private notificationService = inject(NotificationStateService);
 
   // Active alerts
   private readonly alerts = signal<LoadAlert[]>([]);
@@ -134,10 +140,16 @@ export class AcwrAlertsService {
       return; // Don't duplicate alerts
     }
 
+    // Get player info from auth service
+    const user = this.authService.getUser();
+    const playerId = user?.id || "anonymous";
+    const rawMetadata = (user as any)?.user_metadata || {};
+    const playerName = rawMetadata?.full_name || user?.email?.split("@")[0] || "Player";
+
     const alert: LoadAlert = {
       id: this.generateAlertId(),
-      playerId: "current-player", // See issue #26 - Get player context from auth
-      playerName: "Current Player", // See issue #27 - Get player name from auth
+      playerId,
+      playerName,
       timestamp: new Date(),
       acknowledged: false,
       ...alertData,
@@ -170,11 +182,36 @@ export class AcwrAlertsService {
   /**
    * Send in-app notification
    */
-  private sendNotification(alert: LoadAlert): void {
-    // See issue #23 - Integrate ACWR alerts with notification system
+  private async sendNotification(alert: LoadAlert): Promise<void> {
     this.logger.info("🔔 Alert:", alert.message);
 
-    // Could trigger browser notification
+    // Save notification to database
+    const user = this.authService.getUser();
+    if (user?.id) {
+      try {
+        await this.supabaseService.client
+          .from("notifications")
+          .insert({
+            user_id: user.id,
+            type: "acwr_alert",
+            title: `Load Alert: ${alert.type.replace(/_/g, " ")}`,
+            message: alert.message,
+            data: {
+              alertId: alert.id,
+              severity: alert.severity,
+              recommendation: alert.recommendation,
+              acwrValue: alert.acwrValue,
+            },
+          });
+
+        // Refresh notification badge
+        this.notificationService.refreshBadgeCount();
+      } catch (error) {
+        this.logger.warn("Failed to save notification to database:", error);
+      }
+    }
+
+    // Trigger browser notification if permitted
     if ("Notification" in window && Notification.permission === "granted") {
       new Notification("FlagFit Pro - Load Alert", {
         body: alert.message,
@@ -188,15 +225,54 @@ export class AcwrAlertsService {
   /**
    * Notify coach of critical alert
    */
-  private notifyCoach(alert: LoadAlert): void {
-    // See issue #24 - Implement email/SMS coach alerts
+  private async notifyCoach(alert: LoadAlert): Promise<void> {
     this.logger.info("📧 Notifying coach of critical alert:", alert.message);
 
-    // Could trigger:
-    // - Email via backend API
-    // - SMS via Twilio
-    // - Push notification to coach mobile app
-    // - Slack/Teams message
+    const user = this.authService.getUser();
+    if (!user?.id) return;
+
+    try {
+      // Find the player's coach through team membership
+      const { data: teamMember } = await this.supabaseService.client
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", user.id)
+        .limit(1)
+        .single();
+
+      if (teamMember?.team_id) {
+        // Find coach(es) for the team
+        const { data: coaches } = await this.supabaseService.client
+          .from("team_members")
+          .select("user_id")
+          .eq("team_id", teamMember.team_id)
+          .eq("role", "coach");
+
+        if (coaches && coaches.length > 0) {
+          // Create notification for each coach
+          const coachNotifications = coaches.map((coach) => ({
+            user_id: coach.user_id,
+            type: "player_alert",
+            title: `Critical Alert: ${alert.playerName}`,
+            message: alert.message,
+            data: {
+              alertId: alert.id,
+              playerId: alert.playerId,
+              playerName: alert.playerName,
+              severity: alert.severity,
+              recommendation: alert.recommendation,
+              acwrValue: alert.acwrValue,
+            },
+          }));
+
+          await this.supabaseService.client
+            .from("notifications")
+            .insert(coachNotifications);
+        }
+      }
+    } catch (error) {
+      this.logger.warn("Failed to notify coach:", error);
+    }
   }
 
   /**

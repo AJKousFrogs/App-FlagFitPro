@@ -3,10 +3,14 @@ import { Router, CanActivateFn } from "@angular/router";
 import { AuthService } from "../services/auth.service";
 import { SupabaseService } from "../services/supabase.service";
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const supabaseService = inject(SupabaseService);
   const router = inject(Router);
+
+  // CRITICAL: Wait for Supabase auth to initialize before checking
+  // This prevents false redirects to login on page refresh
+  await supabaseService.waitForInit();
 
   // Check both the auth service signal AND the supabase session directly
   // This handles the race condition where the signal hasn't updated yet

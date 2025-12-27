@@ -22,6 +22,7 @@ import {
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 
 interface StatCard {
   title: string;
@@ -525,6 +526,7 @@ export class TrainingComponent implements OnInit {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private headerService = inject(HeaderService);
+  private supabaseService = inject(SupabaseService);
 
   userName = signal("Alex");
   stats = signal<StatCard[]>([]);
@@ -705,14 +707,67 @@ export class TrainingComponent implements OnInit {
     }, 300);
   }
 
-  markWorkoutComplete(workout: Workout): void {
-    this.toastService.success(`${workout.title} marked as complete`);
-    // See issue #6 - Implement workout status update API
+  async markWorkoutComplete(workout: Workout): Promise<void> {
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) return;
+
+      // Log completed workout to training_sessions
+      await this.supabaseService.client
+        .from("training_sessions")
+        .insert({
+          user_id: user.id,
+          session_type: workout.type || workout.title,
+          duration_minutes: parseInt(workout.duration) || 45,
+          intensity: workout.intensity?.toLowerCase() || "moderate",
+          status: "completed",
+          completed_at: new Date().toISOString(),
+          scheduled_date: new Date().toISOString(),
+          notes: `Completed: ${workout.title}`,
+        });
+
+      this.toastService.success(`${workout.title} marked as complete! 🎉`);
+
+      // Remove from workouts list
+      this.workouts.update((workouts) =>
+        workouts.filter((w) => w.title !== workout.title)
+      );
+    } catch (error) {
+      this.toastService.error("Failed to mark workout as complete");
+    }
   }
 
-  postponeWorkout(workout: Workout): void {
-    this.toastService.info(`${workout.title} has been postponed`);
-    // See issue #6 - Implement workout status update API
+  async postponeWorkout(workout: Workout): Promise<void> {
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) return;
+
+      // Schedule for tomorrow
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(9, 0, 0, 0);
+
+      await this.supabaseService.client
+        .from("training_sessions")
+        .insert({
+          user_id: user.id,
+          session_type: workout.type || workout.title,
+          duration_minutes: parseInt(workout.duration) || 45,
+          intensity: workout.intensity?.toLowerCase() || "moderate",
+          status: "scheduled",
+          scheduled_date: tomorrow.toISOString(),
+          notes: `Postponed: ${workout.title}`,
+        });
+
+      this.toastService.info(`${workout.title} postponed to tomorrow`);
+
+      // Remove from today's workouts
+      this.workouts.update((workouts) =>
+        workouts.filter((w) => w.title !== workout.title)
+      );
+    } catch (error) {
+      this.toastService.error("Failed to postpone workout");
+    }
   }
 
   refreshTrainingData(): void {

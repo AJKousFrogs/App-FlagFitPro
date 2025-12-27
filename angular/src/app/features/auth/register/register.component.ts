@@ -6,7 +6,7 @@ import {
   DestroyRef,
 } from "@angular/core";
 
-import { Router, RouterModule } from "@angular/router";
+import { Router, RouterModule, ActivatedRoute } from "@angular/router";
 import {
   FormBuilder,
   FormGroup,
@@ -227,6 +227,7 @@ export class RegisterComponent {
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
@@ -355,7 +356,15 @@ export class RegisterComponent {
         next: (response) => {
           if (response.success) {
             this.toastService.success("Account created successfully!");
-            this.router.navigate(["/dashboard"]);
+            // Check for returnUrl (e.g., from team invitation)
+            const returnUrl = this.route.snapshot.queryParams["returnUrl"];
+            // New users should go to onboarding first, then returnUrl
+            if (returnUrl && !returnUrl.includes("onboarding")) {
+              // Store returnUrl for after onboarding
+              sessionStorage.setItem("postOnboardingRedirect", returnUrl);
+            }
+            // Always send new users to onboarding first
+            this.router.navigate(["/onboarding"]);
           } else {
             this.toastService.error(response.error || "Registration failed");
           }

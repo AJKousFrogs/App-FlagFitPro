@@ -18,6 +18,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "../../../core/services/toast.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 
 @Component({
   selector: "app-reset-password",
@@ -157,6 +158,7 @@ export class ResetPasswordComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private supabaseService = inject(SupabaseService);
 
   resetForm: FormGroup;
   isLoading = signal(false);
@@ -183,7 +185,7 @@ export class ResetPasswordComponent {
     return "";
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.resetForm.invalid) {
       this.resetForm.markAllAsTouched();
       return;
@@ -192,13 +194,36 @@ export class ResetPasswordComponent {
     this.isLoading.set(true);
     const email = this.resetForm.value.email;
 
-    // Reset password API call - implementation pending
-    setTimeout(() => {
-      this.toastService.success("Password reset link sent to your email!");
-      this.isLoading.set(false);
+    try {
+      // Build the redirect URL for the update-password page
+      const redirectTo = `${window.location.origin}/update-password`;
+
+      const { error } = await this.supabaseService.client.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo,
+        }
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      this.toastService.success(
+        "Password reset link sent! Check your email inbox."
+      );
+      
       setTimeout(() => {
         this.router.navigate(["/login"]);
       }, 2000);
-    }, 1000);
+    } catch (error: unknown) {
+      console.error("Password reset error:", error);
+      // Don't reveal if email exists or not for security
+      this.toastService.success(
+        "If an account exists with this email, you will receive a reset link."
+      );
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }

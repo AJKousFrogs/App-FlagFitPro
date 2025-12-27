@@ -16,7 +16,7 @@ import { Component, input, computed, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonModule } from "primeng/button";
 import { RouterModule } from "@angular/router";
-import { DataSourceService, DataSourceType } from "../../core/services/data-source.service";
+import { DataSourceService, DataSourceType } from "../../../core/services/data-source.service";
 
 export type BannerSeverity = "info" | "warning" | "danger" | "success";
 

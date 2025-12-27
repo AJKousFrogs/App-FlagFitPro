@@ -22,8 +22,8 @@ import {
   TrainingSafetyService,
   SafetyWarning,
   WarningSeverity,
-} from "../../core/services/training-safety.service";
-import { AuthService } from "../../core/services/auth.service";
+} from "../../../core/services/training-safety.service";
+import { AuthService } from "../../../core/services/auth.service";
 
 @Component({
   selector: "app-safety-warnings",
@@ -441,7 +441,7 @@ export class SafetyWarningsComponent implements OnInit {
       case "info":
         return "LOW";
       default:
-        return severity.toUpperCase();
+        return (severity as string).toUpperCase();
     }
   }
 

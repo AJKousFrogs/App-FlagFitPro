@@ -716,7 +716,7 @@ export class TrainingSafetyService {
         overallRisk = "critical";
       } else if (
         sleepDebt.debtLevel === "moderate" &&
-        overallRisk !== "critical"
+        (overallRisk as string) !== "critical"
       ) {
         overallRisk = "high";
       }

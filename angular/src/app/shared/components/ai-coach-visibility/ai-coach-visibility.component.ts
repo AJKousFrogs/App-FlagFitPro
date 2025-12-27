@@ -17,8 +17,9 @@ import { TextareaModule } from "primeng/textarea";
 import { FormsModule } from "@angular/forms";
 import { TooltipModule } from "primeng/tooltip";
 import { SkeletonModule } from "primeng/skeleton";
-import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
+import { ToastService } from "../../../core/services/toast.service";
 
 /**
  * AI Recommendation from the backend
@@ -668,8 +669,9 @@ interface CoachVisibilityRecord {
   ],
 })
 export class AiCoachVisibilityComponent implements OnInit {
-  private apiService = inject(ApiService);
+  private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
+  private toastService = inject(ToastService);
 
   @Input() teamId?: string;
 
@@ -705,7 +707,6 @@ export class AiCoachVisibilityComponent implements OnInit {
     this.loading.set(true);
 
     try {
-      // Load recommendations for team players
       await Promise.all([
         this.loadRecommendations(),
         this.loadHighRiskAlerts(),
@@ -719,57 +720,149 @@ export class AiCoachVisibilityComponent implements OnInit {
 
   async loadRecommendations(): Promise<void> {
     try {
-      // This would call a coach-specific endpoint to get player recommendations
-      const response = await this.apiService
-        .get<{ data: AIRecommendation[] }>("/api/coach/ai-recommendations", {
-          teamId: this.teamId,
-        })
-        .toPromise();
+      const user = this.authService.getUser();
+      if (!user?.id) return;
 
-      if (response?.data?.data) {
-        this.recommendations.set(response.data.data);
-      } else if (Array.isArray(response?.data)) {
-        this.recommendations.set(response.data as AIRecommendation[]);
-      } else {
-        // Mock data for development
-        this.recommendations.set(this.getMockRecommendations());
+      // Load AI recommendations from Supabase
+      let query = this.supabaseService.client
+        .from("ai_recommendations")
+        .select(`
+          id,
+          user_id,
+          recommendation_type,
+          reason,
+          recommendation_data,
+          status,
+          created_at,
+          accepted_at,
+          rejected_at,
+          completed_at,
+          outcome
+        `)
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      // If teamId is provided, filter by team members
+      if (this.teamId) {
+        const { data: teamMembers } = await this.supabaseService.client
+          .from("team_members")
+          .select("user_id")
+          .eq("team_id", this.teamId);
+
+        if (teamMembers && teamMembers.length > 0) {
+          const memberIds = teamMembers.map((m) => m.user_id);
+          query = query.in("user_id", memberIds);
+        }
       }
-    } catch {
-      // Use mock data if endpoint doesn't exist yet
-      this.recommendations.set(this.getMockRecommendations());
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.warn("Error loading recommendations:", error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        // Enrich with player names
+        const userIds = [...new Set(data.map((r) => r.user_id))];
+        const { data: users } = await this.supabaseService.client
+          .from("users")
+          .select("id, first_name, last_name")
+          .in("id", userIds);
+
+        const userMap = new Map(users?.map((u) => [u.id, `${u.first_name} ${u.last_name}`]) || []);
+
+        const enrichedData: AIRecommendation[] = data.map((r) => ({
+          ...r,
+          player_name: userMap.get(r.user_id) || "Unknown Player",
+          risk_level: this.getRiskLevelFromType(r.recommendation_type),
+        }));
+
+        this.recommendations.set(enrichedData);
+      } else {
+        this.recommendations.set([]);
+      }
+    } catch (error) {
+      console.error("Error loading recommendations:", error);
+      this.recommendations.set([]);
     }
   }
 
   async loadHighRiskAlerts(): Promise<void> {
     try {
-      const response = await this.apiService
-        .get<{ data: CoachVisibilityRecord[] }>("/api/coach/ai-alerts", {
-          teamId: this.teamId,
-        })
-        .toPromise();
+      const user = this.authService.getUser();
+      if (!user?.id) return;
 
-      if (response?.data?.data) {
-        this.highRiskAlerts.set(response.data.data);
-      } else if (Array.isArray(response?.data)) {
-        this.highRiskAlerts.set(response.data as CoachVisibilityRecord[]);
-      } else {
-        this.highRiskAlerts.set(this.getMockAlerts());
+      // Load high-risk AI coach visibility records
+      let query = this.supabaseService.client
+        .from("ai_coach_visibility")
+        .select(`
+          id,
+          recommendation_id,
+          message_id,
+          player_id,
+          visibility_type,
+          coach_notes,
+          override_reason,
+          viewed_at,
+          created_at
+        `)
+        .eq("coach_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (this.teamId) {
+        query = query.eq("team_id", this.teamId);
       }
-    } catch {
-      this.highRiskAlerts.set(this.getMockAlerts());
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.warn("Error loading alerts:", error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        // Enrich with player names
+        const playerIds = [...new Set(data.map((r) => r.player_id))];
+        const { data: users } = await this.supabaseService.client
+          .from("users")
+          .select("id, first_name, last_name")
+          .in("id", playerIds);
+
+        const userMap = new Map(users?.map((u) => [u.id, `${u.first_name} ${u.last_name}`]) || []);
+
+        const enrichedData: CoachVisibilityRecord[] = data.map((r) => ({
+          ...r,
+          player_name: userMap.get(r.player_id) || "Unknown Player",
+        }));
+
+        this.highRiskAlerts.set(enrichedData);
+      } else {
+        this.highRiskAlerts.set([]);
+      }
+    } catch (error) {
+      console.error("Error loading alerts:", error);
+      this.highRiskAlerts.set([]);
     }
+  }
+
+  private getRiskLevelFromType(type: string): "low" | "medium" | "high" {
+    const highRiskTypes = ["reduce_load", "ask_coach"];
+    const mediumRiskTypes = ["modify_plan", "schedule_recovery"];
+    if (highRiskTypes.includes(type)) return "high";
+    if (mediumRiskTypes.includes(type)) return "medium";
+    return "low";
   }
 
   // Actions
   viewAlert(alert: CoachVisibilityRecord): void {
     this.selectedRecord.set(alert);
-    // Mark as viewed
     this.markAsViewed(alert.id);
   }
 
   viewRecommendation(rec: AIRecommendation): void {
     this.selectedRecommendation.set(rec);
-    // Could open a detail dialog
   }
 
   openNoteDialog(record: CoachVisibilityRecord): void {
@@ -789,12 +882,12 @@ export class AiCoachVisibilityComponent implements OnInit {
     if (!record || !this.coachNote.trim()) return;
 
     try {
-      await this.apiService
-        .post("/api/coach/ai-visibility/note", {
-          recordId: record.id,
-          note: this.coachNote,
-        })
-        .toPromise();
+      const { error } = await this.supabaseService.client
+        .from("ai_coach_visibility")
+        .update({ coach_notes: this.coachNote })
+        .eq("id", record.id);
+
+      if (error) throw error;
 
       // Update local state
       const alerts = this.highRiskAlerts();
@@ -803,8 +896,11 @@ export class AiCoachVisibilityComponent implements OnInit {
         alerts[index] = { ...alerts[index], coach_notes: this.coachNote };
         this.highRiskAlerts.set([...alerts]);
       }
+
+      this.toastService.success("Note saved successfully");
     } catch (error) {
       console.error("Error saving note:", error);
+      this.toastService.error("Failed to save note");
     }
 
     this.noteDialogVisible = false;
@@ -816,12 +912,30 @@ export class AiCoachVisibilityComponent implements OnInit {
     if (!rec || !this.overrideReason.trim()) return;
 
     try {
-      await this.apiService
-        .post("/api/coach/ai-recommendations/override", {
-          recommendationId: rec.id,
-          reason: this.overrideReason,
+      const { error } = await this.supabaseService.client
+        .from("ai_recommendations")
+        .update({
+          status: "rejected",
+          rejected_at: new Date().toISOString(),
         })
-        .toPromise();
+        .eq("id", rec.id);
+
+      if (error) throw error;
+
+      // Create visibility record for the override
+      const user = this.authService.getUser();
+      if (user?.id) {
+        await this.supabaseService.client
+          .from("ai_coach_visibility")
+          .insert({
+            recommendation_id: rec.id,
+            coach_id: user.id,
+            player_id: rec.user_id,
+            team_id: this.teamId || null,
+            visibility_type: "override",
+            override_reason: this.overrideReason,
+          });
+      }
 
       // Update local state
       const recs = this.recommendations();
@@ -830,8 +944,11 @@ export class AiCoachVisibilityComponent implements OnInit {
         recs[index] = { ...recs[index], status: "rejected" };
         this.recommendations.set([...recs]);
       }
+
+      this.toastService.success("Recommendation overridden");
     } catch (error) {
       console.error("Error overriding recommendation:", error);
+      this.toastService.error("Failed to override recommendation");
     }
 
     this.overrideDialogVisible = false;
@@ -840,9 +957,12 @@ export class AiCoachVisibilityComponent implements OnInit {
 
   async markAsViewed(recordId: string): Promise<void> {
     try {
-      await this.apiService
-        .post("/api/coach/ai-visibility/viewed", { recordId })
-        .toPromise();
+      const { error } = await this.supabaseService.client
+        .from("ai_coach_visibility")
+        .update({ viewed_at: new Date().toISOString() })
+        .eq("id", recordId);
+
+      if (error) throw error;
 
       const alerts = this.highRiskAlerts();
       const index = alerts.findIndex((a) => a.id === recordId);
@@ -928,80 +1048,6 @@ export class AiCoachVisibilityComponent implements OnInit {
   truncate(text: string, length: number): string {
     if (text.length <= length) return text;
     return text.slice(0, length) + "...";
-  }
-
-  // Mock data for development
-  private getMockRecommendations(): AIRecommendation[] {
-    return [
-      {
-        id: "1",
-        user_id: "player-1",
-        player_name: "Alex Johnson",
-        recommendation_type: "reduce_load",
-        reason: "ACWR is 1.52, recommend reducing training load by 20%",
-        status: "pending",
-        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        risk_level: "high",
-      },
-      {
-        id: "2",
-        user_id: "player-2",
-        player_name: "Sarah Williams",
-        recommendation_type: "add_exercise",
-        reason: "Add hamstring strengthening exercises for injury prevention",
-        status: "accepted",
-        created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        accepted_at: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString(),
-        risk_level: "medium",
-      },
-      {
-        id: "3",
-        user_id: "player-3",
-        player_name: "Mike Davis",
-        recommendation_type: "schedule_recovery",
-        reason: "High fatigue detected, recommend active recovery session",
-        status: "pending",
-        created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-        risk_level: "medium",
-      },
-    ];
-  }
-
-  private getMockAlerts(): CoachVisibilityRecord[] {
-    return [
-      {
-        id: "alert-1",
-        player_id: "player-1",
-        player_name: "Alex Johnson",
-        visibility_type: "risk_warning",
-        created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-        message: {
-          id: "msg-1",
-          user_id: "player-1",
-          content: "Asked about creatine dosage for performance enhancement",
-          risk_level: "high",
-          intent: "dosage",
-          created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-        },
-      },
-      {
-        id: "alert-2",
-        player_id: "player-2",
-        player_name: "Sarah Williams",
-        visibility_type: "recommendation",
-        created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-        viewed_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        recommendation: {
-          id: "rec-1",
-          user_id: "player-2",
-          recommendation_type: "ask_coach",
-          reason: "Persistent shoulder pain - recommended professional evaluation",
-          status: "pending",
-          created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-          risk_level: "medium",
-        },
-      },
-    ];
   }
 }
 

@@ -181,7 +181,7 @@ export class SleepDebtService {
    */
   getSleepProfile(ageGroup?: string): OptimalSleepProfile {
     const group = ageGroup || this._ageGroup();
-    return SLEEP_PROFILES[group] || SLEEP_PROFILES.adult;
+    return SLEEP_PROFILES[group] || SLEEP_PROFILES['adult'];
   }
 
   /**

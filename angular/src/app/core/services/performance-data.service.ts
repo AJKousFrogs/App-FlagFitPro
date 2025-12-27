@@ -4,6 +4,7 @@ import { map, catchError } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
+import { AuthService } from "./auth.service";
 
 // Physical Measurements Interfaces
 export interface PhysicalMeasurement {
@@ -150,6 +151,7 @@ export class PerformanceDataService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
   private realtimeService = inject(RealtimeService);
+  private authService = inject(AuthService);
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
@@ -832,11 +834,123 @@ export class PerformanceDataService {
     timeframe: string = "12m",
     format: "json" | "csv" = "json",
   ): Observable<{ success: boolean; message?: string; data?: unknown }> {
-    this.logger.warn(
-      "[Performance] Export feature not yet implemented for Supabase",
-    );
-    // See issue #12 - Implement performance data export API (CSV, JSON, PDF)
-    return of({ success: false, message: "Export feature coming soon" });
+    return from(this.performExport(timeframe, format));
+  }
+
+  private async performExport(
+    timeframe: string,
+    format: "json" | "csv",
+  ): Promise<{ success: boolean; message?: string; data?: unknown }> {
+    const user = this.authService.getUser();
+    if (!user?.id) {
+      return { success: false, message: "Please log in to export data" };
+    }
+
+    try {
+      // Calculate date range
+      const now = new Date();
+      const months = parseInt(timeframe) || 12;
+      const startDate = new Date(now);
+      startDate.setMonth(startDate.getMonth() - months);
+
+      // Fetch all performance data
+      const [trainingSessions, wellnessLogs, bodyMeasurements] = await Promise.all([
+        this.supabaseService.client
+          .from("training_sessions")
+          .select("*")
+          .eq("user_id", user.id)
+          .gte("created_at", startDate.toISOString())
+          .order("created_at", { ascending: true }),
+        this.supabaseService.client
+          .from("wellness_logs")
+          .select("*")
+          .eq("user_id", user.id)
+          .gte("created_at", startDate.toISOString())
+          .order("created_at", { ascending: true }),
+        this.supabaseService.client
+          .from("body_measurements")
+          .select("*")
+          .eq("user_id", user.id)
+          .gte("created_at", startDate.toISOString())
+          .order("created_at", { ascending: true }),
+      ]);
+
+      const exportData = {
+        exportedAt: new Date().toISOString(),
+        timeframe,
+        trainingSessions: trainingSessions.data || [],
+        wellnessLogs: wellnessLogs.data || [],
+        bodyMeasurements: bodyMeasurements.data || [],
+      };
+
+      if (format === "json") {
+        // Download as JSON
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+        this.downloadBlob(blob, `performance-data-${new Date().toISOString().split("T")[0]}.json`);
+      } else {
+        // Convert to CSV
+        const csvContent = this.convertToCSV(exportData);
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        this.downloadBlob(blob, `performance-data-${new Date().toISOString().split("T")[0]}.csv`);
+      }
+
+      return { success: true, message: "Data exported successfully", data: exportData };
+    } catch (error) {
+      this.logger.error("[Performance] Export failed:", error);
+      return { success: false, message: "Failed to export data" };
+    }
+  }
+
+  private downloadBlob(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+
+  private convertToCSV(data: Record<string, unknown[]>): string {
+    const lines: string[] = [];
+
+    // Training Sessions
+    if (data["trainingSessions"] && Array.isArray(data["trainingSessions"]) && data["trainingSessions"].length > 0) {
+      lines.push("# Training Sessions");
+      const sessions = data["trainingSessions"] as Record<string, unknown>[];
+      const headers = Object.keys(sessions[0]);
+      lines.push(headers.join(","));
+      sessions.forEach((session) => {
+        lines.push(headers.map((h) => JSON.stringify(session[h] ?? "")).join(","));
+      });
+      lines.push("");
+    }
+
+    // Wellness Logs
+    if (data["wellnessLogs"] && Array.isArray(data["wellnessLogs"]) && data["wellnessLogs"].length > 0) {
+      lines.push("# Wellness Logs");
+      const logs = data["wellnessLogs"] as Record<string, unknown>[];
+      const headers = Object.keys(logs[0]);
+      lines.push(headers.join(","));
+      logs.forEach((log) => {
+        lines.push(headers.map((h) => JSON.stringify(log[h] ?? "")).join(","));
+      });
+      lines.push("");
+    }
+
+    // Body Measurements
+    if (data["bodyMeasurements"] && Array.isArray(data["bodyMeasurements"]) && data["bodyMeasurements"].length > 0) {
+      lines.push("# Body Measurements");
+      const measurements = data["bodyMeasurements"] as Record<string, unknown>[];
+      const headers = Object.keys(measurements[0]);
+      lines.push(headers.join(","));
+      measurements.forEach((m) => {
+        lines.push(headers.map((h) => JSON.stringify(m[h] ?? "")).join(","));
+      });
+    }
+
+    return lines.join("\n");
   }
 
   // Utility Methods

@@ -8,7 +8,7 @@ import {
   DestroyRef,
 } from "@angular/core";
 
-import { Router, RouterModule } from "@angular/router";
+import { Router, RouterModule, ActivatedRoute } from "@angular/router";
 import {
   FormBuilder,
   FormGroup,
@@ -226,6 +226,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
 
@@ -324,7 +325,9 @@ export class LoginComponent {
         next: (response: { success?: boolean; error?: string }) => {
           if (response.success) {
             this.toastService.success("Login successful!");
-            this.router.navigate(["/dashboard"]);
+            // Redirect to returnUrl if provided, otherwise dashboard
+            const returnUrl = this.route.snapshot.queryParams["returnUrl"];
+            this.router.navigateByUrl(returnUrl || "/dashboard");
           } else {
             this.toastService.error(response.error || "Invalid email or password");
           }

@@ -19,7 +19,7 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { Select } from "primeng/select";
 import { SliderModule } from "primeng/slider";
-import { ToggleSwitch } from "primeng/toggleswitch";
+import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { ChipModule } from "primeng/chip";
 import { TagModule } from "primeng/tag";
 import { SelectButtonModule } from "primeng/selectbutton";
@@ -35,6 +35,8 @@ import {
 } from "../../../core/services/weather.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { AuthService } from "../../../core/services/auth.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { Router } from "@angular/router";
 
 interface SessionTypeOption {
   label: string;
@@ -60,7 +62,7 @@ interface EquipmentOption {
     ButtonModule,
     Select,
     SliderModule,
-    ToggleSwitch,
+    ToggleSwitchModule,
     ChipModule,
     TagModule,
     SelectButtonModule,
@@ -150,11 +152,11 @@ interface EquipmentOption {
                 >
                 </p-tag>
               </div>
-              <p-inputSwitch
+              <p-toggleswitch
                 formControlName="outdoorSession"
                 [disabled]="!weatherData()?.suitable"
               >
-              </p-inputSwitch>
+              </p-toggleswitch>
               <label class="switch-label">Outdoor Session</label>
             </div>
           }
@@ -356,9 +358,13 @@ export class SmartTrainingFormComponent implements OnInit {
   private aiService = inject(AIService);
   private weatherService = inject(WeatherService);
   private authService = inject(AuthService);
+  private supabaseService = inject(SupabaseService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+
+  isSubmitting = signal(false);
 
   aiSuggestions = signal<TrainingSuggestion[]>([]);
   weatherData = signal<WeatherData | null>(null);
@@ -442,11 +448,53 @@ export class SmartTrainingFormComponent implements OnInit {
     const user = this.authService.getUser();
     if (!user) return;
 
+    // Load recent performance data from Supabase
+    let recentPerformance: Array<{ date: string; rpe: number; type: string }> = [];
+    try {
+      const { data: sessions } = await this.supabaseService.client
+        .from("training_sessions")
+        .select("created_at, rpe, session_type")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      if (sessions) {
+        recentPerformance = sessions.map((s) => ({
+          date: s.created_at,
+          rpe: s.rpe || 5,
+          type: s.session_type || "general",
+        }));
+      }
+    } catch (error) {
+      this.logger.warn("Could not load recent performance:", error);
+    }
+
+    // Load upcoming games/events
+    let upcomingGames: Array<{ date: string; opponent?: string; importance?: string }> = [];
+    try {
+      const { data: events } = await this.supabaseService.client
+        .from("team_events")
+        .select("event_date, event_name, event_type")
+        .gte("event_date", new Date().toISOString())
+        .order("event_date", { ascending: true })
+        .limit(5);
+
+      if (events) {
+        upcomingGames = events.map((e) => ({
+          date: e.event_date,
+          opponent: e.event_name,
+          importance: e.event_type === "game" ? "high" : "medium",
+        }));
+      }
+    } catch (error) {
+      this.logger.warn("Could not load upcoming games:", error);
+    }
+
     this.aiService
       .getTrainingSuggestions({
         userId: user.id,
-        recentPerformance: [], // See issue #14 - Load recent performance API
-        upcomingGames: [], // See issue #14 - Load upcoming games API
+        recentPerformance,
+        upcomingGames,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -540,19 +588,69 @@ export class SmartTrainingFormComponent implements OnInit {
 
   getWeatherSeverity(
     suitability: "excellent" | "good" | "fair" | "poor" | undefined,
-  ): "success" | "info" | "warning" | "danger" {
+  ): "success" | "info" | "warn" | "danger" {
     return this.weatherService.getWeatherSeverity(suitability || "good");
   }
 
-  onSubmit() {
-    if (this.trainingForm.valid) {
+  async onSubmit(): Promise<void> {
+    if (this.trainingForm.invalid) {
+      this.toastService.error("Please fill in all required fields");
+      return;
+    }
+
+    this.isSubmitting.set(true);
+
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) {
+        this.toastService.error("You must be logged in to create a session");
+        return;
+      }
+
       const formValue = this.trainingForm.value;
       this.logger.debug("Creating training session:", formValue);
-      // See issue #7 - Implement training form submission API
-      this.toastService.success("Your training session has been created successfully");
-    } else {
-      this.toastService.error("Please fill in all required fields");
+
+      // Save to Supabase
+      const { data, error } = await this.supabaseService.client
+        .from("training_sessions")
+        .insert({
+          user_id: user.id,
+          session_type: formValue.sessionType,
+          duration_minutes: formValue.duration,
+          intensity: this.getIntensityFromDuration(formValue.duration),
+          is_outdoor: formValue.outdoorSession,
+          equipment: formValue.equipment,
+          scheduled_date: new Date().toISOString(),
+          status: "scheduled",
+          notes: `Created via Smart Training Form`,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      this.toastService.success("Training session created successfully!");
+
+      // Navigate to training schedule
+      setTimeout(() => {
+        this.router.navigate(["/training/schedule"]);
+      }, 1000);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to create session";
+      this.toastService.error(message);
+      this.logger.error("Error creating training session:", error);
+    } finally {
+      this.isSubmitting.set(false);
     }
+  }
+
+  private getIntensityFromDuration(duration: number): string {
+    if (duration <= 30) return "low";
+    if (duration <= 60) return "moderate";
+    if (duration <= 90) return "high";
+    return "very_high";
   }
 
   onCancel() {

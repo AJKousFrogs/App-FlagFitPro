@@ -30,6 +30,7 @@ import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { LoadMonitoringService } from "../../../core/services/load-monitoring.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router } from "@angular/router";
 
@@ -551,6 +552,7 @@ export class TrainingBuilderComponent {
   private logger = inject(LoggerService);
   private loadMonitoringService = inject(LoadMonitoringService);
   private toastService = inject(ToastService);
+  private supabaseService = inject(SupabaseService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
@@ -702,18 +704,60 @@ export class TrainingBuilderComponent {
     this.loadAISuggestions();
   }
 
-  private loadAISuggestions() {
+  private async loadAISuggestions() {
     const user = this.authService.getUser();
     if (!user?.id) {
       return;
+    }
+
+    // Load recent performance data from Supabase
+    let recentPerformance: Array<{ date: string; rpe: number; type: string }> = [];
+    try {
+      const { data: sessions } = await this.supabaseService.client
+        .from("training_sessions")
+        .select("created_at, rpe, session_type")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      if (sessions) {
+        recentPerformance = sessions.map((s) => ({
+          date: s.created_at,
+          rpe: s.rpe || 5,
+          type: s.session_type || "general",
+        }));
+      }
+    } catch (error) {
+      this.logger.warn("Could not load recent performance:", error);
+    }
+
+    // Load upcoming games/events
+    let upcomingGames: Array<{ date: string; opponent?: string; importance?: string }> = [];
+    try {
+      const { data: events } = await this.supabaseService.client
+        .from("team_events")
+        .select("event_date, event_name, event_type")
+        .gte("event_date", new Date().toISOString())
+        .order("event_date", { ascending: true })
+        .limit(5);
+
+      if (events) {
+        upcomingGames = events.map((e) => ({
+          date: e.event_date,
+          opponent: e.event_name,
+          importance: e.event_type === "game" ? "high" : "medium",
+        }));
+      }
+    } catch (error) {
+      this.logger.warn("Could not load upcoming games:", error);
     }
 
     // Load AI suggestions based on user's recent performance
     this.aiService
       .getTrainingSuggestions({
         userId: user.id,
-        recentPerformance: [], // See issue #14 - Load recent performance API
-        upcomingGames: [], // See issue #14 - Load upcoming games API
+        recentPerformance,
+        upcomingGames,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -1071,7 +1115,7 @@ export class TrainingBuilderComponent {
   }
 
   async saveSession() {
-    // Save session template for later
+    // Save session template to database
     const user = this.authService.getUser();
     if (!user?.id) {
       this.toastService.error("Please log in to save a session");
@@ -1079,20 +1123,94 @@ export class TrainingBuilderComponent {
     }
 
     this.isSaving.set(true);
+    const exercises = this.generatedExercises();
+    const goals = this.selectedGoals();
+    const duration = this.sessionForm.get("duration")?.value || 60;
+    const intensity = this.sessionForm.get("intensity")?.value || "medium";
 
     try {
-      // For now, just show a success message
-      // TODO: Implement session template saving to training_session_templates table
-      this.toastService.success("Session saved for later!");
-      this.logger.debug("Saving session template:", {
-        goals: this.selectedGoals(),
-        exercises: this.generatedExercises(),
-        duration: this.sessionForm.get("duration")?.value,
-        intensity: this.sessionForm.get("intensity")?.value,
-      });
-    } catch (error) {
+      // Create the session template
+      const sessionType = this.mapGoalsToSessionType(goals);
+      const sessionName = `${goals.map(g => g.charAt(0).toUpperCase() + g.slice(1)).join(" & ")} Session`;
+
+      const { data: template, error: templateError } = await this.supabaseService.client
+        .from("training_session_templates")
+        .insert({
+          session_name: sessionName,
+          session_type: sessionType,
+          duration_minutes: duration,
+          intensity_level: intensity,
+          description: `AI-generated ${sessionType} session focusing on ${goals.join(", ")}`,
+          equipment_needed: [...new Set(exercises.flatMap(e => e.equipment || []))],
+          notes: `Generated on ${new Date().toLocaleDateString()}`,
+          day_of_week: new Date().getDay(),
+          session_order: 1,
+        })
+        .select()
+        .single();
+
+      if (templateError) {
+        throw new Error(templateError.message);
+      }
+
+      // Save individual exercises linked to the template
+      for (let i = 0; i < exercises.length; i++) {
+        const exercise = exercises[i];
+        
+        // Check if exercise exists in master exercises table
+        const { data: existingExercise } = await this.supabaseService.client
+          .from("exercises")
+          .select("id")
+          .eq("name", exercise.name)
+          .single();
+
+        let exerciseId = existingExercise?.id;
+
+        // If not, create it
+        if (!exerciseId) {
+          const { data: newExercise, error: exerciseError } = await this.supabaseService.client
+            .from("exercises")
+            .insert({
+              name: exercise.name,
+              category: exercise.category,
+              description: exercise.description,
+              equipment_needed: exercise.equipment,
+              difficulty_level: exercise.intensity,
+            })
+            .select("id")
+            .single();
+
+          if (exerciseError) {
+            this.logger.warn(`Could not create exercise ${exercise.name}:`, exerciseError);
+            continue;
+          }
+          exerciseId = newExercise?.id;
+        }
+
+        // Link exercise to session template
+        await this.supabaseService.client
+          .from("session_exercises")
+          .insert({
+            session_template_id: template.id,
+            exercise_id: exerciseId,
+            exercise_name: exercise.name,
+            exercise_order: i + 1,
+            sets: 3,
+            reps: "8-12",
+            duration_seconds: exercise.duration * 60,
+            intensity: exercise.intensity,
+            notes: exercise.description,
+          });
+      }
+
+      this.toastService.success("Session template saved successfully!");
+      this.logger.info("Session template saved:", template.id);
+      
+      // Optionally navigate to training schedule
+      this.router.navigate(["/training/schedule"]);
+    } catch (error: any) {
       this.logger.error("Error saving session template:", error);
-      this.toastService.error("Failed to save session template");
+      this.toastService.error(error.message || "Failed to save session template");
     } finally {
       this.isSaving.set(false);
     }

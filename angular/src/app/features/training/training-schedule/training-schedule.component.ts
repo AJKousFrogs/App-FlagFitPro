@@ -2,6 +2,7 @@ import {
   Component,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
   OnInit,
 } from "@angular/core";
@@ -13,9 +14,14 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
+import { SkeletonModule } from "primeng/skeleton";
+import { ToastModule } from "primeng/toast";
+import { TooltipModule } from "primeng/tooltip";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
-import { ApiService } from "../../../core/services/api.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { AuthService } from "../../../core/services/auth.service";
+import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
 interface TrainingSession {
@@ -37,6 +43,9 @@ interface TrainingSession {
     ButtonModule,
     DatePicker,
     TagModule,
+    SkeletonModule,
+    ToastModule,
+    TooltipModule,
     MainLayoutComponent,
     PageHeaderComponent,
   ],
@@ -73,16 +82,28 @@ interface TrainingSession {
               <h3>Upcoming Sessions</h3>
             </ng-template>
             <div class="sessions-list">
-              @if (sessions().length === 0) {
+              @if (isLoading()) {
+                @for (i of [1, 2, 3]; track i) {
+                  <div class="session-item">
+                    <div class="session-info">
+                      <p-skeleton width="150px" height="20px"></p-skeleton>
+                      <p-skeleton width="200px" height="14px" class="mt-2"></p-skeleton>
+                      <p-skeleton width="100px" height="14px" class="mt-1"></p-skeleton>
+                    </div>
+                    <p-skeleton width="80px" height="24px"></p-skeleton>
+                  </div>
+                }
+              } @else if (filteredSessions().length === 0) {
                 <div class="empty-state">
+                  <i class="pi pi-calendar-times" style="font-size: 2rem; margin-bottom: 1rem;"></i>
                   <p>
                     No training sessions scheduled. Click "New Session" to add
                     one.
                   </p>
                 </div>
               } @else {
-                @for (session of sessions(); track session.id) {
-                  <div class="session-item">
+                @for (session of filteredSessions(); track session.id) {
+                  <div class="session-item" (click)="viewSession(session)">
                     <div class="session-info">
                       <h4>{{ session.type }}</h4>
                       <p class="session-date">
@@ -92,11 +113,21 @@ interface TrainingSession {
                         Duration: {{ session.duration }} min
                       </p>
                     </div>
-                    <div class="session-status">
+                    <div class="session-actions">
                       <p-tag
                         [value]="session.status"
                         [severity]="getStatusSeverity(session.status)"
                       ></p-tag>
+                      @if (session.status === 'scheduled') {
+                        <p-button
+                          icon="pi pi-check"
+                          [rounded]="true"
+                          [text]="true"
+                          size="small"
+                          pTooltip="Mark Complete"
+                          (onClick)="markComplete($event, session)"
+                        ></p-button>
+                      }
                     </div>
                   </div>
                 }
@@ -144,6 +175,19 @@ interface TrainingSession {
         padding: var(--space-4);
         background: var(--p-surface-50);
         border-radius: var(--p-border-radius);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .session-item:hover {
+        background: var(--p-surface-100);
+        transform: translateX(4px);
+      }
+
+      .session-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
       }
 
       .session-info h4 {
@@ -169,52 +213,93 @@ interface TrainingSession {
   ],
 })
 export class TrainingScheduleComponent implements OnInit {
-  private apiService = inject(ApiService);
+  private supabaseService = inject(SupabaseService);
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
   private router = inject(Router);
   private logger = inject(LoggerService);
 
   selectedDate = signal<Date>(new Date());
   sessions = signal<TrainingSession[]>([]);
+  isLoading = signal<boolean>(false);
+
+  // Filter sessions based on selected date
+  filteredSessions = computed(() => {
+    const selected = this.selectedDate();
+    const allSessions = this.sessions();
+
+    if (!selected) return allSessions;
+
+    // Show sessions for the selected week
+    const startOfWeek = new Date(selected);
+    startOfWeek.setDate(selected.getDate() - selected.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 7);
+
+    return allSessions.filter((session) => {
+      const sessionDate = new Date(session.date);
+      return sessionDate >= startOfWeek && sessionDate < endOfWeek;
+    });
+  });
 
   ngOnInit(): void {
     this.loadSessions();
   }
 
   async loadSessions(): Promise<void> {
-    try {
-      // See issue #8 - Implement training schedule API
-      // const response = await this.apiService.getTrainingSessions();
+    this.isLoading.set(true);
 
-      // Mock data
-      this.sessions.set([
-        {
-          id: "1",
-          date: new Date(),
-          type: "Speed & Agility",
-          duration: 60,
-          status: "scheduled",
-        },
-        {
-          id: "2",
-          date: new Date(Date.now() + 86400000),
-          type: "Strength Training",
-          duration: 45,
-          status: "scheduled",
-        },
-      ]);
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) {
+        this.logger.warn("No user found, cannot load sessions");
+        return;
+      }
+
+      // Fetch training sessions from Supabase
+      const { data, error } = await this.supabaseService.client
+        .from("training_sessions")
+        .select(`
+          id,
+          scheduled_date,
+          session_type,
+          duration_minutes,
+          status,
+          notes,
+          created_at
+        `)
+        .eq("user_id", user.id)
+        .gte("scheduled_date", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .order("scheduled_date", { ascending: true });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const mappedSessions: TrainingSession[] = (data || []).map((session) => ({
+        id: session.id,
+        date: new Date(session.scheduled_date),
+        type: session.session_type || "Training",
+        duration: session.duration_minutes || 60,
+        status: session.status as "scheduled" | "completed" | "missed",
+      }));
+
+      this.sessions.set(mappedSessions);
     } catch (error) {
       this.logger.error("Error loading sessions:", error);
+      this.toastService.error("Failed to load training sessions");
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
   onDateSelect(date: Date): void {
     this.selectedDate.set(date);
-    // Filter sessions for selected date
   }
 
   createNewSession(): void {
-    // Navigate to training form for session creation
-    // Pre-fill with selected date if available
     const selectedDateStr = this.selectedDate()?.toISOString().split("T")[0];
     this.router.navigate(["/training/smart-form"], {
       queryParams: selectedDateStr ? { date: selectedDateStr } : {},
@@ -222,6 +307,40 @@ export class TrainingScheduleComponent implements OnInit {
     this.logger.debug("Navigating to session creation form", {
       date: selectedDateStr,
     });
+  }
+
+  viewSession(session: TrainingSession): void {
+    this.router.navigate(["/training/session", session.id]);
+  }
+
+  async markComplete(event: Event, session: TrainingSession): Promise<void> {
+    event.stopPropagation();
+
+    try {
+      const { error } = await this.supabaseService.client
+        .from("training_sessions")
+        .update({
+          status: "completed",
+          completed_at: new Date().toISOString(),
+        })
+        .eq("id", session.id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Update local state
+      this.sessions.update((sessions) =>
+        sessions.map((s) =>
+          s.id === session.id ? { ...s, status: "completed" as const } : s
+        )
+      );
+
+      this.toastService.success("Session marked as complete!");
+    } catch (error) {
+      this.logger.error("Error marking session complete:", error);
+      this.toastService.error("Failed to update session");
+    }
   }
 
   getStatusSeverity(

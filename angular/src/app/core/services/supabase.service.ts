@@ -30,10 +30,12 @@ export class SupabaseService {
   // UI State: Use signals instead of BehaviorSubject
   private readonly _currentUser = signal<User | null>(null);
   private readonly _session = signal<Session | null>(null);
+  private readonly _isInitialized = signal<boolean>(false);
 
   // Public readonly signals for components
   readonly currentUser = this._currentUser.asReadonly();
   readonly session = this._session.asReadonly();
+  readonly isInitialized = this._isInitialized.asReadonly();
 
   // Computed signals for derived state
   readonly isAuthenticated = computed(() => this._currentUser() !== null);
@@ -72,19 +74,58 @@ export class SupabaseService {
   }
 
   private async initializeAuth() {
-    // Get initial session
-    const { data } = await this.supabase.auth.getSession();
-    this._session.set(data.session);
-    this._currentUser.set(data.session?.user ?? null);
+    try {
+      // Get initial session
+      const { data } = await this.supabase.auth.getSession();
+      this._session.set(data.session);
+      this._currentUser.set(data.session?.user ?? null);
 
-    // Listen for auth changes
-    this.supabase.auth.onAuthStateChange(
-      (event: AuthChangeEvent, session: Session | null) => {
-        this.logger.debug("Auth state changed:", event);
-        this._session.set(session);
-        this._currentUser.set(session?.user ?? null);
-      },
-    );
+      // Listen for auth changes
+      this.supabase.auth.onAuthStateChange(
+        (event: AuthChangeEvent, session: Session | null) => {
+          this.logger.debug("Auth state changed:", event);
+          this._session.set(session);
+          this._currentUser.set(session?.user ?? null);
+
+          // Handle specific auth events
+          switch (event) {
+            case "SIGNED_OUT":
+              this.logger.info("User signed out");
+              break;
+            case "TOKEN_REFRESHED":
+              this.logger.debug("Session token refreshed automatically");
+              break;
+            case "USER_UPDATED":
+              this.logger.debug("User profile updated");
+              break;
+            case "PASSWORD_RECOVERY":
+              this.logger.info("Password recovery initiated");
+              break;
+          }
+        },
+      );
+    } finally {
+      // Mark as initialized even if there's no session
+      this._isInitialized.set(true);
+    }
+  }
+
+  /**
+   * Wait for auth initialization to complete
+   * Use this in guards to avoid race conditions
+   */
+  async waitForInit(): Promise<void> {
+    if (this._isInitialized()) return;
+    
+    // Poll until initialized (max 5 seconds)
+    const maxWait = 5000;
+    const interval = 50;
+    let waited = 0;
+    
+    while (!this._isInitialized() && waited < maxWait) {
+      await new Promise(resolve => setTimeout(resolve, interval));
+      waited += interval;
+    }
   }
 
   /**

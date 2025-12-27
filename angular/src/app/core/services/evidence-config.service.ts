@@ -13,12 +13,16 @@ import {
   getAllPresets,
 } from "../config/evidence-presets";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
+import { AuthService } from "./auth.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class EvidenceConfigService {
   private logger = inject(LoggerService);
+  private supabaseService = inject(SupabaseService);
+  private authService = inject(AuthService);
 
   // Active preset ID
   private readonly activePresetId = signal<string>("adult_flag_competitive_v1");
@@ -77,8 +81,27 @@ export class EvidenceConfigService {
   /**
    * Log preset change (for analytics/calibration)
    */
-  private logPresetChange(presetId: string): void {
-    // See issue #21 - Implement backend logging service
+  private async logPresetChange(presetId: string): Promise<void> {
     this.logger.info(`[EvidenceConfig] Preset changed to: ${presetId}`);
+
+    // Log to Supabase for analytics
+    const user = this.authService.getUser();
+    if (user?.id) {
+      try {
+        await this.supabaseService.client
+          .from("user_activity_logs")
+          .insert({
+            user_id: user.id,
+            activity_type: "preset_change",
+            activity_data: {
+              preset_id: presetId,
+              changed_at: new Date().toISOString(),
+            },
+          });
+      } catch (error) {
+        // Silently fail if table doesn't exist
+        this.logger.debug("Activity log table not available:", error);
+      }
+    }
   }
 }

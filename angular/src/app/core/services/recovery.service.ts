@@ -383,12 +383,46 @@ export class RecoveryService {
 
   /**
    * Get recommended recovery protocols based on current metrics
-   * Returns mock protocols for now (can be stored in database later)
+   * First tries to load from database, falls back to default protocols
    */
   getRecommendedProtocols(): Observable<RecoveryProtocol[]> {
-    // For now, return mock protocols
-    // See issue #22 - Migrate recovery protocols to dedicated table
-    return of(this.getMockProtocols());
+    return from(this.loadProtocolsFromDatabase());
+  }
+
+  private async loadProtocolsFromDatabase(): Promise<RecoveryProtocol[]> {
+    try {
+      // Try to load from recovery_protocols table
+      const { data, error } = await this.supabaseService.client
+        .from("recovery_protocols")
+        .select("*")
+        .eq("is_active", true)
+        .order("name");
+
+      if (error) {
+        this.logger.debug("[Recovery] Protocols table not available, using defaults");
+        return this.getMockProtocols();
+      }
+
+      if (data && data.length > 0) {
+        return data.map((p) => ({
+          id: p.id,
+          name: p.name,
+          type: p.type || "active",
+          duration: p.duration || 20,
+          description: p.description || "",
+          benefits: p.benefits || [],
+          steps: p.steps || [],
+          equipment: p.equipment || [],
+          targetMuscles: p.target_muscles || [],
+          intensity: p.intensity || "low",
+          icon: p.icon || "pi pi-heart",
+        }));
+      }
+
+      return this.getMockProtocols();
+    } catch {
+      return this.getMockProtocols();
+    }
   }
 
   /**

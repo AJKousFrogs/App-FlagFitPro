@@ -617,15 +617,116 @@ export class NutritionService {
 
   /**
    * Get AI-powered nutrition suggestions
-   * Note: This requires AI API integration
-   * See issue #25 - Implement OpenAI nutrition AI assistant
-   * Requires: Supabase Edge Function, OpenAI API key, budget approval
+   * Calls Supabase Edge Function for AI-powered recommendations
    */
   getAINutritionSuggestions(): Observable<AINutritionSuggestion[]> {
-    this.logger.warn(
-      "[Nutrition] AI suggestions require backend - not yet implemented",
-    );
-    return of([]);
+    return from(this.fetchAINutritionSuggestions());
+  }
+
+  private async fetchAINutritionSuggestions(): Promise<AINutritionSuggestion[]> {
+    const userId = this.userId();
+    if (!userId) {
+      return [];
+    }
+
+    try {
+      // Try to call the AI nutrition edge function
+      const { data, error } = await this.supabaseService.client.functions.invoke(
+        "ai-nutrition-suggestions",
+        {
+          body: { userId },
+        },
+      );
+
+      if (error) {
+        this.logger.debug("[Nutrition] AI edge function not available, using rule-based suggestions");
+        return this.generateRuleBasedSuggestions();
+      }
+
+      return data?.suggestions || [];
+    } catch {
+      // Fall back to rule-based suggestions
+      return this.generateRuleBasedSuggestions();
+    }
+  }
+
+  private async generateRuleBasedSuggestions(): Promise<AINutritionSuggestion[]> {
+    const userId = this.userId();
+    if (!userId) return [];
+
+    const suggestions: AINutritionSuggestion[] = [];
+
+    // Get recent nutrition data
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+
+    const { data: logs } = await this.supabaseService.client
+      .from("nutrition_logs")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("logged_at", weekAgo.toISOString());
+
+    if (!logs || logs.length === 0) {
+      suggestions.push({
+        id: "start-tracking",
+        type: "general",
+        title: "Start Tracking Your Nutrition",
+        description: "Log your meals to get personalized nutrition recommendations.",
+        priority: "high",
+        confidence: 1.0,
+      });
+      return suggestions;
+    }
+
+    // Analyze protein intake
+    const avgProtein = logs.reduce((sum, l) => sum + (l.protein || 0), 0) / logs.length;
+    if (avgProtein < 100) {
+      suggestions.push({
+        id: "increase-protein",
+        type: "macro",
+        title: "Increase Protein Intake",
+        description: `Your average protein intake is ${Math.round(avgProtein)}g/day. Athletes typically need 1.6-2.2g/kg body weight.`,
+        priority: "high",
+        confidence: 0.85,
+        actionItems: [
+          "Add lean protein to each meal",
+          "Consider protein-rich snacks",
+          "Include eggs, chicken, fish, or legumes",
+        ],
+      });
+    }
+
+    // Check hydration
+    const avgWater = logs.reduce((sum, l) => sum + (l.water_ml || 0), 0) / logs.length;
+    if (avgWater < 2000) {
+      suggestions.push({
+        id: "hydration",
+        type: "hydration",
+        title: "Improve Hydration",
+        description: `Average water intake: ${Math.round(avgWater)}ml/day. Aim for 2-3L daily.`,
+        priority: "medium",
+        confidence: 0.9,
+        actionItems: [
+          "Drink water before, during, and after training",
+          "Carry a water bottle throughout the day",
+          "Monitor urine color for hydration status",
+        ],
+      });
+    }
+
+    // Check meal timing consistency
+    if (logs.length < 14) {
+      suggestions.push({
+        id: "consistency",
+        type: "timing",
+        title: "Maintain Consistent Meal Timing",
+        description: "Regular meal timing supports stable energy levels and recovery.",
+        priority: "low",
+        confidence: 0.7,
+      });
+    }
+
+    return suggestions;
   }
 
   /**

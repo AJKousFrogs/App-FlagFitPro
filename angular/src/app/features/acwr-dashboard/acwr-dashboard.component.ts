@@ -13,10 +13,14 @@
 
 import { Component, computed, signal, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
 import { AcwrService } from "../../core/services/acwr.service";
 import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
 import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
+import { AuthService } from "../../core/services/auth.service";
+import { ToastService } from "../../core/services/toast.service";
 import {
   ACWRData,
   RiskZone,
@@ -573,6 +577,11 @@ export class AcwrDashboardComponent implements OnInit {
     }
   }
 
+  private router = inject(Router);
+  private supabaseService = inject(SupabaseService);
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
+
   public dismissTopAlert(): void {
     const alert = this.topAlert();
     if (alert) {
@@ -581,17 +590,123 @@ export class AcwrDashboardComponent implements OnInit {
   }
 
   public logSession(): void {
-    // See issue #15 - Implement ACWR session logging modal
-    this.logger.debug("Open session logging form");
+    // Navigate to smart training form for logging a new session
+    this.router.navigate(["/training/smart-form"]);
   }
 
   public viewHistory(): void {
-    // See issue #16 - Implement ACWR history navigation
-    this.logger.debug("Navigate to load history");
+    // Navigate to training schedule to view history
+    this.router.navigate(["/training/schedule"]);
   }
 
-  public downloadReport(): void {
-    // See issue #17 - Implement PDF report generation
-    this.logger.debug("Generate ACWR report");
+  public async downloadReport(): Promise<void> {
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) {
+        this.toastService.error("Please log in to download reports");
+        return;
+      }
+
+      this.toastService.info("Generating ACWR report...");
+
+      // Get current ACWR data from the service's computed signal
+      const acwrData = this.acwrService.acwrData();
+      const alerts = this.alerts();
+
+      // Build report data
+      const reportData = {
+        generatedAt: new Date().toISOString(),
+        userId: user.id,
+        acwr: {
+          current: acwrData.ratio,
+          riskZone: acwrData.riskZone.label,
+          acuteLoad: acwrData.acute,
+          chronicLoad: acwrData.chronic,
+          weeklyProgression: acwrData.weeklyProgression,
+        },
+        alerts: alerts.map((a) => ({
+          message: a.message,
+          severity: a.severity,
+          recommendation: a.recommendation,
+        })),
+        recommendations: this.getRecommendationsForRiskZone(acwrData.riskZone.label),
+      };
+
+      // Save report to Supabase
+      const { error } = await this.supabaseService.client
+        .from("acwr_reports")
+        .insert({
+          user_id: user.id,
+          report_data: reportData,
+          acwr_value: acwrData.ratio,
+          risk_zone: acwrData.riskZone,
+        });
+
+      if (error) {
+        // If table doesn't exist, just download locally
+        this.logger.debug("ACWR reports table not available, generating local report");
+      }
+
+      // Generate and download JSON report
+      const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: "application/json" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `acwr-report-${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      this.toastService.success("ACWR report downloaded successfully");
+    } catch (error) {
+      this.logger.error("Error generating ACWR report:", error);
+      this.toastService.error("Failed to generate report");
+    }
+  }
+
+  private getRecommendationsForRiskZone(riskZoneLabel: string): string[] {
+    switch (riskZoneLabel) {
+      case "Danger Zone (High)":
+      case "danger-high":
+        return [
+          "Immediately reduce training load by 30-40%",
+          "Focus on recovery activities (sleep, nutrition, hydration)",
+          "Consider active recovery sessions only",
+          "Monitor for signs of overtraining or injury",
+        ];
+      case "Warning (High)":
+      case "warning-high":
+        return [
+          "Reduce training intensity by 15-20%",
+          "Add an extra rest day this week",
+          "Prioritize sleep and nutrition",
+          "Monitor fatigue levels closely",
+        ];
+      case "Optimal Zone":
+      case "optimal":
+        return [
+          "Maintain current training load",
+          "Continue balanced progression",
+          "Keep monitoring ACWR trends",
+        ];
+      case "Warning (Low)":
+      case "warning-low":
+        return [
+          "Gradually increase training load by 10-15%",
+          "Add one additional session this week",
+          "Focus on building chronic fitness base",
+        ];
+      case "Danger Zone (Low)":
+      case "danger-low":
+        return [
+          "Significant increase in training needed",
+          "Build up gradually over 2-3 weeks",
+          "Focus on aerobic base development",
+          "Consider adding more volume before intensity",
+        ];
+      default:
+        return ["Continue monitoring your training load"];
+    }
   }
 }
