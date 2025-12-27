@@ -37,7 +37,7 @@ const {
   CORS_HEADERS,
 } = require("./error-handler.cjs");
 const { authenticateRequest } = require("./auth-helper.cjs");
-const { applyRateLimit } = require("./rate-limiter.cjs");
+const { applyRateLimit, getRateLimitHeaders } = require("./rate-limiter.cjs");
 
 /**
  * Generate a unique request ID for tracking
@@ -131,7 +131,7 @@ async function baseHandler(event, context, options = {}) {
     }
 
     // Call the actual handler
-    const response = await handler(event, context, { userId });
+    const response = await handler(event, context, { userId, requestId });
 
     // Performance monitoring - calculate duration
     const duration = Date.now() - startTime;
@@ -146,11 +146,21 @@ async function baseHandler(event, context, options = {}) {
       timestamp: new Date().toISOString(),
     });
 
-    // Add performance and tracking headers to response
+    // Get client IP for rate limit headers
+    const clientIp =
+      event.headers?.["x-forwarded-for"]?.split(",")[0]?.trim() ||
+      event.headers?.["x-real-ip"] ||
+      "unknown";
+    const rateLimitIdentifier = userId ? `${clientIp}:${userId}` : clientIp;
+    const rateLimitHeaders = getRateLimitHeaders(rateLimitIdentifier, rateLimitType);
+
+    // Add performance, tracking, and rate limit headers to response
     if (response && response.headers) {
       response.headers["X-Response-Time"] = `${duration}ms`;
       response.headers["X-Function-Name"] = functionName;
       response.headers["X-Request-Id"] = requestId;
+      // Add rate limit headers
+      Object.assign(response.headers, rateLimitHeaders);
     }
 
     // Alert on slow responses (>1000ms)

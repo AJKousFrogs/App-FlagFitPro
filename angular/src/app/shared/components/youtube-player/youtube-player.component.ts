@@ -68,7 +68,7 @@ interface YouTubeIFrameAPI {
 
 declare const YT: YouTubeIFrameAPI;
 
-interface WindowWithYouTubeAPI extends Window {
+interface WindowWithYouTubeAPI {
   onYouTubeIframeAPIReady?: () => void;
   YT?: YouTubeIFrameAPI;
 }
@@ -257,7 +257,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     }
 
     // Check if API is already loaded
-    const win = window as WindowWithYouTubeAPI;
+    const win = window as unknown as WindowWithYouTubeAPI;
     if (typeof YT !== "undefined" && YT.Player) {
       this.youtubeApiLoaded.set(true);
       this.initializePlayer();

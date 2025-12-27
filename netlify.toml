@@ -3,7 +3,7 @@
   publish = "angular/dist/flagfit-pro/browser"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
   VITE_APP_ENVIRONMENT = "production"
   VITE_APP_NAME = "FlagFit Pro"

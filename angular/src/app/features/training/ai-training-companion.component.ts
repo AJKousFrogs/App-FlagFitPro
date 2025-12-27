@@ -16,7 +16,7 @@ import { CarouselModule } from "primeng/carousel";
 import { KnobModule } from "primeng/knob";
 import { scaleInOut } from "../../shared/animations/app.animations";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { AIService } from "../../core/services/ai.service";
+import { AIService, AnalysisContext } from "../../core/services/ai.service";
 import { ContextService } from "../../core/services/context.service";
 import { PerformanceMonitorService } from "../../core/services/performance-monitor.service";
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
@@ -97,12 +97,7 @@ interface SpeechRecognitionConstructor {
   new (): SpeechRecognition;
 }
 
-interface TrainingContext {
-  currentExercise: string | null;
-  timeInSession: number;
-  previousPerformance: unknown[];
-  environmentalFactors: unknown | null;
-}
+// TrainingContext is now imported as AnalysisContext from ai.service.ts
 
 interface AIResponse {
   message?: string;
@@ -796,12 +791,12 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
       });
   }
 
-  private async gatherTrainingContext(): Promise<TrainingContext> {
+  private async gatherTrainingContext(): Promise<AnalysisContext> {
     return {
-      currentExercise: null, // Would come from training service
+      currentExercise: undefined, // Would come from training service
       timeInSession: 0, // Would come from training service
       previousPerformance: [], // Would come from performance service
-      environmentalFactors: null, // Would come from environment service
+      environmentalFactors: undefined, // Would come from environment service
     };
   }
 
@@ -852,11 +847,12 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
   private updateInsights(insights: unknown[]): void {
     const formattedInsights: Insight[] = insights.map((insight) => {
       // Type guard to check if insight has required properties
+      const insightObj = insight as Record<string, unknown>;
       const hasRequiredProps =
         insight &&
         typeof insight === "object" &&
         "message" in insight &&
-        typeof (insight as Record<string, unknown>).message === "string";
+        typeof insightObj["message"] === "string";
 
       if (!hasRequiredProps) {
         return {
@@ -868,27 +864,26 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
         };
       }
 
-      const insightObj = insight as Record<string, unknown>;
       return {
         id:
-          typeof insightObj.id === "string"
-            ? insightObj.id
+          typeof insightObj["id"] === "string"
+            ? insightObj["id"]
             : `insight-${Date.now()}`,
         type:
-          typeof insightObj.type === "string" ? insightObj.type : "General",
-        message: insightObj.message as string,
+          typeof insightObj["type"] === "string" ? insightObj["type"] : "General",
+        message: insightObj["message"] as string,
         icon:
-          typeof insightObj.icon === "string"
-            ? insightObj.icon
+          typeof insightObj["icon"] === "string"
+            ? insightObj["icon"]
             : "pi pi-info-circle",
         priority:
-          insightObj.priority === "high" ||
-          insightObj.priority === "medium" ||
-          insightObj.priority === "low"
-            ? insightObj.priority
+          insightObj["priority"] === "high" ||
+          insightObj["priority"] === "medium" ||
+          insightObj["priority"] === "low"
+            ? insightObj["priority"]
             : "medium",
-        actions: Array.isArray(insightObj.actions)
-          ? insightObj.actions
+        actions: Array.isArray(insightObj["actions"])
+          ? insightObj["actions"]
           : undefined,
       };
     });

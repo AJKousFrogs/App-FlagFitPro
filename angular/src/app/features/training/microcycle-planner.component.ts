@@ -29,7 +29,7 @@ interface DayPlan {
 @Component({
   selector: "app-microcycle-planner",
   standalone: true,
-  changeDetectionStrategy: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, TrafficLightRiskComponent],
   template: `
     <div

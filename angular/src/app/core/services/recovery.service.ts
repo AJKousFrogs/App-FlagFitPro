@@ -100,11 +100,7 @@ interface DatabaseRecoverySession {
   status: "in_progress" | "paused" | "completed" | "stopped";
   created_at?: string;
   updated_at?: string;
-}
-
-interface RealtimePayload<T> {
-  new: T;
-  old: T;
+  [key: string]: unknown; // Allow additional properties for Record<string, unknown> compatibility
 }
 
 @Injectable({
@@ -178,11 +174,11 @@ export class RecoveryService {
    * Subscribe to realtime recovery session updates
    */
   private subscribeToSessionUpdates(userId: string): void {
-    this.realtimeService.subscribe(
+    this.realtimeService.subscribe<DatabaseRecoverySession>(
       "recovery_sessions",
       `athlete_id=eq.${userId}`,
       {
-        onInsert: async (payload: RealtimePayload<DatabaseRecoverySession>) => {
+        onInsert: async (payload) => {
           this.logger.info("[Recovery] New session received via realtime");
           const session = await this.fetchSessionWithProtocol(payload.new.id);
           if (session) {
@@ -190,7 +186,7 @@ export class RecoveryService {
             this._activeSessions.set([session, ...current]);
           }
         },
-        onUpdate: async (payload: RealtimePayload<DatabaseRecoverySession>) => {
+        onUpdate: async (payload) => {
           this.logger.info("[Recovery] Session updated via realtime");
           const session = await this.fetchSessionWithProtocol(payload.new.id);
           if (session) {
@@ -207,7 +203,7 @@ export class RecoveryService {
             }
           }
         },
-        onDelete: (payload: RealtimePayload<DatabaseRecoverySession>) => {
+        onDelete: (payload) => {
           this.logger.info("[Recovery] Session deleted via realtime");
           const current = this._activeSessions();
           const filtered = current.filter((s) => s.id !== payload.old.id);

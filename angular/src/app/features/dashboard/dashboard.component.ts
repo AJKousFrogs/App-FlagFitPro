@@ -4,6 +4,7 @@ import {
   computed,
   ChangeDetectionStrategy,
   effect,
+  untracked,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -156,9 +157,15 @@ export class DashboardComponent {
 
   constructor() {
     // Configure header for dashboard using effect (zoneless change detection compatible)
+    // Use untracked() to prevent this effect from re-running on signal changes
+    // since setDashboardHeader() is a one-time setup, not reactive to user changes
     effect(() => {
-      // Effect runs when component initializes and when dependencies change
-      this.headerService.setDashboardHeader();
+      // Read the signal to establish dependency (for future reactivity if needed)
+      const _role = this.userRole();
+      // Use untracked for the side effect to prevent unnecessary re-runs
+      untracked(() => {
+        this.headerService.setDashboardHeader();
+      });
     });
   }
 }

@@ -19,7 +19,7 @@ import { firstValueFrom } from "rxjs";
 // Services
 import { AuthService } from "./auth.service";
 import { AcwrService } from "./acwr.service";
-import { WellnessService } from "./wellness.service";
+import { WellnessService, WellnessData } from "./wellness.service";
 import { NutritionService } from "./nutrition.service";
 import { LoadMonitoringService } from "./load-monitoring.service";
 import { SupabaseService } from "./supabase.service";
@@ -285,7 +285,8 @@ describe("Integration Tests", () => {
       const wellnessService = TestBed.inject(WellnessService);
 
       // Log wellness
-      const wellnessData = {
+      const wellnessData: WellnessData = {
+        date: "2024-01-15",
         sleep: 6,
         energy: 5,
         stress: 7,
@@ -305,7 +306,7 @@ describe("Integration Tests", () => {
     it("should calculate wellness score and status", () => {
       const wellnessService = TestBed.inject(WellnessService);
 
-      const goodWellness = {
+      const goodWellness: WellnessData = {
         date: "2024-01-15",
         sleep: 9,
         energy: 8,
@@ -326,7 +327,7 @@ describe("Integration Tests", () => {
     it("should track wellness trends over time", () => {
       const wellnessService = TestBed.inject(WellnessService);
 
-      const trendData = [
+      const trendData: WellnessData[] = [
         { date: "2024-01-15", sleep: 8, energy: 8 },
         { date: "2024-01-14", sleep: 7, energy: 7 },
         { date: "2024-01-13", sleep: 7, energy: 6 },
@@ -352,7 +353,7 @@ describe("Integration Tests", () => {
       const nutritionService = TestBed.inject(NutritionService);
 
       // Mock food search
-      mockSupabaseService.client.functions.invoke.mockResolvedValue({
+      (mockSupabaseService as any).client.functions.invoke.mockResolvedValue({
         data: {
           success: true,
           data: [

@@ -138,6 +138,7 @@ describe("LoadMonitoringService", () => {
     it("should calculate external load with all metrics", () => {
       const external: ExternalLoad = {
         totalDistance: 8000, // 8km
+        sprintCount: 20, // Number of sprints
         sprintDistance: 400, // 400m sprints
         playerLoad: 600, // Device metric
         accelerations: 50,
@@ -153,6 +154,7 @@ describe("LoadMonitoringService", () => {
     it("should weight distance at 30%", () => {
       const external: ExternalLoad = {
         totalDistance: 10000, // 10km = 100 points base
+        sprintCount: 0,
         sprintDistance: 0,
         accelerations: 0,
         decelerations: 0,
@@ -167,6 +169,7 @@ describe("LoadMonitoringService", () => {
     it("should weight sprints at 40%", () => {
       const external: ExternalLoad = {
         totalDistance: 0,
+        sprintCount: 25,
         sprintDistance: 500, // 500m = 100 points base
         accelerations: 0,
         decelerations: 0,
@@ -181,6 +184,7 @@ describe("LoadMonitoringService", () => {
     it("should weight player load at 30%", () => {
       const external: ExternalLoad = {
         totalDistance: 0,
+        sprintCount: 0,
         sprintDistance: 0,
         playerLoad: 1000, // Max device metric
         accelerations: 0,
@@ -196,6 +200,7 @@ describe("LoadMonitoringService", () => {
     it("should redistribute weight when no player load", () => {
       const withPlayerLoad: ExternalLoad = {
         totalDistance: 5000,
+        sprintCount: 15,
         sprintDistance: 300,
         playerLoad: 500,
         accelerations: 30,
@@ -204,6 +209,7 @@ describe("LoadMonitoringService", () => {
 
       const withoutPlayerLoad: ExternalLoad = {
         totalDistance: 5000,
+        sprintCount: 15,
         sprintDistance: 300,
         accelerations: 30,
         decelerations: 25,
@@ -220,6 +226,7 @@ describe("LoadMonitoringService", () => {
     it("should handle zero metrics", () => {
       const external: ExternalLoad = {
         totalDistance: 0,
+        sprintCount: 0,
         sprintDistance: 0,
         accelerations: 0,
         decelerations: 0,
@@ -373,6 +380,7 @@ describe("LoadMonitoringService", () => {
 
       const external: ExternalLoad = {
         totalDistance: 8000,
+        sprintCount: 20,
         sprintDistance: 400,
         playerLoad: 500,
         accelerations: 40,
@@ -450,6 +458,7 @@ describe("LoadMonitoringService", () => {
       const internal = service.calculateInternalLoad(7, 90);
       const external: ExternalLoad = {
         totalDistance: 8000,
+        sprintCount: 20,
         sprintDistance: 400,
         accelerations: 40,
         decelerations: 35,

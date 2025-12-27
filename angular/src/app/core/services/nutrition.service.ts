@@ -80,12 +80,16 @@ interface DatabaseNutritionLog {
   fiber?: number;
   logged_at: string;
   meal_type?: string;
+  log_date?: string;
+  [key: string]: unknown; // Allow additional properties for Record<string, unknown> compatibility
 }
 
-interface RealtimePayload<T> {
+// RealtimePayload is imported from realtime.service.ts as RealtimeEvent
+// Using type alias for clarity
+type RealtimePayload<T extends Record<string, unknown>> = {
   new: T;
   old: T;
-}
+};
 
 interface EdamamFood {
   fdcId: number;
@@ -189,26 +193,28 @@ export class NutritionService {
     const today = new Date().toISOString().split("T")[0];
 
     // Subscribe to nutrition logs
-    this.realtimeService.subscribe("nutrition_logs", `user_id=eq.${userId}`, {
-      onInsert: (payload: RealtimePayload<DatabaseNutritionLog>) => {
+    this.realtimeService.subscribe<DatabaseNutritionLog>("nutrition_logs", `user_id=eq.${userId}`, {
+      onInsert: (payload) => {
+        const logData = payload.new;
         const logDate =
-          payload.new.log_date ||
-          new Date(payload.new.logged_at).toISOString().split("T")[0];
+          logData.log_date ||
+          new Date(logData.logged_at).toISOString().split("T")[0];
         if (logDate === today) {
           this.logger.info("[Nutrition] New food logged via realtime");
           this.refreshTodaysMeals();
         }
       },
-      onUpdate: (payload: RealtimePayload<DatabaseNutritionLog>) => {
+      onUpdate: (payload) => {
+        const logData = payload.new;
         const logDate =
-          payload.new.log_date ||
-          new Date(payload.new.logged_at).toISOString().split("T")[0];
+          logData.log_date ||
+          new Date(logData.logged_at).toISOString().split("T")[0];
         if (logDate === today) {
           this.logger.info("[Nutrition] Food log updated via realtime");
           this.refreshTodaysMeals();
         }
       },
-      onDelete: (payload: RealtimePayload<DatabaseNutritionLog>) => {
+      onDelete: () => {
         this.logger.info("[Nutrition] Food log deleted via realtime");
         this.refreshTodaysMeals();
       },
@@ -333,18 +339,25 @@ export class NutritionService {
       return of(false);
     }
 
+    // Type-safe property access for both USDAFood and custom food objects
+    const isUSDAFood = 'fdcId' in food;
+    const foodName = isUSDAFood ? (food as USDAFood).description : (food as { name?: string }).name;
+    const foodId = isUSDAFood ? (food as USDAFood).fdcId : null;
+    const calories = isUSDAFood ? ((food as USDAFood).energy ?? 0) : ((food as { calories?: number }).calories ?? 0);
+    const carbs = isUSDAFood ? ((food as USDAFood).carbohydrates ?? 0) : ((food as { carbs?: number }).carbs ?? 0);
+
     return from(
       this.supabaseService.client
         .from("nutrition_logs")
         .insert({
           user_id: userId,
-          food_name: food.description || food.name,
-          food_id: food.fdcId || null,
-          calories: food.energy || food.calories || 0,
-          protein: food.protein || 0,
-          carbohydrates: food.carbohydrates || food.carbs || 0,
-          fat: food.fat || 0,
-          fiber: food.fiber || 0,
+          food_name: foodName,
+          food_id: foodId,
+          calories: calories,
+          protein: food.protein ?? 0,
+          carbohydrates: carbs,
+          fat: food.fat ?? 0,
+          fiber: food.fiber ?? 0,
           logged_at: new Date().toISOString(),
           meal_type: this.getMealTypeFromTime(),
         })
@@ -547,18 +560,21 @@ export class NutritionService {
         }
 
         // Group by meal type
-        const mealsByType = data.reduce((acc: Record<string, DatabaseNutritionLog[]>, log: DatabaseNutritionLog) => {
-          const type = log.meal_type || "other";
-          if (!acc[type]) {
-            acc[type] = [];
-          }
-          acc[type].push(log);
-          return acc;
-        }, {});
+        const mealsByType: Record<string, DatabaseNutritionLog[]> = data.reduce(
+          (acc: Record<string, DatabaseNutritionLog[]>, log: DatabaseNutritionLog) => {
+            const type = log.meal_type || "other";
+            if (!acc[type]) {
+              acc[type] = [];
+            }
+            acc[type].push(log);
+            return acc;
+          },
+          {} as Record<string, DatabaseNutritionLog[]>
+        );
 
         // Convert to Meal[] format
-        return Object.entries(mealsByType).map(
-          ([type, logs]: [string, DatabaseNutritionLog[]]) => ({
+        return (Object.entries(mealsByType) as [string, DatabaseNutritionLog[]][]).map(
+          ([type, logs]) => ({
             id: type,
             type,
             timestamp: new Date(logs[0].logged_at),

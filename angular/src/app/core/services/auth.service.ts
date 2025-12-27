@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, effect } from "@angular/core";
+import { Injectable, inject, signal, effect, untracked } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable, throwError, from, of } from "rxjs";
 import { tap, catchError, map } from "rxjs/operators";
@@ -58,19 +58,22 @@ export class AuthService {
     // This is zoneless-compatible and more efficient than subscriptions
     effect(() => {
       const user = this.supabaseService.currentUser();
-      if (user) {
-        const appUser: User = {
-          id: user.id,
-          email: user.email ?? "",
-          name: user.user_metadata?.["name"] ?? user.email,
-          role: user.user_metadata?.["role"] ?? "user",
-        };
-        this.currentUser.set(appUser);
-        this.isAuthenticated.set(true);
-      } else {
-        this.currentUser.set(null);
-        this.isAuthenticated.set(false);
-      }
+      // Use untracked for state updates to prevent effect from tracking its own writes
+      untracked(() => {
+        if (user) {
+          const appUser: User = {
+            id: user.id,
+            email: user.email ?? "",
+            name: user.user_metadata?.["name"] ?? user.email,
+            role: user.user_metadata?.["role"] ?? "user",
+          };
+          this.currentUser.set(appUser);
+          this.isAuthenticated.set(true);
+        } else {
+          this.currentUser.set(null);
+          this.isAuthenticated.set(false);
+        }
+      });
     });
   }
 
@@ -119,7 +122,8 @@ export class AuthService {
   register(data: RegisterData): Observable<AuthResponse> {
     this.isLoading.set(true);
 
-    const { email, password, ...metadata } = data;
+    // Extract metadata (everything except email/password)
+    const { email: _email, password: _password, ...metadata } = data;
 
     return from(
       this.supabaseService.signUp(data.email, data.password, metadata),

@@ -300,7 +300,12 @@ export class TrainingProgramService {
         )
       );
 
-      return response?.data?.data || response?.data || [];
+      // Handle both nested and direct response formats
+      const data = response?.data;
+      if (Array.isArray(data)) {
+        return data;
+      }
+      return (data as ApiResponse<TrainingPhase[]>)?.data || [];
     } catch (err) {
       this.logger.error("Error fetching training phases:", err);
       return [];
@@ -319,7 +324,12 @@ export class TrainingProgramService {
         )
       );
 
-      return response?.data?.data || response?.data || [];
+      // Handle both nested and direct response formats
+      const data = response?.data;
+      if (Array.isArray(data)) {
+        return data;
+      }
+      return (data as ApiResponse<TrainingWeek[]>)?.data || [];
     } catch (err) {
       this.logger.error("Error fetching training weeks:", err);
       return [];
@@ -338,7 +348,12 @@ export class TrainingProgramService {
         )
       );
 
-      return response?.data?.data || response?.data || [];
+      // Handle both nested and direct response formats
+      const data = response?.data;
+      if (Array.isArray(data)) {
+        return data;
+      }
+      return (data as ApiResponse<SessionTemplate[]>)?.data || [];
     } catch (err) {
       this.logger.error("Error fetching session templates:", err);
       return [];
@@ -357,7 +372,12 @@ export class TrainingProgramService {
         )
       );
 
-      return response?.data?.data || response?.data || [];
+      // Handle both nested and direct response formats
+      const data = response?.data;
+      if (Array.isArray(data)) {
+        return data;
+      }
+      return (data as ApiResponse<SessionExercise[]>)?.data || [];
     } catch (err) {
       this.logger.error("Error fetching session exercises:", err);
       return [];
@@ -371,7 +391,7 @@ export class TrainingProgramService {
     try {
       const params: Record<string, string> = { programId };
       if (date) {
-        params.date = date;
+        params['date'] = date;
       }
 
       const response = await firstValueFrom(

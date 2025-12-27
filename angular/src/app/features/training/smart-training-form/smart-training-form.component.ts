@@ -24,7 +24,7 @@ import { ChipModule } from "primeng/chip";
 import { TagModule } from "primeng/tag";
 import { SelectButtonModule } from "primeng/selectbutton";
 import { ToastModule } from "primeng/toast";
-import { ToastService } from "../../../../core/services/toast.service";
+import { ToastService } from "../../../core/services/toast.service";
 import {
   AIService,
   TrainingSuggestion,

@@ -100,10 +100,11 @@ function auditIconButtons(): IconButtonIssue[] {
 }
 
 // Run audit
-console.log('🔘 ICON BUTTON ACCESSIBILITY AUDIT');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+(function runAudit() {
+  console.log('🔘 ICON BUTTON ACCESSIBILITY AUDIT');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-const issues = auditIconButtons();
+  const issues = auditIconButtons();
 
 if (issues.length === 0) {
   console.log('✅ All icon buttons have accessible labels!\n');
@@ -171,4 +172,4 @@ if (withoutLabels > 0) {
   console.log('</button>');
   console.log('```\n');
 }
-
+})();

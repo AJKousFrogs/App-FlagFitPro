@@ -182,7 +182,7 @@ describe("SupabaseService", () => {
       const result = await service.signIn("test@example.com", "wrongpassword");
 
       expect(result.error).toBeDefined();
-      expect(result.error.message).toBe("Invalid credentials");
+      expect(result.error!.message).toBe("Invalid credentials");
     });
 
     it("should handle sign in with empty credentials", async () => {
@@ -254,7 +254,7 @@ describe("SupabaseService", () => {
       const result = await service.signUp("existing@example.com", "password123");
 
       expect(result.error).toBeDefined();
-      expect(result.error.message).toBe("Email already registered");
+      expect(result.error!.message).toBe("Email already registered");
     });
   });
 

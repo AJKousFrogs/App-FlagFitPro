@@ -26,7 +26,7 @@ const createMockChannel = () => ({
   }),
 });
 
-// Mock services
+// Mock services - use 'as unknown as SupabaseService' to avoid strict type checking
 const mockSupabaseService = {
   session: vi.fn(() => ({ user: { id: "user-123" } })),
   currentUser: vi.fn(() => ({ id: "user-123", email: "test@example.com" })),
@@ -34,7 +34,7 @@ const mockSupabaseService = {
     channel: vi.fn(() => createMockChannel()),
     removeChannel: vi.fn(),
   },
-};
+} as unknown as SupabaseService;
 
 const mockLoggerService = {
   info: vi.fn(),
@@ -86,7 +86,7 @@ describe("RealtimeService", () => {
 
   describe("Connection Status", () => {
     it("should update status when session exists", () => {
-      mockSupabaseService.session.mockReturnValue({
+      (mockSupabaseService as any).session.mockReturnValue({
         user: { id: "user-123" },
       });
 
@@ -169,7 +169,7 @@ describe("RealtimeService", () => {
     });
 
     it("should not subscribe when no user logged in", () => {
-      mockSupabaseService.currentUser.mockReturnValue(null);
+      (mockSupabaseService as any).currentUser.mockReturnValue(null);
 
       const callback: RealtimeCallback = vi.fn();
       const unsubscribe = service.subscribeToTrainingSessions(callback);
@@ -195,7 +195,7 @@ describe("RealtimeService", () => {
     });
 
     it("should not subscribe when no user logged in", () => {
-      mockSupabaseService.currentUser.mockReturnValue(null);
+      (mockSupabaseService as any).currentUser.mockReturnValue(null);
 
       const callback: RealtimeCallback = vi.fn();
       service.subscribeToGames(callback);
@@ -218,7 +218,7 @@ describe("RealtimeService", () => {
     });
 
     it("should not subscribe when no user for wellness", () => {
-      mockSupabaseService.currentUser.mockReturnValue(null);
+      (mockSupabaseService as any).currentUser.mockReturnValue(null);
 
       const callback: RealtimeCallback = vi.fn();
       service.subscribeToWellness(callback);
@@ -385,14 +385,14 @@ describe("RealtimeService", () => {
         }
       );
 
-      mockSupabaseService.client.channel.mockReturnValue(mockChannel);
+      (mockSupabaseService as any).client.channel.mockReturnValue(mockChannel);
 
       const onInsert = vi.fn();
       service.subscribe("test_table", "filter1", { onInsert });
 
       // Simulate INSERT event
       if (capturedCallback) {
-        capturedCallback({
+        (capturedCallback as (payload: unknown) => void)({
           eventType: "INSERT",
           table: "test_table",
           schema: "public",
@@ -416,14 +416,14 @@ describe("RealtimeService", () => {
         }
       );
 
-      mockSupabaseService.client.channel.mockReturnValue(mockChannel);
+      (mockSupabaseService as any).client.channel.mockReturnValue(mockChannel);
 
       const onUpdate = vi.fn();
       service.subscribe("test_table", "filter1", { onUpdate });
 
       // Simulate UPDATE event
       if (capturedCallback) {
-        capturedCallback({
+        (capturedCallback as (payload: unknown) => void)({
           eventType: "UPDATE",
           table: "test_table",
           schema: "public",
@@ -447,14 +447,14 @@ describe("RealtimeService", () => {
         }
       );
 
-      mockSupabaseService.client.channel.mockReturnValue(mockChannel);
+      (mockSupabaseService as any).client.channel.mockReturnValue(mockChannel);
 
       const onDelete = vi.fn();
       service.subscribe("test_table", "filter1", { onDelete });
 
       // Simulate DELETE event
       if (capturedCallback) {
-        capturedCallback({
+        (capturedCallback as (payload: unknown) => void)({
           eventType: "DELETE",
           table: "test_table",
           schema: "public",
@@ -474,7 +474,7 @@ describe("RealtimeService", () => {
 
   describe("Error Handling", () => {
     it("should handle no user gracefully for subscriptions", () => {
-      mockSupabaseService.currentUser.mockReturnValue(null);
+      (mockSupabaseService as any).currentUser.mockReturnValue(null);
 
       const callback: RealtimeCallback = vi.fn();
       const unsubscribe = service.subscribeToTrainingSessions(callback);
@@ -496,7 +496,7 @@ describe("RealtimeService", () => {
       const unsubscribe = service.subscribe("test_table", "filter1", callback);
       unsubscribe();
 
-      expect(mockSupabaseService.client.removeChannel).toHaveBeenCalled();
+      expect((mockSupabaseService as any).client.removeChannel).toHaveBeenCalled();
     });
 
     it("should clear all channels on unsubscribeAll", () => {

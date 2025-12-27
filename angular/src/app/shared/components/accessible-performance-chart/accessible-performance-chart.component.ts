@@ -376,12 +376,16 @@ export class AccessiblePerformanceChartComponent {
     }
 
     const data = chartData.datasets[0].data;
+    const firstItem = data[0];
+    const lastItem = data[data.length - 1];
     const first =
-      typeof data[0] === "object" ? data[0].speed || data[0] : data[0];
+      typeof firstItem === "object" && firstItem !== null
+        ? (firstItem as { speed?: number }).speed ?? 0
+        : (firstItem as number);
     const last =
-      typeof data[data.length - 1] === "object"
-        ? data[data.length - 1].speed || data[data.length - 1]
-        : data[data.length - 1];
+      typeof lastItem === "object" && lastItem !== null
+        ? (lastItem as { speed?: number }).speed ?? 0
+        : (lastItem as number);
 
     if (last > first * 1.05) {
       return "improved significantly";

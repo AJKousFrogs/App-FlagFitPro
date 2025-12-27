@@ -596,11 +596,13 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
       .get("/api/roster/players")
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response: { data?: unknown[] } | unknown[]) => {
-          const players = (response && typeof response === 'object' && 'data' in response) 
-            ? response.data || [] 
-            : response || [];
+        next: (response) => {
+          const data = response?.data;
+          const players = Array.isArray(data) ? data : [];
           // Update active players if available
+          if (players.length > 0) {
+            this.activePlayers.set(players as FieldPlayer[]);
+          }
         },
         error: () => {
           // Use default players

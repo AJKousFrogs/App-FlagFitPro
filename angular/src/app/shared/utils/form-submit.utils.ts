@@ -114,7 +114,7 @@ export class FormSubmitHandler {
           ? takeUntilDestroyed(this.destroyRef)
           : (source: Observable<T>) => source;
         
-        result = await firstValueFrom(apiResult.pipe(takeUntil));
+        result = (await firstValueFrom(apiResult.pipe(takeUntil))) as T;
       } else {
         // Handle Promise
         result = await apiResult;
@@ -183,20 +183,20 @@ export class FormSubmitHandler {
     if (typeof error === 'object' && error !== null) {
       const errorObj = error as Record<string, unknown>;
       
-      if (typeof errorObj.message === 'string') {
-        return errorObj.message;
+      if (typeof errorObj['message'] === 'string') {
+        return errorObj['message'];
       }
       
-      if (typeof errorObj.error === 'string') {
-        return errorObj.error;
+      if (typeof errorObj['error'] === 'string') {
+        return errorObj['error'];
       }
       
       if (
-        typeof errorObj.error === 'object' &&
-        errorObj.error !== null &&
-        typeof (errorObj.error as Record<string, unknown>).message === 'string'
+        typeof errorObj['error'] === 'object' &&
+        errorObj['error'] !== null &&
+        typeof (errorObj['error'] as Record<string, unknown>)['message'] === 'string'
       ) {
-        return (errorObj.error as Record<string, unknown>).message as string;
+        return (errorObj['error'] as Record<string, unknown>)['message'] as string;
       }
     }
     

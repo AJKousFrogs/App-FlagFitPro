@@ -18,6 +18,9 @@ import { ProgressBarModule } from "primeng/progressbar";
 import {
   NutritionService,
   NutritionGoal,
+  AINutritionSuggestion,
+  PerformanceInsight as ServicePerformanceInsight,
+  USDAFood,
 } from "../../../core/services/nutrition.service";
 import { firstValueFrom } from "rxjs";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -38,20 +41,7 @@ interface Meal {
   fat: number;
 }
 
-interface AISuggestion {
-  name: string;
-  priority: string;
-  benefit: string;
-  food: unknown;
-}
-
-interface PerformanceInsight {
-  title: string;
-  description: string;
-  type: string;
-  icon: string;
-  actionLabel?: string;
-}
+// Using AINutritionSuggestion and PerformanceInsight from nutrition.service.ts
 
 @Component({
   selector: "app-nutrition-dashboard",
@@ -528,8 +518,8 @@ export class NutritionDashboardComponent {
   private nutritionService = inject(NutritionService);
   private logger = inject(LoggerService);
 
-  selectedFood: unknown = null;
-  foodSuggestions = signal<unknown[]>([]);
+  selectedFood: USDAFood | null = null;
+  foodSuggestions = signal<USDAFood[]>([]);
   nutritionGoals = signal<NutritionGoal[]>([]);
   todaysMeals = signal<Meal[]>([]);
 
@@ -540,8 +530,8 @@ export class NutritionDashboardComponent {
     this.loadAISuggestions();
     this.loadPerformanceInsights();
   }
-  aiSuggestions = signal<AISuggestion[]>([]);
-  performanceInsights = signal<PerformanceInsight[]>([]);
+  aiSuggestions = signal<AINutritionSuggestion[]>([]);
+  performanceInsights = signal<ServicePerformanceInsight[]>([]);
 
   doughnutOptions = {
     responsive: true,
@@ -571,7 +561,7 @@ export class NutritionDashboardComponent {
     }
   }
 
-  addSuggestedFood(suggestion: AISuggestion) {
+  addSuggestedFood(suggestion: AINutritionSuggestion) {
     firstValueFrom(
       this.nutritionService.addFoodToCurrentMeal(suggestion.food),
     ).then(() => {
@@ -647,7 +637,7 @@ export class NutritionDashboardComponent {
     };
   }
 
-  executeInsightAction(insight: PerformanceInsight) {
+  executeInsightAction(insight: ServicePerformanceInsight) {
     // Handle insight actions (e.g., add recommended food, adjust meal timing)
     this.logger.debug("Executing insight action:", insight);
   }

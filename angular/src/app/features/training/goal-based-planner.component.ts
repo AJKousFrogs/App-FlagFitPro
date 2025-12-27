@@ -26,7 +26,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
 @Component({
   selector: "app-goal-based-planner",
   standalone: true,
-  changeDetectionStrategy: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -411,7 +411,7 @@ export class GoalBasedPlannerComponent implements OnInit {
     return "Maintain current load";
   }
 
-  getSessionCardClass(session: { sessionType?: string }): string {
+  getSessionCardClass(session: { sessionType?: string; intensity?: string }): string {
     if (session.sessionType === "recovery" || session.sessionType === "game") {
       return "border-gray-300";
     }

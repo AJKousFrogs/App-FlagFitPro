@@ -107,10 +107,11 @@ function validateHeadingHierarchy(): HeadingIssue[] {
 }
 
 // Run validation
-console.log('📑 HEADING HIERARCHY VALIDATION');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+(function runValidation() {
+  console.log('📑 HEADING HIERARCHY VALIDATION');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-const issues = validateHeadingHierarchy();
+  const issues = validateHeadingHierarchy();
 
 if (issues.length === 0) {
   console.log('✅ No heading hierarchy issues found!\n');
@@ -165,4 +166,4 @@ headingAudit.forEach(comp => {
   }
   console.log('');
 });
-
+})();

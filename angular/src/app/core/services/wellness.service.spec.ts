@@ -62,7 +62,7 @@ const MOCK_WELLNESS_ENTRIES: WellnessData[] = [
   },
 ];
 
-// Mock services
+// Mock services - use 'as unknown as SupabaseService' to avoid strict type checking
 const mockSupabaseService = {
   userId: vi.fn(() => "user-123"),
   client: {
@@ -90,9 +90,9 @@ const mockSupabaseService = {
           ),
         })),
       })),
-    })),
+    })) as ReturnType<typeof vi.fn>,
   },
-};
+} as unknown as SupabaseService;
 
 const mockLoggerService = {
   info: vi.fn(),
@@ -497,7 +497,7 @@ describe("WellnessService", () => {
         })),
       }));
 
-      mockSupabaseService.client.from.mockReturnValue({
+      (mockSupabaseService as any).client.from.mockReturnValue({
         insert: mockInsert,
         select: vi.fn(() => ({
           or: vi.fn(() => ({
@@ -520,7 +520,7 @@ describe("WellnessService", () => {
     });
 
     it("should return error when not logged in", async () => {
-      mockSupabaseService.userId.mockReturnValue(null);
+      (mockSupabaseService as any).userId.mockReturnValue(null);
 
       const result = await firstValueFrom(
         service.logWellness({
@@ -536,7 +536,7 @@ describe("WellnessService", () => {
       const today = new Date().toISOString().split("T")[0];
 
       // Reset userId to valid user
-      mockSupabaseService.userId.mockReturnValue("user-123");
+      (mockSupabaseService as any).userId.mockReturnValue("user-123");
 
       let capturedInsertData: unknown = null;
       const mockInsert = vi.fn((data: unknown) => {
@@ -550,7 +550,7 @@ describe("WellnessService", () => {
         };
       });
 
-      mockSupabaseService.client.from.mockReturnValue({
+      (mockSupabaseService as any).client.from.mockReturnValue({
         insert: mockInsert,
         select: vi.fn(() => ({
           or: vi.fn(() => ({

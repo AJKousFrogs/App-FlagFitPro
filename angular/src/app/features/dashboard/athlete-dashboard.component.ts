@@ -34,6 +34,18 @@ import { TrainingDataService } from "../../core/services/training-data.service";
 import { RealtimeBaseComponent } from "../../shared/components/realtime-base.component";
 import { LoggerService } from "../../core/services/logger.service";
 
+// Type for training session data
+interface TrainingSession {
+  rpe?: number;
+  intensity_level?: number;
+  duration_minutes?: number;
+  duration?: number;
+  session_date?: string;
+  date?: string;
+  session_type?: string;
+  type?: string;
+}
+
 @Component({
   selector: "app-athlete-dashboard",
   standalone: true,
@@ -254,7 +266,7 @@ export class AthleteDashboardComponent
 
   athleteId = signal<string | undefined>(undefined);
   todayWorkload = signal<number>(0);
-  nextSession = signal<any>(null);
+  nextSession = signal<{ title: string; date: Date } | null>(null);
   trendCards = signal<TrendData[]>([]);
 
   acwrValue = computed(() => this.acwrService.acwrRatio());
@@ -371,8 +383,8 @@ export class AthleteDashboardComponent
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (sessions) => {
-          const workload = sessions.reduce((sum: number, session: { rpe?: number; intensity_level?: number; duration_minutes?: number; duration?: number }) => {
+        next: (sessions: TrainingSession[]) => {
+          const workload = sessions.reduce((sum: number, session: TrainingSession) => {
             const rpe = session.rpe || session.intensity_level || 0;
             const duration = session.duration_minutes || session.duration || 0;
             return sum + rpe * duration;
@@ -385,7 +397,7 @@ export class AthleteDashboardComponent
       });
   }
 
-  loadNextSession(userId: string): void {
+  loadNextSession(_userId: string): void {
     // Use TrainingDataService with includeUpcoming flag
     this.trainingDataService
       .getTrainingSessions({
@@ -394,7 +406,7 @@ export class AthleteDashboardComponent
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (sessions) => {
+        next: (sessions: TrainingSession[]) => {
           if (sessions && sessions.length > 0) {
             const session = sessions[0];
             const sessionDate = session.session_date || session.date;

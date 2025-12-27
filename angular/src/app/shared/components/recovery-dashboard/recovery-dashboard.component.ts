@@ -17,7 +17,11 @@ import { KnobModule } from "primeng/knob";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Tabs } from "primeng/tabs";
 import { TimelineModule } from "primeng/timeline";
-import { RecoveryService } from "../../../core/services/recovery.service";
+import {
+  RecoveryService,
+  RecoveryProtocol as ServiceRecoveryProtocol,
+  RecoverySession as ServiceRecoverySession,
+} from "../../../core/services/recovery.service";
 import { firstValueFrom, timer, Subscription } from "rxjs";
 import { LoggerService } from "../../../core/services/logger.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -31,17 +35,8 @@ interface RecoveryMetric {
   color: string;
 }
 
-interface RecoveryProtocol {
-  name: string;
-  category: string;
-  description: string;
-  duration: number;
-  priority?: 'high' | 'medium' | 'low';
-  evidenceLevel?: string;
-  studyCount?: number;
-  benefits: string[];
-  steps: ProtocolStep[];
-}
+// Using RecoveryProtocol and RecoverySession from recovery.service.ts
+// Aliased as ServiceRecoveryProtocol and ServiceRecoverySession
 
 interface ProtocolStep {
   title: string;
@@ -50,14 +45,6 @@ interface ProtocolStep {
   icon: string;
   completed?: boolean;
   active?: boolean;
-}
-
-interface RecoverySession {
-  id: string;
-  protocol: RecoveryProtocol;
-  duration: number;
-  startTime: string;
-  endTime?: string;
 }
 
 interface ResearchInsight {
@@ -661,8 +648,8 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
 
   recoveryScoreValue = 78;
   recoveryMetrics = signal<RecoveryMetric[]>([]);
-  recommendedProtocols = signal<RecoveryProtocol[]>([]);
-  activeSession = signal<RecoverySession | null>(null);
+  recommendedProtocols = signal<ServiceRecoveryProtocol[]>([]);
+  activeSession = signal<ServiceRecoverySession | null>(null);
   sessionPaused = signal(false);
   sessionProgressValue = 0;
   timeRemaining = signal(0);
@@ -715,11 +702,11 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     return severityMap[category] || "info";
   }
 
-  selectProtocol(protocol: RecoveryProtocol) {
+  selectProtocol(protocol: ServiceRecoveryProtocol) {
     this.logger.debug("Selected protocol:", protocol);
   }
 
-  async startProtocol(protocol: RecoveryProtocol) {
+  async startProtocol(protocol: ServiceRecoveryProtocol) {
     const session = await firstValueFrom(
       this.recoveryService.startRecoverySession(protocol),
     );
@@ -727,7 +714,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     this.setupSessionTimer(session);
   }
 
-  showProtocolDetails(protocol: RecoveryProtocol) {
+  showProtocolDetails(protocol: ServiceRecoveryProtocol) {
     // Open protocol details modal with research evidence
     this.logger.debug("Show details for:", protocol);
   }
@@ -832,7 +819,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  private setupSessionTimer(session: RecoverySession) {
+  private setupSessionTimer(session: ServiceRecoverySession) {
     // Setup session timer and steps
     this.totalTime.set(session.duration); // Already in seconds
     this.timeRemaining.set(this.totalTime());

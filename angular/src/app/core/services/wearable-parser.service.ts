@@ -194,8 +194,8 @@ export class WearableParserService {
         let distance = 0;
 
         // Try various field names
-        speed = this.extractSpeed(entry);
-        distance = this.extractDistance(entry);
+        speed = this.extractSpeed(entry as WearableDataEntry);
+        distance = this.extractDistance(entry as WearableDataEntry);
 
         // Calculate missing values
         const calculated = this.calculateMissingValue(speed, distance);
@@ -339,7 +339,7 @@ export class WearableParserService {
     ];
     for (const field of speedFields) {
       if (obj[field] !== undefined) {
-        return this.normalizeSpeed(parseFloat(obj[field]), field);
+        return this.normalizeSpeed(parseFloat(String(obj[field])), field);
       }
     }
     return 0;
@@ -359,7 +359,7 @@ export class WearableParserService {
     ];
     for (const field of distanceFields) {
       if (obj[field] !== undefined) {
-        return this.normalizeDistance(parseFloat(obj[field]), field);
+        return this.normalizeDistance(parseFloat(String(obj[field])), field);
       }
     }
     return 0;

@@ -1,30 +1,33 @@
-// SECURITY WARNING: These values MUST be replaced during production build with environment variables
-// Never commit production credentials to version control
-// Use Angular's file replacement mechanism or build-time environment variable injection
-//
-// NOTE: process.env doesn't work in browser - MUST use Angular's file replacement
-// During build, replace this file with actual values from environment variables
+// Production environment configuration
+// Values are injected at runtime via window._env (set by index.html inline script)
+// This allows deployment-time configuration without rebuilding
+
+// Note: Window._env type is declared in environment.ts
+// We use a local helper to handle both key naming conventions
+
+// Helper to safely get environment value from window._env
+// Supports both SUPABASE_* and VITE_SUPABASE_* naming conventions
+const getEnvValue = (keys: string[], fallback: string = ''): string => {
+  if (typeof window === 'undefined') return fallback;
+  const env = (window as { _env?: Record<string, string | undefined> })._env;
+  if (!env) return fallback;
+  
+  for (const key of keys) {
+    const value = env[key];
+    if (value) return value;
+  }
+  return fallback;
+};
+
 export const environment = {
   production: true,
-  apiUrl: undefined, // Will auto-detect based on hostname
+  apiUrl: undefined as string | undefined, // Will auto-detect based on hostname
   supabase: {
-    // CRITICAL: These MUST be replaced during build via Angular's file replacement
-    // Example build command: ng build --configuration=production --env=prod
-    // Then use file replacement in angular.json to inject actual values
-    // Fallback to empty string - will fail gracefully if not replaced
-    url:
-      (typeof window !== "undefined" && (window as any)._env?.SUPABASE_URL) ||
-      (typeof window !== "undefined" &&
-        (window as any)._env?.VITE_SUPABASE_URL) ||
-      "",
-    anonKey:
-      (typeof window !== "undefined" &&
-        (window as any)._env?.SUPABASE_ANON_KEY) ||
-      (typeof window !== "undefined" &&
-        (window as any)._env?.VITE_SUPABASE_ANON_KEY) ||
-      "",
+    // Runtime injection with fallback support for both naming conventions
+    url: getEnvValue(['SUPABASE_URL', 'VITE_SUPABASE_URL']),
+    anonKey: getEnvValue(['SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY']),
   },
-  // Angular DevTools configuration (disabled in production)
+  // Angular DevTools configuration (disabled in production for security)
   devtools: {
     enabled: false,
     profiler: false,

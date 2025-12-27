@@ -361,16 +361,18 @@ function sanitize(data) {
  * @returns {object} Netlify function response object
  */
 function createValidationErrorResponse(errors, statusCode = 400) {
+  // Use centralized CORS headers for consistency
+  const { CORS_HEADERS } = require("./utils/error-handler.cjs");
+  
   return {
     statusCode,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
+    headers: CORS_HEADERS,
     body: JSON.stringify({
       success: false,
       errors,
+      errorType: "validation_error",
       message: "Validation failed",
+      timestamp: new Date().toISOString(),
     }),
   };
 }

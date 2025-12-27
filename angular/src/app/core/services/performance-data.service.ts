@@ -107,6 +107,7 @@ interface DatabaseMeasurement {
   muscle_mass_kg?: number;
   notes?: string;
   measured_at: string;
+  [key: string]: unknown; // Allow additional properties for Record<string, unknown> compatibility
 }
 
 interface DatabaseSupplement {
@@ -119,21 +120,21 @@ interface DatabaseSupplement {
   time_of_day?: Supplement['timeOfDay'];
   notes?: string;
   created_at: string;
+  [key: string]: unknown; // Allow additional properties for Record<string, unknown> compatibility
 }
 
 interface DatabaseTest {
   id: number;
   user_id: string;
   test_name: string;
+  test_type?: string;
   result_value: number;
   target_value?: number;
   performed_at: string;
+  test_date?: string;
   test_conditions?: Record<string, unknown>;
-}
-
-interface RealtimePayload<T> {
-  new: T;
-  old: T;
+  conditions?: Record<string, unknown>;
+  [key: string]: unknown; // Allow additional properties for Record<string, unknown> compatibility
 }
 
 interface TestSummary {
@@ -251,17 +252,17 @@ export class PerformanceDataService {
     const today = new Date().toISOString().split("T")[0];
 
     // Subscribe to physical measurements
-    this.realtimeService.subscribe(
+    this.realtimeService.subscribe<DatabaseMeasurement>(
       "physical_measurements",
       `user_id=eq.${userId}`,
       {
-        onInsert: (payload: RealtimePayload<DatabaseMeasurement>) => {
+        onInsert: (payload) => {
           this.logger.info("[PerformanceData] New measurement via realtime");
           const measurement = this.transformMeasurement(payload.new);
           const current = this._recentMeasurements();
           this._recentMeasurements.set([measurement, ...current.slice(0, 9)]);
         },
-        onUpdate: (payload: RealtimePayload<DatabaseMeasurement>) => {
+        onUpdate: (payload) => {
           this.logger.info(
             "[PerformanceData] Measurement updated via realtime",
           );
@@ -274,7 +275,7 @@ export class PerformanceDataService {
             this._recentMeasurements.set(updated);
           }
         },
-        onDelete: (payload: RealtimePayload<DatabaseMeasurement>) => {
+        onDelete: (payload) => {
           this.logger.info(
             "[PerformanceData] Measurement deleted via realtime",
           );
@@ -287,17 +288,17 @@ export class PerformanceDataService {
     );
 
     // Subscribe to performance tests
-    this.realtimeService.subscribe(
+    this.realtimeService.subscribe<DatabaseTest>(
       "performance_tests",
       `user_id=eq.${userId}`,
       {
-        onInsert: (payload: RealtimePayload<DatabaseTest>) => {
+        onInsert: (payload) => {
           this.logger.info("[PerformanceData] New test via realtime");
           const test = this.transformTest(payload.new);
           const current = this._recentTests();
           this._recentTests.set([test, ...current]);
         },
-        onUpdate: (payload: RealtimePayload<DatabaseTest>) => {
+        onUpdate: (payload) => {
           this.logger.info("[PerformanceData] Test updated via realtime");
           const test = this.transformTest(payload.new);
           const current = this._recentTests();
@@ -308,7 +309,7 @@ export class PerformanceDataService {
             this._recentTests.set(updated);
           }
         },
-        onDelete: (payload: RealtimePayload<DatabaseTest>) => {
+        onDelete: (payload) => {
           this.logger.info("[PerformanceData] Test deleted via realtime");
           const current = this._recentTests();
           this._recentTests.set(current.filter((t) => t.id !== payload.old.id));
@@ -317,8 +318,8 @@ export class PerformanceDataService {
     );
 
     // Subscribe to supplement logs
-    this.realtimeService.subscribe("supplement_logs", `user_id=eq.${userId}`, {
-      onInsert: (payload: RealtimePayload<DatabaseSupplement>) => {
+    this.realtimeService.subscribe<DatabaseSupplement>("supplement_logs", `user_id=eq.${userId}`, {
+      onInsert: (payload) => {
         const logDate = payload.new.date;
         if (logDate === today) {
           this.logger.info("[PerformanceData] New supplement log via realtime");
@@ -327,7 +328,7 @@ export class PerformanceDataService {
           this._todaysSupplements.set([...current, supplement]);
         }
       },
-      onUpdate: (payload: RealtimePayload<DatabaseSupplement>) => {
+      onUpdate: (payload) => {
         const logDate = payload.new.date;
         if (logDate === today) {
           this.logger.info(
@@ -343,7 +344,7 @@ export class PerformanceDataService {
           }
         }
       },
-      onDelete: (payload: RealtimePayload<DatabaseSupplement>) => {
+      onDelete: (payload) => {
         this.logger.info(
           "[PerformanceData] Supplement log deleted via realtime",
         );
@@ -417,7 +418,11 @@ export class PerformanceDataService {
 
     if (!userId) {
       this.logger.warn("[Performance] No user logged in");
-      return of({ data: [], summary: {}, pagination: {} });
+      return of({
+        data: [] as PhysicalMeasurement[],
+        summary: {} as MeasurementsSummary,
+        pagination: { page: 1, limit, total: 0 } as PaginationInfo,
+      });
     }
 
     const days = this.parseTimeframeToDays(timeframe);
@@ -479,7 +484,11 @@ export class PerformanceDataService {
     ).pipe(
       catchError((error) => {
         this.logger.error("[Performance] Failed to fetch measurements:", error);
-        return of({ data: [], summary: {}, pagination: {} });
+        return of({
+          data: [] as PhysicalMeasurement[],
+          summary: {} as MeasurementsSummary,
+          pagination: { page: 1, limit, total: 0 } as PaginationInfo,
+        });
       }),
     );
   }
@@ -679,7 +688,12 @@ export class PerformanceDataService {
     const userId = this.userId();
 
     if (!userId) {
-      return of({ data: [], trends: {}, summary: {}, pagination: {} });
+      return of({
+        data: [] as PerformanceTest[],
+        trends: {} as Record<string, TrendValue>,
+        summary: { totalTests: 0 } as TestSummary,
+        pagination: { total: 0 },
+      });
     }
 
     const days = this.parseTimeframeToDays(timeframe);
@@ -710,11 +724,11 @@ export class PerformanceDataService {
         const tests: PerformanceTest[] = (data || []).map((t: DatabaseTest) => ({
           id: t.id,
           userId: t.user_id,
-          testType: t.test_type,
+          testType: t.test_type ?? t.test_name,
           result: t.result_value,
           target: t.target_value,
-          timestamp: t.test_date,
-          conditions: t.conditions,
+          timestamp: t.test_date ?? t.performed_at,
+          conditions: t.conditions ?? t.test_conditions,
         }));
 
         // Calculate basic trends
@@ -731,7 +745,12 @@ export class PerformanceDataService {
     ).pipe(
       catchError((error) => {
         this.logger.error("[Performance] Failed to fetch tests:", error);
-        return of({ data: [], trends: {}, summary: {}, pagination: {} });
+        return of({
+          data: [] as PerformanceTest[],
+          trends: {} as Record<string, TrendValue>,
+          summary: { totalTests: 0 } as TestSummary,
+          pagination: { total: 0 },
+        });
       }),
     );
   }

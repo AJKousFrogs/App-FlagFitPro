@@ -14,7 +14,7 @@ import { of, throwError, firstValueFrom } from "rxjs";
 import { AuthService, User, LoginCredentials, RegisterData } from "./auth.service";
 import { SupabaseService } from "./supabase.service";
 
-// Mock Supabase service
+// Mock Supabase service - use 'as unknown as SupabaseService' to avoid strict type checking
 const mockSupabaseService = {
   currentUser: vi.fn(() => null),
   session: vi.fn(() => null),
@@ -23,7 +23,7 @@ const mockSupabaseService = {
   signUp: vi.fn(),
   signOut: vi.fn(),
   getToken: vi.fn(),
-};
+} as unknown as SupabaseService;
 
 // Mock Router
 const mockRouter = {
@@ -120,7 +120,7 @@ describe("AuthService", () => {
     };
 
     it("should login successfully with valid credentials", async () => {
-      mockSupabaseService.signIn.mockResolvedValue({
+      (mockSupabaseService as any).signIn.mockResolvedValue({
         data: { user: mockUser, session: mockSession },
         error: null,
       });
@@ -129,14 +129,14 @@ describe("AuthService", () => {
 
       expect(response.success).toBe(true);
       expect(response.data).toBeDefined();
-      expect(mockSupabaseService.signIn).toHaveBeenCalledWith(
+      expect((mockSupabaseService as any).signIn).toHaveBeenCalledWith(
         validCredentials.email,
         validCredentials.password
       );
     });
 
     it("should set loading state during login", async () => {
-      mockSupabaseService.signIn.mockResolvedValue({
+      (mockSupabaseService as any).signIn.mockResolvedValue({
         data: { user: mockUser, session: mockSession },
         error: null,
       });
@@ -150,7 +150,7 @@ describe("AuthService", () => {
     });
 
     it("should handle login error", async () => {
-      mockSupabaseService.signIn.mockResolvedValue({
+      (mockSupabaseService as any).signIn.mockResolvedValue({
         data: { user: null, session: null },
         error: { message: "Invalid credentials" },
       });
@@ -162,7 +162,7 @@ describe("AuthService", () => {
     });
 
     it("should handle network error during login", async () => {
-      mockSupabaseService.signIn.mockRejectedValue(new Error("Network error"));
+      (mockSupabaseService as any).signIn.mockRejectedValue(new Error("Network error"));
 
       await expect(firstValueFrom(service.login(validCredentials))).rejects.toThrow(
         "Network error"
@@ -191,7 +191,7 @@ describe("AuthService", () => {
     };
 
     it("should register successfully with valid data", async () => {
-      mockSupabaseService.signUp.mockResolvedValue({
+      (mockSupabaseService as any).signUp.mockResolvedValue({
         data: { user: mockNewUser, session: null },
         error: null,
       });
@@ -200,7 +200,7 @@ describe("AuthService", () => {
 
       expect(response.success).toBe(true);
       expect(response.message).toContain("verify");
-      expect(mockSupabaseService.signUp).toHaveBeenCalledWith(
+      expect((mockSupabaseService as any).signUp).toHaveBeenCalledWith(
         validRegistration.email,
         validRegistration.password,
         { name: validRegistration.name }
@@ -208,7 +208,7 @@ describe("AuthService", () => {
     });
 
     it("should set loading state during registration", async () => {
-      mockSupabaseService.signUp.mockResolvedValue({
+      (mockSupabaseService as any).signUp.mockResolvedValue({
         data: { user: mockNewUser, session: null },
         error: null,
       });
@@ -218,7 +218,7 @@ describe("AuthService", () => {
     });
 
     it("should handle registration error", async () => {
-      mockSupabaseService.signUp.mockResolvedValue({
+      (mockSupabaseService as any).signUp.mockResolvedValue({
         data: { user: null, session: null },
         error: { message: "Email already registered" },
       });
@@ -235,14 +235,14 @@ describe("AuthService", () => {
         teamId: "team-123",
       };
 
-      mockSupabaseService.signUp.mockResolvedValue({
+      (mockSupabaseService as any).signUp.mockResolvedValue({
         data: { user: mockNewUser, session: null },
         error: null,
       });
 
       await firstValueFrom(service.register(registrationWithMetadata));
 
-      expect(mockSupabaseService.signUp).toHaveBeenCalledWith(
+      expect((mockSupabaseService as any).signUp).toHaveBeenCalledWith(
         registrationWithMetadata.email,
         registrationWithMetadata.password,
         { name: "New User", role: "coach", teamId: "team-123" }
@@ -256,18 +256,18 @@ describe("AuthService", () => {
 
   describe("Logout", () => {
     it("should logout successfully", async () => {
-      mockSupabaseService.signOut.mockResolvedValue({ error: null });
+      (mockSupabaseService as any).signOut.mockResolvedValue({ error: null });
 
       await firstValueFrom(service.logout());
 
-      expect(mockSupabaseService.signOut).toHaveBeenCalled();
+      expect((mockSupabaseService as any).signOut).toHaveBeenCalled();
       expect(mockRouter.navigate).toHaveBeenCalledWith(["/login"]);
       expect(service.currentUser()).toBeNull();
       expect(service.isAuthenticated()).toBe(false);
     });
 
     it("should clear auth state even if logout fails", async () => {
-      mockSupabaseService.signOut.mockRejectedValue(new Error("Network error"));
+      (mockSupabaseService as any).signOut.mockRejectedValue(new Error("Network error"));
 
       await expect(firstValueFrom(service.logout())).rejects.toThrow();
 
@@ -281,7 +281,7 @@ describe("AuthService", () => {
       service.generateCsrfToken();
       expect(service.getCsrfToken()).not.toBeNull();
 
-      mockSupabaseService.signOut.mockResolvedValue({ error: null });
+      (mockSupabaseService as any).signOut.mockResolvedValue({ error: null });
       await firstValueFrom(service.logout());
 
       expect(sessionStorage.removeItem).toHaveBeenCalledWith("csrfToken");
@@ -303,7 +303,7 @@ describe("AuthService", () => {
     };
 
     it("should get current user from Supabase", async () => {
-      mockSupabaseService.currentUser.mockReturnValue(mockUser);
+      (mockSupabaseService as any).currentUser.mockReturnValue(mockUser);
 
       const response = await firstValueFrom(service.getCurrentUser());
 
@@ -312,7 +312,7 @@ describe("AuthService", () => {
     });
 
     it("should return error when no user found", async () => {
-      mockSupabaseService.currentUser.mockReturnValue(null);
+      (mockSupabaseService as any).currentUser.mockReturnValue(null);
 
       const response = await firstValueFrom(service.getCurrentUser());
 
@@ -321,7 +321,7 @@ describe("AuthService", () => {
     });
 
     it("should check auth status correctly", () => {
-      mockSupabaseService.session.mockReturnValue({ user: mockUser });
+      (mockSupabaseService as any).session.mockReturnValue({ user: mockUser });
       // Manually set isAuthenticated since effect() won't run in tests
       service.isAuthenticated.set(true);
 
@@ -329,13 +329,13 @@ describe("AuthService", () => {
     });
 
     it("should return false when no session", () => {
-      mockSupabaseService.session.mockReturnValue(null);
+      (mockSupabaseService as any).session.mockReturnValue(null);
 
       expect(service.checkAuth()).toBe(false);
     });
 
     it("should get token from Supabase", async () => {
-      mockSupabaseService.getToken.mockResolvedValue("mock-jwt-token");
+      (mockSupabaseService as any).getToken.mockResolvedValue("mock-jwt-token");
 
       const token = await service.getToken();
 
@@ -343,7 +343,7 @@ describe("AuthService", () => {
     });
 
     it("should return null token when not authenticated", async () => {
-      mockSupabaseService.getToken.mockResolvedValue(null);
+      (mockSupabaseService as any).getToken.mockResolvedValue(null);
 
       const token = await service.getToken();
 
@@ -423,7 +423,7 @@ describe("AuthService", () => {
 
   describe("Edge Cases", () => {
     it("should handle empty email in login", async () => {
-      mockSupabaseService.signIn.mockResolvedValue({
+      (mockSupabaseService as any).signIn.mockResolvedValue({
         data: { user: null, session: null },
         error: { message: "Email is required" },
       });
@@ -434,7 +434,7 @@ describe("AuthService", () => {
     });
 
     it("should handle empty password in login", async () => {
-      mockSupabaseService.signIn.mockResolvedValue({
+      (mockSupabaseService as any).signIn.mockResolvedValue({
         data: { user: null, session: null },
         error: { message: "Password is required" },
       });
@@ -451,7 +451,7 @@ describe("AuthService", () => {
         user_metadata: {},
       };
 
-      mockSupabaseService.currentUser.mockReturnValue(userWithoutMetadata);
+      (mockSupabaseService as any).currentUser.mockReturnValue(userWithoutMetadata);
 
       const response = await firstValueFrom(service.getCurrentUser());
 
@@ -468,7 +468,7 @@ describe("AuthService", () => {
         user_metadata: { name: "Test" },
       };
 
-      mockSupabaseService.currentUser.mockReturnValue(userWithNullEmail);
+      (mockSupabaseService as any).currentUser.mockReturnValue(userWithNullEmail);
 
       const response = await firstValueFrom(service.getCurrentUser());
 

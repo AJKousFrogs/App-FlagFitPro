@@ -4,6 +4,10 @@
   "type": "module",
   "description": "FlagFit Pro - Angular 21 + PrimeNG training platform",
   "main": "index.js",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "start": "cd angular && npm start",
     "dev": "cd angular && npm start",

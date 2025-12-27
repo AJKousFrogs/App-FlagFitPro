@@ -173,29 +173,8 @@ app.get("/api/dashboard/overview", (req, res) => {
   });
 });
 
-// Dashboard endpoint - API only (Angular handles the page)
-app.get("/dashboard", (req, res, next) => {
-  // Check if it's an API request (has Accept header for JSON)
-  const acceptHeader = req.headers.accept || "";
-  if (acceptHeader.includes("application/json")) {
-    res.json({
-      success: true,
-      data: {
-        stats: {
-          trainingSessions: 24,
-          performanceScore: 85,
-          dayStreak: 7,
-          tournaments: 3,
-        },
-        activities: [],
-        upcomingSessions: [],
-      },
-    });
-  } else {
-    // Let Angular handle the route (fall through to catch-all)
-    next();
-  }
-});
+// Note: Dashboard API endpoint is handled above at line 136
+// Angular handles the /dashboard route via the SPA catch-all
 
 // Training endpoints
 app.get("/training-stats", (req, res) => {

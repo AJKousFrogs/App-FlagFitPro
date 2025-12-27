@@ -11,10 +11,34 @@ interface AISuggestionRequest {
   userProfile?: {
     level?: string;
     goals?: string[];
-    recentPerformance?: any[];
+    recentPerformance?: unknown[];
   };
-  recentWorkouts?: any[];
+  recentWorkouts?: WorkoutData[];
   context?: string;
+}
+
+interface WorkoutData {
+  type?: string;
+  duration?: number;
+  load?: string | number;
+}
+
+interface GroqResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
+}
+
+interface Suggestion {
+  id: string;
+  title: string;
+  description: string;
+  priority: "high" | "medium" | "low";
+  duration: number;
+  focus: string[];
+  reasoning: string;
 }
 
 Deno.serve(async (req) => {
@@ -77,7 +101,7 @@ Deno.serve(async (req) => {
       throw new Error(`Groq API error: ${groqResponse.status}`);
     }
 
-    const groqData = await groqResponse.json();
+    const groqData: GroqResponse = await groqResponse.json();
     const aiResponse = groqData.choices[0].message.content;
 
     // Parse AI response
@@ -141,7 +165,7 @@ function buildTrainingContext(body: AISuggestionRequest): string {
   return prompt;
 }
 
-function parseTextSuggestions(text: string): any[] {
+function parseTextSuggestions(_text: string): Suggestion[] {
   // Fallback parser if AI doesn't return valid JSON
   return [
     {
@@ -157,7 +181,7 @@ function parseTextSuggestions(text: string): any[] {
   ];
 }
 
-function getMockSuggestions(): any[] {
+function getMockSuggestions(): Suggestion[] {
   return [
     {
       id: "speed-1",

@@ -1070,7 +1070,7 @@ export class TrainingPlanService {
     try {
       const params: Record<string, string | number> = { athleteId };
       if (weekNumber) {
-        params.weekNumber = weekNumber;
+        params['weekNumber'] = weekNumber;
       }
 
       const response = await firstValueFrom(

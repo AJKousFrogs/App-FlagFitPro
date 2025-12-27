@@ -19,11 +19,33 @@ const ErrorType = {
 
 /**
  * Standard CORS headers
+ * In production, restrict to your actual domain for security
  */
+const ALLOWED_ORIGINS = [
+  "https://flagfit-pro.netlify.app",
+  "https://flagfitpro.com",
+  "http://localhost:4200", // Angular dev server
+  "http://localhost:4000", // Local API server
+];
+
+const getCorsOrigin = (requestOrigin) => {
+  // In development, allow all origins
+  if (process.env.NODE_ENV === "development" || process.env.NETLIFY_DEV === "true") {
+    return requestOrigin || "*";
+  }
+  // In production, validate against allowed origins
+  if (requestOrigin && ALLOWED_ORIGINS.includes(requestOrigin)) {
+    return requestOrigin;
+  }
+  // Default to first allowed origin if no match
+  return ALLOWED_ORIGINS[0];
+};
+
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Origin": process.env.NODE_ENV === "development" ? "*" : ALLOWED_ORIGINS[0],
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-Id",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+  "Access-Control-Allow-Credentials": "true",
   "Content-Type": "application/json",
 };
 
@@ -316,6 +338,8 @@ function logFunctionCall(functionName, event) {
 module.exports = {
   ErrorType,
   CORS_HEADERS,
+  ALLOWED_ORIGINS,
+  getCorsOrigin,
   createErrorResponse,
   createSuccessResponse,
   handleAuthenticationError,

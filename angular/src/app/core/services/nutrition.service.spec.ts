@@ -57,7 +57,7 @@ const MOCK_NUTRITION_GOALS = {
   fat_target: 80,
 };
 
-// Mock services
+// Mock services - use 'as any' to avoid strict type checking issues with mock implementations
 const mockSupabaseService = {
   userId: vi.fn(() => "user-123"),
   client: {
@@ -82,12 +82,12 @@ const mockSupabaseService = {
           ),
         })),
       })),
-    })),
+    })) as ReturnType<typeof vi.fn>,
     functions: {
       invoke: vi.fn(),
     },
   },
-};
+} as unknown as SupabaseService;
 
 const mockLoggerService = {
   info: vi.fn(),
@@ -164,7 +164,7 @@ describe("NutritionService", () => {
         },
       ];
 
-      mockSupabaseService.client.functions.invoke.mockResolvedValue({
+      (mockSupabaseService as any).client.functions.invoke.mockResolvedValue({
         data: { success: true, data: mockFoods },
         error: null,
       });
@@ -187,7 +187,7 @@ describe("NutritionService", () => {
     });
 
     it("should handle search error gracefully", async () => {
-      mockSupabaseService.client.functions.invoke.mockResolvedValue({
+      (mockSupabaseService as any).client.functions.invoke.mockResolvedValue({
         data: null,
         error: { message: "API error" },
       });
@@ -198,7 +198,7 @@ describe("NutritionService", () => {
     });
 
     it("should handle empty search results", async () => {
-      mockSupabaseService.client.functions.invoke.mockResolvedValue({
+      (mockSupabaseService as any).client.functions.invoke.mockResolvedValue({
         data: { success: true, data: [] },
         error: null,
       });
@@ -210,14 +210,14 @@ describe("NutritionService", () => {
     });
 
     it("should paginate search results", async () => {
-      mockSupabaseService.client.functions.invoke.mockResolvedValue({
+      (mockSupabaseService as any).client.functions.invoke.mockResolvedValue({
         data: { success: true, data: [] },
         error: null,
       });
 
       await firstValueFrom(service.searchUSDAFoods("chicken", 50, 2));
 
-      expect(mockSupabaseService.client.functions.invoke).toHaveBeenCalledWith(
+      expect((mockSupabaseService as any).client.functions.invoke).toHaveBeenCalledWith(
         "search-foods-edamam",
         {
           body: {
@@ -244,7 +244,7 @@ describe("NutritionService", () => {
         })),
       }));
 
-      mockSupabaseService.client.from.mockReturnValue({
+      (mockSupabaseService as any).client.from.mockReturnValue({
         insert: mockInsert,
       });
 
@@ -273,7 +273,7 @@ describe("NutritionService", () => {
         })),
       }));
 
-      mockSupabaseService.client.from.mockReturnValue({
+      (mockSupabaseService as any).client.from.mockReturnValue({
         insert: mockInsert,
       });
 
@@ -285,7 +285,7 @@ describe("NutritionService", () => {
     });
 
     it("should return false when not logged in", async () => {
-      mockSupabaseService.userId.mockReturnValue(null);
+      (mockSupabaseService as any).userId.mockReturnValue(null);
 
       const result = await firstValueFrom(
         service.addFoodToCurrentMeal(MOCK_USDA_FOOD)
@@ -296,7 +296,7 @@ describe("NutritionService", () => {
     });
 
     it("should handle database error when adding food", async () => {
-      mockSupabaseService.client.from.mockReturnValue({
+      (mockSupabaseService as any).client.from.mockReturnValue({
         insert: vi.fn(() => ({
           select: vi.fn(() => ({
             single: vi.fn(() =>
@@ -367,7 +367,7 @@ describe("NutritionService", () => {
 
   describe("Nutrition Goals", () => {
     it("should return default goals when not logged in", async () => {
-      mockSupabaseService.userId.mockReturnValue(null);
+      (mockSupabaseService as any).userId.mockReturnValue(null);
 
       const goals = await firstValueFrom(service.getDailyNutritionGoals());
 
@@ -377,7 +377,7 @@ describe("NutritionService", () => {
     });
 
     it("should have correct default values", async () => {
-      mockSupabaseService.userId.mockReturnValue(null);
+      (mockSupabaseService as any).userId.mockReturnValue(null);
 
       const goals = await firstValueFrom(service.getDailyNutritionGoals());
 
@@ -393,7 +393,7 @@ describe("NutritionService", () => {
     });
 
     it("should set correct priorities", async () => {
-      mockSupabaseService.userId.mockReturnValue(null);
+      (mockSupabaseService as any).userId.mockReturnValue(null);
 
       const goals = await firstValueFrom(service.getDailyNutritionGoals());
 
@@ -602,7 +602,7 @@ describe("NutritionService", () => {
   describe("Edge Cases", () => {
     it("should handle food with missing nutrients", async () => {
       // Reset userId mock to return valid user
-      mockSupabaseService.userId.mockReturnValue("user-123");
+      (mockSupabaseService as any).userId.mockReturnValue("user-123");
       
       const incompleteFood: Partial<USDAFood> = {
         fdcId: 99999,
@@ -618,7 +618,7 @@ describe("NutritionService", () => {
         })),
       }));
 
-      mockSupabaseService.client.from.mockReturnValue({
+      (mockSupabaseService as any).client.from.mockReturnValue({
         insert: mockInsert,
       });
 

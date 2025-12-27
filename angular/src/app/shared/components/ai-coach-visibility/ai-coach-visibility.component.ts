@@ -726,8 +726,10 @@ export class AiCoachVisibilityComponent implements OnInit {
         })
         .toPromise();
 
-      if (response?.data) {
-        this.recommendations.set(response.data);
+      if (response?.data?.data) {
+        this.recommendations.set(response.data.data);
+      } else if (Array.isArray(response?.data)) {
+        this.recommendations.set(response.data as AIRecommendation[]);
       } else {
         // Mock data for development
         this.recommendations.set(this.getMockRecommendations());
@@ -746,8 +748,10 @@ export class AiCoachVisibilityComponent implements OnInit {
         })
         .toPromise();
 
-      if (response?.data) {
-        this.highRiskAlerts.set(response.data);
+      if (response?.data?.data) {
+        this.highRiskAlerts.set(response.data.data);
+      } else if (Array.isArray(response?.data)) {
+        this.highRiskAlerts.set(response.data as CoachVisibilityRecord[]);
       } else {
         this.highRiskAlerts.set(this.getMockAlerts());
       }

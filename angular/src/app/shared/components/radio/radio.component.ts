@@ -190,10 +190,12 @@ export class RadioComponent<T = unknown> implements ControlValueAccessor {
   onChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     if (target.checked) {
-      const val = this.value();
+      const val = this.value() ?? null;
       this.selectedValue.set(val);
       this.onChangeFn(val);
-      this.changed.emit(val);
+      if (val !== null) {
+        this.changed.emit(val);
+      }
     }
   }
 

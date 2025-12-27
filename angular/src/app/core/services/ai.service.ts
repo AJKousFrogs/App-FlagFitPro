@@ -40,7 +40,7 @@ interface ContextInsight {
   actions?: CommandAction[];
 }
 
-interface AnalysisContext {
+export interface AnalysisContext {
   currentExercise?: unknown;
   heartRate?: number;
   timeInSession?: number;

@@ -1,15 +1,28 @@
 #!/bin/bash
+set -euo pipefail
 
 # Start development servers with hot reload
 # Backend: nodemon for hot reload
 # Frontend: Angular CLI has built-in hot reload
 
+# Error handling
+trap 'echo ""; echo "🛑 Stopping servers..."; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null || true; exit 0' SIGINT SIGTERM
+trap 'echo "❌ Error at line $LINENO"; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null || true; exit 1' ERR
+
 echo "🚀 Starting FlagFit Pro Development Servers..."
 echo ""
 
+# Change to script directory
+cd "$(dirname "$0")"
+
+# Check if nodemon is installed
+if ! command -v nodemon &> /dev/null; then
+    echo "⚠️  nodemon not found, installing..."
+    npm install -g nodemon
+fi
+
 # Start backend server with nodemon (hot reload)
 echo "📦 Starting backend server on port 3001 (with hot reload)..."
-cd "$(dirname "$0")"
 nodemon server.js --watch . --ext js,json --ignore node_modules/ --ignore angular/ --ignore "*.backup" &
 BACKEND_PID=$!
 

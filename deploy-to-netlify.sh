@@ -1,6 +1,11 @@
 #!/bin/bash
+set -euo pipefail
 
 # Flag Football Training App - Netlify Deployment Script
+# Best practices: Exit on error, undefined vars, pipe failures
+
+# Error handling trap
+trap 'echo "❌ Deployment failed at line $LINENO"; exit 1' ERR
 
 echo "🏈 Deploying Flag Football Training App to Netlify..."
 
