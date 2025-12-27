@@ -24,6 +24,8 @@ import {
 } from "../../shared/components/trend-card/trend-card.component";
 import { ReadinessWidgetComponent } from "../../shared/components/readiness-widget/readiness-widget.component";
 import { LiveIndicatorComponent } from "../../shared/components/live-indicator/live-indicator.component";
+import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
+import { NoDataEntryComponent } from "../../shared/components/no-data-entry/no-data-entry.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { AcwrService } from "../../core/services/acwr.service";
@@ -31,6 +33,7 @@ import { ReadinessService } from "../../core/services/readiness.service";
 import { TrendsService } from "../../core/services/trends.service";
 import { HeaderService } from "../../core/services/header.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
+import { DataSourceService, DATA_REQUIREMENTS } from "../../core/services/data-source.service";
 import { RealtimeBaseComponent } from "../../shared/components/realtime-base.component";
 import { LoggerService } from "../../core/services/logger.service";
 
@@ -61,6 +64,8 @@ interface TrainingSession {
     TrendCardComponent,
     ReadinessWidgetComponent,
     LiveIndicatorComponent,
+    DataSourceBannerComponent,
+    NoDataEntryComponent,
   ],
   template: `
     <app-main-layout>
@@ -76,6 +81,21 @@ interface TrainingSession {
           </div>
         </app-page-header>
 
+        <!-- Data Source Warning Banner - CRITICAL FOR ATHLETE SAFETY -->
+        <app-data-source-banner
+          actionRoute="/training/log"
+          actionLabel="Log Training"
+        ></app-data-source-banner>
+
+        <!-- Show No Data Entry state if first-time user -->
+        @if (isFirstTimeUser()) {
+          <app-no-data-entry
+            context="training"
+            [showMinimumInfo]="true"
+            [minimumEntries]="28"
+            metricName="ACWR"
+          ></app-no-data-entry>
+        } @else {
         <!-- Key Metrics Row -->
         <div class="metrics-row">
           <!-- Today's Workload -->
@@ -154,12 +174,22 @@ interface TrainingSession {
         <!-- Trend Cards -->
         <div class="trends-section">
           <h2 class="section-title">Performance Trends</h2>
-          <div class="trends-grid">
-            @for (trend of trendCards(); track trend.title) {
-              <app-trend-card [data]="trend"></app-trend-card>
-            }
-          </div>
+          @if (hasTrendData()) {
+            <div class="trends-grid">
+              @for (trend of trendCards(); track trend.title) {
+                <app-trend-card [data]="trend"></app-trend-card>
+              }
+            </div>
+          } @else {
+            <app-no-data-entry
+              context="performance"
+              [compact]="true"
+              [inline]="true"
+              [showBenefits]="false"
+            ></app-no-data-entry>
+          }
         </div>
+        } <!-- End of @else for isFirstTimeUser -->
       </div>
     </app-main-layout>
   `,
@@ -261,6 +291,7 @@ export class AthleteDashboardComponent
   private trendsService = inject(TrendsService);
   private headerService = inject(HeaderService);
   private trainingDataService = inject(TrainingDataService);
+  private dataSourceService = inject(DataSourceService);
   private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
 
@@ -268,6 +299,11 @@ export class AthleteDashboardComponent
   todayWorkload = signal<number>(0);
   nextSession = signal<{ title: string; date: Date } | null>(null);
   trendCards = signal<TrendData[]>([]);
+  
+  // Data source tracking - CRITICAL FOR ATHLETE SAFETY
+  totalTrainingSessions = signal<number>(0);
+  isFirstTimeUser = computed(() => this.dataSourceService.isFirstTimeUser());
+  hasTrendData = computed(() => this.trendCards().length > 0 && !this.isFirstTimeUser());
 
   acwrValue = computed(() => this.acwrService.acwrRatio());
   acwrRiskZone = computed(() => this.acwrService.riskZone().label);
@@ -297,6 +333,53 @@ export class AthleteDashboardComponent
     this.headerService.setDashboardHeader();
     this.loadDashboardData();
     this.setupRealtimeSubscriptions();
+    this.checkDataSource();
+  }
+
+  /**
+   * Check data source to determine if user has real data
+   * CRITICAL: This prevents showing mock data that could lead to injury
+   */
+  private checkDataSource(): void {
+    const userId = this.authService.getUser()?.id;
+    if (!userId) return;
+
+    // Check how many training sessions the user has logged
+    this.trainingDataService
+      .getTrainingSessions({ limit: 100 })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (sessions) => {
+          const count = sessions?.length || 0;
+          this.totalTrainingSessions.set(count);
+          
+          // Update global data source service
+          this.dataSourceService.checkUserHasRealData(count);
+          
+          // Register ACWR metric requirements
+          this.dataSourceService.registerMetric(
+            'acwr',
+            DATA_REQUIREMENTS.acwr.name,
+            count,
+            DATA_REQUIREMENTS.acwr.minimumDataPoints,
+            count > 0 ? 'real' : 'unknown'
+          );
+          
+          // Register readiness metric requirements
+          this.dataSourceService.registerMetric(
+            'readiness',
+            DATA_REQUIREMENTS.readiness.name,
+            count,
+            DATA_REQUIREMENTS.readiness.minimumDataPoints,
+            count > 0 ? 'real' : 'unknown'
+          );
+
+          this.logger.info(`[Dashboard] User has ${count} training sessions logged`);
+        },
+        error: () => {
+          this.dataSourceService.checkUserHasRealData(0);
+        },
+      });
   }
 
   /**

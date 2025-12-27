@@ -2,18 +2,26 @@ import {
   Component,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
   OnInit,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { StepsModule } from "primeng/steps";
 import { ToastModule } from "primeng/toast";
+import { CalendarModule } from "primeng/calendar";
+import { CheckboxModule } from "primeng/checkbox";
+import { FileUploadModule } from "primeng/fileupload";
+import { AvatarModule } from "primeng/avatar";
+import { ChipModule } from "primeng/chip";
+import { ProgressBarModule } from "primeng/progressbar";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -22,7 +30,14 @@ import { AuthService } from "../../core/services/auth.service";
 
 interface OnboardingStep {
   label: string;
+  icon: string;
   completed: boolean;
+}
+
+interface InjuryEntry {
+  area: string;
+  severity: 'minor' | 'moderate' | 'severe';
+  notes: string;
 }
 
 @Component({
@@ -30,6 +45,7 @@ interface OnboardingStep {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
     RouterModule,
     FormsModule,
     CardModule,
@@ -38,6 +54,12 @@ interface OnboardingStep {
     Select,
     StepsModule,
     ToastModule,
+    CalendarModule,
+    CheckboxModule,
+    FileUploadModule,
+    AvatarModule,
+    ChipModule,
+    ProgressBarModule,
     MainLayoutComponent,
     PageHeaderComponent,
   ],
@@ -47,78 +69,693 @@ interface OnboardingStep {
       <div class="onboarding-page">
         <app-page-header
           title="Welcome to FlagFit Pro"
-          subtitle="Let's set up your profile"
+          subtitle="Let's set up your profile and training preferences"
           icon="pi-user-plus"
         ></app-page-header>
 
         <p-card class="onboarding-card">
-          <p-steps [model]="steps()" [activeIndex]="currentStep()"></p-steps>
+          <!-- Progress bar -->
+          <div class="progress-section">
+            <p-progressBar [value]="progress()" [showValue]="false" styleClass="onboarding-progress"></p-progressBar>
+            <span class="progress-text">{{ progress() }}% complete</span>
+          </div>
+
+          <p-steps [model]="steps()" [activeIndex]="currentStep()" [readonly]="false"></p-steps>
 
           <div class="onboarding-content">
             @if (currentStep() === 0) {
-              <!-- Step 1: Basic Info -->
-              <div class="step-content">
-                <h3>Tell us about yourself</h3>
-                <div class="form-group">
-                  <label for="name">Full Name</label>
-                  <input
-                    id="name"
-                    type="text"
-                    pInputText
-                    [(ngModel)]="onboardingData.name"
-                    placeholder="Enter your full name"
-                    class="w-full"
-                  />
+              <!-- Step 1: Personal Info -->
+              <div class="step-content animate-fade-in">
+                <div class="step-header">
+                  <i class="pi pi-user step-icon"></i>
+                  <div>
+                    <h3>Personal Information</h3>
+                    <p class="step-description">Let's start with the basics</p>
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label for="position">Position</label>
-                  <p-select
-                    id="position"
-                    [options]="positions"
-                    [(ngModel)]="onboardingData.position"
-                    placeholder="Select your position"
-                    [showClear]="true"
-                    class="w-full"
-                  ></p-select>
+                
+                <div class="form-grid">
+                  <div class="form-group span-2">
+                    <label for="name">Full Name <span class="required">*</span></label>
+                    <input
+                      id="name"
+                      type="text"
+                      pInputText
+                      [(ngModel)]="onboardingData.name"
+                      placeholder="Enter your full name"
+                      class="w-full"
+                    />
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="dob">Date of Birth <span class="required">*</span></label>
+                    <p-calendar
+                      id="dob"
+                      [(ngModel)]="onboardingData.dateOfBirth"
+                      [maxDate]="maxDate"
+                      [minDate]="minDate"
+                      dateFormat="dd/mm/yy"
+                      placeholder="Select date"
+                      [showIcon]="true"
+                      styleClass="w-full"
+                    ></p-calendar>
+                    @if (calculatedAge()) {
+                      <small class="age-hint">Age: {{ calculatedAge() }} years ({{ getAgeGroup() }})</small>
+                    }
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <p-select
+                      id="gender"
+                      [options]="genderOptions"
+                      [(ngModel)]="onboardingData.gender"
+                      placeholder="Select gender"
+                      class="w-full"
+                    ></p-select>
+                  </div>
+                  
+                  <div class="form-group span-2">
+                    <label for="phone">Phone Number <small>(optional)</small></label>
+                    <input
+                      id="phone"
+                      type="tel"
+                      pInputText
+                      [(ngModel)]="onboardingData.phone"
+                      placeholder="+1 234 567 8900"
+                      class="w-full"
+                    />
+                  </div>
                 </div>
               </div>
             } @else if (currentStep() === 1) {
-              <!-- Step 2: Goals -->
-              <div class="step-content">
-                <h3>What are your goals?</h3>
+              <!-- Step 2: Team & Position -->
+              <div class="step-content animate-fade-in">
+                <div class="step-header">
+                  <i class="pi pi-users step-icon"></i>
+                  <div>
+                    <h3>Team & Position</h3>
+                    <p class="step-description">Tell us about your role on the field</p>
+                  </div>
+                </div>
+                
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="team">Team <span class="required">*</span></label>
+                    <p-select
+                      id="team"
+                      [options]="teams"
+                      [(ngModel)]="onboardingData.team"
+                      placeholder="Select your team"
+                      [showClear]="true"
+                      class="w-full"
+                    ></p-select>
+                  </div>
+                  
+                  <div class="form-group jersey-input">
+                    <label for="jerseyNumber">Jersey #</label>
+                    <input
+                      id="jerseyNumber"
+                      type="number"
+                      pInputText
+                      [(ngModel)]="onboardingData.jerseyNumber"
+                      placeholder="#"
+                      min="0"
+                      max="99"
+                      class="w-full jersey-field"
+                    />
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="position">Primary Position <span class="required">*</span></label>
+                    <p-select
+                      id="position"
+                      [options]="positions"
+                      [(ngModel)]="onboardingData.position"
+                      placeholder="Select position"
+                      class="w-full"
+                    ></p-select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="secondaryPosition">Secondary Position</label>
+                    <p-select
+                      id="secondaryPosition"
+                      [options]="positions"
+                      [(ngModel)]="onboardingData.secondaryPosition"
+                      placeholder="Optional"
+                      [showClear]="true"
+                      class="w-full"
+                    ></p-select>
+                  </div>
+                  
+                  @if (isQBSelected()) {
+                    <div class="form-group span-2">
+                      <label for="throwingArm">Throwing Arm <span class="required">*</span></label>
+                      <div class="arm-toggle">
+                        @for (arm of throwingArmOptions; track arm.value) {
+                          <div 
+                            class="arm-option"
+                            [class.selected]="onboardingData.throwingArm === arm.value"
+                            (click)="onboardingData.throwingArm = arm.value"
+                          >
+                            <i class="pi pi-check" *ngIf="onboardingData.throwingArm === arm.value"></i>
+                            {{ arm.label }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                  
+                  <div class="form-group span-2">
+                    <label for="experience">Experience Level <span class="required">*</span></label>
+                    <p-select
+                      id="experience"
+                      [options]="experienceLevels"
+                      [(ngModel)]="onboardingData.experience"
+                      placeholder="Select your experience"
+                      class="w-full"
+                    ></p-select>
+                  </div>
+                </div>
+              </div>
+            } @else if (currentStep() === 2) {
+              <!-- Step 3: Physical Measurements -->
+              <div class="step-content animate-fade-in">
+                <div class="step-header">
+                  <i class="pi pi-heart step-icon"></i>
+                  <div>
+                    <h3>Physical Measurements</h3>
+                    <p class="step-description">Used for load calculations and benchmarks</p>
+                  </div>
+                </div>
+                
                 <div class="form-group">
-                  <label
-                    >Select your primary goals (select all that apply)</label
-                  >
-                  <div class="goals-grid">
-                    @for (goal of goals; track goal.id) {
+                  <label>Preferred Units</label>
+                  <div class="unit-toggle">
+                    <div 
+                      class="unit-option" 
+                      [class.selected]="onboardingData.unitSystem === 'metric'"
+                      (click)="onboardingData.unitSystem = 'metric'"
+                    >
+                      <i class="pi pi-globe"></i>
+                      <span>Metric</span>
+                      <small>cm / kg</small>
+                    </div>
+                    <div 
+                      class="unit-option" 
+                      [class.selected]="onboardingData.unitSystem === 'imperial'"
+                      (click)="onboardingData.unitSystem = 'imperial'"
+                    >
+                      <i class="pi pi-flag"></i>
+                      <span>Imperial</span>
+                      <small>ft-in / lbs</small>
+                    </div>
+                  </div>
+                </div>
+                
+                @if (onboardingData.unitSystem === 'metric') {
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="height">Height (cm) <span class="required">*</span></label>
+                      <input
+                        id="height"
+                        type="number"
+                        pInputText
+                        [(ngModel)]="onboardingData.heightCm"
+                        placeholder="e.g. 180"
+                        min="100"
+                        max="250"
+                        class="w-full"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="weight">Weight (kg) <span class="required">*</span></label>
+                      <input
+                        id="weight"
+                        type="number"
+                        pInputText
+                        [(ngModel)]="onboardingData.weightKg"
+                        placeholder="e.g. 75"
+                        min="30"
+                        max="200"
+                        class="w-full"
+                      />
+                    </div>
+                  </div>
+                } @else {
+                  <div class="form-grid imperial-grid">
+                    <div class="form-group">
+                      <label for="heightFt">Height (ft)</label>
+                      <input
+                        id="heightFt"
+                        type="number"
+                        pInputText
+                        [(ngModel)]="onboardingData.heightFt"
+                        placeholder="5"
+                        min="3"
+                        max="8"
+                        class="w-full"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="heightIn">Inches</label>
+                      <input
+                        id="heightIn"
+                        type="number"
+                        pInputText
+                        [(ngModel)]="onboardingData.heightIn"
+                        placeholder="10"
+                        min="0"
+                        max="11"
+                        class="w-full"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="weightLbs">Weight (lbs) <span class="required">*</span></label>
+                      <input
+                        id="weightLbs"
+                        type="number"
+                        pInputText
+                        [(ngModel)]="onboardingData.weightLbs"
+                        placeholder="e.g. 165"
+                        min="66"
+                        max="440"
+                        class="w-full"
+                      />
+                    </div>
+                  </div>
+                }
+                
+                <div class="info-box">
+                  <i class="pi pi-info-circle"></i>
+                  <span>Your measurements help us calculate appropriate training loads and provide position-specific benchmarks.</span>
+                </div>
+              </div>
+            } @else if (currentStep() === 3) {
+              <!-- Step 4: Health & Injuries -->
+              <div class="step-content animate-fade-in">
+                <div class="step-header">
+                  <i class="pi pi-shield step-icon"></i>
+                  <div>
+                    <h3>Health & Injury History</h3>
+                    <p class="step-description">Helps us avoid recommending harmful exercises</p>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label>Current Injuries or Pain Areas</label>
+                  <p class="field-hint">Add any areas where you're currently experiencing pain or recovering from injury</p>
+                  
+                  <div class="injury-input-row">
+                    <p-select
+                      [options]="injuryAreas"
+                      [(ngModel)]="newInjury.area"
+                      placeholder="Select area"
+                      class="injury-area-select"
+                    ></p-select>
+                    <p-select
+                      [options]="[{label:'Minor',value:'minor'},{label:'Moderate',value:'moderate'},{label:'Severe',value:'severe'}]"
+                      [(ngModel)]="newInjury.severity"
+                      placeholder="Severity"
+                      class="injury-severity-select"
+                    ></p-select>
+                    <p-button 
+                      icon="pi pi-plus" 
+                      [rounded]="true"
+                      [disabled]="!newInjury.area"
+                      (onClick)="addCurrentInjury()"
+                    ></p-button>
+                  </div>
+                  
+                  @if (onboardingData.currentInjuries.length > 0) {
+                    <div class="injury-list">
+                      @for (injury of onboardingData.currentInjuries; track $index) {
+                        <div class="injury-chip" [class]="'severity-' + injury.severity">
+                          <span>{{ injury.area }} ({{ injury.severity }})</span>
+                          <i class="pi pi-times" (click)="removeCurrentInjury($index)"></i>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+                
+                <div class="form-group">
+                  <label>Injury History</label>
+                  <p class="field-hint">Select any significant past injuries (select all that apply)</p>
+                  <div class="checkbox-grid">
+                    @for (injury of injuryHistoryOptions; track injury.value) {
                       <div
-                        class="goal-card"
-                        [class.selected]="
-                          onboardingData.goals.includes(goal.id)
-                        "
-                        (click)="toggleGoal(goal.id)"
+                        class="checkbox-card"
+                        [class.selected]="onboardingData.injuryHistory.includes(injury.value)"
+                        [class.none-selected]="injury.value === 'none'"
+                        (click)="toggleInjuryHistory(injury.value)"
                       >
-                        <i [class]="goal.icon"></i>
-                        <span>{{ goal.label }}</span>
+                        <i [class]="injury.icon"></i>
+                        <span>{{ injury.label }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="medicalNotes">Additional Medical Notes <small>(optional)</small></label>
+                  <textarea
+                    id="medicalNotes"
+                    pInputText
+                    [(ngModel)]="onboardingData.medicalNotes"
+                    placeholder="Any other health conditions, allergies, or notes..."
+                    rows="3"
+                    class="w-full"
+                  ></textarea>
+                </div>
+              </div>
+            } @else if (currentStep() === 4) {
+              <!-- Step 5: Equipment -->
+              <div class="step-content animate-fade-in">
+                <div class="step-header">
+                  <i class="pi pi-box step-icon"></i>
+                  <div>
+                    <h3>Available Equipment</h3>
+                    <p class="step-description">What do you have access to for training?</p>
+                  </div>
+                </div>
+                
+                <div class="equipment-grid">
+                  @for (item of equipmentOptions; track item.value) {
+                    <div
+                      class="equipment-card"
+                      [class.selected]="onboardingData.equipmentAvailable.includes(item.value)"
+                      [class.none-card]="item.value === 'none'"
+                      (click)="toggleEquipment(item.value)"
+                    >
+                      <i [class]="item.icon"></i>
+                      <span>{{ item.label }}</span>
+                      @if (onboardingData.equipmentAvailable.includes(item.value)) {
+                        <i class="pi pi-check check-icon"></i>
+                      }
+                    </div>
+                  }
+                </div>
+                
+                <div class="info-box success">
+                  <i class="pi pi-lightbulb"></i>
+                  <span>We'll recommend exercises based on what you have available. Bodyweight exercises are always an option!</span>
+                </div>
+              </div>
+            } @else if (currentStep() === 5) {
+              <!-- Step 6: Goals -->
+              <div class="step-content animate-fade-in">
+                <div class="step-header">
+                  <i class="pi pi-flag step-icon"></i>
+                  <div>
+                    <h3>Training Goals</h3>
+                    <p class="step-description">What do you want to achieve? (select all that apply)</p>
+                  </div>
+                </div>
+                
+                <div class="goals-grid">
+                  @for (goal of goals; track goal.id) {
+                    <div
+                      class="goal-card"
+                      [class.selected]="onboardingData.goals.includes(goal.id)"
+                      (click)="toggleGoal(goal.id)"
+                    >
+                      <i [class]="goal.icon"></i>
+                      <span>{{ goal.label }}</span>
+                      @if (onboardingData.goals.includes(goal.id)) {
+                        <i class="pi pi-check check-badge"></i>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            } @else if (currentStep() === 6) {
+              <!-- Step 7: Schedule -->
+              <div class="step-content animate-fade-in">
+                <div class="step-header">
+                  <i class="pi pi-calendar step-icon"></i>
+                  <div>
+                    <h3>Your Schedule</h3>
+                    <p class="step-description">Help us recommend the best training times</p>
+                  </div>
+                </div>
+                
+                <div class="form-grid">
+                  <div class="form-group span-2">
+                    <label for="scheduleType">Work Schedule Type <span class="required">*</span></label>
+                    <p-select
+                      id="scheduleType"
+                      [options]="scheduleTypes"
+                      [(ngModel)]="onboardingData.scheduleType"
+                      placeholder="Select your schedule type"
+                      class="w-full"
+                    ></p-select>
+                  </div>
+                  
+                  <div class="form-group span-2">
+                    <label for="practicesPerWeek">Team Practices Per Week</label>
+                    <p-select
+                      id="practicesPerWeek"
+                      [options]="practiceFrequencies"
+                      [(ngModel)]="onboardingData.practicesPerWeek"
+                      placeholder="How many team practices?"
+                      class="w-full"
+                    ></p-select>
+                  </div>
+                  
+                  <div class="form-group span-2">
+                    <label>Practice Days</label>
+                    <div class="days-grid">
+                      @for (day of weekDays; track day.value) {
+                        <div
+                          class="day-chip"
+                          [class.selected]="onboardingData.practiceDays.includes(day.value)"
+                          (click)="togglePracticeDay(day.value)"
+                        >
+                          {{ day.label }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            } @else if (currentStep() === 7) {
+              <!-- Step 8: Mobility & Recovery -->
+              <div class="step-content animate-fade-in">
+                <div class="step-header">
+                  <i class="pi pi-refresh step-icon"></i>
+                  <div>
+                    <h3>Mobility & Recovery</h3>
+                    <p class="step-description">Set up your daily recovery routine</p>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label>Morning Mobility <small>(10 min wake-up routine)</small></label>
+                  <div class="preference-options compact">
+                    @for (option of mobilityTimeOptions; track option.value) {
+                      <div
+                        class="preference-card"
+                        [class.selected]="onboardingData.morningMobility === option.value"
+                        (click)="onboardingData.morningMobility = option.value"
+                      >
+                        <i [class]="option.icon"></i>
+                        <span class="preference-label">{{ option.label }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label>Evening Mobility <small>(15 min before bed)</small></label>
+                  <div class="preference-options compact">
+                    @for (option of mobilityTimeOptions; track option.value) {
+                      <div
+                        class="preference-card"
+                        [class.selected]="onboardingData.eveningMobility === option.value"
+                        (click)="onboardingData.eveningMobility = option.value"
+                      >
+                        <i [class]="option.icon"></i>
+                        <span class="preference-label">{{ option.label }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label>Foam Rolling Preference</label>
+                  <div class="preference-options compact">
+                    @for (option of foamRollingOptions; track option.value) {
+                      <div
+                        class="preference-card"
+                        [class.selected]="onboardingData.foamRollingTime === option.value"
+                        (click)="onboardingData.foamRollingTime = option.value"
+                      >
+                        <i [class]="option.icon"></i>
+                        <span class="preference-label">{{ option.label }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label>Rest Day Recovery</label>
+                  <div class="preference-options">
+                    @for (option of restDayOptions; track option.value) {
+                      <div
+                        class="preference-card"
+                        [class.selected]="onboardingData.restDayPreference === option.value"
+                        (click)="onboardingData.restDayPreference = option.value"
+                      >
+                        <i [class]="option.icon"></i>
+                        <span class="preference-label">{{ option.label }}</span>
+                        <span class="preference-desc">{{ option.description }}</span>
                       </div>
                     }
                   </div>
                 </div>
               </div>
-            } @else if (currentStep() === 2) {
-              <!-- Step 3: Experience -->
-              <div class="step-content">
-                <h3>What's your experience level?</h3>
-                <div class="form-group">
-                  <label for="experience">Experience Level</label>
-                  <p-select
-                    id="experience"
-                    [options]="experienceLevels"
-                    [(ngModel)]="onboardingData.experience"
-                    placeholder="Select your experience level"
-                    class="w-full"
-                  ></p-select>
+            } @else if (currentStep() === 8) {
+              <!-- Step 9: Summary -->
+              <div class="step-content animate-fade-in">
+                <div class="step-header">
+                  <i class="pi pi-check-circle step-icon success"></i>
+                  <div>
+                    <h3>You're All Set!</h3>
+                    <p class="step-description">Review your profile and start training</p>
+                  </div>
+                </div>
+                
+                <div class="summary-grid">
+                  <!-- Profile Card -->
+                  <div class="summary-card">
+                    <h4><i class="pi pi-user"></i> Profile</h4>
+                    <div class="summary-content">
+                      <div class="summary-row">
+                        <span class="label">Name</span>
+                        <span class="value">{{ onboardingData.name || 'Not set' }}</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="label">Age</span>
+                        <span class="value">{{ calculatedAge() || '?' }} years ({{ getAgeGroup() }})</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="label">Gender</span>
+                        <span class="value">{{ getGenderLabel(onboardingData.gender) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Team Card -->
+                  <div class="summary-card">
+                    <h4><i class="pi pi-users"></i> Team</h4>
+                    <div class="summary-content">
+                      <div class="summary-row">
+                        <span class="label">Team</span>
+                        <span class="value">{{ getTeamLabel(onboardingData.team) }}</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="label">Jersey</span>
+                        <span class="value jersey-badge">#{{ onboardingData.jerseyNumber || '?' }}</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="label">Position</span>
+                        <span class="value">{{ getPositionLabel(onboardingData.position) }}</span>
+                      </div>
+                      @if (isQBSelected()) {
+                        <div class="summary-row">
+                          <span class="label">Throwing Arm</span>
+                          <span class="value">{{ getThrowingArmLabel(onboardingData.throwingArm) }}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                  
+                  <!-- Physical Card -->
+                  <div class="summary-card">
+                    <h4><i class="pi pi-heart"></i> Physical</h4>
+                    <div class="summary-content">
+                      <div class="summary-row">
+                        <span class="label">Height</span>
+                        <span class="value">{{ getHeightDisplay() }}</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="label">Weight</span>
+                        <span class="value">{{ getWeightDisplay() }}</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="label">Experience</span>
+                        <span class="value">{{ getExperienceLabel(onboardingData.experience) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Health Card -->
+                  <div class="summary-card">
+                    <h4><i class="pi pi-shield"></i> Health</h4>
+                    <div class="summary-content">
+                      <div class="summary-row">
+                        <span class="label">Current Injuries</span>
+                        <span class="value">
+                          @if (onboardingData.currentInjuries.length === 0) {
+                            None 👍
+                          } @else {
+                            {{ onboardingData.currentInjuries.length }} area(s)
+                          }
+                        </span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="label">Injury History</span>
+                        <span class="value">
+                          @if (onboardingData.injuryHistory.includes('none') || onboardingData.injuryHistory.length === 0) {
+                            None 👍
+                          } @else {
+                            {{ onboardingData.injuryHistory.length }} past injury(s)
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Schedule Card -->
+                  <div class="summary-card">
+                    <h4><i class="pi pi-calendar"></i> Schedule</h4>
+                    <div class="summary-content">
+                      <div class="summary-row">
+                        <span class="label">Schedule Type</span>
+                        <span class="value">{{ getScheduleLabel(onboardingData.scheduleType) }}</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="label">Practices/Week</span>
+                        <span class="value">{{ onboardingData.practicesPerWeek || 0 }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Recovery Card -->
+                  <div class="summary-card">
+                    <h4><i class="pi pi-refresh"></i> Recovery</h4>
+                    <div class="summary-content">
+                      <div class="summary-row">
+                        <span class="label">Morning Mobility</span>
+                        <span class="value">{{ getMobilityLabel(onboardingData.morningMobility) }}</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="label">Foam Rolling</span>
+                        <span class="value">{{ getFoamRollingLabel(onboardingData.foamRollingTime) }}</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="label">Rest Days</span>
+                        <span class="value">{{ restDayOptions.find(o => o.value === onboardingData.restDayPreference)?.label }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="summary-note success">
+                  <i class="pi pi-check-circle"></i>
+                  <span>Your personalized training plan is ready! You can update these settings anytime in your profile.</span>
                 </div>
               </div>
             }
@@ -155,76 +792,641 @@ interface OnboardingStep {
   `,
   styles: [
     `
+      /* ============================================
+         ONBOARDING - MODERN UI/UX STYLES
+         ============================================ */
+      
       .onboarding-page {
-        padding: var(--space-6);
+        padding: var(--space-4);
+        max-width: 900px;
+        margin: 0 auto;
       }
 
       .onboarding-card {
-        margin-top: var(--space-6);
+        margin-top: var(--space-4);
+        border-radius: 16px;
+        overflow: hidden;
       }
 
-      .onboarding-content {
-        margin-top: var(--space-6);
-        min-height: 400px;
-      }
-
-      .step-content h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
+      /* Progress Section */
+      .progress-section {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
         margin-bottom: var(--space-4);
+        padding-bottom: var(--space-3);
+        border-bottom: 1px solid var(--p-surface-100);
+      }
+
+      .progress-text {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        white-space: nowrap;
+      }
+
+      :host ::ng-deep .onboarding-progress {
+        height: 6px;
+        border-radius: 3px;
+        flex: 1;
+      }
+
+      /* Content Area */
+      .onboarding-content {
+        margin-top: var(--space-5);
+        min-height: 480px;
+      }
+
+      /* Step Header */
+      .step-header {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-4);
+        margin-bottom: var(--space-5);
+      }
+
+      .step-icon {
+        font-size: 2rem;
+        color: var(--color-brand-primary);
+        background: var(--color-brand-primary-light);
+        padding: var(--space-3);
+        border-radius: 12px;
+      }
+
+      .step-icon.success {
+        color: var(--color-success);
+        background: var(--color-success-light);
+      }
+
+      .step-header h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
         color: var(--text-primary);
       }
 
+      .step-description {
+        color: var(--text-secondary);
+        margin: var(--space-1) 0 0 0;
+        font-size: 0.95rem;
+      }
+
+      /* Animation */
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Form Grid */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+      }
+
+      .form-grid .span-2 {
+        grid-column: span 2;
+      }
+
+      .imperial-grid {
+        grid-template-columns: 1fr 1fr 2fr;
+      }
+
       .form-group {
-        margin-bottom: var(--space-4);
+        margin-bottom: 0;
       }
 
       .form-group label {
         display: block;
         margin-bottom: var(--space-2);
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+      }
+
+      .form-group label small {
+        font-weight: 400;
+        color: var(--text-secondary);
+      }
+
+      .required {
+        color: var(--color-warning);
+      }
+
+      .field-hint {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin: 0 0 var(--space-2) 0;
+      }
+
+      .age-hint {
+        display: block;
+        margin-top: var(--space-1);
+        color: var(--color-brand-primary);
         font-weight: 500;
+      }
+
+      /* Jersey Input */
+      .jersey-input {
+        max-width: 100px;
+      }
+
+      .jersey-field {
+        text-align: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
+      /* Unit Toggle */
+      .unit-toggle {
+        display: flex;
+        gap: var(--space-3);
+        margin-top: var(--space-2);
+      }
+
+      .unit-option {
+        flex: 1;
+        padding: var(--space-4);
+        border: 2px solid var(--p-surface-200);
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .unit-option i {
+        font-size: 1.5rem;
+        color: var(--text-secondary);
+      }
+
+      .unit-option:hover {
+        border-color: var(--color-brand-primary);
+        background: var(--p-surface-50);
+      }
+
+      .unit-option.selected {
+        border-color: var(--color-brand-primary);
+        background: linear-gradient(135deg, var(--color-brand-primary-light), transparent);
+      }
+
+      .unit-option.selected i {
+        color: var(--color-brand-primary);
+      }
+
+      .unit-option span {
+        display: block;
+        font-weight: 600;
         color: var(--text-primary);
       }
 
+      .unit-option small {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+      }
+
+      /* Arm Toggle (for QBs) */
+      .arm-toggle {
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      .arm-option {
+        flex: 1;
+        padding: var(--space-3);
+        border: 2px solid var(--p-surface-200);
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-2);
+      }
+
+      .arm-option:hover {
+        border-color: var(--color-brand-primary);
+      }
+
+      .arm-option.selected {
+        border-color: var(--color-brand-primary);
+        background: var(--color-brand-primary);
+        color: white;
+      }
+
+      /* Goals Grid */
       .goals-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: var(--space-3);
-        margin-top: var(--space-3);
       }
 
       .goal-card {
         padding: var(--space-4);
         border: 2px solid var(--p-surface-200);
-        border-radius: var(--p-border-radius);
+        border-radius: 12px;
         text-align: center;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.2s ease;
+        position: relative;
       }
 
       .goal-card:hover {
         border-color: var(--color-brand-primary);
-        background: var(--p-surface-50);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       }
 
       .goal-card.selected {
         border-color: var(--color-brand-primary);
-        background: var(--color-brand-primary-light);
+        background: linear-gradient(135deg, var(--color-brand-primary-light), transparent);
       }
 
       .goal-card i {
-        font-size: var(--icon-2xl);
+        font-size: 2rem;
         display: block;
         margin-bottom: var(--space-2);
         color: var(--color-brand-primary);
       }
 
+      .goal-card .check-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 1rem;
+        color: var(--color-success);
+      }
+
+      /* Days Grid */
+      .days-grid {
+        display: flex;
+        gap: var(--space-2);
+        margin-top: var(--space-2);
+      }
+
+      .day-chip {
+        padding: var(--space-2) var(--space-3);
+        border: 2px solid var(--p-surface-200);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .day-chip:hover {
+        border-color: var(--color-brand-primary);
+      }
+
+      .day-chip.selected {
+        border-color: var(--color-brand-primary);
+        background: var(--color-brand-primary);
+        color: white;
+      }
+
+      /* Equipment Grid */
+      .equipment-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-3);
+      }
+
+      .equipment-card {
+        padding: var(--space-3);
+        border: 2px solid var(--p-surface-200);
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-1);
+      }
+
+      .equipment-card:hover {
+        border-color: var(--color-brand-primary);
+      }
+
+      .equipment-card.selected {
+        border-color: var(--color-brand-primary);
+        background: var(--color-brand-primary-light);
+      }
+
+      .equipment-card.none-card.selected {
+        border-color: var(--text-secondary);
+        background: var(--p-surface-100);
+      }
+
+      .equipment-card i {
+        font-size: 1.25rem;
+        color: var(--color-brand-primary);
+      }
+
+      .equipment-card span {
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .equipment-card .check-icon {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        font-size: 0.75rem;
+        color: var(--color-success);
+      }
+
+      /* Checkbox Grid (Injury History) */
+      .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-2);
+      }
+
+      .checkbox-card {
+        padding: var(--space-3);
+        border: 2px solid var(--p-surface-200);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: 0.85rem;
+      }
+
+      .checkbox-card:hover {
+        border-color: var(--color-brand-primary);
+      }
+
+      .checkbox-card.selected {
+        border-color: var(--color-warning);
+        background: var(--color-warning-light);
+      }
+
+      .checkbox-card.none-selected.selected {
+        border-color: var(--color-success);
+        background: var(--color-success-light);
+      }
+
+      .checkbox-card i {
+        color: var(--color-warning);
+      }
+
+      .checkbox-card.none-selected i {
+        color: var(--color-success);
+      }
+
+      /* Injury Input */
+      .injury-input-row {
+        display: flex;
+        gap: var(--space-2);
+        margin-bottom: var(--space-3);
+      }
+
+      .injury-area-select {
+        flex: 2;
+      }
+
+      .injury-severity-select {
+        flex: 1;
+      }
+
+      .injury-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .injury-chip {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-3);
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      .injury-chip.severity-minor {
+        background: var(--color-info-light);
+        color: var(--color-info);
+      }
+
+      .injury-chip.severity-moderate {
+        background: var(--color-warning-light);
+        color: var(--color-warning);
+      }
+
+      .injury-chip.severity-severe {
+        background: var(--color-danger-light);
+        color: var(--color-danger);
+      }
+
+      .injury-chip i {
+        cursor: pointer;
+        opacity: 0.7;
+      }
+
+      .injury-chip i:hover {
+        opacity: 1;
+      }
+
+      /* Preference Options */
+      .preference-options {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-3);
+        margin-top: var(--space-2);
+      }
+
+      .preference-options.compact {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .preference-card {
+        padding: var(--space-3);
+        border: 2px solid var(--p-surface-200);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--space-1);
+      }
+
+      .preference-card:hover {
+        border-color: var(--color-brand-primary);
+      }
+
+      .preference-card.selected {
+        border-color: var(--color-brand-primary);
+        background: linear-gradient(135deg, var(--color-brand-primary-light), transparent);
+      }
+
+      .preference-card i {
+        font-size: 1.25rem;
+        color: var(--color-brand-primary);
+      }
+
+      .preference-label {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.85rem;
+      }
+
+      .preference-desc {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      /* Info Box */
+      .info-box {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        background: var(--color-info-light);
+        border-radius: 10px;
+        color: var(--color-info);
+        font-size: 0.9rem;
+        margin-top: var(--space-4);
+      }
+
+      .info-box.success {
+        background: var(--color-success-light);
+        color: var(--color-success);
+      }
+
+      .info-box i {
+        font-size: 1.25rem;
+        flex-shrink: 0;
+      }
+
+      /* Summary Grid */
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-3);
+      }
+
+      .summary-card {
+        background: var(--p-surface-50);
+        border-radius: 12px;
+        padding: var(--space-4);
+        border: 1px solid var(--p-surface-100);
+      }
+
+      .summary-card h4 {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin: 0 0 var(--space-3) 0;
+        color: var(--color-brand-primary);
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .summary-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+      }
+
+      .summary-row .label {
+        color: var(--text-secondary);
+      }
+
+      .summary-row .value {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .jersey-badge {
+        background: var(--color-brand-primary);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+
+      .summary-note {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        background: var(--color-info-light);
+        border-radius: 10px;
+        color: var(--color-info);
+        font-size: 0.9rem;
+        margin-top: var(--space-4);
+      }
+
+      .summary-note.success {
+        background: var(--color-success-light);
+        color: var(--color-success);
+      }
+
+      /* Actions */
       .onboarding-actions {
         display: flex;
         justify-content: space-between;
         margin-top: var(--space-6);
         padding-top: var(--space-4);
         border-top: 1px solid var(--p-surface-200);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .form-grid .span-2 {
+          grid-column: span 1;
+        }
+
+        .goals-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .equipment-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .checkbox-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .preference-options {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .days-grid {
+          flex-wrap: wrap;
+        }
       }
     `,
   ],
@@ -239,14 +1441,23 @@ export class OnboardingComponent implements OnInit {
   isCompleting = signal(false);
   isLoading = signal(true);
 
+  // Team options
+  teams = [
+    { label: "Ljubljana Frogs - International", value: "ljubljana_frogs_international" },
+    { label: "Ljubljana Frogs - Domestic", value: "ljubljana_frogs_domestic" },
+    { label: "American Samoa National Team - Men", value: "american_samoa_men" },
+    { label: "American Samoa National Team - Women", value: "american_samoa_women" },
+  ];
+
+  // Position options - updated for flag football
   positions = [
     { label: "Quarterback (QB)", value: "QB" },
     { label: "Wide Receiver (WR)", value: "WR" },
-    { label: "Running Back (RB)", value: "RB" },
-    { label: "Tight End (TE)", value: "TE" },
+    { label: "Center", value: "Center" },
     { label: "Defensive Back (DB)", value: "DB" },
+    { label: "Rusher", value: "Rusher" },
     { label: "Linebacker (LB)", value: "LB" },
-    { label: "Defensive Line (DL)", value: "DL" },
+    { label: "Hybrid (Multiple Positions)", value: "Hybrid" },
   ];
 
   goals = [
@@ -259,27 +1470,291 @@ export class OnboardingComponent implements OnInit {
   ];
 
   experienceLevels = [
-    { label: "Beginner", value: "beginner" },
-    { label: "Intermediate", value: "intermediate" },
-    { label: "Advanced", value: "advanced" },
-    { label: "Professional", value: "professional" },
+    { label: "Beginner (0-1 years)", value: "beginner" },
+    { label: "Intermediate (1-3 years)", value: "intermediate" },
+    { label: "Advanced (3-5 years)", value: "advanced" },
+    { label: "Professional (5+ years)", value: "professional" },
   ];
 
+  // Schedule types based on work schedule
+  scheduleTypes = [
+    { label: "Early Bird - Work starts ~6am", value: "early_bird" },
+    { label: "Standard - Work starts ~9am", value: "standard" },
+    { label: "Late Starter - Work starts afternoon", value: "late_starter" },
+    { label: "Shift Worker - Variable shifts", value: "shift_worker" },
+    { label: "Student - Flexible schedule", value: "student" },
+    { label: "Remote Worker - Work from home", value: "remote_worker" },
+  ];
+
+  practiceFrequencies = [
+    { label: "1 practice per week", value: 1 },
+    { label: "2 practices per week", value: 2 },
+    { label: "3 practices per week", value: 3 },
+    { label: "4+ practices per week", value: 4 },
+  ];
+
+  weekDays = [
+    { label: "Mon", value: "Monday" },
+    { label: "Tue", value: "Tuesday" },
+    { label: "Wed", value: "Wednesday" },
+    { label: "Thu", value: "Thursday" },
+    { label: "Fri", value: "Friday" },
+    { label: "Sat", value: "Saturday" },
+    { label: "Sun", value: "Sunday" },
+  ];
+
+  // Mobility time preferences
+  mobilityTimeOptions = [
+    { 
+      label: "Every Day", 
+      value: "daily", 
+      icon: "pi pi-check-circle",
+      description: "Recommended for best results"
+    },
+    { 
+      label: "Most Days", 
+      value: "most_days", 
+      icon: "pi pi-clock",
+      description: "5-6 days per week"
+    },
+    { 
+      label: "When I Can", 
+      value: "flexible", 
+      icon: "pi pi-calendar",
+      description: "Flexible schedule"
+    },
+    { 
+      label: "Skip This", 
+      value: "skip", 
+      icon: "pi pi-times",
+      description: "Not for me right now"
+    },
+  ];
+
+  // Foam rolling preferences
+  foamRollingOptions = [
+    { 
+      label: "After Practice", 
+      value: "after_practice", 
+      icon: "pi pi-flag",
+      description: "Best for recovery"
+    },
+    { 
+      label: "Before Bed", 
+      value: "before_bed", 
+      icon: "pi pi-moon",
+      description: "Helps with sleep"
+    },
+    { 
+      label: "Both", 
+      value: "both", 
+      icon: "pi pi-check-circle",
+      description: "Maximum recovery"
+    },
+    { 
+      label: "When Sore", 
+      value: "when_needed", 
+      icon: "pi pi-exclamation-circle",
+      description: "As needed basis"
+    },
+  ];
+
+  // Rest day preferences
+  restDayOptions = [
+    { 
+      label: "Full Recovery", 
+      value: "full", 
+      icon: "pi pi-heart",
+      description: "Stretching + Foam Rolling (35 min)"
+    },
+    { 
+      label: "Light Stretching", 
+      value: "light", 
+      icon: "pi pi-minus",
+      description: "Just stretching (20 min)"
+    },
+    { 
+      label: "Active Recovery", 
+      value: "active", 
+      icon: "pi pi-refresh",
+      description: "Morning + Stretching + Evening (45 min)"
+    },
+    { 
+      label: "Complete Rest", 
+      value: "none", 
+      icon: "pi pi-stop",
+      description: "No structured routine"
+    },
+  ];
+
+  // Gender options
+  genderOptions = [
+    { label: "Male", value: "male" },
+    { label: "Female", value: "female" },
+    { label: "Other", value: "other" },
+    { label: "Prefer not to say", value: "undisclosed" },
+  ];
+
+  // Throwing arm options (for QBs)
+  throwingArmOptions = [
+    { label: "Right", value: "right" },
+    { label: "Left", value: "left" },
+    { label: "Ambidextrous", value: "both" },
+  ];
+
+  // Injury areas
+  injuryAreas = [
+    { label: "Hamstring", value: "hamstring" },
+    { label: "Quadriceps", value: "quadriceps" },
+    { label: "Knee", value: "knee" },
+    { label: "Ankle", value: "ankle" },
+    { label: "Calf / Achilles", value: "calf_achilles" },
+    { label: "Hip Flexor", value: "hip_flexor" },
+    { label: "Groin", value: "groin" },
+    { label: "Lower Back", value: "lower_back" },
+    { label: "Shoulder", value: "shoulder" },
+    { label: "Elbow", value: "elbow" },
+    { label: "Wrist / Hand", value: "wrist_hand" },
+    { label: "Neck", value: "neck" },
+    { label: "Other", value: "other" },
+  ];
+
+  // Injury history options
+  injuryHistoryOptions = [
+    { label: "ACL Tear", value: "acl", icon: "pi pi-exclamation-triangle" },
+    { label: "Hamstring Strain", value: "hamstring_strain", icon: "pi pi-exclamation-circle" },
+    { label: "Ankle Sprain", value: "ankle_sprain", icon: "pi pi-exclamation-circle" },
+    { label: "Shoulder Injury", value: "shoulder", icon: "pi pi-exclamation-circle" },
+    { label: "Concussion", value: "concussion", icon: "pi pi-exclamation-triangle" },
+    { label: "Back Injury", value: "back", icon: "pi pi-exclamation-circle" },
+    { label: "Knee Injury (other)", value: "knee_other", icon: "pi pi-exclamation-circle" },
+    { label: "Muscle Tear", value: "muscle_tear", icon: "pi pi-exclamation-triangle" },
+    { label: "Stress Fracture", value: "stress_fracture", icon: "pi pi-exclamation-triangle" },
+    { label: "None", value: "none", icon: "pi pi-check-circle" },
+  ];
+
+  // Equipment options
+  equipmentOptions = [
+    { label: "Foam Roller", value: "foam_roller", icon: "pi pi-circle" },
+    { label: "Resistance Bands", value: "bands", icon: "pi pi-link" },
+    { label: "Dumbbells", value: "dumbbells", icon: "pi pi-box" },
+    { label: "Kettlebell", value: "kettlebell", icon: "pi pi-box" },
+    { label: "Pull-up Bar", value: "pullup_bar", icon: "pi pi-minus" },
+    { label: "Jump Rope", value: "jump_rope", icon: "pi pi-sync" },
+    { label: "Yoga Mat", value: "yoga_mat", icon: "pi pi-stop" },
+    { label: "Agility Ladder", value: "agility_ladder", icon: "pi pi-th-large" },
+    { label: "Cones / Markers", value: "cones", icon: "pi pi-map-marker" },
+    { label: "Medicine Ball", value: "medicine_ball", icon: "pi pi-circle-fill" },
+    { label: "Football", value: "football", icon: "pi pi-star" },
+    { label: "Gym Access", value: "gym", icon: "pi pi-building" },
+    { label: "None / Bodyweight Only", value: "none", icon: "pi pi-user" },
+  ];
+
+  // Notification preferences
+  notificationOptions = [
+    { label: "Training Reminders", value: "training", icon: "pi pi-calendar" },
+    { label: "Recovery Alerts", value: "recovery", icon: "pi pi-heart" },
+    { label: "Team Updates", value: "team", icon: "pi pi-users" },
+    { label: "Performance Insights", value: "insights", icon: "pi pi-chart-line" },
+  ];
+
+  // Current injury being added
+  newInjury: InjuryEntry = { area: "", severity: "minor", notes: "" };
+
+  // Max date for DOB (must be at least 13 years old)
+  maxDate = new Date(new Date().setFullYear(new Date().getFullYear() - 13));
+  minDate = new Date(new Date().setFullYear(new Date().getFullYear() - 80));
+
   onboardingData = {
+    // Step 1: Personal Info
     name: "",
-    position: null,
+    dateOfBirth: null as Date | null,
+    gender: null as string | null,
+    phone: "",
+    profilePhotoUrl: null as string | null,
+    
+    // Step 2: Team & Position
+    jerseyNumber: null as number | null,
+    team: null as string | null,
+    position: null as string | null,
+    secondaryPosition: null as string | null,
+    throwingArm: null as string | null, // For QBs
+    experience: null as string | null,
+    
+    // Step 3: Physical
+    unitSystem: "metric" as "metric" | "imperial",
+    heightCm: null as number | null,
+    weightKg: null as number | null,
+    heightFt: null as number | null,
+    heightIn: null as number | null,
+    weightLbs: null as number | null,
+    
+    // Step 4: Health & Injuries
+    currentInjuries: [] as InjuryEntry[],
+    injuryHistory: [] as string[],
+    medicalNotes: "",
+    
+    // Step 5: Equipment
+    equipmentAvailable: [] as string[],
+    
+    // Step 6: Goals
     goals: [] as string[],
-    experience: null,
+    
+    // Step 7: Schedule
+    scheduleType: null as string | null,
+    practicesPerWeek: null as number | null,
+    practiceDays: [] as string[],
+    
+    // Step 8: Mobility & Recovery
+    morningMobility: "daily" as string,
+    eveningMobility: "daily" as string,
+    foamRollingTime: "after_practice" as string,
+    restDayPreference: "full" as string,
+    
+    // Step 9: Notifications
+    enableReminders: true,
+    reminderTime: "08:00" as string,
+    notificationPreferences: ["training", "recovery"] as string[],
   };
 
   steps = signal<OnboardingStep[]>([
-    { label: "Basic Info", completed: false },
-    { label: "Goals", completed: false },
-    { label: "Experience", completed: false },
+    { label: "Personal", icon: "pi pi-user", completed: false },
+    { label: "Team", icon: "pi pi-users", completed: false },
+    { label: "Physical", icon: "pi pi-heart", completed: false },
+    { label: "Health", icon: "pi pi-shield", completed: false },
+    { label: "Equipment", icon: "pi pi-box", completed: false },
+    { label: "Goals", icon: "pi pi-flag", completed: false },
+    { label: "Schedule", icon: "pi pi-calendar", completed: false },
+    { label: "Recovery", icon: "pi pi-refresh", completed: false },
+    { label: "Summary", icon: "pi pi-check", completed: false },
   ]);
 
+  // Computed progress percentage
+  progress = computed(() => {
+    const completed = this.steps().filter(s => s.completed).length;
+    return Math.round((completed / this.steps().length) * 100);
+  });
+
+  // Computed age from DOB
+  calculatedAge = computed(() => {
+    if (!this.onboardingData.dateOfBirth) return null;
+    const today = new Date();
+    const birth = new Date(this.onboardingData.dateOfBirth);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  });
+
+  // Check if QB position is selected
+  isQBSelected = computed(() => {
+    return this.onboardingData.position === "QB" || 
+           this.onboardingData.secondaryPosition === "QB";
+  });
+
   async ngOnInit(): Promise<void> {
-    // Load existing user data if available
     await this.loadUserProfile();
   }
 
@@ -292,7 +1767,6 @@ export class OnboardingComponent implements OnInit {
         return;
       }
 
-      // Fetch existing user profile from public.users table
       const { data, error } = await this.supabaseService.client
         .from("users")
         .select("full_name, first_name, last_name, position, experience_level")
@@ -300,7 +1774,6 @@ export class OnboardingComponent implements OnInit {
         .single();
 
       if (data && !error) {
-        // Pre-fill form with existing data
         this.onboardingData.name = data.full_name || `${data.first_name || ""} ${data.last_name || ""}`.trim();
         this.onboardingData.position = data.position;
         this.onboardingData.experience = data.experience_level;
@@ -321,6 +1794,89 @@ export class OnboardingComponent implements OnInit {
     }
   }
 
+  togglePracticeDay(day: string): void {
+    const index = this.onboardingData.practiceDays.indexOf(day);
+    if (index > -1) {
+      this.onboardingData.practiceDays.splice(index, 1);
+    } else {
+      this.onboardingData.practiceDays.push(day);
+    }
+  }
+
+  toggleEquipment(equipment: string): void {
+    const index = this.onboardingData.equipmentAvailable.indexOf(equipment);
+    if (index > -1) {
+      this.onboardingData.equipmentAvailable.splice(index, 1);
+    } else {
+      // If selecting "none", clear others
+      if (equipment === "none") {
+        this.onboardingData.equipmentAvailable = ["none"];
+      } else {
+        // Remove "none" if selecting other equipment
+        const noneIndex = this.onboardingData.equipmentAvailable.indexOf("none");
+        if (noneIndex > -1) {
+          this.onboardingData.equipmentAvailable.splice(noneIndex, 1);
+        }
+        this.onboardingData.equipmentAvailable.push(equipment);
+      }
+    }
+  }
+
+  toggleInjuryHistory(injury: string): void {
+    const index = this.onboardingData.injuryHistory.indexOf(injury);
+    if (index > -1) {
+      this.onboardingData.injuryHistory.splice(index, 1);
+    } else {
+      // If selecting "none", clear others
+      if (injury === "none") {
+        this.onboardingData.injuryHistory = ["none"];
+      } else {
+        const noneIndex = this.onboardingData.injuryHistory.indexOf("none");
+        if (noneIndex > -1) {
+          this.onboardingData.injuryHistory.splice(noneIndex, 1);
+        }
+        this.onboardingData.injuryHistory.push(injury);
+      }
+    }
+  }
+
+  toggleNotification(notif: string): void {
+    const index = this.onboardingData.notificationPreferences.indexOf(notif);
+    if (index > -1) {
+      this.onboardingData.notificationPreferences.splice(index, 1);
+    } else {
+      this.onboardingData.notificationPreferences.push(notif);
+    }
+  }
+
+  addCurrentInjury(): void {
+    if (this.newInjury.area) {
+      this.onboardingData.currentInjuries.push({ ...this.newInjury });
+      this.newInjury = { area: "", severity: "minor", notes: "" };
+    }
+  }
+
+  removeCurrentInjury(index: number): void {
+    this.onboardingData.currentInjuries.splice(index, 1);
+  }
+
+  getGenderLabel(value: string | null): string {
+    return this.genderOptions.find(g => g.value === value)?.label || "Not selected";
+  }
+
+  getThrowingArmLabel(value: string | null): string {
+    return this.throwingArmOptions.find(a => a.value === value)?.label || "Not selected";
+  }
+
+  getAgeGroup(): string {
+    const age = this.calculatedAge();
+    if (!age) return "Unknown";
+    if (age < 18) return "Youth";
+    if (age < 35) return "Adult";
+    if (age < 50) return "Masters";
+    return "Senior";
+  }
+
   nextStep(): void {
     if (this.currentStep() < this.steps().length - 1) {
       const steps = this.steps();
@@ -336,6 +1892,79 @@ export class OnboardingComponent implements OnInit {
     }
   }
 
+  // Helper methods for summary display
+  getTeamLabel(value: string | null): string {
+    return this.teams.find(t => t.value === value)?.label || "Not selected";
+  }
+
+  getPositionLabel(value: string | null): string {
+    return this.positions.find(p => p.value === value)?.label || "Not selected";
+  }
+
+  getExperienceLabel(value: string | null): string {
+    return this.experienceLevels.find(e => e.value === value)?.label || "Not selected";
+  }
+
+  getScheduleLabel(value: string | null): string {
+    return this.scheduleTypes.find(s => s.value === value)?.label || "Not selected";
+  }
+
+  getMobilityLabel(value: string): string {
+    return this.mobilityTimeOptions.find(o => o.value === value)?.label || value;
+  }
+
+  getFoamRollingLabel(value: string): string {
+    return this.foamRollingOptions.find(o => o.value === value)?.label || value;
+  }
+
+  getRestDayLabel(value: string): string {
+    const option = this.restDayOptions.find(o => o.value === value);
+    return option ? `${option.label} - ${option.description}` : value;
+  }
+
+  getHeightDisplay(): string {
+    if (this.onboardingData.unitSystem === "metric") {
+      return this.onboardingData.heightCm ? `${this.onboardingData.heightCm} cm` : "?";
+    } else {
+      if (this.onboardingData.heightFt || this.onboardingData.heightIn) {
+        return `${this.onboardingData.heightFt || 0}'${this.onboardingData.heightIn || 0}"`;
+      }
+      return "?";
+    }
+  }
+
+  getWeightDisplay(): string {
+    if (this.onboardingData.unitSystem === "metric") {
+      return this.onboardingData.weightKg ? `${this.onboardingData.weightKg} kg` : "?";
+    } else {
+      return this.onboardingData.weightLbs ? `${this.onboardingData.weightLbs} lbs` : "?";
+    }
+  }
+
+  // Convert imperial to metric for storage (database always stores metric)
+  private getHeightInCm(): number | null {
+    if (this.onboardingData.unitSystem === "metric") {
+      return this.onboardingData.heightCm;
+    } else {
+      if (this.onboardingData.heightFt || this.onboardingData.heightIn) {
+        const totalInches = (this.onboardingData.heightFt || 0) * 12 + (this.onboardingData.heightIn || 0);
+        return Math.round(totalInches * 2.54);
+      }
+      return null;
+    }
+  }
+
+  private getWeightInKg(): number | null {
+    if (this.onboardingData.unitSystem === "metric") {
+      return this.onboardingData.weightKg;
+    } else {
+      if (this.onboardingData.weightLbs) {
+        return Math.round(this.onboardingData.weightLbs * 0.453592 * 10) / 10;
+      }
+      return null;
+    }
+  }
+
   async completeOnboarding(): Promise<void> {
     this.isCompleting.set(true);
 
@@ -345,35 +1974,46 @@ export class OnboardingComponent implements OnInit {
         throw new Error("User not authenticated");
       }
 
-      // Parse name into first and last name
       const nameParts = this.onboardingData.name.trim().split(" ");
       const firstName = nameParts[0] || "";
       const lastName = nameParts.slice(1).join(" ") || "";
 
-      // Update user profile in public.users table
+      // Convert to metric for storage (database always stores in metric)
+      const heightCm = this.getHeightInCm();
+      const weightKg = this.getWeightInKg();
+
+      // Prepare user profile data
+      const profileData = {
+        full_name: this.onboardingData.name,
+        first_name: firstName,
+        last_name: lastName,
+        date_of_birth: this.onboardingData.dateOfBirth?.toISOString().split('T')[0],
+        gender: this.onboardingData.gender,
+        phone: this.onboardingData.phone || null,
+        position: this.onboardingData.position,
+        secondary_position: this.onboardingData.secondaryPosition,
+        throwing_arm: this.onboardingData.throwingArm,
+        experience_level: this.onboardingData.experience,
+        team: this.onboardingData.team,
+        jersey_number: this.onboardingData.jerseyNumber,
+        height_cm: heightCm,
+        weight_kg: weightKg,
+        preferred_units: this.onboardingData.unitSystem,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Update user profile
       const { error: updateError } = await this.supabaseService.client
         .from("users")
-        .update({
-          full_name: this.onboardingData.name,
-          first_name: firstName,
-          last_name: lastName,
-          position: this.onboardingData.position,
-          experience_level: this.onboardingData.experience,
-          updated_at: new Date().toISOString(),
-        })
+        .update(profileData)
         .eq("email", user.email);
 
       if (updateError) {
-        // If no row exists, try to insert
         const { error: insertError } = await this.supabaseService.client
           .from("users")
           .insert({
             email: user.email,
-            full_name: this.onboardingData.name,
-            first_name: firstName,
-            last_name: lastName,
-            position: this.onboardingData.position,
-            experience_level: this.onboardingData.experience,
+            ...profileData,
             is_active: true,
             email_verified: true,
           });
@@ -383,12 +2023,11 @@ export class OnboardingComponent implements OnInit {
         }
       }
 
-      // Save training goals to user preferences (if table exists)
-      // This can be expanded later with a user_preferences table
+      // Save training preferences (schedule, mobility, recovery)
+      await this.saveTrainingPreferences(user.email!);
 
-      this.toastService.success("Your profile has been set up successfully.", "Welcome!");
+      this.toastService.success("Your profile and training preferences have been set up!", "Welcome to FlagFit Pro!");
 
-      // Redirect to dashboard
       setTimeout(() => {
         this.router.navigate(["/dashboard"]);
       }, 1000);
@@ -397,6 +2036,54 @@ export class OnboardingComponent implements OnInit {
       this.toastService.error(message);
     } finally {
       this.isCompleting.set(false);
+    }
+  }
+
+  private async saveTrainingPreferences(email: string): Promise<void> {
+    try {
+      const preferences = {
+        email: email,
+        schedule_type: this.onboardingData.scheduleType,
+        practices_per_week: this.onboardingData.practicesPerWeek,
+        practice_days: this.onboardingData.practiceDays,
+        morning_mobility: this.onboardingData.morningMobility,
+        evening_mobility: this.onboardingData.eveningMobility,
+        foam_rolling_time: this.onboardingData.foamRollingTime,
+        rest_day_preference: this.onboardingData.restDayPreference,
+        training_goals: this.onboardingData.goals,
+        equipment_available: this.onboardingData.equipmentAvailable,
+        current_injuries: this.onboardingData.currentInjuries,
+        injury_history: this.onboardingData.injuryHistory,
+        medical_notes: this.onboardingData.medicalNotes || null,
+        enable_reminders: this.onboardingData.enableReminders,
+        reminder_time: this.onboardingData.reminderTime,
+        notification_preferences: this.onboardingData.notificationPreferences,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { error } = await this.supabaseService.client
+        .from("user_preferences")
+        .upsert(preferences, { onConflict: "email" });
+
+      if (error) {
+        console.log("Saving preferences to localStorage:", error.message);
+        localStorage.setItem("flagfit_preferences", JSON.stringify(preferences));
+      }
+    } catch (e) {
+      const preferences = {
+        scheduleType: this.onboardingData.scheduleType,
+        practicesPerWeek: this.onboardingData.practicesPerWeek,
+        practiceDays: this.onboardingData.practiceDays,
+        morningMobility: this.onboardingData.morningMobility,
+        eveningMobility: this.onboardingData.eveningMobility,
+        foamRollingTime: this.onboardingData.foamRollingTime,
+        restDayPreference: this.onboardingData.restDayPreference,
+        trainingGoals: this.onboardingData.goals,
+        equipmentAvailable: this.onboardingData.equipmentAvailable,
+        currentInjuries: this.onboardingData.currentInjuries,
+        injuryHistory: this.onboardingData.injuryHistory,
+      };
+      localStorage.setItem("flagfit_preferences", JSON.stringify(preferences));
     }
   }
 }

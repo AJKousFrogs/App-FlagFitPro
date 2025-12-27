@@ -7,6 +7,7 @@
 
 import { Routes } from "@angular/router";
 import { authGuard } from "../guards/auth.guard";
+import { superadminGuard } from "../guards/superadmin.guard";
 import { headerConfigGuard } from "../guards/header-config.guard";
 import { analyticsPrefetchResolver } from "../resolvers/analytics-prefetch.resolver";
 import { gameTrackerPrefetchResolver } from "../resolvers/game-tracker-prefetch.resolver";
@@ -321,11 +322,52 @@ export const profileRoutes: Routes = [
 ];
 
 /**
+ * Superadmin Routes (Protected - Only for superadmins)
+ * Separate dashboard and settings for platform administration
+ */
+export const superadminRoutes: Routes = [
+  {
+    path: "superadmin",
+    loadComponent: () =>
+      import("../../features/superadmin/superadmin-dashboard.component").then(
+        (m) => m.SuperadminDashboardComponent,
+      ),
+    canActivate: [superadminGuard],
+    data: { preload: false }, // Don't preload admin routes
+  },
+  {
+    path: "superadmin/settings",
+    loadComponent: () =>
+      import("../../features/superadmin/superadmin-settings.component").then(
+        (m) => m.SuperadminSettingsComponent,
+      ),
+    canActivate: [superadminGuard],
+  },
+  {
+    path: "superadmin/teams",
+    loadComponent: () =>
+      import("../../features/superadmin/superadmin-dashboard.component").then(
+        (m) => m.SuperadminDashboardComponent,
+      ),
+    canActivate: [superadminGuard],
+  },
+  {
+    path: "superadmin/users",
+    loadComponent: () =>
+      import("../../features/superadmin/superadmin-dashboard.component").then(
+        (m) => m.SuperadminDashboardComponent,
+      ),
+    canActivate: [superadminGuard],
+  },
+];
+
+/**
  * Combined Feature Routes
  * Organized by priority and feature area
  */
 export const featureRoutes: Routes = [
   ...publicRoutes,
+  ...superadminRoutes, // Superadmin routes first (most specific)
   ...dashboardRoutes,
   ...trainingRoutes,
   ...analyticsRoutes,
