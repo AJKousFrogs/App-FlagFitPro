@@ -101,48 +101,153 @@ interface WellnessMetric {
           }
         </div>
 
-        <!-- Daily Check-in -->
+        <!-- Daily Check-in - Comprehensive for Olympic Athletes -->
         <p-card class="checkin-card">
           <ng-template pTemplate="header">
             <h3>Daily Wellness Check-in</h3>
           </ng-template>
           <div class="checkin-form">
-            <div class="checkin-item">
-              <label>Sleep Hours</label>
-              <p-inputNumber
-                [(ngModel)]="checkInData.sleepHours"
-                [min]="0"
-                [max]="24"
-                [showButtons]="true"
-                placeholder="Hours"
-              ></p-inputNumber>
+            <!-- Sleep Section -->
+            <div class="checkin-section">
+              <h4 class="section-label"><i class="pi pi-moon"></i> Sleep & Recovery</h4>
+              <div class="checkin-row">
+                <div class="checkin-item">
+                  <label>Sleep Hours</label>
+                  <p-inputNumber
+                    [(ngModel)]="checkInData.sleepHours"
+                    [min]="0"
+                    [max]="24"
+                    [showButtons]="true"
+                    [minFractionDigits]="1"
+                    [maxFractionDigits]="1"
+                    placeholder="Hours"
+                  ></p-inputNumber>
+                </div>
+                <div class="checkin-item">
+                  <label>Sleep Quality (1-10)</label>
+                  <p-inputNumber
+                    [(ngModel)]="checkInData.sleepQuality"
+                    [min]="1"
+                    [max]="10"
+                    [showButtons]="true"
+                    placeholder="Quality"
+                  ></p-inputNumber>
+                </div>
+              </div>
             </div>
-            <div class="checkin-item">
-              <label>Energy Level (1-10)</label>
-              <p-inputNumber
-                [(ngModel)]="checkInData.energyLevel"
-                [min]="1"
-                [max]="10"
-                [showButtons]="true"
-                placeholder="Level"
-              ></p-inputNumber>
+
+            <!-- Physical Section -->
+            <div class="checkin-section">
+              <h4 class="section-label"><i class="pi pi-heart"></i> Physical State</h4>
+              <div class="checkin-row">
+                <div class="checkin-item">
+                  <label>Energy Level (1-10)</label>
+                  <p-inputNumber
+                    [(ngModel)]="checkInData.energyLevel"
+                    [min]="1"
+                    [max]="10"
+                    [showButtons]="true"
+                    placeholder="Level"
+                  ></p-inputNumber>
+                </div>
+                <div class="checkin-item">
+                  <label>Muscle Soreness (1-10)</label>
+                  <p-inputNumber
+                    [(ngModel)]="checkInData.soreness"
+                    [min]="1"
+                    [max]="10"
+                    [showButtons]="true"
+                    placeholder="1=None, 10=Severe"
+                  ></p-inputNumber>
+                  <small class="help-text">1 = No soreness, 10 = Very sore</small>
+                </div>
+              </div>
+              <div class="checkin-row">
+                <div class="checkin-item">
+                  <label>Hydration (glasses of water)</label>
+                  <p-inputNumber
+                    [(ngModel)]="checkInData.hydration"
+                    [min]="0"
+                    [max]="20"
+                    [showButtons]="true"
+                    placeholder="Glasses (8oz)"
+                  ></p-inputNumber>
+                  <small class="help-text">Target: 8+ glasses daily</small>
+                </div>
+                <div class="checkin-item">
+                  <label>Resting Heart Rate (BPM)</label>
+                  <p-inputNumber
+                    [(ngModel)]="checkInData.restingHR"
+                    [min]="40"
+                    [max]="120"
+                    [showButtons]="true"
+                    placeholder="Optional"
+                  ></p-inputNumber>
+                  <small class="help-text">Elevated HR may indicate fatigue</small>
+                </div>
+              </div>
             </div>
-            <div class="checkin-item">
-              <label>Mood (1-10)</label>
-              <p-inputNumber
-                [(ngModel)]="checkInData.mood"
-                [min]="1"
-                [max]="10"
-                [showButtons]="true"
-                placeholder="Mood"
-              ></p-inputNumber>
+
+            <!-- Mental Section -->
+            <div class="checkin-section">
+              <h4 class="section-label"><i class="pi pi-sparkles"></i> Mental State</h4>
+              <div class="checkin-row">
+                <div class="checkin-item">
+                  <label>Mood (1-10)</label>
+                  <p-inputNumber
+                    [(ngModel)]="checkInData.mood"
+                    [min]="1"
+                    [max]="10"
+                    [showButtons]="true"
+                    placeholder="Mood"
+                  ></p-inputNumber>
+                </div>
+                <div class="checkin-item">
+                  <label>Stress Level (1-10)</label>
+                  <p-inputNumber
+                    [(ngModel)]="checkInData.stress"
+                    [min]="1"
+                    [max]="10"
+                    [showButtons]="true"
+                    placeholder="1=Relaxed, 10=Very stressed"
+                  ></p-inputNumber>
+                  <small class="help-text">1 = Very relaxed, 10 = Very stressed</small>
+                </div>
+              </div>
+              <div class="checkin-row">
+                <div class="checkin-item">
+                  <label>Training Motivation (1-10)</label>
+                  <p-inputNumber
+                    [(ngModel)]="checkInData.motivation"
+                    [min]="1"
+                    [max]="10"
+                    [showButtons]="true"
+                    placeholder="Motivation"
+                  ></p-inputNumber>
+                </div>
+                <div class="checkin-item">
+                  <label>Readiness to Train (1-10)</label>
+                  <p-inputNumber
+                    [(ngModel)]="checkInData.readiness"
+                    [min]="1"
+                    [max]="10"
+                    [showButtons]="true"
+                    placeholder="Readiness"
+                  ></p-inputNumber>
+                </div>
+              </div>
             </div>
-            <p-button
-              label="Submit Check-in"
-              icon="pi pi-check"
-              [loading]="isSubmitting()"
-              (onClick)="submitCheckIn()"
-            ></p-button>
+
+            <!-- Submit -->
+            <div class="checkin-submit">
+              <p-button
+                label="Submit Check-in"
+                icon="pi pi-check"
+                [loading]="isSubmitting()"
+                (onClick)="submitCheckIn()"
+              ></p-button>
+              <small class="submit-note">Daily check-ins help optimize your training load</small>
+            </div>
           </div>
         </p-card>
       </div>
@@ -203,13 +308,36 @@ interface WellnessMetric {
       }
 
       .checkin-card {
-        max-width: 600px;
+        max-width: 800px;
         margin: 0 auto;
       }
 
       .checkin-form {
         display: flex;
         flex-direction: column;
+        gap: var(--space-6);
+      }
+
+      .checkin-section {
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+        border-left: 4px solid var(--color-brand-primary);
+      }
+
+      .section-label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--font-body-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-brand-primary);
+        margin: 0 0 var(--space-4) 0;
+      }
+
+      .checkin-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: var(--space-4);
       }
 
@@ -222,10 +350,35 @@ interface WellnessMetric {
       .checkin-item label {
         font-weight: 500;
         color: var(--text-primary);
+        font-size: var(--font-body-sm);
+      }
+
+      .help-text {
+        font-size: var(--font-body-xs);
+        color: var(--text-secondary);
+        margin-top: var(--space-1);
+      }
+
+      .checkin-submit {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-3);
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--p-surface-200);
+      }
+
+      .submit-note {
+        font-size: var(--font-body-xs);
+        color: var(--text-secondary);
       }
 
       @media (max-width: 768px) {
         .charts-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .checkin-row {
           grid-template-columns: 1fr;
         }
       }
@@ -245,9 +398,16 @@ export class WellnessComponent implements OnInit {
   sleepChartData = signal<any>(null);
   recoveryChartData = signal<any>(null);
   checkInData = {
-    sleepHours: 0,
-    energyLevel: 5,
-    mood: 5,
+    sleepHours: 7,
+    sleepQuality: 7,
+    energyLevel: 7,
+    soreness: 3,
+    hydration: 8,
+    restingHR: 0,
+    mood: 7,
+    stress: 3,
+    motivation: 7,
+    readiness: 7,
   };
 
   chartOptions = DEFAULT_CHART_OPTIONS;
@@ -438,11 +598,18 @@ export class WellnessComponent implements OnInit {
 
     this.isSubmitting.set(true);
 
-    // Convert form data to wellness check-in format
+    // Convert form data to comprehensive wellness check-in format
     const wellnessData = {
       sleep: this.checkInData.sleepHours,
+      sleep_quality: this.checkInData.sleepQuality,
       energy: this.checkInData.energyLevel,
+      soreness: this.checkInData.soreness,
+      hydration: this.checkInData.hydration,
+      resting_hr: this.checkInData.restingHR > 0 ? this.checkInData.restingHR : null,
       mood: this.checkInData.mood,
+      stress: this.checkInData.stress,
+      motivation: this.checkInData.motivation,
+      readiness: this.checkInData.readiness,
       date: new Date().toISOString().split("T")[0],
     };
 
@@ -452,9 +619,20 @@ export class WellnessComponent implements OnInit {
       next: (response) => {
         this.isSubmitting.set(false);
         if (response.success) {
-          this.toastService.success("Wellness check-in saved!");
-          // Reset form
-          this.checkInData = { sleepHours: 0, energyLevel: 5, mood: 5 };
+          this.toastService.success("Wellness check-in saved! 💪");
+          // Reset form to defaults
+          this.checkInData = {
+            sleepHours: 7,
+            sleepQuality: 7,
+            energyLevel: 7,
+            soreness: 3,
+            hydration: 8,
+            restingHR: 0,
+            mood: 7,
+            stress: 3,
+            motivation: 7,
+            readiness: 7,
+          };
           // Reload wellness data to show updated stats
           this.loadWellnessData();
         } else {

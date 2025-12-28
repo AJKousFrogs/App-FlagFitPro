@@ -84,7 +84,14 @@ export type TrainingFocus =
   | "mobility" 
   | "injury_prevention"
   | "conditioning"
-  | "mental";
+  | "mental"
+  | "plyometrics"
+  | "isometrics"
+  | "reactive_eccentrics"
+  | "deceleration"
+  | "acceleration"
+  | "twitches"
+  | "explosive_power";
 
 export type SkillLevel = "beginner" | "intermediate" | "advanced" | "all";
 export type TrainingPhase = "off_season" | "pre_season" | "in_season" | "tournament_prep" | "recovery" | "all";

@@ -15,12 +15,15 @@
  * - Impellizzeri et al. (2004) - Training load monitoring
  * - Hulin et al. (2014) - Spikes in acute workload
  *
+ * NOTE: ACWR calculations delegate to AcwrService (single source of truth)
+ *
  * @author FlagFit Pro Team
- * @version 1.0.0
+ * @version 1.1.0 - Consolidated ACWR to AcwrService
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { LoggerService } from "./logger.service";
+import { AcwrService } from "./acwr.service";
 
 // ============================================================================
 // INTERFACES
@@ -290,6 +293,7 @@ const LOAD_CONSTANTS = {
 })
 export class PhaseLoadCalculatorService {
   private logger = inject(LoggerService);
+  private acwrService = inject(AcwrService);
 
   // State
   private readonly _trainingHistory = signal<TrainingLoad[]>([]);
@@ -519,8 +523,34 @@ export class PhaseLoadCalculatorService {
 
   /**
    * Calculate ACWR from training history
+   *
+   * @deprecated Use AcwrService.acwrData() instead for consistent ACWR calculations.
+   * This method is kept for backward compatibility but prefers AcwrService data.
+   *
+   * SINGLE SOURCE OF TRUTH: AcwrService is the authoritative source for all ACWR calculations.
    */
   calculateACWR(trainingHistory: TrainingLoad[]): ACWRCalculation {
+    // Log deprecation warning
+    this.logger.warn(
+      "[DEPRECATED] PhaseLoadCalculatorService.calculateACWR() is deprecated. " +
+        "Use AcwrService.acwrData() for consistent ACWR calculations."
+    );
+
+    // Try to use AcwrService if data is available (single source of truth)
+    const acwrData = this.acwrService.acwrData();
+    if (acwrData.ratio > 0) {
+      const result: ACWRCalculation = {
+        acuteLoad: Math.round(acwrData.acute),
+        chronicLoad: Math.round(acwrData.chronic),
+        acwr: parseFloat(acwrData.ratio.toFixed(2)),
+        riskZone: this.mapRiskZone(acwrData.riskZone.level),
+        recommendation: acwrData.riskZone.recommendation,
+      };
+      this._currentACWR.set(result);
+      return result;
+    }
+
+    // Fallback to local calculation if AcwrService has no data
     const acuteLoad = this.calculateAcuteLoad(trainingHistory);
     const chronicLoad = this.calculateChronicLoad(trainingHistory);
 
@@ -562,6 +592,24 @@ export class PhaseLoadCalculatorService {
 
     this._currentACWR.set(result);
     return result;
+  }
+
+  /**
+   * Map AcwrService risk zone level to local ACWRCalculation riskZone format
+   */
+  private mapRiskZone(level: string): "optimal" | "caution" | "danger" {
+    switch (level) {
+      case "sweet-spot":
+        return "optimal";
+      case "elevated-risk":
+        return "caution";
+      case "danger-zone":
+        return "danger";
+      case "under-training":
+        return "caution";
+      default:
+        return "caution";
+    }
   }
 
   /**

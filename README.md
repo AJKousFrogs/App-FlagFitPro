@@ -13,9 +13,9 @@
 
 | Component | Status | Details |
 |-----------|--------|---------|
-| **Database Schema** | ✅ 100% | 53+ migrations, RLS policies, real-time subscriptions |
-| **Backend API** | ✅ 100% | 69 Netlify Functions, rate limiting, error handling |
-| **Angular Frontend** | ✅ 90% | 40+ components, signal-based state, PrimeNG UI |
+| **Database Schema** | ✅ 100% | 55+ migrations, 250+ tables, RLS policies |
+| **Backend API** | ✅ 100% | 80 Netlify Functions, rate limiting, error handling |
+| **Angular Frontend** | ✅ 90% | 28+ feature modules, 86+ services, PrimeNG UI |
 | **AI Coaching** | ✅ 100% | Groq LLM + 3-tier safety + ACWR integration |
 | **ACWR Monitoring** | ✅ 100% | 1,273-line service with Gabbett 2016 thresholds |
 | **Testing** | 🔄 20% | Unit tests in progress |
@@ -66,19 +66,19 @@ Based on Gabbett (2016) research - "The training-injury prevention paradox":
 
 ```
 angular/src/app/
-├── core/                    # 45+ services
+├── core/                    # 86+ services
 │   ├── services/
 │   │   ├── acwr.service.ts         # 1,273 lines - ACWR calculations
 │   │   ├── ai-chat.service.ts      # AI coaching with safety
 │   │   ├── supabase.service.ts     # Auth + database
-│   │   └── ... (40+ more)
+│   │   └── ... (80+ more)
 │   ├── interceptors/        # Auth, cache, error
 │   └── view-models/         # Signal-based state
-├── features/                # 25+ feature modules
+├── features/                # 28+ feature modules
 │   ├── acwr-dashboard/      # Load monitoring UI
 │   ├── training/            # 10+ training components
 │   ├── analytics/           # Performance analytics
-│   └── ... (20+ more)
+│   └── ... (18+ more)
 └── shared/                  # Reusable components
 ```
 
@@ -87,19 +87,21 @@ angular/src/app/
 ```
 netlify/functions/
 ├── ai-chat.cjs              # AI coaching with ACWR safety
-├── ai-safety-classifier.cjs # 3-tier risk classification
+├── utils/
+│   └── ai-safety-classifier.cjs # 3-tier risk classification
 ├── load-management.cjs      # ACWR, monotony, TSB
 ├── training-plan.cjs        # Periodized training
 ├── smart-training-recommendations.cjs
-└── ... (69 total functions)
+└── ... (80 total functions)
 ```
 
 ### Database (Supabase PostgreSQL)
 
-- **53+ migration files** with comprehensive schema
+- **55+ migration files** with comprehensive schema
+- **250+ tables** covering training, nutrition, recovery, AI coaching
 - **Row Level Security (RLS)** policies throughout
 - **Real-time subscriptions** for live updates
-- **Knowledge base** with evidence grading
+- **113+ exercises** (90 plyometrics + 23 isometrics)
 
 ---
 
@@ -150,12 +152,12 @@ Get your FREE Groq API key at: https://console.groq.com/
 flagfit-pro/
 ├── angular/                 # PRIMARY: Angular 21 + PrimeNG 21
 │   ├── src/app/
-│   │   ├── core/           # Services, guards, interceptors
-│   │   ├── features/       # Feature modules (25+)
+│   │   ├── core/           # 86+ services, guards, interceptors
+│   │   ├── features/       # Feature modules (28+)
 │   │   └── shared/         # Shared components
 │   └── package.json
-├── netlify/functions/       # Backend API (69 functions)
-├── database/               # SQL migrations (53+)
+├── netlify/functions/       # Backend API (80 functions)
+├── database/               # SQL migrations (55+)
 ├── docs/                   # Documentation
 └── supabase/              # Supabase config
 ```
@@ -164,7 +166,7 @@ flagfit-pro/
 
 ## 📊 Angular Services Overview
 
-### Core Services (45+)
+### Core Services (86+)
 
 | Service | Lines | Purpose |
 |---------|-------|---------|
@@ -176,7 +178,7 @@ flagfit-pro/
 | `training-stats-calculation.service.ts` | 363 | Training statistics |
 | `notification-state.service.ts` | 394 | Signal-based notifications |
 
-### Feature Components (25+)
+### Feature Components (28+)
 
 | Feature | Components | Status |
 |---------|------------|--------|
@@ -207,8 +209,11 @@ flagfit-pro/
 | Document | Description |
 |----------|-------------|
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design and dependencies |
-| [UTILITIES.md](docs/UTILITIES.md) | Angular services API reference |
-| [AI_COACHING_SYSTEM_REVAMP.md](docs/AI_COACHING_SYSTEM_REVAMP.md) | AI safety system documentation |
+| [API.md](docs/API.md) | Complete API reference (80 endpoints) |
+| [DATABASE_SETUP.md](docs/DATABASE_SETUP.md) | Database schema (250+ tables) |
+| [BACKEND_SETUP.md](docs/BACKEND_SETUP.md) | Netlify Functions setup |
+| [AUTHENTICATION_PATTERN.md](docs/AUTHENTICATION_PATTERN.md) | Supabase Auth patterns |
+| [LOAD_MANAGEMENT_QUICK_START.md](docs/LOAD_MANAGEMENT_QUICK_START.md) | ACWR load monitoring |
 | [angular/README.md](angular/README.md) | Angular-specific documentation |
 | [ANGULAR_PRIMENG_GUIDE.md](ANGULAR_PRIMENG_GUIDE.md) | Angular 21 + PrimeNG best practices |
 

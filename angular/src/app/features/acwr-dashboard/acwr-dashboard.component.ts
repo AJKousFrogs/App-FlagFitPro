@@ -65,50 +65,84 @@ import {
 
       <!-- Main ACWR Display -->
       <div class="acwr-main-card">
-        <div class="acwr-ratio-display">
-          <div class="ratio-circle" [style.border-color]="riskZone().color">
-            <div class="ratio-value">{{ acwrRatio() | number: "1.2-2" }}</div>
-            <div class="ratio-label">ACWR</div>
-          </div>
-
-          <div
-            class="risk-zone-indicator"
-            [style.background-color]="riskZone().color"
-          >
-            <div class="risk-icon">
-              @if (riskZone().level === "sweet-spot") {
-                ✓
-              } @else if (riskZone().level === "danger-zone") {
-                ⚠
-              } @else {
-                ●
-              }
+        @if (hasInsufficientData()) {
+          <!-- Empty State for New Athletes -->
+          <div class="acwr-empty-state">
+            <div class="empty-icon">📊</div>
+            <h3>Build Your Training Baseline</h3>
+            <p>ACWR requires at least <strong>21 days</strong> and <strong>10 training sessions</strong> to calculate your injury risk accurately.</p>
+            
+            <div class="data-progress">
+              <div class="progress-item">
+                <span class="progress-label">Days with data</span>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="(dataQuality()?.daysWithData || 0) / 21 * 100"></div>
+                </div>
+                <span class="progress-value">{{ dataQuality()?.daysWithData || 0 }} / 21</span>
+              </div>
+              <div class="progress-item">
+                <span class="progress-label">Sessions logged</span>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="(dataQuality()?.sessionsInChronicWindow || 0) / 10 * 100"></div>
+                </div>
+                <span class="progress-value">{{ dataQuality()?.sessionsInChronicWindow || 0 }} / 10</span>
+              </div>
             </div>
-            <div class="risk-label">{{ riskZone().label }}</div>
-            <div class="risk-description">{{ riskZone().description }}</div>
+            
+            <p class="empty-tip">💡 <strong>Olympic Tip:</strong> Consistent training logging helps prevent overtraining injuries during your LA28 preparation.</p>
+            
+            <button class="action-btn primary" (click)="logSession()">
+              <i class="icon-plus"></i>
+              Log Your First Session
+            </button>
           </div>
-        </div>
-
-        <!-- Load Breakdown -->
-        <div class="load-breakdown">
-          <div class="load-metric">
-            <div class="metric-label">Acute Load (7-day)</div>
-            <div class="metric-value">
-              {{ acuteLoad() | number: "1.0-0" }} AU
+        } @else {
+          <!-- Full ACWR Display -->
+          <div class="acwr-ratio-display">
+            <div class="ratio-circle" [style.border-color]="riskZone().color">
+              <div class="ratio-value">{{ acwrRatio() | number: "1.2-2" }}</div>
+              <div class="ratio-label">ACWR</div>
             </div>
-            <div class="metric-description">Current fatigue level</div>
-          </div>
 
-          <div class="load-divider">÷</div>
-
-          <div class="load-metric">
-            <div class="metric-label">Chronic Load (28-day)</div>
-            <div class="metric-value">
-              {{ chronicLoad() | number: "1.0-0" }} AU
+            <div
+              class="risk-zone-indicator"
+              [style.background-color]="riskZone().color"
+            >
+              <div class="risk-icon">
+                @if (riskZone().level === "sweet-spot") {
+                  ✓
+                } @else if (riskZone().level === "danger-zone") {
+                  ⚠
+                } @else {
+                  ●
+                }
+              </div>
+              <div class="risk-label">{{ riskZone().label }}</div>
+              <div class="risk-description">{{ riskZone().description }}</div>
             </div>
-            <div class="metric-description">Training fitness base</div>
           </div>
-        </div>
+
+          <!-- Load Breakdown -->
+          <div class="load-breakdown">
+            <div class="load-metric">
+              <div class="metric-label">Acute Load (7-day)</div>
+              <div class="metric-value">
+                {{ acuteLoad() | number: "1.0-0" }} AU
+              </div>
+              <div class="metric-description">Current fatigue level</div>
+            </div>
+
+            <div class="load-divider">÷</div>
+
+            <div class="load-metric">
+              <div class="metric-label">Chronic Load (28-day)</div>
+              <div class="metric-value">
+                {{ chronicLoad() | number: "1.0-0" }} AU
+              </div>
+              <div class="metric-description">Training fitness base</div>
+            </div>
+          </div>
+        }
       </div>
 
       <!-- Risk Zones Guide -->
@@ -498,6 +532,86 @@ import {
         box-shadow: var(--shadow-md);
       }
 
+      /* Empty State */
+      .acwr-empty-state {
+        text-align: center;
+        padding: var(--space-10);
+      }
+
+      .acwr-empty-state .empty-icon {
+        font-size: 4rem;
+        margin-bottom: var(--space-4);
+      }
+
+      .acwr-empty-state h3 {
+        font-size: var(--text-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--space-3);
+      }
+
+      .acwr-empty-state p {
+        color: var(--color-text-secondary);
+        font-size: var(--text-base);
+        margin-bottom: var(--space-6);
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .data-progress {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+        max-width: 400px;
+        margin: 0 auto var(--space-6);
+      }
+
+      .progress-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .progress-label {
+        flex: 0 0 140px;
+        text-align: left;
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
+      }
+
+      .progress-bar {
+        flex: 1;
+        height: 8px;
+        background: var(--p-surface-200);
+        border-radius: var(--radius-full);
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: var(--color-brand-primary);
+        border-radius: var(--radius-full);
+        transition: width 0.3s ease;
+        max-width: 100%;
+      }
+
+      .progress-value {
+        flex: 0 0 60px;
+        text-align: right;
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+      }
+
+      .empty-tip {
+        background: var(--color-status-info-subtle);
+        padding: var(--space-4);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-status-info);
+        margin-bottom: var(--space-6);
+      }
+
       @media (max-width: 768px) {
         .acwr-ratio-display {
           flex-direction: column;
@@ -509,6 +623,15 @@ import {
 
         .zones-grid {
           grid-template-columns: 1fr;
+        }
+
+        .progress-item {
+          flex-wrap: wrap;
+        }
+
+        .progress-label {
+          flex: 1 1 100%;
+          margin-bottom: var(--space-1);
         }
       }
     `,
@@ -542,39 +665,20 @@ export class AcwrDashboardComponent implements OnInit {
     () => this.acwrService.acwrData().lastUpdated,
   );
 
+  // Data quality signal from service
+  public readonly dataQuality = computed(() => this.acwrService.acwrData().dataQuality);
+  public readonly hasInsufficientData = computed(() => {
+    const quality = this.dataQuality();
+    return quality?.level === 'insufficient' || quality?.level === 'low';
+  });
+
   ngOnInit(): void {
-    // Load sample data for demonstration
-    this.loadSampleData();
-
-    // Request notification permission
+    // Request notification permission for alerts
     this.alertsService.requestNotificationPermission();
-  }
-
-  /**
-   * Load sample training data
-   */
-  private async loadSampleData(): Promise<void> {
-    // Simulate 28 days of training
-    for (let i = 28; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-
-      // Vary intensity to create realistic ACWR
-      const baseRPE = 6;
-      const variation = Math.sin(i / 7) * 2; // Weekly variation
-      const rpe = Math.max(3, Math.min(9, baseRPE + variation));
-
-      const session = await this.loadService.createQuickSession(
-        "player123",
-        "technical",
-        rpe,
-        90,
-        `Training session day ${28 - i}`,
-      );
-
-      session.date = date;
-      this.acwrService.addSession(session);
-    }
+    
+    // Real training data is loaded automatically by AcwrService 
+    // when user authenticates (via effect in constructor)
+    this.logger.info('[ACWR Dashboard] Initialized - waiting for real training data');
   }
 
   private router = inject(Router);

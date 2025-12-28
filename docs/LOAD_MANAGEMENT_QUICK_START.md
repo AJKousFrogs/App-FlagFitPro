@@ -1,5 +1,9 @@
 # Load Management Quick Start Guide
 
+**Version**: 2.0  
+**Last Updated**: December 2025  
+**Last Verified Against Codebase**: 2025-12-28
+
 ## No GPS Required - Session RPE Only
 
 This guide shows you how to use the load management system with **just Session RPE** - no GPS or wearable devices needed!
@@ -40,6 +44,21 @@ This single number drives all calculations:
 
 ---
 
+## API Endpoints
+
+The load management system is accessed via these API endpoints:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/load-management` | GET | Overview (ACWR, monotony, TSB) |
+| `/api/load-management/acwr` | GET | ACWR calculation |
+| `/api/load-management/monotony` | GET | Training monotony |
+| `/api/load-management/tsb` | GET | Training stress balance |
+| `/api/load-management/injury-risk` | GET | Composite injury risk |
+| `/api/load-management/training-loads` | GET | Training load history |
+
+---
+
 ## Step-by-Step Usage
 
 ### 1. After Each Training Session
@@ -52,49 +71,117 @@ Record:
 - Duration: 60 minutes
 - Date: 2024-01-15
 
-### 2. Calculate Training Load
+### 2. Log Training Session via API
 
 ```javascript
-import { LoadManagementService } from "./services/LoadManagementService.js";
-
-const loadService = new LoadManagementService();
-
-const trainingLoad = loadService.calculateTrainingLoad(7, 60);
-// Result: 420
+// POST /api/training/sessions
+const response = await fetch('/api/training/sessions', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  },
+  body: JSON.stringify({
+    session_date: '2024-01-15',
+    rpe: 7,
+    duration_minutes: 60,
+    session_type: 'practice',
+    status: 'completed'
+  })
+});
 ```
 
-### 3. Save to Database
+### 3. Calculate ACWR (After 7+ Days of Data)
 
 ```javascript
-const sessionData = {
-  sessionRPE: 7,
-  durationMinutes: 60,
-  sessionDate: "2024-01-15",
-  sessionType: "practice",
-};
+// GET /api/load-management/acwr
+const response = await fetch('/api/load-management/acwr', {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
 
-const loadEntry = loadService.createLoadEntryFromRPE(sessionData);
-
-// Save to database
-await saveToDatabase("training_load_metrics", loadEntry);
+const data = await response.json();
+console.log('ACWR:', data.data.acwr);
+console.log('Risk Zone:', data.data.riskZone);
+console.log('Recommendation:', data.data.recommendation);
 ```
 
-### 4. Calculate ACWR (After 7+ Days of Data)
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "acwr": 1.15,
+    "riskZone": "safe",
+    "injuryRiskMultiplier": 1.0,
+    "acuteAverage": 450.5,
+    "chronicAverage": 391.7,
+    "acuteLoads": 7,
+    "chronicLoads": 28,
+    "recommendation": "Training load is in the optimal 'sweet spot'. Maintain current progression.",
+    "calculatedFor": "2024-01-15"
+  }
+}
+```
+
+### 4. Get Composite Injury Risk
 
 ```javascript
-const acwrData = await loadService.calculateACWR(userId);
+// GET /api/load-management/injury-risk
+const response = await fetch('/api/load-management/injury-risk', {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
 
-console.log("ACWR:", acwrData.acwr);
-console.log("Risk Zone:", acwrData.riskZone);
-console.log("Recommendation:", acwrData.recommendation);
+const data = await response.json();
+console.log('Risk Level:', data.data.riskLevel);
+console.log('Overall Risk:', data.data.overallRisk);
 ```
 
-**Example Output**:
+**Example Response**:
 
+```json
+{
+  "success": true,
+  "data": {
+    "overallRisk": 0.234,
+    "riskLevel": "moderate",
+    "recommendation": "Moderate risk. Monitor fatigue and recovery closely.",
+    "individualRisks": {
+      "acwr": 0.15,
+      "monotony": 0.25,
+      "tsb": 0.30
+    },
+    "weights": {
+      "acwr": 0.45,
+      "monotony": 0.25,
+      "tsb": 0.30
+    }
+  }
+}
 ```
-ACWR: 1.35
-Risk Zone: caution
-Recommendation: ACWR elevated (1.3-1.5). Monitor closely and consider reducing load by 10-20%.
+
+---
+
+## Angular Service Usage
+
+If using the Angular frontend:
+
+```typescript
+import { ApiService, API_ENDPOINTS } from '@core/services/api.service';
+
+@Injectable({ providedIn: 'root' })
+export class LoadManagementComponent {
+  private api = inject(ApiService);
+  
+  acwrData = signal<ACWRData | null>(null);
+  
+  async loadACWR() {
+    const response = await firstValueFrom(
+      this.api.get<ACWRData>('/api/load-management/acwr')
+    );
+    this.acwrData.set(response.data);
+  }
+}
 ```
 
 ---
@@ -121,6 +208,18 @@ Use this Modified Borg CR-10 Scale:
 
 ---
 
+## Risk Zones (Gabbett 2016)
+
+| ACWR Range | Risk Zone | Injury Risk Multiplier | AI Behavior |
+|------------|-----------|------------------------|-------------|
+| < 0.80 | Detraining | 1.2x | Can recommend more training |
+| 0.80 - 1.30 | Safe (Sweet Spot) | 1.0x | All recommendations allowed |
+| 1.30 - 1.50 | Caution | 1.5x | Allowed with monitoring advice |
+| > 1.50 | Danger | 2.0x | **BLOCKS high-intensity** |
+| > 1.80 | Critical | 4.2x | **Recommends rest only** |
+
+---
+
 ## Optional Enhancements
 
 ### Add Subjective Metrics
@@ -128,18 +227,19 @@ Use this Modified Borg CR-10 Scale:
 If you track recovery metrics, add them:
 
 ```javascript
-const enhancedData = {
-  sessionRPE: 7,
-  durationMinutes: 60,
-  sessionDate: "2024-01-15",
-  sessionType: "practice",
-
-  // Optional subjective metrics
-  perceivedRecovery: 6, // How recovered? (0-10)
-  muscleSoreness: 4, // How sore? (0-10)
-  sleepQuality: 7, // Sleep quality (0-10)
-  stressLevel: 3, // Stress level (0-10)
-  moodRating: 8, // Mood (0-10)
+const sessionData = {
+  session_date: '2024-01-15',
+  rpe: 7,
+  duration_minutes: 60,
+  session_type: 'practice',
+  status: 'completed',
+  
+  // Optional subjective metrics (via wellness check-in)
+  perceived_recovery: 6,
+  muscle_soreness: 4,
+  sleep_quality: 7,
+  stress_level: 3,
+  mood_rating: 8
 };
 ```
 
@@ -149,12 +249,12 @@ Count manually if you want:
 
 ```javascript
 const flagFootballData = {
-  ...enhancedData,
-
+  ...sessionData,
+  
   // Manual counts (optional)
-  routesRun: 25, // Number of routes run
-  cuttingMovements: 15, // Number of hard cuts
-  sprintRepetitions: 12, // Number of sprint efforts
+  routes_run: 25,
+  cutting_movements: 15,
+  sprint_repetitions: 12
 };
 ```
 
@@ -177,14 +277,14 @@ Sunday:   REST
 ### End of Week: Check Monotony
 
 ```javascript
-const weekStart = getWeekStart(new Date());
-const monotonyData = await loadService.calculateTrainingMonotony(
-  userId,
-  weekStart,
-);
+// GET /api/load-management/monotony?weekStart=2024-01-08
+const response = await fetch('/api/load-management/monotony?weekStart=2024-01-08', {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
 
-if (monotonyData.monotony > 2.0) {
-  console.log("⚠️ High monotony - add variety next week");
+const data = await response.json();
+if (data.data.monotony > 2.0) {
+  console.log('⚠️ High monotony - add variety next week');
 }
 ```
 
@@ -218,38 +318,6 @@ if (monotonyData.monotony > 2.0) {
 
 ---
 
-## Example: Complete Workflow
-
-```javascript
-// 1. After training session
-const session = {
-  sessionRPE: 7,
-  durationMinutes: 60,
-  sessionDate: "2024-01-15",
-  sessionType: "practice",
-  perceivedRecovery: 6,
-  sleepQuality: 7,
-};
-
-// 2. Calculate and save
-const loadEntry = loadService.createLoadEntryFromRPE(session);
-await saveToDatabase("training_load_metrics", loadEntry);
-
-// 3. Check ACWR (after 7+ days)
-const acwr = await loadService.calculateACWR(userId);
-console.log(`ACWR: ${acwr.acwr} (${acwr.riskZone})`);
-
-// 4. Check injury risk
-const risk = await loadService.calculateInjuryRisk(userId);
-if (risk.riskLevel === "high") {
-  console.log("⚠️ High injury risk detected");
-  console.log("Top factors:", risk.topFactors);
-  console.log("Recommendations:", risk.recommendations);
-}
-```
-
----
-
 ## Benefits of RPE-Only Approach
 
 ✅ **No equipment costs** - completely free  
@@ -261,12 +329,20 @@ if (risk.riskLevel === "high") {
 
 ---
 
+## Related Documentation
+
+- [API.md](./API.md) - Full API reference
+- [DATABASE_SETUP.md](./DATABASE_SETUP.md) - Database schema
+- [FLAG_FOOTBALL_TRAINING_SCIENCE.md](./FLAG_FOOTBALL_TRAINING_SCIENCE.md) - Training science
+
+---
+
 ## Next Steps
 
 1. Start collecting Session RPE after each training session
 2. Calculate Training Load = RPE × Duration
-3. Save to `training_load_metrics` table
-4. After 7 days, start calculating ACWR
+3. Log sessions via `/api/training/sessions`
+4. After 7 days, start checking ACWR via `/api/load-management/acwr`
 5. Monitor weekly monotony
 6. Use injury risk predictions to guide training
 

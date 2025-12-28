@@ -48,7 +48,7 @@ import { FormsModule } from "@angular/forms";
       [resizable]="false"
       [closable]="false"
       [style]="{ width: '320px' }"
-      position="bottom-right"
+      position="bottomright"
       styleClass="rest-timer-dialog"
     >
       <ng-template pTemplate="header">

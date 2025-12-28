@@ -119,13 +119,13 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               <div class="card-header">
                 <h3>Upcoming Events</h3>
                 <div class="filter-actions">
-                  <p-dropdown
+                  <p-select
                     [options]="eventTypeOptions"
                     [(ngModel)]="selectedEventType"
                     placeholder="All Types"
                     [showClear]="true"
                     (onChange)="filterEvents()"
-                  ></p-dropdown>
+                  ></p-select>
                 </div>
               </div>
             </ng-template>
@@ -280,36 +280,36 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
 
             <div class="form-field">
               <label for="eventType">Type *</label>
-              <p-dropdown
+              <p-select
                 id="eventType"
                 [options]="eventTypeOptions"
                 [(ngModel)]="newEvent.event_type"
                 placeholder="Select type"
                 [style]="{ width: '100%' }"
-              ></p-dropdown>
+              ></p-select>
             </div>
 
             <div class="form-row">
               <div class="form-field">
                 <label for="startTime">Start Time *</label>
-                <p-calendar
+                <p-datepicker
                   id="startTime"
                   [(ngModel)]="newEvent.start_time"
                   [showTime]="true"
                   dateFormat="mm/dd/yy"
                   [style]="{ width: '100%' }"
-                ></p-calendar>
+                ></p-datepicker>
               </div>
 
               <div class="form-field">
                 <label for="endTime">End Time</label>
-                <p-calendar
+                <p-datepicker
                   id="endTime"
                   [(ngModel)]="newEvent.end_time"
                   [showTime]="true"
                   dateFormat="mm/dd/yy"
                   [style]="{ width: '100%' }"
-                ></p-calendar>
+                ></p-datepicker>
               </div>
             </div>
 
@@ -741,9 +741,9 @@ export class AttendanceComponent implements OnInit {
     { label: "Other", value: "other" },
   ];
 
-  attendanceStatuses: Array<{ value: AttendanceStatus; label: string; severity: "success" | "danger" | "warning" | "info" }> = [
+  attendanceStatuses: Array<{ value: AttendanceStatus; label: string; severity: "success" | "danger" | "warn" | "info" }> = [
     { value: "present", label: "Present", severity: "success" },
-    { value: "late", label: "Late", severity: "warning" },
+    { value: "late", label: "Late", severity: "warn" },
     { value: "excused", label: "Excused", severity: "info" },
     { value: "absent", label: "Absent", severity: "danger" },
   ];

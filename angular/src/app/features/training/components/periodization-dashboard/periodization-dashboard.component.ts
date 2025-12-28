@@ -23,7 +23,7 @@ import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { AccordionModule } from "primeng/accordion";
-import { Tabs, TabPanel } from "primeng/tabs";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { TooltipModule } from "primeng/tooltip";
 import { ButtonModule } from "primeng/button";
 import { DividerModule } from "primeng/divider";
@@ -72,6 +72,9 @@ interface TimelineEvent {
     ProgressBarModule,
     AccordionModule,
     Tabs,
+    TabList,
+    Tab,
+    TabPanels,
     TabPanel,
     TooltipModule,
     ButtonModule,
@@ -162,9 +165,16 @@ interface TimelineEvent {
       </p-card>
 
       <!-- Tabs for different views -->
-      <p-tabs styleClass="training-tabs">
-        <!-- Weekly Schedule Tab -->
-        <p-tabpanel header="Weekly Schedule">
+      <p-tabs styleClass="training-tabs" [(value)]="activeTab">
+        <p-tablist>
+          <p-tab value="schedule">Weekly Schedule</p-tab>
+          <p-tab value="sprint">Sprint Training</p-tab>
+          <p-tab value="annual">Annual Plan</p-tab>
+          <p-tab value="research">Research</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+          <!-- Weekly Schedule Tab -->
+          <p-tabpanel value="schedule">
           <div class="weekly-schedule">
             @if (weeklyTemplate()) {
               @for (day of weeklyTemplate()?.days || []; track day.dayName) {
@@ -225,10 +235,10 @@ interface TimelineEvent {
               </div>
             </div>
           }
-        </p-tabpanel>
+          </p-tabpanel>
 
-        <!-- Sprint Protocols Tab -->
-        <p-tabpanel header="Sprint Training">
+          <!-- Sprint Protocols Tab -->
+          <p-tabpanel value="sprint">
           <div class="sprint-protocols">
             @if (sprintGuidelines()) {
               <div class="sprint-header">
@@ -286,10 +296,10 @@ interface TimelineEvent {
               </ul>
             </div>
           </div>
-        </p-tabpanel>
+          </p-tabpanel>
 
-        <!-- Annual Timeline Tab -->
-        <p-tabpanel header="Annual Plan">
+          <!-- Annual Timeline Tab -->
+          <p-tabpanel value="annual">
           <div class="annual-timeline">
             <p-timeline [value]="annualTimeline()" layout="horizontal" styleClass="phase-timeline">
               <ng-template pTemplate="marker" let-event>
@@ -311,43 +321,46 @@ interface TimelineEvent {
           <!-- Phase Details Accordion -->
           <p-accordion [multiple]="true">
             @for (phase of allPhases(); track phase.type) {
-              <p-accordionTab [header]="phase.name">
-                <div class="phase-detail">
-                  <p>{{ phase.description }}</p>
+              <p-accordion-panel [value]="phase.type">
+                <p-accordion-header>{{ phase.name }}</p-accordion-header>
+                <p-accordion-content>
+                  <div class="phase-detail">
+                    <p>{{ phase.description }}</p>
 
-                  <div class="phase-metrics">
-                    <div class="metric">
-                      <span class="metric-label">Duration</span>
-                      <span class="metric-value">{{ phase.durationWeeks }} weeks</span>
+                    <div class="phase-metrics">
+                      <div class="metric">
+                        <span class="metric-label">Duration</span>
+                        <span class="metric-value">{{ phase.durationWeeks }} weeks</span>
+                      </div>
+                      <div class="metric">
+                        <span class="metric-label">Volume</span>
+                        <span class="metric-value">{{ (phase.volumeMultiplier * 100).toFixed(0) }}%</span>
+                      </div>
+                      <div class="metric">
+                        <span class="metric-label">Intensity</span>
+                        <span class="metric-value">{{ (phase.intensityMultiplier * 100).toFixed(0) }}%</span>
+                      </div>
+                      <div class="metric">
+                        <span class="metric-label">Recovery Priority</span>
+                        <span class="metric-value">{{ phase.recoveryPriority }}</span>
+                      </div>
                     </div>
-                    <div class="metric">
-                      <span class="metric-label">Volume</span>
-                      <span class="metric-value">{{ (phase.volumeMultiplier * 100).toFixed(0) }}%</span>
-                    </div>
-                    <div class="metric">
-                      <span class="metric-label">Intensity</span>
-                      <span class="metric-value">{{ (phase.intensityMultiplier * 100).toFixed(0) }}%</span>
-                    </div>
-                    <div class="metric">
-                      <span class="metric-label">Recovery Priority</span>
-                      <span class="metric-value">{{ phase.recoveryPriority }}</span>
-                    </div>
+
+                    <h5>Injury Prevention Focus</h5>
+                    <ul>
+                      @for (focus of phase.injuryPreventionFocus; track focus) {
+                        <li>{{ focus }}</li>
+                      }
+                    </ul>
                   </div>
-
-                  <h5>Injury Prevention Focus</h5>
-                  <ul>
-                    @for (focus of phase.injuryPreventionFocus; track focus) {
-                      <li>{{ focus }}</li>
-                    }
-                  </ul>
-                </div>
-              </p-accordionTab>
+                </p-accordion-content>
+              </p-accordion-panel>
             }
           </p-accordion>
-        </p-tabpanel>
+          </p-tabpanel>
 
-        <!-- Evidence Base Tab -->
-        <p-tabpanel header="Research">
+          <!-- Evidence Base Tab -->
+          <p-tabpanel value="research">
           <div class="evidence-section">
             <h3>📚 Evidence-Based Training</h3>
             <p class="evidence-intro">
@@ -376,7 +389,8 @@ interface TimelineEvent {
               }
             </div>
           </div>
-        </p-tabpanel>
+          </p-tabpanel>
+        </p-tabpanels>
       </p-tabs>
 
       <!-- Personalized Adjustments -->
@@ -414,6 +428,7 @@ export class PeriodizationDashboardComponent implements OnInit {
 
   // State
   readonly currentDate = new Date();
+  activeTab = signal<string>('schedule');
 
   // Signals from services
   readonly currentPhase = signal<PhaseConfig | null>(null);

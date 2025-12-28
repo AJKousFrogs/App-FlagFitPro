@@ -99,86 +99,93 @@ interface PositionGroup {
               </div>
             </p-card>
           } @else {
-            <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)">
-              @for (chart of depthCharts(); track chart.id) {
-                <p-tabPanel [header]="getChartTypeLabel(chart.chart_type)">
-                  <div class="chart-container">
-                    @if (activeChart()) {
-                      <div class="positions-grid">
-                        @for (group of positionGroups(); track group.position) {
-                          <div class="position-card">
-                            <div class="position-header">
-                              <span class="position-abbr">{{ group.abbreviation }}</span>
-                              <span class="position-name">{{ group.position }}</span>
-                            </div>
-                            <div
-                              class="players-list"
-                              cdkDropList
-                              [cdkDropListData]="group.players"
-                              (cdkDropListDropped)="onDrop($event, group)"
-                            >
-                              @for (entry of group.players; track entry.id; let i = $index) {
-                                <div
-                                  class="player-slot"
-                                  [class.empty]="!entry.player_id"
-                                  [class.starter]="i === 0"
-                                  cdkDrag
-                                  [cdkDragDisabled]="!isCoach()"
-                                >
-                                  <div class="depth-indicator">{{ i + 1 }}</div>
-                                  @if (entry.player_id) {
-                                    <p-avatar
-                                      [label]="getInitials(entry.player_name || 'U')"
-                                      shape="circle"
-                                      size="normal"
-                                    ></p-avatar>
-                                    <div class="player-info">
-                                      <span class="player-name">{{ entry.player_name }}</span>
-                                      @if (entry.player_number) {
-                                        <span class="player-number">#{{ entry.player_number }}</span>
+            <p-tabs [(value)]="activeTabIndex" (valueChange)="onTabChange($event)">
+              <p-tablist>
+                @for (chart of depthCharts(); track chart.id; let i = $index) {
+                  <p-tab [value]="i">{{ getChartTypeLabel(chart.chart_type) }}</p-tab>
+                }
+              </p-tablist>
+              <p-tabpanels>
+                @for (chart of depthCharts(); track chart.id; let i = $index) {
+                  <p-tabpanel [value]="i">
+                    <div class="chart-container">
+                      @if (activeChart()) {
+                        <div class="positions-grid">
+                          @for (group of positionGroups(); track group.position) {
+                            <div class="position-card">
+                              <div class="position-header">
+                                <span class="position-abbr">{{ group.abbreviation }}</span>
+                                <span class="position-name">{{ group.position }}</span>
+                              </div>
+                              <div
+                                class="players-list"
+                                cdkDropList
+                                [cdkDropListData]="group.players"
+                                (cdkDropListDropped)="onDrop($event, group)"
+                              >
+                                @for (entry of group.players; track entry.id; let j = $index) {
+                                  <div
+                                    class="player-slot"
+                                    [class.empty]="!entry.player_id"
+                                    [class.starter]="j === 0"
+                                    cdkDrag
+                                    [cdkDragDisabled]="!isCoach()"
+                                  >
+                                    <div class="depth-indicator">{{ j + 1 }}</div>
+                                    @if (entry.player_id) {
+                                      <p-avatar
+                                        [label]="getInitials(entry.player_name || 'U')"
+                                        shape="circle"
+                                        size="normal"
+                                      ></p-avatar>
+                                      <div class="player-info">
+                                        <span class="player-name">{{ entry.player_name }}</span>
+                                        @if (entry.player_number) {
+                                          <span class="player-number">#{{ entry.player_number }}</span>
+                                        }
+                                      </div>
+                                      @if (isCoach()) {
+                                        <p-button
+                                          icon="pi pi-times"
+                                          [text]="true"
+                                          [rounded]="true"
+                                          size="small"
+                                          severity="danger"
+                                          pTooltip="Remove player"
+                                          (onClick)="removePlayer(entry)"
+                                        ></p-button>
                                       }
-                                    </div>
-                                    @if (isCoach()) {
-                                      <p-button
-                                        icon="pi pi-times"
-                                        [text]="true"
-                                        [rounded]="true"
-                                        size="small"
-                                        severity="danger"
-                                        pTooltip="Remove player"
-                                        (onClick)="removePlayer(entry)"
-                                      ></p-button>
+                                    } @else {
+                                      <div class="empty-slot" (click)="openAssignDialog(entry)">
+                                        <i class="pi pi-user-plus"></i>
+                                        <span>Assign Player</span>
+                                      </div>
                                     }
-                                  } @else {
-                                    <div class="empty-slot" (click)="openAssignDialog(entry)">
-                                      <i class="pi pi-user-plus"></i>
-                                      <span>Assign Player</span>
+                                    <div class="drag-handle" cdkDragHandle>
+                                      <i class="pi pi-bars"></i>
                                     </div>
-                                  }
-                                  <div class="drag-handle" cdkDragHandle>
-                                    <i class="pi pi-bars"></i>
                                   </div>
-                                </div>
-                              }
-                              @if (isCoach()) {
-                                <p-button
-                                  label="Add Backup"
-                                  icon="pi pi-plus"
-                                  [text]="true"
-                                  size="small"
-                                  styleClass="add-backup-btn"
-                                  (onClick)="addBackupSlot(group)"
-                                ></p-button>
-                              }
+                                }
+                                @if (isCoach()) {
+                                  <p-button
+                                    label="Add Backup"
+                                    icon="pi pi-plus"
+                                    [text]="true"
+                                    size="small"
+                                    styleClass="add-backup-btn"
+                                    (onClick)="addBackupSlot(group)"
+                                  ></p-button>
+                                }
+                              </div>
                             </div>
-                          </div>
-                        }
-                      </div>
-                    }
-                  </div>
-                </p-tabPanel>
-              }
-            </p-tabView>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </p-tabpanel>
+                }
+              </p-tabpanels>
+            </p-tabs>
 
             <!-- Unassigned Players -->
             @if (isCoach() && unassignedPlayers().length > 0) {
@@ -186,7 +193,7 @@ interface PositionGroup {
                 <ng-template pTemplate="header">
                   <div class="card-header">
                     <h3>Unassigned Players</h3>
-                    <p-tag [value]="unassignedPlayers().length + ' players'" severity="warning"></p-tag>
+                    <p-tag [value]="unassignedPlayers().length + ' players'" severity="warn"></p-tag>
                   </div>
                 </ng-template>
                 <div class="unassigned-list">
@@ -217,7 +224,7 @@ interface PositionGroup {
               Assign a player to <strong>{{ selectedEntry()?.position_name }}</strong>
               (Depth {{ (selectedEntry()?.depth_order || 0) }})
             </p>
-            <p-dropdown
+            <p-select
               [options]="availablePlayersForAssign()"
               [(ngModel)]="selectedPlayerId"
               optionLabel="name"
@@ -226,7 +233,7 @@ interface PositionGroup {
               [filter]="true"
               filterBy="name"
               [style]="{ width: '100%' }"
-            ></p-dropdown>
+            ></p-select>
           </div>
           <ng-template pTemplate="footer">
             <p-button
@@ -580,10 +587,12 @@ export class DepthChartComponent implements OnInit {
       });
   }
 
-  onTabChange(event: { index: number }): void {
+  onTabChange(index: string | number | undefined): void {
+    if (index === undefined) return;
+    const numIndex = typeof index === 'string' ? parseInt(index, 10) : index;
     const charts = this.depthCharts();
-    if (charts[event.index]) {
-      this.loadChartDetails(charts[event.index].id);
+    if (charts[numIndex]) {
+      this.loadChartDetails(charts[numIndex].id);
     }
   }
 

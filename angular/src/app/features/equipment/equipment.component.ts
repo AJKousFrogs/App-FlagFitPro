@@ -129,13 +129,13 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               <div class="card-header">
                 <h3>Equipment Inventory</h3>
                 <div class="filter-actions">
-                  <p-dropdown
+                  <p-select
                     [options]="typeOptions"
                     [(ngModel)]="selectedType"
                     placeholder="All Types"
                     [showClear]="true"
                     (onChange)="filterEquipment()"
-                  ></p-dropdown>
+                  ></p-select>
                 </div>
               </div>
             </ng-template>
@@ -303,21 +303,21 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
             <div class="form-row">
               <div class="form-field">
                 <label>Type *</label>
-                <p-dropdown
+                <p-select
                   [options]="typeOptions"
                   [(ngModel)]="newItem.item_type"
                   placeholder="Select type"
                   [style]="{ width: '100%' }"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="form-field">
                 <label>Condition</label>
-                <p-dropdown
+                <p-select
                   [options]="conditionOptions"
                   [(ngModel)]="newItem.condition"
                   [style]="{ width: '100%' }"
-                ></p-dropdown>
+                ></p-select>
               </div>
             </div>
 
@@ -372,7 +372,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
 
               <div class="form-field">
                 <label>Player *</label>
-                <p-dropdown
+                <p-select
                   [options]="teamPlayers()"
                   [(ngModel)]="checkoutData.player_id"
                   optionLabel="name"
@@ -380,7 +380,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                   placeholder="Select player"
                   [filter]="true"
                   [style]="{ width: '100%' }"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="form-field">
@@ -426,11 +426,11 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
 
               <div class="form-field">
                 <label>Condition at Return *</label>
-                <p-dropdown
+                <p-select
                   [options]="conditionOptions"
                   [(ngModel)]="returnData.condition"
                   [style]="{ width: '100%' }"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="form-field">
@@ -766,11 +766,11 @@ export class EquipmentComponent implements OnInit {
     return found?.label || condition;
   }
 
-  getConditionSeverity(condition: string): "success" | "warning" | "danger" | "info" {
-    const severities: Record<string, "success" | "warning" | "danger" | "info"> = {
+  getConditionSeverity(condition: string): "success" | "warn" | "danger" | "info" {
+    const severities: Record<string, "success" | "warn" | "danger" | "info"> = {
       new: "success",
       good: "success",
-      fair: "warning",
+      fair: "warn",
       poor: "danger",
       needs_replacement: "danger",
     };

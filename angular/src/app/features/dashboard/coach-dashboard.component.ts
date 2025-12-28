@@ -638,13 +638,14 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
           </div>
           <div class="form-field">
             <label for="sessionNotes">Notes</label>
-            <p-textarea
+            <textarea
+              pTextarea
               id="sessionNotes"
               [(ngModel)]="newSession.notes"
               placeholder="Session notes..."
-              [rows]="3"
-              styleClass="w-full"
-            ></p-textarea>
+              rows="3"
+              class="w-full"
+            ></textarea>
           </div>
         </div>
         <ng-template pTemplate="footer">
@@ -664,13 +665,14 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
         <div class="message-form">
           <div class="form-field">
             <label for="messageContent">Message</label>
-            <p-textarea
+            <textarea
+              pTextarea
               id="messageContent"
               [(ngModel)]="teamMessageContent"
               placeholder="Type your message to the team..."
-              [rows]="5"
-              styleClass="w-full"
-            ></p-textarea>
+              rows="5"
+              class="w-full"
+            ></textarea>
           </div>
         </div>
         <ng-template pTemplate="footer">

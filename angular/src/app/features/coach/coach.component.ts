@@ -188,14 +188,14 @@ interface TeamMember {
           </div>
           <div class="p-field mb-4">
             <label for="sessionDate" class="p-label">Date & Time</label>
-            <p-calendar
+            <p-datepicker
               id="sessionDate"
               [(ngModel)]="newSession.date"
               [showTime]="true"
               [showIcon]="true"
               dateFormat="mm/dd/yy"
               styleClass="w-full"
-            ></p-calendar>
+            ></p-datepicker>
           </div>
           <div class="p-field mb-4">
             <label for="sessionDuration" class="p-label">Duration (minutes)</label>

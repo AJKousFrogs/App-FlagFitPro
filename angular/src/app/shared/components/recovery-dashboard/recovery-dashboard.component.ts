@@ -25,6 +25,7 @@ import {
 import { firstValueFrom, timer, Subscription } from "rxjs";
 import { LoggerService } from "../../../core/services/logger.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { CountdownTimerComponent } from "../countdown-timer/countdown-timer.component";
 
 interface RecoveryMetric {
   name: string;
@@ -89,6 +90,7 @@ interface ChartOptions {
     ProgressBarModule,
     Tabs,
     TimelineModule,
+    CountdownTimerComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -209,22 +211,15 @@ interface ChartOptions {
             <p>{{ activeSession()?.protocol.description }}</p>
           </div>
 
-          <!-- Session Timer -->
+          <!-- Session Timer - Uses unified CountdownTimerComponent -->
           <div class="session-timer">
-            <p-knob
-              [(ngModel)]="sessionProgressValue"
-              [min]="0"
-              [max]="100"
-              [size]="120"
-              [strokeWidth]="8"
-              [valueColor]="'#10c96b'"
-              [rangeColor]="'#e5e7eb'"
-              [readonly]="true">
-            </p-knob>
-            <div class="timer-text">
-              <span class="time-remaining">{{ formatTime(timeRemaining()) }}</span>
-              <span class="total-time">/ {{ formatTime(totalTime()) }}</span>
-            </div>
+            <app-countdown-timer
+              [initialSeconds]="totalTime()"
+              [autoStart]="!sessionPaused()"
+              size="lg"
+              [showControls]="false"
+              (complete)="completeSession()"
+            ></app-countdown-timer>
           </div>
 
           <!-- Session Steps -->

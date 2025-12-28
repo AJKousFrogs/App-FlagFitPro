@@ -1,50 +1,52 @@
 # Authentication Pattern Documentation
 
-**Version**: 1.0  
-**Last Updated**: January 2025  
+**Version**: 2.0  
+**Last Updated**: December 2025  
+**Last Verified Against Codebase**: 2025-12-28  
 **Status**: ✅ Production Ready
 
 ---
 
 ## Overview
 
-FlagFit Pro uses a **custom JWT-based authentication system** instead of Supabase's built-in authentication. This document explains why this decision was made and how the authentication flow works.
+FlagFit Pro uses **Supabase Authentication** for user management and JWT-based authorization. This document explains the authentication flow and security patterns.
 
 ### Key Features
 
-- **Custom JWT Authentication**: Full control over authentication flow
-- **Email Verification**: Required before login
+- **Supabase Auth**: Built-in authentication with JWT tokens
+- **Email Verification**: Required before full access
 - **Secure Token Storage**: Encrypted storage with AES-GCM
 - **Rate Limiting**: Protection against brute force attacks
-- **CSRF Protection**: State-changing operations protected
+- **Row Level Security**: Database-level access control
 
 ---
 
-## Architecture Decision: Custom JWT vs Supabase Auth
+## Architecture
 
-### Why Custom JWT?
-
-1. **Existing Implementation**: The application already had a custom authentication system in place before migrating to Supabase
-2. **Control Over User Schema**: Custom user table with specific fields (role, email_verified, etc.) that don't match Supabase Auth's default schema
-3. **Backend Control**: All authentication logic runs through Netlify Functions, providing better control over business logic
-4. **Migration Path**: Easier migration path from previous database without requiring user re-registration
-
-### Trade-offs
-
-**Advantages:**
-
-- ✅ Full control over authentication flow
-- ✅ Custom user schema matching application needs
-- ✅ No dependency on Supabase Auth features
-- ✅ Easier to customize authentication logic
-
-**Disadvantages:**
-
-- ❌ More code to maintain
-- ❌ Manual session management
-- ❌ No built-in social auth providers
-- ❌ Manual password reset flows
-- ❌ RLS policies can't use `auth.uid()` directly
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    FRONTEND (Angular)                           │
+│  ├── AuthService (supabase.auth.*)                             │
+│  ├── SecureStorageService (token storage)                      │
+│  └── AuthGuard (route protection)                              │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    NETLIFY FUNCTIONS                            │
+│  ├── auth-helper.cjs (supabase.auth.getUser)                   │
+│  ├── base-handler.cjs (auth middleware)                        │
+│  └── Protected endpoints (require valid JWT)                   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    SUPABASE                                     │
+│  ├── Auth Service (user management)                            │
+│  ├── PostgreSQL (data storage)                                 │
+│  └── RLS Policies (auth.uid() based)                           │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -53,207 +55,253 @@ FlagFit Pro uses a **custom JWT-based authentication system** instead of Supabas
 ### 1. User Registration
 
 ```
-Frontend → POST /auth-register → Netlify Function
+Frontend → supabase.auth.signUp() → Supabase Auth
   ↓
-Validate input → Hash password → Create user in Supabase
+Create user in auth.users → Send verification email
   ↓
-Generate verification token → Send verification email
-  ↓
-Return success (user must verify email before login)
+Return session (user must verify email for full access)
 ```
 
-**Key Points:**
+**Frontend Code:**
 
-- Password is hashed using `bcryptjs` (10 rounds)
-- Email verification token is generated and stored
-- User cannot login until email is verified
+```typescript
+// Angular AuthService
+async register(email: string, password: string, name: string) {
+  const { data, error } = await this.supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { name, role: 'player' }
+    }
+  });
+  return { data, error };
+}
+```
 
 ### 2. User Login
 
 ```
-Frontend → POST /auth-login → Netlify Function
+Frontend → supabase.auth.signInWithPassword() → Supabase Auth
   ↓
-Validate credentials → Find user by email → Verify password
+Validate credentials → Generate JWT token
   ↓
-Check email_verified → Generate JWT token
-  ↓
-Return token + user data (without password)
+Return session with access_token and refresh_token
 ```
 
-**JWT Token Structure:**
+**Frontend Code:**
 
-```json
-{
-  "userId": "uuid",
-  "email": "user@example.com",
-  "role": "player" | "coach" | "admin",
-  "exp": 1234567890  // 24 hours from issue
+```typescript
+// Angular AuthService
+async login(email: string, password: string) {
+  const { data, error } = await this.supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+  return { data, error };
 }
 ```
 
-### 3. Authenticated Requests
+### 3. Authenticated API Requests
 
 ```
 Frontend → API Request with Authorization header
   ↓
 Netlify Function → Extract JWT from header
   ↓
-Validate JWT signature → Check expiration → Extract userId
+supabase.auth.getUser(token) → Validate with Supabase
   ↓
-Use userId for database queries
+Use user.id for database queries
 ```
 
-**Authorization Header Format:**
+**Backend Code (auth-helper.cjs):**
+
+```javascript
+async function authenticateRequest(event) {
+  const authHeader = event.headers.authorization;
+  const token = authHeader.substring(7); // Remove "Bearer "
+  
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  
+  if (error || !user) {
+    return { success: false, error: 'Invalid or expired token' };
+  }
+  
+  return {
+    success: true,
+    user: {
+      id: user.id,
+      email: user.email,
+      role: user.user_metadata?.role || 'player',
+      name: user.user_metadata?.name || user.email,
+      emailVerified: user.email_confirmed_at !== null
+    }
+  };
+}
+```
+
+### 4. Token Refresh
 
 ```
-Authorization: Bearer <jwt_token>
+Frontend → supabase.auth.refreshSession() → Supabase Auth
+  ↓
+Validate refresh_token → Generate new access_token
+  ↓
+Return new session
 ```
 
 ---
 
 ## Security Measures
 
-### 1. Password Security
+### 1. JWT Token Security
 
-- Passwords are hashed using `bcryptjs` with 10 salt rounds
-- Never stored or returned in plain text
-- Password comparison uses constant-time comparison
+- Tokens are signed by Supabase with project-specific secret
+- Access tokens expire after 1 hour (configurable)
+- Refresh tokens enable automatic renewal
+- Tokens validated on every API request
 
-### 2. JWT Security
+### 2. Row Level Security (RLS)
 
-- Tokens signed with `JWT_SECRET` (stored in environment variables)
-- Tokens expire after 24 hours
-- Secret key never exposed to frontend
-
-### 3. Email Verification
-
-- Users must verify email before login
-- Verification tokens expire after 24 hours
-- Tokens are single-use (cleared after verification)
-
-### 4. Rate Limiting
-
-- Login attempts limited to 5 per 15 minutes per IP
-- Prevents brute force attacks
-
-### 5. CSRF Protection
-
-- CSRF tokens required for state-changing operations
-- Validated on backend
-
----
-
-## Database Schema
-
-### Users Table
+All database tables have RLS enabled:
 
 ```sql
-CREATE TABLE users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,  -- bcrypt hash
-  name VARCHAR(255),
-  role VARCHAR(50) DEFAULT 'player',
-  email_verified BOOLEAN DEFAULT FALSE,
-  verification_token VARCHAR(255),
-  verification_token_expires_at TIMESTAMP,
-  avatar_url TEXT,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
+-- Users can only access their own data
+CREATE POLICY "Users can view own data" ON training_sessions
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- Coaches can view team member data
+CREATE POLICY "Coaches can view team data" ON training_sessions
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM team_members 
+      WHERE team_members.team_id = training_sessions.team_id
+      AND team_members.user_id = auth.uid()
+      AND team_members.role IN ('coach', 'admin')
+    )
+  );
+```
+
+### 3. Rate Limiting
+
+| Tier | Requests | Window | Endpoints |
+|------|----------|--------|-----------|
+| READ | 100 | 1 minute | GET requests |
+| CREATE | 20 | 1 minute | POST requests |
+| UPDATE | 30 | 1 minute | PUT/PATCH requests |
+| DELETE | 10 | 1 minute | DELETE requests |
+
+### 4. Secure Token Storage (Frontend)
+
+```typescript
+// SecureStorageService - AES-GCM encryption
+export class SecureStorageService {
+  private async encryptData(data: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const key = await this.getEncryptionKey();
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encrypted = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      key,
+      encoder.encode(data)
+    );
+    // ... store encrypted data
+  }
+}
 ```
 
 ---
 
-## Supabase Integration
+## User Roles
 
-### Service Key Usage
+| Role | Permissions |
+|------|-------------|
+| `player` | Own data only, team membership |
+| `coach` | Team data, player management |
+| `admin` | Full access, system management |
 
-All database operations use Supabase's **service key** (`SUPABASE_SERVICE_KEY`), which:
+Roles are stored in `user_metadata`:
 
-- Bypasses Row Level Security (RLS) policies
-- Allows admin-level operations
-- Never exposed to frontend
+```typescript
+const { data } = await supabase.auth.updateUser({
+  data: { role: 'coach' }
+});
+```
 
-**Why Service Key?**
+---
 
-- Backend functions need admin access to manage users
-- Custom authentication doesn't use Supabase Auth sessions
-- RLS policies protect against direct database access
+## API Endpoints
 
-### RLS Policies
+### Authentication Endpoints
 
-RLS is enabled on all tables but bypassed by service key. Policies protect against:
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/auth/login` | No | Login (via Supabase) |
+| POST | `/api/auth/reset-password` | No | Request password reset |
+| GET | `/auth-me` | Yes | Verify token and get user |
+| POST | `/api/accept-invitation` | No | Accept team invitation |
+| GET | `/api/validate-invitation` | No | Validate invitation token |
 
-- Direct database access from frontend
-- Unauthorized API calls
-- Data leaks
+### Protected Endpoints
 
-**Note:** Since we use custom JWT, RLS policies can't use `auth.uid()`. Instead, authorization is handled in Netlify Functions using the JWT `userId`.
+All other `/api/*` endpoints require valid JWT:
+
+```
+Authorization: Bearer <access_token>
+```
 
 ---
 
 ## Frontend Integration
 
-### Token Storage
+### Angular AuthService
 
-Tokens are stored securely using:
-
-- **Secure Storage Service**: Encrypted storage with AES-GCM
-- **Fallback**: localStorage (for development)
-- **Session Storage**: Encryption method preference
-
-### Token Management
-
-```javascript
-// Get token
-const token = await secureStorage.getAuthToken();
-
-// Set token
-await secureStorage.setAuthToken(token);
-
-// Remove token
-secureStorage.removeAuthToken();
+```typescript
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private supabase = inject(SupabaseService).client;
+  
+  // Reactive auth state
+  readonly user = signal<User | null>(null);
+  readonly isAuthenticated = computed(() => !!this.user());
+  
+  constructor() {
+    // Listen for auth state changes
+    this.supabase.auth.onAuthStateChange((event, session) => {
+      this.user.set(session?.user ?? null);
+    });
+  }
+  
+  async login(email: string, password: string) {
+    return this.supabase.auth.signInWithPassword({ email, password });
+  }
+  
+  async logout() {
+    return this.supabase.auth.signOut();
+  }
+  
+  async getSession() {
+    return this.supabase.auth.getSession();
+  }
+}
 ```
 
-### Making Authenticated Requests
+### Route Guards
 
-```javascript
-// Using ApiClient
-const response = await apiClient.get("/dashboard", { userId });
-
-// ApiClient automatically adds Authorization header
-// Authorization: Bearer <token>
+```typescript
+export const authGuard: CanActivateFn = async () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  
+  const { data: { session } } = await auth.getSession();
+  
+  if (!session) {
+    router.navigate(['/login']);
+    return false;
+  }
+  
+  return true;
+};
 ```
-
----
-
-## Migration to Supabase Auth (Future Consideration)
-
-If you want to migrate to Supabase Auth in the future:
-
-### Steps Required:
-
-1. Enable Supabase Auth in dashboard
-2. Migrate user passwords (requires re-hashing or password reset)
-3. Update authentication endpoints to use Supabase Auth
-4. Update RLS policies to use `auth.uid()`
-5. Update frontend to use Supabase Auth client
-6. Remove custom JWT logic
-
-### Benefits:
-
-- Built-in social auth providers
-- Automatic session management
-- Better RLS integration
-- Less code to maintain
-
-### Challenges:
-
-- User password migration
-- Session migration
-- Code refactoring
-- Testing all authentication flows
 
 ---
 
@@ -261,12 +309,13 @@ If you want to migrate to Supabase Auth in the future:
 
 ### Common Authentication Errors
 
-| Error Code | Description         | Solution             |
-| ---------- | ------------------- | -------------------- |
-| `401`      | Invalid credentials | Check email/password |
-| `403`      | Email not verified  | Verify email address |
-| `429`      | Rate limit exceeded | Wait 15 minutes      |
-| `500`      | Server error        | Check logs           |
+| Error Code | Description | Solution |
+|------------|-------------|----------|
+| `401` | Invalid credentials | Check email/password |
+| `401` | Token expired | Refresh token or re-login |
+| `403` | Email not verified | Verify email address |
+| `429` | Rate limit exceeded | Wait before retrying |
+| `500` | Server error | Check logs |
 
 ### Error Response Format
 
@@ -274,8 +323,31 @@ If you want to migrate to Supabase Auth in the future:
 {
   "success": false,
   "error": "Error message",
-  "code": "ERROR_CODE"
+  "code": "unauthorized",
+  "requestId": "uuid-for-tracking"
 }
+```
+
+---
+
+## Session Management
+
+### Token Lifecycle
+
+1. **Login**: Receive `access_token` (1 hour) and `refresh_token` (30 days)
+2. **API Calls**: Include `access_token` in Authorization header
+3. **Token Refresh**: Automatic refresh before expiration
+4. **Logout**: Clear tokens and invalidate session
+
+### Frontend Token Storage
+
+```typescript
+// Supabase handles token storage automatically
+// Access via supabase.auth.getSession()
+
+// For custom storage (e.g., secure storage):
+const { data: { session } } = await supabase.auth.getSession();
+await secureStorage.setAuthToken(session.access_token);
 ```
 
 ---
@@ -284,45 +356,60 @@ If you want to migrate to Supabase Auth in the future:
 
 ### Test Users
 
-Demo users are automatically seeded:
+Demo users available in development:
 
 - `test@flagfitpro.com` / `demo123`
-- `demo@flagfitpro.com` / `demo123`
 - `coach@flagfitpro.com` / `demo123`
 
 **Note:** These are for development only. Remove in production.
+
+### Testing Authentication
+
+```bash
+# Login
+curl -X POST 'https://YOUR_PROJECT.supabase.co/auth/v1/token?grant_type=password' \
+  -H 'apikey: YOUR_ANON_KEY' \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"test@flagfitpro.com","password":"demo123"}'
+
+# Authenticated request
+curl http://localhost:8888/api/dashboard \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN'
+```
 
 ---
 
 ## Security Checklist
 
-- [x] Passwords hashed with bcrypt
-- [x] JWT tokens signed and validated
-- [x] Email verification required
-- [x] Rate limiting on login
-- [x] CSRF protection
-- [x] Service key never exposed
-- [x] Tokens expire after 24 hours
-- [x] Secure token storage
+- [x] Supabase Auth with JWT tokens
+- [x] Tokens validated on every request
+- [x] Row Level Security (RLS) enabled
+- [x] Rate limiting on all endpoints
+- [x] Secure token storage (AES-GCM)
+- [x] HTTPS enforced in production
+- [x] Service key never exposed to frontend
+- [x] Email verification supported
 
 ---
 
-## 🔗 **Related Documentation**
+## Related Documentation
 
-- [Backend Setup](BACKEND_SETUP.md) - Backend API setup guide
-- [Database Setup](DATABASE_SETUP.md) - Database configuration
-- [Architecture](ARCHITECTURE.md) - System architecture overview
-- [Error Handling Guide](ERROR_HANDLING_GUIDE.md) - Error handling patterns
+- [BACKEND_SETUP.md](BACKEND_SETUP.md) - Backend API setup guide
+- [DATABASE_SETUP.md](DATABASE_SETUP.md) - Database configuration
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture overview
+- [RLS_POLICY_SPECIFICATION.md](RLS_POLICY_SPECIFICATION.md) - Row Level Security
 
-## 📝 **Changelog**
+---
 
-- **v1.0 (2025-01)**: Initial authentication pattern documentation
-- Custom JWT system documented
-- Security measures detailed
-- Migration guide added
+## Changelog
+
+- **v2.0 (2025-12)**: Updated to reflect Supabase Auth implementation
+- **v1.0 (2025-01)**: Initial custom JWT documentation (deprecated)
+
+---
 
 ## References
 
+- [Supabase Auth Documentation](https://supabase.com/docs/guides/auth)
+- [Supabase JavaScript Client](https://supabase.com/docs/reference/javascript/auth-signup)
 - [JWT Best Practices](https://datatracker.ietf.org/doc/html/rfc8725)
-- [Supabase Service Key Documentation](https://supabase.com/docs/guides/api/using-the-service-role-key)
-- [bcryptjs Documentation](https://www.npmjs.com/package/bcryptjs)

@@ -1,316 +1,299 @@
 # FlagFit Pro Database Setup Guide
 
-**Version**: 1.0  
-**Last Updated**: January 2025  
+**Version**: 2.0  
+**Last Updated**: December 2025  
+**Last Verified Against Supabase**: 2025-12-28  
 **Status**: ✅ Production Ready
 
 ---
 
 ## Overview
 
-This guide covers the comprehensive database setup for FlagFit Pro, including nutrition, recovery, AI coaching, and sports science research systems.
-
-### Database Systems
-
-- **Nutrition System**: USDA FoodData Central integration and sports nutrition plans
-- **Recovery System**: Cryotherapy, compression, manual therapy, and heat therapy protocols
-- **AI Coaches & Sport Psychology**: AI coach profiles and mental training techniques
-- **Sports Science Research**: Research institutions, studies, and evidence-based protocols
+This guide covers the database setup for FlagFit Pro on Supabase. The database contains 250+ tables covering training, nutrition, recovery, team management, AI coaching, and sports science research.
 
 ## Database Architecture
 
-The FlagFit Pro database consists of four main systems:
+The FlagFit Pro database is organized into the following systems:
 
-### 1. Nutrition System
+### 1. Core Training System (✅ Implemented)
+- **Training Programs**: `training_programs`, `training_phases`, `training_weeks`, `training_session_templates`
+- **Exercises**: `exercises` (21 exercises), `session_exercises` (15 entries)
+- **Plyometrics**: `plyometrics_exercises` (90 exercises), `plyometrics_training_programs`
+- **Isometrics**: `isometrics_exercises` (23 exercises), `isometrics_training_programs`
+- **Positions**: `positions` (7 positions)
+- **Workout Logging**: `workout_logs`, `exercise_logs`, `session_summaries`
 
-- **USDA FoodData Central Integration**: Comprehensive food database with nutritional information
-- **Sports Nutrition Plans**: Evidence-based nutrition strategies for athletes
-- **Meal Templates**: Pre-designed meal plans for different training phases
-- **Supplements Database**: Research-backed supplement information
-- **Food Synergies**: Optimal food combinations for performance
+### 2. Load Monitoring & ACWR (✅ Implemented)
+- **Load Tracking**: `load_monitoring`, `load_daily`, `training_load_metrics`
+- **Wellness**: `wellness_entries`, `wellness_logs`, `readiness_scores`
+- **Injury Tracking**: `injury_tracking`, `injury_details`, `athlete_injuries`
 
-### 2. Recovery System
+### 3. Nutrition System (✅ Partially Implemented)
+**Implemented Tables:**
+- `nutrition_logs` - Food intake logging with macronutrients
+- `nutrition_goals` - User-specific daily nutrition targets
+- `supplement_logs` - Supplement intake tracking
 
-- **Cryotherapy Protocols**: Whole body cryotherapy and ice bath protocols
-- **Compression Therapy**: Compression garments and pneumatic compression
-- **Manual Therapy**: Foam rolling, stretching, and massage protocols
-- **Heat Therapy**: Sauna, hot tub, and heat therapy protocols
-- **Sleep Optimization**: Sleep hygiene and recovery protocols
+**NOT Implemented (documented but don't exist):**
+- ~~`foods`~~ - No USDA FoodData Central integration
+- ~~`nutrients`~~
+- ~~`food_nutrients`~~
+- ~~`nutrition_plans`~~
+- ~~`meal_templates`~~
+- ~~`athlete_nutrition_profiles`~~
 
-### 3. AI Coaches & Sport Psychology
+### 4. Recovery System (✅ Partially Implemented)
+**Implemented Tables:**
+- `recovery_sessions` - Recovery protocol session tracking
+- `sleep_optimization_protocols` (3 entries)
+- `sprint_recovery_protocols` (4 entries)
+- `environmental_recovery_protocols` (3 entries)
+- `cognitive_recovery_protocols` (3 entries)
+- `injury_recovery_protocols` (6 entries)
 
-- **AI Coach Profiles**: Specialized coaches with sport psychology expertise
-- **Mental Training Techniques**: Visualization, goal setting, and mental toughness
-- **Psychological Assessments**: Mental skills evaluation tools
-- **Sport Psychology Research**: Evidence-based mental training approaches
+**NOT Implemented:**
+- ~~`recovery_protocols`~~ (generic)
+- ~~`cryotherapy_protocols`~~
+- ~~`compression_protocols`~~
+- ~~`manual_therapy_protocols`~~
+- ~~`heat_therapy_protocols`~~
+- ~~`athlete_recovery_profiles`~~
 
-### 4. Sports Science Research
+### 5. AI Coaching System (✅ Implemented)
+**Implemented Tables:**
+- `ai_chat_sessions` - AI chat sessions with context snapshots
+- `ai_messages` - Individual messages with risk classification
+- `ai_recommendations` - Actionable AI recommendations
+- `ai_feedback` - User feedback on AI responses
+- `ai_coach_visibility` - Coach visibility into player AI interactions
+- `knowledge_base_entries` (7 entries) - Curated knowledge base
+- `chatbot_user_context`, `chatbot_user_state`, `chatbot_response_filters`
 
-- **Research Institutions**: Leading sports science institutions worldwide
-- **Research Studies**: Peer-reviewed studies and meta-analyses
-- **Performance Methodologies**: Evidence-based training approaches
-- **Evidence-Based Protocols**: Implementable protocols with research backing
+**NOT Implemented:**
+- ~~`ai_coaches`~~ (profiles)
+- ~~`coaching_specializations`~~
+- ~~`ai_coach_responses`~~
+- ~~`mental_training_techniques`~~
+- ~~`psychological_assessments`~~
+
+### 6. Sports Science Research (✅ Implemented)
+**Implemented Tables:**
+- `hydration_research_studies` (2 entries)
+- `supplement_research` (3 entries)
+- `supplements` (8 entries)
+- `supplement_interactions` (3 entries)
+- `supplement_evidence_grades` (3 entries)
+- `supplement_wada_compliance` (5 entries)
+- `creatine_research` (2 entries)
+- `sleep_guidelines` (6 entries)
+
+**NOT Implemented:**
+- ~~`research_institutions`~~
+- ~~`research_studies`~~ (generic)
+- ~~`performance_methodologies`~~
+- ~~`evidence_based_protocols`~~
+- ~~`research_collaborations`~~
+
+### 7. Team Management (✅ Implemented)
+- `teams`, `team_members`, `team_invitations`, `team_players`
+- `team_events`, `attendance_records`, `absence_requests`
+- `channels`, `channel_members`, `chat_messages`
+- `depth_chart_templates`, `depth_chart_entries`
+- `player_evaluations`, `coach_observations`
+- `equipment_inventory`, `jersey_assignments`
+
+### 8. Competition & Tournaments (✅ Implemented)
+- `tournaments`, `tournament_participation`, `tournament_budgets`
+- `games`, `game_events`, `game_plays`
+- `officials`, `official_availability`, `game_official_assignments`
+
+### 9. User & Authentication (✅ Implemented)
+- `users` (8 users)
+- `user_preferences`, `user_achievements`, `user_notification_preferences`
+- `notification_preferences`, `push_notification_tokens`
+- `gdpr_consent`, `gdpr_data_processing_log`
 
 ## Prerequisites
 
 ### Database Requirements
-
-- Supabase PostgreSQL (recommended) or PostgreSQL 12+
-- Database user with CREATE, INSERT, UPDATE, DELETE permissions
-- Sufficient storage space (minimum 2GB recommended)
+- Supabase PostgreSQL (production)
+- All tables have Row Level Security (RLS) enabled
 
 ### Environment Variables
 
-Create a `.env` file in the project root with the following variables:
+Create a `.env` file in the Angular project root:
 
 ```env
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=flagfootball_dev
-DB_USER=your_username
-DB_PASSWORD=your_password
-
-# USDA FoodData Central API (optional)
-USDA_API_KEY=your_usda_api_key
-
-# External APIs (optional)
-DEAKIN_API_KEY=your_deakin_api_key
-NORWEGIAN_SCHOOL_API_KEY=your_norwegian_school_api_key
-INSEP_API_KEY=your_insep_api_key
+# Supabase Configuration
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
 ```
 
 ## Installation Steps
 
-### 1. Install Dependencies
+### 1. Run Migrations
+
+All database schema is managed through migration files in `database/migrations/`. There are 50+ migration files.
 
 ```bash
-npm install
+# Run all migrations via Supabase dashboard or CLI
+# Or use the migration script:
+./scripts/run-all-migrations-supabase.sh
 ```
 
-### 2. Run Database Setup
+### 2. Seed Data
+
+Available seeding scripts in `scripts/`:
 
 ```bash
-# Run the comprehensive setup script
-node scripts/setupDatabase.js
+# Plyometrics (90 exercises)
+node scripts/seedPlyometricsResearchDatabase.cjs
+
+# Isometrics (23 exercises)
+node scripts/seedIsometricsTrainingDatabase.cjs
+
+# Hydration research
+node scripts/seedHydrationResearchDatabase.cjs
+
+# Supplement research
+node scripts/seedSupplementResearchDatabase.cjs
+
+# Recovery system
+node scripts/seedRecoverySystem.cjs
+
+# Nutrition system
+node scripts/seedNutritionSystem.cjs
+
+# Competition protocols
+node scripts/seedCompetitionProtocolsFinal.cjs
 ```
 
-This script will:
-
-1. Run all database migrations
-2. Seed the nutrition database with USDA data
-3. Seed the recovery science database
-4. Seed the AI coaches and sport psychology database
-5. Seed the sports science research database
-6. Verify the database setup
-
-### 3. Individual Scripts (Optional)
-
-If you need to run individual components:
-
-```bash
-# Run migrations only
-node scripts/runMigrations.js
-
-# Seed nutrition database
-node scripts/seedComprehensiveNutritionDatabase.js
-
-# Seed recovery database
-node scripts/seedRecoveryScienceDatabase.js
-
-# Seed AI coaches database
-node scripts/seedAICoachesDatabase.js
-
-# Seed sports science research
-node scripts/seedSportsScienceResearch.js
-```
-
-## Database Schema
-
-### Core Tables
-
-#### Nutrition System
-
-- `foods` - USDA FoodData Central food items
-- `nutrients` - Nutritional components and their performance impact
-- `food_nutrients` - Nutritional values for foods
-- `nutrition_plans` - Evidence-based nutrition strategies
-- `meal_templates` - Pre-designed meal plans
-- `supplements` - Research-backed supplement information
-- `athlete_nutrition_profiles` - Individual nutrition profiles
-
-#### Recovery System
-
-- `recovery_protocols` - Comprehensive recovery protocols
-- `cryotherapy_protocols` - Cryotherapy-specific protocols
-- `compression_protocols` - Compression therapy protocols
-- `manual_therapy_protocols` - Foam rolling and stretching
-- `heat_therapy_protocols` - Heat therapy protocols
-- `sleep_optimization_protocols` - Sleep and recovery protocols
-- `athlete_recovery_profiles` - Individual recovery profiles
-
-#### AI Coaches & Sport Psychology
-
-- `ai_coaches` - AI coach profiles with specializations
-- `mental_training_techniques` - Mental skills training methods
-- `mental_toughness_protocols` - Mental toughness development
-- `psychological_assessments` - Mental skills evaluation tools
-- `athlete_psychological_profiles` - Individual psychological profiles
-- `coaching_sessions` - AI coaching session records
-
-#### Sports Science Research
-
-- `research_institutions` - Leading sports science institutions
-- `research_studies` - Peer-reviewed research studies
-- `performance_methodologies` - Evidence-based training approaches
-- `evidence_based_protocols` - Implementable protocols
-- `research_collaborations` - Research partnerships and collaborations
-
-## Data Sources
-
-### Nutrition Data
-
-- **USDA FoodData Central**: Comprehensive food database
-- **Sports Nutrition Research**: Evidence-based nutrition strategies
-- **Olympic Nutrition Guidelines**: Elite athlete nutrition protocols
-
-### Recovery Data
-
-- **Cryotherapy Research**: Banfi et al. (2010), Hausswirth et al. (2011)
-- **Compression Therapy**: Meta-analyses and systematic reviews
-- **Manual Therapy**: Evidence-based stretching and foam rolling protocols
-- **Sleep Science**: Sleep optimization for athletic performance
-
-### AI Coaches Data
-
-- **Liverpool John Moores University**: Applied Sport Psychology Research Group
-- **Norwegian School of Sport Sciences**: Performance psychology research
-- **University of Copenhagen**: Sport psychology and mental training
-- **Professional Certifications**: AASP, BASES, CMPC standards
-
-### Sports Science Research
-
-- **Deakin University**: Institute for Physical Activity and Nutrition
-- **Norwegian School of Sport Sciences**: Sports medicine and exercise science
-- **INSEP**: French National Institute of Sport, Expertise and Performance
-- **Research Collaborations**: International sports performance consortium
-
-## Verification
-
-After setup, verify the database by checking:
+### 3. Verify Installation
 
 ```sql
--- Check table counts
-SELECT
-  (SELECT COUNT(*) FROM foods) as foods_count,
-  (SELECT COUNT(*) FROM recovery_protocols) as recovery_count,
-  (SELECT COUNT(*) FROM ai_coaches) as coaches_count,
-  (SELECT COUNT(*) FROM research_studies) as studies_count;
-
--- Check data quality
-SELECT
-  table_name,
-  COUNT(*) as record_count
-FROM information_schema.tables
-WHERE table_schema = 'public'
-GROUP BY table_name
-ORDER BY record_count DESC;
+-- Check core tables
+SELECT 
+  'positions' as table_name, COUNT(*) as count FROM positions
+UNION ALL SELECT 'training_programs', COUNT(*) FROM training_programs
+UNION ALL SELECT 'plyometrics_exercises', COUNT(*) FROM plyometrics_exercises
+UNION ALL SELECT 'isometrics_exercises', COUNT(*) FROM isometrics_exercises
+UNION ALL SELECT 'exercises', COUNT(*) FROM exercises
+UNION ALL SELECT 'users', COUNT(*) FROM users
+UNION ALL SELECT 'supplements', COUNT(*) FROM supplements;
 ```
+
+**Expected Results (as of 2025-12-28):**
+| Table | Count |
+|-------|-------|
+| positions | 7 |
+| training_programs | 1 |
+| plyometrics_exercises | 90 |
+| isometrics_exercises | 23 |
+| exercises | 21 |
+| users | 8 |
+| supplements | 8 |
+
+## Database Schema Details
+
+### Key Tables with Row Counts
+
+| Category | Table | Rows | RLS |
+|----------|-------|------|-----|
+| Training | `training_programs` | 1 | ✅ |
+| Training | `training_phases` | 10 | ✅ |
+| Training | `training_weeks` | 16 | ✅ |
+| Training | `training_session_templates` | 112 | ✅ |
+| Training | `session_exercises` | 15 | ✅ |
+| Exercises | `exercises` | 21 | ✅ |
+| Exercises | `plyometrics_exercises` | 90 | ✅ |
+| Exercises | `isometrics_exercises` | 23 | ✅ |
+| Positions | `positions` | 7 | ✅ |
+| Load | `workout_logs` | 3 | ✅ |
+| Load | `load_monitoring` | 0 | ✅ |
+| Wellness | `wellness_entries` | 1 | ✅ |
+| Wellness | `readiness_scores` | 1 | ✅ |
+| Users | `users` | 8 | ✅ |
+| Teams | `teams` | 0 | ✅ |
+| Research | `hydration_research_studies` | 2 | ✅ |
+| Research | `supplement_research` | 3 | ✅ |
+
+### RLS Policies
+
+All tables have Row Level Security enabled. Key policies:
+
+- **User data**: Users can only access their own data
+- **Team data**: Team members can access team data
+- **Public reference data**: `plyometrics_exercises`, `isometrics_exercises`, `positions` are publicly readable
+- **Coach visibility**: Coaches can see player data within their teams
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Database Connection Failed**
-   - Verify Supabase PostgreSQL connection
-   - Check database credentials in `.env`
-   - Ensure database exists and is accessible
+1. **RLS Policy Errors**
+   - Ensure user is authenticated
+   - Check team membership for team-related queries
+   - Use service role key for admin operations
 
-2. **Migration Errors**
-   - Check database connectivity
-   - Verify user permissions
-   - Clear migration history if needed: `DELETE FROM migrations;`
+2. **Missing Tables**
+   - Run all migrations in order
+   - Check `database/migrations/` for latest migrations
 
-3. **Seeding Errors**
-   - Check available disk space
-   - Verify API keys if using external data sources
-   - Check database constraints and foreign keys
-
-4. **Performance Issues**
-   - Optimize database configuration
-   - Add appropriate indexes
-   - Consider database partitioning for large datasets
+3. **Empty Exercise Libraries**
+   - Run seeding scripts for plyometrics/isometrics
+   - Check `scripts/` folder for available seeders
 
 ### Reset Database
 
-To completely reset the database:
+⚠️ **Warning**: This will delete all data
 
 ```bash
-# Drop and recreate database (for local PostgreSQL only)
-# For Supabase PostgreSQL, use the Supabase dashboard to reset the database
-dropdb flagfootball_dev
-createdb flagfootball_dev
+# Via Supabase Dashboard:
+# 1. Go to Database > Tables
+# 2. Use SQL Editor to truncate tables or reset schema
 
-# Run setup again
-node scripts/setupDatabase.js
+# Or run migrations fresh after clearing
 ```
 
-## Maintenance
+## Scripts Reference
 
-### Regular Updates
+### Available Seeding Scripts
 
-- Update USDA food data monthly
-- Refresh research studies quarterly
-- Update AI coach content annually
+| Script | Purpose |
+|--------|---------|
+| `seedPlyometricsResearchDatabase.cjs` | 90 plyometric exercises |
+| `seedIsometricsTrainingDatabase.cjs` | 23 isometric exercises |
+| `seedHydrationResearchDatabase.cjs` | Hydration protocols |
+| `seedSupplementResearchDatabase.cjs` | Supplement data |
+| `seedRecoverySystem.cjs` | Recovery protocols |
+| `seedNutritionSystem.cjs` | Nutrition data |
+| `seedCompetitionProtocolsFinal.cjs` | Competition protocols |
+| `seedDashboardData.js` | Dashboard sample data |
 
-### Backup Strategy
+### Scripts That DON'T Exist
 
-```bash
-# Create database backup (for local PostgreSQL)
-# For Supabase PostgreSQL, use the Supabase dashboard for backups
-pg_dump flagfootball_dev > backup_$(date +%Y%m%d).sql
+The following scripts mentioned in previous documentation do NOT exist:
+- ~~`setupDatabase.js`~~
+- ~~`runMigrations.js`~~
+- ~~`seedComprehensiveNutritionDatabase.js`~~
+- ~~`seedAICoachesDatabase.js`~~
+- ~~`seedSportsScienceResearch.js`~~
 
-# Restore from backup
-psql flagfootball_dev < backup_20240101.sql
-```
+## Related Documentation
 
-### Performance Monitoring
+- [README-TRAINING-DATABASE.md](../database/README-TRAINING-DATABASE.md) - Training schema details
+- [LOAD_MANAGEMENT_QUICK_START.md](LOAD_MANAGEMENT_QUICK_START.md) - ACWR implementation
+- [RLS_POLICY_SPECIFICATION.md](RLS_POLICY_SPECIFICATION.md) - Security policies
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture
 
-```sql
--- Monitor table sizes
-SELECT
-  schemaname,
-  tablename,
-  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
-FROM pg_tables
-WHERE schemaname = 'public'
-ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
-```
+## Changelog
 
-## Support
-
-For database setup issues:
-
-1. Check the troubleshooting section above
-2. Review database logs
-3. Verify environment configuration
-4. Contact the development team
-
-## 🔗 **Related Documentation**
-
-- [Comprehensive Database Schema Summary](COMPREHENSIVE_DATABASE_SCHEMA_SUMMARY.md) - Complete schema overview
-- [Database Integration Summary](DATABASE_INTEGRATION_SUMMARY.md) - Integration patterns
-- [Database Connection Manager API](DATABASE_CONNECTION_MANAGER_API.md) - Connection pooling
-- [Backend Setup](BACKEND_SETUP.md) - Backend API setup guide
-- [Architecture](ARCHITECTURE.md) - System architecture overview
-
-## 📝 **Changelog**
-
-- **v1.0 (2025-01)**: Initial database setup guide
-- Comprehensive database systems documented
-- Setup scripts and verification procedures added
-- Maintenance and backup strategies documented
+- **v2.0 (2025-12-28)**: Complete rewrite based on actual database audit
+  - Removed references to non-existent tables and scripts
+  - Added accurate table counts and implementation status
+  - Updated seeding script references
+- **v1.0 (2025-01)**: Initial documentation (largely inaccurate)
 
 ## License
 
-This database setup is part of the FlagFit Pro application and follows the same licensing terms.
+This database setup is part of the FlagFit Pro application.

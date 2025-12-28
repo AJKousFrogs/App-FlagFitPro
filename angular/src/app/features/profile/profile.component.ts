@@ -12,7 +12,7 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { AvatarModule } from "primeng/avatar";
 import { TagModule } from "primeng/tag";
-import { Tabs, TabPanel } from "primeng/tabs";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
@@ -46,6 +46,9 @@ interface PendingInvitation {
     AvatarModule,
     TagModule,
     Tabs,
+    TabList,
+    Tab,
+    TabPanels,
     TabPanel,
     ProgressSpinnerModule,
     MainLayoutComponent,
@@ -111,8 +114,15 @@ interface PendingInvitation {
         <app-stats-grid [stats]="stats()"></app-stats-grid>
 
         <!-- Profile Tabs -->
-        <p-tabs>
-          <p-tabpanel header="Overview" leftIcon="pi pi-chart-line">
+        <p-tabs [(value)]="activeTab">
+          <p-tablist>
+            <p-tab value="overview"><i class="pi pi-chart-line"></i> Overview</p-tab>
+            <p-tab value="achievements"><i class="pi pi-trophy"></i> Achievements</p-tab>
+            <p-tab value="statistics"><i class="pi pi-bar-chart"></i> Statistics</p-tab>
+            <p-tab value="invitations"><i class="pi pi-envelope"></i> Invitations @if (pendingInvitations().length > 0) { ({{ pendingInvitations().length }}) }</p-tab>
+          </p-tablist>
+          <p-tabpanels>
+            <p-tabpanel value="overview">
             <div class="overview-content">
               <p-card>
                 <ng-template pTemplate="header">
@@ -143,8 +153,8 @@ interface PendingInvitation {
                 }
               </p-card>
             </div>
-          </p-tabpanel>
-          <p-tabpanel header="Achievements" leftIcon="pi pi-trophy">
+            </p-tabpanel>
+            <p-tabpanel value="achievements">
             @if (achievements().length === 0) {
               <app-empty-state
                 title="No Achievements Yet"
@@ -168,8 +178,8 @@ interface PendingInvitation {
                 }
               </div>
             }
-          </p-tabpanel>
-          <p-tabpanel header="Statistics" leftIcon="pi pi-bar-chart">
+            </p-tabpanel>
+            <p-tabpanel value="statistics">
             <p-card>
               <ng-template pTemplate="header">
                 <h3>Performance Statistics</h3>
@@ -190,8 +200,8 @@ interface PendingInvitation {
                 }
               </div>
             </p-card>
-          </p-tabpanel>
-          <p-tabpanel [header]="'Invitations' + (pendingInvitations().length > 0 ? ' (' + pendingInvitations().length + ')' : '')" leftIcon="pi pi-envelope">
+            </p-tabpanel>
+            <p-tabpanel value="invitations">
             <div class="invitations-section">
               @if (loadingInvitations()) {
                 <div class="loading-invitations">
@@ -263,7 +273,8 @@ interface PendingInvitation {
                 </div>
               }
             </div>
-          </p-tabpanel>
+            </p-tabpanel>
+          </p-tabpanels>
         </p-tabs>
         }
       </div>
@@ -583,6 +594,7 @@ export class ProfileComponent implements OnInit {
   userEmail = signal("Loading...");
   userRole = signal("Player");
   userInitials = signal("U");
+  activeTab = signal<string>('overview');
   stats = signal<Array<{ value: string; label: string }>>([]);
   activities = signal<Array<{ icon: string; title: string; time: string }>>([]);
   achievements = signal<Array<{ icon: string; title: string; description: string; date: string }>>([]);
@@ -598,9 +610,10 @@ export class ProfileComponent implements OnInit {
     this.loadPendingInvitations();
   }
 
-  loadProfileData(): void {
+  async loadProfileData(): Promise<void> {
     this.isLoading.set(true);
     const user = this.authService.getUser();
+    
     if (user) {
       this.userName.set(user.name || user.email || "User");
       this.userEmail.set(user.email || "");
@@ -608,53 +621,200 @@ export class ProfileComponent implements OnInit {
       this.userInitials.set(this.getInitials(this.userName()));
     }
 
-    // Load stats
+    if (!user?.id) {
+      this.loadEmptyState();
+      this.isLoading.set(false);
+      return;
+    }
+
+    try {
+      // Load real training sessions count
+      const { data: sessions, error: sessionsError } = await this.supabaseService.client
+        .from('training_sessions')
+        .select('id, status, completed_at, scheduled_date, duration_minutes')
+        .eq('user_id', user.id);
+
+      if (sessionsError) throw sessionsError;
+
+      const completedSessions = (sessions || []).filter(s => s.status === 'completed');
+      const totalSessions = completedSessions.length;
+
+      // Calculate streak
+      let streak = 0;
+      const sortedSessions = [...completedSessions]
+        .sort((a, b) => new Date(b.completed_at || b.scheduled_date).getTime() - new Date(a.completed_at || a.scheduled_date).getTime());
+      
+      if (sortedSessions.length > 0) {
+        let checkDate = new Date();
+        checkDate.setHours(0, 0, 0, 0);
+        
+        for (const session of sortedSessions) {
+          const sessionDate = new Date(session.completed_at || session.scheduled_date);
+          sessionDate.setHours(0, 0, 0, 0);
+          
+          const daysDiff = Math.floor((checkDate.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
+          
+          if (daysDiff <= 1) {
+            streak++;
+            checkDate = sessionDate;
+          } else {
+            break;
+          }
+        }
+      }
+
+      // Load wellness data for performance score
+      const { data: wellness } = await this.supabaseService.client
+        .from('wellness_checkins')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false })
+        .limit(7);
+
+      // Calculate performance score based on wellness and training
+      let performanceScore = 0;
+      if (wellness && wellness.length > 0) {
+        const avgEnergy = wellness.reduce((a, w) => a + (w.energy || 0), 0) / wellness.length;
+        const avgReadiness = wellness.reduce((a, w) => a + (w.readiness || 5), 0) / wellness.length;
+        performanceScore = Math.round((avgEnergy + avgReadiness) * 5);
+      }
+
+      // Load stats with real data
+      this.stats.set([
+        { value: totalSessions.toString(), label: "Training Sessions" },
+        { value: performanceScore > 0 ? `${performanceScore}%` : "N/A", label: "Performance Score" },
+        { value: streak.toString(), label: "Day Streak" },
+        { value: "0", label: "Games Played" },
+      ]);
+
+      // Load recent activities from training sessions
+      const recentActivities = sortedSessions.slice(0, 5).map(session => {
+        const date = new Date(session.completed_at || session.scheduled_date);
+        const timeAgo = this.getTimeAgo(date);
+        return {
+          icon: "🏃",
+          title: `Completed ${session.duration_minutes || 0} min training`,
+          time: timeAgo
+        };
+      });
+
+      this.activities.set(recentActivities.length > 0 ? recentActivities : []);
+
+      // Build achievements based on real data
+      const achievements: Array<{ icon: string; title: string; description: string; date: string }> = [];
+      
+      if (streak >= 7) {
+        achievements.push({
+          icon: "🔥",
+          title: `${streak}-Day Streak`,
+          description: `Completed ${streak} consecutive training days`,
+          date: "Current"
+        });
+      }
+      if (totalSessions >= 10) {
+        achievements.push({
+          icon: "🏃",
+          title: "10 Sessions Complete",
+          description: "Reached your first training milestone",
+          date: "Achieved"
+        });
+      }
+      if (totalSessions >= 25) {
+        achievements.push({
+          icon: "⭐",
+          title: "25 Sessions Complete",
+          description: "Consistent training pays off",
+          date: "Achieved"
+        });
+      }
+      if (totalSessions >= 50) {
+        achievements.push({
+          icon: "🏆",
+          title: "Dedicated Athlete",
+          description: "50+ training sessions logged",
+          date: "Achieved"
+        });
+      }
+
+      this.achievements.set(achievements);
+
+      // Load performance stats with real data
+      const totalMinutes = completedSessions.reduce((a, s) => a + (s.duration_minutes || 0), 0);
+      const avgSessionLength = totalSessions > 0 ? Math.round(totalMinutes / totalSessions) : 0;
+
+      this.performanceStats.set([
+        {
+          label: "Performance Score",
+          value: performanceScore > 0 ? `${performanceScore}%` : "N/A",
+          trend: performanceScore >= 80 ? "Excellent" : performanceScore >= 60 ? "Good" : "Building",
+          trendType: performanceScore >= 80 ? "success" : performanceScore >= 60 ? "info" : "secondary",
+        },
+        {
+          label: "Avg Session Length",
+          value: avgSessionLength > 0 ? `${avgSessionLength} min` : "N/A",
+          trend: avgSessionLength >= 45 ? "Great duration" : "Keep it up",
+          trendType: avgSessionLength >= 45 ? "success" : "info",
+        },
+        {
+          label: "Total Training Hours",
+          value: `${(totalMinutes / 60).toFixed(1)}h`,
+          trend: totalMinutes >= 600 ? "Strong commitment" : "Building base",
+          trendType: totalMinutes >= 600 ? "success" : "info",
+        },
+      ]);
+
+    } catch (error) {
+      this.logger.error('Error loading profile data:', error);
+      this.loadEmptyState();
+    }
+
+    this.isLoading.set(false);
+  }
+
+  private getTimeAgo(date: Date): string {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 60) return `${diffMins} minutes ago`;
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return date.toLocaleDateString();
+  }
+
+  private loadEmptyState(): void {
     this.stats.set([
-      { value: "24", label: "Training Sessions" },
-      { value: "85%", label: "Performance Score" },
-      { value: "7", label: "Day Streak" },
-      { value: "3", label: "Tournaments" },
+      { value: "0", label: "Training Sessions" },
+      { value: "N/A", label: "Performance Score" },
+      { value: "0", label: "Day Streak" },
+      { value: "0", label: "Games Played" },
     ]);
 
-    // Load activities
-    this.activities.set([
-      { icon: "🏃", title: "Completed Speed Training", time: "2 hours ago" },
-      { icon: "🏆", title: "Achieved New Personal Best", time: "1 day ago" },
-      { icon: "📊", title: "Updated Performance Metrics", time: "2 days ago" },
-    ]);
-
-    // Load achievements
-    this.achievements.set([
-      {
-        icon: "🏆",
-        title: "7-Day Streak",
-        description: "Completed 7 consecutive training days",
-        date: "2 days ago",
-      },
-      {
-        icon: "⚡",
-        title: "Speed Master",
-        description: "Achieved sub-4.5s 40-yard dash",
-        date: "1 week ago",
-      },
-    ]);
-
-    // Load performance stats
+    this.activities.set([]);
+    this.achievements.set([]);
     this.performanceStats.set([
       {
-        label: "Overall Performance",
-        value: "85%",
-        trend: "+5%",
-        trendType: "success",
+        label: "Performance Score",
+        value: "N/A",
+        trend: "Log wellness check-ins",
+        trendType: "secondary",
       },
-      { label: "Speed Score", value: "92", trend: "+8", trendType: "success" },
-      { label: "Strength Score", value: "78", trend: "+3", trendType: "info" },
+      {
+        label: "Avg Session Length",
+        value: "N/A",
+        trend: "Start training",
+        trendType: "secondary",
+      },
+      {
+        label: "Total Training Hours",
+        value: "0h",
+        trend: "Begin your journey",
+        trendType: "secondary",
+      },
     ]);
-
-    // Simulate loading delay
-    setTimeout(() => {
-      this.isLoading.set(false);
-    }, 500);
   }
 
   getInitials(name: string): string {

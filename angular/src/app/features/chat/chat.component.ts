@@ -360,7 +360,7 @@ import { MenuItem } from "primeng/api";
                     <div class="mention-suggestions">
                       @for (member of mentionSuggestions(); track member.id) {
                         <div class="mention-item" (click)="insertMention(member)">
-                          <p-avatar [label]="getInitials(member.full_name)" size="small"></p-avatar>
+                          <p-avatar [label]="getInitials(member.full_name)" size="normal"></p-avatar>
                           <span>{{ member.full_name }}</span>
                         </div>
                       }
@@ -433,27 +433,27 @@ import { MenuItem } from "primeng/api";
         
         <div class="form-field">
           <label>Channel Type</label>
-          <p-dropdown
+          <p-select
             [(ngModel)]="newChannelType"
             [options]="channelTypeOptions"
             optionLabel="label"
             optionValue="value"
             placeholder="Select type"
             styleClass="w-full"
-          ></p-dropdown>
+          ></p-select>
         </div>
         
         @if (newChannelType === 'position_group') {
           <div class="form-field">
             <label>Position</label>
-            <p-dropdown
+            <p-select
               [(ngModel)]="newChannelPosition"
               [options]="positionOptions"
               optionLabel="label"
               optionValue="value"
               placeholder="Select position"
               styleClass="w-full"
-            ></p-dropdown>
+            ></p-select>
           </div>
         }
       </div>

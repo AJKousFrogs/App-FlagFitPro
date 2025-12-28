@@ -210,10 +210,28 @@ export const trainingRoutes: Routes = [
   {
     path: "training/videos",
     loadComponent: () =>
-      import("../../features/exercise-library/exercise-library.component").then(
-        (m) => m.ExerciseLibraryComponent,
+      import("../../features/training/video-feed/video-feed.component").then(
+        (m) => m.VideoFeedComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "high" },
+  },
+  {
+    path: "training/videos/curation",
+    loadComponent: () =>
+      import("../../features/training/video-curation/video-curation.component").then(
+        (m) => m.VideoCurationComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/videos/suggest",
+    loadComponent: () =>
+      import("../../features/training/video-suggestion/video-suggestion.component").then(
+        (m) => m.VideoSuggestionComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "medium" },
   },
 ];
 
@@ -324,6 +342,33 @@ export const teamRoutes: Routes = [
  * Game & Competition Routes
  */
 export const gameRoutes: Routes = [
+  {
+    path: "game/readiness",
+    loadComponent: () =>
+      import("../../features/game/game-day-readiness/game-day-readiness.component").then(
+        (m) => m.GameDayReadinessComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "high" }, // Critical for game days
+  },
+  {
+    path: "game/nutrition",
+    loadComponent: () =>
+      import("../../features/game/tournament-nutrition/tournament-nutrition.component").then(
+        (m) => m.TournamentNutritionComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "high" }, // Critical for tournament days
+  },
+  {
+    path: "travel/recovery",
+    loadComponent: () =>
+      import("../../features/travel/travel-recovery/travel-recovery.component").then(
+        (m) => m.TravelRecoveryComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "high" }, // Critical for Olympic travel planning
+  },
   {
     path: "game-tracker",
     loadComponent: () =>

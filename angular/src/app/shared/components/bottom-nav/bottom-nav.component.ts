@@ -285,21 +285,33 @@ export class BottomNavComponent implements OnInit, OnDestroy {
   });
 
   // Primary nav items (shown in bottom bar)
+  // Wellness promoted to primary for athletes - critical daily action
   private primaryNavItems: NavItem[] = [
     { label: "Home", icon: "pi-home", route: "/dashboard" },
     { label: "Training", icon: "pi-bolt", route: "/training" },
+    { label: "Wellness", icon: "pi-heart", route: "/wellness" }, // Promoted!
     { label: "Analytics", icon: "pi-chart-line", route: "/analytics" },
-    { label: "Team", icon: "pi-users", route: "/roster" },
   ];
 
   // Secondary nav items (shown in "More" menu)
+  // Reorganized for better UX flow
   private secondaryNavItems: NavItem[] = [
+    // Competition
+    { label: "Game Day", icon: "pi-flag-fill", route: "/game/readiness" },
+    { label: "Fuel Plan", icon: "pi-apple", route: "/game/nutrition" },
+    { label: "Games", icon: "pi-video", route: "/game-tracker" },
     { label: "Tournaments", icon: "pi-trophy", route: "/tournaments" },
-    { label: "Games", icon: "pi-flag", route: "/game-tracker" },
-    { label: "Wellness", icon: "pi-heart", route: "/wellness" },
+    // Recovery
+    { label: "Travel", icon: "pi-globe", route: "/travel/recovery" },
+    // Team
+    { label: "Team", icon: "pi-users", route: "/roster" },
+    { label: "Depth Chart", icon: "pi-sitemap", route: "/depth-chart", roles: ["coach", "assistant_coach"] },
+    // Resources
+    { label: "Videos", icon: "pi-youtube", route: "/training/videos" },
+    // Community
     { label: "Community", icon: "pi-comments", route: "/community" },
     { label: "Chat", icon: "pi-inbox", route: "/chat" },
-    { label: "Depth Chart", icon: "pi-sitemap", route: "/depth-chart", roles: ["coach", "assistant_coach"] },
+    // Account
     { label: "Profile", icon: "pi-user", route: "/profile" },
     { label: "Settings", icon: "pi-cog", route: "/settings" },
   ];

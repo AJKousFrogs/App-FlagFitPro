@@ -12,6 +12,7 @@ import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { ButtonModule } from "primeng/button";
+import { TooltipModule } from "primeng/tooltip";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -27,6 +28,11 @@ import { ReadinessWidgetComponent } from "../../shared/components/readiness-widg
 import { LiveIndicatorComponent } from "../../shared/components/live-indicator/live-indicator.component";
 import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
 import { NoDataEntryComponent } from "../../shared/components/no-data-entry/no-data-entry.component";
+// New UX Components
+import { MorningBriefingComponent } from "../../shared/components/morning-briefing/morning-briefing.component";
+import { TournamentModeWidgetComponent } from "../../shared/components/tournament-mode-widget/tournament-mode-widget.component";
+import { ActionableInsightsComponent } from "../../shared/components/actionable-insights/actionable-insights.component";
+import { GameDayCountdownComponent } from "../../shared/components/game-day-countdown/game-day-countdown.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { AcwrService } from "../../core/services/acwr.service";
@@ -35,8 +41,10 @@ import { TrendsService } from "../../core/services/trends.service";
 import { HeaderService } from "../../core/services/header.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { DataSourceService, DATA_REQUIREMENTS } from "../../core/services/data-source.service";
+import { TournamentModeService } from "../../core/services/tournament-mode.service";
 import { RealtimeBaseComponent } from "../../shared/components/realtime-base.component";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 
 // Type for training session data
 interface TrainingSession {
@@ -60,6 +68,7 @@ interface TrainingSession {
     CardModule,
     TagModule,
     ButtonModule,
+    TooltipModule,
     MainLayoutComponent,
     PageHeaderComponent,
     TrafficLightIndicatorComponent,
@@ -68,6 +77,11 @@ interface TrainingSession {
     LiveIndicatorComponent,
     DataSourceBannerComponent,
     NoDataEntryComponent,
+    // New UX Components
+    MorningBriefingComponent,
+    TournamentModeWidgetComponent,
+    ActionableInsightsComponent,
+    GameDayCountdownComponent,
   ],
   template: `
     <app-main-layout>
@@ -77,6 +91,29 @@ interface TrainingSession {
           subtitle="Your performance overview for today"
         >
           <div class="flex items-center gap-3">
+            @if (hasUpcomingGame()) {
+              <p-button
+                label="Game Day Check-in"
+                icon="pi pi-flag"
+                routerLink="/game/readiness"
+                styleClass="p-button-warning"
+                pTooltip="Pre-competition readiness check"
+              ></p-button>
+              <p-button
+                label="Tournament Fuel"
+                icon="pi pi-heart"
+                routerLink="/game/nutrition"
+                [outlined]="true"
+                pTooltip="Nutrition & hydration plan"
+              ></p-button>
+            }
+            <p-button
+              label="Travel Recovery"
+              icon="pi pi-globe"
+              routerLink="/travel/recovery"
+              [outlined]="true"
+              pTooltip="Jet lag & travel recovery protocols for away tournaments"
+            ></p-button>
             <p-button
               label="Today's Practice"
               icon="pi pi-play"
@@ -88,6 +125,17 @@ interface TrainingSession {
             ></app-live-indicator>
           </div>
         </app-page-header>
+
+        <!-- Morning Briefing - Streamlined daily check-in -->
+        <app-morning-briefing></app-morning-briefing>
+
+        <!-- Tournament Mode Widget - Shows when in active tournament -->
+        <app-tournament-mode-widget></app-tournament-mode-widget>
+
+        <!-- Game Day Countdown - Shows when game is within 48 hours -->
+        @if (upcomingGame()) {
+          <app-game-day-countdown [game]="upcomingGame()"></app-game-day-countdown>
+        }
 
         <!-- Data Source Warning Banner - CRITICAL FOR ATHLETE SAFETY -->
         <app-data-source-banner
@@ -177,6 +225,11 @@ interface TrainingSession {
               [athleteId]="athleteId()!"
             ></app-readiness-widget>
           }
+        </div>
+
+        <!-- Actionable Insights - AI-powered recommendations -->
+        <div class="insights-section">
+          <app-actionable-insights></app-actionable-insights>
         </div>
 
         <!-- Trend Cards -->
@@ -276,6 +329,10 @@ interface TrainingSession {
         gap: var(--space-4);
       }
 
+      .insights-section {
+        margin-bottom: var(--space-6);
+      }
+
       @media (max-width: 768px) {
         .metrics-row {
           grid-template-columns: 1fr;
@@ -300,13 +357,28 @@ export class AthleteDashboardComponent
   private headerService = inject(HeaderService);
   private trainingDataService = inject(TrainingDataService);
   private dataSourceService = inject(DataSourceService);
+  private tournamentService = inject(TournamentModeService);
   private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
+  private supabaseService = inject(SupabaseService);
 
   athleteId = signal<string | undefined>(undefined);
   todayWorkload = signal<number>(0);
   nextSession = signal<{ title: string; date: Date } | null>(null);
   trendCards = signal<TrendData[]>([]);
+  
+  // Game day detection - show Game Day Check-in button when game is within 2 days
+  hasUpcomingGame = signal<boolean>(false);
+  
+  // Upcoming game data for countdown widget
+  upcomingGame = signal<{
+    id: string;
+    opponent: string;
+    date: Date;
+    time: string;
+    location: string;
+    isHome: boolean;
+  } | null>(null);
   
   // Data source tracking - CRITICAL FOR ATHLETE SAFETY
   totalTrainingSessions = signal<number>(0);
@@ -342,6 +414,94 @@ export class AthleteDashboardComponent
     this.loadDashboardData();
     this.setupRealtimeSubscriptions();
     this.checkDataSource();
+    this.checkForUpcomingGame();
+  }
+
+  /**
+   * Check if athlete has a game within the next 2 days
+   * Shows Game Day Check-in button for pre-competition readiness
+   */
+  private async checkForUpcomingGame(): Promise<void> {
+    const userId = this.authService.getUser()?.id;
+    if (!userId) return;
+
+    try {
+      // Check for games in the next 2 days
+      const today = new Date();
+      const twoDaysFromNow = new Date();
+      twoDaysFromNow.setDate(today.getDate() + 2);
+
+      const { data: games } = await this.supabaseService.client
+        .from('games')
+        .select('id, game_date, opponent, location, game_time, is_home')
+        .gte('game_date', today.toISOString().split('T')[0])
+        .lte('game_date', twoDaysFromNow.toISOString().split('T')[0])
+        .order('game_date', { ascending: true })
+        .limit(1);
+
+      if (games && games.length > 0) {
+        this.hasUpcomingGame.set(true);
+        const game = games[0];
+        this.upcomingGame.set({
+          id: game.id,
+          opponent: game.opponent || 'TBD',
+          date: new Date(game.game_date),
+          time: game.game_time || '12:00 PM',
+          location: game.location || 'TBD',
+          isHome: game.is_home ?? true,
+        });
+        this.logger.info('[Dashboard] Upcoming game detected - showing Game Day Check-in');
+      } else {
+        // Also check team_members for tournament availability
+        const { data: teamMember } = await this.supabaseService.client
+          .from('team_members')
+          .select('team_id')
+          .eq('user_id', userId)
+          .single();
+
+        if (teamMember?.team_id) {
+          const { data: teamGames } = await this.supabaseService.client
+            .from('team_games')
+            .select('id, game_date, opponent, location, game_time, is_home')
+            .eq('team_id', teamMember.team_id)
+            .gte('game_date', today.toISOString().split('T')[0])
+            .lte('game_date', twoDaysFromNow.toISOString().split('T')[0])
+            .order('game_date', { ascending: true })
+            .limit(1);
+
+          if (teamGames && teamGames.length > 0) {
+            this.hasUpcomingGame.set(true);
+            const game = teamGames[0];
+            this.upcomingGame.set({
+              id: game.id,
+              opponent: game.opponent || 'TBD',
+              date: new Date(game.game_date),
+              time: game.game_time || '12:00 PM',
+              location: game.location || 'TBD',
+              isHome: game.is_home ?? true,
+            });
+          }
+        }
+      }
+    } catch (error) {
+      // If tables don't exist, default to showing the button on weekends (common game days)
+      const dayOfWeek = new Date().getDay();
+      // Show on Friday (5), Saturday (6), Sunday (0)
+      if (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) {
+        this.hasUpcomingGame.set(true);
+        // Set mock game data for demo purposes
+        const gameDate = new Date();
+        if (dayOfWeek === 5) gameDate.setDate(gameDate.getDate() + 1); // Saturday
+        this.upcomingGame.set({
+          id: 'demo-game',
+          opponent: 'Eagles',
+          date: gameDate,
+          time: '2:00 PM',
+          location: 'Home Field',
+          isHome: true,
+        });
+      }
+    }
   }
 
   /**

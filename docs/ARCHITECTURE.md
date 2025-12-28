@@ -1,7 +1,8 @@
 # 🏗️ FlagFit Pro - System Architecture
 
-**Version:** 2.1  
-**Last Updated:** December 26, 2025  
+**Version:** 2.2  
+**Last Updated:** December 28, 2025  
+**Last Verified Against Codebase:** 2025-12-28  
 **Status:** ✅ Production Ready (~85% Complete)
 
 ---
@@ -43,8 +44,8 @@ A comprehensive flag football training platform that prioritizes **athlete safet
 │                    PRESENTATION LAYER                           │
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │  Angular 21 Frontend                                     │   │
-│  │  ├── 25+ Feature Components (standalone)                 │   │
-│  │  ├── 45+ Core Services (signal-based)                    │   │
+│  │  ├── 28+ Feature Components (standalone)                 │   │
+│  │  ├── 86+ Core Services (signal-based)                    │   │
 │  │  ├── PrimeNG 21 UI Components                           │   │
 │  │  ├── Zoneless Change Detection                          │   │
 │  │  └── SCSS Design System                                 │   │
@@ -55,7 +56,7 @@ A comprehensive flag football training platform that prioritizes **athlete safet
 ┌─────────────────────────────────────────────────────────────────┐
 │                    APPLICATION LAYER                            │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │  Netlify Functions (69 serverless functions)             │   │
+│  │  Netlify Functions (80 serverless functions)             │   │
 │  │  ├── AI Chat with ACWR Safety Integration               │   │
 │  │  ├── Load Management (ACWR, Monotony, TSB)              │   │
 │  │  ├── Smart Training Recommendations                      │   │
@@ -69,7 +70,7 @@ A comprehensive flag football training platform that prioritizes **athlete safet
 │                      DATA LAYER                                 │
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │  Supabase PostgreSQL                                     │   │
-│  │  ├── 53+ Migration Files                                │   │
+│  │  ├── 55+ Migration Files                                │   │
 │  │  ├── Row Level Security (RLS) Policies                  │   │
 │  │  ├── Real-time Subscriptions                            │   │
 │  │  ├── Knowledge Base with Evidence Grading               │   │
@@ -95,7 +96,7 @@ A comprehensive flag football training platform that prioritizes **athlete safet
 ```
 angular/src/app/
 ├── core/                           # Singleton services & utilities
-│   ├── services/                   # 45+ injectable services
+│   ├── services/                   # 86+ injectable services
 │   │   ├── acwr.service.ts         # 1,273 lines - ACWR calculations
 │   │   ├── acwr-alerts.service.ts  # Load alert management
 │   │   ├── ai-chat.service.ts      # AI coaching chat
@@ -104,7 +105,7 @@ angular/src/app/
 │   │   ├── supabase.service.ts     # Supabase client
 │   │   ├── notification-state.service.ts  # Signal-based state
 │   │   ├── wellness.service.ts     # Wellness tracking
-│   │   └── ... (35+ more)
+│   │   └── ... (75+ more)
 │   ├── guards/                     # Route guards
 │   │   ├── auth.guard.ts
 │   │   └── role.guard.ts
@@ -120,7 +121,7 @@ angular/src/app/
 │   └── models/                     # TypeScript interfaces
 │       ├── acwr.models.ts
 │       └── ...
-├── features/                       # Feature modules (25+)
+├── features/                       # Feature modules (28+)
 │   ├── acwr-dashboard/             # ACWR monitoring UI
 │   ├── training/                   # 10 training components
 │   │   ├── training.component.ts
@@ -134,7 +135,7 @@ angular/src/app/
 │   ├── game-tracker/               # Game statistics
 │   ├── tournaments/                # Tournament management
 │   ├── auth/                       # Authentication
-│   └── ... (15+ more)
+│   └── ... (18+ more)
 └── shared/                         # Shared components
     ├── components/
     │   ├── ai-coach-visibility/    # Coach AI monitoring
@@ -212,7 +213,7 @@ netlify/functions/
 ├── training-stats-enhanced.cjs     # Enhanced statistics
 ├── coach.cjs                       # Coach endpoints
 ├── knowledge-search.cjs            # Knowledge base search
-└── ... (69 total functions)
+└── ... (80 total functions)
 ```
 
 ### Base Handler Pattern
@@ -495,4 +496,4 @@ export abstract class BaseViewModel {
 
 ---
 
-**Last Updated:** December 26, 2025
+**Last Updated:** December 28, 2025

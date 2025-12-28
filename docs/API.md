@@ -1,7 +1,8 @@
-# 📡 FlagFit Pro API Documentation
+# FlagFit Pro API Documentation
 
-**Version**: 2.0  
+**Version**: 2.1  
 **Last Updated**: December 2025  
+**Last Verified Against Codebase**: 2025-12-28  
 **Status**: ✅ Production Ready
 
 ---
@@ -42,8 +43,10 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 |--------|----------|------|-------------|
 | POST | `/api/auth/login` | No | Login with credentials |
 | POST | `/api/auth/reset-password` | No | Request password reset |
+| GET | `/auth-me` | Yes | Verify token and get user |
 | POST | `/api/accept-invitation` | No | Accept team invitation |
 | GET | `/api/validate-invitation` | No | Validate invitation token |
+| POST | `/api/team-invite` | Yes | Send team invitation |
 
 ### Dashboard
 
@@ -52,10 +55,12 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 | GET | `/api/dashboard` | Yes | Main dashboard data |
 | GET | `/api/dashboard/overview` | Yes | Dashboard overview |
 | GET | `/api/dashboard/notifications` | Yes | User notifications |
+| GET | `/api/dashboard/notifications/count` | Yes | Unread notification count |
 | POST | `/api/dashboard/notifications/create` | Yes | Create notification |
 | GET | `/api/dashboard/notifications/preferences` | Yes | Notification preferences |
+| PUT | `/api/dashboard/notifications/preferences` | Yes | Update preferences |
 
-### Training
+### Training Sessions
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
@@ -66,7 +71,7 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 | GET | `/api/training/stats` | Yes | Training statistics |
 | GET | `/api/training/stats-enhanced` | Yes | Enhanced statistics |
 
-### Training Programs
+### Training Programs (Annual Periodization)
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
@@ -78,6 +83,13 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 | GET | `/api/training-programs/exercises` | Yes | Exercise library |
 | GET | `/api/training-programs/current-week` | Yes | Current training week |
 
+### Daily Training
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/daily-training` | Yes | Get daily training plan |
+| POST | `/api/daily-training` | Yes | Log daily training |
+
 ### Smart Training Recommendations
 
 | Method | Endpoint | Auth | Description |
@@ -85,15 +97,30 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 | GET | `/api/smart-training` | Yes | Smart recommendations |
 | POST | `/api/smart-training` | Yes | Get recommendations with params |
 
-### Load Management
+### Load Management (Evidence-Based)
+
+Based on 87 peer-reviewed studies with 12,453 athletes.
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
+| GET | `/api/load-management` | Yes | Overview (ACWR, monotony, TSB) |
 | GET | `/api/load-management/acwr` | Yes | ACWR calculation |
 | GET | `/api/load-management/monotony` | Yes | Training monotony |
 | GET | `/api/load-management/tsb` | Yes | Training stress balance |
-| GET | `/api/load-management/injury-risk` | Yes | Injury risk assessment |
+| GET | `/api/load-management/injury-risk` | Yes | Composite injury risk |
 | GET | `/api/load-management/training-loads` | Yes | Training load history |
+
+**ACWR Response:**
+```json
+{
+  "acwr": 1.15,
+  "riskZone": "safe",
+  "injuryRiskMultiplier": 1.0,
+  "acuteAverage": 450.5,
+  "chronicAverage": 391.7,
+  "recommendation": "Training load is in the optimal 'sweet spot'. Maintain current progression."
+}
+```
 
 ### Readiness
 
@@ -117,6 +144,18 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 | GET | `/api/performance/metrics` | Yes | Performance metrics |
 | GET | `/api/performance/trends` | Yes | Performance trends |
 | GET | `/api/performance/heatmap` | Yes | Performance heatmap |
+
+### Performance Data (Comprehensive)
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/performance-data/measurements` | Yes | Body measurements |
+| GET | `/api/performance-data/performance-tests` | Yes | Performance test results |
+| GET | `/api/performance-data/wellness` | Yes | Wellness data |
+| GET | `/api/performance-data/supplements` | Yes | Supplement logs |
+| GET | `/api/performance-data/injuries` | Yes | Injury history |
+| GET | `/api/performance-data/trends` | Yes | All trends combined |
+| GET | `/api/performance-data/export` | Yes | Export all data |
 
 ### Games & Stats
 
@@ -145,6 +184,7 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
 | POST | `/api/ai/chat` | Yes | AI chat with safety classification |
+| POST | `/api/ai/feedback` | Yes | Submit feedback on AI response |
 
 **Request Body:**
 ```json
@@ -172,8 +212,8 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| POST | `/api/knowledge-search` | No | Search knowledge base |
-| GET | `/api/knowledge-search/{topic}` | No | Get topic details |
+| POST | `/knowledge-search` | No | Search knowledge base |
+| GET | `/knowledge-search/{topic}` | No | Get topic details |
 
 ### Analytics
 
@@ -189,21 +229,48 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| GET | `/api/nutrition/search-foods` | Yes | Search food database |
+| GET | `/api/nutrition/search-foods?query={term}` | Yes | Search food database |
 | POST | `/api/nutrition/add-food` | Yes | Log food intake |
 | GET | `/api/nutrition/goals` | Yes | Nutrition goals |
-| GET | `/api/nutrition/meals` | Yes | Daily meals |
+| GET | `/api/nutrition/meals` | Yes | Today's meals |
 | GET | `/api/nutrition/ai-suggestions` | Yes | AI nutrition suggestions |
+| GET | `/api/nutrition/performance-insights` | Yes | Nutrition-performance insights |
+
+### Supplements
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/supplements/logs` | Yes | Supplement log history |
+| POST | `/api/supplements/log` | Yes | Log supplement intake |
 
 ### Recovery
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
 | GET | `/api/recovery/metrics` | Yes | Recovery metrics |
-| GET | `/api/recovery/protocols` | Yes | Recovery protocols |
+| GET | `/api/recovery/protocols` | Yes | Recommended protocols |
 | POST | `/api/recovery/start-session` | Yes | Start recovery session |
 | POST | `/api/recovery/complete-session` | Yes | Complete recovery session |
+| POST | `/api/recovery/stop-session` | Yes | Stop recovery session |
 | GET | `/api/recovery/weekly-trends` | Yes | Weekly recovery trends |
+| GET | `/api/recovery/research-insights` | Yes | Research-based insights |
+| GET | `/api/recovery/protocol-effectiveness` | Yes | Protocol effectiveness data |
+
+### Exercise Libraries
+
+#### Plyometrics (90 exercises)
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/plyometrics` | Yes | List plyometric exercises |
+| GET | `/api/plyometrics?position={pos}` | Yes | Filter by position |
+
+#### Isometrics (23 exercises)
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/isometrics` | Yes | List isometric exercises |
+| GET | `/api/isometrics?muscle_group={group}` | Yes | Filter by muscle group |
 
 ### Coach
 
@@ -215,7 +282,57 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 | POST | `/api/coach/training-session` | Yes | Create team session |
 | GET | `/api/coach/games` | Yes | Team games |
 
-### Community
+### Coach Activity Feed
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/coach-activity` | Yes | Activity feed |
+| GET | `/api/coach-activity/recent` | Yes | Recent activity |
+
+### Team Management
+
+#### Attendance
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/attendance` | Yes | Get attendance records |
+| POST | `/api/attendance` | Yes | Record attendance |
+| GET | `/api/attendance/practice/{id}` | Yes | Practice attendance |
+
+#### Depth Chart
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/depth-chart` | Yes | Get depth chart |
+| POST | `/api/depth-chart` | Yes | Update depth chart |
+
+#### Equipment
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/equipment` | Yes | List equipment |
+| POST | `/api/equipment` | Yes | Add equipment |
+| PUT | `/api/equipment/{id}` | Yes | Update equipment |
+
+#### Officials
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/officials` | Yes | List officials |
+| POST | `/api/officials` | Yes | Add official |
+
+### Chat & Community
+
+#### Real-time Chat
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/chat/channels` | Yes | List channels |
+| POST | `/api/chat/channels` | Yes | Create channel |
+| GET | `/api/chat/messages` | Yes | Get messages |
+| POST | `/api/chat/messages` | Yes | Send message |
+
+#### Community
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
@@ -223,6 +340,44 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 | POST | `/api/community/posts` | Yes | Create post |
 | GET | `/api/community/leaderboard` | Yes | Leaderboard |
 | GET | `/api/community/challenges` | Yes | Challenges |
+
+### Achievements
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/achievements` | Yes | List achievements |
+| GET | `/api/achievements/progress` | Yes | Achievement progress |
+
+### Push Notifications
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/push/subscribe` | Yes | Subscribe to push |
+| POST | `/api/push/unsubscribe` | Yes | Unsubscribe from push |
+| POST | `/api/push/send` | Yes | Send push notification |
+
+### User Profile
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/user/profile` | Yes | Get user profile |
+| PUT | `/api/user/profile` | Yes | Update profile |
+| GET | `/api/user/context` | Yes | Get user context |
+
+### Weather
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/weather/current` | Yes | Current weather |
+| GET | `/api/weather/forecast` | Yes | Weather forecast |
+
+### Trends
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/trends` | Yes | All trends |
+| GET | `/api/trends/performance` | Yes | Performance trends |
+| GET | `/api/trends/training` | Yes | Training trends |
 
 ### Admin
 
@@ -232,6 +387,14 @@ Tokens are obtained via Supabase Auth and validated by the `baseHandler` middlew
 | POST | `/api/admin/sync-usda` | Yes | Sync USDA data |
 | POST | `/api/admin/sync-research` | Yes | Sync research data |
 | POST | `/api/admin/create-backup` | Yes | Create database backup |
+
+### Compute Endpoints
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/compute-acwr` | Yes | Compute ACWR |
+| GET | `/api/training-metrics` | Yes | Training metrics |
+| POST | `/api/import-open-data` | Yes | Import open data |
 
 ---
 
@@ -256,6 +419,7 @@ All endpoints return consistent error responses:
 | `unauthorized` | 401 | Missing or invalid auth token |
 | `forbidden` | 403 | Insufficient permissions |
 | `not_found` | 404 | Resource not found |
+| `method_not_allowed` | 405 | HTTP method not supported |
 | `rate_limited` | 429 | Too many requests |
 | `internal_error` | 500 | Server error |
 
@@ -299,13 +463,43 @@ export class MyService {
 
 ---
 
-## Related Documentation
+## Netlify Functions Reference
 
-- [API_DOCUMENTATION.md](API_DOCUMENTATION.md) - Algorithm API details
-- [BACKEND_SETUP.md](BACKEND_SETUP.md) - Backend setup guide
-- [AUTHENTICATION_PATTERN.md](AUTHENTICATION_PATTERN.md) - Auth patterns
-- [AI_COACHING_SYSTEM_REVAMP.md](AI_COACHING_SYSTEM_REVAMP.md) - AI safety tiers
+All API endpoints are implemented as Netlify Functions in `/netlify/functions/`:
+
+| Function File | Endpoints Handled |
+|---------------|-------------------|
+| `health.cjs` | `/api/health` |
+| `dashboard.cjs` | `/api/dashboard/*` |
+| `training-sessions.cjs` | `/api/training/sessions` |
+| `training-programs.cjs` | `/api/training-programs/*` |
+| `load-management.cjs` | `/api/load-management/*` |
+| `nutrition.cjs` | `/api/nutrition/*` |
+| `recovery.cjs` | `/api/recovery/*` |
+| `ai-chat.cjs` | `/api/ai/chat` |
+| `games.cjs` | `/api/games/*` |
+| `tournaments.cjs` | `/api/tournaments/*` |
+| `analytics.cjs` | `/api/analytics/*` |
+| `coach.cjs` | `/api/coach/*` |
+| `community.cjs` | `/api/community/*` |
+| `plyometrics.cjs` | `/api/plyometrics` |
+| `isometrics.cjs` | `/api/isometrics` |
+| `attendance.cjs` | `/api/attendance/*` |
+| `depth-chart.cjs` | `/api/depth-chart/*` |
+| `equipment.cjs` | `/api/equipment/*` |
+| `officials.cjs` | `/api/officials/*` |
+| `chat.cjs` | `/api/chat/*` |
+| `push.cjs` | `/api/push/*` |
 
 ---
 
-_Last Updated: December 26, 2025_
+## Related Documentation
+
+- [BACKEND_SETUP.md](BACKEND_SETUP.md) - Backend setup guide
+- [AUTHENTICATION_PATTERN.md](AUTHENTICATION_PATTERN.md) - Auth patterns
+- [DATABASE_SETUP.md](DATABASE_SETUP.md) - Database schema
+- [RLS_POLICY_SPECIFICATION.md](RLS_POLICY_SPECIFICATION.md) - Row Level Security
+
+---
+
+_Last Updated: December 28, 2025_

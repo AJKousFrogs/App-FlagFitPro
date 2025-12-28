@@ -292,7 +292,7 @@ type TeamRole =
             icon="pi-users"
             [actionLabel]="canManageRoster() ? 'Add First Player' : ''"
             actionIcon="pi pi-plus"
-            [actionHandler]="canManageRoster() ? openAddPlayer.bind(this) : undefined"
+            [actionHandler]="canManageRoster() ? openAddPlayer.bind(this) : null"
           ></app-empty-state>
         }
 
@@ -530,7 +530,7 @@ type TeamRole =
                       </div>
                     </div>
                     
-                    @if (player.stats && Object.keys(player.stats).length > 0) {
+                    @if (player.stats && getPlayerStats(player).length > 0) {
                       <div class="player-stats">
                         @for (stat of getPlayerStats(player); track trackByStatKey($index, stat)) {
                           <p-tag
@@ -800,7 +800,7 @@ type TeamRole =
               }
             </div>
             
-            @if (selectedPlayer()!.stats && Object.keys(selectedPlayer()!.stats!).length > 0) {
+            @if (selectedPlayer()!.stats && getPlayerStats(selectedPlayer()!).length > 0) {
               <div class="details-stats">
                 <h3>Performance Stats</h3>
                 <div class="stats-chips">
@@ -2015,7 +2015,7 @@ export class RosterComponent implements OnInit {
     { label: 'Linebacker', value: 'LB' },
   ];
 
-  statusOptions = [
+  statusOptions: Array<{ label: string; value: 'active' | 'injured' | 'inactive' }> = [
     { label: 'Active', value: 'active' },
     { label: 'Injured', value: 'injured' },
     { label: 'Inactive', value: 'inactive' },

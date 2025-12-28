@@ -1588,7 +1588,7 @@ export class TournamentsComponent implements OnInit {
   };
   
   // Options
-  availabilityOptions = [
+  availabilityOptions: Array<{ value: 'pending' | 'confirmed' | 'declined' | 'tentative'; label: string; icon: string }> = [
     { value: 'confirmed', label: 'Yes, I\'m in!', icon: 'pi pi-check-circle' },
     { value: 'tentative', label: 'Maybe', icon: 'pi pi-question-circle' },
     { value: 'declined', label: 'Can\'t make it', icon: 'pi pi-times-circle' },

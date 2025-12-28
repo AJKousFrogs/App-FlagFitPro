@@ -84,13 +84,13 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               <div class="card-header">
                 <h3>Officials Directory</h3>
                 <div class="filter-actions">
-                  <p-dropdown
+                  <p-select
                     [options]="certificationOptions"
                     [(ngModel)]="selectedCertification"
                     placeholder="All Levels"
                     [showClear]="true"
                     (onChange)="filterOfficials()"
-                  ></p-dropdown>
+                  ></p-select>
                 </div>
               </div>
             </ng-template>
@@ -315,12 +315,12 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             <div class="form-row">
               <div class="form-field">
                 <label>Certification Level</label>
-                <p-dropdown
+                <p-select
                   [options]="certificationOptions"
                   [(ngModel)]="officialForm.certification_level"
                   placeholder="Select level"
                   [style]="{ width: '100%' }"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="form-field">
@@ -361,24 +361,24 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
 
               <div class="form-field">
                 <label>Game *</label>
-                <p-dropdown
+                <p-select
                   [options]="upcomingGames()"
                   [(ngModel)]="scheduleForm.game_id"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select game"
                   [style]="{ width: '100%' }"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="form-field">
                 <label>Role *</label>
-                <p-dropdown
+                <p-select
                   [options]="roleOptions"
                   [(ngModel)]="scheduleForm.role"
                   placeholder="Select role"
                   [style]="{ width: '100%' }"
-                ></p-dropdown>
+                ></p-select>
               </div>
 
               <div class="form-field">
@@ -701,11 +701,11 @@ export class OfficialsComponent implements OnInit {
     return found?.label || level;
   }
 
-  getCertificationSeverity(level: string | undefined): "success" | "info" | "warning" | "danger" {
-    const severities: Record<string, "success" | "info" | "warning" | "danger"> = {
+  getCertificationSeverity(level: string | undefined): "success" | "info" | "warn" | "danger" {
+    const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
       professional: "success",
       college: "info",
-      high_school: "warning",
+      high_school: "warn",
       youth: "secondary" as "info",
     };
     return severities[level || ""] || "info";
@@ -726,11 +726,11 @@ export class OfficialsComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
-    const severities: Record<string, "success" | "info" | "warning" | "danger"> = {
+  getStatusSeverity(status: string): "success" | "info" | "warn" | "danger" {
+    const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
       confirmed: "success",
       scheduled: "info",
-      declined: "warning",
+      declined: "warn",
       no_show: "danger",
     };
     return severities[status] || "info";

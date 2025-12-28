@@ -838,11 +838,11 @@ export class LandingComponent {
   
   currentYear = new Date().getFullYear();
 
-  // Hero stats data
+  // Hero stats data - authentic messaging for Olympic-bound athletes
   heroStats = [
-    { value: '10K+', label: 'Active Players' },
-    { value: '500+', label: 'Tournaments' },
-    { value: '50K+', label: 'Training Sessions' },
+    { value: 'LA28', label: 'Olympic Debut' },
+    { value: '5v5', label: 'Olympic Format' },
+    { value: '∞', label: 'Your Potential' },
   ];
 
   // Particle data for background animation

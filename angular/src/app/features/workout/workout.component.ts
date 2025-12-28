@@ -16,7 +16,12 @@ import { TagModule } from "primeng/tag";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { SupabaseService } from "../../core/services/supabase.service";
+import { AuthService } from "../../core/services/auth.service";
+import { ToastService } from "../../core/services/toast.service";
+import { LoggerService } from "../../core/services/logger.service";
 
 interface WorkoutExercise {
   id: string;
@@ -49,6 +54,7 @@ interface Workout {
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -129,29 +135,44 @@ interface Workout {
           <ng-template pTemplate="header">
             <h3>Workout History</h3>
           </ng-template>
-          <div class="workouts-list">
-            @for (
-              workout of workoutHistory();
-              track trackByWorkoutId($index, workout)
-            ) {
-              <div class="workout-item">
-                <div class="workout-info">
-                  <h4>{{ workout.name }}</h4>
-                  <p class="workout-date">{{ workout.date }}</p>
-                  <p class="workout-stats">
-                    {{ workout.exercises.length }} exercises
-                  </p>
+          @if (isLoading()) {
+            <div class="loading-state">
+              <i class="pi pi-spin pi-spinner"></i>
+              <p>Loading workouts...</p>
+            </div>
+          } @else if (workoutHistory().length === 0) {
+            <app-empty-state
+              icon="pi-bolt"
+              title="No Workouts Yet"
+              message="Start logging your strength and conditioning sessions to track your Olympic preparation progress."
+              actionLabel="Log First Workout"
+              (actionClicked)="createNewWorkout()"
+            ></app-empty-state>
+          } @else {
+            <div class="workouts-list">
+              @for (
+                workout of workoutHistory();
+                track trackByWorkoutId($index, workout)
+              ) {
+                <div class="workout-item">
+                  <div class="workout-info">
+                    <h4>{{ workout.name }}</h4>
+                    <p class="workout-date">{{ workout.date }}</p>
+                    <p class="workout-stats">
+                      {{ workout.exercises.length }} exercises
+                    </p>
+                  </div>
+                  <div class="workout-status">
+                    <p-tag
+                      [value]="workout.completed ? 'Completed' : 'Incomplete'"
+                      [severity]="workout.completed ? 'success' : 'warn'"
+                    >
+                    </p-tag>
+                  </div>
                 </div>
-                <div class="workout-status">
-                  <p-tag
-                    [value]="workout.completed ? 'Completed' : 'Incomplete'"
-                    [severity]="workout.completed ? 'success' : 'warn'"
-                  >
-                  </p-tag>
-                </div>
-              </div>
-            }
-          </div>
+              }
+            </div>
+          }
         </p-card>
       </div>
     </app-main-layout>
@@ -287,6 +308,21 @@ interface Workout {
         margin: 0;
       }
 
+      .loading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-10);
+        color: var(--text-secondary);
+      }
+
+      .loading-state i {
+        font-size: 2rem;
+        margin-bottom: var(--space-3);
+        color: var(--color-brand-primary);
+      }
+
       @media (max-width: 768px) {
         .page-header {
           flex-direction: column;
@@ -305,67 +341,139 @@ interface Workout {
 })
 export class WorkoutComponent implements OnInit {
   private apiService = inject(ApiService);
+  private supabaseService = inject(SupabaseService);
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
+  private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
 
   activeWorkout = signal<Workout | null>(null);
   workoutHistory = signal<Workout[]>([]);
+  isLoading = signal(true);
 
   ngOnInit(): void {
     this.loadWorkouts();
   }
 
-  loadWorkouts(): void {
-    // Load workout history
-    this.workoutHistory.set([
-      {
-        id: "1",
-        name: "Upper Body Strength",
-        date: "2024-03-15",
-        exercises: [
-          {
-            id: "1",
-            name: "Bench Press",
-            sets: 3,
-            reps: 10,
-            weight: 185,
+  async loadWorkouts(): Promise<void> {
+    const user = this.authService.getUser();
+    if (!user?.id) {
+      this.isLoading.set(false);
+      return;
+    }
+
+    try {
+      // Load workout logs from Supabase
+      const { data: workoutLogs, error } = await this.supabaseService.client
+        .from('workout_logs')
+        .select(`
+          id,
+          session_id,
+          completed_at,
+          rpe,
+          duration_minutes,
+          notes,
+          training_sessions (
+            id,
+            name,
+            session_type,
+            exercises
+          )
+        `)
+        .eq('player_id', user.id)
+        .order('completed_at', { ascending: false })
+        .limit(20);
+
+      if (error) {
+        this.logger.warn('[Workout] Error loading workouts:', error);
+        this.isLoading.set(false);
+        return;
+      }
+
+      if (workoutLogs && workoutLogs.length > 0) {
+        const workouts: Workout[] = workoutLogs.map((log: any) => {
+          // Parse exercises from training session if available
+          let exercises: WorkoutExercise[] = [];
+          if (log.training_sessions?.exercises) {
+            try {
+              const parsedExercises = typeof log.training_sessions.exercises === 'string' 
+                ? JSON.parse(log.training_sessions.exercises) 
+                : log.training_sessions.exercises;
+              
+              exercises = (parsedExercises || []).map((ex: any, idx: number) => ({
+                id: ex.id || `${log.id}-${idx}`,
+                name: ex.name || ex.exercise_name || 'Exercise',
+                sets: ex.sets || 3,
+                reps: ex.reps || 10,
+                weight: ex.weight,
+                completed: true,
+              }));
+            } catch (e) {
+              this.logger.debug('[Workout] Could not parse exercises');
+            }
+          }
+
+          // If no exercises from session, create placeholder based on notes
+          if (exercises.length === 0) {
+            const notes = (log.notes || '').toLowerCase();
+            if (notes.includes('strength') || notes.includes('gym')) {
+              exercises = [
+                { id: '1', name: 'Strength Exercise', sets: 3, reps: 10, completed: true },
+              ];
+            } else if (notes.includes('sprint') || notes.includes('speed')) {
+              exercises = [
+                { id: '1', name: 'Sprint Drills', sets: 5, reps: 1, completed: true },
+              ];
+            } else {
+              exercises = [
+                { id: '1', name: 'Training Session', sets: 1, reps: 1, completed: true },
+              ];
+            }
+          }
+
+          return {
+            id: log.id,
+            name: log.training_sessions?.name || this.inferWorkoutName(log.notes),
+            date: new Date(log.completed_at).toLocaleDateString(),
+            exercises,
+            duration: log.duration_minutes,
             completed: true,
-          },
-          {
-            id: "2",
-            name: "Shoulder Press",
-            sets: 3,
-            reps: 10,
-            weight: 135,
-            completed: true,
-          },
-        ],
-        completed: true,
-      },
-      {
-        id: "2",
-        name: "Lower Body Power",
-        date: "2024-03-14",
-        exercises: [
-          {
-            id: "3",
-            name: "Squats",
-            sets: 4,
-            reps: 8,
-            weight: 225,
-            completed: true,
-          },
-          {
-            id: "4",
-            name: "Deadlifts",
-            sets: 3,
-            reps: 6,
-            weight: 275,
-            completed: true,
-          },
-        ],
-        completed: true,
-      },
-    ]);
+          };
+        });
+
+        this.workoutHistory.set(workouts);
+      }
+    } catch (error) {
+      this.logger.error('[Workout] Failed to load workouts:', error);
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  private inferWorkoutName(notes: string | null): string {
+    if (!notes) return 'Training Session';
+    const lowerNotes = notes.toLowerCase();
+    
+    if (lowerNotes.includes('strength') || lowerNotes.includes('gym') || lowerNotes.includes('weight')) {
+      return 'Strength Training';
+    }
+    if (lowerNotes.includes('sprint') || lowerNotes.includes('speed')) {
+      return 'Speed Training';
+    }
+    if (lowerNotes.includes('route') || lowerNotes.includes('passing')) {
+      return 'Route Running';
+    }
+    if (lowerNotes.includes('agility') || lowerNotes.includes('cut')) {
+      return 'Agility Training';
+    }
+    if (lowerNotes.includes('conditioning') || lowerNotes.includes('cardio')) {
+      return 'Conditioning';
+    }
+    if (lowerNotes.includes('recovery') || lowerNotes.includes('mobility')) {
+      return 'Recovery Session';
+    }
+    
+    return 'Training Session';
   }
 
   createNewWorkout(): void {
@@ -382,29 +490,75 @@ export class WorkoutComponent implements OnInit {
     this.activeWorkout.set(newWorkout);
   }
 
-  saveWorkout(): void {
+  async saveWorkout(): Promise<void> {
     if (!this.activeWorkout()) return;
+
+    const user = this.authService.getUser();
+    if (!user?.id) {
+      this.toastService.error('Please log in to save workouts');
+      return;
+    }
 
     const workout = this.activeWorkout()!;
-    this.apiService
-      .put(`/api/training/workouts/${workout.id}`, workout)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          // Workout saved successfully
-        },
-        error: () => {
-          // Error handled by error interceptor
-        },
-      });
+    
+    try {
+      // Save as workout log
+      const { error } = await this.supabaseService.client
+        .from('workout_logs')
+        .insert({
+          player_id: user.id,
+          completed_at: new Date().toISOString(),
+          duration_minutes: workout.duration || 60,
+          rpe: 5, // Default RPE, can be adjusted
+          notes: `${workout.name}: ${workout.exercises.map(e => e.name).join(', ')}`,
+        });
+
+      if (error) throw error;
+      
+      this.toastService.success('Workout saved!');
+    } catch (error) {
+      this.logger.error('[Workout] Error saving:', error);
+      this.toastService.error('Failed to save workout');
+    }
   }
 
-  completeWorkout(): void {
+  async completeWorkout(): Promise<void> {
     if (!this.activeWorkout()) return;
 
+    const user = this.authService.getUser();
+    if (!user?.id) {
+      this.toastService.error('Please log in to complete workouts');
+      return;
+    }
+
     const workout = { ...this.activeWorkout()!, completed: true };
-    this.workoutHistory.update((history) => [workout, ...history]);
-    this.activeWorkout.set(null);
+    
+    try {
+      // Save completed workout to database
+      const { error } = await this.supabaseService.client
+        .from('workout_logs')
+        .insert({
+          player_id: user.id,
+          completed_at: new Date().toISOString(),
+          duration_minutes: workout.duration || 60,
+          rpe: 6, // Slightly higher RPE for completed workout
+          notes: `Completed: ${workout.name} - ${workout.exercises.filter(e => e.completed).length}/${workout.exercises.length} exercises`,
+        });
+
+      if (error) throw error;
+
+      // Update local state
+      this.workoutHistory.update((history) => [workout, ...history]);
+      this.activeWorkout.set(null);
+      this.toastService.success('Workout completed! 💪');
+    } catch (error) {
+      this.logger.error('[Workout] Error completing:', error);
+      this.toastService.error('Failed to complete workout');
+      
+      // Still update local state
+      this.workoutHistory.update((history) => [workout, ...history]);
+      this.activeWorkout.set(null);
+    }
   }
 
   trackByExerciseId(index: number, exercise: WorkoutExercise): string {

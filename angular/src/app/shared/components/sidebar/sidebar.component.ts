@@ -358,42 +358,83 @@ export class SidebarComponent implements OnInit, OnDestroy {
   
   isOpen = signal(false);
 
+  /**
+   * Reorganized navigation for better UX flow:
+   * - Primary: Most-used daily features
+   * - Competition: Game-related features (promoted)
+   * - Team: Team management
+   * - Secondary: Less frequent features
+   */
   private baseNavItems: NavItem[] = [
+    // === PRIMARY (Daily Use) ===
     {
-      label: "Overview",
+      label: "Dashboard",
       route: "/dashboard",
-      icon: "pi-th-large",
+      icon: "pi-home",
       ariaLabel: "Dashboard Overview",
     },
     {
       label: "Training",
       route: "/training",
       icon: "pi-bolt",
-      ariaLabel: "Training",
+      ariaLabel: "Training Hub",
+    },
+    {
+      label: "Today's Practice",
+      route: "/training/daily",
+      icon: "pi-play",
+      ariaLabel: "Today's Practice",
     },
     {
       label: "Analytics",
       route: "/analytics",
       icon: "pi-chart-bar",
-      ariaLabel: "Analytics",
+      ariaLabel: "Performance Analytics",
     },
-    {
-      label: "Game Tracker",
-      route: "/game-tracker",
-      icon: "pi-flag",
-      ariaLabel: "Game Tracker",
-    },
+    // === WELLNESS & RECOVERY (Promoted) ===
     {
       label: "Wellness",
       route: "/wellness",
       icon: "pi-heart",
-      ariaLabel: "Wellness",
+      ariaLabel: "Wellness & Recovery",
     },
+    {
+      label: "Travel Recovery",
+      route: "/travel/recovery",
+      icon: "pi-globe",
+      ariaLabel: "Travel & Jet Lag Recovery",
+    },
+    // === COMPETITION (Promoted) ===
+    {
+      label: "Game Day",
+      route: "/game/readiness",
+      icon: "pi-flag-fill",
+      ariaLabel: "Game Day Readiness",
+    },
+    {
+      label: "Tournament Fuel",
+      route: "/game/nutrition",
+      icon: "pi-apple",
+      ariaLabel: "Tournament Nutrition",
+    },
+    {
+      label: "Game Tracker",
+      route: "/game-tracker",
+      icon: "pi-video",
+      ariaLabel: "Live Game Tracker",
+    },
+    {
+      label: "Tournaments",
+      route: "/tournaments",
+      icon: "pi-trophy",
+      ariaLabel: "Tournament Schedule",
+    },
+    // === TEAM ===
     {
       label: "Roster",
       route: "/roster",
       icon: "pi-users",
-      ariaLabel: "Roster",
+      ariaLabel: "Team Roster",
     },
     {
       label: "Depth Chart",
@@ -402,23 +443,38 @@ export class SidebarComponent implements OnInit, OnDestroy {
       ariaLabel: "Depth Chart",
       roles: ["coach", "assistant_coach", "admin"],
     },
+    // === RESOURCES ===
     {
-      label: "Tournaments",
-      route: "/tournaments",
-      icon: "pi-trophy",
-      ariaLabel: "Tournaments",
+      label: "Training Videos",
+      route: "/training/videos",
+      icon: "pi-youtube",
+      ariaLabel: "Training Video Library",
     },
+    {
+      label: "Exercise Library",
+      route: "/exercise-library",
+      icon: "pi-book",
+      ariaLabel: "Exercise Library",
+    },
+    // === COMMUNITY ===
     {
       label: "Community",
       route: "/community",
-      icon: "pi-globe",
+      icon: "pi-comments",
       ariaLabel: "Community",
     },
     {
       label: "Chat",
       route: "/chat",
-      icon: "pi-comments",
-      ariaLabel: "Chat",
+      icon: "pi-inbox",
+      ariaLabel: "Team Chat",
+    },
+    // === SECONDARY ===
+    {
+      label: "Equipment",
+      route: "/equipment",
+      icon: "pi-box",
+      ariaLabel: "Equipment Checklist",
     },
     {
       label: "Settings",

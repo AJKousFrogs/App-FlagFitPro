@@ -240,43 +240,46 @@ interface ScheduleBlock {
               @if (block.block === 'Warm-Up' && block.protocol) {
                 <p-accordion [multiple]="true">
                   @for (phase of block.protocol.phases; track phase.name) {
-                    <p-accordionTab [header]="phase.name + ' (' + phase.duration + ' min)'">
-                      <div class="exercise-list">
-                        @for (exercise of phase.exercises; track exercise.name) {
-                          <div class="exercise-item">
-                            <div class="exercise-name">{{ exercise.name }}</div>
-                            <div class="exercise-details">
-                              @if (exercise.duration) {
-                                <span class="detail-badge">{{ exercise.duration }}</span>
+                    <p-accordion-panel [value]="phase.name">
+                      <p-accordion-header>{{ phase.name }} ({{ phase.duration }} min)</p-accordion-header>
+                      <p-accordion-content>
+                        <div class="exercise-list">
+                          @for (exercise of phase.exercises; track exercise.name) {
+                            <div class="exercise-item">
+                              <div class="exercise-name">{{ exercise.name }}</div>
+                              <div class="exercise-details">
+                                @if (exercise.duration) {
+                                  <span class="detail-badge">{{ exercise.duration }}</span>
+                                }
+                                @if (exercise.sets && exercise.reps) {
+                                  <span class="detail-badge">{{ exercise.sets }}×{{ exercise.reps }}</span>
+                                }
+                                @if (exercise.distance) {
+                                  <span class="detail-badge">{{ exercise.distance }}</span>
+                                }
+                                @if (exercise.focus) {
+                                  <span class="focus-badge">{{ exercise.focus }}</span>
+                                }
+                              </div>
+                              @if (exercise.variations) {
+                                <div class="variations">
+                                  @for (v of exercise.variations; track v) {
+                                    <span class="variation-tag">{{ v }}</span>
+                                  }
+                                </div>
                               }
-                              @if (exercise.sets && exercise.reps) {
-                                <span class="detail-badge">{{ exercise.sets }}×{{ exercise.reps }}</span>
-                              }
-                              @if (exercise.distance) {
-                                <span class="detail-badge">{{ exercise.distance }}</span>
-                              }
-                              @if (exercise.focus) {
-                                <span class="focus-badge">{{ exercise.focus }}</span>
+                              @if (exercise.breakdown) {
+                                <div class="breakdown">
+                                  @for (b of exercise.breakdown; track b.variation) {
+                                    <span class="breakdown-item">{{ b.variation }}: {{ b.duration }}</span>
+                                  }
+                                </div>
                               }
                             </div>
-                            @if (exercise.variations) {
-                              <div class="variations">
-                                @for (v of exercise.variations; track v) {
-                                  <span class="variation-tag">{{ v }}</span>
-                                }
-                              </div>
-                            }
-                            @if (exercise.breakdown) {
-                              <div class="breakdown">
-                                @for (b of exercise.breakdown; track b.variation) {
-                                  <span class="breakdown-item">{{ b.variation }}: {{ b.duration }}</span>
-                                }
-                              </div>
-                            }
-                          </div>
-                        }
-                      </div>
-                    </p-accordionTab>
+                          }
+                        </div>
+                      </p-accordion-content>
+                    </p-accordion-panel>
                   }
                 </p-accordion>
               }
@@ -294,34 +297,37 @@ interface ScheduleBlock {
                 </div>
                 <p-accordion [multiple]="true">
                   @for (exercise of asPlyoExercises(block.exercises); track exercise.exercise_name) {
-                    <p-accordionTab [header]="exercise.exercise_name">
-                      <div class="exercise-detail-card">
-                        <p class="exercise-description">{{ exercise.description }}</p>
-                        <div class="exercise-meta">
-                          <p-tag [value]="exercise.difficulty_level" [severity]="getDifficultySeverity(exercise.difficulty_level)"></p-tag>
-                          <span class="meta-item">{{ exercise.session_sets }} sets × {{ exercise.session_reps }} reps</span>
-                          <span class="meta-item">{{ exercise.recommended_contacts }} contacts</span>
-                        </div>
-                        <div class="instructions">
-                          <h4>Instructions</h4>
-                          <ol>
-                            @for (instruction of exercise.instructions; track instruction) {
-                              <li>{{ instruction }}</li>
-                            }
-                          </ol>
-                        </div>
-                        @if (exercise.safety_notes?.length) {
-                          <div class="safety-notes">
-                            <h4><i class="pi pi-exclamation-triangle"></i> Safety Notes</h4>
-                            <ul>
-                              @for (note of exercise.safety_notes; track note) {
-                                <li>{{ note }}</li>
-                              }
-                            </ul>
+                    <p-accordion-panel [value]="exercise.exercise_name">
+                      <p-accordion-header>{{ exercise.exercise_name }}</p-accordion-header>
+                      <p-accordion-content>
+                        <div class="exercise-detail-card">
+                          <p class="exercise-description">{{ exercise.description }}</p>
+                          <div class="exercise-meta">
+                            <p-tag [value]="exercise.difficulty_level" [severity]="getDifficultySeverity(exercise.difficulty_level)"></p-tag>
+                            <span class="meta-item">{{ exercise.session_sets }} sets × {{ exercise.session_reps }} reps</span>
+                            <span class="meta-item">{{ exercise.recommended_contacts }} contacts</span>
                           </div>
-                        }
-                      </div>
-                    </p-accordionTab>
+                          <div class="instructions">
+                            <h4>Instructions</h4>
+                            <ol>
+                              @for (instruction of exercise.instructions; track instruction) {
+                                <li>{{ instruction }}</li>
+                              }
+                            </ol>
+                          </div>
+                          @if (exercise.safety_notes?.length) {
+                            <div class="safety-notes">
+                              <h4><i class="pi pi-exclamation-triangle"></i> Safety Notes</h4>
+                              <ul>
+                                @for (note of exercise.safety_notes; track note) {
+                                  <li>{{ note }}</li>
+                                }
+                              </ul>
+                            </div>
+                          }
+                        </div>
+                      </p-accordion-content>
+                    </p-accordion-panel>
                   }
                 </p-accordion>
               }
@@ -339,31 +345,34 @@ interface ScheduleBlock {
                 </div>
                 <p-accordion [multiple]="true">
                   @for (exercise of asIsoExercises(block.exercises); track exercise.name) {
-                    <p-accordionTab [header]="exercise.name">
-                      <div class="exercise-detail-card">
-                        <p class="exercise-description">{{ exercise.description }}</p>
-                        <div class="exercise-meta">
-                          <p-tag [value]="exercise.difficulty_level" [severity]="getDifficultySeverity(exercise.difficulty_level)"></p-tag>
-                          <p-tag [value]="exercise.category" severity="secondary"></p-tag>
-                          <span class="meta-item">{{ exercise.session_sets }} sets × {{ exercise.session_duration }}s hold</span>
-                          <span class="meta-item">{{ exercise.rest_between_sets }}s rest</span>
-                        </div>
-                        <div class="setup">
-                          <h4>Setup</h4>
-                          <p>{{ exercise.setup_instructions }}</p>
-                        </div>
-                        @if (exercise.execution_cues?.length) {
-                          <div class="cues">
-                            <h4>Execution Cues</h4>
-                            <div class="cue-tags">
-                              @for (cue of exercise.execution_cues; track cue) {
-                                <span class="cue-tag">{{ cue }}</span>
-                              }
-                            </div>
+                    <p-accordion-panel [value]="exercise.name">
+                      <p-accordion-header>{{ exercise.name }}</p-accordion-header>
+                      <p-accordion-content>
+                        <div class="exercise-detail-card">
+                          <p class="exercise-description">{{ exercise.description }}</p>
+                          <div class="exercise-meta">
+                            <p-tag [value]="exercise.difficulty_level" [severity]="getDifficultySeverity(exercise.difficulty_level)"></p-tag>
+                            <p-tag [value]="exercise.category" severity="secondary"></p-tag>
+                            <span class="meta-item">{{ exercise.session_sets }} sets × {{ exercise.session_duration }}s hold</span>
+                            <span class="meta-item">{{ exercise.rest_between_sets }}s rest</span>
                           </div>
-                        }
-                      </div>
-                    </p-accordionTab>
+                          <div class="setup">
+                            <h4>Setup</h4>
+                            <p>{{ exercise.setup_instructions }}</p>
+                          </div>
+                          @if (exercise.execution_cues?.length) {
+                            <div class="cues">
+                              <h4>Execution Cues</h4>
+                              <div class="cue-tags">
+                                @for (cue of exercise.execution_cues; track cue) {
+                                  <span class="cue-tag">{{ cue }}</span>
+                                }
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </p-accordion-content>
+                    </p-accordion-panel>
                   }
                 </p-accordion>
               }

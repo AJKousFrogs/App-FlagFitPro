@@ -40,7 +40,7 @@ interface Metric {
   value: string;
   label: string;
   trend: string;
-  trendType: "positive" | "negative";
+  trendType: "positive" | "negative" | "neutral";
 }
 
 @Component({
@@ -95,19 +95,21 @@ interface Metric {
               <ng-template pTemplate="header">
                 <div class="chart-header">
                   <h3 class="chart-title">Performance Trends</h3>
-                  <div class="chart-actions">
-                    <p-button
-                      label="Export"
-                      [outlined]="true"
-                      size="small"
-                      (onClick)="exportChart('performance')"
-                    ></p-button>
-                    <p-button 
-                      label="Customize" 
-                      size="small"
-                      (onClick)="customizeChart('performance')"
-                    ></p-button>
-                  </div>
+                  @if (performanceChartData()) {
+                    <div class="chart-actions">
+                      <p-button
+                        label="Export"
+                        [outlined]="true"
+                        size="small"
+                        (onClick)="exportChart('performance')"
+                      ></p-button>
+                      <p-button 
+                        label="Customize" 
+                        size="small"
+                        (onClick)="customizeChart('performance')"
+                      ></p-button>
+                    </div>
+                  }
                 </div>
               </ng-template>
               @if (performanceChartData()) {
@@ -116,21 +118,32 @@ interface Metric {
                   [data]="performanceChartData()"
                   [options]="lineChartOptions"
                 ></p-chart>
+                <div class="chart-insights">
+                  <div class="insight-item">
+                    <div class="insight-value">91</div>
+                    <div class="insight-label">Current Score</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">+13</div>
+                    <div class="insight-label">Total Improvement</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">+5.2%</div>
+                    <div class="insight-label">Weekly Trend</div>
+                  </div>
+                </div>
+              } @else {
+                <div class="empty-chart-state">
+                  <i class="pi pi-chart-line empty-icon"></i>
+                  <h4>No Performance Data Yet</h4>
+                  <p>Complete training sessions and wellness check-ins to see your performance trends.</p>
+                  <p-button 
+                    label="Start Training" 
+                    icon="pi pi-bolt"
+                    [routerLink]="['/training']"
+                  ></p-button>
+                </div>
               }
-              <div class="chart-insights">
-                <div class="insight-item">
-                  <div class="insight-value">91</div>
-                  <div class="insight-label">Current Score</div>
-                </div>
-                <div class="insight-item">
-                  <div class="insight-value">+13</div>
-                  <div class="insight-label">Total Improvement</div>
-                </div>
-                <div class="insight-item">
-                  <div class="insight-value">+5.2%</div>
-                  <div class="insight-label">Weekly Trend</div>
-                </div>
-              </div>
             </p-card>
           } @placeholder {
             <p-card class="chart-card">
@@ -146,19 +159,21 @@ interface Metric {
               <ng-template pTemplate="header">
                 <div class="chart-header">
                   <h3 class="chart-title">Team Chemistry Analysis</h3>
-                  <div class="chart-actions">
-                    <p-button
-                      label="Details"
-                      [outlined]="true"
-                      size="small"
-                      (onClick)="viewChartDetails('chemistry')"
-                    ></p-button>
-                    <p-button 
-                      label="Improve" 
-                      size="small"
-                      (onClick)="showImprovementTips('chemistry')"
-                    ></p-button>
-                  </div>
+                  @if (chemistryChartData()) {
+                    <div class="chart-actions">
+                      <p-button
+                        label="Details"
+                        [outlined]="true"
+                        size="small"
+                        (onClick)="viewChartDetails('chemistry')"
+                      ></p-button>
+                      <p-button 
+                        label="Improve" 
+                        size="small"
+                        (onClick)="showImprovementTips('chemistry')"
+                      ></p-button>
+                    </div>
+                  }
                 </div>
               </ng-template>
               @if (chemistryChartData()) {
@@ -167,21 +182,32 @@ interface Metric {
                   [data]="chemistryChartData()"
                   [options]="radarChartOptions"
                 ></p-chart>
+                <div class="chart-insights">
+                  <div class="insight-item">
+                    <div class="insight-value">8.4</div>
+                    <div class="insight-label">Overall Score</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">9.1</div>
+                    <div class="insight-label">Trust Level</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">7.5</div>
+                    <div class="insight-label">Leadership</div>
+                  </div>
+                </div>
+              } @else {
+                <div class="empty-chart-state">
+                  <i class="pi pi-users empty-icon"></i>
+                  <h4>Team Chemistry Coming Soon</h4>
+                  <p>Join a team and participate in team activities to build chemistry metrics.</p>
+                  <p-button 
+                    label="View Roster" 
+                    icon="pi pi-users"
+                    [routerLink]="['/roster']"
+                  ></p-button>
+                </div>
               }
-              <div class="chart-insights">
-                <div class="insight-item">
-                  <div class="insight-value">8.4</div>
-                  <div class="insight-label">Overall Score</div>
-                </div>
-                <div class="insight-item">
-                  <div class="insight-value">9.1</div>
-                  <div class="insight-label">Trust Level</div>
-                </div>
-                <div class="insight-item">
-                  <div class="insight-value">7.5</div>
-                  <div class="insight-label">Leadership</div>
-                </div>
-              </div>
             </p-card>
           } @placeholder {
             <p-card class="chart-card">
@@ -197,19 +223,21 @@ interface Metric {
               <ng-template pTemplate="header">
                 <div class="chart-header">
                   <h3 class="chart-title">Training Session Distribution</h3>
-                  <div class="chart-actions">
-                    <p-button
-                      label="Filter"
-                      [outlined]="true"
-                      size="small"
-                      (onClick)="filterTrainingData()"
-                    ></p-button>
-                    <p-button 
-                      label="Schedule" 
-                      size="small"
-                      [routerLink]="['/training/schedule']"
-                    ></p-button>
-                  </div>
+                  @if (distributionChartData()) {
+                    <div class="chart-actions">
+                      <p-button
+                        label="Filter"
+                        [outlined]="true"
+                        size="small"
+                        (onClick)="filterTrainingData()"
+                      ></p-button>
+                      <p-button 
+                        label="Schedule" 
+                        size="small"
+                        [routerLink]="['/training/schedule']"
+                      ></p-button>
+                    </div>
+                  }
                 </div>
               </ng-template>
               @if (distributionChartData()) {
@@ -218,21 +246,32 @@ interface Metric {
                   [data]="distributionChartData()"
                   [options]="DOUGHNUT_CHART_OPTIONS"
                 ></p-chart>
+                <div class="chart-insights">
+                  <div class="insight-item">
+                    <div class="insight-value">30</div>
+                    <div class="insight-label">Agility Sessions</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">25</div>
+                    <div class="insight-label">Speed Sessions</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">20</div>
+                    <div class="insight-label">Technical Sessions</div>
+                  </div>
+                </div>
+              } @else {
+                <div class="empty-chart-state">
+                  <i class="pi pi-chart-pie empty-icon"></i>
+                  <h4>No Training Data Yet</h4>
+                  <p>Log your training sessions to see how your time is distributed across different workout types.</p>
+                  <p-button 
+                    label="Log Training" 
+                    icon="pi pi-plus"
+                    [routerLink]="['/training']"
+                  ></p-button>
+                </div>
               }
-              <div class="chart-insights">
-                <div class="insight-item">
-                  <div class="insight-value">30</div>
-                  <div class="insight-label">Agility Sessions</div>
-                </div>
-                <div class="insight-item">
-                  <div class="insight-value">25</div>
-                  <div class="insight-label">Speed Sessions</div>
-                </div>
-                <div class="insight-item">
-                  <div class="insight-value">20</div>
-                  <div class="insight-label">Technical Sessions</div>
-                </div>
-              </div>
             </p-card>
           } @placeholder {
             <p-card class="chart-card">
@@ -248,19 +287,21 @@ interface Metric {
               <ng-template pTemplate="header">
                 <div class="chart-header">
                   <h3 class="chart-title">Position Performance Comparison</h3>
-                  <div class="chart-actions">
-                    <p-button
-                      label="Benchmarks"
-                      [outlined]="true"
-                      size="small"
-                      (onClick)="showBenchmarks()"
-                    ></p-button>
-                    <p-button 
-                      label="Optimize" 
-                      size="small"
-                      (onClick)="showOptimizationTips()"
-                    ></p-button>
-                  </div>
+                  @if (positionChartData()) {
+                    <div class="chart-actions">
+                      <p-button
+                        label="Benchmarks"
+                        [outlined]="true"
+                        size="small"
+                        (onClick)="showBenchmarks()"
+                      ></p-button>
+                      <p-button 
+                        label="Optimize" 
+                        size="small"
+                        (onClick)="showOptimizationTips()"
+                      ></p-button>
+                    </div>
+                  }
                 </div>
               </ng-template>
               @if (positionChartData()) {
@@ -269,21 +310,32 @@ interface Metric {
                   [data]="positionChartData()"
                   [options]="BAR_CHART_OPTIONS"
                 ></p-chart>
+                <div class="chart-insights">
+                  <div class="insight-item">
+                    <div class="insight-value">94</div>
+                    <div class="insight-label">Top Performer</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">91</div>
+                    <div class="insight-label">Your Score</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">89</div>
+                    <div class="insight-label">Team Average</div>
+                  </div>
+                </div>
+              } @else {
+                <div class="empty-chart-state">
+                  <i class="pi pi-chart-bar empty-icon"></i>
+                  <h4>Position Data Coming Soon</h4>
+                  <p>Complete your profile with your position and log game stats to see position-specific analytics.</p>
+                  <p-button 
+                    label="Update Profile" 
+                    icon="pi pi-user"
+                    [routerLink]="['/settings']"
+                  ></p-button>
+                </div>
               }
-              <div class="chart-insights">
-                <div class="insight-item">
-                  <div class="insight-value">94</div>
-                  <div class="insight-label">Lorenzo S. #21</div>
-                </div>
-                <div class="insight-item">
-                  <div class="insight-value">91</div>
-                  <div class="insight-label">Aljosa K. #55</div>
-                </div>
-                <div class="insight-item">
-                  <div class="insight-value">89</div>
-                  <div class="insight-label">Vince M. #10</div>
-                </div>
-              </div>
             </p-card>
           } @placeholder {
             <p-card class="chart-card">
@@ -696,6 +748,41 @@ interface Metric {
         text-align: center;
         color: var(--color-text-secondary);
         font-size: var(--text-sm);
+      }
+
+      .empty-chart-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-10);
+        text-align: center;
+        min-height: 280px;
+      }
+
+      .empty-chart-state .empty-icon {
+        font-size: 3rem;
+        color: var(--p-surface-300);
+        margin-bottom: var(--space-4);
+      }
+
+      .empty-chart-state h4 {
+        font-size: var(--text-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin: 0 0 var(--space-2) 0;
+      }
+
+      .empty-chart-state p {
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
+        max-width: 280px;
+        margin: 0 0 var(--space-6) 0;
+        line-height: 1.5;
+      }
+
+      .trend-neutral {
+        color: var(--color-text-secondary);
       }
 
       .analytics-page {
@@ -1284,157 +1371,75 @@ export class AnalyticsComponent implements OnInit {
   }
 
   loadFallbackData(): void {
-    this.loadFallbackMetrics();
-    this.loadFallbackPerformanceChart();
-    this.loadFallbackChemistryChart();
-    this.loadFallbackDistributionChart();
-    this.loadFallbackPositionChart();
-    this.loadFallbackSpeedChart();
+    this.loadEmptyMetrics();
+    // Set charts to null to show empty states
+    this.performanceChartData.set(null);
+    this.chemistryChartData.set(null);
+    this.distributionChartData.set(null);
+    this.positionChartData.set(null);
+    this.speedChartData.set(null);
   }
 
-  loadFallbackMetrics(): void {
+  loadEmptyMetrics(): void {
     this.metrics.set([
       {
         icon: "pi-chart-bar",
-        value: "87%",
+        value: "N/A",
         label: "Overall Performance",
-        trend: "+5.2% this week",
-        trendType: "positive",
+        trend: "Log training to track",
+        trendType: "neutral" as const,
       },
       {
         icon: "pi-users",
-        value: "8.4",
+        value: "N/A",
         label: "Team Chemistry",
-        trend: "+0.6 improvement",
-        trendType: "positive",
+        trend: "Join a team to see",
+        trendType: "neutral" as const,
       },
       {
         icon: "pi-bolt",
-        value: "4.52s",
+        value: "N/A",
         label: "40-Yard Dash",
-        trend: "-0.13s faster",
-        trendType: "positive",
+        trend: "Record your time",
+        trendType: "neutral" as const,
       },
       {
         icon: "pi-trophy",
-        value: "73%",
-        label: "Olympic Qualification",
-        trend: "+8% progress",
-        trendType: "positive",
+        value: "LA28",
+        label: "Olympic Goal",
+        trend: "Start your journey",
+        trendType: "positive" as const,
       },
     ]);
   }
 
+  loadFallbackMetrics(): void {
+    this.loadEmptyMetrics();
+  }
+
   loadFallbackPerformanceChart(): void {
-    this.performanceChartData.set({
-      labels: [
-        "Week 1",
-        "Week 2",
-        "Week 3",
-        "Week 4",
-        "Week 5",
-        "Week 6",
-        "Week 7",
-      ],
-      datasets: [
-        {
-          label: "Performance Score",
-          data: [78, 82, 85, 79, 88, 91, 87],
-          borderColor: "var(--ds-primary-green)",
-          backgroundColor: "var(--ds-primary-green-subtle)",
-          borderWidth: 3,
-          fill: true,
-          tension: 0.4,
-        },
-      ],
-    });
+    // Return null to show empty state
+    this.performanceChartData.set(null);
   }
 
   loadFallbackChemistryChart(): void {
-    this.chemistryChartData.set({
-      labels: [
-        "Communication",
-        "Coordination",
-        "Trust",
-        "Cohesion",
-        "Leadership",
-        "Adaptability",
-      ],
-      datasets: [
-        {
-          label: "Team Chemistry",
-          data: [8.4, 9.1, 7.5, 8.8, 9.2, 8.0],
-          borderColor: "#089949",
-          backgroundColor: "rgba(16, 201, 107, 0.2)",
-          borderWidth: 2,
-        },
-      ],
-    });
+    // Return null to show empty state
+    this.chemistryChartData.set(null);
   }
 
   loadFallbackDistributionChart(): void {
-    this.distributionChartData.set({
-      labels: [
-        "Speed Training",
-        "Strength",
-        "Agility",
-        "Endurance",
-        "Technique",
-      ],
-      datasets: [
-        {
-          data: [30, 25, 20, 15, 10],
-          backgroundColor: [
-            "#089949",
-            "#10c89b",
-            "#f1c40f",
-            "#e74c3c",
-            "#3498db",
-          ], // Array - using actual values with design system equivalents in comments
-        },
-      ],
-    });
+    // Return null to show empty state
+    this.distributionChartData.set(null);
   }
 
   loadFallbackPositionChart(): void {
-    this.positionChartData.set({
-      labels: ["QB", "WR", "RB", "DB", "Rusher"],
-      datasets: [
-        {
-          label: "Performance",
-          data: [94, 91, 89, 87, 85],
-          backgroundColor: "var(--ds-primary-green)",
-        },
-      ],
-    });
+    // Return null to show empty state
+    this.positionChartData.set(null);
   }
 
   loadFallbackSpeedChart(): void {
-    this.speedChartData.set({
-      labels: [
-        "Week 1",
-        "Week 2",
-        "Week 3",
-        "Week 4",
-        "Week 5",
-        "Week 6",
-        "Week 7",
-      ],
-      datasets: [
-        {
-          label: "40-Yard",
-          data: [4.65, 4.58, 4.52, 4.49, 4.47, 4.46, 4.46],
-          borderColor: "var(--ds-primary-green)",
-          backgroundColor: "var(--ds-primary-green-subtle)",
-        },
-        {
-          label: "10-Yard",
-          data: [1.65, 1.6, 1.57, 1.55, 1.54, 1.54, 1.54],
-          borderColor: "#10c96b",
-          backgroundColor: "rgba(16, 201, 107, 0.1)",
-        },
-      ],
-    });
+    // Return null to show empty state
+    this.speedChartData.set(null);
   }
 
   trackByMetricLabel(index: number, metric: Metric): string {

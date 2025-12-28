@@ -42,6 +42,7 @@ import { TrainingLimitsService } from "../../../core/services/training-limits.se
 import { ReturnToPlayService } from "../../../core/services/return-to-play.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 
 @Component({
   selector: "app-training-safety",
@@ -557,6 +558,7 @@ export class TrainingSafetyComponent implements OnInit {
   private returnToPlayService = inject(ReturnToPlayService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
+  private supabaseService = inject(SupabaseService);
   private destroyRef = inject(DestroyRef);
 
   // ACWR signals
@@ -612,38 +614,344 @@ export class TrainingSafetyComponent implements OnInit {
     this.loadSafetyData();
   }
 
-  private loadSafetyData(): void {
+  private async loadSafetyData(): Promise<void> {
     const user = this.authService.getUser();
-    if (!user) return;
+    if (!user?.id) {
+      this.showEmptyState();
+      return;
+    }
 
-    // Load age-adjusted recovery data
-    // In real implementation, this would come from the service
-    this.ageGroup.set("Adult");
+    try {
+      // Load age-adjusted recovery from user profile
+      await this.loadAgeRecoveryData(user.id);
+      
+      // Load sleep debt from wellness data
+      await this.loadSleepDebtData(user.id);
+      
+      // Load movement limits from training sessions
+      await this.loadMovementLimits(user.id);
+      
+      // Load training history for the week
+      await this.loadTrainingHistory(user.id);
+      
+      // Load return-to-play status if any
+      await this.loadRTPStatus(user.id);
+      
+      // Generate recommendations based on real data
+      this.generateRecommendations();
+      
+    } catch (error) {
+      this.logger.error('[TrainingSafety] Error loading safety data:', error);
+      this.showEmptyState();
+    }
+  }
+
+  private async loadAgeRecoveryData(userId: string): Promise<void> {
+    try {
+      // Get user's date of birth from profile
+      const { data: profile } = await this.supabaseService.client
+        .from('users')
+        .select('date_of_birth')
+        .eq('id', userId)
+        .single();
+
+      if (profile?.date_of_birth) {
+        const dob = new Date(profile.date_of_birth);
+        const age = this.calculateAge(dob);
+        
+        // Set age group and recovery parameters
+        if (age < 18) {
+          this.ageGroup.set('Youth');
+          this.recoveryMultiplier.set(0.8);
+          this.maxSessionsPerWeek.set(5);
+          this.minRestDays.set(2);
+        } else if (age < 25) {
+          this.ageGroup.set('Young Adult');
+          this.recoveryMultiplier.set(0.9);
+          this.maxSessionsPerWeek.set(6);
+          this.minRestDays.set(1);
+        } else if (age < 35) {
+          this.ageGroup.set('Adult');
+          this.recoveryMultiplier.set(1.0);
+          this.maxSessionsPerWeek.set(6);
+          this.minRestDays.set(1);
+        } else {
+          this.ageGroup.set('Masters');
+          this.recoveryMultiplier.set(1.2);
+          this.maxSessionsPerWeek.set(5);
+          this.minRestDays.set(2);
+        }
+      }
+    } catch (error) {
+      this.logger.debug('[TrainingSafety] Could not load age data, using defaults');
+    }
+  }
+
+  private calculateAge(dob: Date): number {
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
+  private async loadSleepDebtData(userId: string): Promise<void> {
+    try {
+      // Get last 7 days of wellness entries for sleep data
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const { data: wellnessEntries } = await this.supabaseService.client
+        .from('wellness_entries')
+        .select('sleep_quality, date')
+        .or(`athlete_id.eq.${userId},user_id.eq.${userId}`)
+        .gte('date', sevenDaysAgo.toISOString().split('T')[0])
+        .order('date', { ascending: false });
+
+      if (wellnessEntries && wellnessEntries.length > 0) {
+        // Calculate sleep debt (assuming 8 hours is optimal)
+        const optimalSleep = 8;
+        let totalDebt = 0;
+        
+        wellnessEntries.forEach((entry: { sleep_quality?: number }) => {
+          if (entry.sleep_quality) {
+            // Convert 1-10 scale to hours (1=4h, 10=10h)
+            const estimatedHours = 4 + (entry.sleep_quality / 10) * 6;
+            const dailyDebt = Math.max(0, optimalSleep - estimatedHours);
+            totalDebt += dailyDebt;
+          }
+        });
+
+        this.sleepDebtHours.set(Math.round(totalDebt * 10) / 10);
+        
+        // Determine sleep debt level
+        if (totalDebt === 0) {
+          this.sleepDebtLevel.set('None');
+          this.trainingCapacity.set(100);
+        } else if (totalDebt < 5) {
+          this.sleepDebtLevel.set('Mild');
+          this.trainingCapacity.set(90);
+        } else if (totalDebt < 10) {
+          this.sleepDebtLevel.set('Moderate');
+          this.trainingCapacity.set(75);
+        } else {
+          this.sleepDebtLevel.set('Severe');
+          this.trainingCapacity.set(60);
+        }
+      } else {
+        // No wellness data - show defaults
+        this.sleepDebtHours.set(0);
+        this.sleepDebtLevel.set('Unknown');
+        this.trainingCapacity.set(100);
+      }
+    } catch (error) {
+      this.logger.debug('[TrainingSafety] Could not load sleep data');
+    }
+  }
+
+  private async loadMovementLimits(userId: string): Promise<void> {
+    try {
+      // Get this week's workout logs to count movement types
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // Start of week (Sunday)
+
+      const { data: workoutLogs } = await this.supabaseService.client
+        .from('workout_logs')
+        .select('notes, duration_minutes, rpe')
+        .eq('player_id', userId)
+        .gte('completed_at', weekStart.toISOString());
+
+      // Count movement types from workout notes
+      let sprints = 0, cuts = 0, throws = 0, jumps = 0;
+
+      if (workoutLogs) {
+        workoutLogs.forEach((log: { notes?: string; duration_minutes?: number }) => {
+          const notes = (log.notes || '').toLowerCase();
+          const duration = log.duration_minutes || 0;
+          
+          // Estimate movement counts based on session type
+          if (notes.includes('sprint') || notes.includes('speed')) {
+            sprints += Math.round(duration / 2); // ~30 sprints per hour
+          }
+          if (notes.includes('route') || notes.includes('agility') || notes.includes('cut')) {
+            cuts += Math.round(duration * 1.5); // ~90 cuts per hour
+          }
+          if (notes.includes('throw') || notes.includes('passing') || notes.includes('qb')) {
+            throws += Math.round(duration * 2); // ~120 throws per hour
+          }
+          if (notes.includes('jump') || notes.includes('plyometric')) {
+            jumps += Math.round(duration / 3); // ~20 jumps per hour
+          }
+        });
+      }
+
+      this.movementLimits.set([
+        { type: 'Sprints', current: sprints, max: 100 },
+        { type: 'Cuts', current: cuts, max: 200 },
+        { type: 'Throws', current: throws, max: 300 },
+        { type: 'Jumps', current: jumps, max: 150 },
+      ]);
+
+      // Determine overall status
+      const limits = this.movementLimits();
+      const anyOverLimit = limits.some(l => l.current > l.max);
+      const anyNearLimit = limits.some(l => l.current > l.max * 0.8);
+      
+      if (anyOverLimit) {
+        this.movementLimitStatus.set('Over Limit');
+      } else if (anyNearLimit) {
+        this.movementLimitStatus.set('Caution');
+      } else {
+        this.movementLimitStatus.set('Safe');
+      }
+    } catch (error) {
+      this.logger.debug('[TrainingSafety] Could not load movement limits');
+    }
+  }
+
+  private async loadTrainingHistory(userId: string): Promise<void> {
+    try {
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      
+      const lastWeekStart = new Date(weekStart);
+      lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+
+      // Get this week's sessions
+      const { data: thisWeekSessions } = await this.supabaseService.client
+        .from('workout_logs')
+        .select('completed_at, rpe, duration_minutes')
+        .eq('player_id', userId)
+        .gte('completed_at', weekStart.toISOString());
+
+      // Get last week's sessions for comparison
+      const { data: lastWeekSessions } = await this.supabaseService.client
+        .from('workout_logs')
+        .select('rpe, duration_minutes')
+        .eq('player_id', userId)
+        .gte('completed_at', lastWeekStart.toISOString())
+        .lt('completed_at', weekStart.toISOString());
+
+      if (thisWeekSessions) {
+        this.totalSessionsThisWeek.set(thisWeekSessions.length);
+        
+        // Calculate total load (RPE × duration)
+        const thisWeekLoad = thisWeekSessions.reduce((sum: number, s: { rpe?: number; duration_minutes?: number }) => 
+          sum + ((s.rpe || 5) * (s.duration_minutes || 60)), 0);
+        this.totalLoadThisWeek.set(thisWeekLoad);
+
+        // Calculate consecutive training days
+        const trainingDates = new Set(
+          thisWeekSessions.map((s: { completed_at: string }) => 
+            new Date(s.completed_at).toDateString())
+        );
+        let consecutive = 0;
+        const today = new Date();
+        for (let i = 0; i < 7; i++) {
+          const checkDate = new Date(today);
+          checkDate.setDate(checkDate.getDate() - i);
+          if (trainingDates.has(checkDate.toDateString())) {
+            consecutive++;
+          } else {
+            break;
+          }
+        }
+        this.consecutiveTrainingDays.set(consecutive);
+
+        // Calculate week-over-week change
+        if (lastWeekSessions && lastWeekSessions.length > 0) {
+          const lastWeekLoad = lastWeekSessions.reduce((sum: number, s: { rpe?: number; duration_minutes?: number }) => 
+            sum + ((s.rpe || 5) * (s.duration_minutes || 60)), 0);
+          
+          if (lastWeekLoad > 0) {
+            const change = ((thisWeekLoad - lastWeekLoad) / lastWeekLoad) * 100;
+            this.weeklyLoadChange.set(Math.round(change));
+          }
+        }
+      }
+    } catch (error) {
+      this.logger.debug('[TrainingSafety] Could not load training history');
+    }
+  }
+
+  private async loadRTPStatus(userId: string): Promise<void> {
+    try {
+      // Check for active return-to-play protocols
+      const { data: rtpProtocol } = await this.supabaseService.client
+        .from('injury_tracking')
+        .select('*')
+        .eq('player_id', userId)
+        .eq('status', 'in_recovery')
+        .order('injury_date', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (rtpProtocol) {
+        this.hasActiveRTP.set(true);
+        this.rtpInjuryType.set(rtpProtocol.injury_type || 'Unknown');
+        
+        const injuryDate = new Date(rtpProtocol.injury_date);
+        const daysInProtocol = Math.floor((Date.now() - injuryDate.getTime()) / (1000 * 60 * 60 * 24));
+        this.rtpDaysInProtocol.set(daysInProtocol);
+        
+        // Estimate progress based on typical recovery times
+        const typicalRecovery: Record<string, number> = {
+          'muscle_strain': 14,
+          'hamstring': 21,
+          'ankle_sprain': 14,
+          'knee': 28,
+          'concussion': 14,
+          'default': 21
+        };
+        const expectedDays = typicalRecovery[rtpProtocol.injury_type?.toLowerCase()] || typicalRecovery['default'];
+        const progress = Math.min(100, Math.round((daysInProtocol / expectedDays) * 100));
+        this.rtpProgress.set(progress);
+        
+        // Determine stage
+        if (progress < 25) {
+          this.rtpStage.set('Phase 1: Rest');
+          this.rtpRestrictions.set('No training, focus on recovery');
+        } else if (progress < 50) {
+          this.rtpStage.set('Phase 2: Light Activity');
+          this.rtpRestrictions.set('Walking, light stretching only');
+        } else if (progress < 75) {
+          this.rtpStage.set('Phase 3: Sport-Specific');
+          this.rtpRestrictions.set('No contact, 50% intensity');
+        } else {
+          this.rtpStage.set('Phase 4: Full Training');
+          this.rtpRestrictions.set('Full participation with monitoring');
+        }
+      } else {
+        this.hasActiveRTP.set(false);
+      }
+    } catch (error) {
+      this.logger.debug('[TrainingSafety] Could not load RTP status');
+      this.hasActiveRTP.set(false);
+    }
+  }
+
+  private showEmptyState(): void {
+    // Set default values for empty state
+    this.ageGroup.set('Unknown');
     this.recoveryMultiplier.set(1.0);
     this.maxSessionsPerWeek.set(6);
     this.minRestDays.set(1);
-
-    // Load sleep debt data
-    this.sleepDebtHours.set(2.5);
-    this.sleepDebtLevel.set("Mild");
-    this.trainingCapacity.set(90);
-
-    // Load movement limits
+    this.sleepDebtHours.set(0);
+    this.sleepDebtLevel.set('No Data');
+    this.trainingCapacity.set(100);
     this.movementLimits.set([
-      { type: "Sprints", current: 45, max: 100 },
-      { type: "Cuts", current: 120, max: 200 },
-      { type: "Throws", current: 180, max: 300 },
-      { type: "Jumps", current: 60, max: 150 },
+      { type: 'Sprints', current: 0, max: 100 },
+      { type: 'Cuts', current: 0, max: 200 },
+      { type: 'Throws', current: 0, max: 300 },
+      { type: 'Jumps', current: 0, max: 150 },
     ]);
-
-    // Generate recommendations
-    this.generateRecommendations();
-
-    // Load training history
-    this.totalSessionsThisWeek.set(4);
-    this.totalLoadThisWeek.set(2400);
-    this.consecutiveTrainingDays.set(2);
-    this.weeklyLoadChange.set(8);
+    this.movementLimitStatus.set('No Data');
+    this.totalSessionsThisWeek.set(0);
+    this.totalLoadThisWeek.set(0);
+    this.consecutiveTrainingDays.set(0);
+    this.weeklyLoadChange.set(0);
   }
 
   private generateRecommendations(): void {

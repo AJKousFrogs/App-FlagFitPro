@@ -41,4 +41,46 @@ export class HapticFeedbackService {
       navigator.vibrate(pattern);
     }
   }
+
+  /**
+   * Light haptic feedback - for subtle interactions
+   */
+  light(): void {
+    this.trigger("light");
+  }
+
+  /**
+   * Medium haptic feedback - for standard interactions
+   */
+  medium(): void {
+    this.trigger("medium");
+  }
+
+  /**
+   * Heavy haptic feedback - for important actions
+   */
+  heavy(): void {
+    this.trigger("heavy");
+  }
+
+  /**
+   * Success haptic feedback - for successful operations
+   */
+  success(): void {
+    this.trigger("success");
+  }
+
+  /**
+   * Warning haptic feedback - for warnings
+   */
+  warning(): void {
+    this.trigger("warning");
+  }
+
+  /**
+   * Error haptic feedback - for errors
+   */
+  error(): void {
+    this.trigger("error");
+  }
 }

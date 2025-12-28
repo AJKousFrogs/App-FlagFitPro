@@ -1,7 +1,8 @@
 # RLS Policy Specification
 
-**Version**: 1.0  
-**Last Updated**: January 2025  
+**Version**: 2.0  
+**Last Updated**: December 2025  
+**Last Verified Against Codebase**: 2025-12-28  
 **Status**: ✅ Implementation Guide
 
 ---

@@ -4,6 +4,9 @@
  * Used by Analytics, Performance, and Game Tracker components
  *
  * This service ensures consistent calculations across all views
+ *
+ * NOTE: ACWR calculations are now delegated to AcwrService (single source of truth)
+ * The calculateACWR method here is DEPRECATED - use AcwrService.acwrData() instead
  */
 
 import { Injectable, inject } from "@angular/core";
@@ -12,6 +15,7 @@ import { map } from "rxjs/operators";
 import { TrainingDataService, TrainingSession } from "./training-data.service";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { AcwrService } from "./acwr.service";
 
 export interface ACWRData {
   acwr: number | null;
@@ -84,6 +88,7 @@ export class TrainingStatsCalculationService {
   private apiService = inject(ApiService);
   private trainingDataService = inject(TrainingDataService);
   private logger = inject(LoggerService);
+  private acwrService = inject(AcwrService);
 
   /**
    * Get comprehensive training statistics
@@ -118,12 +123,37 @@ export class TrainingStatsCalculationService {
 
   /**
    * Calculate ACWR from sessions array
-   * Can be used client-side if needed, but prefer backend calculation
+   *
+   * @deprecated Use AcwrService.acwrData() instead for consistent ACWR calculations.
+   * This method is kept for backward compatibility but delegates to AcwrService.
+   *
+   * SINGLE SOURCE OF TRUTH: AcwrService is the authoritative source for all ACWR calculations.
    */
   calculateACWR(
     sessions: TrainingSession[],
     referenceDate: Date = new Date(),
   ): ACWRData {
+    // Log deprecation warning
+    this.logger.warn(
+      "[DEPRECATED] TrainingStatsCalculationService.calculateACWR() is deprecated. " +
+        "Use AcwrService.acwrData() for consistent ACWR calculations."
+    );
+
+    // Try to use AcwrService if data is available
+    const acwrData = this.acwrService.acwrData();
+    if (acwrData.ratio > 0) {
+      return {
+        acwr: acwrData.ratio,
+        acuteLoad: acwrData.acute,
+        chronicLoad: acwrData.chronic,
+        acuteDays: 7,
+        chronicDays: 28,
+        riskZone: this.mapRiskZone(acwrData.riskZone.level),
+        message: acwrData.riskZone.description,
+      };
+    }
+
+    // Fallback to local calculation if AcwrService has no data
     const today =
       referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
     const todayStr = today.toISOString().split("T")[0];
@@ -330,6 +360,28 @@ export class TrainingStatsCalculationService {
     }
 
     return currentStreak;
+  }
+
+  /**
+   * Map AcwrService risk zone level to local ACWRData riskZone format
+   */
+  private mapRiskZone(
+    level: string
+  ): "insufficient_data" | "detraining" | "optimal" | "elevated" | "danger" {
+    switch (level) {
+      case "no-data":
+        return "insufficient_data";
+      case "under-training":
+        return "detraining";
+      case "sweet-spot":
+        return "optimal";
+      case "elevated-risk":
+        return "elevated";
+      case "danger-zone":
+        return "danger";
+      default:
+        return "insufficient_data";
+    }
   }
 
   /**
