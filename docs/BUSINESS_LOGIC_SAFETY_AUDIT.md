@@ -694,6 +694,6 @@ Foam Roller, Resistance Bands, Dumbbells, Kettlebell, Pull-up Bar, Jump Rope, Yo
 
 ---
 
-*Last Updated: December 2025
+*Last Updated: 29. December 2025
 *
 *Version: 3.0.0*

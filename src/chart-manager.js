@@ -5,7 +5,6 @@ import { logger } from "./logger.js";
 
 // Dynamic import with fallback for older browsers
 let Chart;
-const _chartLoadPromise = null;
 
 // Async function to load Chart.js dynamically
 async function loadChart() {

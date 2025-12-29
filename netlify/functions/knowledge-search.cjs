@@ -1,24 +1,52 @@
 // Netlify Function: Knowledge Base Search
 // Searches the evidence-based knowledge database
+// Updated to work with actual knowledge_base_entries schema
 
-const { Pool } = require("pg");
+const { createClient } = require('@supabase/supabase-js');
 const {
   createSuccessResponse,
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { buildNumericCondition } = require("./utils/sql-formatter.cjs");
 
-// SECURITY: Whitelist of allowed categories to prevent SQL injection
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+
+function getSupabase() {
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Missing Supabase credentials');
+  }
+  return createClient(supabaseUrl, supabaseKey);
+}
+
+// SECURITY: Whitelist of allowed categories to prevent injection
 const ALLOWED_CATEGORIES = [
   "training",
   "nutrition",
   "recovery",
+  "psychology",
+  "injury_prevention",
   "technique",
   "mental",
   "injury",
   "equipment",
   "strategy",
+];
+
+// SECURITY: Whitelist of allowed subcategories
+const ALLOWED_SUBCATEGORIES = [
+  // Nutrition
+  "meal_planning", "hydration", "tournament", "supplements", "pre-training",
+  "food_database", "macro_calculator",
+  // Training
+  "speed", "power", "strength", "agility", "protocols", "skills", "warm-up", "research",
+  // Recovery
+  "sleep", "active_recovery", "protocols",
+  // Psychology
+  "mental_preparation", "confidence", "focus",
+  // Injury
+  "hamstring", "prevention",
 ];
 
 exports.handler = async (event, context) => {
@@ -28,11 +56,7 @@ exports.handler = async (event, context) => {
     rateLimitType: "READ",
     requireAuth: false, // Knowledge search is public
     handler: async (event, _context, { requestId }) => {
-      const pool = new Pool({
-        connectionString:
-          process.env.DATABASE_URL || process.env.SUPABASE_DB_URL,
-        ssl: { rejectUnauthorized: false },
-      });
+      const supabase = getSupabase();
 
       try {
         if (event.httpMethod === "POST") {
@@ -48,7 +72,7 @@ exports.handler = async (event, context) => {
             );
           }
 
-          const { query, category, limit = 5 } = bodyData;
+          const { query, category, subcategory, limit = 10 } = bodyData;
 
           if (!query || typeof query !== "string") {
             return createErrorResponse(
@@ -77,83 +101,187 @@ exports.handler = async (event, context) => {
             );
           }
 
-          const sanitizedLimit = Math.min(Math.max(parseInt(limit) || 5, 1), 50);
-
-          // Parse options for governance filters
-          const options = bodyData.options || {};
-          const requireApproval = options.requireApproval !== false;
-          const includeExperimental = options.includeExperimental === true;
-          const minQualityScore = parseFloat(options.minQualityScore) || 0.0;
-
-          // Build approval filter
-          let approvalFilter = "";
-          if (requireApproval) {
-            approvalFilter = includeExperimental
-              ? `AND kbe.approval_status IN ('approved', 'experimental')`
-              : `AND kbe.approval_status = 'approved'`;
-          }
-
-          // Build quality score filter
-          let qualityFilter = "";
-          if (minQualityScore > 0) {
-            const scoreCondition = buildNumericCondition(
-              "kbe.source_quality_score",
-              ">=",
-              minQualityScore
+          if (subcategory && !ALLOWED_SUBCATEGORIES.includes(subcategory)) {
+            return createErrorResponse(
+              "Invalid subcategory",
+              400,
+              "validation_error",
+              requestId
             );
-            qualityFilter = `AND (kbe.source_quality_score IS NULL OR ${scoreCondition})`;
           }
 
-          const searchQuery = `
-            SELECT 
-              kbe.*,
-              array_agg(DISTINCT ra.id) as supporting_articles,
-              array_agg(DISTINCT ra.title) as article_titles
-            FROM knowledge_base_entries kbe
-            LEFT JOIN unnest(kbe.supporting_articles) as article_id ON true
-            LEFT JOIN research_articles ra ON ra.id = article_id
-            WHERE 
-              (kbe.answer ILIKE $1
-              OR kbe.question ILIKE $1
-              OR kbe.topic ILIKE $1)
-              ${category ? `AND kbe.entry_type = $2` : ""}
-              ${approvalFilter}
-              ${qualityFilter}
-            GROUP BY kbe.id
-            ORDER BY 
-              kbe.approval_status = 'approved' DESC,
-              kbe.source_quality_score DESC NULLS LAST,
-              kbe.evidence_strength DESC,
-              kbe.query_count DESC
-            LIMIT $${category ? "3" : "2"}
-          `;
+          const sanitizedLimit = Math.min(Math.max(parseInt(limit) || 10, 1), 50);
 
-          const params = category
-            ? [`%${query}%`, category, sanitizedLimit]
-            : [`%${query}%`, sanitizedLimit];
+          // Build query
+          let queryBuilder = supabase
+            .from('knowledge_base_entries')
+            .select('*')
+            .eq('is_active', true)
+            .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
+            .order('source_quality_score', { ascending: false, nullsFirst: false })
+            .order('evidence_grade', { ascending: true })
+            .limit(sanitizedLimit);
 
-          const result = await pool.query(searchQuery, params);
-          return createSuccessResponse(result.rows, requestId);
+          // Apply category filter
+          if (category) {
+            queryBuilder = queryBuilder.eq('category', category);
+          }
+
+          // Apply subcategory filter
+          if (subcategory) {
+            queryBuilder = queryBuilder.eq('subcategory', subcategory);
+          }
+
+          const { data, error } = await queryBuilder;
+
+          if (error) {
+            console.error('Knowledge search error:', error);
+            return createErrorResponse(
+              "Search failed",
+              500,
+              "database_error",
+              requestId
+            );
+          }
+
+          // Format results
+          const results = data.map(entry => ({
+            id: entry.id,
+            title: entry.title,
+            content: entry.content,
+            category: entry.category,
+            subcategory: entry.subcategory,
+            evidenceGrade: entry.evidence_grade,
+            riskLevel: entry.risk_level,
+            requiresProfessional: entry.requires_professional,
+            sourceType: entry.source_type,
+            sourceUrl: entry.source_url,
+            sourceTitle: entry.source_title,
+            qualityScore: entry.source_quality_score,
+          }));
+
+          return createSuccessResponse({
+            query,
+            category: category || 'all',
+            results,
+            total: results.length,
+          }, requestId);
         }
 
         if (event.httpMethod === "GET") {
-          const topic = event.path.split("/").pop();
+          // Parse path for specific entry or category listing
+          const pathParts = event.path.replace(/^\/+|\/+$/g, '').split('/');
+          const endpoint = pathParts[pathParts.length - 1];
+          const params = event.queryStringParameters || {};
 
-          const result = await pool.query(
-            `
-            SELECT
-              kbe.*,
-              array_agg(DISTINCT ra.id) as supporting_articles
-            FROM knowledge_base_entries kbe
-            LEFT JOIN unnest(kbe.supporting_articles) as article_id ON true
-            LEFT JOIN research_articles ra ON ra.id = article_id
-            WHERE kbe.topic = $1
-            GROUP BY kbe.id
-          `,
-            [topic]
-          );
+          // GET /knowledge-search/categories - List all categories
+          if (endpoint === 'categories') {
+            const { data, error } = await supabase
+              .from('knowledge_base_entries')
+              .select('category, subcategory')
+              .eq('is_active', true);
 
-          return createSuccessResponse(result.rows[0] || null, requestId);
+            if (error) {
+              return createErrorResponse("Failed to fetch categories", 500, "database_error", requestId);
+            }
+
+            // Group by category
+            const categories = {};
+            data.forEach(entry => {
+              if (!categories[entry.category]) {
+                categories[entry.category] = new Set();
+              }
+              if (entry.subcategory) {
+                categories[entry.category].add(entry.subcategory);
+              }
+            });
+
+            const result = Object.entries(categories).map(([category, subcategories]) => ({
+              category,
+              subcategories: Array.from(subcategories),
+            }));
+
+            return createSuccessResponse(result, requestId);
+          }
+
+          // GET /knowledge-search/entry/:id - Get specific entry
+          if (endpoint === 'entry' || params.id) {
+            const entryId = params.id || pathParts[pathParts.length - 1];
+            
+            const { data, error } = await supabase
+              .from('knowledge_base_entries')
+              .select('*')
+              .eq('id', entryId)
+              .eq('is_active', true)
+              .single();
+
+            if (error || !data) {
+              return createErrorResponse("Entry not found", 404, "not_found", requestId);
+            }
+
+            // Increment query count
+            await supabase
+              .from('knowledge_base_entries')
+              .update({ query_count: (data.query_count || 0) + 1 })
+              .eq('id', entryId);
+
+            return createSuccessResponse(data, requestId);
+          }
+
+          // GET /knowledge-search?category=nutrition - List by category
+          if (params.category) {
+            if (!ALLOWED_CATEGORIES.includes(params.category)) {
+              return createErrorResponse(
+                "Invalid category",
+                400,
+                "validation_error",
+                requestId
+              );
+            }
+
+            let queryBuilder = supabase
+              .from('knowledge_base_entries')
+              .select('id, title, category, subcategory, evidence_grade, source_quality_score')
+              .eq('is_active', true)
+              .eq('category', params.category)
+              .order('source_quality_score', { ascending: false, nullsFirst: false });
+
+            if (params.subcategory && ALLOWED_SUBCATEGORIES.includes(params.subcategory)) {
+              queryBuilder = queryBuilder.eq('subcategory', params.subcategory);
+            }
+
+            const { data, error } = await queryBuilder;
+
+            if (error) {
+              return createErrorResponse("Failed to fetch entries", 500, "database_error", requestId);
+            }
+
+            return createSuccessResponse({
+              category: params.category,
+              subcategory: params.subcategory || 'all',
+              entries: data,
+              total: data.length,
+            }, requestId);
+          }
+
+          // GET /knowledge-search - List all entries (summary)
+          const { data, error } = await supabase
+            .from('knowledge_base_entries')
+            .select('id, title, category, subcategory, evidence_grade')
+            .eq('is_active', true)
+            .order('category')
+            .order('subcategory')
+            .limit(100);
+
+          if (error) {
+            return createErrorResponse("Failed to fetch entries", 500, "database_error", requestId);
+          }
+
+          return createSuccessResponse({
+            entries: data,
+            total: data.length,
+            hint: "Use POST with 'query' to search, or GET with 'category' to filter",
+          }, requestId);
         }
 
         return createErrorResponse(
@@ -162,8 +290,14 @@ exports.handler = async (event, context) => {
           "method_not_allowed",
           requestId
         );
-      } finally {
-        await pool.end();
+      } catch (error) {
+        console.error('Knowledge search error:', error);
+        return createErrorResponse(
+          error.message || "Internal server error",
+          500,
+          "internal_error",
+          requestId
+        );
       }
     },
   });

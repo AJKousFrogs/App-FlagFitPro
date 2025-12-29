@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { MessageService } from "primeng/api";
 import { LoggerService } from "./logger.service";
+import { ImageCompressionService } from "./image-compression.service";
 import { timer } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
@@ -60,6 +61,7 @@ export class PerformanceMonitorService {
   private messageService = inject(MessageService);
   private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
+  private imageCompression = inject(ImageCompressionService);
 
   metrics = signal<PerformanceMetric[]>([]);
   private performanceObserver?: PerformanceObserver;
@@ -301,8 +303,8 @@ export class PerformanceMonitorService {
     // Clear unused chart instances
     this.clearUnusedChartInstances();
 
-    // Compress images (placeholder - would need image optimization service)
-    // this.compressImages();
+    // Compress images in the DOM
+    this.compressPageImages();
 
     // Prefetch critical resources
     this.prefetchCriticalResources();
@@ -315,6 +317,50 @@ export class PerformanceMonitorService {
 
     // Show success message
     this.showToast("success", "Performance optimizations applied");
+  }
+
+  /**
+   * Find and compress large images on the current page
+   */
+  private async compressPageImages(): Promise<void> {
+    try {
+      const images = document.querySelectorAll('img[src^="data:"]');
+      let compressedCount = 0;
+
+      for (const img of Array.from(images)) {
+        const imgElement = img as HTMLImageElement;
+        const src = imgElement.src;
+        
+        // Skip small images or already optimized
+        if (!src.startsWith('data:image') || src.includes('image/webp')) {
+          continue;
+        }
+
+        try {
+          const result = await this.imageCompression.compressImageFromDataUrl(
+            src,
+            this.imageCompression.getPresetOptions('post')
+          );
+
+          // Only replace if we achieved significant compression
+          if (result.compressionRatio > 10) {
+            imgElement.src = result.dataUrl;
+            compressedCount++;
+            this.logger.debug(
+              `Compressed image: ${result.compressionRatio}% reduction`
+            );
+          }
+        } catch (error) {
+          this.logger.debug('Could not compress image:', error);
+        }
+      }
+
+      if (compressedCount > 0) {
+        this.logger.info(`Compressed ${compressedCount} images on page`);
+      }
+    } catch (error) {
+      this.logger.warn('Image compression optimization failed:', error);
+    }
   }
 
   private clearUnusedChartInstances(): void {

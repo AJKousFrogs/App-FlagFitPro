@@ -51,7 +51,6 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     InputTextModule,
     InputNumberModule,
     Select,
-    DatePicker,
     TooltipModule,
     AvatarModule,
     MainLayoutComponent,

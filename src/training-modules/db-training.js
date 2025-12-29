@@ -293,8 +293,6 @@ export class DBTrainingModule extends ComponentWithCleanup {
    * Create weekly DB training plan
    */
   createWeeklyDBPlan(analysis) {
-    const _primaryFocus = analysis.primaryWeaknesses[0]?.area || "general";
-
     const weeklyPlan = {
       monday: {
         focus: "Flag Pull Technique",

@@ -31,6 +31,7 @@ import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { TooltipModule } from "primeng/tooltip";
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: "app-settings",
@@ -51,6 +52,7 @@ import { TooltipModule } from "primeng/tooltip";
     DividerModule,
     ToggleSwitchModule,
     TooltipModule,
+    RouterLink,
   ],
   
   template: `
@@ -178,6 +180,19 @@ import { TooltipModule } from "primeng/tooltip";
                 >
               </div>
             </form>
+            <p-divider></p-divider>
+            <div class="privacy-controls-link">
+              <div class="link-info">
+                <h4>Advanced Privacy Controls</h4>
+                <p>Manage AI processing, team data sharing, research participation, and more.</p>
+              </div>
+              <p-button
+                label="Privacy Controls"
+                icon="pi pi-shield"
+                [outlined]="true"
+                routerLink="/settings/privacy"
+              ></p-button>
+            </div>
           </p-card>
 
           <!-- App Preferences -->
@@ -1029,6 +1044,27 @@ import { TooltipModule } from "primeng/tooltip";
         margin-top: var(--space-2);
         color: var(--text-secondary);
         font-size: var(--font-body-xs);
+      }
+
+      .privacy-controls-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--space-4);
+        padding-top: var(--space-3);
+      }
+
+      .privacy-controls-link .link-info h4 {
+        margin: 0 0 var(--space-1) 0;
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+      }
+
+      .privacy-controls-link .link-info p {
+        margin: 0;
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
       }
 
       @media (max-width: 768px) {

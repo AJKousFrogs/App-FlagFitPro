@@ -1,6 +1,6 @@
 # 📊 Data Sources Documentation
 
-**Last Updated**: December 2025  
+**Last Updated**: 29. December 2025  
 **Status**: Active
 
 ---

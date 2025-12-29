@@ -2,17 +2,13 @@
 // Imports open-source sport-science datasets and computes flag-football metrics
 // Endpoint: /api/import-open-data
 
-const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
-  handleServerError,
   handleValidationError,
-  logFunctionCall,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
 // Flag-football specific thresholds
 const HIGH_SPEED_M_S = 5.5; // High-speed running threshold (m/s)
@@ -66,103 +62,71 @@ function computeMetrics(raw) {
 /**
  * Import open dataset and compute metrics
  */
-exports.handler = async (event, _context) => {
-  // CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-      body: "",
-    };
-  }
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "import-open-data",
+    allowedMethods: ["POST"],
+    rateLimitType: "CREATE",
+    requireAuth: true,
+    handler: async (event, _context, { userId }) => {
+      // Parse request body
+      let body;
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch (_e) {
+        return handleValidationError("Invalid JSON in request body");
+      }
 
-  logFunctionCall("import-open-data", event.httpMethod);
+      // If athleteId not provided, use authenticated user's ID
+      const { athleteId = userId, dataset } = body;
 
-  try {
-    // Check environment variables
-    checkEnvVars();
+      // Validate required fields
+      if (!athleteId) {
+        return handleValidationError("athleteId is required");
+      }
 
-    // Only allow POST
-    if (event.httpMethod !== "POST") {
-      return createErrorResponse(
-        "Method not allowed. Use POST to import data.",
-        405,
-        "method_not_allowed",
-      );
-    }
+      if (!dataset || !Array.isArray(dataset)) {
+        return handleValidationError("dataset must be a non-empty array");
+      }
 
-    // SECURITY: Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, "CREATE");
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
+      if (dataset.length === 0) {
+        return handleValidationError("dataset array cannot be empty");
+      }
 
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
+      // Compute metrics from dataset
+      const metrics = computeMetrics(dataset);
 
-    const userId = auth.user.id;
+      // Insert into sessions table
+      const { data, error } = await supabaseAdmin
+        .from("sessions")
+        .insert({
+          athlete_id: athleteId,
+          date: new Date().toISOString().slice(0, 10),
+          rpe: 0, // Athletes fill this post-session
+          total_volume: metrics.total_volume,
+          high_speed_distance: metrics.high_speed_distance,
+          sprint_count: metrics.sprint_count,
+          duration_minutes: metrics.duration_minutes,
+          data_source: "open_dataset",
+          raw_data: dataset,
+        })
+        .select()
+        .single();
 
-    // Parse request body
-    let body;
-    try {
-      body = JSON.parse(event.body || "{}");
-    } catch (_e) {
-      return handleValidationError("Invalid JSON in request body");
-    }
+      if (error) {
+        console.error("Database error:", error);
+        return createErrorResponse(
+          `Failed to insert session: ${error.message}`,
+          500,
+          "database_error"
+        );
+      }
 
-    // If athleteId not provided, use authenticated user's ID
-    const { athleteId = userId, dataset } = body;
-
-    // Validate required fields
-    if (!athleteId) {
-      return handleValidationError("athleteId is required");
-    }
-
-    if (!dataset || !Array.isArray(dataset)) {
-      return handleValidationError("dataset must be a non-empty array");
-    }
-
-    if (dataset.length === 0) {
-      return handleValidationError("dataset array cannot be empty");
-    }
-
-    // Compute metrics from dataset
-    const metrics = computeMetrics(dataset);
-
-    // Insert into sessions table
-    const { data, error } = await supabaseAdmin
-      .from("sessions")
-      .insert({
-        athlete_id: athleteId,
-        date: new Date().toISOString().slice(0, 10),
-        rpe: 0, // Athletes fill this post-session
-        total_volume: metrics.total_volume,
-        high_speed_distance: metrics.high_speed_distance,
-        sprint_count: metrics.sprint_count,
-        duration_minutes: metrics.duration_minutes,
-        data_source: "open_dataset",
-        raw_data: dataset,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Database error:", error);
-      return createErrorResponse(
-        500,
-        `Failed to insert session: ${error.message}`,
-      );
-    }
-
-    return createSuccessResponse({
-      ok: true,
-      metrics,
-      session_id: data.id,
-    });
-  } catch (error) {
-    return handleServerError(error, "import-open-data");
-  }
+      return createSuccessResponse({
+        ok: true,
+        metrics,
+        session_id: data.id,
+      });
+    },
+  });
 };

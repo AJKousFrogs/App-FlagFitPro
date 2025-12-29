@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -14,16 +14,27 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
+import { TooltipModule } from "primeng/tooltip";
 import { Textarea } from "primeng/textarea";
 import { DatePicker } from "primeng/datepicker";
 import { Select } from "primeng/select";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import { ConsentBlockedMessageComponent } from "../../shared/components/consent-blocked-message/consent-blocked-message.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { ToastService } from "../../core/services/toast.service";
 import { SupabaseService } from "../../core/services/supabase.service";
+import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
+
+/**
+ * Interface for consent information returned from API
+ */
+interface ConsentInfo {
+  blockedPlayerIds: string[];
+  partialDataNotice?: string;
+}
 
 interface TeamMember {
   id: string;
@@ -32,6 +43,7 @@ interface TeamMember {
   performance: number;
   attendance: number;
   status: string;
+  isConsentBlocked?: boolean;
 }
 
 @Component({
@@ -40,6 +52,7 @@ interface TeamMember {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
+    RouterModule,
     CardModule,
     ButtonModule,
     ChartModule,
@@ -47,6 +60,7 @@ interface TeamMember {
     TagModule,
     DialogModule,
     InputTextModule,
+    TooltipModule,
     Textarea,
     DatePicker,
     Select,
@@ -71,6 +85,23 @@ interface TeamMember {
 
         <!-- Coach Stats -->
         <app-stats-grid [stats]="stats()"></app-stats-grid>
+
+        <!-- Partial Data Notice (when some players have blocked consent) -->
+        @if (hasBlockedPlayers()) {
+          <div class="partial-data-notice">
+            <div class="notice-icon">
+              <i class="pi pi-info-circle"></i>
+            </div>
+            <div class="notice-content">
+              <h4>{{ partialDataMessage.title }}</h4>
+              <p>{{ partialDataMessage.reason }}</p>
+              <a [routerLink]="partialDataMessage.helpLink" class="notice-link">
+                <i class="pi pi-external-link"></i>
+                {{ partialDataMessage.actionLabel }}
+              </a>
+            </div>
+          </div>
+        }
 
         <!-- Team Performance Chart - Lazy loaded for performance -->
         @defer (on viewport) {
@@ -114,39 +145,73 @@ interface TeamMember {
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-member>
-              <tr [attr.data-member-id]="member.id">
-                <td>{{ member.name }}</td>
+              <tr [attr.data-member-id]="member.id" [class.consent-blocked-row]="member.isConsentBlocked">
+                <td>
+                  <div class="member-name-cell">
+                    {{ member.name }}
+                    @if (member.isConsentBlocked) {
+                      <span class="blocked-indicator">
+                        <i class="pi pi-lock"></i>
+                      </span>
+                    }
+                  </div>
+                </td>
                 <td>{{ member.position }}</td>
                 <td>
-                  <p-tag
-                    [value]="member.performance + '%'"
-                    [severity]="getPerformanceSeverity(member.performance)"
-                  >
-                  </p-tag>
-                </td>
-                <td>{{ member.attendance }}%</td>
-                <td>
-                  <p-tag
-                    [value]="member.status"
-                    [severity]="getStatusSeverity(member.status)"
-                  >
-                  </p-tag>
+                  @if (member.isConsentBlocked) {
+                    <span class="blocked-data">—</span>
+                  } @else {
+                    <p-tag
+                      [value]="member.performance + '%'"
+                      [severity]="getPerformanceSeverity(member.performance)"
+                    >
+                    </p-tag>
+                  }
                 </td>
                 <td>
-                  <p-button
-                    icon="pi pi-eye"
-                    [text]="true"
-                    [rounded]="true"
-                    ariaLabel="View details"
-                    (onClick)="viewMemberDetails(member)"
-                  ></p-button>
-                  <p-button
-                    icon="pi pi-pencil"
-                    [text]="true"
-                    [rounded]="true"
-                    ariaLabel="Edit"
-                    (onClick)="editMember(member)"
-                  ></p-button>
+                  @if (member.isConsentBlocked) {
+                    <span class="blocked-data">—</span>
+                  } @else {
+                    {{ member.attendance }}%
+                  }
+                </td>
+                <td>
+                  @if (member.isConsentBlocked) {
+                    <p-tag value="Private" severity="secondary"></p-tag>
+                  } @else {
+                    <p-tag
+                      [value]="member.status"
+                      [severity]="getStatusSeverity(member.status)"
+                    >
+                    </p-tag>
+                  }
+                </td>
+                <td>
+                  @if (member.isConsentBlocked) {
+                    <p-button
+                      icon="pi pi-envelope"
+                      [text]="true"
+                      [rounded]="true"
+                      ariaLabel="Request data sharing"
+                      pTooltip="Ask athlete to enable sharing"
+                      (onClick)="requestDataSharing(member)"
+                    ></p-button>
+                  } @else {
+                    <p-button
+                      icon="pi pi-eye"
+                      [text]="true"
+                      [rounded]="true"
+                      ariaLabel="View details"
+                      (onClick)="viewMemberDetails(member)"
+                    ></p-button>
+                    <p-button
+                      icon="pi pi-pencil"
+                      [text]="true"
+                      [rounded]="true"
+                      ariaLabel="Edit"
+                      (onClick)="editMember(member)"
+                    ></p-button>
+                  }
                 </td>
               </tr>
             </ng-template>
@@ -325,6 +390,101 @@ interface TeamMember {
         color: var(--text-secondary);
       }
 
+      /* Consent blocked styles */
+      .consent-blocked-row {
+        background: var(--surface-100) !important;
+        opacity: 0.85;
+      }
+
+      .member-name-cell {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .blocked-indicator {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        background: var(--surface-400);
+        border-radius: 50%;
+      }
+
+      .blocked-indicator i {
+        font-size: 10px;
+        color: white;
+      }
+
+      .blocked-data {
+        color: var(--text-secondary);
+        font-style: italic;
+      }
+
+      /* Partial Data Notice */
+      .partial-data-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        background: var(--p-blue-50);
+        border: 1px solid var(--p-blue-200);
+        border-radius: var(--p-border-radius);
+        margin-bottom: var(--space-6);
+      }
+
+      .notice-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--p-blue-100);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .notice-icon i {
+        font-size: 1.25rem;
+        color: var(--p-blue-600);
+      }
+
+      .notice-content {
+        flex: 1;
+      }
+
+      .notice-content h4 {
+        margin: 0 0 var(--space-1);
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+      }
+
+      .notice-content p {
+        margin: 0 0 var(--space-2);
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+      }
+
+      .notice-link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        font-size: var(--font-body-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--p-blue-600);
+        text-decoration: none;
+      }
+
+      .notice-link:hover {
+        text-decoration: underline;
+      }
+
+      .notice-link i {
+        font-size: 0.75rem;
+      }
+
       @media (max-width: 768px) {
         .stats-grid {
           grid-template-columns: repeat(2, 1fr);
@@ -348,6 +508,12 @@ export class CoachComponent implements OnInit {
   stats = signal<any[]>([]);
   teamChartData = signal<any>(null);
   teamMembers = signal<TeamMember[]>([]);
+  
+  // Consent blocked players tracking
+  consentInfo = signal<ConsentInfo>({ blockedPlayerIds: [] });
+  
+  // Get partial data message from centralized privacy copy
+  partialDataMessage = CONSENT_BLOCKED_MESSAGES.coachTeamPartialBlock;
 
   // Dialog state
   showCreateSessionDialog = false;
@@ -526,6 +692,23 @@ export class CoachComponent implements OnInit {
     // Navigate to edit member page
     this.toastService.info(`Editing ${member.name}`);
     this.router.navigate(['/roster'], { queryParams: { member: member.id, edit: true } });
+  }
+
+  /**
+   * Check if any players have blocked consent
+   */
+  hasBlockedPlayers(): boolean {
+    return this.teamMembers().some(m => m.isConsentBlocked);
+  }
+
+  /**
+   * Request data sharing from a player with blocked consent
+   */
+  requestDataSharing(member: TeamMember): void {
+    this.toastService.info(`Sending data sharing request to ${member.name}...`);
+    this.router.navigate(['/help/privacy-sharing'], { 
+      queryParams: { player: member.id, action: 'request' } 
+    });
   }
 
   getPerformanceSeverity(

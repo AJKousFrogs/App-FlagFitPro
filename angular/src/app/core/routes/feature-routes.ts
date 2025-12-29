@@ -467,6 +467,15 @@ export const profileRoutes: Routes = [
       ),
     canActivate: [authGuard],
   },
+  {
+    path: "settings/privacy",
+    loadComponent: () =>
+      import("../../features/settings/privacy-controls/privacy-controls.component").then(
+        (m) => m.PrivacyControlsComponent,
+      ),
+    canActivate: [authGuard],
+    title: "Privacy Controls - FlagFit Pro",
+  },
 ];
 
 /**

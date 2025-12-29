@@ -2,7 +2,7 @@
 // Provides interactive API documentation for the Flag Football app
 // Endpoint: /api/api-docs
 
-const { CORS_HEADERS, createSuccessResponse } = require("./utils/error-handler.cjs");
+const { createSuccessResponse, CORS_HEADERS } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
 // API endpoint definitions

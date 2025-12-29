@@ -4,11 +4,7 @@
 
 const https = require("https");
 const http = require("http");
-const {
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
-} = require("./utils/error-handler.cjs");
+const { CORS_HEADERS } = require("./utils/error-handler.cjs");
 
 // Cache for logo data (in-memory, resets on function restart)
 const logoCache = new Map();
@@ -86,9 +82,6 @@ async function fetchImageAsBase64(imageUrl) {
 }
 
 exports.handler = async (event, _context) => {
-  // Log function call
-  logFunctionCall("sponsor-logo", event);
-
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
@@ -194,31 +187,17 @@ exports.handler = async (event, _context) => {
     };
   } catch (error) {
     console.error("Error proxying sponsor logo:", error);
-    console.error("Error stack:", error.stack);
-    console.error("Error details:", {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-    });
-
-    // Return a proper error response instead of crashing
-    try {
-      return handleServerError(error, "Failed to proxy sponsor logo");
-    } catch (handlerError) {
-      // Fallback if error handler itself fails
-      console.error("Error handler failed:", handlerError);
-      return {
-        statusCode: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Failed to proxy sponsor logo",
-          errorType: "server_error",
-        }),
-      };
-    }
+    return {
+      statusCode: 500,
+      headers: {
+        ...CORS_HEADERS,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        success: false,
+        error: "Failed to proxy sponsor logo",
+        errorType: "server_error",
+      }),
+    };
   }
 };

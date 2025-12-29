@@ -18,6 +18,7 @@ import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { ToastModule } from "primeng/toast";
+import { CheckboxModule } from "primeng/checkbox";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -41,6 +42,7 @@ import {
     InputTextModule,
     MessageModule,
     ToastModule,
+    CheckboxModule,
   ],
   template: `
     <p-toast></p-toast>
@@ -127,6 +129,43 @@ import {
             @if (isFieldInvalid("confirmPassword")) {
               <small class="p-error">
                 {{ getFieldError("confirmPassword") }}
+              </small>
+            }
+          </div>
+
+          <div class="p-field mb-4">
+            <div class="age-verification">
+              <p-checkbox
+                formControlName="ageVerification"
+                [binary]="true"
+                inputId="ageVerification"
+              ></p-checkbox>
+              <label for="ageVerification" class="age-label">
+                I confirm that I am <strong>16 years of age or older</strong>
+              </label>
+            </div>
+            @if (isFieldInvalid("ageVerification")) {
+              <small class="p-error">
+                You must be 16 or older to use this app
+              </small>
+            }
+          </div>
+
+          <div class="p-field mb-4">
+            <div class="terms-agreement">
+              <p-checkbox
+                formControlName="termsAccepted"
+                [binary]="true"
+                inputId="termsAccepted"
+              ></p-checkbox>
+              <label for="termsAccepted" class="terms-label">
+                I agree to the <a href="/docs/terms" target="_blank">Terms of Service</a> 
+                and <a href="/docs/privacy" target="_blank">Privacy Policy</a>
+              </label>
+            </div>
+            @if (isFieldInvalid("termsAccepted")) {
+              <small class="p-error">
+                You must accept the Terms and Privacy Policy
               </small>
             }
           </div>
@@ -219,6 +258,35 @@ import {
         content: " *";
         color: var(--color-warning);
       }
+
+      .age-verification,
+      .terms-agreement {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+      }
+
+      .age-label,
+      .terms-label {
+        font-size: var(--font-body-sm);
+        color: var(--text-secondary);
+        line-height: 1.5;
+        cursor: pointer;
+      }
+
+      .age-label strong {
+        color: var(--text-primary);
+      }
+
+      .terms-label a {
+        color: var(--color-brand-primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .terms-label a:hover {
+        text-decoration: underline;
+      }
     `,
   ],
 })
@@ -251,6 +319,8 @@ export class RegisterComponent {
           ],
         ],
         confirmPassword: ["", [Validators.required]],
+        ageVerification: [false, [Validators.requiredTrue]],
+        termsAccepted: [false, [Validators.requiredTrue]],
       },
       { validators: this.passwordMatchValidator },
     );

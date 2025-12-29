@@ -51,13 +51,11 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
     InputTextModule,
     InputNumberModule,
     Select,
-    DatePicker,
     TooltipModule,
     BadgeModule,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
-    CurrencyPipe,
   ],
   template: `
     <app-main-layout>

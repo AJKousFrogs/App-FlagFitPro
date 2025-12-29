@@ -113,7 +113,7 @@ exports.handler = async (event, context) => {
       // Use appropriate status code
       const statusCode = overallStatus === "healthy" ? 200 : 503;
 
-      return createSuccessResponse(response, requestId, statusCode);
+      return createSuccessResponse(response, statusCode);
     },
   });
 };

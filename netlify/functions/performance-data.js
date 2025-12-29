@@ -1,128 +1,84 @@
- 
 // Netlify Functions - Performance Data API
 // Handles athlete performance data storage and retrieval using Supabase
 
-const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
-const {
-  createErrorResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
-} = require("./utils/error-handler.cjs");
-const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
+const { createErrorResponse } = require("./utils/error-handler.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("Performance-Data", event);
+exports.handler = async (event, context) => {
+  // Determine rate limit type based on HTTP method
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "CREATE";
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
+  return baseHandler(event, context, {
+    functionName: "performance-data",
+    allowedMethods: ["GET", "POST", "PUT", "DELETE"],
+    rateLimitType,
+    requireAuth: true,
+    handler: async (event, _context, { userId }) => {
+      const { httpMethod, path, body, queryStringParameters } = event;
+      const pathSegments = path.split("/").filter(Boolean);
+      const endpoint = pathSegments[pathSegments.length - 1];
 
-  try {
-    const { httpMethod, path, body, queryStringParameters } = event;
-    const pathSegments = path.split("/").filter(Boolean);
-    const endpoint = pathSegments[pathSegments.length - 1];
+      let response;
 
-    // Check environment variables
-    checkEnvVars();
+      switch (endpoint) {
+        case "measurements":
+          response = await handleMeasurements(
+            httpMethod,
+            userId,
+            body,
+            queryStringParameters,
+          );
+          break;
+        case "performance-tests":
+          response = await handlePerformanceTests(
+            httpMethod,
+            userId,
+            body,
+            queryStringParameters,
+          );
+          break;
+        case "wellness":
+          response = await handleWellness(
+            httpMethod,
+            userId,
+            body,
+            queryStringParameters,
+          );
+          break;
+        case "supplements":
+          response = await handleSupplements(
+            httpMethod,
+            userId,
+            body,
+            queryStringParameters,
+          );
+          break;
+        case "injuries":
+          response = await handleInjuries(
+            httpMethod,
+            userId,
+            body,
+            queryStringParameters,
+          );
+          break;
+        case "trends":
+          response = await handleTrends(
+            httpMethod,
+            userId,
+            queryStringParameters,
+          );
+          break;
+        case "export":
+          response = await handleExport(userId, queryStringParameters);
+          break;
+        default:
+          return createErrorResponse("Endpoint not found", 404, "not_found");
+      }
 
-    // SECURITY: Apply rate limiting
-    const rateLimitType = httpMethod === "GET" ? "READ" : "CREATE";
-    const rateLimitResponse = applyRateLimit(event, rateLimitType);
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    // SECURITY: Authenticate request using Supabase
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-
-    const userId = auth.user.id;
-
-    let response;
-
-    switch (endpoint) {
-      case "measurements":
-        response = await handleMeasurements(
-          httpMethod,
-          userId,
-          body,
-          queryStringParameters,
-        );
-        break;
-      case "performance-tests":
-        response = await handlePerformanceTests(
-          httpMethod,
-          userId,
-          body,
-          queryStringParameters,
-        );
-        break;
-      case "wellness":
-        response = await handleWellness(
-          httpMethod,
-          userId,
-          body,
-          queryStringParameters,
-        );
-        break;
-      case "supplements":
-        response = await handleSupplements(
-          httpMethod,
-          userId,
-          body,
-          queryStringParameters,
-        );
-        break;
-      case "injuries":
-        response = await handleInjuries(
-          httpMethod,
-          userId,
-          body,
-          queryStringParameters,
-        );
-        break;
-      case "trends":
-        response = await handleTrends(
-          httpMethod,
-          userId,
-          queryStringParameters,
-        );
-        break;
-      case "export":
-        response = await handleExport(userId, queryStringParameters);
-        break;
-      default:
-        response = createErrorResponse("Endpoint not found", 404, "not_found");
-        // Convert to old format for consistency with other handlers
-        response = {
-          statusCode: response.statusCode,
-          body: response.body,
-          headers: response.headers,
-        };
-    }
-
-    return {
-      ...response,
-      headers: { ...CORS_HEADERS, ...response.headers },
-    };
-  } catch (error) {
-    console.error("Error in performance-data function:", error);
-    console.error("Error stack:", error.stack);
-    console.error("Error details:", {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-    });
-    return handleServerError(error, "Performance-Data");
-  }
+      return response;
+    },
+  });
 };
 
 // Physical Measurements Handler

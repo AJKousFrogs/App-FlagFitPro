@@ -37,13 +37,13 @@ import { TagModule } from "primeng/tag";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, ButtonModule, TagModule],
   template: `
-    @if (visible() && currentAnnouncement()) {
+    @if (visible() && currentAnnouncement(); as announcement) {
       <div
         class="announcements-banner"
-        [class.important]="currentAnnouncement()?.is_important"
+        [class.important]="announcement.is_important"
       >
         <div class="banner-icon">
-          @if (currentAnnouncement()?.is_important) {
+          @if (announcement.is_important) {
             <i class="pi pi-exclamation-circle"></i>
           } @else {
             <i class="pi pi-megaphone"></i>
@@ -52,21 +52,21 @@ import { TagModule } from "primeng/tag";
 
         <div class="banner-content">
           <div class="banner-header">
-            @if (currentAnnouncement()?.is_important) {
+            @if (announcement.is_important) {
               <p-tag severity="danger" value="Important" [rounded]="true"></p-tag>
             }
             <span class="announcement-channel">
-              #{{ currentAnnouncement()?.channel_name }}
+              #{{ announcement.channel_name }}
             </span>
             <span class="announcement-author">
-              {{ currentAnnouncement()?.author_name }}
+              {{ announcement.author_name }}
             </span>
             <span class="announcement-time">
-              {{ formatTime(currentAnnouncement()?.created_at || '') }}
+              {{ formatTime(announcement.created_at || '') }}
             </span>
           </div>
           <div class="banner-message">
-            {{ currentAnnouncement()?.message }}
+            {{ announcement.message }}
           </div>
         </div>
 

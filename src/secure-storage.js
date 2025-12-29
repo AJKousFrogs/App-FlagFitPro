@@ -294,12 +294,13 @@ export class SecureStorage {
 
   /**
    * Legacy XOR encryption (for backward compatibility during migration)
-   * @deprecated Use encrypt() instead
+   * @deprecated Since v2.0 - Use encrypt() instead. Will be removed in v3.0
    * @param {string} text - Text to encrypt
    * @param {string} key - Encryption key
    * @returns {string} Encrypted text
    */
   simpleEncrypt(text, key) {
+    logger.warn("[SecureStorage] simpleEncrypt is deprecated. Use encrypt() instead.");
     let encrypted = "";
     for (let i = 0; i < text.length; i++) {
       const keyChar = key.charCodeAt(i % key.length);
@@ -311,12 +312,13 @@ export class SecureStorage {
 
   /**
    * Legacy XOR decryption (for backward compatibility during migration)
-   * @deprecated Use decrypt() instead
+   * @deprecated Since v2.0 - Use decrypt() instead. Will be removed in v3.0
    * @param {string} encryptedText - Encrypted text
    * @param {string} key - Decryption key
    * @returns {string|null} Decrypted text
    */
   simpleDecrypt(encryptedText, key) {
+    logger.warn("[SecureStorage] simpleDecrypt is deprecated. Use decrypt() instead.");
     try {
       const encrypted = atob(encryptedText);
       let decrypted = "";

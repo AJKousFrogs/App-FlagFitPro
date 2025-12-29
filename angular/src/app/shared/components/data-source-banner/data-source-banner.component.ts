@@ -1,312 +1,314 @@
+import {
+  Component,
+  Input,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
+import {
+  DataState,
+  DataWithState,
+  DataSourceService,
+} from '../../../core/services/data-source.service';
+
 /**
  * Data Source Banner Component
- *
- * CRITICAL SAFETY COMPONENT
- *
- * Displays prominent warnings when:
- * - Using mock/demo data (could lead to injury if acted upon)
- * - Insufficient data for reliable calculations
- * - First-time user with no data entries
- *
- * This component should be placed at the top of any dashboard
- * or page that displays performance metrics.
+ * 
+ * Displays a prominent banner when data is not in REAL_DATA state.
+ * Used to ensure users always know when they're looking at:
+ * - No data
+ * - Insufficient data for reliable metrics
+ * - Demo/mock data
+ * 
+ * Based on PLAYER_DATA_SAFETY_GUIDE.md requirements.
+ * 
+ * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
-import { Component, input, computed, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
-import { RouterModule } from "@angular/router";
-import { DataSourceService, DataSourceType } from "../../../core/services/data-source.service";
-
-export type BannerSeverity = "info" | "warning" | "danger" | "success";
-
 @Component({
-  selector: "app-data-source-banner",
+  selector: 'app-data-source-banner',
   standalone: true,
-  imports: [CommonModule, ButtonModule, RouterModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, ButtonModule, TagModule, TooltipModule],
   template: `
     @if (shouldShow()) {
-      <div
-        class="data-source-banner"
-        [class.banner-info]="severity() === 'info'"
-        [class.banner-warning]="severity() === 'warning'"
-        [class.banner-danger]="severity() === 'danger'"
-        [class.banner-success]="severity() === 'success'"
-        role="alert"
-        [attr.aria-live]="severity() === 'danger' ? 'assertive' : 'polite'"
-      >
+      <div class="data-source-banner" [class]="bannerClass()">
         <div class="banner-content">
           <div class="banner-icon">
-            <i [class]="iconClass()"></i>
+            <i [class]="'pi ' + icon()"></i>
           </div>
           <div class="banner-text">
-            <strong class="banner-title">{{ title() }}</strong>
+            <h4 class="banner-title">{{ title() }}</h4>
             <p class="banner-message">{{ message() }}</p>
+            @if (showProgress()) {
+              <div class="progress-info">
+                <div class="progress-bar">
+                  <div 
+                    class="progress-fill" 
+                    [style.width.%]="progressPercent()"
+                  ></div>
+                </div>
+                <span class="progress-text">
+                  {{ currentDataPoints }} / {{ minimumRequired }} days
+                </span>
+              </div>
+            }
           </div>
-        </div>
-        <div class="banner-actions">
-          @if (showAction() && actionRoute()) {
-            <p-button
-              [label]="actionLabel()"
-              [icon]="actionIcon()"
-              [routerLink]="actionRoute()"
-              [outlined]="true"
-              size="small"
-              styleClass="banner-action-btn"
-            ></p-button>
-          }
-          @if (dismissible()) {
-            <p-button
-              icon="pi pi-times"
-              [rounded]="true"
-              [text]="true"
-              size="small"
-              (onClick)="dismiss()"
-              ariaLabel="Dismiss banner"
-            ></p-button>
+          @if (showDismiss) {
+            <button 
+              class="dismiss-btn"
+              (click)="onDismiss()"
+              pTooltip="Dismiss this notice"
+            >
+              <i class="pi pi-times"></i>
+            </button>
           }
         </div>
+        @if (warnings.length > 0) {
+          <div class="banner-warnings">
+            @for (warning of warnings; track $index) {
+              <span class="warning-item">
+                <i class="pi pi-info-circle"></i>
+                {{ warning }}
+              </span>
+            }
+          </div>
+        }
       </div>
     }
   `,
-  styles: [
-    `
-      .data-source-banner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: var(--space-3) var(--space-4);
-        border-radius: var(--radius-lg);
-        margin-bottom: var(--space-4);
-        gap: var(--space-4);
-        animation: slideDown 0.3s ease-out;
-      }
+  styles: [`
+    .data-source-banner {
+      border-radius: var(--p-border-radius);
+      margin-bottom: var(--space-4);
+      overflow: hidden;
+    }
 
-      @keyframes slideDown {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
+    .banner-content {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding: var(--space-4);
+    }
 
-      .banner-info {
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-        border: 1px solid #2196f3;
-        color: #1565c0;
-      }
+    .banner-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
 
-      .banner-warning {
-        background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-        border: 1px solid #ff9800;
-        color: #e65100;
-      }
+    .banner-icon i {
+      font-size: 1.5rem;
+    }
 
-      .banner-danger {
-        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-        border: 2px solid #f44336;
-        color: #c62828;
-      }
+    .banner-text {
+      flex: 1;
+    }
 
-      .banner-success {
-        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-        border: 1px solid #4caf50;
-        color: #2e7d32;
-      }
+    .banner-title {
+      margin: 0 0 var(--space-1) 0;
+      font-size: var(--font-body-md);
+      font-weight: var(--font-weight-semibold);
+    }
 
+    .banner-message {
+      margin: 0;
+      font-size: var(--font-body-sm);
+      opacity: 0.9;
+    }
+
+    .dismiss-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: var(--space-2);
+      border-radius: var(--p-border-radius);
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    .dismiss-btn:hover {
+      opacity: 1;
+    }
+
+    .progress-info {
+      margin-top: var(--space-3);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: var(--font-body-xs);
+      font-weight: var(--font-weight-medium);
+      white-space: nowrap;
+    }
+
+    .banner-warnings {
+      padding: var(--space-3) var(--space-4);
+      background: rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .warning-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-body-xs);
+      opacity: 0.9;
+    }
+
+    /* State-specific styles */
+    .data-source-banner.no-data {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+    }
+
+    .data-source-banner.no-data .banner-icon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .data-source-banner.insufficient {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+    }
+
+    .data-source-banner.insufficient .banner-icon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .data-source-banner.demo {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+    }
+
+    .data-source-banner.demo .banner-icon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .data-source-banner.real {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+    }
+
+    .data-source-banner.real .banner-icon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 768px) {
       .banner-content {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        flex: 1;
+        flex-direction: column;
+        text-align: center;
       }
 
       .banner-icon {
-        font-size: var(--icon-2xl);
-        flex-shrink: 0;
+        margin: 0 auto;
       }
 
-      .banner-danger .banner-icon {
-        animation: pulse 1.5s infinite;
+      .dismiss-btn {
+        position: absolute;
+        top: var(--space-2);
+        right: var(--space-2);
       }
 
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
-        }
+      .data-source-banner {
+        position: relative;
       }
-
-      .banner-text {
-        flex: 1;
-      }
-
-      .banner-title {
-        display: block;
-        font-size: var(--font-body-md);
-        font-weight: var(--font-weight-semibold);
-        margin-bottom: var(--space-1);
-      }
-
-      .banner-message {
-        font-size: var(--font-body-sm);
-        margin: 0;
-        opacity: 0.9;
-      }
-
-      .banner-actions {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        flex-shrink: 0;
-      }
-
-      .banner-action-btn {
-        white-space: nowrap;
-      }
-
-      @media (max-width: 768px) {
-        .data-source-banner {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .banner-actions {
-          width: 100%;
-          justify-content: flex-end;
-        }
-      }
-    `,
-  ],
+    }
+  `]
 })
 export class DataSourceBannerComponent {
-  private dataSourceService = inject(DataSourceService);
+  @Input() dataState: DataState = DataState.NO_DATA;
+  @Input() currentDataPoints: number = 0;
+  @Input() minimumRequired: number = 28;
+  @Input() warnings: string[] = [];
+  @Input() metricName: string = 'metrics';
+  @Input() showDismiss: boolean = false;
+  @Input() showWhenReal: boolean = false;
 
-  // Inputs for manual override (optional)
-  customTitle = input<string | null>(null);
-  customMessage = input<string | null>(null);
-  customSeverity = input<BannerSeverity | null>(null);
-  forMetric = input<string | null>(null); // Specific metric to check
-  dismissible = input<boolean>(true);
-  showAction = input<boolean>(true);
-  actionLabel = input<string>("Log Data");
-  actionIcon = input<string>("pi pi-plus");
-  actionRoute = input<string | null>("/training/log");
-
-  // Internal state
   private dismissed = false;
 
-  // Computed values based on data source service
+  // Computed properties
   shouldShow = computed(() => {
     if (this.dismissed) return false;
-
-    const source = this.dataSourceService.globalSource();
-    const isDemoMode = this.dataSourceService.isDemoMode();
-
-    // Always show if in demo mode or using mock data
-    if (isDemoMode || source.source === "mock") return true;
-
-    // Show if first-time user
-    if (source.isFirstTimeUser) return true;
-
-    // Show if not enough data
-    if (!source.hasEnoughData) return true;
-
-    // Check specific metric if provided
-    const metricId = this.forMetric();
-    if (metricId) {
-      const metricSources = this.dataSourceService.metricSources();
-      const metric = metricSources.get(metricId);
-      if (metric && !metric.isReliable) return true;
-    }
-
-    return false;
+    if (this.dataState === DataState.REAL_DATA && !this.showWhenReal) return false;
+    return true;
   });
 
-  severity = computed<BannerSeverity>(() => {
-    if (this.customSeverity()) return this.customSeverity()!;
+  bannerClass = computed(() => {
+    switch (this.dataState) {
+      case DataState.NO_DATA: return 'no-data';
+      case DataState.INSUFFICIENT_DATA: return 'insufficient';
+      case DataState.DEMO_DATA: return 'demo';
+      case DataState.REAL_DATA: return 'real';
+    }
+  });
 
-    const source = this.dataSourceService.globalSource();
-    const isDemoMode = this.dataSourceService.isDemoMode();
-
-    // Demo/mock data = danger (could cause injury)
-    if (isDemoMode || source.source === "mock") return "danger";
-
-    // First-time user = info (welcoming)
-    if (source.isFirstTimeUser) return "info";
-
-    // Not enough data = warning
-    if (!source.hasEnoughData) return "warning";
-
-    return "success";
+  icon = computed(() => {
+    switch (this.dataState) {
+      case DataState.NO_DATA: return 'pi-inbox';
+      case DataState.INSUFFICIENT_DATA: return 'pi-exclamation-triangle';
+      case DataState.DEMO_DATA: return 'pi-info-circle';
+      case DataState.REAL_DATA: return 'pi-check-circle';
+    }
   });
 
   title = computed(() => {
-    if (this.customTitle()) return this.customTitle()!;
-
-    const source = this.dataSourceService.globalSource();
-    const isDemoMode = this.dataSourceService.isDemoMode();
-
-    if (isDemoMode || source.source === "mock") {
-      return "⚠️ Demo Data - Not Your Real Metrics";
+    switch (this.dataState) {
+      case DataState.NO_DATA: return 'No Data Available';
+      case DataState.INSUFFICIENT_DATA: return 'Building Your Data Profile';
+      case DataState.DEMO_DATA: return '⚠️ Demo Data - Not Your Real Metrics';
+      case DataState.REAL_DATA: return 'Real Data';
     }
-
-    if (source.isFirstTimeUser) {
-      return "👋 Welcome! Start Tracking Your Performance";
-    }
-
-    if (!source.hasEnoughData) {
-      return "📊 Building Your Performance Profile";
-    }
-
-    return "✅ Using Your Real Data";
   });
 
   message = computed(() => {
-    if (this.customMessage()) return this.customMessage()!;
-
-    const source = this.dataSourceService.globalSource();
-    const isDemoMode = this.dataSourceService.isDemoMode();
-
-    if (isDemoMode || source.source === "mock") {
-      return "These metrics are for demonstration only. DO NOT make training decisions based on this data. Log your real workouts to see accurate metrics.";
-    }
-
-    if (source.isFirstTimeUser) {
-      return "No training data logged yet. Start by logging your first workout to see personalized metrics and recommendations.";
-    }
-
-    if (!source.hasEnoughData) {
-      const remaining = source.minimumDataRequired - source.realDataCount;
-      return `You have ${source.realDataCount} entries. ${remaining} more needed for reliable ACWR and recovery calculations.`;
-    }
-
-    return "Your dashboard is showing metrics based on your logged training data.";
-  });
-
-  iconClass = computed(() => {
-    const sev = this.severity();
-    switch (sev) {
-      case "danger":
-        return "pi pi-exclamation-triangle";
-      case "warning":
-        return "pi pi-info-circle";
-      case "info":
-        return "pi pi-user-plus";
-      case "success":
-        return "pi pi-check-circle";
-      default:
-        return "pi pi-info-circle";
+    switch (this.dataState) {
+      case DataState.NO_DATA:
+        return `Start logging your training to see ${this.metricName}. We need real data to provide accurate insights.`;
+      case DataState.INSUFFICIENT_DATA:
+        return `We're collecting data to calculate your ${this.metricName}. Keep logging your training!`;
+      case DataState.DEMO_DATA:
+        return `These are example values for demonstration purposes only. They do not reflect your actual performance.`;
+      case DataState.REAL_DATA:
+        return `Your ${this.metricName} are calculated from your actual training data.`;
     }
   });
 
-  dismiss(): void {
+  showProgress = computed(() => {
+    return this.dataState === DataState.INSUFFICIENT_DATA;
+  });
+
+  progressPercent = computed(() => {
+    if (this.minimumRequired === 0) return 0;
+    return Math.min((this.currentDataPoints / this.minimumRequired) * 100, 100);
+  });
+
+  onDismiss(): void {
     this.dismissed = true;
   }
 }

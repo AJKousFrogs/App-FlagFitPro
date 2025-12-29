@@ -293,6 +293,11 @@
 
 # Other Pages
 [[redirects]]
+  from = "/auth/callback.html"
+  to = "/auth/callback"
+  status = 301
+
+[[redirects]]
   from = "/onboarding.html"
   to = "/onboarding"
   status = 301
@@ -471,6 +476,32 @@
 [[redirects]]
   from = "/api/admin"
   to = "/.netlify/functions/admin"
+  status = 200
+  force = true
+
+# API Routes for USDA Sync (dedicated endpoint for USDA data operations)
+[[redirects]]
+  from = "/api/usda/*"
+  to = "/.netlify/functions/usda-sync"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/usda"
+  to = "/.netlify/functions/usda-sync"
+  status = 200
+  force = true
+
+# API Routes for Research Sync (sports science research from PubMed, Europe PMC, OpenAlex)
+[[redirects]]
+  from = "/api/research/*"
+  to = "/.netlify/functions/research-sync"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/research"
+  to = "/.netlify/functions/research-sync"
   status = 200
   force = true
 
@@ -843,6 +874,20 @@
   status = 200
   force = true
 
+# API Routes for AI Context Analysis
+[[redirects]]
+  from = "/api/ai/analyze-context"
+  to = "/.netlify/functions/ai-chat"
+  status = 200
+  force = true
+
+# API Routes for AI Process Command
+[[redirects]]
+  from = "/api/ai/process-command"
+  to = "/.netlify/functions/ai-chat"
+  status = 200
+  force = true
+
 # API Routes for AI Feedback
 [[redirects]]
   from = "/api/ai/feedback"
@@ -947,6 +992,19 @@
 [[redirects]]
   from = "/api/daily-training/*"
   to = "/.netlify/functions/daily-training"
+  status = 200
+  force = true
+
+# API Routes for Calibration Logs
+[[redirects]]
+  from = "/api/calibration-logs"
+  to = "/.netlify/functions/calibration-logs"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/calibration-logs/*"
+  to = "/.netlify/functions/calibration-logs"
   status = 200
   force = true
 

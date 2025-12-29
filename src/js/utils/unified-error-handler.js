@@ -3,9 +3,6 @@
  * Combines error handling, user notifications, logging, and Sentry tracking
  */
 
-import { escapeHtml } from "./sanitize.js";
-import { setSafeContent } from "./shared.js";
-
 import { logger } from "../../logger.js";
 
 // Lazy-load Sentry service (only in production)
@@ -362,17 +359,33 @@ export class UnifiedErrorHandler {
 
     const icon = this.getNotificationIcon(type);
 
-    setSafeContent(notification, `
-      <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
-        <span style="flex-shrink: 0; font-size: 1rem;">${icon}</span>
-        <span style="flex: 1;">${escapeHtml(message)}</span>
-        <button onclick="this.closest('.error-notification').remove()"
-                style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;
-                       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;"
-                onmouseover="this.style.opacity='1'"
-                onmouseout="this.style.opacity='0.8'">×</button>
-      </div>
-    `, true, true);
+    // Build notification using safe DOM methods (no inline event handlers)
+    const container = document.createElement("div");
+    container.style.cssText = "display: flex; align-items: flex-start; gap: 0.75rem;";
+
+    const iconSpan = document.createElement("span");
+    iconSpan.style.cssText = "flex-shrink: 0; font-size: 1rem;";
+    iconSpan.textContent = icon;
+
+    const messageSpan = document.createElement("span");
+    messageSpan.style.cssText = "flex: 1;";
+    messageSpan.textContent = message;
+
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "×";
+    closeBtn.setAttribute("aria-label", "Close notification");
+    closeBtn.style.cssText = `
+      background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;
+      opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;
+    `;
+    closeBtn.addEventListener("click", () => notification.remove());
+    closeBtn.addEventListener("mouseenter", () => { closeBtn.style.opacity = "1"; });
+    closeBtn.addEventListener("mouseleave", () => { closeBtn.style.opacity = "0.8"; });
+
+    container.appendChild(iconSpan);
+    container.appendChild(messageSpan);
+    container.appendChild(closeBtn);
+    notification.appendChild(container);
 
     return notification;
   }
@@ -429,28 +442,57 @@ export class UnifiedErrorHandler {
     const notification = document.createElement("div");
     notification.className = "error-notification error";
     notification.setAttribute("role", "alert");
-
     notification.style.cssText = this.getNotificationStyles("error");
 
-    setSafeContent(notification, `
-      <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
-        <span style="flex-shrink: 0; font-size: 1rem;">❌</span>
-        <div style="flex: 1;">
-          <div style="margin-bottom: 0.5rem;">${escapeHtml(message)}</div>
-          <button class="retry-btn"
-                  style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
-                         color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer;
-                         font-size: 0.75rem; font-weight: 500; margin-top: 0.5rem;"
-                  onmouseover="this.style.background='rgba(255,255,255,0.3)'"
-                  onmouseout="this.style.background='rgba(255,255,255,0.2)'">Retry</button>
-        </div>
-        <button onclick="this.closest('.error-notification').remove()"
-                style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;
-                       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;"
-                onmouseover="this.style.opacity='1'"
-                onmouseout="this.style.opacity='0.8'">×</button>
-      </div>
-    `, true, true);
+    // Build notification using safe DOM methods (no inline event handlers)
+    const container = document.createElement("div");
+    container.style.cssText = "display: flex; align-items: flex-start; gap: 0.75rem;";
+
+    const iconSpan = document.createElement("span");
+    iconSpan.style.cssText = "flex-shrink: 0; font-size: 1rem;";
+    iconSpan.textContent = "❌";
+
+    const contentDiv = document.createElement("div");
+    contentDiv.style.cssText = "flex: 1;";
+
+    const messageDiv = document.createElement("div");
+    messageDiv.style.cssText = "margin-bottom: 0.5rem;";
+    messageDiv.textContent = message;
+
+    const retryBtn = document.createElement("button");
+    retryBtn.className = "retry-btn";
+    retryBtn.textContent = "Retry";
+    retryBtn.style.cssText = `
+      background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+      color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer;
+      font-size: 0.75rem; font-weight: 500; margin-top: 0.5rem;
+    `;
+    retryBtn.addEventListener("mouseenter", () => { retryBtn.style.background = "rgba(255,255,255,0.3)"; });
+    retryBtn.addEventListener("mouseleave", () => { retryBtn.style.background = "rgba(255,255,255,0.2)"; });
+    retryBtn.addEventListener("click", () => {
+      notification.remove();
+      if (retryCallback) {
+        retryCallback();
+      }
+    });
+
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "×";
+    closeBtn.setAttribute("aria-label", "Close notification");
+    closeBtn.style.cssText = `
+      background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;
+      opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;
+    `;
+    closeBtn.addEventListener("click", () => notification.remove());
+    closeBtn.addEventListener("mouseenter", () => { closeBtn.style.opacity = "1"; });
+    closeBtn.addEventListener("mouseleave", () => { closeBtn.style.opacity = "0.8"; });
+
+    contentDiv.appendChild(messageDiv);
+    contentDiv.appendChild(retryBtn);
+    container.appendChild(iconSpan);
+    container.appendChild(contentDiv);
+    container.appendChild(closeBtn);
+    notification.appendChild(container);
 
     document.body.appendChild(notification);
 
@@ -458,15 +500,6 @@ export class UnifiedErrorHandler {
     setTimeout(() => {
       notification.style.transform = "translateX(0)";
     }, 100);
-
-    // Setup retry button
-    const retryBtn = notification.querySelector(".retry-btn");
-    retryBtn.addEventListener("click", () => {
-      notification.remove();
-      if (retryCallback) {
-        retryCallback();
-      }
-    });
 
     // Auto-remove after duration
     if (duration > 0) {

@@ -1,0 +1,87 @@
+version: 2
+updates:
+  # Root package.json dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+      - "automated"
+    groups:
+      production-deps:
+        patterns:
+          - "@supabase/*"
+          - "express*"
+          - "jsonwebtoken"
+          - "bcryptjs"
+        update-types:
+          - "minor"
+          - "patch"
+      dev-deps:
+        patterns:
+          - "@playwright/*"
+          - "eslint*"
+          - "prettier*"
+          - "typescript"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Angular package.json dependencies
+  - package-ecosystem: "npm"
+    directory: "/angular"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps(angular)"
+    labels:
+      - "dependencies"
+      - "angular"
+      - "automated"
+    groups:
+      angular-core:
+        patterns:
+          - "@angular/*"
+        update-types:
+          - "minor"
+          - "patch"
+      primeng:
+        patterns:
+          - "primeng"
+          - "primeicons"
+        update-types:
+          - "minor"
+          - "patch"
+      testing:
+        patterns:
+          - "vitest*"
+          - "@vitest/*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "ci"
+      - "automated"
+

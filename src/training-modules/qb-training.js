@@ -402,9 +402,7 @@ export class QBTrainingModule extends ComponentWithCleanup {
   /**
    * Create weekly QB training schedule
    */
-  createWeeklyQBPlan(analysis) {
-    const _primaryWeakness = analysis.primaryWeaknesses[0]?.area || "general";
-
+  createWeeklyQBPlan(_analysis) {
     return {
       monday: {
         focus: "Accuracy & Mechanics",
@@ -603,7 +601,6 @@ export class QBTrainingModule extends ComponentWithCleanup {
    * Set specific performance targets
    */
   setPerformanceTargets(analysis) {
-    const _currentLevel = analysis.overallLevel;
     const targetImprovement = 0.15; // 15% improvement goal
 
     return {

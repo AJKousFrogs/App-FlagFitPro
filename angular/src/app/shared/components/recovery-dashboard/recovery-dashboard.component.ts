@@ -17,10 +17,14 @@ import { KnobModule } from "primeng/knob";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Tabs } from "primeng/tabs";
 import { TimelineModule } from "primeng/timeline";
+import { SelectButtonModule } from "primeng/selectbutton";
+import { DialogModule } from "primeng/dialog";
+import { TooltipModule } from "primeng/tooltip";
 import {
   RecoveryService,
   RecoveryProtocol as ServiceRecoveryProtocol,
   RecoverySession as ServiceRecoverySession,
+  AthleteRecoveryProfile,
 } from "../../../core/services/recovery.service";
 import { firstValueFrom, timer, Subscription } from "rxjs";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -90,6 +94,9 @@ interface ChartOptions {
     ProgressBarModule,
     Tabs,
     TimelineModule,
+    SelectButtonModule,
+    DialogModule,
+    TooltipModule,
     CountdownTimerComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -138,67 +145,227 @@ interface ChartOptions {
       </p-card>
 
       <!-- Evidence-Based Recovery Protocols -->
-      <p-card header="Recommended Recovery Protocols" class="protocols-card">
-        <div class="protocols-grid">
-          @for (protocol of recommendedProtocols(); track protocol.name) {
-            <div
-              class="protocol-card"
-              [class.priority]="protocol.priority === 'high'"
-              (click)="selectProtocol(protocol)">
-              <div class="protocol-header">
-                <div class="protocol-info">
-                  <h4>{{ protocol.name }}</h4>
-                  <p-tag
-                    [value]="protocol.category"
-                    [severity]="getProtocolSeverity(protocol.category)">
-                  </p-tag>
+      <p-card header="Recovery Protocols" class="protocols-card">
+        <!-- Category Filter -->
+        <div class="category-filter">
+          <p-selectButton
+            [options]="categoryOptions"
+            [(ngModel)]="selectedCategory"
+            (onChange)="onCategoryChange($event)"
+            optionLabel="label"
+            optionValue="value">
+          </p-selectButton>
+        </div>
+
+        <!-- Loading State -->
+        @if (loadingProtocols()) {
+          <div class="loading-protocols">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Loading protocols...</span>
+          </div>
+        } @else if (filteredProtocols().length === 0) {
+          <div class="no-protocols">
+            <i class="pi pi-info-circle"></i>
+            <span>No protocols found for this category</span>
+          </div>
+        } @else {
+          <div class="protocols-grid">
+            @for (protocol of filteredProtocols(); track protocol.id) {
+              <div
+                class="protocol-card"
+                [class.priority-high]="protocol.priority === 'high'"
+                [class.priority-medium]="protocol.priority === 'medium'"
+                [class.category-cryotherapy]="protocol.category === 'Cryotherapy'"
+                [class.category-compression]="protocol.category === 'Compression'"
+                [class.category-manual]="protocol.category === 'Manual Therapy'"
+                [class.category-heat]="protocol.category === 'Heat Therapy'"
+                (click)="selectProtocol(protocol)">
+                <div class="protocol-header">
+                  <div class="protocol-info">
+                    <div class="protocol-icon">
+                      <i [class]="protocol.icon || 'pi pi-heart'" [pTooltip]="protocol.category"></i>
+                    </div>
+                    <div>
+                      <h4>{{ protocol.name }}</h4>
+                      <p-tag
+                        [value]="protocol.category"
+                        [severity]="getProtocolSeverity(protocol.category)">
+                      </p-tag>
+                    </div>
+                  </div>
+                  <div class="protocol-meta">
+                    <span class="duration">
+                      <i class="pi pi-clock"></i>
+                      {{ protocol.duration }} min
+                    </span>
+                    @if (protocol.priority === 'high') {
+                      <span class="priority-badge">
+                        <i class="pi pi-star-fill"></i>
+                        Recommended
+                      </span>
+                    }
+                  </div>
                 </div>
-                <div class="protocol-meta">
-                  <span class="duration">{{ protocol.duration }} min</span>
-                  <i class="pi pi-chevron-right"></i>
+
+                <p class="protocol-description">{{ protocol.description }}</p>
+
+                <!-- Research Evidence Badge -->
+                @if (protocol.evidenceLevel) {
+                  <div class="evidence-badge" [class.evidence-strong]="protocol.evidenceLevel === 'Strong'">
+                    <i class="pi pi-verified"></i>
+                    <span>{{ protocol.evidenceLevel }} Evidence</span>
+                    <small>({{ protocol.studyCount }} studies)</small>
+                  </div>
+                }
+
+                <!-- Expected Benefits -->
+                @if (protocol.benefits && protocol.benefits.length > 0) {
+                  <div class="benefits">
+                    <h5>Expected Benefits:</h5>
+                    <ul>
+                      @for (benefit of protocol.benefits.slice(0, 4); track benefit) {
+                        <li>{{ benefit }}</li>
+                      }
+                      @if (protocol.benefits.length > 4) {
+                        <li class="more-benefits">+{{ protocol.benefits.length - 4 }} more</li>
+                      }
+                    </ul>
+                  </div>
+                }
+
+                <!-- Equipment Required -->
+                @if (protocol.equipment && protocol.equipment.length > 0) {
+                  <div class="equipment-info">
+                    <i class="pi pi-box"></i>
+                    <span>{{ protocol.equipment.slice(0, 2).join(', ') }}{{ protocol.equipment.length > 2 ? '...' : '' }}</span>
+                  </div>
+                }
+
+                <div class="protocol-actions">
+                  <p-button
+                    label="Start Protocol"
+                    icon="pi pi-play"
+                    size="small"
+                    (onClick)="startProtocol(protocol); $event.stopPropagation()">
+                  </p-button>
+
+                  <p-button
+                    label="Details"
+                    icon="pi pi-info-circle"
+                    [outlined]="true"
+                    size="small"
+                    (onClick)="showProtocolDetails(protocol); $event.stopPropagation()">
+                  </p-button>
                 </div>
               </div>
+            }
+          </div>
+        }
+      </p-card>
 
-              <p class="protocol-description">{{ protocol.description }}</p>
+      <!-- Protocol Details Dialog -->
+      <p-dialog
+        header="Protocol Details"
+        [(visible)]="showProtocolDialog"
+        [modal]="true"
+        [style]="{ width: '600px', maxWidth: '95vw' }"
+        [draggable]="false"
+        [resizable]="false">
+        @if (selectedProtocolDetails()) {
+          <div class="protocol-details">
+            <div class="detail-header">
+              <div class="detail-icon" [class]="'category-' + selectedProtocolDetails()?.category?.toLowerCase()?.replace(' ', '-')">
+                <i [class]="selectedProtocolDetails()?.icon || 'pi pi-heart'"></i>
+              </div>
+              <div>
+                <h2>{{ selectedProtocolDetails()?.name }}</h2>
+                <p-tag [value]="selectedProtocolDetails()?.category || ''" [severity]="getProtocolSeverity(selectedProtocolDetails()?.category || '')"></p-tag>
+              </div>
+            </div>
 
-              <!-- Research Evidence Badge -->
-              @if (protocol.evidenceLevel) {
-                <div class="evidence-badge">
-                  <i class="pi pi-verified"></i>
-                  <span>{{ protocol.evidenceLevel }} Evidence</span>
-                  <small>({{ protocol.studyCount }} studies)</small>
-                </div>
-              }
+            <p class="detail-description">{{ selectedProtocolDetails()?.description }}</p>
 
-              <!-- Expected Benefits -->
-              <div class="benefits">
-                <h5>Expected Benefits:</h5>
+            <div class="detail-meta">
+              <div class="meta-item">
+                <i class="pi pi-clock"></i>
+                <span>{{ selectedProtocolDetails()?.duration }} minutes</span>
+              </div>
+              <div class="meta-item">
+                <i class="pi pi-chart-bar"></i>
+                <span>{{ selectedProtocolDetails()?.intensity }} intensity</span>
+              </div>
+              <div class="meta-item">
+                <i class="pi pi-verified"></i>
+                <span>{{ selectedProtocolDetails()?.evidenceLevel }} evidence ({{ selectedProtocolDetails()?.studyCount }} studies)</span>
+              </div>
+            </div>
+
+            @if (selectedProtocolDetails()?.benefits && selectedProtocolDetails()!.benefits.length > 0) {
+              <div class="detail-section">
+                <h4><i class="pi pi-check-circle"></i> Benefits</h4>
                 <ul>
-                  @for (benefit of protocol.benefits; track benefit) {
+                  @for (benefit of selectedProtocolDetails()?.benefits; track benefit) {
                     <li>{{ benefit }}</li>
                   }
                 </ul>
               </div>
+            }
 
-            <div class="protocol-actions">
+            @if (selectedProtocolDetails()?.equipment && selectedProtocolDetails()!.equipment!.length > 0) {
+              <div class="detail-section">
+                <h4><i class="pi pi-box"></i> Equipment Required</h4>
+                <ul>
+                  @for (item of selectedProtocolDetails()?.equipment; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            @if (selectedProtocolDetails()?.targetMuscles && selectedProtocolDetails()!.targetMuscles!.length > 0) {
+              <div class="detail-section">
+                <h4><i class="pi pi-user"></i> Target Areas</h4>
+                <div class="tag-list">
+                  @for (muscle of selectedProtocolDetails()?.targetMuscles; track muscle) {
+                    <p-tag [value]="muscle" severity="secondary"></p-tag>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (selectedProtocolDetails()?.steps && selectedProtocolDetails()!.steps.length > 0) {
+              <div class="detail-section">
+                <h4><i class="pi pi-list"></i> Protocol Steps</h4>
+                <div class="steps-list">
+                  @for (step of selectedProtocolDetails()?.steps; track step.id; let i = $index) {
+                    <div class="step-item">
+                      <div class="step-number">{{ i + 1 }}</div>
+                      <div class="step-info">
+                        <strong>{{ step.title }}</strong>
+                        <p>{{ step.description }}</p>
+                        <span class="step-duration"><i class="pi pi-clock"></i> {{ step.duration }} min</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="detail-actions">
               <p-button
-                label="Start Protocol"
+                label="Start This Protocol"
                 icon="pi pi-play"
-                size="small"
-                (onClick)="startProtocol(protocol)">
+                (onClick)="startProtocol(selectedProtocolDetails()!); showProtocolDialog = false">
               </p-button>
-
               <p-button
-                label="Learn More"
-                icon="pi pi-info-circle"
+                label="Close"
                 [outlined]="true"
-                size="small"
-                (onClick)="showProtocolDetails(protocol)">
+                (onClick)="showProtocolDialog = false">
               </p-button>
             </div>
-          }
-        </div>
-      </p-card>
+          </div>
+        }
+      </p-dialog>
 
       <!-- Active Recovery Sessions -->
       @if (activeSession()) {
@@ -632,6 +799,349 @@ interface ChartOptions {
         color: var(--p-text-color-secondary);
         font-size: 0.875rem;
       }
+
+      /* Category Filter */
+      .category-filter {
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: center;
+      }
+
+      .category-filter :deep(.p-selectbutton) {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+      }
+
+      /* Loading and Empty States */
+      .loading-protocols,
+      .no-protocols {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        gap: 1rem;
+        color: var(--p-text-color-secondary);
+      }
+
+      .loading-protocols i,
+      .no-protocols i {
+        font-size: 2rem;
+      }
+
+      /* Protocol Card Enhancements */
+      .protocol-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--p-surface-100);
+        margin-right: 0.75rem;
+      }
+
+      .protocol-icon i {
+        font-size: 1.5rem;
+        color: var(--p-primary-color);
+      }
+
+      .protocol-info {
+        display: flex;
+        align-items: center;
+      }
+
+      .protocol-card.category-cryotherapy .protocol-icon {
+        background: rgba(59, 130, 246, 0.1);
+      }
+      .protocol-card.category-cryotherapy .protocol-icon i {
+        color: #3b82f6;
+      }
+
+      .protocol-card.category-compression .protocol-icon {
+        background: rgba(16, 185, 129, 0.1);
+      }
+      .protocol-card.category-compression .protocol-icon i {
+        color: #10b981;
+      }
+
+      .protocol-card.category-manual .protocol-icon {
+        background: rgba(245, 158, 11, 0.1);
+      }
+      .protocol-card.category-manual .protocol-icon i {
+        color: #f59e0b;
+      }
+
+      .protocol-card.category-heat .protocol-icon {
+        background: rgba(239, 68, 68, 0.1);
+      }
+      .protocol-card.category-heat .protocol-icon i {
+        color: #ef4444;
+      }
+
+      .protocol-card.priority-high {
+        border-left: 4px solid var(--p-orange-500);
+      }
+
+      .priority-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background: var(--p-orange-100);
+        color: var(--p-orange-700);
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .priority-badge i {
+        font-size: 0.625rem;
+      }
+
+      .duration {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .evidence-badge.evidence-strong {
+        background: var(--p-green-100);
+        border-color: var(--p-green-300);
+      }
+
+      .more-benefits {
+        color: var(--p-primary-color);
+        font-style: italic;
+      }
+
+      .equipment-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background: var(--p-surface-50);
+        border-radius: 4px;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        color: var(--p-text-color-secondary);
+      }
+
+      /* Protocol Details Dialog */
+      .protocol-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .detail-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .detail-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--p-surface-100);
+      }
+
+      .detail-icon i {
+        font-size: 2rem;
+        color: var(--p-primary-color);
+      }
+
+      .detail-icon.category-cryotherapy {
+        background: rgba(59, 130, 246, 0.1);
+      }
+      .detail-icon.category-cryotherapy i {
+        color: #3b82f6;
+      }
+
+      .detail-icon.category-compression {
+        background: rgba(16, 185, 129, 0.1);
+      }
+      .detail-icon.category-compression i {
+        color: #10b981;
+      }
+
+      .detail-icon.category-manual-therapy {
+        background: rgba(245, 158, 11, 0.1);
+      }
+      .detail-icon.category-manual-therapy i {
+        color: #f59e0b;
+      }
+
+      .detail-icon.category-heat-therapy {
+        background: rgba(239, 68, 68, 0.1);
+      }
+      .detail-icon.category-heat-therapy i {
+        color: #ef4444;
+      }
+
+      .detail-header h2 {
+        margin: 0 0 0.5rem 0;
+        color: var(--p-text-color);
+      }
+
+      .detail-description {
+        margin: 0;
+        color: var(--p-text-color-secondary);
+        line-height: 1.6;
+      }
+
+      .detail-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--p-surface-50);
+        border-radius: 8px;
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--p-text-color-secondary);
+      }
+
+      .meta-item i {
+        color: var(--p-primary-color);
+      }
+
+      .detail-section {
+        border-top: 1px solid var(--p-surface-border);
+        padding-top: 1rem;
+      }
+
+      .detail-section h4 {
+        margin: 0 0 0.75rem 0;
+        color: var(--p-text-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .detail-section h4 i {
+        color: var(--p-primary-color);
+      }
+
+      .detail-section ul {
+        margin: 0;
+        padding-left: 1.25rem;
+      }
+
+      .detail-section li {
+        margin: 0.25rem 0;
+        color: var(--p-text-color-secondary);
+      }
+
+      .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .steps-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .step-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--p-surface-50);
+        border-radius: 8px;
+      }
+
+      .step-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--p-primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .step-info {
+        flex: 1;
+      }
+
+      .step-info strong {
+        display: block;
+        color: var(--p-text-color);
+        margin-bottom: 0.25rem;
+      }
+
+      .step-info p {
+        margin: 0 0 0.5rem 0;
+        color: var(--p-text-color-secondary);
+        font-size: 0.875rem;
+      }
+
+      .step-info .step-duration {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        color: var(--p-text-color-secondary);
+      }
+
+      .detail-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        padding-top: 1rem;
+        border-top: 1px solid var(--p-surface-border);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .status-overview {
+          flex-direction: column;
+        }
+
+        .protocols-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .session-content {
+          grid-template-columns: 1fr;
+        }
+
+        .session-timer {
+          grid-column: 1;
+          grid-row: 2;
+        }
+
+        .session-steps {
+          grid-row: 3;
+        }
+
+        .session-controls {
+          grid-row: 4;
+          flex-wrap: wrap;
+        }
+
+        .category-filter :deep(.p-selectbutton) {
+          justify-content: center;
+        }
+
+        .detail-meta {
+          flex-direction: column;
+        }
+      }
     `,
   ],
 })
@@ -644,6 +1154,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   recoveryScoreValue = 78;
   recoveryMetrics = signal<RecoveryMetric[]>([]);
   recommendedProtocols = signal<ServiceRecoveryProtocol[]>([]);
+  filteredProtocols = signal<ServiceRecoveryProtocol[]>([]);
   activeSession = signal<ServiceRecoverySession | null>(null);
   sessionPaused = signal(false);
   sessionProgressValue = 0;
@@ -651,6 +1162,22 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   totalTime = signal(0);
   sessionSteps = signal<ProtocolStep[]>([]);
   researchInsights = signal<ResearchInsight[]>([]);
+  loadingProtocols = signal(false);
+  athleteProfile = signal<AthleteRecoveryProfile | null>(null);
+
+  // Protocol details dialog
+  showProtocolDialog = false;
+  selectedProtocolDetails = signal<ServiceRecoveryProtocol | null>(null);
+
+  // Category filter
+  selectedCategory = 'all';
+  categoryOptions = [
+    { label: 'All', value: 'all', icon: 'pi pi-th-large' },
+    { label: 'Cryotherapy', value: 'Cryotherapy', icon: 'pi pi-snowflake' },
+    { label: 'Compression', value: 'Compression', icon: 'pi pi-arrows-v' },
+    { label: 'Manual Therapy', value: 'Manual Therapy', icon: 'pi pi-user' },
+    { label: 'Heat Therapy', value: 'Heat Therapy', icon: 'pi pi-sun' },
+  ];
 
   // Chart data
   weeklyRecoveryData: ChartData = { labels: [], datasets: [] };
@@ -662,6 +1189,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     this.loadRecoveryData();
     this.loadRecommendedProtocols();
     this.loadResearchInsights();
+    this.loadAthleteProfile();
     this.setupChartData();
   }
 
@@ -686,15 +1214,30 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     return "Poor";
   }
 
-  getProtocolSeverity(category: string): string {
-    const severityMap: Record<string, string> = {
+  getProtocolSeverity(category: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" | undefined {
+    const severityMap: Record<string, "success" | "info" | "warn" | "danger" | "secondary" | "contrast"> = {
       Cryotherapy: "info",
       Compression: "success",
       "Manual Therapy": "warn",
       "Heat Therapy": "danger",
-      Sleep: "help",
+      Sleep: "secondary",
+      Mobility: "contrast",
+      Breathing: "secondary",
     };
     return severityMap[category] || "info";
+  }
+
+  onCategoryChange(event: { value: string }) {
+    this.filterProtocols(event.value);
+  }
+
+  private filterProtocols(category: string) {
+    const all = this.recommendedProtocols();
+    if (category === 'all') {
+      this.filteredProtocols.set(all);
+    } else {
+      this.filteredProtocols.set(all.filter(p => p.category === category));
+    }
   }
 
   selectProtocol(protocol: ServiceRecoveryProtocol) {
@@ -710,8 +1253,8 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   }
 
   showProtocolDetails(protocol: ServiceRecoveryProtocol) {
-    // Open protocol details modal with research evidence
-    this.logger.debug("Show details for:", protocol);
+    this.selectedProtocolDetails.set(protocol);
+    this.showProtocolDialog = true;
   }
 
   toggleSession() {
@@ -761,10 +1304,24 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   }
 
   private async loadRecommendedProtocols() {
-    const protocols = await firstValueFrom(
-      this.recoveryService.getRecommendedProtocols(),
+    this.loadingProtocols.set(true);
+    try {
+      const protocols = await firstValueFrom(
+        this.recoveryService.getRecommendedProtocols(),
+      );
+      this.recommendedProtocols.set(protocols);
+      this.filteredProtocols.set(protocols);
+      this.logger.success(`Loaded ${protocols.length} recovery protocols`);
+    } finally {
+      this.loadingProtocols.set(false);
+    }
+  }
+
+  private async loadAthleteProfile() {
+    const profile = await firstValueFrom(
+      this.recoveryService.getAthleteRecoveryProfile(),
     );
-    this.recommendedProtocols.set(protocols);
+    this.athleteProfile.set(profile);
   }
 
   private async loadResearchInsights() {

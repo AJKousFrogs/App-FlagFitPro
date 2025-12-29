@@ -4,490 +4,538 @@ import {
   setupTestEnvironment,
 } from "../test-helpers.js";
 
-// Note: Importing relative to expected structure
-const ApiConfig = vi.fn().mockImplementation(() => ({
-  baseURL: "http://localhost:3001/api",
-  timeout: 5000,
-  retryAttempts: 3,
-  makeRequest: vi.fn(),
-  setAuthToken: vi.fn(),
-  clearAuthToken: vi.fn(),
+// Mock dependencies
+vi.mock("../../src/config/environment.js", () => ({
+  config: {
+    API_BASE_URL: "http://localhost:8888/.netlify/functions",
+  },
+}));
+
+vi.mock("../../src/logger.js", () => ({
+  logger: {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    success: vi.fn(),
+  },
+}));
+
+vi.mock("../../src/js/security/csrf-protection.js", () => ({
+  csrfProtection: {
+    getHeaders: vi.fn().mockReturnValue({ "X-CSRF-Token": "test-csrf-token" }),
+    requiresProtection: vi.fn((method) =>
+      ["POST", "PUT", "DELETE", "PATCH"].includes(method)
+    ),
+  },
+}));
+
+vi.mock("../../src/js/services/cache-service.js", () => ({
+  cacheService: {
+    get: vi.fn(),
+    set: vi.fn(),
+    invalidatePattern: vi.fn(),
+  },
+}));
+
+vi.mock("../../src/js/config/app-constants.js", () => ({
+  NETWORK: {
+    CACHE_DURATION_SHORT: 60000,
+    CACHE_DURATION_MEDIUM: 300000,
+    CACHE_DURATION_LONG: 3600000,
+  },
+}));
+
+vi.mock("../../src/js/services/storage-service-unified.js", () => ({
+  storageService: {
+    get: vi.fn(),
+    set: vi.fn(),
+    remove: vi.fn(),
+  },
 }));
 
 describe("API Configuration - Comprehensive Tests", () => {
-  let apiConfig;
   let testEnv;
+  let ApiClient;
+  let apiClient;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     testEnv = setupTestEnvironment();
-    apiConfig = new ApiConfig();
-    global.fetch = vi.fn();
     vi.clearAllMocks();
+    global.fetch = vi.fn();
+
+    // Reset modules and import fresh
+    vi.resetModules();
+    const module = await import("../../src/api-config.js");
+    ApiClient = module.ApiClient;
+    apiClient = new ApiClient();
   });
 
   afterEach(() => {
     testEnv.cleanup();
+    vi.clearAllMocks();
   });
 
-  describe("Configuration Management", () => {
-    it("should initialize with correct default configuration", () => {
-      expect(apiConfig.baseURL).toBe("http://localhost:3001/api");
-      expect(apiConfig.timeout).toBe(5000);
-      expect(apiConfig.retryAttempts).toBe(3);
+  describe("Configuration Initialization", () => {
+    it("should initialize with correct base URL", () => {
+      expect(apiClient.baseUrl).toBeDefined();
     });
 
-    it("should allow configuration updates", () => {
-      apiConfig.updateConfig = vi.fn().mockImplementation((newConfig) => {
-        Object.assign(apiConfig, newConfig);
-      });
-
-      const newConfig = {
-        baseURL: "https://api.flagfit.com",
-        timeout: 10000,
-        retryAttempts: 5,
-      };
-
-      apiConfig.updateConfig(newConfig);
-
-      expect(apiConfig.baseURL).toBe("https://api.flagfit.com");
-      expect(apiConfig.timeout).toBe(10000);
-      expect(apiConfig.retryAttempts).toBe(5);
+    it("should have default headers set", () => {
+      expect(apiClient.defaultHeaders["Content-Type"]).toBe("application/json");
+      expect(apiClient.defaultHeaders["Accept"]).toBe("application/json");
     });
   });
 
   describe("Authentication Token Management", () => {
-    it("should set authentication token correctly", () => {
+    it("should set authentication token in headers", () => {
       const token = "test-jwt-token-123";
 
-      apiConfig.setAuthToken(token);
+      apiClient.setAuthToken(token);
 
-      expect(apiConfig.setAuthToken).toHaveBeenCalledWith(token);
+      expect(apiClient.defaultHeaders["Authorization"]).toBe(
+        `Bearer ${token}`
+      );
     });
 
-    it("should clear authentication token", () => {
-      apiConfig.clearAuthToken();
+    it("should clear authentication token when null is passed", () => {
+      apiClient.defaultHeaders["Authorization"] = "Bearer old-token";
 
-      expect(apiConfig.clearAuthToken).toHaveBeenCalled();
+      apiClient.setAuthToken(null);
+
+      expect(apiClient.defaultHeaders["Authorization"]).toBeUndefined();
     });
 
-    it("should include auth header in authenticated requests", async () => {
-      const token = "bearer-token-123";
-      const mockResponse = await createMockApiResponse({ success: true });
+    it("should get auth token from storage", async () => {
+      const { storageService } = await import(
+        "../../src/js/services/storage-service-unified.js"
+      );
+      storageService.get.mockReturnValue("stored-token");
 
-      global.fetch.mockResolvedValue(mockResponse);
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockImplementation(async (url, method, data, options) => {
-          const headers = options?.headers || {};
-          expect(headers["Authorization"]).toBe(`Bearer ${token}`);
-          return { success: true };
-        });
+      const token = await apiClient.getAuthToken();
 
-      await apiConfig.makeRequest("/test", "GET", null, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      expect(token).toBe("stored-token");
     });
   });
 
-  describe("Request Handling", () => {
-    it("should handle GET requests correctly", async () => {
-      const mockData = { data: "test-data" };
-      const mockResponse = await createMockApiResponse(mockData);
+  describe("HTTP Request Methods", () => {
+    describe("GET Requests", () => {
+      it("should make GET request correctly", async () => {
+        const mockData = { data: "test-data" };
+        const mockResponse = await createMockApiResponse(mockData);
+        global.fetch.mockResolvedValue(mockResponse);
 
-      global.fetch.mockResolvedValue(mockResponse);
-      apiConfig.makeRequest = vi.fn().mockResolvedValue(mockData);
+        const result = await apiClient.get("/test-endpoint");
 
-      const result = await apiConfig.makeRequest("/test-endpoint", "GET");
-
-      expect(result).toEqual(mockData);
-    });
-
-    it("should handle POST requests with data", async () => {
-      const postData = { name: "test", value: 123 };
-      const mockResponse = await createMockApiResponse({ id: 1, ...postData });
-
-      global.fetch.mockResolvedValue(mockResponse);
-      apiConfig.makeRequest = vi.fn().mockResolvedValue({ id: 1, ...postData });
-
-      const result = await apiConfig.makeRequest(
-        "/test-endpoint",
-        "POST",
-        postData,
-      );
-
-      expect(result).toEqual({ id: 1, ...postData });
-    });
-
-    it("should handle PUT requests for updates", async () => {
-      const updateData = { id: 1, name: "updated-test" };
-      const mockResponse = await createMockApiResponse(updateData);
-
-      global.fetch.mockResolvedValue(mockResponse);
-      apiConfig.makeRequest = vi.fn().mockResolvedValue(updateData);
-
-      const result = await apiConfig.makeRequest(
-        "/test-endpoint/1",
-        "PUT",
-        updateData,
-      );
-
-      expect(result).toEqual(updateData);
-    });
-
-    it("should handle DELETE requests", async () => {
-      const mockResponse = await createMockApiResponse({
-        success: true,
-        deleted: true,
+        expect(global.fetch).toHaveBeenCalled();
+        expect(result).toEqual(mockData);
       });
 
-      global.fetch.mockResolvedValue(mockResponse);
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockResolvedValue({ success: true, deleted: true });
+      it("should include query parameters in GET request", async () => {
+        const mockData = { data: "filtered-data" };
+        const mockResponse = await createMockApiResponse(mockData);
+        global.fetch.mockResolvedValue(mockResponse);
 
-      const result = await apiConfig.makeRequest("/test-endpoint/1", "DELETE");
+        await apiClient.get("/test-endpoint", { userId: 1, limit: 10 });
 
-      expect(result.success).toBe(true);
-      expect(result.deleted).toBe(true);
+        expect(global.fetch).toHaveBeenCalledWith(
+          expect.stringContaining("userId=1"),
+          expect.any(Object)
+        );
+        expect(global.fetch).toHaveBeenCalledWith(
+          expect.stringContaining("limit=10"),
+          expect.any(Object)
+        );
+      });
+
+      it("should use cache for GET requests when enabled", async () => {
+        const { cacheService } = await import(
+          "../../src/js/services/cache-service.js"
+        );
+        const cachedData = { data: "cached-data" };
+        cacheService.get.mockReturnValue(cachedData);
+
+        const result = await apiClient.get("/cached-endpoint", {}, { useCache: true });
+
+        expect(result).toEqual(cachedData);
+        expect(global.fetch).not.toHaveBeenCalled();
+      });
+
+      it("should bypass cache when forceRefresh is true", async () => {
+        const { cacheService } = await import(
+          "../../src/js/services/cache-service.js"
+        );
+        cacheService.get.mockReturnValue({ data: "old-cached-data" });
+
+        const mockData = { data: "fresh-data" };
+        const mockResponse = await createMockApiResponse(mockData);
+        global.fetch.mockResolvedValue(mockResponse);
+
+        const result = await apiClient.get(
+          "/test-endpoint",
+          {},
+          { useCache: true, forceRefresh: true }
+        );
+
+        expect(global.fetch).toHaveBeenCalled();
+        expect(result).toEqual(mockData);
+      });
+    });
+
+    describe("POST Requests", () => {
+      it("should make POST request with data", async () => {
+        const postData = { name: "test", value: 123 };
+        const mockResponse = await createMockApiResponse({ id: 1, ...postData });
+        global.fetch.mockResolvedValue(mockResponse);
+
+        const result = await apiClient.post("/test-endpoint", postData);
+
+        expect(global.fetch).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            method: "POST",
+            body: JSON.stringify(postData),
+          })
+        );
+        expect(result.id).toBe(1);
+      });
+
+      it("should include CSRF token in POST requests", async () => {
+        const { csrfProtection } = await import(
+          "../../src/js/security/csrf-protection.js"
+        );
+        const mockResponse = await createMockApiResponse({ success: true });
+        global.fetch.mockResolvedValue(mockResponse);
+
+        await apiClient.post("/test-endpoint", { data: "test" });
+
+        expect(csrfProtection.requiresProtection).toHaveBeenCalledWith("POST");
+        expect(csrfProtection.getHeaders).toHaveBeenCalled();
+      });
+
+      it("should invalidate cache after POST request", async () => {
+        const { cacheService } = await import(
+          "../../src/js/services/cache-service.js"
+        );
+        const mockResponse = await createMockApiResponse({ success: true });
+        global.fetch.mockResolvedValue(mockResponse);
+
+        await apiClient.post("/test-endpoint", { data: "test" });
+
+        expect(cacheService.invalidatePattern).toHaveBeenCalled();
+      });
+    });
+
+    describe("PUT Requests", () => {
+      it("should make PUT request with data", async () => {
+        const updateData = { id: 1, name: "updated-test" };
+        const mockResponse = await createMockApiResponse(updateData);
+        global.fetch.mockResolvedValue(mockResponse);
+
+        const result = await apiClient.put("/test-endpoint/1", updateData);
+
+        expect(global.fetch).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            method: "PUT",
+            body: JSON.stringify(updateData),
+          })
+        );
+        expect(result).toEqual(updateData);
+      });
+    });
+
+    describe("PATCH Requests", () => {
+      it("should make PATCH request with partial data", async () => {
+        const patchData = { name: "patched-name" };
+        const mockResponse = await createMockApiResponse({
+          id: 1,
+          ...patchData,
+        });
+        global.fetch.mockResolvedValue(mockResponse);
+
+        const result = await apiClient.patch("/test-endpoint/1", patchData);
+
+        expect(global.fetch).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            method: "PATCH",
+            body: JSON.stringify(patchData),
+          })
+        );
+        expect(result.name).toBe("patched-name");
+      });
+    });
+
+    describe("DELETE Requests", () => {
+      it("should make DELETE request", async () => {
+        const mockResponse = await createMockApiResponse({
+          success: true,
+          deleted: true,
+        });
+        global.fetch.mockResolvedValue(mockResponse);
+
+        const result = await apiClient.delete("/test-endpoint/1");
+
+        expect(global.fetch).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            method: "DELETE",
+          })
+        );
+        expect(result.deleted).toBe(true);
+      });
     });
   });
 
   describe("Error Handling", () => {
     it("should handle 401 unauthorized errors", async () => {
-      const unauthorizedResponse = await createMockApiResponse(
-        { error: "Unauthorized" },
-        { status: 401, ok: false },
-      );
-
+      const unauthorizedResponse = {
+        ok: false,
+        status: 401,
+        headers: new Map([["content-type", "application/json"]]),
+        json: vi.fn().mockResolvedValue({ error: "Unauthorized" }),
+      };
       global.fetch.mockResolvedValue(unauthorizedResponse);
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockRejectedValue(new Error("Unauthorized"));
 
-      await expect(
-        apiConfig.makeRequest("/protected-endpoint", "GET"),
-      ).rejects.toThrow("Unauthorized");
+      await expect(apiClient.get("/protected-endpoint")).rejects.toThrow();
     });
 
     it("should handle 403 forbidden errors", async () => {
-      const forbiddenResponse = await createMockApiResponse(
-        { error: "Forbidden" },
-        { status: 403, ok: false },
-      );
-
+      const forbiddenResponse = {
+        ok: false,
+        status: 403,
+        headers: new Map([["content-type", "application/json"]]),
+        json: vi.fn().mockResolvedValue({ error: "Forbidden" }),
+      };
       global.fetch.mockResolvedValue(forbiddenResponse);
-      apiConfig.makeRequest = vi.fn().mockRejectedValue(new Error("Forbidden"));
 
-      await expect(
-        apiConfig.makeRequest("/admin-endpoint", "GET"),
-      ).rejects.toThrow("Forbidden");
+      await expect(apiClient.get("/admin-endpoint")).rejects.toThrow();
     });
 
     it("should handle 404 not found errors", async () => {
-      const notFoundResponse = await createMockApiResponse(
-        { error: "Not Found" },
-        { status: 404, ok: false },
-      );
-
+      const notFoundResponse = {
+        ok: false,
+        status: 404,
+        headers: new Map([["content-type", "application/json"]]),
+        json: vi.fn().mockResolvedValue({ error: "Not Found" }),
+      };
       global.fetch.mockResolvedValue(notFoundResponse);
-      apiConfig.makeRequest = vi.fn().mockRejectedValue(new Error("Not Found"));
 
-      await expect(
-        apiConfig.makeRequest("/nonexistent-endpoint", "GET"),
-      ).rejects.toThrow("Not Found");
+      await expect(apiClient.get("/nonexistent-endpoint")).rejects.toThrow();
     });
 
     it("should handle 500 server errors", async () => {
-      const serverErrorResponse = await createMockApiResponse(
-        { error: "Internal Server Error" },
-        { status: 500, ok: false },
-      );
-
+      const serverErrorResponse = {
+        ok: false,
+        status: 500,
+        headers: new Map([["content-type", "application/json"]]),
+        json: vi.fn().mockResolvedValue({ error: "Internal Server Error" }),
+      };
       global.fetch.mockResolvedValue(serverErrorResponse);
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockRejectedValue(new Error("Internal Server Error"));
 
-      await expect(
-        apiConfig.makeRequest("/test-endpoint", "GET"),
-      ).rejects.toThrow("Internal Server Error");
+      await expect(apiClient.get("/test-endpoint")).rejects.toThrow();
     });
 
     it("should handle network errors", async () => {
-      global.fetch.mockRejectedValue(new Error("Network error"));
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockRejectedValue(new Error("Network error"));
+      global.fetch.mockRejectedValue(new Error("Failed to fetch"));
 
-      await expect(
-        apiConfig.makeRequest("/test-endpoint", "GET"),
-      ).rejects.toThrow("Network error");
+      await expect(apiClient.get("/test-endpoint")).rejects.toThrow();
+    });
+
+    it("should handle HTML responses as errors", async () => {
+      const htmlResponse = {
+        ok: true,
+        status: 200,
+        headers: new Map([["content-type", "text/html"]]),
+        text: vi.fn().mockResolvedValue("<html>Not Found</html>"),
+      };
+      global.fetch.mockResolvedValue(htmlResponse);
+
+      await expect(apiClient.get("/test-endpoint")).rejects.toThrow();
     });
   });
 
-  describe("Retry Logic", () => {
-    it("should retry failed requests up to configured limit", async () => {
-      const networkError = new Error("Network error");
-      const successResponse = await createMockApiResponse({ success: true });
+  describe("Request Cancellation", () => {
+    it("should cancel a specific request", () => {
+      const mockController = { abort: vi.fn() };
+      apiClient.activeRequests = new Map();
+      apiClient.activeRequests.set("test-request", mockController);
 
-      global.fetch
-        .mockRejectedValueOnce(networkError)
-        .mockRejectedValueOnce(networkError)
-        .mockResolvedValueOnce(successResponse);
+      apiClient.cancelRequest("test-request");
 
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockRejectedValueOnce(networkError)
-        .mockRejectedValueOnce(networkError)
-        .mockResolvedValueOnce({ success: true });
-
-      const result = await apiConfig.makeRequest("/test-endpoint", "GET");
-
-      expect(apiConfig.makeRequest).toHaveBeenCalledTimes(3);
-      expect(result.success).toBe(true);
+      expect(mockController.abort).toHaveBeenCalled();
+      expect(apiClient.activeRequests.has("test-request")).toBe(false);
     });
 
-    it("should fail after max retry attempts", async () => {
-      const networkError = new Error("Persistent network error");
+    it("should cancel all active requests", () => {
+      const mockController1 = { abort: vi.fn() };
+      const mockController2 = { abort: vi.fn() };
+      apiClient.activeRequests = new Map();
+      apiClient.activeRequests.set("request-1", mockController1);
+      apiClient.activeRequests.set("request-2", mockController2);
 
-      global.fetch.mockRejectedValue(networkError);
-      apiConfig.makeRequest = vi.fn().mockRejectedValue(networkError);
+      apiClient.cancelAllRequests();
 
-      await expect(
-        apiConfig.makeRequest("/test-endpoint", "GET"),
-      ).rejects.toThrow("Persistent network error");
+      expect(mockController1.abort).toHaveBeenCalled();
+      expect(mockController2.abort).toHaveBeenCalled();
+      expect(apiClient.activeRequests.size).toBe(0);
     });
 
-    it("should not retry on client errors (4xx)", async () => {
-      const clientError = await createMockApiResponse(
-        { error: "Bad Request" },
-        { status: 400, ok: false },
+    it("should cancel requests by pattern", () => {
+      const mockController1 = { abort: vi.fn() };
+      const mockController2 = { abort: vi.fn() };
+      const mockController3 = { abort: vi.fn() };
+      apiClient.activeRequests = new Map();
+      apiClient.activeRequests.set("/training/sessions_123", mockController1);
+      apiClient.activeRequests.set("/training/stats_456", mockController2);
+      apiClient.activeRequests.set("/analytics/data_789", mockController3);
+
+      apiClient.cancelRequestsByPattern("/training");
+
+      expect(mockController1.abort).toHaveBeenCalled();
+      expect(mockController2.abort).toHaveBeenCalled();
+      expect(mockController3.abort).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("Cache Invalidation", () => {
+    it("should invalidate cache for endpoint pattern", async () => {
+      const { cacheService } = await import(
+        "../../src/js/services/cache-service.js"
       );
 
-      global.fetch.mockResolvedValue(clientError);
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockRejectedValue(new Error("Bad Request"));
+      apiClient.invalidateCache("/training/sessions/123");
 
-      await expect(
-        apiConfig.makeRequest("/test-endpoint", "GET"),
-      ).rejects.toThrow("Bad Request");
-
-      expect(apiConfig.makeRequest).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe("Request Timeout", () => {
-    it("should timeout long-running requests", async () => {
-      const timeoutPromise = new Promise((resolve) => {
-        setTimeout(
-          () => resolve(createMockApiResponse({ data: "delayed" })),
-          10000,
-        );
-      });
-
-      global.fetch.mockReturnValue(timeoutPromise);
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockRejectedValue(new Error("Request timeout"));
-
-      await expect(
-        apiConfig.makeRequest("/slow-endpoint", "GET"),
-      ).rejects.toThrow("Request timeout");
-    });
-  });
-
-  describe("Request Caching", () => {
-    it("should cache GET requests when enabled", async () => {
-      // Mock cache implementation
-      const cache = new Map();
-      apiConfig.getFromCache = vi
-        .fn()
-        .mockImplementation((key) => cache.get(key));
-      apiConfig.setCache = vi
-        .fn()
-        .mockImplementation((key, data) => cache.set(key, data));
-
-      // First request - miss cache
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockImplementationOnce(async (url, method) => {
-          const data = { data: "fresh-response", timestamp: Date.now() };
-          apiConfig.setCache(`${method}:${url}`, data);
-          return data;
-        })
-        .mockImplementationOnce(async (url, method) => {
-          return (
-            apiConfig.getFromCache(`${method}:${url}`) || { data: "fallback" }
-          );
-        });
-
-      const firstResult = await apiConfig.makeRequest(
-        "/cached-endpoint",
-        "GET",
+      expect(cacheService.invalidatePattern).toHaveBeenCalledWith(
+        expect.stringContaining("api:/training/sessions")
       );
-      const secondResult = await apiConfig.makeRequest(
-        "/cached-endpoint",
-        "GET",
+    });
+
+    it("should strip query params when invalidating cache", async () => {
+      const { cacheService } = await import(
+        "../../src/js/services/cache-service.js"
       );
 
-      expect(firstResult.data).toBe("fresh-response");
-      expect(secondResult.data).toBe("fresh-response");
-      expect(apiConfig.setCache).toHaveBeenCalled();
-    });
-  });
+      apiClient.invalidateCache("/training/sessions?userId=1&limit=10");
 
-  describe("Request Interceptors", () => {
-    it("should apply request interceptors", async () => {
-      const requestInterceptor = vi.fn().mockImplementation((config) => {
-        config.headers = {
-          ...config.headers,
-          "X-Custom-Header": "intercepted",
-        };
-        return config;
-      });
-
-      apiConfig.addRequestInterceptor = vi
-        .fn()
-        .mockImplementation((interceptor) => {
-          apiConfig.requestInterceptors = apiConfig.requestInterceptors || [];
-          apiConfig.requestInterceptors.push(interceptor);
-        });
-
-      apiConfig.addRequestInterceptor(requestInterceptor);
-
-      expect(apiConfig.requestInterceptors).toContain(requestInterceptor);
-    });
-
-    it("should apply response interceptors", async () => {
-      const responseInterceptor = vi.fn().mockImplementation((response) => {
-        response.processed = true;
-        return response;
-      });
-
-      apiConfig.addResponseInterceptor = vi
-        .fn()
-        .mockImplementation((interceptor) => {
-          apiConfig.responseInterceptors = apiConfig.responseInterceptors || [];
-          apiConfig.responseInterceptors.push(interceptor);
-        });
-
-      apiConfig.addResponseInterceptor(responseInterceptor);
-
-      expect(apiConfig.responseInterceptors).toContain(responseInterceptor);
+      expect(cacheService.invalidatePattern).toHaveBeenCalledWith(
+        "api:/training/sessions"
+      );
     });
   });
 
   describe("Content Type Handling", () => {
     it("should handle JSON content correctly", async () => {
       const jsonData = { message: "json test" };
-      const mockResponse = await createMockApiResponse(jsonData);
-
+      const mockResponse = {
+        ok: true,
+        status: 200,
+        headers: new Map([["content-type", "application/json"]]),
+        json: vi.fn().mockResolvedValue(jsonData),
+      };
       global.fetch.mockResolvedValue(mockResponse);
-      apiConfig.makeRequest = vi.fn().mockResolvedValue(jsonData);
 
-      const result = await apiConfig.makeRequest("/json-endpoint", "GET");
+      const result = await apiClient.get("/json-endpoint");
 
       expect(result).toEqual(jsonData);
     });
 
-    it("should handle form data uploads", async () => {
-      const formData = new FormData();
-      formData.append("file", new File(["test"], "test.txt"));
-      formData.append("description", "Test file upload");
-
-      const mockResponse = await createMockApiResponse({
-        uploaded: true,
-        fileId: "file-123",
-      });
-
-      global.fetch.mockResolvedValue(mockResponse);
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockResolvedValue({ uploaded: true, fileId: "file-123" });
-
-      const result = await apiConfig.makeRequest("/upload", "POST", formData);
-
-      expect(result.uploaded).toBe(true);
-      expect(result.fileId).toBe("file-123");
-    });
-
-    it("should handle binary data downloads", async () => {
-      const binaryData = new Uint8Array([1, 2, 3, 4, 5]);
+    it("should attempt to parse non-JSON as JSON when possible", async () => {
+      const jsonData = { message: "parsed json" };
       const mockResponse = {
         ok: true,
         status: 200,
-        arrayBuffer: vi.fn().mockResolvedValue(binaryData.buffer),
-        headers: new Map([["content-type", "application/octet-stream"]]),
+        headers: new Map([["content-type", "text/plain"]]),
+        text: vi.fn().mockResolvedValue(JSON.stringify(jsonData)),
       };
-
       global.fetch.mockResolvedValue(mockResponse);
-      apiConfig.makeRequest = vi.fn().mockResolvedValue(binaryData.buffer);
 
-      const result = await apiConfig.makeRequest("/download/file.bin", "GET");
+      const result = await apiClient.get("/text-endpoint");
 
-      expect(result).toBeInstanceOf(ArrayBuffer);
+      expect(result).toEqual(jsonData);
     });
   });
 
-  describe("Rate Limiting", () => {
-    it("should handle rate limit responses", async () => {
-      const rateLimitResponse = await createMockApiResponse(
-        { error: "Rate limit exceeded" },
-        {
-          status: 429,
-          ok: false,
-          headers: new Map([
-            ["retry-after", "60"],
-            ["x-ratelimit-remaining", "0"],
-          ]),
-        },
-      );
+  describe("API Endpoints Configuration", () => {
+    it("should have auth endpoints configured", async () => {
+      const { API_ENDPOINTS } = await import("../../src/api-config.js");
 
-      global.fetch.mockResolvedValue(rateLimitResponse);
-      apiConfig.makeRequest = vi
-        .fn()
-        .mockRejectedValue(new Error("Rate limit exceeded"));
-
-      await expect(
-        apiConfig.makeRequest("/api-endpoint", "GET"),
-      ).rejects.toThrow("Rate limit exceeded");
+      expect(API_ENDPOINTS.auth.login).toBeDefined();
+      expect(API_ENDPOINTS.auth.register).toBeDefined();
+      expect(API_ENDPOINTS.auth.logout).toBeDefined();
+      expect(API_ENDPOINTS.auth.me).toBeDefined();
     });
 
-    it("should respect rate limit headers", async () => {
-      apiConfig.checkRateLimit = vi.fn().mockReturnValue(true);
-      apiConfig.waitForRateLimit = vi.fn().mockResolvedValue(undefined);
+    it("should have dashboard endpoints configured", async () => {
+      const { API_ENDPOINTS } = await import("../../src/api-config.js");
 
-      const canProceed = apiConfig.checkRateLimit();
-      expect(canProceed).toBe(true);
+      expect(API_ENDPOINTS.dashboard.overview).toBeDefined();
+      expect(API_ENDPOINTS.dashboard.notifications).toBeDefined();
+      expect(API_ENDPOINTS.dashboard.health).toBeDefined();
+    });
 
-      if (!canProceed) {
-        await apiConfig.waitForRateLimit();
-        expect(apiConfig.waitForRateLimit).toHaveBeenCalled();
-      }
+    it("should have training endpoints configured", async () => {
+      const { API_ENDPOINTS } = await import("../../src/api-config.js");
+
+      expect(API_ENDPOINTS.training.stats).toBeDefined();
+      expect(API_ENDPOINTS.training.sessions).toBeDefined();
+      expect(API_ENDPOINTS.training.complete).toBeDefined();
+    });
+
+    it("should have analytics endpoints configured", async () => {
+      const { API_ENDPOINTS } = await import("../../src/api-config.js");
+
+      expect(API_ENDPOINTS.analytics.performanceTrends).toBeDefined();
+      expect(API_ENDPOINTS.analytics.summary).toBeDefined();
+    });
+
+    it("should have community endpoints configured", async () => {
+      const { API_ENDPOINTS } = await import("../../src/api-config.js");
+
+      expect(API_ENDPOINTS.community.feed).toBeDefined();
+      expect(API_ENDPOINTS.community.leaderboard).toBeDefined();
     });
   });
 
-  describe("Environment Configuration", () => {
-    it("should use development configuration in dev environment", () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = "development";
+  describe("Helper Functions", () => {
+    it("should have auth helper functions", async () => {
+      const { auth } = await import("../../src/api-config.js");
 
-      const devApiConfig = new ApiConfig();
-      expect(devApiConfig.baseURL).toBe("http://localhost:3001/api");
-
-      process.env.NODE_ENV = originalEnv;
+      expect(typeof auth.login).toBe("function");
+      expect(typeof auth.register).toBe("function");
+      expect(typeof auth.logout).toBe("function");
+      expect(typeof auth.getCurrentUser).toBe("function");
     });
 
-    it("should use production configuration in prod environment", () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = "production";
+    it("should have dashboard helper functions", async () => {
+      const { dashboard } = await import("../../src/api-config.js");
 
-      const prodApiConfig = new ApiConfig();
-      // This would be the production URL in a real implementation
-      expect(prodApiConfig.baseURL).toBeDefined();
+      expect(typeof dashboard.getOverview).toBe("function");
+      expect(typeof dashboard.getNotifications).toBe("function");
+      expect(typeof dashboard.getNotificationCount).toBe("function");
+    });
 
-      process.env.NODE_ENV = originalEnv;
+    it("should have analytics helper functions", async () => {
+      const { analytics } = await import("../../src/api-config.js");
+
+      expect(typeof analytics.getPerformanceTrends).toBe("function");
+      expect(typeof analytics.getSummary).toBe("function");
+    });
+
+    it("should have community helper functions", async () => {
+      const { community } = await import("../../src/api-config.js");
+
+      expect(typeof community.getFeed).toBe("function");
+      expect(typeof community.createPost).toBe("function");
+      expect(typeof community.getLeaderboard).toBe("function");
+    });
+
+    it("should have knowledge helper functions", async () => {
+      const { knowledge } = await import("../../src/api-config.js");
+
+      expect(typeof knowledge.search).toBe("function");
+      expect(typeof knowledge.getEntry).toBe("function");
     });
   });
 });

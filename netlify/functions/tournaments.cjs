@@ -8,7 +8,6 @@ const {
   createSuccessResponse,
   createErrorResponse,
   handleNotFoundError,
-  CORS_HEADERS,
 } = require("./utils/error-handler.cjs");
 
 // =====================================================
@@ -336,15 +335,6 @@ function getDaysUntil(startDate) {
 // =====================================================
 
 exports.handler = async (event, context) => {
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-      body: "",
-    };
-  }
-
   // Route to appropriate handler based on HTTP method
   const method = event.httpMethod;
 

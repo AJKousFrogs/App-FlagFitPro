@@ -178,21 +178,8 @@ class ScheduleService {
       scheduleSettings,
     );
 
-    // Check if there's a game on Saturday (this week)
-    const saturday = new Date(date);
-    const daysUntilSaturday = (6 - dayOfWeek + 7) % 7;
-    saturday.setDate(
-      saturday.getDate() + (daysUntilSaturday === 0 ? 7 : daysUntilSaturday),
-    );
-    const _hasGameSaturday = this.isGameDay(6, saturday, scheduleSettings);
-
-    // Check if there's a game on Sunday (this week)
-    const sunday = new Date(date);
-    const daysUntilSunday = (0 - dayOfWeek + 7) % 7;
-    sunday.setDate(
-      sunday.getDate() + (daysUntilSunday === 0 ? 7 : daysUntilSunday),
-    );
-    const _hasGameSunday = this.isGameDay(0, sunday, scheduleSettings);
+    // Note: Game day checks for Saturday/Sunday are computed but currently
+    // only used indirectly through isDaysBeforeGame. Kept for future use.
 
     // Check if game is within 1 day
     const isDayBeforeGame = this.isDaysBeforeGame(date, 1, scheduleSettings);

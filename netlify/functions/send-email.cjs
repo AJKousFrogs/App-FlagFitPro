@@ -4,10 +4,9 @@
 const nodemailer = require("nodemailer");
 const {
   createSuccessResponse,
-  handleServerError,
-  logFunctionCall,
-  CORS_HEADERS,
+  createErrorResponse,
 } = require("./utils/error-handler.cjs");
+const { baseHandler } = require("./utils/base-handler.cjs");
 
 // Initialize email transporter
 function getEmailTransporter() {
@@ -157,115 +156,187 @@ function getVerificationEmailTemplate(name, verificationUrl, role = "player") {
 </html>`;
 }
 
-exports.handler = async (event, _context) => {
-  logFunctionCall("Send-Email", event);
+// Parental consent email template
+function getParentalConsentEmailTemplate(guardianName, minorName, verificationUrl) {
+  const appUrl = getAppUrl();
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parental Consent Required - FlagFit Pro</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
+        .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .header { background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%); color: white; padding: 40px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { padding: 40px; }
+        .button { display: inline-block; background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+        .footer { background: #f8f9fa; padding: 30px; text-align: center; color: #666; font-size: 14px; border-radius: 0 0 10px 10px; }
+        .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; color: #856404; }
+        .info-box { background: #e8f5e9; border-left: 4px solid #10c96b; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .consent-options { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        ul { margin: 10px 0; padding-left: 20px; }
+        h3 { color: #333; margin-top: 25px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏈 FlagFit Pro</h1>
+            <h2>Parental Consent Required</h2>
+        </div>
+        <div class="content">
+            <p>Dear ${guardianName},</p>
+            
+            <p><strong>${minorName}</strong> has requested to use FlagFit Pro, a flag football training and performance tracking application. As they are under 18 years old, we require your consent before they can access certain features.</p>
+            
+            <div class="info-box">
+                <h3 style="margin-top: 0;">📱 About FlagFit Pro</h3>
+                <p>FlagFit Pro helps young athletes track their training progress, connect with teammates, and improve their flag football skills. The app is designed with safety and privacy as top priorities.</p>
+            </div>
+            
+            <h3>🔒 What We're Asking Permission For:</h3>
+            <div class="consent-options">
+                <p>When you verify consent, you'll be able to choose which features to allow:</p>
+                <ul>
+                    <li><strong>Health Data:</strong> Track fitness metrics like heart rate, steps, and workout intensity</li>
+                    <li><strong>Biometrics:</strong> Record physical measurements for performance tracking</li>
+                    <li><strong>Location:</strong> Find nearby teams and track outdoor training routes</li>
+                    <li><strong>Research:</strong> Optionally contribute anonymized data to sports science research</li>
+                </ul>
+                <p><em>You can enable or disable each feature individually.</em></p>
+            </div>
+            
+            <h3>✅ To Give Consent:</h3>
+            <p style="text-align: center;">
+                <a href="${verificationUrl}" class="button">Review & Verify Consent</a>
+            </p>
+            
+            <div class="warning">
+                <strong>⚠️ Important Information:</strong>
+                <ul>
+                    <li>This verification link expires in 7 days</li>
+                    <li>You can revoke consent at any time</li>
+                    <li>If you did not expect this email, please ignore it</li>
+                </ul>
+            </div>
+            
+            <p>If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style="word-break: break-all; font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 5px; font-size: 12px;">
+                ${verificationUrl}
+            </p>
+            
+            <p>Questions? Visit our <a href="${appUrl}/privacy-policy">Privacy Policy</a> or contact <a href="mailto:privacy@flagfitpro.com">privacy@flagfitpro.com</a></p>
+            
+            <p>Best regards,<br>The FlagFit Pro Team</p>
+        </div>
+        <div class="footer">
+            <p>© ${new Date().getFullYear()} FlagFit Pro. All rights reserved.</p>
+            <p>This email was sent because ${minorName} requested parental consent to use FlagFit Pro.</p>
+        </div>
+    </div>
+</body>
+</html>`;
+}
 
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
-  }
+exports.handler = async (event, context) => {
+  return baseHandler(event, context, {
+    functionName: "send-email",
+    allowedMethods: ["POST"],
+    rateLimitType: "AUTH", // Strict rate limiting for email sending
+    requireAuth: false, // Email sending may be called during registration
+    handler: async (event, _context, { userId }) => {
+      const transporter = getEmailTransporter();
+      if (!transporter) {
+        return createErrorResponse(
+          "Email service not configured. Please set up email credentials in environment variables.",
+          503,
+          "service_unavailable"
+        );
+      }
 
-  // Only allow POST requests
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      headers: CORS_HEADERS,
-      body: JSON.stringify({
-        success: false,
-        error: "Method not allowed",
-      }),
-    };
-  }
+      const { type, to, name, verificationUrl, token, role, minorName } = JSON.parse(
+        event.body || "{}",
+      );
 
-  try {
-    const transporter = getEmailTransporter();
-    if (!transporter) {
-      return {
-        statusCode: 503,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error:
-            "Email service not configured. Please set up email credentials in environment variables.",
-        }),
-      };
-    }
+      if (!type || !to) {
+        return createErrorResponse(
+          "Email type and recipient (to) are required",
+          400,
+          "validation_error"
+        );
+      }
 
-    const { type, to, name, verificationUrl, token, role } = JSON.parse(
-      event.body || "{}",
-    );
+      const fromEmail = getFromEmail();
+      let mailOptions;
 
-    if (!type || !to) {
-      return {
-        statusCode: 400,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          success: false,
-          error: "Email type and recipient (to) are required",
-        }),
-      };
-    }
+      switch (type) {
+        case "verification":
+          if (!verificationUrl && !token) {
+            return createErrorResponse(
+              "Verification URL or token is required",
+              400,
+              "validation_error"
+            );
+          }
 
-    const fromEmail = getFromEmail();
-    let mailOptions;
-
-    switch (type) {
-      case "verification":
-        if (!verificationUrl && !token) {
-          return {
-            statusCode: 400,
-            headers: CORS_HEADERS,
-            body: JSON.stringify({
-              success: false,
-              error: "Verification URL or token is required",
-            }),
+          const url =
+            verificationUrl || `${getAppUrl()}/verify-email.html?token=${token}`;
+          const userRole = role || "player"; // Default to player if not provided
+          mailOptions = {
+            from: {
+              name: "FlagFit Pro",
+              address: fromEmail,
+            },
+            to,
+            subject: "Verify Your FlagFit Pro Email Address",
+            html: getVerificationEmailTemplate(name || "User", url, userRole),
+            text: `Hi ${name || "User"},\n\nPlease verify your email address by clicking this link:\n${url}\n\nThis link expires in 24 hours.\n\nBest regards,\nThe FlagFit Pro Team`,
           };
-        }
+          break;
 
-        const url =
-          verificationUrl || `${getAppUrl()}/verify-email.html?token=${token}`;
-        const userRole = role || "player"; // Default to player if not provided
-        mailOptions = {
-          from: {
-            name: "FlagFit Pro",
-            address: fromEmail,
-          },
+        case "parental_consent":
+          if (!verificationUrl) {
+            return createErrorResponse(
+              "Verification URL is required for parental consent emails",
+              400,
+              "validation_error"
+            );
+          }
+          mailOptions = {
+            from: {
+              name: "FlagFit Pro",
+              address: fromEmail,
+            },
+            to,
+            subject: `Parental Consent Required for ${minorName || "your child"} - FlagFit Pro`,
+            html: getParentalConsentEmailTemplate(name || "Parent/Guardian", minorName || "your child", verificationUrl),
+            text: `Dear ${name || "Parent/Guardian"},\n\n${minorName || "Your child"} has requested to use FlagFit Pro. As they are under 18, we require your consent.\n\nPlease verify consent by clicking this link:\n${verificationUrl}\n\nThis link expires in 7 days.\n\nBest regards,\nThe FlagFit Pro Team`,
+          };
+          break;
+
+        default:
+          return createErrorResponse(
+            `Unsupported email type: ${type}`,
+            400,
+            "validation_error"
+          );
+      }
+
+      const result = await transporter.sendMail(mailOptions);
+
+      console.log(`✅ Email sent successfully to ${to}:`, result.messageId);
+
+      return createSuccessResponse(
+        {
+          messageId: result.messageId,
           to,
-          subject: "Verify Your FlagFit Pro Email Address",
-          html: getVerificationEmailTemplate(name || "User", url, userRole),
-          text: `Hi ${name || "User"},\n\nPlease verify your email address by clicking this link:\n${url}\n\nThis link expires in 24 hours.\n\nBest regards,\nThe FlagFit Pro Team`,
-        };
-        break;
-
-      default:
-        return {
-          statusCode: 400,
-          headers: CORS_HEADERS,
-          body: JSON.stringify({
-            success: false,
-            error: `Unsupported email type: ${type}`,
-          }),
-        };
-    }
-
-    const result = await transporter.sendMail(mailOptions);
-
-    console.log(`✅ Email sent successfully to ${to}:`, result.messageId);
-
-    return createSuccessResponse(
-      {
-        messageId: result.messageId,
-        to,
-        type,
-      },
-      200,
-      "Email sent successfully",
-    );
-  } catch (error) {
-    console.error("Error sending email:", error);
-    return handleServerError(error, "Failed to send email");
-  }
+          type,
+        },
+        200,
+        "Email sent successfully",
+      );
+    },
+  });
 };

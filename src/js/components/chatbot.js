@@ -1007,8 +1007,8 @@ class FlagFitChatbot {
     let knowledgeEntry = null;
     let articles = [];
 
-    // Include conversation context in parsing if available
-    const _contextMessages = this.conversationContext.slice(-4); // Last 4 messages for context
+    // Note: Conversation context is available via this.conversationContext.slice(-4)
+    // for future use in context-aware parsing
 
     try {
       // Import question parser and answer generator
@@ -1479,7 +1479,6 @@ class FlagFitChatbot {
 
   getLocalKnowledgeEntry(parsedQuestion, _lowerMessage) {
     // Create a knowledge entry structure from local knowledge base
-    // const _intent = parsedQuestion.intent; // Reserved for future use
     const entities = parsedQuestion.entities;
 
     // Check for supplements

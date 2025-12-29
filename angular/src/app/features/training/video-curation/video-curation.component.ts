@@ -434,7 +434,7 @@ interface PlaylistForm {
                             @for (pos of suggestion.positions; track pos) {
                               <p-tag [value]="pos" severity="info"></p-tag>
                             }
-                            @for (focus of suggestion.training_focus?.slice(0, 2); track focus) {
+                            @for (focus of suggestion.training_focus.slice(0, 2); track focus) {
                               <p-tag [value]="formatFocus(focus)" severity="success"></p-tag>
                             }
                           </div>

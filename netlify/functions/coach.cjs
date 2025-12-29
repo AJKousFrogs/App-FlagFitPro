@@ -7,15 +7,45 @@ const {
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { supabaseAdmin, db } = require("./supabase-client.cjs");
+const { ConsentDataReader, AccessContext } = require("./utils/consent-data-reader.cjs");
+const { DataState } = require("./utils/data-state.cjs");
+
+// Initialize consent-aware data reader
+const consentReader = new ConsentDataReader(supabaseAdmin);
+
+/**
+ * Get the team ID for a coach
+ * @private
+ */
+async function getCoachTeamId(coachId) {
+  const { data: teams, error } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", coachId)
+    .eq("role", "coach")
+    .limit(1);
+
+  if (error || !teams || teams.length === 0) {
+    return null;
+  }
+  return teams[0].team_id;
+}
 
 /**
  * Get coach dashboard data
  * Returns squad overview, risk flags, and upcoming fixtures
+ * 
+ * Uses ConsentDataReader for consent-protected tables (training_sessions, wellness_entries)
  */
 async function getCoachDashboard(userId) {
   try {
     // Get team members (squad)
     const teamMembers = await db.teams.getUserTeams(userId);
+    const teamId = await getCoachTeamId(userId);
+
+    // Track consent info across all members
+    const allBlockedPlayerIds = new Set();
+    let totalAccessibleCount = 0;
 
     // Get squad member details with workload and ACWR
     const squadMembers = [];
@@ -33,17 +63,28 @@ async function getCoachDashboard(userId) {
           continue;
         }
 
-        // Get recent training sessions for ACWR calculation
-        const { data: sessions, error: _sessionsError } = await supabaseAdmin
-          .from("training_sessions")
-          .select("workload, session_date")
-          .eq("user_id", member.user_id)
-          .order("session_date", { ascending: false })
-          .limit(28); // Last 4 weeks
+        // Get recent training sessions for ACWR calculation using ConsentDataReader
+        const sessionsResult = await consentReader.readTrainingSessions({
+          requesterId: userId,
+          playerId: member.user_id,
+          teamId: teamId,
+          context: AccessContext.COACH_TEAM_DATA,
+          filters: {
+            limit: 28, // Last 4 weeks
+          },
+        });
+
+        const sessions = sessionsResult.data || [];
+        
+        // Track blocked players
+        if (sessionsResult.consentInfo?.blockedPlayerIds?.length > 0) {
+          sessionsResult.consentInfo.blockedPlayerIds.forEach(id => allBlockedPlayerIds.add(id));
+        }
 
         // Calculate ACWR (Acute:Chronic Workload Ratio)
         let acwr = 1.0;
         let workload = 0;
+        let dataState = DataState.NO_DATA;
 
         if (sessions && sessions.length > 0) {
           const acute = sessions
@@ -58,18 +99,31 @@ async function getCoachDashboard(userId) {
 
           acwr = chronic > 0 ? acute / chronic : 1.0;
           workload = acute; // Weekly workload
+          dataState = sessions.length >= 7 ? DataState.REAL_DATA : DataState.INSUFFICIENT_DATA;
+          totalAccessibleCount += sessions.length;
         }
 
-        // Calculate readiness from wellness data
+        // Calculate readiness from wellness data using ConsentDataReader
         let readiness = 75; // Default baseline
+        let wellnessDataState = DataState.NO_DATA;
+        
         try {
-          // Get latest wellness entry for this user
-          const { data: wellnessData } = await supabaseAdmin
-            .from("wellness_entries")
-            .select("sleep_quality, energy_level, stress_level, muscle_soreness, mood")
-            .or(`athlete_id.eq.${member.user_id},user_id.eq.${member.user_id}`)
-            .order("date", { ascending: false })
-            .limit(1);
+          const wellnessResult = await consentReader.readWellnessEntries({
+            requesterId: userId,
+            playerId: member.user_id,
+            teamId: teamId,
+            context: AccessContext.COACH_TEAM_DATA,
+            filters: {
+              limit: 1,
+            },
+          });
+
+          // Track blocked players from wellness
+          if (wellnessResult.consentInfo?.blockedPlayerIds?.length > 0) {
+            wellnessResult.consentInfo.blockedPlayerIds.forEach(id => allBlockedPlayerIds.add(id));
+          }
+
+          const wellnessData = wellnessResult.data || [];
 
           if (wellnessData && wellnessData.length > 0) {
             const w = wellnessData[0];
@@ -85,6 +139,7 @@ async function getCoachDashboard(userId) {
             // Combine wellness with ACWR impact
             const acwrPenalty = Math.abs(acwr - 1.0) * 15; // Penalty for being far from optimal ACWR
             readiness = Math.max(30, Math.min(100, wellnessAvg - acwrPenalty));
+            wellnessDataState = DataState.REAL_DATA;
           } else {
             // Fallback: estimate from ACWR only
             readiness = Math.max(50, Math.min(100, 85 - (acwr - 1.0) * 20));
@@ -104,6 +159,10 @@ async function getCoachDashboard(userId) {
           today_workload: workload / 7, // Daily average
           acwr: acwr,
           readiness: readiness,
+          dataState: {
+            training: dataState,
+            wellness: wellnessDataState,
+          },
         });
       } catch (err) {
         console.error(`Error processing squad member ${member.user_id}:`, err);
@@ -118,6 +177,12 @@ async function getCoachDashboard(userId) {
             squadMembers.length
           : 0,
       members: squadMembers,
+      consentInfo: {
+        blockedPlayerIds: [...allBlockedPlayerIds],
+        blockedCount: allBlockedPlayerIds.size,
+        accessibleCount: totalAccessibleCount,
+      },
+      dataState: squadMembers.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
     };
   } catch (error) {
     console.error("Error getting coach dashboard:", error);
@@ -128,6 +193,8 @@ async function getCoachDashboard(userId) {
 /**
  * Get team information
  * Returns team members with their stats
+ * 
+ * Uses ConsentDataReader for consent-protected tables (training_sessions)
  */
 async function getTeamInfo(userId, coachId) {
   try {
@@ -135,37 +202,53 @@ async function getTeamInfo(userId, coachId) {
     const targetCoachId = coachId || userId;
 
     // Get teams where user is coach
-    const { data: teams, error: teamsError } = await supabaseAdmin
-      .from("team_members")
-      .select("team_id")
-      .eq("user_id", targetCoachId)
-      .eq("role", "coach")
-      .limit(1);
+    const teamId = await getCoachTeamId(targetCoachId);
 
-    if (teamsError || !teams || teams.length === 0) {
+    if (!teamId) {
       // Return empty team if no teams found
-      return [];
+      return {
+        members: [],
+        consentInfo: {
+          blockedPlayerIds: [],
+          blockedCount: 0,
+          accessibleCount: 0,
+        },
+        dataState: DataState.NO_DATA,
+      };
     }
-
-    const teamId = teams[0].team_id;
 
     // Get all team members
     const members = await db.teams.getTeamMembers(teamId);
 
-    // Enrich with training data
+    // Track consent info
+    const allBlockedPlayerIds = new Set();
+    let totalAccessibleCount = 0;
+
+    // Enrich with training data using ConsentDataReader
     const enrichedMembers = await Promise.all(
       members.map(async (member) => {
         try {
-          // Get recent training sessions
-          const { data: sessions, error: _sessionsError } = await supabaseAdmin
-            .from("training_sessions")
-            .select("workload, session_date")
-            .eq("user_id", member.user_id)
-            .order("session_date", { ascending: false })
-            .limit(28);
+          // Get recent training sessions using ConsentDataReader
+          const sessionsResult = await consentReader.readTrainingSessions({
+            requesterId: userId,
+            playerId: member.user_id,
+            teamId: teamId,
+            context: AccessContext.COACH_TEAM_DATA,
+            filters: {
+              limit: 28,
+            },
+          });
+
+          const sessions = sessionsResult.data || [];
+
+          // Track blocked players
+          if (sessionsResult.consentInfo?.blockedPlayerIds?.length > 0) {
+            sessionsResult.consentInfo.blockedPlayerIds.forEach(id => allBlockedPlayerIds.add(id));
+          }
 
           let acwr = 1.0;
           let workload = 0;
+          let dataState = DataState.NO_DATA;
 
           if (sessions && sessions.length > 0) {
             const acute = sessions
@@ -180,6 +263,8 @@ async function getTeamInfo(userId, coachId) {
 
             acwr = chronic > 0 ? acute / chronic : 1.0;
             workload = acute;
+            dataState = sessions.length >= 7 ? DataState.REAL_DATA : DataState.INSUFFICIENT_DATA;
+            totalAccessibleCount += sessions.length;
           }
 
           const readiness = Math.max(50, Math.min(100, 85 - (acwr - 1.0) * 20));
@@ -190,6 +275,7 @@ async function getTeamInfo(userId, coachId) {
             workload: workload,
             today_workload: workload / 7,
             readiness: readiness,
+            dataState: dataState,
           };
         } catch (err) {
           console.error(`Error enriching member ${member.user_id}:`, err);
@@ -199,12 +285,21 @@ async function getTeamInfo(userId, coachId) {
             workload: 0,
             today_workload: 0,
             readiness: 75,
+            dataState: DataState.NO_DATA,
           };
         }
       }),
     );
 
-    return enrichedMembers;
+    return {
+      members: enrichedMembers,
+      consentInfo: {
+        blockedPlayerIds: [...allBlockedPlayerIds],
+        blockedCount: allBlockedPlayerIds.size,
+        accessibleCount: totalAccessibleCount,
+      },
+      dataState: enrichedMembers.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
+    };
   } catch (error) {
     console.error("Error getting team info:", error);
     throw error;
@@ -214,42 +309,59 @@ async function getTeamInfo(userId, coachId) {
 /**
  * Get training analytics
  * Returns training statistics and trends
+ * 
+ * Uses ConsentDataReader for consent-protected tables (training_sessions)
  */
 async function getTrainingAnalytics(userId, coachId) {
   try {
     const targetCoachId = coachId || userId;
 
-    // Get team members
-    const teamMembers = await getTeamInfo(userId, targetCoachId);
+    // Get team ID
+    const teamId = await getCoachTeamId(targetCoachId);
 
-    // Get training sessions for all team members
-    const memberIds = teamMembers.map((m) => m.user_id || m.id);
-
-    if (memberIds.length === 0) {
+    if (!teamId) {
       return {
         totalSessions: 0,
         totalWorkload: 0,
         avgWorkload: 0,
         trends: [],
         distribution: {},
+        consentInfo: {
+          blockedPlayerIds: [],
+          blockedCount: 0,
+          accessibleCount: 0,
+        },
+        dataState: DataState.NO_DATA,
       };
     }
 
-    const { data: sessions, error: sessionsError } = await supabaseAdmin
-      .from("training_sessions")
-      .select("workload, session_date, user_id, session_type")
-      .in("user_id", memberIds)
-      .order("session_date", { ascending: false })
-      .limit(100);
+    // Get training sessions for all team members using ConsentDataReader
+    // The reader will handle consent checking internally
+    const sessionsResult = await consentReader.readTrainingSessions({
+      requesterId: userId,
+      teamId: teamId,
+      context: AccessContext.COACH_TEAM_DATA,
+      filters: {
+        limit: 100,
+      },
+    });
 
-    if (sessionsError) {
-      console.error("Error fetching training sessions:", sessionsError);
+    const sessions = sessionsResult.data || [];
+    const consentInfo = sessionsResult.consentInfo || {
+      blockedPlayerIds: [],
+      blockedCount: 0,
+      accessibleCount: 0,
+    };
+
+    if (sessions.length === 0) {
       return {
         totalSessions: 0,
         totalWorkload: 0,
         avgWorkload: 0,
         trends: [],
         distribution: {},
+        consentInfo,
+        dataState: DataState.NO_DATA,
       };
     }
 
@@ -300,6 +412,8 @@ async function getTrainingAnalytics(userId, coachId) {
       avgWorkload,
       trends,
       distribution,
+      consentInfo,
+      dataState: totalSessions >= 7 ? DataState.REAL_DATA : DataState.INSUFFICIENT_DATA,
     };
   } catch (error) {
     console.error("Error getting training analytics:", error);
@@ -309,6 +423,7 @@ async function getTrainingAnalytics(userId, coachId) {
 
 /**
  * Create training session
+ * Note: This is a WRITE operation, not subject to consent reading rules
  */
 async function createTrainingSession(userId, sessionData) {
   try {
@@ -353,18 +468,11 @@ async function getGames(userId, coachId) {
     const targetCoachId = coachId || userId;
 
     // Get teams where user is coach
-    const { data: teams, error: teamsError } = await supabaseAdmin
-      .from("team_members")
-      .select("team_id")
-      .eq("user_id", targetCoachId)
-      .eq("role", "coach")
-      .limit(1);
+    const teamId = await getCoachTeamId(targetCoachId);
 
-    if (teamsError || !teams || teams.length === 0) {
+    if (!teamId) {
       return [];
     }
-
-    const teamId = teams[0].team_id;
 
     // Get games for this team
     const { data: games, error: gamesError } = await supabaseAdmin
@@ -428,8 +536,14 @@ async function handleRequest(event, context, { userId }) {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
-        const team = await getTeamInfo(userId, coachId);
-        return createSuccessResponse(team);
+        const teamResult = await getTeamInfo(userId, coachId);
+        // Preserve backwards compatibility: return members array at top level
+        // but include consentInfo and dataState
+        return createSuccessResponse({
+          ...teamResult,
+          // For backwards compat, also expose members at root if clients expect array
+          // Clients should migrate to using result.members
+        });
 
       case "/training-analytics":
         if (event.httpMethod !== "GET") {

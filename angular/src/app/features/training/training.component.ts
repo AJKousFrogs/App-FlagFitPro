@@ -65,8 +65,6 @@ interface Workout {
     MainLayoutComponent,
     StatsGridComponent,
     TrainingBuilderComponent,
-    WorkoutCalendarComponent,
-    RestTimerComponent,
     SwipeGestureDirective,
   ],
   template: `

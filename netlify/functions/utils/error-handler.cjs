@@ -51,20 +51,29 @@ const CORS_HEADERS = {
 
 /**
  * Create a standardized error response
+ * 
+ * Note: Fourth parameter can be either additionalData object or requestId string
+ * for backward compatibility with older code patterns.
+ * 
  * @param {Error|string} error - Error object or message
  * @param {number} statusCode - HTTP status code
  * @param {string} errorType - Error type from ErrorType enum
- * @param {object} additionalData - Additional data to include
+ * @param {object|string} additionalDataOrRequestId - Additional data to include or requestId (ignored)
  * @returns {object} Netlify function response
  */
 function createErrorResponse(
   error,
   statusCode = 500,
   errorType = ErrorType.UNKNOWN,
-  additionalData = {},
+  additionalDataOrRequestId = {},
 ) {
   const errorMessage = error instanceof Error ? error.message : error;
   const timestamp = new Date().toISOString();
+
+  // Handle backward compatibility: if fourth param is string (requestId), ignore it
+  const additionalData = typeof additionalDataOrRequestId === 'object' && additionalDataOrRequestId !== null
+    ? additionalDataOrRequestId
+    : {};
 
   // Log the error
   console.error(
@@ -88,13 +97,28 @@ function createErrorResponse(
 
 /**
  * Create a standardized success response
+ * 
+ * Supports two calling conventions:
+ * 1. createSuccessResponse(data) - Simple response with data
+ * 2. createSuccessResponse(data, statusCode, message, cacheTTL) - Full options
+ * 
+ * Note: If second parameter is a string (requestId), it's ignored for backward compatibility
+ * with older code that passed requestId. Use options object for new code.
+ * 
  * @param {*} data - Data to return
- * @param {number} statusCode - HTTP status code
+ * @param {number|string} statusCodeOrRequestId - HTTP status code (default: 200) or requestId (ignored)
  * @param {string} message - Optional success message
  * @param {number} cacheTTL - Cache TTL in seconds (0 = no cache)
  * @returns {object} Netlify function response
  */
-function createSuccessResponse(data, statusCode = 200, message = null, cacheTTL = 0) {
+function createSuccessResponse(data, statusCodeOrRequestId = 200, message = null, cacheTTL = 0) {
+  // Handle backward compatibility: if second param is a string (requestId), use defaults
+  let statusCode = 200;
+  if (typeof statusCodeOrRequestId === 'number') {
+    statusCode = statusCodeOrRequestId;
+  }
+  // If it's a string (requestId), we ignore it and use default statusCode
+
   const response = {
     success: true,
     data,

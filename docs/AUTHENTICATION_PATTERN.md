@@ -1,7 +1,7 @@
 # Authentication Pattern Documentation
 
 **Version**: 2.0  
-**Last Updated**: December 2025  
+**Last Updated**: 29. December 2025  
 **Last Verified Against Codebase**: 2025-12-28  
 **Status**: ✅ Production Ready
 
@@ -358,8 +358,8 @@ await secureStorage.setAuthToken(session.access_token);
 
 Demo users available in development:
 
-- `test@flagfitpro.com` / `demo123`
-- `coach@flagfitpro.com` / `demo123`
+- `test@ljubljanafrogs.si` / `demo123`
+- `coach@ljubljanafrogs.si` / `demo123`
 
 **Note:** These are for development only. Remove in production.
 
@@ -370,7 +370,7 @@ Demo users available in development:
 curl -X POST 'https://YOUR_PROJECT.supabase.co/auth/v1/token?grant_type=password' \
   -H 'apikey: YOUR_ANON_KEY' \
   -H 'Content-Type: application/json' \
-  -d '{"email":"test@flagfitpro.com","password":"demo123"}'
+  -d '{"email":"test@ljubljanafrogs.si","password":"demo123"}'
 
 # Authenticated request
 curl http://localhost:8888/api/dashboard \

@@ -8,7 +8,7 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Router } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
@@ -43,6 +43,16 @@ import {
   RiskAlert,
   TeamMessage,
 } from "../../core/services/team-statistics.service";
+import { ConsentBlockedMessageComponent } from "../../shared/components/consent-blocked-message/consent-blocked-message.component";
+import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
+
+/**
+ * Interface for consent information returned from API
+ */
+interface ConsentInfo {
+  blockedPlayerIds: string[];
+  partialDataNotice?: string;
+}
 
 type PlayerFilterType = 'all' | 'starters' | 'injured' | 'at_risk';
 type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
@@ -54,6 +64,7 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     CardModule,
     TableModule,
     TagModule,
@@ -69,7 +80,6 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
     DatePicker,
     Select,
     MainLayoutComponent,
-    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -161,6 +171,23 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
             </div>
           </div>
         </div>
+
+        <!-- Partial Data Notice (when some players have blocked consent) -->
+        @if (hasBlockedPlayers()) {
+          <div class="partial-data-notice">
+            <div class="notice-icon">
+              <i class="pi pi-info-circle"></i>
+            </div>
+            <div class="notice-content">
+              <h4>{{ partialDataMessage().title }}</h4>
+              <p>{{ partialDataMessage().reason }}</p>
+              <a [routerLink]="partialDataMessage().helpLink" class="notice-link">
+                <i class="pi pi-external-link"></i>
+                {{ partialDataMessage().actionLabel }}
+              </a>
+            </div>
+          </div>
+        }
 
         <!-- Main Content Grid -->
         <div class="main-grid">
@@ -351,18 +378,32 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-player>
-                  <tr [class.at-risk-row]="player.riskLevel === 'high'" [class.injured-row]="player.status === 'injured'">
+                  <tr 
+                    [class.at-risk-row]="player.riskLevel === 'high'" 
+                    [class.injured-row]="player.status === 'injured'"
+                    [class.consent-blocked-row]="isPlayerBlocked(player.playerId)"
+                  >
                     <td>
                       <div class="player-cell">
-                        <p-avatar 
-                          [label]="player.avatarInitials" 
-                          shape="circle"
-                          [style]="getAvatarStyle(player)"
-                        ></p-avatar>
+                        <div class="avatar-wrapper">
+                          <p-avatar 
+                            [label]="player.avatarInitials" 
+                            shape="circle"
+                            [style]="getAvatarStyle(player)"
+                          ></p-avatar>
+                          @if (isPlayerBlocked(player.playerId)) {
+                            <div class="blocked-badge" pTooltip="Data not shared">
+                              <i class="pi pi-lock"></i>
+                            </div>
+                          }
+                        </div>
                         <div class="player-info">
                           <span class="player-name">{{ player.playerName }}</span>
                           @if (player.jerseyNumber) {
                             <span class="jersey-number">#{{ player.jerseyNumber }}</span>
+                          }
+                          @if (isPlayerBlocked(player.playerId)) {
+                            <span class="blocked-label">Data not shared</span>
                           }
                         </div>
                       </div>
@@ -371,51 +412,77 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
                       <p-tag [value]="player.position" [severity]="getPositionSeverity(player.position)"></p-tag>
                     </td>
                     <td>
-                      <div class="performance-cell">
-                        <span class="perf-score" [class]="getPerformanceClass(player.performanceScore)">
-                          {{ player.performanceScore }}%
+                      @if (isPlayerBlocked(player.playerId)) {
+                        <span class="blocked-data">—</span>
+                      } @else {
+                        <div class="performance-cell">
+                          <span class="perf-score" [class]="getPerformanceClass(player.performanceScore)">
+                            {{ player.performanceScore }}%
+                          </span>
+                          <i [class]="getTrendIcon(player.performanceTrend)" [ngClass]="'trend-' + player.performanceTrend"></i>
+                        </div>
+                      }
+                    </td>
+                    <td>
+                      @if (isPlayerBlocked(player.playerId)) {
+                        <span class="blocked-data">—</span>
+                      } @else {
+                        <span [class]="getACWRClass(player.acwr)">
+                          {{ player.acwr | number:'1.2-2' }}
                         </span>
-                        <i [class]="getTrendIcon(player.performanceTrend)" [ngClass]="'trend-' + player.performanceTrend"></i>
-                      </div>
+                      }
                     </td>
                     <td>
-                      <span [class]="getACWRClass(player.acwr)">
-                        {{ player.acwr | number:'1.2-2' }}
-                      </span>
+                      @if (isPlayerBlocked(player.playerId)) {
+                        <span class="blocked-data">—</span>
+                      } @else {
+                        <div class="readiness-cell">
+                          <p-progressBar 
+                            [value]="player.readiness" 
+                            [showValue]="false"
+                            [style]="{ height: '8px', width: '60px' }"
+                            [styleClass]="getReadinessBarClass(player.readiness)"
+                          ></p-progressBar>
+                          <span class="readiness-value">{{ player.readiness }}</span>
+                        </div>
+                      }
                     </td>
                     <td>
-                      <div class="readiness-cell">
-                        <p-progressBar 
-                          [value]="player.readiness" 
-                          [showValue]="false"
-                          [style]="{ height: '8px', width: '60px' }"
-                          [styleClass]="getReadinessBarClass(player.readiness)"
-                        ></p-progressBar>
-                        <span class="readiness-value">{{ player.readiness }}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <p-tag 
-                        [value]="getStatusLabel(player.status)" 
-                        [severity]="getStatusSeverity(player.status)"
-                      ></p-tag>
+                      @if (isPlayerBlocked(player.playerId)) {
+                        <p-tag value="Private" severity="secondary" pTooltip="Ask athlete to enable sharing"></p-tag>
+                      } @else {
+                        <p-tag 
+                          [value]="getStatusLabel(player.status)" 
+                          [severity]="getStatusSeverity(player.status)"
+                        ></p-tag>
+                      }
                     </td>
                     <td>
                       <div class="action-buttons">
-                        <p-button 
-                          icon="pi pi-eye" 
-                          [text]="true" 
-                          [rounded]="true"
-                          pTooltip="View Details"
-                          (onClick)="viewPlayer(player.playerId)"
-                        ></p-button>
-                        <p-button 
-                          icon="pi pi-chart-bar" 
-                          [text]="true" 
-                          [rounded]="true"
-                          pTooltip="View Stats"
-                          (onClick)="viewPlayerStats(player.playerId)"
-                        ></p-button>
+                        @if (isPlayerBlocked(player.playerId)) {
+                          <p-button 
+                            icon="pi pi-envelope" 
+                            [text]="true" 
+                            [rounded]="true"
+                            pTooltip="Request data sharing"
+                            (onClick)="requestDataSharing(player.playerId)"
+                          ></p-button>
+                        } @else {
+                          <p-button 
+                            icon="pi pi-eye" 
+                            [text]="true" 
+                            [rounded]="true"
+                            pTooltip="View Details"
+                            (onClick)="viewPlayer(player.playerId)"
+                          ></p-button>
+                          <p-button 
+                            icon="pi pi-chart-bar" 
+                            [text]="true" 
+                            [rounded]="true"
+                            pTooltip="View Stats"
+                            (onClick)="viewPlayerStats(player.playerId)"
+                          ></p-button>
+                        }
                       </div>
                     </td>
                   </tr>
@@ -1058,6 +1125,109 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
       background: var(--red-50) !important;
     }
 
+    .consent-blocked-row {
+      background: var(--surface-100) !important;
+      opacity: 0.85;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+    }
+
+    .blocked-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      background: var(--surface-400);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid white;
+    }
+
+    .blocked-badge i {
+      font-size: 8px;
+      color: white;
+    }
+
+    .blocked-label {
+      display: block;
+      font-size: var(--text-xs);
+      color: var(--text-color-secondary);
+      font-style: italic;
+    }
+
+    .blocked-data {
+      color: var(--text-color-secondary);
+      font-style: italic;
+    }
+
+    /* Partial Data Notice */
+    .partial-data-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      background: var(--blue-50);
+      border: 1px solid var(--blue-200);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--space-5);
+    }
+
+    .notice-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--blue-100);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .notice-icon i {
+      font-size: 1.25rem;
+      color: var(--blue-600);
+    }
+
+    .notice-content {
+      flex: 1;
+    }
+
+    .notice-content h4 {
+      margin: 0 0 var(--space-1);
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--text-color);
+    }
+
+    .notice-content p {
+      margin: 0 0 var(--space-2);
+      font-size: var(--text-sm);
+      color: var(--text-color-secondary);
+    }
+
+    .notice-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--text-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--blue-600);
+      text-decoration: none;
+    }
+
+    .notice-link:hover {
+      text-decoration: underline;
+    }
+
+    .notice-link i {
+      font-size: 0.75rem;
+    }
+
     .empty-message {
       text-align: center;
       padding: var(--space-6);
@@ -1438,6 +1608,9 @@ export class CoachDashboardComponent implements OnInit {
   teamMessages = signal<TeamMessage[]>([]);
   performanceTrend = signal<{ labels: string[]; scores: number[] }>({ labels: [], scores: [] });
 
+  // Consent blocked players tracking
+  consentInfo = signal<ConsentInfo>({ blockedPlayerIds: [] });
+
   // UI state
   playerFilter = signal<PlayerFilterType>('all');
   showCreateSessionDialog = false;
@@ -1528,6 +1701,20 @@ export class CoachDashboardComponent implements OnInit {
     return scores[scores.length - 1] - scores[0];
   });
 
+  /**
+   * Check if any players have blocked consent
+   */
+  hasBlockedPlayers = computed(() => {
+    return this.consentInfo().blockedPlayerIds.length > 0;
+  });
+
+  /**
+   * Get the partial data message from centralized privacy copy
+   */
+  partialDataMessage = computed(() => {
+    return CONSENT_BLOCKED_MESSAGES.coachTeamPartialBlock;
+  });
+
   ngOnInit(): void {
     this.headerService.setDashboardHeader();
     this.loadDashboardData();
@@ -1583,6 +1770,23 @@ export class CoachDashboardComponent implements OnInit {
   adjustPlayerLoad(playerId: string): void {
     this.toastService.info('Opening load adjustment for player...');
     this.router.navigate(['/training'], { queryParams: { player: playerId, action: 'adjust-load' } });
+  }
+
+  /**
+   * Check if a player has blocked consent
+   */
+  isPlayerBlocked(playerId: string): boolean {
+    return this.consentInfo().blockedPlayerIds.includes(playerId);
+  }
+
+  /**
+   * Request data sharing from a player with blocked consent
+   */
+  requestDataSharing(playerId: string): void {
+    this.toastService.info('Sending data sharing request to athlete...');
+    this.router.navigate(['/help/privacy-sharing'], { 
+      queryParams: { player: playerId, action: 'request' } 
+    });
   }
 
   navigateToAnalytics(): void {

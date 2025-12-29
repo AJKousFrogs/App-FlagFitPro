@@ -1,395 +1,326 @@
-# TERMS OF USE - FLAG FOOTBALL TRAINING APP
-
-**Last Updated: [DATE]**
-
-## 1. ACCEPTANCE OF TERMS
-
-By accessing or using the Flag Football Training Application ("App"), provided by [COMPANY NAME] ("we," "us," or "our"), you ("User," "you," or "your") agree to be bound by these Terms of Use ("Terms"). If you do not agree to these Terms, do not use the App.
-
-**IMPORTANT:** This App provides fitness, health, and training guidance. It is not a substitute for professional medical advice, diagnosis, or treatment.
-
-## 2. DESCRIPTION OF SERVICE
-
-### 2.1 App Functionality
-
-The App provides:
-
-- **Performance Analytics:** AI-powered analysis of athletic performance and predictions
-- **Injury Risk Assessment:** Algorithms to assess and predict injury risks
-- **Nutrition Tracking:** Food logging and nutritional guidance based on USDA database
-- **Team Chemistry Analysis:** Team dynamics and communication analytics
-- **Training Optimization:** Personalized training recommendations and scheduling
-- **Recovery Monitoring:** Sleep, wellness, and recovery tracking
-- **Emergency Features:** Safety features including emergency contact systems
-
-### 2.2 AI and Machine Learning Features
-
-The App uses artificial intelligence and machine learning to:
-
-- Analyze your performance data and provide predictions
-- Generate personalized recommendations for training and nutrition
-- Assess injury risks based on multiple data factors
-- Provide AI coaching through conversational interfaces
-- Optimize team chemistry and communication patterns
-
-## 3. USER ACCOUNTS AND ELIGIBILITY
-
-### 3.1 Age Requirements
-
-- **Minimum Age:** Users must be at least 13 years old
-- **Minors (13-17):** Require verifiable parental consent for certain features
-- **Adult Supervision:** Minors must use the App under adult supervision
-
-### 3.2 Account Creation
-
-You agree to:
-
-- Provide accurate, complete, and current information
-- Maintain the security of your account credentials
-- Notify us immediately of any unauthorized use
-- Accept responsibility for all activities under your account
-
-### 3.3 Team Accounts
-
-- **Coach/Admin Accounts:** Have additional responsibilities for team data protection
-- **Team Data:** Coaches may access aggregated team performance data with appropriate permissions
-- **Individual Privacy:** Team features respect individual privacy settings
-
-## 4. ACCEPTABLE USE POLICY
-
-### 4.1 Permitted Uses
-
-You may use the App to:
-
-- Track your personal athletic performance and health data
-- Receive training and nutrition recommendations
-- Participate in team analytics (with appropriate permissions)
-- Access AI coaching and guidance features
-- Use emergency safety features when needed
-
-### 4.2 Prohibited Uses
-
-You may NOT:
-
-- **Misrepresent Information:** Provide false health, performance, or personal data
-- **Circumvent Security:** Attempt to bypass security measures or access restrictions
-- **Reverse Engineer:** Decompile, reverse engineer, or attempt to extract source code
-- **Data Mining:** Use automated tools to extract data from the App
-- **Commercial Use:** Use the App for commercial purposes without authorization
-- **Harmful Activities:** Use the App in ways that could harm other users or the service
-- **Medical Advice:** Rely solely on the App for medical decisions without professional consultation
-
-### 4.3 Data Integrity
-
-You are responsible for:
-
-- Ensuring accuracy of all data you input
-- Understanding that inaccurate data may lead to inappropriate recommendations
-- Regular review and updating of your profile information
-- Proper use of emergency features only for genuine emergencies
-
-## 5. HEALTH AND SAFETY DISCLAIMERS
-
-### 5.1 Medical Disclaimer
-
-**IMPORTANT:** The App is NOT a medical device and should NOT replace professional medical advice.
-
-- **Not Medical Advice:** All recommendations are for informational purposes only
-- **Consult Professionals:** Always consult healthcare providers for medical decisions
-- **Emergency Situations:** Call 911 or local emergency services for medical emergencies
-- **Individual Variation:** Results and recommendations may not be suitable for everyone
-
-### 5.2 Fitness and Training Disclaimer
-
-- **Physical Risk:** All physical activity involves inherent risks of injury
-- **Personal Responsibility:** You assume all risks associated with training recommendations
-- **Medical Clearance:** Obtain medical clearance before beginning any training program
-- **Listen to Your Body:** Stop activity if you experience pain or discomfort
-
-### 5.3 Injury Risk Assessment Limitations
-
-- **Predictive Only:** Injury risk assessments are predictions, not guarantees
-- **Multiple Factors:** Many injury risk factors are not captured by the App
-- **Professional Assessment:** Supplement with professional sports medicine evaluation
-- **Individual Differences:** Risk factors vary significantly among individuals
-
-### 5.4 Nutrition Guidance Limitations
-
-- **General Guidance:** Nutrition recommendations are general and may not suit your specific needs
-- **Medical Conditions:** Consult healthcare providers if you have dietary restrictions or medical conditions
-- **USDA Data:** Nutritional information based on USDA database may not reflect exact values
-- **Supplement Advice:** Supplement recommendations are informational only
-
-## 6. DATA USAGE AND PRIVACY
-
-### 6.1 Data Collection Consent
-
-By using the App, you consent to the collection and processing of:
-
-- Personal information and account data
-- Performance and training metrics
-- Health and wellness information
-- Nutrition and lifestyle data
-- Team and social interaction data
-- Technical usage data
-
-### 6.2 AI and Machine Learning Consent
-
-You specifically consent to:
-
-- Analysis of your data by AI and machine learning algorithms
-- Generation of predictions and recommendations based on your data
-- Comparative analysis with anonymized user data
-- Continuous improvement of AI models using your data (anonymized)
-
-### 6.3 Emergency Data Sharing
-
-You consent to sharing emergency information with:
-
-- Emergency responders and medical professionals
-- Designated emergency contacts
-- Relevant authorities during safety incidents
-- Team coaches/staff during team-related emergencies
-
-### 6.4 Privacy Policy Integration
-
-Data usage is governed by our Privacy Policy, which is incorporated by reference into these Terms.
-
-## 7. INTELLECTUAL PROPERTY RIGHTS
-
-### 7.1 Our Intellectual Property
-
-The App and its content are protected by:
-
-- **Copyright:** All content, design, and code are copyrighted
-- **Trademarks:** App name, logos, and branding are trademarked
-- **Trade Secrets:** Algorithms, AI models, and business processes are proprietary
-- **Patents:** Certain features may be protected by patents
-
-### 7.2 Your Data Rights
-
-- **Ownership:** You retain ownership of data you input into the App
-- **License to Us:** You grant us a license to process your data as described in our Privacy Policy
-- **Anonymized Data:** We may use anonymized, aggregated data for research and improvement
-- **Deletion Rights:** You may request deletion of your data subject to legal requirements
-
-### 7.3 Third-Party Content
-
-- **USDA Database:** Nutritional data licensed from USDA FoodData Central
-- **Research Data:** Sports science data licensed from academic institutions
-- **Compliance:** All third-party content used in compliance with licensing terms
-
-## 8. LIMITATION OF LIABILITY
-
-### 8.1 General Limitations
-
-TO THE MAXIMUM EXTENT PERMITTED BY LAW:
-
-**WE ARE NOT LIABLE FOR:**
-
-- **Indirect Damages:** Consequential, incidental, or punitive damages
-- **Personal Injury:** Injuries resulting from training recommendations or app use
-- **Medical Issues:** Health problems arising from following app recommendations
-- **Data Loss:** Loss of data due to technical issues or user error
-- **Business Losses:** Lost profits, revenue, or business opportunities
-- **Third-Party Actions:** Actions or omissions of third parties
-
-### 8.2 Specific App-Related Limitations
-
-**WE SPECIFICALLY DISCLAIM LIABILITY FOR:**
-
-- **Inaccurate Predictions:** Errors in performance or injury risk predictions
-- **Training Injuries:** Injuries occurring during recommended training activities
-- **Nutrition Issues:** Adverse reactions to nutritional recommendations
-- **Emergency Response:** Delays or failures in emergency feature functionality
-- **AI Recommendations:** Inappropriate or harmful AI-generated advice
-- **Team Conflicts:** Issues arising from team chemistry analytics
-
-### 8.3 Maximum Liability Cap
-
-Our total liability for all claims shall not exceed the amount you paid for the App in the 12 months preceding the claim, or $100, whichever is greater.
-
-## 9. INDEMNIFICATION
-
-You agree to indemnify, defend, and hold harmless [COMPANY NAME], its officers, directors, employees, and agents from any claims, losses, damages, or expenses (including attorney fees) arising from:
-
-- Your use or misuse of the App
-- Violation of these Terms or applicable laws
-- Infringement of third-party rights
-- Inaccurate information you provide
-- Your training activities or health decisions based on App recommendations
-
-## 10. DISCLAIMERS AND WARRANTIES
-
-### 10.1 "AS IS" Service
-
-THE APP IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND.
-
-**WE DISCLAIM ALL WARRANTIES INCLUDING:**
-
-- **Accuracy:** Accuracy of predictions, recommendations, or data
-- **Reliability:** Continuous, uninterrupted service availability
-- **Completeness:** Completeness of information or features
-- **Fitness for Purpose:** Suitability for your specific needs or goals
-- **Security:** Absolute security of data or systems
-
-### 10.2 AI and Machine Learning Disclaimers
-
-**REGARDING AI FEATURES:**
-
-- **Accuracy Not Guaranteed:** AI predictions and recommendations may be inaccurate
-- **Learning Systems:** AI models continuously learn and may change over time
-- **Data Dependent:** AI accuracy depends on quality and quantity of input data
-- **Not Human Judgment:** AI cannot replace human expertise and judgment
-
-## 11. MODIFICATIONS AND TERMINATION
-
-### 11.1 Service Modifications
-
-We reserve the right to:
-
-- Modify or discontinue the App or any features
-- Update AI algorithms and recommendation systems
-- Change pricing or subscription terms
-- Add or remove functionality
-
-### 11.2 Terms Modifications
-
-- **Updates:** We may update these Terms periodically
-- **Notification:** Significant changes will be communicated 30 days in advance
-- **Continued Use:** Continued use after changes constitutes acceptance
-- **Rejection:** If you reject changes, you must stop using the App
-
-### 11.3 Account Termination
-
-**We may terminate accounts for:**
-
-- Violation of these Terms
-- Suspicious or fraudulent activity
-- Extended periods of inactivity
-- Legal or regulatory requirements
-
-**You may terminate by:**
-
-- Deleting your account through app settings
-- Contacting customer support
-- Following account closure procedures in our Privacy Policy
-
-## 12. EMERGENCY FEATURES AND SAFETY
-
-### 12.1 Emergency Feature Limitations
-
-- **Not Primary Emergency Service:** App emergency features supplement, not replace, traditional emergency services
-- **Network Dependent:** Emergency features require network connectivity
-- **Battery Dependent:** Features require adequate device battery
-- **Location Accuracy:** GPS location may not be perfectly accurate
-
-### 12.2 Emergency Use Guidelines
-
-- **Call 911 First:** Always call traditional emergency services for serious emergencies
-- **App as Backup:** Use app emergency features as additional safety measure
-- **Keep Updated:** Maintain current emergency contact information
-- **Test Features:** Periodically test emergency features for functionality
-
-### 12.3 Emergency Data Sharing
-
-In emergencies, we may share:
-
-- Your location with emergency responders
-- Medical information with healthcare providers
-- Contact information with designated emergency contacts
-- Relevant health data with medical professionals
-
-## 13. THIRD-PARTY INTEGRATIONS
-
-### 13.1 Third-Party Services
-
-The App may integrate with:
-
-- **Health Platforms:** Apple Health, Google Fit, other fitness platforms
-- **Wearable Devices:** Fitness trackers, smartwatches, heart rate monitors
-- **Food Databases:** USDA FoodData Central, nutrition databases
-- **Map Services:** GPS and mapping services for location features
-
-### 13.2 Third-Party Terms
-
-- **Separate Terms:** Third-party services have their own terms and privacy policies
-- **No Control:** We do not control third-party services or their availability
-- **Data Sharing:** Integration may involve data sharing with third parties
-- **Discontinuation:** Third-party integrations may be discontinued without notice
-
-## 14. GOVERNING LAW AND DISPUTE RESOLUTION
-
-### 14.1 Governing Law
-
-These Terms are governed by the laws of [STATE/JURISDICTION], without regard to conflict of law principles.
-
-### 14.2 Dispute Resolution Process
-
-**MANDATORY STEPS:**
-
-1. **Direct Resolution:** Contact us at support@[COMPANY_DOMAIN] to resolve informally
-2. **Mediation:** If informal resolution fails, attempt mediation through [MEDIATION_SERVICE]
-3. **Binding Arbitration:** Unresolved disputes subject to binding arbitration under [ARBITRATION_RULES]
-
-### 14.3 Arbitration Terms
-
-- **Individual Basis:** Disputes resolved individually, not as class actions
-- **Location:** Arbitration conducted in [LOCATION]
-- **Costs:** Each party bears own attorney fees unless otherwise awarded
-- **Limited Discovery:** Streamlined discovery process
-
-### 14.4 Exceptions to Arbitration
-
-The following may be resolved in court:
-
-- Intellectual property disputes
-- Emergency injunctive relief
-- Small claims court matters (under jurisdictional limits)
-
-## 15. MISCELLANEOUS PROVISIONS
-
-### 15.1 Severability
-
-If any provision is deemed invalid or unenforceable, the remaining provisions continue in full force and effect.
-
-### 15.2 Entire Agreement
-
-These Terms, together with our Privacy Policy, constitute the entire agreement between you and us regarding the App.
-
-### 15.3 No Waiver
-
-Our failure to enforce any provision does not constitute a waiver of that or any other provision.
-
-### 15.4 Assignment
-
-You may not assign your rights under these Terms. We may assign our rights and obligations without restriction.
-
-### 15.5 Survival
-
-Provisions that by their nature should survive termination will survive, including liability limitations, indemnification, and governing law.
-
-## 16. CONTACT INFORMATION
-
-### General Support:
-
-- **Email:** support@[COMPANY_DOMAIN]
-- **Phone:** [PHONE_NUMBER]
-- **Mail:** [COMPANY_ADDRESS]
-
-### Legal Notices:
-
-- **Email:** legal@[COMPANY_DOMAIN]
-- **Mail:** [LEGAL_ADDRESS]
-
-### Emergency Support:
-
-- **24/7 Hotline:** [EMERGENCY_NUMBER]
-- **Emergency Email:** emergency@[COMPANY_DOMAIN]
+# TERMS OF USE - FLAGFIT PRO
 
 ---
 
-**ACKNOWLEDGMENT:** By using our App, you acknowledge that you have read, understood, and agree to be bound by these Terms of Use. You understand that the App involves the collection and processing of sensitive personal information and that you are responsible for your health and safety decisions.
+## ORGANIZATION IDENTITY & LEGAL INFORMATION
 
-**EFFECTIVE DATE:** [DATE]
+| Field | Value |
+|-------|-------|
+| **Organization Name** | Športno društvo Žabe |
+| **Legal Form** | Sports Club (Športno društvo) - Non-Profit |
+| **Registration Number** | 4121503000 |
+| **VAT Number** | SI57486913 |
+| **Registered Address** | Štihova ulica 13, 1000 Ljubljana, Slovenia |
+| **Email** | merlin@ljubljanafrogs.si |
+| **Phone** | +386 69 685 482 |
+| **Governing Law** | Republic of Slovenia |
+| **Jurisdiction** | Courts of Ljubljana, Slovenia |
+| **Effective Date** | 29. December 2025 |
+| **Version** | 1.0 |
+
+---
+
+**Last Updated: 29. December 2025**
+
+## IMPORTANT NOTICE - PLEASE READ CAREFULLY
+
+**FlagFit Pro is a free training application developed and operated by Športno društvo Žabe, a volunteer-run sports club in Ljubljana, Slovenia. We operate with zero budget and no commercial interests.**
+
+By using this app, you acknowledge and accept:
+
+1. **We are volunteers, not a corporation.** We are athletes helping athletes.
+2. **We have no money.** We cannot pay damages, legal fees, or settlements.
+3. **We do not sell your data.** We have no commercial interest in your information.
+4. **You use this app at your own risk.** We provide tools to help you train better, but you are responsible for your own health and safety decisions.
+5. **This is not medical advice.** Always consult healthcare professionals for medical decisions.
+
+---
+
+## 1. ACCEPTANCE OF TERMS
+
+By accessing or using FlagFit Pro ("the App"), provided by Športno društvo Žabe ("we," "us," "our," or "the Club"), you ("User," "Athlete," "you," or "your") agree to these Terms of Use.
+
+**If you do not agree to these terms, do not use the App.**
+
+## 2. WHO WE ARE
+
+### 2.1 About Športno društvo Žabe
+
+We are a registered non-profit sports club in Slovenia dedicated to promoting flag football and athletic development. We operate entirely on volunteer effort with zero operating budget.
+
+- **We are not a company.** We are a sports association (društvo).
+- **We have no employees.** All work is done by volunteers.
+- **We have no revenue.** We do not charge for the app or sell anything.
+- **We have no commercial interests.** Your data has no monetary value to us.
+
+### 2.2 Why We Built This App
+
+We built FlagFit Pro to help our athletes and the broader flag football community train smarter, prevent injuries, and improve performance. That's it. No hidden agenda.
+
+## 3. WHAT THE APP DOES
+
+### 3.1 Features
+
+The App provides:
+
+- **Performance Tracking:** Log and analyze your training sessions
+- **Injury Risk Monitoring:** Track wellness indicators that may affect injury risk
+- **Training Recommendations:** AI-assisted suggestions for training optimization
+- **Team Features:** Share data with coaches (only with your explicit consent)
+- **Nutrition Logging:** Track your food intake for performance optimization
+
+### 3.2 What the App Does NOT Do
+
+- **Medical diagnosis or treatment** - We are not doctors
+- **Professional coaching** - We are not certified trainers (unless our volunteers happen to be)
+- **Guarantee results** - Your improvement depends on you
+- **Replace common sense** - If something hurts, stop doing it
+
+## 4. ELIGIBILITY
+
+### 4.1 Age Requirements
+
+- **Minimum age:** 16 years old (in accordance with Slovenian law)
+- **Ages 13-15:** May use the app with parental/guardian consent
+- **Under 13:** Cannot use this app
+
+### 4.2 Account Responsibility
+
+You are responsible for:
+- Keeping your login credentials secure
+- All activity under your account
+- Providing accurate information (garbage in = garbage out)
+
+## 5. YOUR DATA - THE HONEST TRUTH
+
+### 5.1 What We Collect and Why
+
+| Data | Why We Need It | What We Do With It |
+|------|----------------|-------------------|
+| **Name, Email** | So you can log in | Nothing else |
+| **Training Data** | To show you your progress | Help you train better |
+| **Wellness Data** | To estimate injury risk | Warn you when you might be overtraining |
+| **Nutrition Data** | To track your intake | Show you patterns |
+| **Team Data** | To enable team features | Share with coaches (only if you allow it) |
+
+### 5.2 What We Do NOT Do With Your Data
+
+- ❌ **Sell it** - We have nothing to sell and no one to sell it to
+- ❌ **Share it with advertisers** - We don't have advertisers
+- ❌ **Give it to insurance companies** - We don't know any
+- ❌ **Use it for commercial purposes** - We're not commercial
+- ❌ **Mine it for profit** - We have no profit motive
+
+### 5.3 Where Your Data Lives
+
+Your data is stored on Supabase servers in the European Union. We chose EU hosting specifically to keep data under EU/Slovenian jurisdiction.
+
+### 5.4 Your Rights (GDPR)
+
+You can always:
+- **See your data** - Just ask
+- **Fix your data** - If something's wrong, tell us
+- **Delete your data** - We'll remove it within 30 days
+- **Export your data** - We'll give you a copy
+- **Stop AI processing** - Turn it off in settings
+
+**Contact:** merlin@ljubljanafrogs.si
+
+## 6. HEALTH AND SAFETY - READ THIS
+
+### 6.1 We Are Not Doctors
+
+**THIS APP IS NOT MEDICAL ADVICE.**
+
+- We are athletes, not medical professionals
+- Our injury risk scores are estimates, not diagnoses
+- Our training suggestions are ideas, not prescriptions
+- Our nutrition tracking is logging, not dietary counseling
+
+### 6.2 Your Responsibility
+
+**YOU are responsible for:**
+
+- Getting medical clearance before training
+- Listening to your body
+- Stopping when something hurts
+- Consulting real doctors for real medical issues
+- Making your own health decisions
+
+### 6.3 Emergency Situations
+
+**In an emergency, call 112 (Slovenia/EU) or your local emergency number.**
+
+The app's emergency features are a backup, not a replacement for real emergency services.
+
+## 7. AI FEATURES - WHAT YOU SHOULD KNOW
+
+### 7.1 How Our AI Works
+
+The app uses machine learning to:
+- Predict your performance trends
+- Estimate injury risk based on your data
+- Suggest training adjustments
+- Analyze nutrition patterns
+
+### 7.2 AI Limitations
+
+**AI is not magic. It can be wrong.**
+
+- Predictions are based on patterns, not certainty
+- The AI doesn't know everything about you
+- It can't account for factors you don't input
+- It's a tool, not an oracle
+
+### 7.3 You Can Turn It Off
+
+Don't trust AI? Turn it off in Settings > Privacy > AI Processing. The app still works without it.
+
+## 8. LIMITATION OF LIABILITY - THE LEGAL PART
+
+### 8.1 The Reality of Our Situation
+
+We need to be completely honest with you:
+
+**Športno društvo Žabe operates with €0 budget.** We are volunteers who built this app in our free time to help our community. We have:
+
+- No money to pay lawyers
+- No money to pay damages
+- No money to pay settlements
+- No insurance coverage for app-related claims
+
+### 8.2 What This Means for You
+
+By using this app, you understand and accept that:
+
+1. **We provide this app "as is"** - bugs and all
+2. **We make no guarantees** - about accuracy, availability, or results
+3. **We cannot be held financially liable** - because we have nothing
+4. **You assume all risks** - of using the app and following its suggestions
+
+### 8.3 Things We're Definitely Not Liable For
+
+- Injuries during training (you chose to train)
+- Inaccurate predictions (AI isn't perfect)
+- Data loss (back up important stuff yourself)
+- App downtime (we're volunteers, not a 24/7 operations center)
+- Your decisions based on app data (those are your decisions)
+- Third-party services (Apple Health, Google Fit, etc.)
+
+### 8.4 Maximum Liability
+
+To the maximum extent permitted by Slovenian law, our total liability for any and all claims is limited to **€0** (zero euros), reflecting our actual operating budget.
+
+**If you need guaranteed service levels, professional liability coverage, or someone to sue, this is not the app for you.**
+
+## 9. INDEMNIFICATION
+
+You agree not to pursue legal action against Športno društvo Žabe, its volunteers, members, or officers for:
+
+- Your use of the app
+- Your training decisions
+- Your health outcomes
+- Data you chose to input
+- Features you chose to use
+
+We're trying to help. Please don't sue us for trying to help.
+
+## 10. ACCEPTABLE USE
+
+### 10.1 Do
+
+- Use the app for personal training improvement
+- Share feedback to help us improve
+- Report bugs (we'll try to fix them)
+- Tell other athletes about it
+
+### 10.2 Don't
+
+- Try to hack or break the app
+- Input false data (it only hurts your own analysis)
+- Use the app for commercial purposes without permission
+- Pretend to be someone else
+- Use the app if you're under 13
+
+## 11. INTELLECTUAL PROPERTY
+
+### 11.1 The App
+
+FlagFit Pro is our creation. The code, design, and algorithms belong to Športno društvo Žabe.
+
+### 11.2 Your Data
+
+Your data is yours. We just store and process it to provide the service. You can take it with you anytime (data portability).
+
+## 12. CHANGES TO THE APP AND TERMS
+
+### 12.1 App Changes
+
+We may update the app whenever we have time (remember, volunteers). Features may change, improve, or occasionally break.
+
+### 12.2 Terms Changes
+
+If we change these terms significantly, we'll notify you via email or in-app notification at least 30 days before the changes take effect.
+
+## 13. TERMINATION
+
+### 13.1 You Can Leave Anytime
+
+Delete your account in Settings > Account > Delete Account. We'll remove your data within 30 days.
+
+### 13.2 We Can Remove Accounts
+
+We may remove accounts that:
+- Violate these terms
+- Appear to be fake or fraudulent
+- Are inactive for extended periods
+- Are used to harm others
+
+## 14. GOVERNING LAW AND DISPUTES
+
+### 14.1 Slovenian Law
+
+These Terms are governed exclusively by the laws of the Republic of Slovenia.
+
+### 14.2 Jurisdiction
+
+Any disputes will be resolved in the courts of Ljubljana, Slovenia.
+
+### 14.3 Please Talk to Us First
+
+Before considering any legal action, please contact us at merlin@ljubljanafrogs.si. We're reasonable people. Let's try to solve problems like adults.
+
+## 15. CONTACT US
+
+**Športno društvo Žabe**
+Štihova ulica 13
+1000 Ljubljana
+Slovenia
+
+- **Email:** merlin@ljubljanafrogs.si
+- **Phone:** +386 69 685 482
+
+We're volunteers, so please be patient. We'll respond as soon as we can.
+
+---
+
+## FINAL ACKNOWLEDGMENT
+
+By using FlagFit Pro, you confirm that you:
+
+1. ✅ Understand this is a free app from a volunteer sports club
+2. ✅ Accept that we operate with zero budget and zero liability capacity
+3. ✅ Take responsibility for your own health and training decisions
+4. ✅ Will not pursue legal action against volunteers trying to help athletes
+5. ✅ Understand the app is provided "as is" without guarantees
+
+**If you agree, welcome to FlagFit Pro. Let's train smarter together.**
+
+**If you don't agree, please don't use the app.**
+
+---
+
+**EFFECTIVE DATE:** 29. December 2025
 **VERSION:** 1.0
+
+*Športno društvo Žabe - Athletes helping athletes since 2020*

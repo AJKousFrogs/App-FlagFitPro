@@ -526,13 +526,13 @@ exports.handler = async (event, context) => {
         // GET /channels - List user's channels
         if (method === "GET" && (path === "" || path === "channels")) {
           const channels = await getChannels(userId);
-          return createSuccessResponse(channels, requestId);
+          return createSuccessResponse(channels);
         }
 
         // POST /channels - Create channel
         if (method === "POST" && path === "channels") {
           const channel = await createChannel(userId, body);
-          return createSuccessResponse(channel, requestId, 201);
+          return createSuccessResponse(channel, 201);
         }
 
         // GET /channels/:id/messages - Get messages
@@ -541,14 +541,14 @@ exports.handler = async (event, context) => {
           const channelId = messagesMatch[1];
           const options = event.queryStringParameters || {};
           const messages = await getMessages(userId, channelId, options);
-          return createSuccessResponse(messages, requestId);
+          return createSuccessResponse(messages);
         }
 
         // POST /channels/:id/messages - Send message
         if (method === "POST" && messagesMatch) {
           const channelId = messagesMatch[1];
           const message = await sendMessage(userId, channelId, body);
-          return createSuccessResponse(message, requestId, 201);
+          return createSuccessResponse(message, 201);
         }
 
         // POST /channels/:id/read - Mark as read
@@ -556,7 +556,7 @@ exports.handler = async (event, context) => {
         if (method === "POST" && readMatch) {
           const channelId = readMatch[1];
           const result = await markChannelRead(userId, channelId);
-          return createSuccessResponse(result, requestId);
+          return createSuccessResponse(result);
         }
 
         // PATCH /messages/:id - Update message
@@ -564,17 +564,17 @@ exports.handler = async (event, context) => {
         if (method === "PATCH" && updateMatch) {
           const messageId = updateMatch[1];
           const message = await updateMessage(userId, messageId, body);
-          return createSuccessResponse(message, requestId);
+          return createSuccessResponse(message);
         }
 
         // DELETE /messages/:id - Delete message
         if (method === "DELETE" && updateMatch) {
           const messageId = updateMatch[1];
           const result = await deleteMessage(userId, messageId);
-          return createSuccessResponse(result, requestId);
+          return createSuccessResponse(result);
         }
 
-        return createErrorResponse("Not found", 404, "not_found", requestId);
+        return createErrorResponse("Not found", 404, "not_found");
       } catch (error) {
         console.error("Chat API error:", error);
         return createErrorResponse(

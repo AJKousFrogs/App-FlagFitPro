@@ -76,16 +76,16 @@ import {
               <div class="progress-item">
                 <span class="progress-label">Days with data</span>
                 <div class="progress-bar">
-                  <div class="progress-fill" [style.width.%]="(dataQuality()?.daysWithData || 0) / 21 * 100"></div>
+                  <div class="progress-fill" [style.width.%]="(dataQuality().daysWithData || 0) / 21 * 100"></div>
                 </div>
-                <span class="progress-value">{{ dataQuality()?.daysWithData || 0 }} / 21</span>
+                <span class="progress-value">{{ dataQuality().daysWithData || 0 }} / 21</span>
               </div>
               <div class="progress-item">
                 <span class="progress-label">Sessions logged</span>
                 <div class="progress-bar">
-                  <div class="progress-fill" [style.width.%]="(dataQuality()?.sessionsInChronicWindow || 0) / 10 * 100"></div>
+                  <div class="progress-fill" [style.width.%]="(dataQuality().sessionsInChronicWindow || 0) / 10 * 100"></div>
                 </div>
-                <span class="progress-value">{{ dataQuality()?.sessionsInChronicWindow || 0 }} / 10</span>
+                <span class="progress-value">{{ dataQuality().sessionsInChronicWindow || 0 }} / 10</span>
               </div>
             </div>
             

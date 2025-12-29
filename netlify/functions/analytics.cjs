@@ -8,9 +8,14 @@ const {
   createSuccessResponse,
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
+const { ConsentDataReader, AccessContext } = require("./utils/consent-data-reader.cjs");
+const { DataState } = require("./utils/data-state.cjs");
 // Note: authenticateRequest, applyRateLimit, and CORS are handled by baseHandler
 
-// Get performance trends over time
+// Initialize consent-aware data reader for team analytics
+const consentReader = new ConsentDataReader(supabaseAdmin);
+
+// Get performance trends over time (PLAYER OWN DATA - not coach context)
 // Always filters data up to and including today
 const getPerformanceTrends = async (userId, weeks = 7) => {
   try {
@@ -22,22 +27,25 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
     const todayEndOfDay = new Date();
     todayEndOfDay.setHours(23, 59, 59, 999);
 
-    const { data: sessions, error } = await supabaseAdmin
-      .from("training_sessions")
-      .select("completed_at, score, workout_type")
-      .eq("user_id", userId)
-      .gte("completed_at", startDate.toISOString())
-      .lte("completed_at", todayEndOfDay.toISOString())
-      .order("completed_at", { ascending: true });
+    // Using ConsentDataReader for player's own data
+    const sessionsResult = await consentReader.readTrainingSessions({
+      requesterId: userId,
+      playerId: userId,
+      context: AccessContext.PLAYER_OWN_DATA,
+      filters: {
+        startDate: startDate.toISOString(),
+        endDate: todayEndOfDay.toISOString(),
+      },
+    });
 
-    if (error) {
-      throw error;
-    }
+    const sessions = sessionsResult.data || [];
 
     // Group by week and calculate average performance
     const weeklyData = {};
     sessions.forEach((session) => {
-      const date = new Date(session.completed_at);
+      const completedAt = session.completed_at || session.session_date;
+      if (!completedAt) return;
+      const date = new Date(completedAt);
       const weekKey = `${date.getFullYear()}-W${getWeekNumber(date)}`;
       if (!weeklyData[weekKey]) {
         weeklyData[weekKey] = { scores: [], count: 0 };
@@ -94,6 +102,7 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
               100
             ).toFixed(1)
           : "0",
+      dataState: sessionsResult.dataState,
     };
   } catch (error) {
     console.error("Error getting performance trends:", error);
@@ -112,11 +121,12 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
       currentScore: 87,
       improvement: 9,
       weeklyTrend: "5.2",
+      dataState: DataState.NO_DATA,
     };
   }
 };
 
-// Get team chemistry metrics
+// Get team chemistry metrics (COACH CONTEXT - uses ConsentDataReader)
 const getTeamChemistry = async (userId) => {
   try {
     // Get user's team memberships
@@ -143,22 +153,24 @@ const getTeamChemistry = async (userId) => {
     }
 
     // Calculate chemistry metrics based on training sessions together
-    // Always filters data up to and including today
-    const memberIds = members.map((m) => m.user_id);
+    // Using ConsentDataReader for COACH_TEAM_DATA context
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const todayEndOfDay = new Date();
     todayEndOfDay.setHours(23, 59, 59, 999);
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-    const { data: teamSessions, error: sessionsError } = await supabaseAdmin
-      .from("training_sessions")
-      .select("user_id, completed_at, score")
-      .in("user_id", memberIds)
-      .gte("completed_at", thirtyDaysAgo.toISOString())
-      .lte("completed_at", todayEndOfDay.toISOString());
+    const sessionsResult = await consentReader.readTrainingSessions({
+      requesterId: userId,
+      teamId: teamId,
+      context: AccessContext.COACH_TEAM_DATA,
+      filters: {
+        startDate: thirtyDaysAgo.toISOString(),
+        endDate: todayEndOfDay.toISOString(),
+        limit: 500,
+      },
+    });
 
-    if (sessionsError) {
-      throw sessionsError;
-    }
+    const teamSessions = sessionsResult.data || [];
+    const consentInfo = sessionsResult.consentInfo || { blockedPlayerIds: [], blockedCount: 0 };
 
     // Calculate metrics (simplified - in real app, would use more sophisticated algorithms)
     const _totalSessions = teamSessions.length;
@@ -205,6 +217,8 @@ const getTeamChemistry = async (userId) => {
       overall: parseFloat(overall.toFixed(1)),
       trustLevel: parseFloat(trust.toFixed(1)),
       leadership: parseFloat(leadership.toFixed(1)),
+      consentInfo,
+      dataState: sessionsResult.dataState,
     };
   } catch (error) {
     console.error("Error getting team chemistry:", error);
@@ -212,7 +226,7 @@ const getTeamChemistry = async (userId) => {
   }
 };
 
-// Get training distribution
+// Get training distribution (PLAYER OWN DATA - not coach context)
 // Always filters data up to and including today
 const getTrainingDistribution = async (userId, period = "30days") => {
   try {
@@ -224,21 +238,23 @@ const getTrainingDistribution = async (userId, period = "30days") => {
     const todayEndOfDay = new Date();
     todayEndOfDay.setHours(23, 59, 59, 999);
 
-    const { data: sessions, error } = await supabaseAdmin
-      .from("training_sessions")
-      .select("workout_type")
-      .eq("user_id", userId)
-      .gte("completed_at", startDate.toISOString())
-      .lte("completed_at", todayEndOfDay.toISOString());
+    // Using ConsentDataReader for player's own data
+    const sessionsResult = await consentReader.readTrainingSessions({
+      requesterId: userId,
+      playerId: userId,
+      context: AccessContext.PLAYER_OWN_DATA,
+      filters: {
+        startDate: startDate.toISOString(),
+        endDate: todayEndOfDay.toISOString(),
+      },
+    });
 
-    if (error) {
-      throw error;
-    }
+    const sessions = sessionsResult.data || [];
 
     // Count by workout type
     const distribution = {};
     sessions.forEach((session) => {
-      const type = session.workout_type || "Other";
+      const type = session.workout_type || session.session_type || "Other";
       distribution[type] = (distribution[type] || 0) + 1;
     });
 
@@ -259,6 +275,7 @@ const getTrainingDistribution = async (userId, period = "30days") => {
       speedSessions: distribution["Speed"] || distribution["speed"] || 0,
       technicalSessions:
         distribution["Technical"] || distribution["technique"] || 0,
+      dataState: sessionsResult.dataState,
     };
   } catch (error) {
     console.error("Error getting training distribution:", error);
@@ -266,7 +283,7 @@ const getTrainingDistribution = async (userId, period = "30days") => {
   }
 };
 
-// Get position performance comparison
+// Get position performance comparison (COACH CONTEXT - uses ConsentDataReader)
 const getPositionPerformance = async (userId) => {
   try {
     // Get user's team
@@ -301,32 +318,35 @@ const getPositionPerformance = async (userId) => {
       throw membersError;
     }
 
-    // Get performance scores for each member
-    // Always filters data up to and including today
-    const memberIds = members.map((m) => m.user_id);
+    // Get performance scores using ConsentDataReader for COACH_TEAM_DATA context
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const todayEndOfDay = new Date();
     todayEndOfDay.setHours(23, 59, 59, 999);
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-    const { data: sessions, error: sessionsError } = await supabaseAdmin
-      .from("training_sessions")
-      .select("user_id, score")
-      .in("user_id", memberIds)
-      .gte("completed_at", thirtyDaysAgo.toISOString())
-      .lte("completed_at", todayEndOfDay.toISOString());
+    const sessionsResult = await consentReader.readTrainingSessions({
+      requesterId: userId,
+      teamId: teamId,
+      context: AccessContext.COACH_TEAM_DATA,
+      filters: {
+        startDate: thirtyDaysAgo.toISOString(),
+        endDate: todayEndOfDay.toISOString(),
+        limit: 500,
+      },
+    });
 
-    if (sessionsError) {
-      throw sessionsError;
-    }
+    const sessions = sessionsResult.data || [];
+    const consentInfo = sessionsResult.consentInfo || { blockedPlayerIds: [], blockedCount: 0 };
 
     // Calculate average score per user
     const userScores = {};
     sessions.forEach((session) => {
-      if (!userScores[session.user_id]) {
-        userScores[session.user_id] = { total: 0, count: 0 };
+      const sessionUserId = session.user_id || session.player_id;
+      if (!sessionUserId) return;
+      if (!userScores[sessionUserId]) {
+        userScores[sessionUserId] = { total: 0, count: 0 };
       }
-      userScores[session.user_id].total += session.score || 70;
-      userScores[session.user_id].count++;
+      userScores[sessionUserId].total += session.score || 70;
+      userScores[sessionUserId].count++;
     });
 
     // Map to position performance
@@ -372,6 +392,8 @@ const getPositionPerformance = async (userId) => {
         }))
         .sort((a, b) => b.score - a.score)
         .slice(0, 3),
+      consentInfo,
+      dataState: sessionsResult.dataState,
     };
   } catch (error) {
     console.error("Error getting position performance:", error);
@@ -379,7 +401,7 @@ const getPositionPerformance = async (userId) => {
   }
 };
 
-// Get speed development progress
+// Get speed development progress (PLAYER OWN DATA - not coach context)
 // Always filters data up to and including today
 const getSpeedDevelopment = async (userId, weeks = 7) => {
   try {
@@ -519,6 +541,7 @@ const getAnalyticsSummary = async (userId) => {
           trendType: "positive",
         },
       ],
+      consentInfo: chemistry.consentInfo,
     };
   } catch (error) {
     console.error("Error getting analytics summary:", error);
@@ -564,6 +587,8 @@ function getFallbackTeamChemistry() {
     overall: 8.4,
     trustLevel: 9.1,
     leadership: 7.5,
+    consentInfo: { blockedPlayerIds: [], blockedCount: 0 },
+    dataState: DataState.NO_DATA,
   };
 }
 
@@ -575,6 +600,7 @@ function getFallbackTrainingDistribution() {
     agilitySessions: 30,
     speedSessions: 25,
     technicalSessions: 20,
+    dataState: DataState.NO_DATA,
   };
 }
 
@@ -587,6 +613,8 @@ function getFallbackPositionPerformance() {
       { name: "Aljosa K. #55", score: 91 },
       { name: "Vince M. #10", score: 89 },
     ],
+    consentInfo: { blockedPlayerIds: [], blockedCount: 0 },
+    dataState: DataState.NO_DATA,
   };
 }
 
@@ -651,6 +679,7 @@ function getFallbackAnalyticsSummary() {
         trendType: "positive",
       },
     ],
+    consentInfo: { blockedPlayerIds: [], blockedCount: 0 },
   };
 }
 

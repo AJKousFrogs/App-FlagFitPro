@@ -36,6 +36,8 @@ import { SkeletonModule } from "primeng/skeleton";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { CONSENT_BLOCKED_MESSAGES } from "../../utils/privacy-ux-copy";
 
 interface AthleteWellnessStatus {
   id: string;
@@ -49,6 +51,7 @@ interface AthleteWellnessStatus {
   acwrStatus: "optimal" | "caution" | "danger" | "unknown";
   alerts: string[];
   needsAttention: boolean;
+  isConsentBlocked?: boolean;
 }
 
 interface TeamWellnessSummary {
@@ -79,6 +82,24 @@ interface TeamWellnessSummary {
   ],
   template: `
     <div class="team-wellness-overview">
+      <!-- Partial Data Notice (when some athletes have blocked consent) -->
+      @if (hasBlockedAthletes()) {
+        <div class="partial-data-notice">
+          <div class="notice-icon">
+            <i class="pi pi-info-circle"></i>
+          </div>
+          <div class="notice-content">
+            <h4>{{ partialDataMessage.title }}</h4>
+            <p>{{ partialDataMessage.reason }}</p>
+            <p class="notice-action">{{ partialDataMessage.action }}</p>
+            <a [routerLink]="partialDataMessage.helpLink" class="notice-link">
+              <i class="pi pi-external-link"></i>
+              {{ partialDataMessage.actionLabel }}
+            </a>
+          </div>
+        </div>
+      }
+
       <!-- Summary Cards -->
       <div class="summary-grid">
         <!-- Check-in Rate -->
@@ -298,7 +319,9 @@ interface TeamWellnessSummary {
             <div
               class="athlete-mini-card"
               [class.not-checked]="!athlete.checkedInToday"
-              [routerLink]="['/roster', athlete.id]"
+              [class.consent-blocked]="athlete.isConsentBlocked"
+              [routerLink]="athlete.isConsentBlocked ? null : ['/roster', athlete.id]"
+              (click)="athlete.isConsentBlocked && onBlockedAthleteClick(athlete)"
             >
               <div class="mini-header">
                 <p-avatar
@@ -306,20 +329,37 @@ interface TeamWellnessSummary {
                   [image]="athlete.avatar"
                   shape="circle"
                 ></p-avatar>
-                <div class="status-indicator" [class]="athlete.acwrStatus"></div>
+                @if (athlete.isConsentBlocked) {
+                  <div class="status-indicator blocked">
+                    <i class="pi pi-lock"></i>
+                  </div>
+                } @else {
+                  <div class="status-indicator" [class]="athlete.acwrStatus"></div>
+                }
               </div>
               <span class="mini-name">{{ athlete.name.split(' ')[0] }}</span>
-              <div class="mini-metrics">
-                <span class="mini-wellness" [class]="getScoreClass(athlete.wellnessScore)">
-                  {{ athlete.wellnessScore }}
-                </span>
-                <span class="mini-acwr" [class]="athlete.acwrStatus">
-                  {{ athlete.acwr | number: "1.1-1" }}
-                </span>
-              </div>
-              @if (!athlete.checkedInToday) {
+              @if (athlete.isConsentBlocked) {
+                <div class="mini-blocked-label">
+                  <span>Private</span>
+                </div>
+              } @else {
+                <div class="mini-metrics">
+                  <span class="mini-wellness" [class]="getScoreClass(athlete.wellnessScore)">
+                    {{ athlete.wellnessScore }}
+                  </span>
+                  <span class="mini-acwr" [class]="athlete.acwrStatus">
+                    {{ athlete.acwr | number: "1.1-1" }}
+                  </span>
+                </div>
+              }
+              @if (!athlete.checkedInToday && !athlete.isConsentBlocked) {
                 <div class="not-checked-badge">
                   <i class="pi pi-clock"></i>
+                </div>
+              }
+              @if (athlete.isConsentBlocked) {
+                <div class="blocked-badge" pTooltip="Data not shared - ask athlete to enable">
+                  <i class="pi pi-lock"></i>
                 </div>
               }
             </div>
@@ -803,6 +843,124 @@ interface TeamWellnessSummary {
         color: var(--p-orange-600);
       }
 
+      /* Partial Data Notice */
+      .partial-data-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        background: var(--p-blue-50);
+        border: 1px solid var(--p-blue-200);
+        border-radius: 12px;
+        margin-bottom: var(--space-4);
+      }
+
+      .notice-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--p-blue-100);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .notice-icon i {
+        font-size: 1.25rem;
+        color: var(--p-blue-600);
+      }
+
+      .notice-content {
+        flex: 1;
+      }
+
+      .notice-content h4 {
+        margin: 0 0 var(--space-1);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .notice-content p {
+        margin: 0 0 var(--space-1);
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+
+      .notice-action {
+        font-size: 0.8125rem;
+        color: var(--text-secondary);
+        font-style: italic;
+      }
+
+      .notice-link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        margin-top: var(--space-2);
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--p-blue-600);
+        text-decoration: none;
+      }
+
+      .notice-link:hover {
+        text-decoration: underline;
+      }
+
+      .notice-link i {
+        font-size: 0.75rem;
+      }
+
+      /* Consent Blocked Athlete Card */
+      .athlete-mini-card.consent-blocked {
+        opacity: 0.75;
+        border-style: dashed;
+        border-color: var(--p-surface-300);
+        cursor: pointer;
+      }
+
+      .athlete-mini-card.consent-blocked:hover {
+        border-color: var(--p-blue-400);
+      }
+
+      .status-indicator.blocked {
+        background: var(--p-surface-400);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .status-indicator.blocked i {
+        font-size: 6px;
+        color: white;
+      }
+
+      .mini-blocked-label {
+        font-size: 0.625rem;
+        color: var(--text-secondary);
+        font-style: italic;
+      }
+
+      .blocked-badge {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 20px;
+        height: 20px;
+        background: var(--p-surface-400);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .blocked-badge i {
+        font-size: 0.625rem;
+        color: white;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         .summary-grid {
@@ -829,12 +987,16 @@ export class TeamWellnessOverviewComponent implements OnInit {
   private logger = inject(LoggerService);
   private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
+  private toastService = inject(ToastService);
 
   // State
   isLoading = signal(true);
   filter = signal<"all" | "optimal" | "caution" | "danger">("all");
 
   athletes = signal<AthleteWellnessStatus[]>([]);
+  
+  // Get partial data message from centralized privacy copy
+  partialDataMessage = CONSENT_BLOCKED_MESSAGES.coachTeamPartialBlock;
 
   // Computed values
   summary = computed<TeamWellnessSummary>(() => {
@@ -1009,6 +1171,22 @@ export class TeamWellnessOverviewComponent implements OnInit {
   sendReminders(): void {
     // Would integrate with notification service
     this.logger.info("Sending check-in reminders to athletes");
-    // Show toast notification
+    this.toastService.info("Sending check-in reminders to athletes...");
+  }
+
+  /**
+   * Check if any athletes have blocked consent
+   */
+  hasBlockedAthletes(): boolean {
+    return this.athletes().some(a => a.isConsentBlocked);
+  }
+
+  /**
+   * Handle click on a blocked athlete card
+   */
+  onBlockedAthleteClick(athlete: AthleteWellnessStatus): void {
+    this.toastService.info(
+      `${athlete.name}'s data is private. Ask them to enable sharing in their Privacy Settings.`
+    );
   }
 }

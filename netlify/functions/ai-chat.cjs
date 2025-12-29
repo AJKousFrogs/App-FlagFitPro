@@ -692,10 +692,178 @@ async function logRecommendation(userId, sessionId, recommendation) {
 }
 
 // =====================================================
+// CONTEXT ANALYSIS
+// =====================================================
+
+/**
+ * Analyze training context and generate insights
+ * POST /api/ai/analyze-context
+ */
+async function analyzeContext(context, userContext) {
+  const insights = [];
+
+  // Analyze heart rate
+  if (context.heartRate) {
+    if (context.heartRate > 180) {
+      insights.push({
+        id: "hr-high",
+        type: "Performance",
+        message: "Your heart rate is elevated. Consider taking a short break.",
+        icon: "pi pi-heart",
+        priority: "high",
+      });
+    } else if (
+      context.heartRate < 100 &&
+      context.timeInSession &&
+      context.timeInSession > 10
+    ) {
+      insights.push({
+        id: "hr-low",
+        type: "Performance",
+        message: "Your heart rate suggests you can increase intensity.",
+        icon: "pi pi-arrow-up",
+        priority: "medium",
+      });
+    }
+  }
+
+  // Analyze session duration
+  if (context.timeInSession && context.timeInSession > 60) {
+    insights.push({
+      id: "duration-long",
+      type: "Recovery",
+      message: "You've been training for over an hour. Great work! Consider recovery.",
+      icon: "pi pi-clock",
+      priority: "medium",
+    });
+  }
+
+  // Analyze fatigue
+  if (context.userFatigue && context.userFatigue > 7) {
+    insights.push({
+      id: "fatigue-high",
+      type: "Recovery",
+      message: "You're showing signs of fatigue. Rest is important for performance.",
+      icon: "pi pi-exclamation-triangle",
+      priority: "high",
+    });
+  }
+
+  // Analyze ACWR if available
+  if (userContext && userContext.acwr) {
+    const acwr = userContext.acwr;
+    if (acwr.riskZone === "danger" || acwr.riskZone === "critical") {
+      insights.push({
+        id: "acwr-danger",
+        type: "Safety",
+        message: `Your ACWR is ${acwr.acwr} (${acwr.riskZone} zone). Consider reducing training load.`,
+        icon: "pi pi-exclamation-circle",
+        priority: "high",
+      });
+    } else if (acwr.riskZone === "detraining") {
+      insights.push({
+        id: "acwr-low",
+        type: "Training",
+        message: `Your ACWR is ${acwr.acwr}. Consider gradually increasing your training load.`,
+        icon: "pi pi-info-circle",
+        priority: "medium",
+      });
+    }
+  }
+
+  // Analyze injuries
+  if (userContext && userContext.injuries && userContext.injuries.length > 0) {
+    const activeInjuries = userContext.injuries.filter(i => i.status === "active");
+    if (activeInjuries.length > 0) {
+      insights.push({
+        id: "injury-warning",
+        type: "Safety",
+        message: `You have ${activeInjuries.length} active injury(ies). Modify exercises accordingly.`,
+        icon: "pi pi-exclamation-triangle",
+        priority: "high",
+      });
+    }
+  }
+
+  // Analyze performance trends
+  if (context.previousPerformance && context.previousPerformance.length > 0) {
+    const recentScores = context.previousPerformance
+      .slice(-3)
+      .filter(p => p.score !== undefined)
+      .map(p => p.score);
+    
+    if (recentScores.length > 0) {
+      const recentAvg = recentScores.reduce((sum, s) => sum + s, 0) / recentScores.length;
+
+      if (recentAvg > 85) {
+        insights.push({
+          id: "performance-excellent",
+          type: "Motivation",
+          message: "Your recent performance has been excellent! Keep up the great work!",
+          icon: "pi pi-star",
+          priority: "low",
+        });
+      } else if (recentAvg < 50) {
+        insights.push({
+          id: "performance-struggling",
+          type: "Support",
+          message: "Your recent performance suggests you might need extra recovery or support.",
+          icon: "pi pi-heart",
+          priority: "medium",
+        });
+      }
+    }
+  }
+
+  // Add environmental insights if available
+  if (context.environmentalFactors) {
+    const env = context.environmentalFactors;
+    if (env.temperature && env.temperature > 30) {
+      insights.push({
+        id: "heat-warning",
+        type: "Safety",
+        message: "High temperature detected. Stay hydrated and take more breaks.",
+        icon: "pi pi-sun",
+        priority: "high",
+      });
+    } else if (env.temperature && env.temperature < 5) {
+      insights.push({
+        id: "cold-warning",
+        type: "Safety",
+        message: "Cold conditions. Ensure proper warm-up before intense activity.",
+        icon: "pi pi-cloud",
+        priority: "medium",
+      });
+    }
+  }
+
+  return insights;
+}
+
+// =====================================================
 // MAIN HANDLER
 // =====================================================
 
+/**
+ * Check if user has AI processing enabled in privacy settings
+ * Returns true if enabled or if no settings exist (default to enabled)
+ */
+async function checkAiProcessingConsent(userId) {
+  const { data: settings } = await supabaseAdmin
+    .from("privacy_settings")
+    .select("ai_processing_enabled")
+    .eq("user_id", userId)
+    .single();
+  
+  // Default to enabled if no settings exist
+  return settings?.ai_processing_enabled ?? true;
+}
+
 exports.handler = async (event, context) => {
+  // Extract sub-path to determine which endpoint is being called
+  const path = event.path.replace("/.netlify/functions/ai-chat", "");
+  const isAnalyzeContext = path.includes("/analyze-context") || event.path.includes("/api/ai/analyze-context");
+
   return baseHandler(event, context, {
     functionName: "ai-chat",
     allowedMethods: ["POST"],
@@ -703,6 +871,67 @@ exports.handler = async (event, context) => {
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       checkEnvVars();
+
+      // Handle /api/ai/analyze-context endpoint
+      if (isAnalyzeContext) {
+        // PRIVACY ENFORCEMENT: Check if user has opted out of AI processing
+        const aiProcessingEnabled = await checkAiProcessingConsent(userId);
+        if (!aiProcessingEnabled) {
+          return createErrorResponse(
+            "AI processing is disabled in your privacy settings. " +
+            "To use AI features, please enable AI processing in Settings > Privacy Controls.",
+            403,
+            "ai_processing_disabled",
+            requestId
+          );
+        }
+
+        // Parse request body
+        let analysisContext;
+        try {
+          analysisContext = JSON.parse(event.body || "{}");
+        } catch {
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+            requestId
+          );
+        }
+
+        try {
+          // Get user context for enhanced analysis
+          const userContext = await getUserContext(userId);
+          
+          // Analyze context and generate insights
+          const insights = await analyzeContext(analysisContext, userContext);
+
+          return createSuccessResponse(
+            insights,
+            requestId
+          );
+        } catch (error) {
+          console.error("[AI Chat] Error analyzing context:", error);
+          return createErrorResponse(
+            "Failed to analyze context",
+            500,
+            "internal_error",
+            requestId
+          );
+        }
+      }
+
+      // PRIVACY ENFORCEMENT: Check if user has opted out of AI processing
+      const aiProcessingEnabled = await checkAiProcessingConsent(userId);
+      if (!aiProcessingEnabled) {
+        return createErrorResponse(
+          "AI processing is disabled in your privacy settings. " +
+          "To use AI features, please enable AI processing in Settings > Privacy Controls.",
+          403,
+          "ai_processing_disabled",
+          requestId
+        );
+      }
 
       // Parse request body
       let body;

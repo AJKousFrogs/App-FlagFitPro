@@ -430,8 +430,6 @@ export class PerformanceAnalytics {
   // Get wellness summary
   getWellnessSummary(days = 7) {
     const wellness = this.performanceData.wellness;
-    // const recentData = wellness.dates.slice(-days); // Reserved for future use
-
     const summary = {};
     ["sleep", "energy", "soreness", "stress", "nutrition", "hydration"].forEach(
       (metric) => {

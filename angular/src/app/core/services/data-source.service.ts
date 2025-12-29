@@ -1,330 +1,542 @@
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { LoggerService } from './logger.service';
+
 /**
  * Data Source Service
- *
- * CRITICAL SAFETY SERVICE - Tracks whether data is real or mock
- *
- * This service is essential for athlete safety. Mock data can lead to:
- * - Incorrect training load calculations
- * - Wrong recovery recommendations
- * - Potential injury from following false metrics
- *
- * BEST PRACTICES:
- * 1. Always check dataSource before displaying performance metrics
- * 2. Show clear warnings when using mock/demo data
- * 3. Show "No data entry yet" for empty states (not mock data)
- * 4. Never allow training decisions based on mock data
+ * 
+ * Implements the "Data State" contract from PLAYER_DATA_SAFETY_GUIDE.md:
+ * - Never show mock data as real data
+ * - Don't compute metrics without enough data
+ * - Clear visual indicators for data state
+ * 
+ * This service provides a shared contract for all data-dependent features
+ * to ensure player safety and data integrity.
+ * 
+ * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
-import { Injectable, signal, computed, inject } from "@angular/core";
-import { LoggerService } from "./logger.service";
+// ============================================================================
+// DATA STATE TYPES
+// ============================================================================
 
-export type DataSourceType = "real" | "mock" | "cache" | "unknown";
-
-export interface DataSourceInfo {
-  /** Whether data comes from real user entries */
-  isRealData: boolean;
-  /** The source of the data */
-  source: DataSourceType;
-  /** When the data was last updated */
-  lastUpdated: Date | null;
-  /** Whether this is the user's first time (no data entry yet) */
-  isFirstTimeUser: boolean;
-  /** Number of real data entries the user has */
-  realDataCount: number;
-  /** Minimum data points needed for reliable calculations */
-  minimumDataRequired: number;
-  /** Whether enough data exists for reliable calculations */
-  hasEnoughData: boolean;
-}
-
-export interface MetricDataSource {
-  metricId: string;
-  metricName: string;
-  source: DataSourceType;
-  lastUpdated: Date | null;
-  dataPoints: number;
-  minimumRequired: number;
-  isReliable: boolean;
+/**
+ * Data state enum - defines the possible states of data
+ */
+export enum DataState {
+  /** No data exists at all */
+  NO_DATA = 'NO_DATA',
+  
+  /** Some data exists but not enough for reliable calculations */
+  INSUFFICIENT_DATA = 'INSUFFICIENT_DATA',
+  
+  /** Demo/mock data is being shown (clearly labeled) */
+  DEMO_DATA = 'DEMO_DATA',
+  
+  /** Real, verified data with sufficient history */
+  REAL_DATA = 'REAL_DATA',
 }
 
 /**
- * Data requirements for different metrics
- * These minimums are based on sports science best practices
+ * Minimum data requirements for different metrics
+ * Based on sports science research (Gabbett 2016, etc.)
  */
-export const DATA_REQUIREMENTS = {
-  // ACWR needs 4 weeks of data minimum
+export const MINIMUM_DATA_REQUIREMENTS = {
+  // ACWR requires 28 days of data for chronic load calculation
   acwr: {
-    minimumDataPoints: 28, // 4 weeks daily
-    warningThreshold: 14, // 2 weeks - show warning
-    name: "Acute:Chronic Workload Ratio",
+    minimumDays: 28,
+    description: '28 days of training data required for reliable ACWR calculation',
+    source: 'Gabbett, T.J. (2016) - The training-injury prevention paradox',
   },
-  // Readiness needs at least 7 days of data
-  readiness: {
-    minimumDataPoints: 7,
-    warningThreshold: 3,
-    name: "Readiness Score",
+  
+  // Acute load requires 7 days
+  acuteLoad: {
+    minimumDays: 7,
+    description: '7 days of training data required for acute load',
+    source: 'Standard rolling average calculation',
   },
-  // Performance trends need at least 2 data points
+  
+  // Chronic load requires 28 days
+  chronicLoad: {
+    minimumDays: 28,
+    description: '28 days of training data required for chronic load',
+    source: 'Gabbett, T.J. (2016)',
+  },
+  
+  // Training monotony requires 7 days
+  trainingMonotony: {
+    minimumDays: 7,
+    description: '7 days of data required for monotony calculation',
+    source: 'Foster, C. (1998)',
+  },
+  
+  // Performance trends require at least 14 days
   performanceTrends: {
-    minimumDataPoints: 2,
-    warningThreshold: 1,
-    name: "Performance Trends",
+    minimumDays: 14,
+    description: '14 days of data required for meaningful trends',
+    source: 'Statistical significance',
   },
-  // Wellness tracking needs consistent daily entries
-  wellness: {
-    minimumDataPoints: 7,
-    warningThreshold: 3,
-    name: "Wellness Metrics",
+  
+  // Readiness baseline requires 7 days
+  readinessBaseline: {
+    minimumDays: 7,
+    description: '7 days of readiness scores for personalized baseline',
+    source: 'Individual baseline calculation',
   },
-  // Body composition trends
-  bodyComposition: {
-    minimumDataPoints: 4,
-    warningThreshold: 2,
-    name: "Body Composition",
-  },
-  // Training load
-  trainingLoad: {
-    minimumDataPoints: 7,
-    warningThreshold: 3,
-    name: "Training Load",
+  
+  // Injury risk prediction requires 28 days
+  injuryRiskPrediction: {
+    minimumDays: 28,
+    description: '28 days of load data for injury risk assessment',
+    source: 'ACWR-based injury prediction models',
   },
 } as const;
 
+export type MetricType = keyof typeof MINIMUM_DATA_REQUIREMENTS;
+
+/**
+ * Alias for backward compatibility - DATA_REQUIREMENTS maps metric names
+ * to their minimum data point requirements
+ */
+export const DATA_REQUIREMENTS = {
+  acwr: {
+    name: 'ACWR (Acute:Chronic Workload Ratio)',
+    minimumDataPoints: MINIMUM_DATA_REQUIREMENTS.acwr.minimumDays,
+    description: MINIMUM_DATA_REQUIREMENTS.acwr.description,
+  },
+  readiness: {
+    name: 'Readiness Score',
+    minimumDataPoints: MINIMUM_DATA_REQUIREMENTS.readinessBaseline.minimumDays,
+    description: MINIMUM_DATA_REQUIREMENTS.readinessBaseline.description,
+  },
+  acuteLoad: {
+    name: 'Acute Load',
+    minimumDataPoints: MINIMUM_DATA_REQUIREMENTS.acuteLoad.minimumDays,
+    description: MINIMUM_DATA_REQUIREMENTS.acuteLoad.description,
+  },
+  chronicLoad: {
+    name: 'Chronic Load',
+    minimumDataPoints: MINIMUM_DATA_REQUIREMENTS.chronicLoad.minimumDays,
+    description: MINIMUM_DATA_REQUIREMENTS.chronicLoad.description,
+  },
+  performanceTrends: {
+    name: 'Performance Trends',
+    minimumDataPoints: MINIMUM_DATA_REQUIREMENTS.performanceTrends.minimumDays,
+    description: MINIMUM_DATA_REQUIREMENTS.performanceTrends.description,
+  },
+  injuryRisk: {
+    name: 'Injury Risk Prediction',
+    minimumDataPoints: MINIMUM_DATA_REQUIREMENTS.injuryRiskPrediction.minimumDays,
+    description: MINIMUM_DATA_REQUIREMENTS.injuryRiskPrediction.description,
+  },
+} as const;
+
+/**
+ * Response wrapper for data with state information
+ */
+export interface DataWithState<T> {
+  /** The actual data value (null if insufficient) */
+  value: T | null;
+  
+  /** Current state of the data */
+  dataState: DataState;
+  
+  /** Number of data points currently available */
+  currentDataPoints: number;
+  
+  /** Minimum data points required for this metric */
+  minimumRequiredDataPoints: number;
+  
+  /** Human-readable warnings */
+  warnings: string[];
+  
+  /** When the data was last updated */
+  lastUpdated: string | null;
+  
+  /** Additional metadata */
+  metadata?: {
+    source?: string;
+    confidence?: number;
+    calculationMethod?: string;
+  };
+}
+
+/**
+ * Risk level for displaying data state
+ */
+export type DataStateRisk = 'safe' | 'warning' | 'danger' | 'info';
+
+// ============================================================================
+// SERVICE
+// ============================================================================
+
+/**
+ * Registered metric tracking
+ */
+interface RegisteredMetric {
+  id: string;
+  name: string;
+  currentDataPoints: number;
+  requiredDataPoints: number;
+  dataSource: 'real' | 'demo' | 'unknown';
+  lastUpdated: Date;
+}
+
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root'
 })
 export class DataSourceService {
   private logger = inject(LoggerService);
 
-  // Global data source state
-  private readonly _globalSource = signal<DataSourceInfo>({
-    isRealData: false,
-    source: "unknown",
-    lastUpdated: null,
-    isFirstTimeUser: true,
-    realDataCount: 0,
-    minimumDataRequired: 7,
-    hasEnoughData: false,
-  });
+  // Global demo mode flag (for development/testing)
+  private _demoMode = signal(false);
+  readonly demoMode = this._demoMode.asReadonly();
 
-  // Per-metric data source tracking
-  private readonly _metricSources = signal<Map<string, MetricDataSource>>(
-    new Map()
-  );
+  // User has real data flag
+  private _userHasRealData = signal(false);
+  readonly userHasRealData = this._userHasRealData.asReadonly();
 
-  // Whether the app is in demo mode
-  private readonly _isDemoMode = signal<boolean>(false);
+  // First time user (no data at all)
+  readonly isFirstTimeUser = computed(() => !this._userHasRealData());
 
-  // Public readonly signals
-  readonly globalSource = this._globalSource.asReadonly();
-  readonly metricSources = this._metricSources.asReadonly();
-  readonly isDemoMode = this._isDemoMode.asReadonly();
+  // Registered metrics tracking
+  private _registeredMetrics = signal<Map<string, RegisteredMetric>>(new Map());
+  readonly registeredMetrics = computed(() => Array.from(this._registeredMetrics().values()));
 
-  // Computed signals for common checks
-  readonly isRealData = computed(() => this._globalSource().isRealData);
-  readonly isFirstTimeUser = computed(() => this._globalSource().isFirstTimeUser);
-  readonly hasEnoughData = computed(() => this._globalSource().hasEnoughData);
+  // ============================================================================
+  // STATE EVALUATION
+  // ============================================================================
 
   /**
-   * Check if a specific metric has enough data for reliable calculations
+   * Evaluate the data state based on available data points
    */
-  readonly getMetricReliability = (metricId: string) =>
-    computed(() => {
-      const sources = this._metricSources();
-      const metric = sources.get(metricId);
-      return metric?.isReliable ?? false;
-    });
+  evaluateDataState(
+    currentDataPoints: number,
+    metricType: MetricType,
+    isDemo: boolean = false
+  ): DataState {
+    if (isDemo) {
+      return DataState.DEMO_DATA;
+    }
+
+    if (currentDataPoints === 0) {
+      return DataState.NO_DATA;
+    }
+
+    const requirement = MINIMUM_DATA_REQUIREMENTS[metricType];
+    if (currentDataPoints < requirement.minimumDays) {
+      return DataState.INSUFFICIENT_DATA;
+    }
+
+    return DataState.REAL_DATA;
+  }
 
   /**
-   * Get warning level for data reliability
+   * Create a data response with state information
    */
-  readonly dataWarningLevel = computed<"none" | "low" | "warning" | "critical">(() => {
-    const source = this._globalSource();
-
-    if (source.isRealData && source.hasEnoughData) {
-      return "none";
+  createDataResponse<T>(
+    value: T | null,
+    currentDataPoints: number,
+    metricType: MetricType,
+    options: {
+      isDemo?: boolean;
+      lastUpdated?: string | null;
+      metadata?: DataWithState<T>['metadata'];
+    } = {}
+  ): DataWithState<T> {
+    const { isDemo = false, lastUpdated = null, metadata } = options;
+    const requirement = MINIMUM_DATA_REQUIREMENTS[metricType];
+    const dataState = this.evaluateDataState(currentDataPoints, metricType, isDemo);
+    
+    const warnings: string[] = [];
+    
+    // Generate appropriate warnings
+    switch (dataState) {
+      case DataState.NO_DATA:
+        warnings.push('No data available yet. Start logging your training to see metrics.');
+        break;
+      case DataState.INSUFFICIENT_DATA:
+        const daysNeeded = requirement.minimumDays - currentDataPoints;
+        warnings.push(
+          `${requirement.description}. You have ${currentDataPoints} days, need ${daysNeeded} more.`
+        );
+        break;
+      case DataState.DEMO_DATA:
+        warnings.push('This is demonstration data, not your actual metrics.');
+        break;
     }
 
-    if (source.isFirstTimeUser) {
-      return "critical"; // No data at all
-    }
+    // If data is insufficient, don't return the value
+    const safeValue = dataState === DataState.REAL_DATA ? value : null;
 
-    if (!source.isRealData) {
-      return "critical"; // Using mock data
-    }
-
-    if (source.realDataCount < source.minimumDataRequired / 2) {
-      return "warning"; // Some data but not enough
-    }
-
-    return "low"; // Almost enough data
-  });
+    return {
+      value: safeValue,
+      dataState,
+      currentDataPoints,
+      minimumRequiredDataPoints: requirement.minimumDays,
+      warnings,
+      lastUpdated,
+      metadata,
+    };
+  }
 
   /**
-   * Set the app to demo mode (for development/testing)
+   * Check if data is safe to display as real
    */
-  setDemoMode(isDemoMode: boolean): void {
-    this._isDemoMode.set(isDemoMode);
-    this.logger.info(`[DataSource] Demo mode ${isDemoMode ? "enabled" : "disabled"}`);
+  isDataSafe(dataState: DataState): boolean {
+    return dataState === DataState.REAL_DATA;
+  }
 
-    if (isDemoMode) {
-      this._globalSource.update((current) => ({
-        ...current,
-        isRealData: false,
-        source: "mock",
-      }));
+  /**
+   * Check if data can be used for calculations
+   */
+  canCalculate(currentDataPoints: number, metricType: MetricType): boolean {
+    const requirement = MINIMUM_DATA_REQUIREMENTS[metricType];
+    return currentDataPoints >= requirement.minimumDays;
+  }
+
+  /**
+   * Get the risk level for UI display
+   */
+  getDataStateRisk(dataState: DataState): DataStateRisk {
+    switch (dataState) {
+      case DataState.NO_DATA:
+        return 'info';
+      case DataState.INSUFFICIENT_DATA:
+        return 'warning';
+      case DataState.DEMO_DATA:
+        return 'danger';
+      case DataState.REAL_DATA:
+        return 'safe';
     }
   }
 
   /**
-   * Update global data source information
+   * Get display label for data state
    */
-  updateGlobalSource(info: Partial<DataSourceInfo>): void {
-    this._globalSource.update((current) => ({
-      ...current,
-      ...info,
-      hasEnoughData: (info.realDataCount ?? current.realDataCount) >=
-        (info.minimumDataRequired ?? current.minimumDataRequired),
-    }));
-
-    this.logger.debug("[DataSource] Global source updated:", this._globalSource());
+  getDataStateLabel(dataState: DataState): string {
+    switch (dataState) {
+      case DataState.NO_DATA:
+        return 'No Data';
+      case DataState.INSUFFICIENT_DATA:
+        return 'Insufficient Data';
+      case DataState.DEMO_DATA:
+        return 'Demo Data';
+      case DataState.REAL_DATA:
+        return 'Real Data';
+    }
   }
 
   /**
-   * Register a metric's data source
+   * Get icon for data state
+   */
+  getDataStateIcon(dataState: DataState): string {
+    switch (dataState) {
+      case DataState.NO_DATA:
+        return 'pi-inbox';
+      case DataState.INSUFFICIENT_DATA:
+        return 'pi-exclamation-triangle';
+      case DataState.DEMO_DATA:
+        return 'pi-info-circle';
+      case DataState.REAL_DATA:
+        return 'pi-check-circle';
+    }
+  }
+
+  // ============================================================================
+  // DEMO MODE
+  // ============================================================================
+
+  /**
+   * Enable demo mode (for development/testing)
+   */
+  enableDemoMode(): void {
+    this._demoMode.set(true);
+    this.logger.warn('Demo mode enabled - all data will be marked as demo');
+  }
+
+  /**
+   * Disable demo mode
+   */
+  disableDemoMode(): void {
+    this._demoMode.set(false);
+    this.logger.info('Demo mode disabled');
+  }
+
+  // ============================================================================
+  // ACWR-SPECIFIC HELPERS
+  // ============================================================================
+
+  /**
+   * Validate ACWR calculation prerequisites
+   * Returns null if calculation should not proceed
+   */
+  validateAcwrCalculation(
+    trainingDays: number,
+    acuteLoadDays: number,
+    chronicLoadDays: number
+  ): { canCalculate: boolean; reason?: string } {
+    if (trainingDays === 0) {
+      return {
+        canCalculate: false,
+        reason: 'No training data recorded yet',
+      };
+    }
+
+    if (acuteLoadDays < MINIMUM_DATA_REQUIREMENTS.acuteLoad.minimumDays) {
+      return {
+        canCalculate: false,
+        reason: `Need at least ${MINIMUM_DATA_REQUIREMENTS.acuteLoad.minimumDays} days for acute load (have ${acuteLoadDays})`,
+      };
+    }
+
+    if (chronicLoadDays < MINIMUM_DATA_REQUIREMENTS.chronicLoad.minimumDays) {
+      return {
+        canCalculate: false,
+        reason: `Need at least ${MINIMUM_DATA_REQUIREMENTS.chronicLoad.minimumDays} days for chronic load (have ${chronicLoadDays})`,
+      };
+    }
+
+    return { canCalculate: true };
+  }
+
+  /**
+   * Create a safe ACWR response
+   * Returns null value if data is insufficient
+   */
+  createSafeAcwrResponse(
+    acwr: number | null,
+    acuteLoad: number | null,
+    chronicLoad: number | null,
+    trainingDays: number
+  ): DataWithState<{
+    acwr: number;
+    acuteLoad: number;
+    chronicLoad: number;
+    riskLevel: string;
+  }> {
+    const validation = this.validateAcwrCalculation(
+      trainingDays,
+      trainingDays, // Simplified - in practice these might differ
+      trainingDays
+    );
+
+    if (!validation.canCalculate || acwr === null || acuteLoad === null || chronicLoad === null) {
+      return {
+        value: null,
+        dataState: trainingDays === 0 ? DataState.NO_DATA : DataState.INSUFFICIENT_DATA,
+        currentDataPoints: trainingDays,
+        minimumRequiredDataPoints: MINIMUM_DATA_REQUIREMENTS.acwr.minimumDays,
+        warnings: [validation.reason || 'Insufficient data for ACWR calculation'],
+        lastUpdated: null,
+        metadata: {
+          source: 'ACWR calculation',
+          calculationMethod: 'Rolling average (7-day acute / 28-day chronic)',
+        },
+      };
+    }
+
+    // Determine risk level based on ACWR value
+    let riskLevel: string;
+    if (acwr < 0.8) {
+      riskLevel = 'undertraining';
+    } else if (acwr <= 1.3) {
+      riskLevel = 'optimal';
+    } else if (acwr <= 1.5) {
+      riskLevel = 'moderate';
+    } else {
+      riskLevel = 'high';
+    }
+
+    return {
+      value: { acwr, acuteLoad, chronicLoad, riskLevel },
+      dataState: DataState.REAL_DATA,
+      currentDataPoints: trainingDays,
+      minimumRequiredDataPoints: MINIMUM_DATA_REQUIREMENTS.acwr.minimumDays,
+      warnings: [],
+      lastUpdated: new Date().toISOString(),
+      metadata: {
+        source: 'ACWR calculation',
+        confidence: Math.min(trainingDays / 56, 1), // Higher confidence with more data
+        calculationMethod: 'Rolling average (7-day acute / 28-day chronic)',
+      },
+    };
+  }
+
+  // ============================================================================
+  // USER DATA STATE TRACKING
+  // ============================================================================
+
+  /**
+   * Check if user has real data based on training session count
+   * Updates the global userHasRealData flag
+   */
+  checkUserHasRealData(trainingSessionCount: number): void {
+    const hasRealData = trainingSessionCount > 0;
+    this._userHasRealData.set(hasRealData);
+    
+    this.logger.debug(
+      `[DataSource] User has real data: ${hasRealData} (${trainingSessionCount} sessions)`
+    );
+  }
+
+  /**
+   * Register a metric with its data requirements for tracking
    */
   registerMetric(
-    metricId: string,
-    metricName: string,
-    dataPoints: number,
-    minimumRequired: number,
-    source: DataSourceType = "unknown"
+    id: string,
+    name: string,
+    currentDataPoints: number,
+    requiredDataPoints: number,
+    dataSource: 'real' | 'demo' | 'unknown'
   ): void {
-    const isReliable = dataPoints >= minimumRequired && source === "real";
-
-    this._metricSources.update((sources) => {
-      const newSources = new Map(sources);
-      newSources.set(metricId, {
-        metricId,
-        metricName,
-        source,
-        lastUpdated: source === "real" ? new Date() : null,
-        dataPoints,
-        minimumRequired,
-        isReliable,
-      });
-      return newSources;
+    const metrics = new Map(this._registeredMetrics());
+    
+    metrics.set(id, {
+      id,
+      name,
+      currentDataPoints,
+      requiredDataPoints,
+      dataSource,
+      lastUpdated: new Date(),
     });
-
-    if (!isReliable) {
-      this.logger.warn(
-        `[DataSource] Metric "${metricName}" has insufficient data: ${dataPoints}/${minimumRequired} points`
-      );
-    }
+    
+    this._registeredMetrics.set(metrics);
+    
+    this.logger.debug(
+      `[DataSource] Registered metric: ${name} (${currentDataPoints}/${requiredDataPoints} points, source: ${dataSource})`
+    );
   }
 
   /**
-   * Update a metric's data source
+   * Get a registered metric by ID
    */
-  updateMetricSource(metricId: string, updates: Partial<MetricDataSource>): void {
-    this._metricSources.update((sources) => {
-      const current = sources.get(metricId);
-      if (!current) {
-        this.logger.warn(`[DataSource] Metric ${metricId} not found`);
-        return sources;
-      }
-
-      const newSources = new Map(sources);
-      const updated = { ...current, ...updates };
-      updated.isReliable =
-        updated.dataPoints >= updated.minimumRequired && updated.source === "real";
-      newSources.set(metricId, updated);
-      return newSources;
-    });
+  getMetric(id: string): RegisteredMetric | undefined {
+    return this._registeredMetrics().get(id);
   }
 
   /**
-   * Check if user has entered any real data
+   * Check if a metric has sufficient data
    */
-  checkUserHasRealData(dataCount: number): void {
-    const isFirstTimeUser = dataCount === 0;
-    const isRealData = dataCount > 0;
-
-    this._globalSource.update((current) => ({
-      ...current,
-      isRealData,
-      isFirstTimeUser,
-      realDataCount: dataCount,
-      source: isRealData ? "real" : "unknown",
-      lastUpdated: isRealData ? new Date() : null,
-      hasEnoughData: dataCount >= current.minimumDataRequired,
-    }));
+  metricHasSufficientData(id: string): boolean {
+    const metric = this.getMetric(id);
+    if (!metric) return false;
+    return metric.currentDataPoints >= metric.requiredDataPoints;
   }
 
   /**
-   * Get a human-readable message about data status
+   * Get all metrics that need more data
    */
-  getDataStatusMessage(): string {
-    const source = this._globalSource();
-
-    if (source.isFirstTimeUser) {
-      return "Welcome! Start logging your training data to see personalized metrics.";
-    }
-
-    if (!source.isRealData) {
-      return "⚠️ Showing demo data. Your real metrics will appear after you log training data.";
-    }
-
-    if (!source.hasEnoughData) {
-      const remaining = source.minimumDataRequired - source.realDataCount;
-      return `📊 ${remaining} more data entries needed for reliable calculations.`;
-    }
-
-    return "✅ Using your real performance data.";
+  getMetricsNeedingData(): RegisteredMetric[] {
+    return this.registeredMetrics().filter(
+      m => m.currentDataPoints < m.requiredDataPoints
+    );
   }
 
   /**
-   * Get warning message for a specific metric
+   * Clear all registered metrics
    */
-  getMetricWarningMessage(metricId: string): string | null {
-    const sources = this._metricSources();
-    const metric = sources.get(metricId);
-
-    if (!metric) {
-      return "No data available for this metric.";
-    }
-
-    if (metric.source === "mock") {
-      return `⚠️ DEMO DATA - This ${metric.metricName} is not based on your real performance.`;
-    }
-
-    if (metric.dataPoints === 0) {
-      return `No ${metric.metricName} data entered yet. Start logging to see your metrics.`;
-    }
-
-    if (!metric.isReliable) {
-      const remaining = metric.minimumRequired - metric.dataPoints;
-      return `${remaining} more entries needed for reliable ${metric.metricName} calculations.`;
-    }
-
-    return null; // No warning needed
-  }
-
-  /**
-   * Reset all data source tracking (e.g., on logout)
-   */
-  reset(): void {
-    this._globalSource.set({
-      isRealData: false,
-      source: "unknown",
-      lastUpdated: null,
-      isFirstTimeUser: true,
-      realDataCount: 0,
-      minimumDataRequired: 7,
-      hasEnoughData: false,
-    });
-    this._metricSources.set(new Map());
-    this._isDemoMode.set(false);
-    this.logger.info("[DataSource] Data source tracking reset");
+  clearMetrics(): void {
+    this._registeredMetrics.set(new Map());
+    this.logger.debug('[DataSource] Cleared all registered metrics');
   }
 }

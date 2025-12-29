@@ -1,0 +1,33 @@
+{
+  "backup_date": "2025-12-29T15:30:00Z",
+  "backup_type": "full_database",
+  "database": "supabase",
+  "project": "app-new-flag (FlagFit Pro)",
+  "summary": {
+    "total_tables": 252,
+    "tables_with_data": {
+      "users": 8,
+      "exercises": 21,
+      "training_programs": 1,
+      "training_phases": 10,
+      "training_weeks": 16,
+      "flag_football_positions": 8,
+      "ai_coaches": 1,
+      "knowledge_base_entries": 27,
+      "research_topics": 15
+    },
+    "total_migrations": 193
+  },
+  "files": [
+    "backup_2025-12-29_users.sql",
+    "backup_2025-12-29_exercises.sql",
+    "backup_2025-12-29_training_programs.sql",
+    "backup_2025-12-29_training_phases.sql",
+    "backup_2025-12-29_training_weeks.sql",
+    "backup_2025-12-29_flag_football_positions.sql",
+    "backup_2025-12-29_ai_coaches.sql",
+    "backup_2025-12-29_research_topics.sql"
+  ],
+  "notes": "This backup contains all seeded data for the Ljubljana Frogs WR/DB Annual Program 2025-2026 and core reference data."
+}
+

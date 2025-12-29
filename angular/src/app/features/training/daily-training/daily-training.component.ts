@@ -99,7 +99,6 @@ interface ScheduleBlock {
     CheckboxModule,
     FormsModule,
     MainLayoutComponent,
-    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -315,7 +314,7 @@ interface ScheduleBlock {
                               }
                             </ol>
                           </div>
-                          @if (exercise.safety_notes?.length) {
+                          @if (exercise.safety_notes.length) {
                             <div class="safety-notes">
                               <h4><i class="pi pi-exclamation-triangle"></i> Safety Notes</h4>
                               <ul>
@@ -360,7 +359,7 @@ interface ScheduleBlock {
                             <h4>Setup</h4>
                             <p>{{ exercise.setup_instructions }}</p>
                           </div>
-                          @if (exercise.execution_cues?.length) {
+                          @if (exercise.execution_cues.length) {
                             <div class="cues">
                               <h4>Execution Cues</h4>
                               <div class="cue-tags">

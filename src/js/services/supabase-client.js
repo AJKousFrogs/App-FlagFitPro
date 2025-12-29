@@ -121,6 +121,27 @@ export const getSupabase = () => {
 };
 
 /**
+ * Safe wrapper for Supabase queries with error handling and logging
+ * @param {Promise} query - Supabase query promise
+ * @param {string} context - Context for logging (e.g., "Auth:Login")
+ * @returns {Promise} Query result with error handling
+ */
+export const safeSupabaseQuery = async (query, context = "Query") => {
+  try {
+    const result = await query;
+    
+    if (result.error) {
+      logger.error(`[Supabase:${context}] Error:`, result.error.message);
+    }
+    
+    return result;
+  } catch (error) {
+    logger.error(`[Supabase:${context}] Exception:`, error);
+    return { data: null, error };
+  }
+};
+
+/**
  * Real-time Subscription Manager
  * Handles all real-time database subscriptions
  */
@@ -157,7 +178,6 @@ class RealtimeManager {
     // Check if channel already exists
     if (this.channels.has(channelName)) {
       logger.debug(`[Realtime] Reusing existing channel: ${channelName}`);
-      const _channel = this.channels.get(channelName);
       return {
         unsubscribe: () => this.unsubscribe(channelName),
       };
@@ -397,6 +417,7 @@ export { supabaseClient };
 export default {
   getSupabase,
   initializeSupabase,
+  safeSupabaseQuery,
   realtimeManager,
   supabaseHelpers,
 };

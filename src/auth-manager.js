@@ -12,7 +12,7 @@ import {
   AUTH,
   ERROR_MESSAGES,
 } from "./js/config/app-constants.js";
-import { debounce } from "./js/utils/html-escape.js";
+import { debounce } from "./js/utils/shared.js";
 import { storageService } from "./js/services/storage-service-unified.js";
 
 class AuthManager {
@@ -820,7 +820,6 @@ class AuthManager {
       try {
         // Verify token is not expired
         const payload = JSON.parse(atob(this.token.split(".")[1]));
-        const _tokenExpiry = payload.exp ? Math.floor(Date.now() / 1000) : null;
 
         // Only log token details in development
         if (isDevelopment && shouldLog) {
