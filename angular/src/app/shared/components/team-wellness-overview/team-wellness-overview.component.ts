@@ -20,7 +20,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 
 // PrimeNG
 import { CardModule } from "primeng/card";
@@ -321,8 +321,7 @@ interface TeamWellnessSummary {
               class="athlete-mini-card"
               [class.not-checked]="!athlete.checkedInToday"
               [class.consent-blocked]="athlete.isConsentBlocked"
-              [routerLink]="athlete.isConsentBlocked ? null : ['/roster', athlete.id]"
-              (click)="athlete.isConsentBlocked && onBlockedAthleteClick(athlete)"
+              (click)="onAthleteClick(athlete)"
             >
               <div class="mini-header">
                 <p-avatar
@@ -989,6 +988,7 @@ export class TeamWellnessOverviewComponent implements OnInit {
   private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
+  private router = inject(Router);
 
   // State
   isLoading = signal(true);
@@ -1189,5 +1189,16 @@ export class TeamWellnessOverviewComponent implements OnInit {
     this.toastService.info(
       `${athlete.name}'s data is private. Ask them to enable sharing in their Privacy Settings.`
     );
+  }
+
+  /**
+   * Handle click on an athlete card - navigate to roster with player query param
+   */
+  onAthleteClick(athlete: AthleteWellnessStatus): void {
+    if (athlete.isConsentBlocked) {
+      this.onBlockedAthleteClick(athlete);
+    } else {
+      this.router.navigate(['/roster'], { queryParams: { player: athlete.id } });
+    }
   }
 }

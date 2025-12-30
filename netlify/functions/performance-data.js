@@ -5,6 +5,73 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
 const { createErrorResponse } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
+// ============================================================================
+// DATA MAPPERS - Reusable transformation functions
+// ============================================================================
+
+const dataMappers = {
+  measurement: (m) => ({
+    id: m.id,
+    userId: m.user_id,
+    weight: m.weight,
+    height: m.height,
+    bodyFat: m.body_fat,
+    muscleMass: m.muscle_mass,
+    timestamp: m.created_at,
+  }),
+
+  performanceTest: (t) => ({
+    id: t.id,
+    userId: t.user_id,
+    testType: t.test_type || t.test_protocol_id?.toString(),
+    result: t.best_result || t.average_result,
+    target: null,
+    timestamp: t.test_date || t.created_at,
+    conditions: t.environmental_conditions || {},
+    notes: t.notes,
+  }),
+
+  wellness: (w) => ({
+    id: w.id,
+    userId: w.user_id,
+    date: w.date,
+    sleep: w.sleep,
+    energy: w.energy,
+    stress: w.stress,
+    soreness: w.soreness,
+    motivation: w.motivation,
+    mood: w.mood,
+    hydration: w.hydration,
+    notes: w.notes,
+    timestamp: w.created_at,
+  }),
+
+  supplement: (s) => ({
+    id: s.id,
+    userId: s.user_id,
+    name: s.name,
+    dosage: s.dosage,
+    frequency: s.frequency,
+    startDate: s.start_date,
+    endDate: s.end_date,
+    purpose: s.purpose,
+    notes: s.notes,
+  }),
+
+  injury: (i) => ({
+    id: i.id,
+    userId: i.user_id,
+    type: i.type,
+    location: i.location,
+    severity: i.severity,
+    date: i.date,
+    status: i.status,
+    recoveryDate: i.recovery_date,
+    treatment: i.treatment,
+    notes: i.notes,
+  }),
+};
+
 // Handler registry pattern - cleaner than switch statement
 const ENDPOINT_HANDLERS = {
   measurements: handleMeasurements,
@@ -85,15 +152,7 @@ async function handleMeasurements(method, userId, body, query) {
         return {
           statusCode: 200,
           body: JSON.stringify({
-            data: data.map((m) => ({
-              id: m.id,
-              userId: m.user_id,
-              weight: m.weight,
-              height: m.height,
-              bodyFat: m.body_fat,
-              muscleMass: m.muscle_mass,
-              timestamp: m.created_at,
-            })),
+            data: data.map(dataMappers.measurement),
             summary: calculateMeasurementsSummary(data),
             pagination: {
               page,
@@ -232,15 +291,7 @@ async function handlePerformanceTests(method, userId, body, query) {
           throw error;
         }
 
-        let filteredTests = (tests || []).map((t) => ({
-          id: t.id,
-          userId: t.user_id,
-          testType: t.test_type || t.test_protocol_id?.toString(),
-          result: t.best_result || t.average_result,
-          target: null, // Would need to be added
-          timestamp: t.test_date || t.created_at,
-          conditions: t.environmental_conditions || {},
-        }));
+        let filteredTests = (tests || []).map(dataMappers.performanceTest);
 
         // Filter by testType if provided (in memory for now)
         if (testType) {
@@ -366,20 +417,7 @@ async function handleWellness(method, userId, body, query) {
           throw error;
         }
 
-        const wellnessData = (wellness || []).map((w) => ({
-          id: w.id,
-          userId: w.user_id,
-          date: w.date,
-          sleep: w.sleep,
-          energy: w.energy,
-          stress: w.stress,
-          soreness: w.soreness,
-          motivation: w.motivation,
-          mood: w.mood,
-          hydration: w.hydration,
-          notes: w.notes,
-          timestamp: w.created_at,
-        }));
+        const wellnessData = (wellness || []).map(dataMappers.wellness);
 
         return {
           statusCode: 200,

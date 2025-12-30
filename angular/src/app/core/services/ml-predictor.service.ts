@@ -16,6 +16,91 @@ export interface ModelConfig {
 }
 
 /**
+ * Athlete Data for Sprint Predictions
+ */
+export interface AthleteData {
+  acceleration?: number;
+  topSpeed?: number;
+  agility?: number;
+  strength?: number;
+  recovery?: number;
+  recentPerformances?: number[];
+  trainingHistory?: TrainingDataPoint[];
+  bodyMetrics?: BodyMetrics;
+}
+
+export interface TrainingDataPoint {
+  date: Date;
+  type: string;
+  intensity: number;
+  duration: number;
+}
+
+export interface BodyMetrics {
+  weight?: number;
+  height?: number;
+  bodyFat?: number;
+  muscleMass?: number;
+}
+
+/**
+ * Skill Data for Route Progression
+ */
+export interface SkillData {
+  routeTypes?: Record<string, number>;
+  practiceHours?: number;
+  successRate?: number;
+  progressHistory?: ProgressDataPoint[];
+}
+
+export interface ProgressDataPoint {
+  date: Date;
+  metric: string;
+  value: number;
+}
+
+/**
+ * Player Data for Decision Making
+ */
+export interface PlayerData {
+  cognitiveMetrics?: CognitiveMetrics;
+  experienceLevel?: number;
+  gameHistory?: GameDataPoint[];
+  trainingData?: TrainingDataPoint[];
+}
+
+export interface CognitiveMetrics {
+  reactionTime?: number;
+  decisionSpeed?: number;
+  patternRecognition?: number;
+  situationalAwareness?: number;
+}
+
+export interface GameDataPoint {
+  date: Date;
+  performance: number;
+  decisions: number;
+  successRate: number;
+}
+
+/**
+ * Feature Vectors for ML Models
+ */
+export interface FeatureVector {
+  values: number[];
+  names: string[];
+}
+
+/**
+ * Model Prediction Output
+ */
+export interface PredictionResult {
+  value: number;
+  confidence: number;
+  features: FeatureVector;
+}
+
+/**
  * Interface for Sprint Prediction Result
  */
 export interface SprintPredictionResult {
