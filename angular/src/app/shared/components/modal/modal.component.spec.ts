@@ -467,4 +467,547 @@ describe('ModalComponent', () => {
       expect(component.dialogStyleClass).toBeDefined();
     });
   });
+
+  describe('Accessibility Enhancements - Focus Trap', () => {
+    beforeEach(() => {
+      // Create modal with focusable elements
+      component.visible.set(true);
+      fixture.detectChanges();
+    });
+
+    it('should enable focus trap by default', () => {
+      expect(component.enableFocusTrap()).toBe(true);
+    });
+
+    it('should allow disabling focus trap', () => {
+      fixture.componentRef.setInput('enableFocusTrap', false);
+      expect(component.enableFocusTrap()).toBe(false);
+    });
+
+    it('should trap Tab key within modal', () => {
+      const tabEvent = new KeyboardEvent('keydown', {
+        key: 'Tab',
+        bubbles: true,
+        cancelable: true,
+      });
+
+      const preventDefaultSpy = vi.spyOn(tabEvent, 'preventDefault');
+
+      // Mock focusable elements
+      const mockElements = [
+        document.createElement('button'),
+        document.createElement('input'),
+        document.createElement('button'),
+      ];
+      mockElements.forEach((el, i) => {
+        el.id = `element-${i}`;
+      });
+
+      vi.spyOn(component as any, 'getFocusableElements').mockReturnValue(mockElements);
+
+      // Mock active element as last element
+      Object.defineProperty(document, 'activeElement', {
+        writable: true,
+        value: mockElements[2],
+      });
+
+      component.handleTabKey(tabEvent);
+
+      // Should prevent default and cycle to first element
+      expect(preventDefaultSpy).toHaveBeenCalled();
+    });
+
+    it('should trap Shift+Tab key within modal (reverse)', () => {
+      const shiftTabEvent = new KeyboardEvent('keydown', {
+        key: 'Tab',
+        shiftKey: true,
+        bubbles: true,
+        cancelable: true,
+      });
+
+      const preventDefaultSpy = vi.spyOn(shiftTabEvent, 'preventDefault');
+
+      const mockElements = [
+        document.createElement('button'),
+        document.createElement('input'),
+        document.createElement('button'),
+      ];
+
+      vi.spyOn(component as any, 'getFocusableElements').mockReturnValue(mockElements);
+
+      // Mock active element as first element
+      Object.defineProperty(document, 'activeElement', {
+        writable: true,
+        value: mockElements[0],
+      });
+
+      component.handleTabKey(shiftTabEvent);
+
+      expect(preventDefaultSpy).toHaveBeenCalled();
+    });
+
+    it('should not trap focus when modal is not visible', () => {
+      component.visible.set(false);
+
+      const tabEvent = new KeyboardEvent('keydown', {
+        key: 'Tab',
+        bubbles: true,
+        cancelable: true,
+      });
+
+      const preventDefaultSpy = vi.spyOn(tabEvent, 'preventDefault');
+
+      component.handleTabKey(tabEvent);
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not trap focus when enableFocusTrap is false', () => {
+      fixture.componentRef.setInput('enableFocusTrap', false);
+
+      const tabEvent = new KeyboardEvent('keydown', {
+        key: 'Tab',
+        bubbles: true,
+        cancelable: true,
+      });
+
+      const preventDefaultSpy = vi.spyOn(tabEvent, 'preventDefault');
+
+      component.handleTabKey(tabEvent);
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+
+    it('should get focusable elements correctly', () => {
+      // Create mock dialog with focusable elements
+      const mockDialog = document.createElement('div');
+      const button1 = document.createElement('button');
+      const input1 = document.createElement('input');
+      const button2 = document.createElement('button');
+      const disabledButton = document.createElement('button');
+      disabledButton.disabled = true;
+
+      mockDialog.appendChild(button1);
+      mockDialog.appendChild(input1);
+      mockDialog.appendChild(disabledButton);
+      mockDialog.appendChild(button2);
+
+      vi.spyOn(component as any, 'getModalElement').mockReturnValue(mockDialog);
+
+      const focusableElements = (component as any).getFocusableElements();
+
+      // Should include enabled buttons and input, but not disabled button
+      expect(focusableElements.length).toBeGreaterThan(0);
+    });
+
+    it('should exclude hidden elements from focus trap', () => {
+      const mockDialog = document.createElement('div');
+      const visibleButton = document.createElement('button');
+      const hiddenButton = document.createElement('button');
+      hiddenButton.setAttribute('hidden', 'true');
+
+      mockDialog.appendChild(visibleButton);
+      mockDialog.appendChild(hiddenButton);
+
+      vi.spyOn(component as any, 'getModalElement').mockReturnValue(mockDialog);
+
+      const focusableElements = (component as any).getFocusableElements();
+
+      // Should only include visible elements
+      expect(focusableElements).not.toContain(hiddenButton);
+    });
+
+    it('should exclude disabled elements from focus trap', () => {
+      const mockDialog = document.createElement('div');
+      const enabledButton = document.createElement('button');
+      const disabledButton = document.createElement('button');
+      disabledButton.disabled = true;
+
+      mockDialog.appendChild(enabledButton);
+      mockDialog.appendChild(disabledButton);
+
+      vi.spyOn(component as any, 'getModalElement').mockReturnValue(mockDialog);
+
+      const focusableElements = (component as any).getFocusableElements();
+
+      // Should only include enabled elements
+      expect(focusableElements).not.toContain(disabledButton);
+    });
+
+    it('should focus first element on modal open', async () => {
+      const mockButton = document.createElement('button');
+      mockButton.id = 'first-button';
+
+      const mockDialog = document.createElement('div');
+      mockDialog.appendChild(mockButton);
+
+      vi.spyOn(component as any, 'getModalElement').mockReturnValue(mockDialog);
+
+      const focusSpy = vi.spyOn(mockButton, 'focus');
+
+      (component as any).focusFirstElement();
+
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('should handle modal with no focusable elements', () => {
+      const mockDialog = document.createElement('div');
+      mockDialog.innerHTML = '<p>No focusable elements</p>';
+
+      vi.spyOn(component as any, 'getModalElement').mockReturnValue(mockDialog);
+
+      expect(() => (component as any).focusFirstElement()).not.toThrow();
+    });
+  });
+
+  describe('Accessibility Enhancements - Focus Restoration', () => {
+    it('should enable focus restoration by default', () => {
+      expect(component.restoreFocus()).toBe(true);
+    });
+
+    it('should allow disabling focus restoration', () => {
+      fixture.componentRef.setInput('restoreFocus', false);
+      expect(component.restoreFocus()).toBe(false);
+    });
+
+    it('should store focused element on modal open', () => {
+      const mockButton = document.createElement('button');
+      mockButton.id = 'trigger-button';
+      document.body.appendChild(mockButton);
+      mockButton.focus();
+
+      // Mock document.activeElement
+      Object.defineProperty(document, 'activeElement', {
+        writable: true,
+        value: mockButton,
+      });
+
+      component.handleShow();
+
+      // Should store the last focused element
+      expect((component as any).lastFocusedElement).toBe(mockButton);
+
+      document.body.removeChild(mockButton);
+    });
+
+    it('should restore focus to original element on close', async () => {
+      const mockButton = document.createElement('button');
+      mockButton.id = 'trigger-button';
+      document.body.appendChild(mockButton);
+
+      const focusSpy = vi.spyOn(mockButton, 'focus');
+
+      // Set as last focused element
+      (component as any).lastFocusedElement = mockButton;
+
+      // Mock document.body.contains
+      vi.spyOn(document.body, 'contains').mockReturnValue(true);
+
+      component.close();
+
+      // Wait for the timeout (200ms)
+      await new Promise(resolve => setTimeout(resolve, 250));
+
+      expect(focusSpy).toHaveBeenCalled();
+
+      document.body.removeChild(mockButton);
+    });
+
+    it('should fallback to body when element removed from DOM', async () => {
+      const mockButton = document.createElement('button');
+      mockButton.id = 'removed-button';
+
+      (component as any).lastFocusedElement = mockButton;
+
+      // Mock document.body.contains to return false (element removed)
+      vi.spyOn(document.body, 'contains').mockReturnValue(false);
+
+      const bodyFocusSpy = vi.spyOn(document.body, 'focus');
+
+      component.close();
+
+      await new Promise(resolve => setTimeout(resolve, 250));
+
+      expect(bodyFocusSpy).toHaveBeenCalled();
+    });
+
+    it('should not restore focus when restoreFocus is disabled', async () => {
+      fixture.componentRef.setInput('restoreFocus', false);
+
+      const mockButton = document.createElement('button');
+      document.body.appendChild(mockButton);
+
+      const focusSpy = vi.spyOn(mockButton, 'focus');
+
+      (component as any).lastFocusedElement = mockButton;
+
+      component.close();
+
+      await new Promise(resolve => setTimeout(resolve, 250));
+
+      expect(focusSpy).not.toHaveBeenCalled();
+
+      document.body.removeChild(mockButton);
+    });
+
+    it('should use requestAnimationFrame for smooth restoration', async () => {
+      const mockButton = document.createElement('button');
+      document.body.appendChild(mockButton);
+
+      (component as any).lastFocusedElement = mockButton;
+      vi.spyOn(document.body, 'contains').mockReturnValue(true);
+
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: any) => {
+        cb();
+        return 0;
+      });
+
+      component.close();
+
+      await new Promise(resolve => setTimeout(resolve, 250));
+
+      expect(rafSpy).toHaveBeenCalled();
+
+      document.body.removeChild(mockButton);
+      rafSpy.mockRestore();
+    });
+
+    it('should clear lastFocusedElement after restoration', async () => {
+      const mockButton = document.createElement('button');
+      document.body.appendChild(mockButton);
+
+      (component as any).lastFocusedElement = mockButton;
+      vi.spyOn(document.body, 'contains').mockReturnValue(true);
+
+      component.close();
+
+      await new Promise(resolve => setTimeout(resolve, 250));
+
+      expect((component as any).lastFocusedElement).toBeNull();
+
+      document.body.removeChild(mockButton);
+    });
+  });
+
+  describe('Accessibility Enhancements - Stacking Context Management', () => {
+    it('should add modal to static stack on show', () => {
+      const modalStackBefore = (component.constructor as any).modalStack?.length || 0;
+
+      component.handleShow();
+
+      const modalStackAfter = (component.constructor as any).modalStack?.length || 0;
+
+      expect(modalStackAfter).toBeGreaterThan(modalStackBefore);
+    });
+
+    it('should remove modal from stack on close', () => {
+      component.handleShow(); // Add to stack
+
+      const modalStackBefore = (component.constructor as any).modalStack?.length || 0;
+
+      (component as any).removeFromModalStack();
+
+      const modalStackAfter = (component.constructor as any).modalStack?.length || 0;
+
+      expect(modalStackAfter).toBeLessThan(modalStackBefore);
+    });
+
+    it('should assign z-index based on stack position', () => {
+      const baseZIndex = (component.constructor as any).baseZIndex || 1100;
+
+      // Clear stack first
+      if ((component.constructor as any).modalStack) {
+        (component.constructor as any).modalStack = [];
+      }
+
+      // Create first modal
+      component.handleShow();
+
+      // Mock dialog element
+      const mockDialog = document.createElement('div');
+      const mockMask = document.createElement('div');
+      mockMask.classList.add('p-dialog-mask');
+
+      mockDialog.appendChild(mockMask);
+      document.body.appendChild(mockDialog);
+
+      vi.spyOn(component as any, 'getModalElement').mockReturnValue(mockDialog);
+
+      (component as any).updateModalZIndex();
+
+      // First modal should have baseZIndex
+      expect(parseInt(mockMask.style.zIndex || '0')).toBeGreaterThanOrEqual(baseZIndex);
+
+      document.body.removeChild(mockDialog);
+    });
+
+    it('should calculate z-index with increment for multiple modals', () => {
+      const baseZIndex = (component.constructor as any).baseZIndex || 1100;
+
+      // Clear stack
+      if ((component.constructor as any).modalStack) {
+        (component.constructor as any).modalStack = [];
+      }
+
+      // Add to stack manually to simulate multiple modals
+      const modalId = (component as any).modalId;
+      (component.constructor as any).modalStack = ['modal-1', 'modal-2', modalId];
+
+      const mockDialog = document.createElement('div');
+      const mockMask = document.createElement('div');
+      mockMask.classList.add('p-dialog-mask');
+      mockDialog.appendChild(mockMask);
+      document.body.appendChild(mockDialog);
+
+      vi.spyOn(component as any, 'getModalElement').mockReturnValue(mockDialog);
+
+      (component as any).updateModalZIndex();
+
+      // Third modal should have baseZIndex + 20 (2 * 10)
+      const expectedZIndex = baseZIndex + 20;
+      expect(parseInt(mockMask.style.zIndex || '0')).toBe(expectedZIndex);
+
+      document.body.removeChild(mockDialog);
+    });
+
+    it('should only trap focus on topmost modal in stack', () => {
+      // Simulate two modals in stack
+      (component.constructor as any).modalStack = ['modal-1', 'modal-2-different'];
+      (component as any).modalId = 'modal-1'; // Current modal is not topmost
+
+      const tabEvent = new KeyboardEvent('keydown', {
+        key: 'Tab',
+        bubbles: true,
+        cancelable: true,
+      });
+
+      const preventDefaultSpy = vi.spyOn(tabEvent, 'preventDefault');
+
+      component.handleTabKey(tabEvent);
+
+      // Should not trap focus since not topmost
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+
+    it('should handle stack correctly with multiple modals', () => {
+      // Clear stack
+      if ((component.constructor as any).modalStack) {
+        (component.constructor as any).modalStack = [];
+      }
+
+      const component1 = fixture.componentInstance;
+      const component2 = TestBed.createComponent(ModalComponent).componentInstance;
+      const component3 = TestBed.createComponent(ModalComponent).componentInstance;
+
+      component1.handleShow(); // Add to stack
+      component2.handleShow(); // Add to stack
+      component3.handleShow(); // Add to stack
+
+      const stackLength = (component1.constructor as any).modalStack?.length || 0;
+      expect(stackLength).toBe(3);
+
+      (component2 as any).removeFromModalStack();
+
+      const newStackLength = (component1.constructor as any).modalStack?.length || 0;
+      expect(newStackLength).toBe(2);
+    });
+
+    it('should handle z-index update when modal element not found', () => {
+      vi.spyOn(component as any, 'getModalElement').mockReturnValue(null);
+
+      expect(() => (component as any).updateModalZIndex()).not.toThrow();
+    });
+
+    it('should generate unique modal ID for each instance', () => {
+      const component1 = fixture.componentInstance;
+      const component2 = TestBed.createComponent(ModalComponent).componentInstance;
+
+      const id1 = (component1 as any).modalId;
+      const id2 = (component2 as any).modalId;
+
+      expect(id1).not.toBe(id2);
+      expect(id1).toMatch(/^modal-/);
+      expect(id2).toMatch(/^modal-/);
+    });
+  });
+
+  describe('Accessibility Enhancements - Integration', () => {
+    it('should work correctly with all accessibility features enabled', async () => {
+      // Enable all features
+      fixture.componentRef.setInput('enableFocusTrap', true);
+      fixture.componentRef.setInput('restoreFocus', true);
+
+      const mockButton = document.createElement('button');
+      document.body.appendChild(mockButton);
+      mockButton.focus();
+
+      Object.defineProperty(document, 'activeElement', {
+        writable: true,
+        value: mockButton,
+      });
+
+      // Open modal
+      component.handleShow();
+
+      expect((component as any).lastFocusedElement).toBe(mockButton);
+
+      // Close modal
+      vi.spyOn(document.body, 'contains').mockReturnValue(true);
+      const focusSpy = vi.spyOn(mockButton, 'focus');
+
+      component.close();
+
+      await new Promise(resolve => setTimeout(resolve, 250));
+
+      expect(focusSpy).toHaveBeenCalled();
+
+      document.body.removeChild(mockButton);
+    });
+
+    it('should work correctly with all accessibility features disabled', () => {
+      fixture.componentRef.setInput('enableFocusTrap', false);
+      fixture.componentRef.setInput('restoreFocus', false);
+
+      component.handleShow();
+
+      const tabEvent = new KeyboardEvent('keydown', {
+        key: 'Tab',
+        bubbles: true,
+        cancelable: true,
+      });
+
+      const preventDefaultSpy = vi.spyOn(tabEvent, 'preventDefault');
+
+      component.handleTabKey(tabEvent);
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+
+    it('should handle nested modals correctly', async () => {
+      const modal1 = fixture.componentInstance;
+      const modal2 = TestBed.createComponent(ModalComponent).componentInstance;
+
+      // Clear stack
+      if ((modal1.constructor as any).modalStack) {
+        (modal1.constructor as any).modalStack = [];
+      }
+
+      // Open first modal
+      modal1.handleShow();
+
+      // Open second modal (nested)
+      modal2.handleShow();
+
+      // Second modal should be on top
+      const stackLength = (modal1.constructor as any).modalStack?.length || 0;
+      expect(stackLength).toBe(2);
+
+      // Close second modal
+      (modal2 as any).removeFromModalStack();
+
+      // First modal should now be on top
+      const newStackLength = (modal1.constructor as any).modalStack?.length || 0;
+      expect(newStackLength).toBe(1);
+    });
+  });
 });

@@ -3,7 +3,6 @@ import {
   provideZonelessChangeDetection,
   isDevMode,
   ErrorHandler,
-  provideExperimentalZonelessChangeDetection,
 } from "@angular/core";
 import {
   provideRouter,

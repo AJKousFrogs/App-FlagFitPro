@@ -1,0 +1,446 @@
+/**
+ * Login Component Styles
+ * Migrated from inline styles to SCSS using design system
+ */
+
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+// ============================================================================
+// PAGE LAYOUT
+// ============================================================================
+
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-4);
+  background: linear-gradient(
+    135deg,
+    var(--surface-primary) 0%,
+    var(--surface-secondary) 100%
+  );
+
+  // Subtle pattern overlay
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(var(--ds-primary-green-rgb), 0.03) 0%,
+      transparent 50%
+    );
+    pointer-events: none;
+  }
+}
+
+// ============================================================================
+// CARD STYLING
+// ============================================================================
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+
+  // Gradient top border
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(
+      90deg,
+      var(--ds-primary-green) 0%,
+      var(--ds-secondary-gold) 100%
+    );
+  }
+
+  // PrimeNG card overrides
+  :host ::ng-deep {
+    .p-card-header {
+      padding: var(--space-6) var(--space-6) 0;
+      text-align: center;
+    }
+
+    .p-card-body {
+      padding: var(--space-6);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+}
+
+// ============================================================================
+// LOGO & HEADER
+// ============================================================================
+
+.login-logo {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ds-primary-green-subtle);
+  border-radius: var(--radius-xl);
+  color: var(--ds-primary-green);
+  font-size: var(--icon-3xl);
+  transition: transform var(--transition-normal) var(--ease-bounce);
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  i {
+    animation: pulse-subtle 2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.login-title {
+  font-size: var(--font-heading-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+// ============================================================================
+// FORM ELEMENTS
+// ============================================================================
+
+.p-field {
+  margin-bottom: var(--space-4);
+}
+
+.p-label {
+  display: block;
+  font-size: var(--font-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+
+  &.required::after {
+    content: ' *';
+    color: var(--color-status-error);
+  }
+}
+
+// Input field styling
+:host ::ng-deep {
+  .p-inputtext {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-body-md);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--surface-primary);
+    color: var(--color-text-primary);
+    transition: all var(--transition-fast) var(--ease-smooth);
+
+    &:focus {
+      outline: none;
+      border-color: var(--ds-primary-green);
+      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
+    }
+
+    &.ng-invalid.ng-touched,
+    &.ng-invalid.ng-dirty {
+      border-color: var(--color-status-error);
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.15);
+      }
+    }
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+  }
+}
+
+// Error messages
+.p-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  font-size: var(--font-body-xs);
+  color: var(--color-status-error);
+  animation: shake 0.3s ease-in-out;
+
+  &::before {
+    content: '⚠';
+    font-size: var(--font-body-sm);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+// ============================================================================
+// FORM OPTIONS ROW
+// ============================================================================
+
+.login-form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+
+  label {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  a {
+    font-size: var(--font-body-sm);
+    color: var(--ds-primary-green);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--ds-primary-green-hover);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ds-primary-green);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+  }
+}
+
+// Checkbox styling
+:host ::ng-deep {
+  .p-checkbox {
+    .p-checkbox-box {
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--color-border-primary);
+      transition: all var(--transition-fast);
+
+      &.p-highlight {
+        background: var(--ds-primary-green);
+        border-color: var(--ds-primary-green);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
+      }
+    }
+  }
+}
+
+// ============================================================================
+// SUBMIT BUTTON
+// ============================================================================
+
+:host ::ng-deep {
+  .p-button.w-full {
+    width: 100%;
+    justify-content: center;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-body-md);
+    font-weight: var(--font-weight-semibold);
+    border-radius: var(--radius-lg);
+    background: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
+    transition: all var(--transition-fast) var(--ease-smooth);
+
+    &:not(:disabled):hover {
+      background: var(--ds-primary-green-hover);
+      border-color: var(--ds-primary-green-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-primary);
+    }
+
+    &:not(:disabled):active {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ds-primary-green);
+      outline-offset: 2px;
+    }
+  }
+}
+
+// ============================================================================
+// DIVIDER
+// ============================================================================
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-body-sm);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-secondary);
+  }
+}
+
+// ============================================================================
+// CREATE ACCOUNT LINK
+// ============================================================================
+
+.login-create-link {
+  display: block;
+  text-align: center;
+  font-size: var(--font-body-md);
+  color: var(--ds-primary-green);
+  text-decoration: none;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: var(--ds-primary-green-subtle);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
+}
+
+// ============================================================================
+// ALERT STYLES
+// ============================================================================
+
+.alert {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-body-sm);
+
+  strong {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  &.alert-info {
+    background: var(--color-status-info-light);
+    color: var(--primitive-info-700);
+    border: 1px solid var(--primitive-info-200);
+  }
+}
+
+// ============================================================================
+// RESPONSIVE DESIGN
+// ============================================================================
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: var(--space-3);
+  }
+
+  .login-card {
+    :host ::ng-deep {
+      .p-card-header {
+        padding: var(--space-5) var(--space-4) 0;
+      }
+
+      .p-card-body {
+        padding: var(--space-4);
+      }
+    }
+  }
+
+  .login-logo {
+    width: 56px;
+    height: 56px;
+    font-size: var(--icon-2xl);
+  }
+
+  .login-title {
+    font-size: var(--font-heading-md);
+  }
+
+  .login-form-options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+// ============================================================================
+// DARK MODE
+// ============================================================================
+
+[data-theme="dark"] {
+  .login-page {
+    background: linear-gradient(
+      135deg,
+      var(--primitive-neutral-900) 0%,
+      var(--primitive-neutral-950) 100%
+    );
+  }
+
+  .login-card {
+    background: var(--primitive-neutral-800);
+    border: 1px solid var(--primitive-neutral-700);
+  }
+
+  .login-logo {
+    background: rgba(var(--ds-primary-green-rgb), 0.15);
+  }
+}
+
+// ============================================================================
+// REDUCED MOTION
+// ============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .login-logo i {
+    animation: none;
+  }
+
+  .p-error {
+    animation: none;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+

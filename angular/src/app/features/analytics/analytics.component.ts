@@ -50,6 +50,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { AcwrService } from "../../core/services/acwr.service";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 interface Metric {
@@ -1099,6 +1100,7 @@ interface Metric {
       }
     `,
   ],
+  styleUrls: ['./analytics.component.scss'],
 })
 export class AnalyticsComponent implements OnInit, AfterViewInit {
   @ViewChildren(UIChart) chartRefs!: QueryList<UIChart>;
@@ -1108,6 +1110,7 @@ export class AnalyticsComponent implements OnInit, AfterViewInit {
   private trainingStatsService = inject(TrainingStatsCalculationService);
   private trainingDataService = inject(TrainingDataService);
   private logger = inject(LoggerService);
+  private acwrService = inject(AcwrService);
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(true);
@@ -1256,16 +1259,19 @@ export class AnalyticsComponent implements OnInit, AfterViewInit {
       },
     });
 
-    // Load training sessions for ACWR calculation
-    this.trainingDataService.getTrainingSessions({ limit: 100 }).subscribe({
-      next: (sessions) => {
-        const acwr = this.trainingStatsService.calculateACWR(sessions);
-        this.acwrData.set(acwr);
-      },
-      error: (error) => {
-        this.logger.error("Error loading training sessions for ACWR:", error);
-      },
-    });
+    // Load ACWR data from canonical AcwrService (single source of truth)
+    const acwrData = this.acwrService.acwrData();
+    if (acwrData.ratio > 0) {
+      this.acwrData.set({
+        acwr: acwrData.ratio,
+        acuteLoad: acwrData.acute,
+        chronicLoad: acwrData.chronic,
+        acuteDays: 7,
+        chronicDays: 28,
+        riskZone: acwrData.riskZone.level,
+        message: acwrData.riskZone.description,
+      });
+    }
   }
 
   loadPlayerStatistics(): void {

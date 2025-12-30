@@ -53,6 +53,7 @@ import {
   FlagFootballAthleteProfileService,
   FlagFootballPosition,
 } from "../../../../core/services/flag-football-athlete-profile.service";
+import { AcwrService } from "../../../../core/services/acwr.service";
 
 interface TimelineEvent {
   phase: string;
@@ -425,6 +426,7 @@ export class PeriodizationDashboardComponent implements OnInit {
   private sprintService = inject(SprintTrainingKnowledgeService);
   private loadCalculator = inject(PhaseLoadCalculatorService);
   private athleteProfileService = inject(FlagFootballAthleteProfileService);
+  private acwrService = inject(AcwrService);
 
   // State
   readonly currentDate = new Date();
@@ -464,12 +466,18 @@ export class PeriodizationDashboardComponent implements OnInit {
     );
     this.loadRecommendation.set(loadRec);
 
-    // Get ACWR (mock data for demo)
-    const acwr = this.loadCalculator.calculateACWR([
-      { sessionRPE: 7, duration: 60, load: 420, type: "strength", date: new Date() },
-      { sessionRPE: 8, duration: 45, load: 360, type: "speed", date: new Date() },
-    ]);
-    this.acwrStatus.set(acwr);
+    // Get ACWR from canonical AcwrService (single source of truth)
+    const acwrData = this.acwrService.acwrData();
+    if (acwrData.ratio > 0) {
+      const acwr: ACWRCalculation = {
+        acuteLoad: Math.round(acwrData.acute),
+        chronicLoad: Math.round(acwrData.chronic),
+        acwr: parseFloat(acwrData.ratio.toFixed(2)),
+        riskZone: this.mapRiskZone(acwrData.riskZone.level),
+        recommendation: acwrData.riskZone.recommendation,
+      };
+      this.acwrStatus.set(acwr);
+    }
 
     // Get sprint guidelines
     const sprintPhase = this.mapPhaseToSprintPhase(phaseType);
@@ -507,18 +515,37 @@ export class PeriodizationDashboardComponent implements OnInit {
   }
 
   private generateAnnualTimeline(): void {
+    // Colors reference --color-phase-* tokens from design-system-tokens.scss
     const timeline: TimelineEvent[] = [
-      { phase: "Recovery", month: "Nov", icon: "pi pi-heart", color: "#9CA3AF", description: "Active recovery" },
-      { phase: "Foundation", month: "Dec", icon: "pi pi-building", color: "#3B82F6", description: "Base building" },
-      { phase: "Strength", month: "Jan", icon: "pi pi-bolt", color: "#8B5CF6", description: "Strength accumulation" },
-      { phase: "Power", month: "Feb", icon: "pi pi-chart-line", color: "#EC4899", description: "Power development" },
-      { phase: "Speed", month: "Mar", icon: "pi pi-forward", color: "#F59E0B", description: "Speed development" },
-      { phase: "Competition", month: "Apr-Jun", icon: "pi pi-trophy", color: "#10B981", description: "Tournament season" },
-      { phase: "Reload", month: "Jul", icon: "pi pi-refresh", color: "#6366F1", description: "Mid-season reload" },
-      { phase: "Peak", month: "Aug", icon: "pi pi-star", color: "#EF4444", description: "Championship peak" },
-      { phase: "Late Season", month: "Sep-Oct", icon: "pi pi-calendar", color: "#14B8A6", description: "Season finish" },
+      { phase: "Recovery", month: "Nov", icon: "pi pi-heart", color: "var(--color-phase-recovery)", description: "Active recovery" },
+      { phase: "Foundation", month: "Dec", icon: "pi pi-building", color: "var(--color-phase-foundation)", description: "Base building" },
+      { phase: "Strength", month: "Jan", icon: "pi pi-bolt", color: "var(--color-phase-strength)", description: "Strength accumulation" },
+      { phase: "Power", month: "Feb", icon: "pi pi-chart-line", color: "var(--color-phase-power)", description: "Power development" },
+      { phase: "Speed", month: "Mar", icon: "pi pi-forward", color: "var(--color-phase-speed)", description: "Speed development" },
+      { phase: "Competition", month: "Apr-Jun", icon: "pi pi-trophy", color: "var(--color-phase-competition)", description: "Tournament season" },
+      { phase: "Reload", month: "Jul", icon: "pi pi-refresh", color: "var(--color-phase-reload)", description: "Mid-season reload" },
+      { phase: "Peak", month: "Aug", icon: "pi pi-star", color: "var(--color-phase-peak)", description: "Championship peak" },
+      { phase: "Late Season", month: "Sep-Oct", icon: "pi pi-calendar", color: "var(--color-phase-late-season)", description: "Season finish" },
     ];
     this.annualTimeline.set(timeline);
+  }
+
+  /**
+   * Map AcwrService risk zone level to ACWRCalculation riskZone format
+   */
+  private mapRiskZone(level: string): "optimal" | "caution" | "danger" {
+    switch (level) {
+      case "sweet-spot":
+        return "optimal";
+      case "elevated-risk":
+        return "caution";
+      case "danger-zone":
+        return "danger";
+      case "under-training":
+        return "caution";
+      default:
+        return "optimal";
+    }
   }
 
   getPhaseSeverity(): "success" | "info" | "warn" | "danger" | "secondary" {

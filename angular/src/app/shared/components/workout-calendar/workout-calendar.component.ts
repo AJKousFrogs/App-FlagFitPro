@@ -361,12 +361,12 @@ export interface WorkoutEntry {
     }
 
     /* Workout type colors */
-    .type-strength { background: #ef4444; }
-    .type-cardio { background: #f59e0b; }
-    .type-mobility { background: #10b981; }
-    .type-practice { background: #3b82f6; }
-    .type-game { background: #8b5cf6; }
-    .type-rest { background: #6b7280; }
+    .type-strength { background: var(--color-workout-strength); }
+    .type-cardio { background: var(--color-workout-cardio); }
+    .type-mobility { background: var(--color-workout-mobility); }
+    .type-practice { background: var(--color-workout-practice); }
+    .type-game { background: var(--color-workout-game); }
+    .type-rest { background: var(--color-workout-rest); }
 
     .day-workouts {
       display: flex;

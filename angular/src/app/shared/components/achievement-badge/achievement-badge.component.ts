@@ -318,19 +318,19 @@ export type BadgeRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
     }
 
     .rarity-uncommon {
-      border-color: #1eff00;
+      border-color: var(--color-rarity-uncommon);
     }
 
     .rarity-rare {
-      border-color: #0070dd;
+      border-color: var(--color-rarity-rare);
     }
 
     .rarity-epic {
-      border-color: #a335ee;
+      border-color: var(--color-rarity-epic);
     }
 
     .rarity-legendary {
-      border-color: #ff8000;
+      border-color: var(--color-rarity-legendary);
       animation: legendary-glow 2s ease-in-out infinite;
     }
 
@@ -345,10 +345,10 @@ export type BadgeRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
 
     @keyframes legendary-glow {
       0%, 100% {
-        box-shadow: 0 0 10px #ff8000;
+        box-shadow: 0 0 10px var(--color-rarity-legendary);
       }
       50% {
-        box-shadow: 0 0 20px #ff8000, 0 0 30px #ff8000;
+        box-shadow: 0 0 20px var(--color-rarity-legendary), 0 0 30px var(--color-rarity-legendary);
       }
     }
 

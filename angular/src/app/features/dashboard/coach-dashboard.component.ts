@@ -770,7 +770,6 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
           <p-button label="Send" icon="pi pi-send" (onClick)="sendTeamMessage()"></p-button>
         </ng-template>
       </p-dialog>
-      </div>
       } <!-- End of @else for content -->
     </app-main-layout>
   `,

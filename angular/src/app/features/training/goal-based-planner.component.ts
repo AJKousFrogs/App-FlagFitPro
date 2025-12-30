@@ -68,7 +68,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
       </div>
 
       <!-- Current Status -->
-      @if (selectedGoal) {
+      @if (selectedGoal()) {
         <div class="status-section mb-6 p-4 bg-surface-secondary rounded-lg">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div class="stat-item">
@@ -117,7 +117,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
                 Weekly Training Plan - {{ getGoalLabel() }}
               </h3>
               <p-tag
-                [value]="weeklyPlan()?.phase | titlecase"
+                [value]="(weeklyPlan()?.phase || '') | titlecase"
                 severity="info"
               ></p-tag>
             </div>
@@ -227,7 +227,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
                   <div class="text-xs text-text-secondary">ACWR Target</div>
                   <div class="text-lg font-bold">
                     {{
-                      weeklyPlan()?.progressionRules.acwrThreshold
+                      weeklyPlan()?.progressionRules?.acwrThreshold
                         | number: "1.2-2"
                     }}
                   </div>
@@ -239,16 +239,16 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
                   <div
                     class="text-lg font-bold"
                     [class]="
-                      weeklyPlan()?.progressionRules.volumeAdjustment > 0
+                      (weeklyPlan()?.progressionRules?.volumeAdjustment ?? 0) > 0
                         ? 'text-green-600'
                         : 'text-red-600'
                     "
                   >
                     {{
-                      weeklyPlan()?.progressionRules.volumeAdjustment > 0
+                      (weeklyPlan()?.progressionRules?.volumeAdjustment ?? 0) > 0
                         ? "+"
                         : ""
-                    }}{{ weeklyPlan()?.progressionRules.volumeAdjustment }}%
+                    }}{{ weeklyPlan()?.progressionRules?.volumeAdjustment }}%
                   </div>
                 </div>
               </div>
@@ -258,7 +258,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
       }
 
       <!-- Generate Button -->
-      @if (selectedGoal) {
+      @if (selectedGoal()) {
         <div class="actions mt-6 flex justify-end">
           <p-button
             label="Generate Plan"
@@ -397,10 +397,8 @@ export class GoalBasedPlannerComponent implements OnInit {
     return "text-green-600";
   }
 
-  getReadinessSeverity(): "success" | "warning" | "danger" {
-    const severity = this.readinessService.getSeverity(this.readinessLevel());
-    // Convert 'warn' to 'warning' for PrimeNG compatibility
-    return severity === "warn" ? "warning" : severity;
+  getReadinessSeverity(): "success" | "warn" | "danger" {
+    return this.readinessService.getSeverity(this.readinessLevel());
   }
 
   getProgressionRule(): string {
@@ -422,16 +420,16 @@ export class GoalBasedPlannerComponent implements OnInit {
 
   getSessionTypeSeverity(
     type: string,
-  ): "success" | "info" | "warning" | "danger" {
+  ): "success" | "info" | "warn" | "danger" {
     const severityMap: Record<
       string,
-      "success" | "info" | "warning" | "danger"
+      "success" | "info" | "warn" | "danger"
     > = {
       speed: "danger",
-      agility: "warning",
+      agility: "warn",
       strength: "info",
       technique: "success",
-      conditioning: "warning",
+      conditioning: "warn",
       recovery: "success",
       game: "info",
     };

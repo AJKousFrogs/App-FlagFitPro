@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { LoadingService } from "../../core/services/loading.service";
+import { LoadingService } from "../../../core/services/loading.service";
 
 @Component({
   selector: "app-loading-overlay",
@@ -35,48 +35,48 @@ import { LoadingService } from "../../core/services/loading.service";
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: var(--surface-overlay);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
+      z-index: var(--z-index-loading-overlay);
       -webkit-backdrop-filter: blur(4px);
       backdrop-filter: blur(4px);
-      transition: opacity 0.3s ease;
+      transition: opacity var(--transition-slow);
     }
 
     .loading-content {
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: white;
+      color: var(--color-text-on-primary);
     }
 
     .loading-spinner {
       width: 50px;
       height: 50px;
       border: 4px solid rgba(255, 255, 255, 0.1);
-      border-left-color: var(--primary-color, #3b82f6);
-      border-radius: 50%;
+      border-left-color: var(--color-brand-primary);
+      border-radius: var(--radius-full);
       animation: spin 1s linear infinite;
-      margin-bottom: 1rem;
+      margin-bottom: var(--space-4);
     }
 
     .loading-message {
-      font-size: 1.125rem;
-      font-weight: 500;
+      font-size: var(--font-body-lg);
+      font-weight: var(--font-weight-medium);
     }
 
     .loading-cancel-btn {
-      margin-top: 1rem;
-      padding: 0.5rem 1rem;
+      margin-top: var(--space-4);
+      padding: var(--space-2) var(--space-4);
       background: rgba(255, 255, 255, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      border-radius: 4px;
+      color: var(--color-text-on-primary);
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      font-size: 0.875rem;
-      transition: background 0.2s;
+      font-size: var(--font-body-sm);
+      transition: background var(--transition-base);
     }
 
     .loading-cancel-btn:hover {

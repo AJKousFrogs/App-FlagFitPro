@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject, HostListener } from "@angular/core";
 
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { HeaderComponent } from "../header/header.component";
@@ -6,6 +6,8 @@ import { QuickActionsFABComponent } from "../quick-actions-fab/quick-actions-fab
 import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumbs.component";
 import { BottomNavComponent } from "../bottom-nav/bottom-nav.component";
 import { OfflineBannerComponent } from "../offline-banner/offline-banner.component";
+import { KeyboardShortcutsModalComponent } from "../keyboard-shortcuts-modal/keyboard-shortcuts-modal.component";
+import { ThemeService } from "../../../core/services/theme.service";
 
 @Component({
   selector: "app-main-layout",
@@ -18,6 +20,7 @@ import { OfflineBannerComponent } from "../offline-banner/offline-banner.compone
     SmartBreadcrumbsComponent,
     BottomNavComponent,
     OfflineBannerComponent,
+    KeyboardShortcutsModalComponent,
   ],
   template: `
     <!-- Offline Banner -->
@@ -39,7 +42,29 @@ import { OfflineBannerComponent } from "../offline-banner/offline-banner.compone
       <!-- Mobile Bottom Navigation -->
       <app-bottom-nav></app-bottom-nav>
     </div>
+
+    <!-- Keyboard Shortcuts Modal (Global) -->
+    <app-keyboard-shortcuts-modal></app-keyboard-shortcuts-modal>
   `,
   styleUrls: ['./main-layout.component.scss'],
 })
-export class MainLayoutComponent {}
+export class MainLayoutComponent {
+  private themeService = inject(ThemeService);
+
+  /**
+   * Listen for custom events from keyboard shortcuts service
+   */
+  @HostListener('window:toggle-sidebar')
+  onToggleSidebar(): void {
+    // This will be handled by the sidebar component
+    // We dispatch a custom event that the sidebar listens to
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('sidebar-toggle-request'));
+    }
+  }
+
+  @HostListener('window:toggle-theme')
+  onToggleTheme(): void {
+    this.themeService.toggle();
+  }
+}

@@ -120,7 +120,7 @@ import { ToastModule } from "primeng/toast";
 
       .toast-icon-warn {
         background: var(--color-status-warning-light);
-        color: #92400e;
+        color: var(--color-status-warning-text);
       }
 
       .toast-icon-error {

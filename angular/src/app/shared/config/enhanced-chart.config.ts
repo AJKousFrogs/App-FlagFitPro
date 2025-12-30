@@ -9,7 +9,7 @@
  * - onClick handlers for drill-down
  */
 
-import { ChartOptions, TooltipItem, Chart, LegendItem } from 'chart.js';
+import { ChartOptions, TooltipItem, Chart, LegendItem, ChartEvent, ActiveElement, LegendElement } from 'chart.js';
 
 /**
  * Calculate trend from data points
@@ -103,7 +103,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
   },
 
   // Custom onClick handler for drill-down
-  onClick: (event, activeElements, chart) => {
+  onClick: (event: ChartEvent, activeElements: ActiveElement[], chart: Chart) => {
     if (activeElements.length > 0) {
       const element = activeElements[0];
       const datasetIndex = element.datasetIndex;
@@ -136,7 +136,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
         padding: 15,
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Inter', sans-serif",
+          family: "'Poppins', sans-serif",
           weight: '500'
         },
         color: 'var(--color-text-primary)',
@@ -152,7 +152,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
           }));
         }
       },
-      onClick: (e, legendItem: LegendItem, legend) => {
+      onClick: (e: ChartEvent, legendItem: LegendItem, legend: LegendElement<'line'>) => {
         const index = legendItem.datasetIndex!;
         const chart = legend.chart;
 
@@ -182,15 +182,15 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
       titleFont: {
         size: getResponsiveFontSize(14),
         weight: 'bold',
-        family: "'Inter', sans-serif"
+        family: "'Poppins', sans-serif"
       },
       bodyFont: {
         size: getResponsiveFontSize(13),
-        family: "'Inter', sans-serif"
+        family: "'Poppins', sans-serif"
       },
       footerFont: {
         size: getResponsiveFontSize(11),
-        family: "'Inter', sans-serif",
+        family: "'Poppins', sans-serif",
         style: 'italic'
       },
       displayColors: true,
@@ -208,7 +208,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
           enabled: true
         },
         mode: 'x',
-        onZoomComplete: ({ chart }) => {
+        onZoomComplete: ({ chart }: { chart: Chart }) => {
           // Dispatch custom event when zoom completes
           const customEvent = new CustomEvent('chartZoom', {
             detail: {
@@ -222,7 +222,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
         enabled: true,
         mode: 'x',
         modifierKey: 'shift',
-        onPanComplete: ({ chart }) => {
+        onPanComplete: ({ chart }: { chart: Chart }) => {
           // Dispatch custom event when pan completes
           const customEvent = new CustomEvent('chartPan', {
             detail: {
@@ -251,7 +251,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
       ticks: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Inter', sans-serif"
+          family: "'Poppins', sans-serif"
         },
         color: 'var(--color-text-secondary)',
         maxRotation: 45,
@@ -269,7 +269,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<any> = {
       ticks: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Inter', sans-serif"
+          family: "'Poppins', sans-serif"
         },
         color: 'var(--color-text-secondary)',
         padding: 8
@@ -345,7 +345,7 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<'radar'> = {
       labels: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Inter', sans-serif"
+          family: "'Poppins', sans-serif"
         },
         color: 'var(--color-text-primary)'
       }
@@ -355,11 +355,11 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<'radar'> = {
       backgroundColor: 'rgba(0, 0, 0, 0.9)',
       titleFont: {
         size: getResponsiveFontSize(14),
-        family: "'Inter', sans-serif"
+        family: "'Poppins', sans-serif"
       },
       bodyFont: {
         size: getResponsiveFontSize(13),
-        family: "'Inter', sans-serif"
+        family: "'Poppins', sans-serif"
       },
       callbacks: CUSTOM_TOOLTIP_CALLBACKS
     }
@@ -373,7 +373,7 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<'radar'> = {
         stepSize: 2,
         font: {
           size: getResponsiveFontSize(11),
-          family: "'Inter', sans-serif"
+          family: "'Poppins', sans-serif"
         },
         color: 'var(--color-text-secondary)',
         backdropColor: 'transparent'
@@ -384,8 +384,8 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<'radar'> = {
       pointLabels: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Inter', sans-serif",
-          weight: '500'
+          family: "'Poppins', sans-serif",
+          weight: 500
         },
         color: 'var(--color-text-primary)'
       }
@@ -442,29 +442,35 @@ export function updateChartFontSizes(chart: Chart): void {
   if (!options.plugins || !options.scales) return;
 
   // Update legend font size
-  if (options.plugins.legend?.labels?.font) {
-    options.plugins.legend.labels.font.size = getResponsiveFontSize(12);
+  const legendFont = options.plugins.legend?.labels?.font;
+  if (legendFont && typeof legendFont === 'object' && 'size' in legendFont) {
+    (legendFont as { size?: number }).size = getResponsiveFontSize(12);
   }
 
   // Update tooltip font sizes
   if (options.plugins.tooltip) {
-    if (options.plugins.tooltip.titleFont) {
-      options.plugins.tooltip.titleFont.size = getResponsiveFontSize(14);
+    const titleFont = options.plugins.tooltip.titleFont;
+    if (titleFont && typeof titleFont === 'object' && 'size' in titleFont) {
+      (titleFont as { size?: number }).size = getResponsiveFontSize(14);
     }
-    if (options.plugins.tooltip.bodyFont) {
-      options.plugins.tooltip.bodyFont.size = getResponsiveFontSize(13);
+    const bodyFont = options.plugins.tooltip.bodyFont;
+    if (bodyFont && typeof bodyFont === 'object' && 'size' in bodyFont) {
+      (bodyFont as { size?: number }).size = getResponsiveFontSize(13);
     }
-    if (options.plugins.tooltip.footerFont) {
-      options.plugins.tooltip.footerFont.size = getResponsiveFontSize(11);
+    const footerFont = options.plugins.tooltip.footerFont;
+    if (footerFont && typeof footerFont === 'object' && 'size' in footerFont) {
+      (footerFont as { size?: number }).size = getResponsiveFontSize(11);
     }
   }
 
   // Update axis font sizes
-  if (options.scales.x?.ticks?.font) {
-    options.scales.x.ticks.font.size = getResponsiveFontSize(12);
+  const xFont = options.scales.x?.ticks?.font;
+  if (xFont && typeof xFont === 'object' && 'size' in xFont) {
+    (xFont as { size?: number }).size = getResponsiveFontSize(12);
   }
-  if (options.scales.y?.ticks?.font) {
-    options.scales.y.ticks.font.size = getResponsiveFontSize(12);
+  const yFont = options.scales.y?.ticks?.font;
+  if (yFont && typeof yFont === 'object' && 'size' in yFont) {
+    (yFont as { size?: number }).size = getResponsiveFontSize(12);
   }
 
   chart.update();

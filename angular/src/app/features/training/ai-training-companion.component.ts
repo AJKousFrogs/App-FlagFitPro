@@ -662,7 +662,7 @@ declare global {
       }
 
       .ai-disabled-content i {
-        font-size: 2rem;
+        font-size: var(--icon-2xl);
         color: var(--color-text-secondary);
       }
 
@@ -727,7 +727,7 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
   quickActions = signal<QuickAction[]>([]);
 
   private speechRecognition: SpeechRecognition | null = null;
-  private contextAnalysisInterval?: NodeJS.Timeout;
+  private contextAnalysisInterval?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void {
     this.initializeSpeechRecognition();

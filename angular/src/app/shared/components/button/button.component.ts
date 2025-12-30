@@ -334,8 +334,8 @@ import { CommonModule } from "@angular/common";
 
       @media (hover: hover) and (pointer: fine) {
         .btn-danger:hover:not(:disabled) {
-          background-color: #dc2626;
-          border-color: #dc2626;
+          background-color: var(--primitive-error-600, #dc2626);
+          border-color: var(--primitive-error-600, #dc2626);
           transform: translateY(-2px);
           box-shadow: 
             0 6px 20px rgba(239, 68, 68, 0.35),
@@ -346,7 +346,7 @@ import { CommonModule } from "@angular/common";
       .btn-danger:active:not(:disabled),
       .btn-danger.btn-pressed {
         transform: translateY(0) scale(0.98);
-        background-color: #b91c1c;
+        background-color: var(--primitive-error-700, #b91c1c);
       }
 
       .btn-danger:focus-visible {
@@ -363,8 +363,8 @@ import { CommonModule } from "@angular/common";
 
       @media (hover: hover) and (pointer: fine) {
         .btn-success:hover:not(:disabled) {
-          background-color: #d4a617;
-          border-color: #d4a617;
+          background-color: var(--primitive-success-600, #d4a617);
+          border-color: var(--primitive-success-600, #d4a617);
           transform: translateY(-2px);
           box-shadow: 
             0 6px 20px rgba(241, 196, 15, 0.35),
@@ -375,7 +375,7 @@ import { CommonModule } from "@angular/common";
       .btn-success:active:not(:disabled),
       .btn-success.btn-pressed {
         transform: translateY(0) scale(0.98);
-        background-color: #b7941f;
+        background-color: var(--primitive-success-700, #b7941f);
       }
 
       .btn-success:focus-visible {

@@ -44,27 +44,27 @@ import { FeedbackService, FeedbackMessage } from "../../../core/services/feedbac
     `
       .toast-container {
         position: fixed;
-        top: 20px;
-        right: 20px;
+        top: var(--space-5);
+        right: var(--space-5);
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        z-index: 10000;
+        gap: var(--space-3);
+        z-index: var(--z-index-notification);
         max-width: 400px;
       }
 
       .toast-item {
-        padding: 1rem 1.25rem;
-        border-radius: 8px;
-        color: white;
-        font-weight: 500;
-        font-size: 0.875rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        padding: var(--space-4) var(--space-5);
+        border-radius: var(--radius-lg);
+        color: var(--color-text-on-primary);
+        font-weight: var(--font-weight-medium);
+        font-size: var(--font-body-sm);
+        box-shadow: var(--shadow-md);
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        animation: slideIn 0.3s ease-out;
-        line-height: 1.4;
+        animation: slideIn var(--transition-slow) ease-out;
+        line-height: var(--line-height-normal);
       }
 
       @keyframes slideIn {
@@ -77,17 +77,21 @@ import { FeedbackService, FeedbackMessage } from "../../../core/services/feedbac
       }
 
       .success {
-        background: #10c96b;
-        border-left: 4px solid #0ab85a;
+        background: var(--ds-primary-green);
+        border-left: 4px solid var(--ds-primary-green-hover);
       }
       .error {
-        background: #ef4444;
-        border-left: 4px solid #dc2626;
+        background: var(--color-status-error);
+        border-left: 4px solid var(--primitive-error-600, #dc2626);
       }
-      .warning,
+      .warning {
+        background: var(--color-status-warning);
+        border-left: 4px solid var(--primitive-warning-500, #f59e0b);
+        color: var(--color-text-primary);
+      }
       .info {
-        background: #fbbf24;
-        border-left: 4px solid #f59e0b;
+        background: var(--color-status-info);
+        border-left: 4px solid var(--primitive-primary-600, #0ab85a);
       }
 
       .toast-content {

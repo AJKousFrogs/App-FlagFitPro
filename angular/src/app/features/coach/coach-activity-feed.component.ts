@@ -155,7 +155,7 @@ import { LoggerService } from "../../core/services/logger.service";
                         </span>
                         @if (activity.player?.position) {
                           <p-tag
-                            [value]="activity.player.position"
+                            [value]="activity.player?.position ?? ''"
                             [rounded]="true"
                             severity="info"
                           ></p-tag>

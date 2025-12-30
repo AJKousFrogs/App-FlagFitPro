@@ -6,6 +6,9 @@
 /* Design System Tokens - Single source of truth */
 @use "./assets/styles/design-system-tokens.scss" as *;
 
+/* Standardized Design Tokens - CSS Custom Properties */
+@use "./assets/styles/design-tokens-standardized.scss" as *;
+
 /* Standardized Components - All components use same variants */
 @use "./assets/styles/standardized-components.scss" as *;
 
@@ -17,6 +20,14 @@
 
 /* PrimeNG Theme - Premium component styling */
 @use "./assets/styles/primeng-theme.scss" as *;
+
+/* Color Contrast Fixes - WCAG 2.1 AA Compliance */
+@use "./assets/styles/color-contrast-fixes.scss" as *;
+
+/* SCSS Variables and Mixins */
+@use "./styles/variables" as *;
+@use "./styles/mixins" as *;
+@use "./styles/responsive-utilities" as *;
 
 /* PrimeIcons - CSS file, must use @import */
 @import "primeicons/primeicons.css";

@@ -260,37 +260,7 @@ export function getFormData(formId) {
   return data;
 }
 
-// ================================================================
-// LOCAL STORAGE UTILITIES
-// ================================================================
-// NOTE: Storage functions have been moved to storage-service-unified.js
-// These are kept for backward compatibility but will be deprecated
-// Import from '../services/storage-service-unified.js' instead
-
-import { storageService } from "../services/storage-service-unified.js";
-
 import { logger } from "../../logger.js";
-
-/**
- * @deprecated Use storageService.set() from storage-service-unified.js instead
- */
-export function saveToStorage(key, data) {
-  return storageService.set(key, data, { usePrefix: false });
-}
-
-/**
- * @deprecated Use storageService.get() from storage-service-unified.js instead
- */
-export function getFromStorage(key, defaultValue = null) {
-  return storageService.get(key, defaultValue, { usePrefix: false });
-}
-
-/**
- * @deprecated Use storageService.remove() from storage-service-unified.js instead
- */
-export function removeFromStorage(key) {
-  return storageService.remove(key, { usePrefix: false });
-}
 
 // ================================================================
 // ARRAY UTILITIES
@@ -583,11 +553,6 @@ export const utils = {
   showFieldSuccess,
   clearFieldState,
   getFormData,
-
-  // Storage
-  saveToStorage,
-  getFromStorage,
-  removeFromStorage,
 
   // Arrays
   shuffleArray,

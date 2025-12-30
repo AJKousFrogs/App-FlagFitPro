@@ -79,7 +79,7 @@ interface PendingInvitation {
                 <p-button
                   [label]="deletionMessage.actionLabel"
                   icon="pi pi-times"
-                  severity="warning"
+                  severity="warn"
                   (onClick)="cancelDeletion()"
                   [loading]="cancellingDeletion()"
                 ></p-button>

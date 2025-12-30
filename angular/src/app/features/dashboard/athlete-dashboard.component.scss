@@ -3,8 +3,8 @@
  * Migrated from inline styles to SCSS using design system
  */
 
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
 
 .dashboard-content {
   padding: space(6);

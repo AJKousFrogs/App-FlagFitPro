@@ -77,16 +77,16 @@ import { AI_PROCESSING_MESSAGES, PrivacyMessage } from '../../utils/privacy-ux-c
       align-items: flex-start;
       gap: var(--space-4);
       padding: var(--space-5);
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-      border: 1px solid rgba(102, 126, 234, 0.2);
+      background: var(--color-status-info-subtle);
+      border: 1px solid rgba(14, 165, 233, 0.2);
       border-radius: var(--p-border-radius);
-      border-left: 4px solid #667eea;
+      border-left: 4px solid var(--color-status-info);
     }
 
     .ai-consent-required.banner {
       border-radius: 0;
       border-left: none;
-      border-top: 4px solid #667eea;
+      border-top: 4px solid var(--color-status-info);
     }
 
     .ai-consent-required.card {
@@ -101,8 +101,8 @@ import { AI_PROCESSING_MESSAGES, PrivacyMessage } from '../../utils/privacy-ux-c
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 12px;
+      background: linear-gradient(135deg, var(--color-status-info) 0%, var(--color-brand-primary) 100%);
+      border-radius: var(--radius-lg);
       flex-shrink: 0;
     }
 
@@ -110,16 +110,16 @@ import { AI_PROCESSING_MESSAGES, PrivacyMessage } from '../../utils/privacy-ux-c
       width: 72px;
       height: 72px;
       margin: 0 auto var(--space-4);
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
     }
 
     .consent-icon i {
-      font-size: 1.5rem;
-      color: white;
+      font-size: var(--font-heading-lg);
+      color: var(--color-text-on-primary);
     }
 
     .ai-consent-required.card .consent-icon i {
-      font-size: 2rem;
+      font-size: var(--icon-2xl);
     }
 
     .consent-content {
@@ -174,7 +174,14 @@ export class AiConsentRequiredComponent {
   @Output() onDismiss = new EventEmitter<void>();
 
   private getPrivacyMessage(): PrivacyMessage {
-    return AI_PROCESSING_MESSAGES[this.status] || AI_PROCESSING_MESSAGES.consentRequired;
+    // Map snake_case status to camelCase keys in AI_PROCESSING_MESSAGES
+    const statusMap: Record<string, keyof typeof AI_PROCESSING_MESSAGES> = {
+      'disabled': 'disabled',
+      'not_consented': 'notConsented',
+      'consent_required': 'consentRequired',
+    };
+    const key = statusMap[this.status] || 'consentRequired';
+    return AI_PROCESSING_MESSAGES[key];
   }
 
   getTitle(): string {

@@ -103,6 +103,43 @@ export class ThemeService {
   }
 
   /**
+   * Get CSS variable value from design system
+   * Useful for Chart.js and other canvas-based rendering that can't use CSS vars
+   * @param variableName - CSS variable name (e.g., '--color-chart-1' or 'color-chart-1')
+   * @returns The computed value of the CSS variable
+   */
+  getCssVariable(variableName: string): string {
+    if (typeof window === "undefined") {
+      return "";
+    }
+    const name = variableName.startsWith("--") ? variableName : `--${variableName}`;
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  /**
+   * Get chart color palette from design system
+   * Returns array of hex colors for Chart.js
+   */
+  getChartColors(): string[] {
+    return [
+      this.getCssVariable("--color-chart-1") || "#089949",
+      this.getCssVariable("--color-chart-2") || "#10c96b",
+      this.getCssVariable("--color-chart-3") || "#f1c40f",
+      this.getCssVariable("--color-chart-4") || "#e74c3c",
+      this.getCssVariable("--color-chart-5") || "#3498db",
+      this.getCssVariable("--color-chart-6") || "#9b59b6",
+    ];
+  }
+
+  /**
+   * Get specific design system color by token name
+   * @param tokenName - Token name without '--' prefix (e.g., 'ds-primary-green')
+   */
+  getColor(tokenName: string): string {
+    return this.getCssVariable(tokenName);
+  }
+
+  /**
    * Initialize system preference detection
    */
   private initializeSystemPreference(): void {

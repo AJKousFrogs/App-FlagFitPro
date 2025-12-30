@@ -17,7 +17,7 @@ export class EnhancedChartConfig {
 
   getFontFamily() {
     // Use consistent font stack across the app
-    return "'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif";
+    return "'Poppins', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif";
   }
 
   getColorPalette() {

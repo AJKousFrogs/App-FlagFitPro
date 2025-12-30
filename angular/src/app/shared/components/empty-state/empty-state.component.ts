@@ -309,7 +309,7 @@ export class EmptyStateComponent {
   actionIcon = input<string | null>(null);
   actionLink = input<string | null>(null); // NEW: RouterLink support
   actionHandler = input<(() => void) | null>(null);
-  actionSeverity = input<'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'danger'>('primary');
+  actionSeverity = input<'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'help' | 'contrast'>('primary');
 
   // Secondary action (NEW)
   secondaryActionLabel = input<string | null>(null);

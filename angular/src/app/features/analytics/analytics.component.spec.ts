@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { QueryList } from '@angular/core';
+import { QueryList, NO_ERRORS_SCHEMA } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { AnalyticsComponent } from './analytics.component';
 import { UIChart } from 'primeng/chart';
@@ -82,6 +82,7 @@ describe('AnalyticsComponent', () => {
         { provide: TrainingDataService, useValue: mockTrainingDataService },
         { provide: LoggerService, useValue: mockLoggerService },
       ],
+      schemas: [NO_ERRORS_SCHEMA], // Ignore unknown elements in template
     }).compileComponents();
 
     fixture = TestBed.createComponent(AnalyticsComponent);

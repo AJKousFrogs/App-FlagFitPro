@@ -15,7 +15,7 @@ import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
-import { NotificationStateService, Notification } from "./notification-state.service";
+import { NotificationStateService, Notification as AppNotification } from "./notification-state.service";
 import { ToastService } from "./toast.service";
 import {
   RealtimeChannel,
@@ -178,7 +178,7 @@ export class TeamNotificationService {
 
     this.notificationChannel = this.supabase.client
       .channel(`notifications:${userId}`)
-      .on<Notification>(
+      .on<AppNotification>(
         REALTIME_LISTEN_TYPES.POSTGRES_CHANGES,
         {
           event: REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.INSERT,
@@ -186,8 +186,8 @@ export class TeamNotificationService {
           table: "notifications",
           filter: `user_id=eq.${userId}`,
         },
-        (payload: RealtimePostgresChangesPayload<Notification>) => {
-          this.handleNewNotification(payload.new as Notification);
+        (payload: RealtimePostgresChangesPayload<AppNotification>) => {
+          this.handleNewNotification(payload.new as AppNotification);
         }
       )
       .subscribe((status) => {
@@ -254,7 +254,7 @@ export class TeamNotificationService {
   /**
    * Handle incoming notification
    */
-  private handleNewNotification(notification: Notification): void {
+  private handleNewNotification(notification: AppNotification): void {
     this.logger.info("📬 New notification:", notification.message);
 
     // Add to state
@@ -301,18 +301,19 @@ export class TeamNotificationService {
   /**
    * Show browser notification (if permitted)
    */
-  private async showBrowserNotification(notification: Notification): Promise<void> {
+  private async showBrowserNotification(notification: AppNotification): Promise<void> {
     if (!("Notification" in window)) return;
 
-    if (Notification.permission === "granted") {
-      new Notification(notification.type || "FlagFit Pro", {
+    // Use window.Notification to reference the browser's Notification API
+    if (window.Notification.permission === "granted") {
+      new window.Notification(notification.type || "FlagFit Pro", {
         body: notification.message,
         icon: "/icons/icon-192.png",
         badge: "/icons/badge-72.png",
         tag: notification.id,
       });
-    } else if (Notification.permission !== "denied") {
-      const permission = await Notification.requestPermission();
+    } else if (window.Notification.permission !== "denied") {
+      const permission = await window.Notification.requestPermission();
       if (permission === "granted") {
         this.showBrowserNotification(notification);
       }

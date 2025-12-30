@@ -97,7 +97,7 @@ export class ResourceService {
   createResource<T>(
     urlFn: () => string,
     options: ResourceOptions<T> = {}
-  ): ResourceRef<T> {
+  ): ResourceRef<T | undefined> {
     const { cacheKey, initialValue } = options;
 
     // Check cache for existing resource
@@ -106,8 +106,10 @@ export class ResourceService {
     }
 
     const resourceRef = resource<T, string>({
-      request: urlFn,
-      loader: async ({ request: url, abortSignal }) => {
+      params: urlFn,
+      loader: async (loaderParams) => {
+        const url = loaderParams.params ?? '';
+        // const abortSignal = loaderParams.abortSignal; // Available for cancellation
         this.logger.debug(`[Resource] Fetching: ${url}`);
 
         try {
@@ -195,7 +197,7 @@ export class ResourceService {
     baseUrlFn: () => string,
     pageSize: number = 20
   ): {
-    resource: ResourceRef<PaginatedResponse<T>>;
+    resource: ResourceRef<PaginatedResponse<T> | undefined>;
     page: ReturnType<typeof signal<number>>;
     nextPage: () => void;
     prevPage: () => void;
@@ -204,12 +206,13 @@ export class ResourceService {
     const page = signal(1);
 
     const resourceRef = resource<PaginatedResponse<T>, string>({
-      request: () => {
+      params: () => {
         const baseUrl = baseUrlFn();
         const separator = baseUrl.includes("?") ? "&" : "?";
         return `${baseUrl}${separator}page=${page()}&pageSize=${pageSize}`;
       },
-      loader: async ({ request: url }) => {
+      loader: async (loaderParams) => {
+        const url = loaderParams.params ?? '';
         this.logger.debug(`[PaginatedResource] Fetching: ${url}`);
         return firstValueFrom(this.http.get<PaginatedResponse<T>>(url));
       },
@@ -247,8 +250,8 @@ export class ResourceService {
       status: resourceRef.status(),
       error: resourceRef.error(),
       isLoading: resourceRef.isLoading(),
-      isResolved: resourceRef.status() === ResourceStatus.Resolved,
-      isError: resourceRef.status() === ResourceStatus.Error,
+      isResolved: resourceRef.status() === (4 as unknown as ResourceStatus), // ResourceStatus.Resolved
+      isError: resourceRef.status() === (5 as unknown as ResourceStatus), // ResourceStatus.Error
     }));
   }
 }

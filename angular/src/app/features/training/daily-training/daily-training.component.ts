@@ -449,14 +449,14 @@ interface ScheduleBlock {
       }
 
       .greeting-text {
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: var(--font-heading-2xl);
+        font-weight: var(--font-weight-bold);
         margin: 0 0 var(--space-2) 0;
-        font-family: 'Space Grotesk', sans-serif;
+        font-family: var(--font-family-display);
       }
 
       .date-text {
-        font-size: 1.1rem;
+        font-size: var(--font-body-lg);
         opacity: 0.9;
         margin: 0;
       }
@@ -591,22 +591,22 @@ interface ScheduleBlock {
         align-items: center;
         gap: var(--space-4);
         border: 1px solid var(--p-surface-200);
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: transform var(--transition-base), box-shadow var(--transition-base);
       }
 
       .status-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-md);
       }
 
       .status-icon {
         width: 48px;
         height: 48px;
-        border-radius: 12px;
+        border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
+        font-size: var(--font-heading-md);
       }
 
       .phase-card .status-icon {

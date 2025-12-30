@@ -4,8 +4,8 @@
  * Utility classes for common styling patterns
  */
 
-@import 'variables';
-@import 'mixins';
+@use 'variables' as *;
+@use 'mixins' as *;
 
 // ================================
 // SPACING UTILITIES

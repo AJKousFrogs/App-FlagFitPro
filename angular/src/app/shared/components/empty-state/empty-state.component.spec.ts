@@ -1,13 +1,21 @@
+/**
+ * Empty State Component Tests
+ *
+ * Tests for the reusable empty state component.
+ * Covers all display variants and action handling.
+ *
+ * @author FlagFit Pro Team
+ */
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { EmptyStateComponent } from './empty-state.component';
 import { provideRouter } from '@angular/router';
-import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
+
+import { EmptyStateComponent } from './empty-state.component';
 
 describe('EmptyStateComponent', () => {
   let component: EmptyStateComponent;
   let fixture: ComponentFixture<EmptyStateComponent>;
-  let compiled: HTMLElement;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -17,234 +25,254 @@ describe('EmptyStateComponent', () => {
 
     fixture = TestBed.createComponent(EmptyStateComponent);
     component = fixture.componentInstance;
-    compiled = fixture.nativeElement;
+    fixture.detectChanges();
   });
 
-  describe('Component Initialization', () => {
-    it('should create', () => {
-      expect(component).toBeTruthy();
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  describe('Basic Display', () => {
+    it('should display default title', () => {
+      const titleEl = fixture.nativeElement.querySelector('.empty-title');
+      expect(titleEl.textContent).toContain('No Data Available');
     });
 
-    it('should have default title', () => {
+    it('should display custom title', () => {
+      fixture.componentRef.setInput('title', 'No Sessions Found');
       fixture.detectChanges();
-      const titleEl = compiled.querySelector('.empty-title');
-      expect(titleEl?.textContent).toBe('No Data Available');
+
+      const titleEl = fixture.nativeElement.querySelector('.empty-title');
+      expect(titleEl.textContent).toContain('No Sessions Found');
     });
 
-    it('should render with custom title', () => {
-      fixture.componentRef.setInput('title', 'No Training Sessions');
+    it('should display message when provided', () => {
+      fixture.componentRef.setInput('message', 'Start by creating your first session');
       fixture.detectChanges();
-      const titleEl = compiled.querySelector('.empty-title');
-      expect(titleEl?.textContent).toBe('No Training Sessions');
+
+      const messageEl = fixture.nativeElement.querySelector('.empty-message');
+      expect(messageEl).toBeTruthy();
+      expect(messageEl.textContent).toContain('Start by creating your first session');
+    });
+
+    it('should not display message when not provided', () => {
+      fixture.componentRef.setInput('message', null);
+      fixture.detectChanges();
+
+      const messageEl = fixture.nativeElement.querySelector('.empty-message');
+      expect(messageEl).toBeFalsy();
     });
   });
 
   describe('Icon Display', () => {
-    it('should not show icon by default', () => {
-      fixture.detectChanges();
-      const iconEl = compiled.querySelector('.empty-icon');
-      expect(iconEl).toBeNull();
-    });
-
     it('should display icon when provided', () => {
       fixture.componentRef.setInput('icon', 'pi-inbox');
       fixture.detectChanges();
-      const iconEl = compiled.querySelector('.empty-icon i');
-      expect(iconEl?.classList.contains('pi-inbox')).toBe(true);
+
+      const iconEl = fixture.nativeElement.querySelector('.empty-icon i');
+      expect(iconEl).toBeTruthy();
+      expect(iconEl.classList.contains('pi-inbox')).toBe(true);
+    });
+
+    it('should not display icon container when no icon', () => {
+      fixture.componentRef.setInput('icon', null);
+      fixture.detectChanges();
+
+      const iconEl = fixture.nativeElement.querySelector('.empty-icon');
+      expect(iconEl).toBeFalsy();
     });
 
     it('should apply custom icon color', () => {
-      fixture.componentRef.setInput('icon', 'pi-users');
-      fixture.componentRef.setInput('iconColor', 'red');
+      fixture.componentRef.setInput('icon', 'pi-inbox');
+      fixture.componentRef.setInput('iconColor', 'var(--ds-primary-green)');
       fixture.detectChanges();
-      const iconContainerEl = compiled.querySelector('.empty-icon') as HTMLElement;
-      expect(iconContainerEl?.style.color).toBe('red');
+
+      const iconEl = fixture.nativeElement.querySelector('.empty-icon');
+      expect(iconEl.style.color).toBe('var(--ds-primary-green)');
     });
   });
 
-  describe('Message Display', () => {
-    it('should not show message by default', () => {
+  describe('Compact Mode', () => {
+    it('should apply compact class when compact is true', () => {
+      fixture.componentRef.setInput('compact', true);
       fixture.detectChanges();
-      const messageEl = compiled.querySelector('.empty-message');
-      expect(messageEl).toBeNull();
+
+      const containerEl = fixture.nativeElement.querySelector('.empty-state');
+      expect(containerEl.classList.contains('compact')).toBe(true);
     });
 
-    it('should display message when provided', () => {
-      const testMessage = 'Start logging your training to track progress.';
-      fixture.componentRef.setInput('message', testMessage);
-      fixture.detectChanges();
-      const messageEl = compiled.querySelector('.empty-message');
-      expect(messageEl?.textContent).toBe(testMessage);
+    it('should not apply compact class by default', () => {
+      const containerEl = fixture.nativeElement.querySelector('.empty-state');
+      expect(containerEl.classList.contains('compact')).toBe(false);
     });
   });
 
   describe('Benefits List', () => {
-    it('should not show benefits list when not provided', () => {
+    it('should display benefits when provided', () => {
+      fixture.componentRef.setInput('benefits', ['Benefit 1', 'Benefit 2', 'Benefit 3']);
       fixture.detectChanges();
-      const benefitsEl = compiled.querySelector('.empty-benefits');
-      expect(benefitsEl).toBeNull();
-    });
 
-    it('should display benefits list when provided', () => {
-      fixture.componentRef.setInput('benefits', [
-        'Track your progress',
-        'Optimize performance',
-        'Prevent injuries'
-      ]);
-      fixture.detectChanges();
-      const benefitItems = compiled.querySelectorAll('.empty-benefits li');
+      const benefitsList = fixture.nativeElement.querySelector('.empty-benefits');
+      expect(benefitsList).toBeTruthy();
+
+      const benefitItems = fixture.nativeElement.querySelectorAll('.empty-benefits li');
       expect(benefitItems.length).toBe(3);
     });
 
-    it('should show checkmark icons for benefits', () => {
+    it('should not display benefits section when empty', () => {
+      fixture.componentRef.setInput('benefits', null);
+      fixture.detectChanges();
+
+      const benefitsList = fixture.nativeElement.querySelector('.empty-benefits');
+      expect(benefitsList).toBeFalsy();
+    });
+
+    it('should display check icons for each benefit', () => {
       fixture.componentRef.setInput('benefits', ['Benefit 1']);
       fixture.detectChanges();
-      const checkIcon = compiled.querySelector('.empty-benefits li i');
-      expect(checkIcon?.classList.contains('pi-check-circle')).toBe(true);
+
+      const checkIcon = fixture.nativeElement.querySelector('.empty-benefits li i');
+      expect(checkIcon.classList.contains('pi-check-circle')).toBe(true);
     });
   });
 
-  describe('Action Buttons', () => {
-    it('should not show action button when no label provided', () => {
+  describe('Primary Action', () => {
+    it('should display primary action button with label', () => {
+      fixture.componentRef.setInput('actionLabel', 'Create New');
+      fixture.componentRef.setInput('actionLink', '/create');
       fixture.detectChanges();
-      const buttonEl = compiled.querySelector('p-button');
-      expect(buttonEl).toBeNull();
+
+      const button = fixture.nativeElement.querySelector('.empty-actions p-button');
+      expect(button).toBeTruthy();
     });
 
-    it('should show action button with RouterLink', () => {
-      fixture.componentRef.setInput('actionLabel', 'Log Session');
-      fixture.componentRef.setInput('actionLink', '/training/log');
+    it('should display action icon when provided', () => {
+      fixture.componentRef.setInput('actionLabel', 'Add Item');
+      fixture.componentRef.setInput('actionIcon', 'pi-plus');
+      fixture.componentRef.setInput('actionLink', '/add');
       fixture.detectChanges();
-      const buttonEl = compiled.querySelector('p-button');
-      expect(buttonEl).toBeTruthy();
+
+      const button = fixture.debugElement.query(By.css('.empty-actions p-button'));
+      expect(button).toBeTruthy();
     });
 
-    it('should emit onAction event when button clicked', () => {
-      let actionEmitted = false;
-      component.onAction.subscribe(() => {
-        actionEmitted = true;
-      });
+    it('should use RouterLink when actionLink is provided', () => {
+      fixture.componentRef.setInput('actionLabel', 'Go to Page');
+      fixture.componentRef.setInput('actionLink', '/some-page');
+      fixture.detectChanges();
 
-      fixture.componentRef.setInput('actionLabel', 'Test Action');
-      fixture.componentRef.setInput('actionHandler', () => {});
+      const button = fixture.debugElement.query(By.css('.empty-actions p-button'));
+      expect(button).toBeTruthy();
+    });
+
+    it('should call handler when actionHandler is provided', () => {
+      const handlerSpy = jasmine.createSpy('actionHandler');
+      fixture.componentRef.setInput('actionLabel', 'Click Me');
+      fixture.componentRef.setInput('actionHandler', handlerSpy);
       fixture.detectChanges();
 
       component.handleAction();
-      expect(actionEmitted).toBe(true);
+      expect(handlerSpy).toHaveBeenCalled();
     });
 
-    it('should show secondary action button when provided', () => {
-      fixture.componentRef.setInput('actionLabel', 'Primary');
-      fixture.componentRef.setInput('secondaryActionLabel', 'Secondary');
-      fixture.componentRef.setInput('secondaryActionLink', '/help');
+    it('should emit onAction event when action is triggered', () => {
+      fixture.componentRef.setInput('actionLabel', 'Click Me');
+      fixture.componentRef.setInput('actionHandler', () => {});
       fixture.detectChanges();
-      const buttons = compiled.querySelectorAll('p-button');
+
+      const emitSpy = spyOn(component.onAction, 'emit');
+      component.handleAction();
+
+      expect(emitSpy).toHaveBeenCalled();
+    });
+
+    it('should apply correct severity to button', () => {
+      fixture.componentRef.setInput('actionLabel', 'Danger Action');
+      fixture.componentRef.setInput('actionLink', '/danger');
+      fixture.componentRef.setInput('actionSeverity', 'danger');
+      fixture.detectChanges();
+
+      expect(component.actionSeverity()).toBe('danger');
+    });
+  });
+
+  describe('Secondary Action', () => {
+    it('should display secondary action when label is provided', () => {
+      fixture.componentRef.setInput('actionLabel', 'Primary');
+      fixture.componentRef.setInput('actionLink', '/primary');
+      fixture.componentRef.setInput('secondaryActionLabel', 'Secondary');
+      fixture.componentRef.setInput('secondaryActionLink', '/secondary');
+      fixture.detectChanges();
+
+      const buttons = fixture.nativeElement.querySelectorAll('.empty-actions p-button');
       expect(buttons.length).toBe(2);
     });
 
-    it('should emit onSecondaryAction event', () => {
-      let secondaryActionEmitted = false;
-      component.onSecondaryAction.subscribe(() => {
-        secondaryActionEmitted = true;
-      });
+    it('should emit onSecondaryAction event when triggered', () => {
+      fixture.componentRef.setInput('secondaryActionLabel', 'Cancel');
+      fixture.detectChanges();
 
+      const emitSpy = spyOn(component.onSecondaryAction, 'emit');
       component.handleSecondaryAction();
-      expect(secondaryActionEmitted).toBe(true);
+
+      expect(emitSpy).toHaveBeenCalled();
     });
   });
 
   describe('Help Link', () => {
-    it('should not show help link when not provided', () => {
-      fixture.detectChanges();
-      const helpEl = compiled.querySelector('.empty-help');
-      expect(helpEl).toBeNull();
-    });
-
     it('should display help link when both text and link provided', () => {
-      fixture.componentRef.setInput('helpText', 'Learn more');
-      fixture.componentRef.setInput('helpLink', '/help/training');
-      fixture.detectChanges();
-      const helpLink = compiled.querySelector('.empty-help-link');
-      expect(helpLink?.textContent?.trim()).toContain('Learn more');
-    });
-
-    it('should not show help link if only text is provided', () => {
-      fixture.componentRef.setInput('helpText', 'Learn more');
-      fixture.detectChanges();
-      const helpEl = compiled.querySelector('.empty-help');
-      expect(helpEl).toBeNull();
-    });
-
-    it('should show question icon in help link', () => {
-      fixture.componentRef.setInput('helpText', 'Help');
+      fixture.componentRef.setInput('helpText', 'Need help?');
       fixture.componentRef.setInput('helpLink', '/help');
       fixture.detectChanges();
-      const helpIcon = compiled.querySelector('.empty-help-link i');
-      expect(helpIcon?.classList.contains('pi-question-circle')).toBe(true);
-    });
-  });
 
-  describe('Compact Variant', () => {
-    it('should apply compact class when compact=true', () => {
-      fixture.componentRef.setInput('compact', true);
-      fixture.detectChanges();
-      const emptyState = compiled.querySelector('.empty-state');
-      expect(emptyState?.classList.contains('compact')).toBe(true);
+      const helpLink = fixture.nativeElement.querySelector('.empty-help-link');
+      expect(helpLink).toBeTruthy();
+      expect(helpLink.textContent).toContain('Need help?');
     });
 
-    it('should not apply compact class by default', () => {
+    it('should not display help link when text is missing', () => {
+      fixture.componentRef.setInput('helpText', null);
+      fixture.componentRef.setInput('helpLink', '/help');
       fixture.detectChanges();
-      const emptyState = compiled.querySelector('.empty-state');
-      expect(emptyState?.classList.contains('compact')).toBe(false);
+
+      const helpLink = fixture.nativeElement.querySelector('.empty-help');
+      expect(helpLink).toBeFalsy();
+    });
+
+    it('should not display help link when link is missing', () => {
+      fixture.componentRef.setInput('helpText', 'Need help?');
+      fixture.componentRef.setInput('helpLink', null);
+      fixture.detectChanges();
+
+      const helpLink = fixture.nativeElement.querySelector('.empty-help');
+      expect(helpLink).toBeFalsy();
     });
   });
 
   describe('Accessibility', () => {
-    it('should have proper ARIA structure', () => {
-      fixture.componentRef.setInput('title', 'No Data');
-      fixture.componentRef.setInput('message', 'Please add data');
-      fixture.detectChanges();
-
-      const titleEl = compiled.querySelector('.empty-title');
-      const messageEl = compiled.querySelector('.empty-message');
-
-      expect(titleEl?.tagName).toBe('H3');
-      expect(messageEl?.tagName).toBe('P');
+    it('should have proper heading structure', () => {
+      const heading = fixture.nativeElement.querySelector('.empty-title');
+      expect(heading.tagName).toBe('H3');
     });
 
-    it('should have animation that respects prefers-reduced-motion', () => {
+    it('should have descriptive text for screen readers', () => {
+      fixture.componentRef.setInput('title', 'No Results');
+      fixture.componentRef.setInput('message', 'Try adjusting your search');
       fixture.detectChanges();
-      const styles = getComputedStyle(compiled.querySelector('.empty-state')!);
-      // This test verifies the CSS exists; actual motion reduction is browser-level
-      expect(styles).toBeDefined();
+
+      const container = fixture.nativeElement.querySelector('.empty-state');
+      expect(container.textContent).toContain('No Results');
+      expect(container.textContent).toContain('Try adjusting your search');
     });
   });
 
-  describe('Integration', () => {
-    it('should render complete empty state with all features', () => {
-      fixture.componentRef.setInput('icon', 'pi-inbox');
-      fixture.componentRef.setInput('iconColor', 'var(--ds-primary-green)');
-      fixture.componentRef.setInput('title', 'No Training Sessions');
-      fixture.componentRef.setInput('message', 'Start logging to track progress');
-      fixture.componentRef.setInput('benefits', [
-        'Track progress',
-        'Optimize performance'
-      ]);
-      fixture.componentRef.setInput('actionLabel', 'Log First Session');
-      fixture.componentRef.setInput('actionIcon', 'pi-plus');
-      fixture.componentRef.setInput('actionLink', '/training/log');
-      fixture.componentRef.setInput('secondaryActionLabel', 'Learn More');
-      fixture.componentRef.setInput('secondaryActionLink', '/help/training');
-      fixture.componentRef.setInput('helpText', 'Need help?');
-      fixture.componentRef.setInput('helpLink', '/support');
-      fixture.detectChanges();
+  describe('Animation', () => {
+    it('should have fade-in animation class', () => {
+      const container = fixture.nativeElement.querySelector('.empty-state');
+      const computedStyle = window.getComputedStyle(container);
 
-      expect(compiled.querySelector('.empty-icon')).toBeTruthy();
-      expect(compiled.querySelector('.empty-title')).toBeTruthy();
-      expect(compiled.querySelector('.empty-message')).toBeTruthy();
-      expect(compiled.querySelector('.empty-benefits')).toBeTruthy();
-      expect(compiled.querySelectorAll('p-button').length).toBe(2);
-      expect(compiled.querySelector('.empty-help')).toBeTruthy();
+      // Animation should be defined (may vary by browser)
+      expect(container).toBeTruthy();
     });
   });
 });

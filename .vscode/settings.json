@@ -20,6 +20,7 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.tsdk": "angular/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 
   // ═══════════════════════════════════════════════════════════════════════════
   // Editor Settings

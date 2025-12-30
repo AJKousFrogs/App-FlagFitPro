@@ -4,7 +4,7 @@
  * Reusable mixins for common styling patterns
  */
 
-@import 'variables';
+@use 'variables' as *;
 
 // ================================
 // RESPONSIVE BREAKPOINTS
@@ -71,6 +71,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+// Flex start (align items at start)
+@mixin flex-start {
+  display: flex;
+  align-items: flex-start;
 }
 
 // Grid responsive

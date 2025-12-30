@@ -395,10 +395,10 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
         gap: var(--space-2);
         margin-top: var(--space-6);
         padding: var(--space-3) var(--space-4);
-        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        background: var(--color-status-success-light);
         border-radius: var(--radius-md);
         font-size: var(--font-body-xs);
-        color: #2e7d32;
+        color: var(--color-status-success);
         max-width: 400px;
       }
 

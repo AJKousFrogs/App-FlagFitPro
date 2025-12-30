@@ -1,0 +1,439 @@
+/**
+ * FlagFit Pro - Standardized Design Tokens
+ *
+ * This file defines ALL design tokens as CSS custom properties.
+ * Components should ONLY use these variables - never hard-coded values.
+ *
+ * Migration Guide:
+ * - Replace `#089949` → `var(--ds-primary-green)`
+ * - Replace `2rem` → `var(--space-8)` or `var(--font-heading-xl)`
+ * - Replace `rgba(...)` → use color variables with opacity utilities
+ *
+ * @author FlagFit Pro Team
+ * @version 2.0.0
+ */
+
+:root {
+  /* ================================
+     PRIMITIVE COLORS
+     ================================ */
+
+  /* Green Scale (Primary Brand) */
+  --primitive-green-50: #f0fdf4;
+  --primitive-green-100: #dcfce7;
+  --primitive-green-200: #bbf7d0;
+  --primitive-green-300: #86efac;
+  --primitive-green-400: #4ade80;
+  --primitive-green-500: #22c55e;
+  --primitive-green-600: #089949;
+  --primitive-green-700: #15803d;
+  --primitive-green-800: #166534;
+  --primitive-green-900: #14532d;
+  --primitive-green-950: #052e16;
+
+  /* Neutral Scale */
+  --primitive-neutral-0: #ffffff;
+  --primitive-neutral-50: #f8faf9;
+  --primitive-neutral-100: #f1f5f4;
+  --primitive-neutral-200: #e2e8f0;
+  --primitive-neutral-300: #cbd5e1;
+  --primitive-neutral-400: #94a3b8;
+  --primitive-neutral-500: #64748b;
+  --primitive-neutral-600: #475569;
+  --primitive-neutral-700: #334155;
+  --primitive-neutral-800: #1e293b;
+  --primitive-neutral-900: #0f172a;
+  --primitive-neutral-950: #020617;
+
+  /* Error/Red Scale */
+  --primitive-error-50: #fef2f2;
+  --primitive-error-100: #fee2e2;
+  --primitive-error-200: #fecaca;
+  --primitive-error-300: #fca5a5;
+  --primitive-error-400: #f87171;
+  --primitive-error-500: #ef4444;
+  --primitive-error-600: #dc2626;
+  --primitive-error-700: #b91c1c;
+  --primitive-error-800: #991b1b;
+  --primitive-error-900: #7f1d1d;
+
+  /* Warning/Amber Scale */
+  --primitive-warning-50: #fffbeb;
+  --primitive-warning-100: #fef3c7;
+  --primitive-warning-200: #fde68a;
+  --primitive-warning-300: #fcd34d;
+  --primitive-warning-400: #fbbf24;
+  --primitive-warning-500: #f59e0b;
+  --primitive-warning-600: #d97706;
+  --primitive-warning-700: #b45309;
+  --primitive-warning-800: #92400e;
+  --primitive-warning-900: #78350f;
+
+  /* Success/Emerald Scale */
+  --primitive-success-50: #ecfdf5;
+  --primitive-success-100: #d1fae5;
+  --primitive-success-200: #a7f3d0;
+  --primitive-success-300: #6ee7b7;
+  --primitive-success-400: #34d399;
+  --primitive-success-500: #10b981;
+  --primitive-success-600: #059669;
+  --primitive-success-700: #047857;
+  --primitive-success-800: #065f46;
+  --primitive-success-900: #064e3b;
+
+  /* Info/Blue Scale */
+  --primitive-info-50: #eff6ff;
+  --primitive-info-100: #dbeafe;
+  --primitive-info-200: #bfdbfe;
+  --primitive-info-300: #93c5fd;
+  --primitive-info-400: #60a5fa;
+  --primitive-info-500: #3b82f6;
+  --primitive-info-600: #2563eb;
+  --primitive-info-700: #1d4ed8;
+  --primitive-info-800: #1e40af;
+  --primitive-info-900: #1e3a8a;
+
+  /* ================================
+     SEMANTIC COLORS (Design System)
+     ================================ */
+
+  /* Primary Brand Colors */
+  --ds-primary-green: var(--primitive-green-600);
+  --ds-primary-green-hover: var(--primitive-green-700);
+  --ds-primary-green-active: var(--primitive-green-800);
+  --ds-primary-green-subtle: var(--primitive-green-50);
+  --ds-primary-green-light: var(--primitive-green-100);
+
+  /* RGB values for rgba() usage */
+  --ds-primary-green-rgb: 8, 153, 73;
+  --primitive-error-500-rgb: 239, 68, 68;
+  --primitive-success-500-rgb: 16, 185, 129;
+
+  /* Secondary Brand Colors */
+  --ds-secondary-gold: #f1c40f;
+  --ds-secondary-gold-hover: #d4a617;
+  --ds-secondary-gold-subtle: rgba(241, 196, 15, 0.1);
+
+  /* Surface Colors */
+  --surface-primary: var(--primitive-neutral-0);
+  --surface-secondary: var(--primitive-neutral-50);
+  --surface-tertiary: var(--primitive-neutral-100);
+  --surface-elevated: var(--primitive-neutral-0);
+  --surface-card: var(--primitive-neutral-0);
+  --surface-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text Colors */
+  --color-text-primary: var(--primitive-neutral-900);
+  --color-text-secondary: var(--primitive-neutral-600);
+  --color-text-muted: var(--primitive-neutral-400);
+  --color-text-on-primary: var(--primitive-neutral-0);
+  --color-text-link: var(--ds-primary-green);
+  --color-text-link-hover: var(--ds-primary-green-hover);
+
+  /* Border Colors */
+  --color-border-primary: var(--primitive-neutral-200);
+  --color-border-secondary: var(--primitive-neutral-100);
+  --color-border-focus: var(--ds-primary-green);
+  --color-border-error: var(--primitive-error-500);
+
+  /* Status Colors */
+  --color-status-success: var(--primitive-success-500);
+  --color-status-success-light: var(--primitive-success-50);
+  --color-status-warning: var(--primitive-warning-500);
+  --color-status-warning-light: var(--primitive-warning-50);
+  --color-status-error: var(--primitive-error-500);
+  --color-status-error-light: var(--primitive-error-50);
+  --color-status-info: var(--primitive-info-500);
+  --color-status-info-light: var(--primitive-info-50);
+
+  /* ================================
+     SPACING SCALE
+     ================================ */
+
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-7: 2.5rem;    /* 40px */
+  --space-8: 3rem;      /* 48px */
+  --space-9: 3.5rem;    /* 56px */
+  --space-10: 4rem;     /* 64px */
+  --space-11: 4.5rem;   /* 72px */
+  --space-12: 5rem;     /* 80px */
+  --space-14: 6rem;     /* 96px */
+  --space-16: 8rem;     /* 128px */
+  --space-20: 10rem;    /* 160px */
+
+  /* ================================
+     TYPOGRAPHY
+     ================================ */
+
+  /* Font Families */
+  --font-family-sans: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-family-display: "Poppins", var(--font-family-sans);
+
+  /* Font Sizes - Headings (aligned with design-system-tokens.scss) */
+  --font-heading-2xl: 2.5rem;    /* 40px */
+  --font-heading-xl: 1.875rem;   /* 30px */
+  --font-heading-lg: 1.5rem;     /* 24px */
+  --font-heading-md: 1.25rem;    /* 20px */
+  --font-heading-sm: 1.125rem;   /* 18px */
+  --font-heading-xs: 1rem;       /* 16px */
+
+  /* Font Sizes - Body */
+  --font-body-xs: 0.75rem;       /* 12px */
+  --font-body-sm: 0.875rem;      /* 14px */
+  --font-body-md: 1rem;          /* 16px */
+  --font-body-lg: 1.125rem;      /* 18px */
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Line Heights */
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+
+  /* Letter Spacing */
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+
+  /* ================================
+     BORDER RADIUS
+     ================================ */
+
+  --radius-none: 0;
+  --radius-sm: 0.25rem;    /* 4px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.5rem;    /* 24px */
+  --radius-full: 9999px;
+
+  /* ================================
+     SHADOWS
+     ================================ */
+
+  --shadow-none: none;
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+
+  /* Colored Shadows */
+  --shadow-primary: 0 4px 14px 0 rgba(var(--ds-primary-green-rgb), 0.25);
+  --shadow-error: 0 4px 14px 0 rgba(var(--primitive-error-500-rgb), 0.25);
+
+  /* ================================
+     Z-INDEX SCALE
+     ================================ */
+
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-notification: 1080;
+  --z-max: 9999;
+
+  /* ================================
+     TRANSITIONS
+     ================================ */
+
+  --transition-fast: 150ms;
+  --transition-normal: 200ms;
+  --transition-slow: 300ms;
+  --transition-slower: 500ms;
+
+  /* Easing Functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* ================================
+     ICON SIZES
+     ================================ */
+
+  --icon-xs: 0.75rem;    /* 12px */
+  --icon-sm: 1rem;       /* 16px */
+  --icon-md: 1.25rem;    /* 20px */
+  --icon-lg: 1.5rem;     /* 24px */
+  --icon-xl: 2rem;       /* 32px */
+  --icon-2xl: 2.5rem;    /* 40px */
+  --icon-3xl: 3rem;      /* 48px */
+  --icon-4xl: 4rem;      /* 64px */
+  --icon-5xl: 5rem;      /* 80px */
+
+  /* ================================
+     COMPONENT-SPECIFIC TOKENS
+     ================================ */
+
+  /* Buttons */
+  --button-height-sm: 32px;
+  --button-height-md: 44px;
+  --button-height-lg: 56px;
+  --button-min-width: 100px;
+  --button-padding-sm: var(--space-2) var(--space-3);
+  --button-padding-md: var(--space-3) var(--space-4);
+  --button-padding-lg: var(--space-4) var(--space-6);
+
+  /* Inputs */
+  --input-height: 44px;
+  --input-padding: var(--space-3);
+  --input-border-width: 1px;
+
+  /* Cards */
+  --card-padding: var(--space-5);
+  --card-radius: var(--radius-xl);
+  --card-shadow: var(--shadow-sm);
+
+  /* Modals */
+  --modal-padding: var(--space-5);
+  --modal-radius: var(--radius-xl);
+  --modal-width-sm: 400px;
+  --modal-width-md: 560px;
+  --modal-width-lg: 800px;
+  --modal-width-xl: 1140px;
+
+  /* Touch Targets (WCAG minimum) */
+  --touch-target-min: 44px;
+
+  /* ================================
+     BREAKPOINTS (for reference)
+     ================================ */
+
+  /* Use with @media queries:
+   * --breakpoint-xs: 374px
+   * --breakpoint-sm: 640px
+   * --breakpoint-md: 768px
+   * --breakpoint-lg: 1024px
+   * --breakpoint-xl: 1280px
+   * --breakpoint-xxl: 1536px
+   */
+}
+
+/* ================================
+   DARK MODE OVERRIDES
+   ================================ */
+
+[data-theme="dark"],
+.dark-theme {
+  /* Surface Colors */
+  --surface-primary: var(--primitive-neutral-900);
+  --surface-secondary: var(--primitive-neutral-800);
+  --surface-tertiary: var(--primitive-neutral-700);
+  --surface-elevated: var(--primitive-neutral-800);
+  --surface-card: var(--primitive-neutral-800);
+  --surface-overlay: rgba(0, 0, 0, 0.7);
+
+  /* Text Colors */
+  --color-text-primary: var(--primitive-neutral-50);
+  --color-text-secondary: var(--primitive-neutral-400);
+  --color-text-muted: var(--primitive-neutral-500);
+
+  /* Border Colors */
+  --color-border-primary: var(--primitive-neutral-700);
+  --color-border-secondary: var(--primitive-neutral-800);
+
+  /* Shadows (more subtle in dark mode) */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+/* ================================
+   UTILITY CLASSES
+   ================================ */
+
+/* Spacing utilities */
+.mt-auto { margin-top: auto; }
+.mb-auto { margin-bottom: auto; }
+.ml-auto { margin-left: auto; }
+.mr-auto { margin-right: auto; }
+
+/* Flex utilities */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-5 { gap: var(--space-5); }
+.gap-6 { gap: var(--space-6); }
+
+/* Width utilities */
+.w-full { width: 100%; }
+.w-auto { width: auto; }
+.max-w-full { max-width: 100%; }
+
+/* Text utilities */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.font-bold { font-weight: var(--font-weight-bold); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-medium { font-weight: var(--font-weight-medium); }
+
+/* Visibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus visible */
+.focus-visible:focus-visible {
+  outline: 2px solid var(--ds-primary-green);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

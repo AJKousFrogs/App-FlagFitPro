@@ -2,7 +2,6 @@ import { Component, inject, signal, ChangeDetectionStrategy } from "@angular/cor
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { Textarea } from "primeng/textarea";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { ToastService } from "../../core/services/toast.service";
@@ -20,7 +19,6 @@ import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
     CommonModule,
     CardModule,
     ButtonModule,
-    Textarea,
     InputTextModule,
     MessageModule,
     ToastModule,

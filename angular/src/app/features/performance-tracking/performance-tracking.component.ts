@@ -265,7 +265,6 @@ interface PerformanceMetric {
           ></p-button>
         </ng-template>
       </p-dialog>
-      </div>
       } <!-- End of @else for content -->
     </app-main-layout>
   `,

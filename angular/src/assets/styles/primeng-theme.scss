@@ -809,6 +809,124 @@
     padding: var(--space-4);
     border-bottom: 1px solid var(--color-border-secondary);
   }
+
+  /* ================================================================
+     DATATABLE RESPONSIVE STYLES
+     Mobile-first responsive table with card layout on small screens
+     ================================================================ */
+  
+  @media (max-width: 767px) {
+    /* Scrollable table container */
+    .p-datatable-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Responsive stacked layout for tables with .p-datatable-responsive-stack class */
+    .p-datatable-responsive-stack {
+      .p-datatable-thead {
+        display: none;
+      }
+
+      .p-datatable-tbody > tr {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: var(--space-4);
+        border: 1px solid var(--color-border-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--space-3);
+        background: var(--surface-primary);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .p-datatable-tbody > tr > td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-2) var(--space-3);
+        border-bottom: 1px solid var(--color-border-secondary);
+        gap: var(--space-3);
+      }
+
+      .p-datatable-tbody > tr > td:last-child {
+        border-bottom: none;
+      }
+
+      /* Show data-label as row header */
+      .p-datatable-tbody > tr > td::before {
+        content: attr(data-label);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-secondary);
+        font-size: var(--font-body-sm);
+        flex-shrink: 0;
+        min-width: 100px;
+      }
+
+      /* Cell content alignment */
+      .p-datatable-tbody > tr > td > * {
+        text-align: right;
+      }
+
+      /* Action buttons in stacked layout */
+      .p-datatable-tbody > tr > td:has(.p-button) {
+        justify-content: flex-end;
+        padding-top: var(--space-3);
+        margin-top: var(--space-2);
+        border-top: 1px solid var(--color-border-secondary);
+        border-bottom: none;
+      }
+
+      .p-datatable-tbody > tr > td:has(.p-button)::before {
+        display: none;
+      }
+    }
+
+    /* Compact table on mobile (default behavior) */
+    .p-datatable:not(.p-datatable-responsive-stack) {
+      .p-datatable-thead > tr > th,
+      .p-datatable-tbody > tr > td {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--font-body-sm);
+      }
+
+      /* Hide less important columns on mobile */
+      .p-datatable-thead > tr > th.hide-mobile,
+      .p-datatable-tbody > tr > td.hide-mobile {
+        display: none;
+      }
+    }
+  }
+
+  /* Tablet adjustments */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: var(--space-3);
+    }
+
+    /* Hide on tablet */
+    .p-datatable-thead > tr > th.hide-tablet,
+    .p-datatable-tbody > tr > td.hide-tablet {
+      display: none;
+    }
+  }
+
+  /* Touch device optimizations */
+  @media (hover: none) and (pointer: coarse) {
+    .p-datatable-tbody > tr:hover {
+      transform: none;
+    }
+
+    .p-datatable-tbody > tr:active {
+      background: var(--ds-primary-green-ultra-subtle);
+    }
+
+    /* Larger touch targets for action buttons */
+    .p-datatable-tbody .p-button {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
   
   /* ================================================================
      ACCORDION COMPONENT ENHANCEMENTS

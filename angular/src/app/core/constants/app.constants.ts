@@ -153,18 +153,22 @@ export const ANIMATIONS = {
 
 /**
  * Chart configuration
+ * Colors map to design system tokens:
+ * - --color-chart-1 through --color-chart-6
+ * - See design-system-tokens.scss for single source of truth
+ * Note: Chart.js requires hex values (can't use CSS vars in canvas)
  */
 export const CHART = {
   DEFAULT_COLORS: [
-    '#10b981', // Primary green
-    '#3b82f6', // Blue
-    '#f59e0b', // Amber
-    '#ef4444', // Red
-    '#8b5cf6', // Purple
-    '#ec4899', // Pink
+    '#089949', // --color-chart-1 (ds-primary-green)
+    '#10c96b', // --color-chart-2 (brand secondary)
+    '#f1c40f', // --color-chart-3 (success/gold)
+    '#e74c3c', // --color-chart-4 (error)
+    '#3498db', // --color-chart-5 (info)
+    '#9b59b6', // --color-chart-6 (purple)
   ],
   ANIMATION_DURATION: 750,
-  FONT_FAMILY: "'Inter', sans-serif",
+  FONT_FAMILY: "'Poppins', sans-serif",
 } as const;
 
 /**

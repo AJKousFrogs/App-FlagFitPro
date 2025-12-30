@@ -340,7 +340,7 @@ import { CommonModule } from "@angular/common";
 
       .icon-warning {
         background: var(--color-status-warning-light);
-        color: #92400e;
+        color: var(--color-status-warning-text);
       }
 
       .icon-error {

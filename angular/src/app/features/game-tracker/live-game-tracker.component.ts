@@ -217,7 +217,8 @@ interface Play {
 
       <!-- Play Details Modal -->
       <p-dialog
-        [(visible)]="showPlayDetails()"
+        [visible]="showPlayDetails()"
+        (visibleChange)="showPlayDetails.set($event)"
         header="Play Details"
         [modal]="true"
         [style]="{ width: '90vw', maxWidth: '500px' }"
@@ -525,7 +526,7 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   activePlayers = signal<FieldPlayer[]>([]);
 
   private gameTimerSubscription?: Subscription;
-  private orientationCheck?: NodeJS.Timeout;
+  private orientationCheck?: ReturnType<typeof setTimeout>;
 
   constructor() {
     // Check orientation - effect automatically cleans up on component destroy in Angular 21
@@ -555,13 +556,13 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   }
 
   @HostListener("document:keydown.space", ["$event"])
-  pauseGame(event: KeyboardEvent): void {
+  pauseGame(event: Event): void {
     event.preventDefault();
     // Toggle pause/resume
   }
 
   @HostListener("document:keydown.escape", ["$event"])
-  showGameMenu(event: KeyboardEvent): void {
+  showGameMenu(event: Event): void {
     event.preventDefault();
     // Show game menu
   }

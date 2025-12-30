@@ -78,13 +78,26 @@
   --primitive-success-900: #78350f;
   --primitive-success-500-rgb: 241, 196, 15; /* #f1c40f */
 
-  /* Warning/Error - Red Scale */
+  /* Warning - Orange/Amber Scale */
+  --primitive-warning-50: #fffbeb;
+  --primitive-warning-100: #fef3c7;
+  --primitive-warning-200: #fde68a;
+  --primitive-warning-300: #fcd34d;
+  --primitive-warning-400: #fbbf24;
+  --primitive-warning-500: #f59e0b; /* PRIMARY WARNING COLOR */
+  --primitive-warning-600: #d97706;
+  --primitive-warning-700: #b45309;
+  --primitive-warning-800: #92400e; /* Dark warning text */
+  --primitive-warning-900: #78350f;
+  --primitive-warning-500-rgb: 245, 158, 11; /* #f59e0b */
+
+  /* Error - Red Scale */
   --primitive-error-50: #fef2f2;
   --primitive-error-100: #fee2e2;
   --primitive-error-200: #fecaca;
   --primitive-error-300: #fca5a5;
   --primitive-error-400: #f87171;
-  --primitive-error-500: #ef4444; /* PRIMARY ERROR/WARNING COLOR */
+  --primitive-error-500: #ef4444; /* PRIMARY ERROR COLOR */
   --primitive-error-600: #dc2626;
   --primitive-error-700: #b91c1c;
   --primitive-error-800: #991b1b;
@@ -162,6 +175,9 @@
   --color-status-error: #ff003c;
   --color-status-error-light: rgba(255, 0, 60, 0.1);
   --color-status-error-subtle: rgba(255, 0, 60, 0.05);
+
+  /* Warning/Error text colors for use on light backgrounds */
+  --color-status-warning-text: var(--primitive-warning-800); /* #92400e - dark amber for light mode */
 
   /* Info: Blue for informational messages, tips, or default states */
   --color-status-info: #0ea5e9;
@@ -510,6 +526,106 @@
   --spacing-component-md: var(--space-4);
   --spacing-component-lg: var(--space-6);
   --spacing-component-xl: var(--space-8);
+
+  /* ================================
+     WORKOUT TYPE COLORS
+     Used in calendar and training components
+     ================================ */
+  --color-workout-strength: #ef4444;
+  --color-workout-cardio: #f59e0b;
+  --color-workout-mobility: #10b981;
+  --color-workout-practice: #3b82f6;
+  --color-workout-game: #8b5cf6;
+  --color-workout-rest: #6b7280;
+
+  /* ================================
+     ACHIEVEMENT RARITY COLORS
+     Used for gamification badges
+     ================================ */
+  --color-rarity-common: var(--color-border-primary);
+  --color-rarity-uncommon: #1eff00;
+  --color-rarity-rare: #0070dd;
+  --color-rarity-epic: #a335ee;
+  --color-rarity-legendary: #ff8000;
+
+  /* ================================
+     STAFF CATEGORY COLORS
+     Used for roster staff cards
+     ================================ */
+  --color-staff-coaching: #6366f1;
+  --color-staff-coaching-light: rgba(99, 102, 241, 0.15);
+  --color-staff-coaching-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --color-staff-medical: #ef4444;
+  --color-staff-medical-light: rgba(239, 68, 68, 0.15);
+  --color-staff-medical-gradient: linear-gradient(135deg, #ef4444, #f97316);
+  --color-staff-performance: #10b981;
+  --color-staff-performance-light: rgba(16, 185, 129, 0.15);
+  --color-staff-performance-gradient: linear-gradient(135deg, #10b981, #14b8a6);
+
+  /* ================================
+     POSITION COLORS
+     Used for player position badges and cards
+     ================================ */
+  --color-position-qb: linear-gradient(135deg, var(--ds-primary-green), var(--ds-primary-green-hover));
+  --color-position-wr: linear-gradient(135deg, #3498db, #2980b9);
+  --color-position-rb: linear-gradient(135deg, #e74c3c, #c0392b);
+  --color-position-db: linear-gradient(135deg, #9b59b6, #8e44ad);
+  --color-position-rusher: linear-gradient(135deg, #f39c12, #e67e22);
+  --color-position-center: linear-gradient(135deg, #1abc9c, #16a085);
+  --color-position-lb: linear-gradient(135deg, #34495e, #2c3e50);
+
+  /* ================================
+     PERIODIZATION PHASE COLORS
+     Used for training periodization dashboard
+     ================================ */
+  --color-phase-recovery: #9ca3af;
+  --color-phase-foundation: #3b82f6;
+  --color-phase-strength: #8b5cf6;
+  --color-phase-power: #ec4899;
+  --color-phase-speed: #f59e0b;
+  --color-phase-competition: #10b981;
+  --color-phase-reload: #6366f1;
+  --color-phase-peak: #ef4444;
+  --color-phase-late-season: #14b8a6;
+
+  /* ================================
+     CHART & DATA VISUALIZATION COLORS
+     Consistent palette for all charts
+     ================================ */
+  --color-chart-primary: var(--ds-primary-green);
+  --color-chart-secondary: #10c96b;
+  --color-chart-tertiary: #3b82f6;
+  --color-chart-quaternary: #f59e0b;
+  --color-chart-quinary: #ef4444;
+  --color-chart-senary: #8b5cf6;
+  --color-chart-septenary: #ec4899;
+  
+  /* Chart palette as array for programmatic use */
+  --color-chart-1: var(--ds-primary-green);
+  --color-chart-2: #10c96b;
+  --color-chart-3: #f1c40f;
+  --color-chart-4: #e74c3c;
+  --color-chart-5: #3498db;
+  --color-chart-6: #9b59b6;
+
+  /* ================================
+     THIRD-PARTY BRAND COLORS
+     External service brand guidelines
+     ================================ */
+  --color-brand-youtube: #ff0000;
+  --color-brand-twitter: #1da1f2;
+  --color-brand-instagram-gradient: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+  --color-brand-facebook: #1877f2;
+  --color-brand-linkedin: #0a66c2;
+
+  /* ================================
+     SPECIAL UI COLORS
+     Specific use-case colors
+     ================================ */
+  --color-star-rating: #ffd700;
+  --color-video-background: #000000;
+  --color-field-grass: #2d5016;
+  --color-field-lines: #ffffff;
 }
 
 /* ================================================================
@@ -562,6 +678,9 @@
     --color-text-disabled: var(--primitive-neutral-600); /* #737373 */
     --color-text-on-white: #ffffff; /* White text on dark */
 
+    /* Warning text color - lighter for dark mode */
+    --color-status-warning-text: var(--primitive-warning-300); /* #fcd34d */
+
     /* Border Colors - Dark Mode */
     --color-border-primary: rgba(255, 255, 255, 0.1);
     --color-border-secondary: rgba(255, 255, 255, 0.08);
@@ -595,6 +714,9 @@ body.dark-theme {
   --color-text-on-white: #ffffff;
   --text-primary: #ffffff;
   --text-secondary: var(--primitive-neutral-400);
+
+  /* Warning text color - lighter for dark mode */
+  --color-status-warning-text: var(--primitive-warning-300); /* #fcd34d */
 
   /* Border Colors - Dark Mode */
   --color-border-primary: rgba(255, 255, 255, 0.1);

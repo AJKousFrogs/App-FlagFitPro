@@ -172,7 +172,7 @@ export class ErrorHandler {
       border-left: 4px solid #dc2626;
       font-weight: 500;
       font-size: 0.875rem;
-      font-family: 'Inter', 'Poppins', sans-serif;
+      font-family: 'Poppins', sans-serif;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       z-index: 10000;
       transform: translateX(100%);
@@ -309,7 +309,7 @@ export class ErrorHandler {
       color: white;
       font-weight: 500;
       font-size: 0.875rem;
-      font-family: 'Inter', 'Poppins', sans-serif;
+      font-family: 'Poppins', sans-serif;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       z-index: 10000;
       transform: translateX(100%);

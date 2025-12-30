@@ -74,7 +74,7 @@ import { LoggerService } from "../../../core/services/logger.service";
                 inputStyleClass="w-full"
                 [class.ng-invalid]="isFieldInvalid('password')"
                 ariaLabel="New password"
-                [ariaDescribedBy]="isFieldInvalid('password') ? 'password-error' : undefined"
+                [attr.aria-describedby]="isFieldInvalid('password') ? 'password-error' : null"
               ></p-password>
               @if (isFieldInvalid("password")) {
                 <small id="password-error" class="p-error" role="alert">
@@ -95,7 +95,7 @@ import { LoggerService } from "../../../core/services/logger.service";
                 inputStyleClass="w-full"
                 [class.ng-invalid]="isFieldInvalid('confirmPassword')"
                 ariaLabel="Confirm new password"
-                [ariaDescribedBy]="isFieldInvalid('confirmPassword') ? 'confirmPassword-error' : undefined"
+                [attr.aria-describedby]="isFieldInvalid('confirmPassword') ? 'confirmPassword-error' : null"
               ></p-password>
               @if (isFieldInvalid("confirmPassword")) {
                 <small id="confirmPassword-error" class="p-error" role="alert">

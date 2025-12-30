@@ -1,0 +1,664 @@
+/**
+ * Roster Service
+ * Handles all roster-related data operations and business logic
+ * Extracted from roster.component.ts for better separation of concerns
+ */
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { SupabaseService } from '../../core/services/supabase.service';
+import { AuthService } from '../../core/services/auth.service';
+import { LoggerService } from '../../core/services/logger.service';
+import { 
+  Player, 
+  StaffMember, 
+  TeamStat, 
+  TeamInvitation, 
+  TeamRole, 
+  StaffCategory,
+  StaffByCategory,
+  PositionGroup,
+  PlayerStatus 
+} from './roster.models';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class RosterService {
+  private supabaseService = inject(SupabaseService);
+  private authService = inject(AuthService);
+  private logger = inject(LoggerService);
+
+  // State signals
+  readonly isLoading = signal(false);
+  readonly teamStats = signal<TeamStat[]>([]);
+  readonly coachingStaff = signal<StaffMember[]>([]);
+  readonly allPlayers = signal<Player[]>([]);
+  readonly currentTeamId = signal<string | null>(null);
+  readonly currentUserRole = signal<TeamRole>('player');
+  readonly pendingInvitations = signal<TeamInvitation[]>([]);
+  readonly error = signal<string | null>(null);
+
+  // Computed values
+  readonly coachingStaffByCategory = computed<StaffByCategory>(() => {
+    const staff = this.coachingStaff();
+    return {
+      coaching: staff.filter(s => s.roleCategory === 'coaching'),
+      medical: staff.filter(s => s.roleCategory === 'medical'),
+      performance: staff.filter(s => s.roleCategory === 'performance'),
+    };
+  });
+
+  readonly canManageRoster = computed(() => {
+    const role = this.currentUserRole();
+    const managementRoles = [
+      'owner', 'admin', 
+      'head_coach', 'coach', 
+      'offense_coordinator', 'defense_coordinator', 
+      'assistant_coach'
+    ];
+    return managementRoles.includes(role);
+  });
+
+  readonly canDeletePlayers = computed(() => {
+    const role = this.currentUserRole();
+    return ['owner', 'admin', 'head_coach', 'coach'].includes(role);
+  });
+
+  readonly canViewHealthData = computed(() => {
+    const role = this.currentUserRole();
+    const healthDataRoles = [
+      'owner', 'admin', 
+      'head_coach', 'coach',
+      'physiotherapist', 'nutritionist', 'strength_conditioning_coach'
+    ];
+    return healthDataRoles.includes(role);
+  });
+
+  /**
+   * Load all roster data for the current user's team
+   */
+  async loadRosterData(): Promise<void> {
+    this.isLoading.set(true);
+    this.error.set(null);
+    const userId = this.authService.currentUser()?.id;
+
+    if (!userId) {
+      this.isLoading.set(false);
+      return;
+    }
+
+    try {
+      // Get user's team and role
+      const { data: teamMember } = await this.supabaseService.client
+        .from('team_members')
+        .select('team_id, role, teams(name)')
+        .eq('user_id', userId)
+        .single();
+
+      if (!teamMember?.team_id) {
+        this.teamStats.set([]);
+        this.coachingStaff.set([]);
+        this.allPlayers.set([]);
+        this.isLoading.set(false);
+        return;
+      }
+
+      this.currentTeamId.set(teamMember.team_id);
+      this.currentUserRole.set(teamMember.role as TeamRole);
+
+      // Load team members (coaches/staff)
+      const { data: members } = await this.supabaseService.client
+        .from('team_members')
+        .select(`
+          id,
+          user_id,
+          role,
+          users:user_id (
+            id,
+            email,
+            raw_user_meta_data
+          )
+        `)
+        .eq('team_id', teamMember.team_id);
+
+      // Load players from team_players table
+      const { data: players, error: playersError } = await this.supabaseService.client
+        .from('team_players')
+        .select('*')
+        .eq('team_id', teamMember.team_id)
+        .order('position', { ascending: true });
+
+      if (playersError) {
+        this.logger.warn('[RosterService] team_players table may not exist, using fallback');
+        this.loadFallbackData(members);
+        return;
+      }
+
+      // Process coaching staff
+      const staff = this.processStaffMembers(members);
+      this.coachingStaff.set(staff);
+
+      // Process players
+      const playerList = this.processPlayers(players);
+      this.allPlayers.set(playerList);
+
+      // Calculate team stats
+      this.calculateTeamStats(playerList, staff);
+
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error loading roster:', error);
+      this.error.set(this.getErrorMessage(error));
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  /**
+   * Add a new player to the team
+   */
+  async addPlayer(playerData: Partial<Player>): Promise<{ success: boolean; error?: string }> {
+    const userId = this.authService.currentUser()?.id;
+    if (!userId) {
+      return { success: false, error: 'You must be logged in' };
+    }
+
+    try {
+      let teamId = this.currentTeamId();
+      
+      if (!teamId) {
+        teamId = await this.ensureTeamExists(userId);
+      }
+
+      const { error } = await this.supabaseService.client
+        .from('team_players')
+        .insert({
+          team_id: teamId,
+          name: playerData.name,
+          position: playerData.position,
+          jersey_number: playerData.jersey,
+          country: playerData.country || null,
+          age: playerData.age || null,
+          height: playerData.height || null,
+          weight: playerData.weight || null,
+          email: playerData.email || null,
+          phone: playerData.phone || null,
+          status: playerData.status || 'active',
+          created_by: userId,
+        });
+
+      if (error) throw error;
+      
+      await this.loadRosterData();
+      return { success: true };
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error adding player:', error);
+      return { success: false, error: error.message || 'Failed to add player' };
+    }
+  }
+
+  /**
+   * Update an existing player
+   */
+  async updatePlayer(playerId: string, playerData: Partial<Player>): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabaseService.client
+        .from('team_players')
+        .update({
+          name: playerData.name,
+          position: playerData.position,
+          jersey_number: playerData.jersey,
+          country: playerData.country || null,
+          age: playerData.age || null,
+          height: playerData.height || null,
+          weight: playerData.weight || null,
+          email: playerData.email || null,
+          phone: playerData.phone || null,
+          status: playerData.status || 'active',
+        })
+        .eq('id', playerId);
+
+      if (error) throw error;
+      
+      await this.loadRosterData();
+      return { success: true };
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error updating player:', error);
+      return { success: false, error: error.message || 'Failed to update player' };
+    }
+  }
+
+  /**
+   * Remove a player from the team
+   */
+  async removePlayer(playerId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabaseService.client
+        .from('team_players')
+        .delete()
+        .eq('id', playerId);
+
+      if (error) throw error;
+      
+      await this.loadRosterData();
+      return { success: true };
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error removing player:', error);
+      return { success: false, error: error.message || 'Failed to remove player' };
+    }
+  }
+
+  /**
+   * Update player status
+   */
+  async updatePlayerStatus(playerId: string, status: PlayerStatus): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabaseService.client
+        .from('team_players')
+        .update({ status })
+        .eq('id', playerId);
+
+      if (error) throw error;
+      
+      await this.loadRosterData();
+      return { success: true };
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error updating status:', error);
+      return { success: false, error: error.message || 'Failed to update status' };
+    }
+  }
+
+  /**
+   * Bulk update player status
+   */
+  async bulkUpdateStatus(playerIds: string[], status: PlayerStatus): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabaseService.client
+        .from('team_players')
+        .update({ status })
+        .in('id', playerIds);
+
+      if (error) throw error;
+      
+      await this.loadRosterData();
+      return { success: true };
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error bulk updating status:', error);
+      return { success: false, error: error.message || 'Failed to update status' };
+    }
+  }
+
+  /**
+   * Bulk remove players
+   */
+  async bulkRemovePlayers(playerIds: string[]): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabaseService.client
+        .from('team_players')
+        .delete()
+        .in('id', playerIds);
+
+      if (error) throw error;
+      
+      await this.loadRosterData();
+      return { success: true };
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error bulk removing players:', error);
+      return { success: false, error: error.message || 'Failed to remove players' };
+    }
+  }
+
+  /**
+   * Send team invitation
+   */
+  async sendInvitation(email: string, role: string, message?: string): Promise<{ success: boolean; error?: string }> {
+    const teamId = this.currentTeamId();
+    if (!teamId) {
+      return { success: false, error: 'No team selected' };
+    }
+
+    try {
+      // Check if invitation already exists
+      const { data: existing } = await this.supabaseService.client
+        .from('team_invitations')
+        .select('id, status')
+        .eq('team_id', teamId)
+        .eq('email', email)
+        .eq('status', 'pending')
+        .single();
+      
+      if (existing) {
+        return { success: false, error: 'An invitation is already pending for this email' };
+      }
+
+      const { error } = await this.supabaseService.client
+        .from('team_invitations')
+        .insert({
+          team_id: teamId,
+          email,
+          role,
+          message: message || null,
+          invited_by: this.authService.currentUser()?.id,
+          status: 'pending',
+          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        });
+
+      if (error) {
+        if (error.code === '42P01') {
+          return { success: false, error: 'Invitation feature coming soon!' };
+        }
+        throw error;
+      }
+
+      await this.loadPendingInvitations();
+      return { success: true };
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error sending invitation:', error);
+      return { success: false, error: error.message || 'Failed to send invitation' };
+    }
+  }
+
+  /**
+   * Load pending invitations
+   */
+  async loadPendingInvitations(): Promise<void> {
+    const teamId = this.currentTeamId();
+    if (!teamId) return;
+
+    try {
+      const { data, error } = await this.supabaseService.client
+        .from('team_invitations')
+        .select(`
+          id,
+          email,
+          role,
+          message,
+          status,
+          invited_by,
+          expires_at,
+          created_at,
+          inviter:invited_by(raw_user_meta_data)
+        `)
+        .eq('team_id', teamId)
+        .in('status', ['pending', 'expired'])
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        if (error.code !== '42P01') throw error;
+        return;
+      }
+
+      this.pendingInvitations.set((data || []).map((inv: any) => ({
+        id: inv.id,
+        email: inv.email,
+        role: inv.role,
+        message: inv.message,
+        status: inv.status,
+        invitedBy: inv.inviter?.raw_user_meta_data?.full_name || 'Unknown',
+        expiresAt: inv.expires_at,
+        createdAt: inv.created_at,
+        isExpired: new Date(inv.expires_at) < new Date()
+      })));
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error loading invitations:', error);
+    }
+  }
+
+  /**
+   * Resend invitation
+   */
+  async resendInvitation(invitationId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabaseService.client
+        .from('team_invitations')
+        .update({
+          status: 'pending',
+          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', invitationId);
+
+      if (error) throw error;
+
+      await this.loadPendingInvitations();
+      return { success: true };
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error resending invitation:', error);
+      return { success: false, error: error.message || 'Failed to resend invitation' };
+    }
+  }
+
+  /**
+   * Cancel invitation
+   */
+  async cancelInvitation(invitationId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabaseService.client
+        .from('team_invitations')
+        .update({ status: 'cancelled' })
+        .eq('id', invitationId);
+
+      if (error) throw error;
+
+      await this.loadPendingInvitations();
+      return { success: true };
+    } catch (error: any) {
+      this.logger.error('[RosterService] Error cancelling invitation:', error);
+      return { success: false, error: error.message || 'Failed to cancel invitation' };
+    }
+  }
+
+  /**
+   * Check if jersey number is taken
+   */
+  isJerseyNumberTaken(jerseyNumber: string, excludePlayerId?: string): boolean {
+    const players = this.allPlayers();
+    return players.some(p => 
+      p.jersey === jerseyNumber && 
+      p.id !== excludePlayerId
+    );
+  }
+
+  /**
+   * Get available jersey numbers
+   */
+  getAvailableJerseyNumbers(): string[] {
+    const usedNumbers = new Set(this.allPlayers().map(p => p.jersey));
+    const available: string[] = [];
+    
+    for (let i = 0; i <= 99; i++) {
+      const num = i.toString();
+      if (!usedNumbers.has(num)) {
+        available.push(num);
+      }
+    }
+    
+    return available;
+  }
+
+  /**
+   * Export roster to CSV
+   */
+  exportRosterToCsv(): string {
+    const players = this.allPlayers();
+    if (players.length === 0) return '';
+
+    const headers = ['Name', 'Position', 'Jersey #', 'Country', 'Age', 'Height', 'Weight', 'Status', 'Email'];
+    const rows = players.map(p => [
+      p.name,
+      p.position,
+      p.jersey,
+      p.country,
+      p.age.toString(),
+      p.height,
+      p.weight,
+      p.status,
+      p.email || '',
+    ]);
+
+    return [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+  }
+
+  // ============================================================================
+  // HELPER METHODS
+  // ============================================================================
+
+  private processStaffMembers(members: any[] | null): StaffMember[] {
+    const staffRoles = [
+      'owner', 'admin',
+      'head_coach', 'coach', 
+      'offense_coordinator', 'defense_coordinator', 'assistant_coach',
+      'physiotherapist', 'nutritionist', 'strength_conditioning_coach'
+    ];
+
+    return (members || [])
+      .filter((m: any) => staffRoles.includes(m.role))
+      .map((m: any) => {
+        const role = m.role;
+        const category = this.getStaffCategoryFromRole(role);
+        return {
+          id: m.id,
+          user_id: m.user_id,
+          name: m.users?.raw_user_meta_data?.full_name || m.users?.email?.split('@')[0] || 'Unknown',
+          position: this.getRoleDisplayName(role),
+          role: role,
+          roleCategory: category,
+          country: m.users?.raw_user_meta_data?.country || 'Unknown',
+          experience: m.users?.raw_user_meta_data?.experience || 'N/A',
+          email: m.users?.email,
+          phone: m.users?.raw_user_meta_data?.phone,
+          specialization: m.users?.raw_user_meta_data?.specialization,
+          certifications: m.users?.raw_user_meta_data?.certifications || [],
+          achievements: m.users?.raw_user_meta_data?.achievements || [],
+        };
+      });
+  }
+
+  private processPlayers(players: any[] | null): Player[] {
+    return (players || []).map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      position: p.position,
+      jersey: p.jersey_number?.toString() || '0',
+      country: p.country || 'Unknown',
+      age: p.age || 0,
+      height: p.height || 'N/A',
+      weight: p.weight || 'N/A',
+      email: p.email || '',
+      phone: p.phone || '',
+      status: p.status || 'active',
+      stats: p.stats || {},
+      created_at: p.created_at,
+      user_id: p.user_id,
+    }));
+  }
+
+  private calculateTeamStats(players: Player[], staff: StaffMember[]): void {
+    const activePlayers = players.filter(p => p.status === 'active');
+    const injuredPlayers = players.filter(p => p.status === 'injured');
+    const uniqueCountries = new Set(players.map(p => p.country).filter(c => c !== 'Unknown'));
+    const avgAge = players.length > 0 
+      ? Math.round(players.reduce((sum, p) => sum + (p.age || 0), 0) / players.length)
+      : 0;
+
+    this.teamStats.set([
+      { value: players.length.toString(), label: 'Total Players' },
+      { value: activePlayers.length.toString(), label: 'Active' },
+      { value: injuredPlayers.length.toString(), label: 'Injured' },
+      { value: uniqueCountries.size.toString(), label: 'Countries' },
+      { value: avgAge.toString(), label: 'Avg Age' },
+      { value: staff.length.toString(), label: 'Staff' },
+    ]);
+  }
+
+  private loadFallbackData(members: any[] | null): void {
+    const staff = this.processStaffMembers(members);
+    this.coachingStaff.set(staff);
+    this.allPlayers.set([]);
+    this.teamStats.set([
+      { value: '0', label: 'Total Players' },
+      { value: '0', label: 'Active' },
+      { value: '0', label: 'Injured' },
+      { value: '0', label: 'Countries' },
+      { value: '0', label: 'Avg Age' },
+      { value: staff.length.toString(), label: 'Staff' },
+    ]);
+    this.isLoading.set(false);
+  }
+
+  private async ensureTeamExists(userId: string): Promise<string> {
+    // Check if user has a team
+    const { data: teamMember } = await this.supabaseService.client
+      .from('team_members')
+      .select('team_id')
+      .eq('user_id', userId)
+      .single();
+    
+    if (teamMember?.team_id) {
+      this.currentTeamId.set(teamMember.team_id);
+      return teamMember.team_id;
+    }
+
+    // Create a default team
+    const { data: newTeam, error: teamError } = await this.supabaseService.client
+      .from('teams')
+      .insert({
+        name: 'My Team',
+        created_by: userId,
+      })
+      .select()
+      .single();
+
+    if (teamError) throw teamError;
+    
+    this.currentTeamId.set(newTeam.id);
+
+    await this.supabaseService.client
+      .from('team_members')
+      .insert({
+        team_id: newTeam.id,
+        user_id: userId,
+        role: 'owner',
+      });
+
+    return newTeam.id;
+  }
+
+  private getStaffCategoryFromRole(role: string): StaffCategory {
+    const medicalRoles = ['physiotherapist', 'nutritionist'];
+    const performanceRoles = ['strength_conditioning_coach'];
+    
+    if (medicalRoles.includes(role)) return 'medical';
+    if (performanceRoles.includes(role)) return 'performance';
+    return 'coaching';
+  }
+
+  getRoleDisplayName(role: string): string {
+    const roleNames: Record<string, string> = {
+      owner: 'Team Owner',
+      admin: 'Administrator',
+      head_coach: 'Head Coach',
+      coach: 'Head Coach',
+      offense_coordinator: 'Offense Coordinator',
+      defense_coordinator: 'Defense Coordinator',
+      assistant_coach: 'Assistant Coach',
+      physiotherapist: 'Physiotherapist',
+      nutritionist: 'Nutritionist',
+      strength_conditioning_coach: 'Strength & Conditioning Coach',
+      player: 'Player',
+      manager: 'Team Manager',
+    };
+    return roleNames[role] || role;
+  }
+
+  private getErrorMessage(error: any): string {
+    if (error?.status === 401 || error?.status === 403) {
+      return 'Your session has expired. Please log in again.';
+    } else if (error?.status >= 500) {
+      return 'The server is temporarily unavailable. Please try again later.';
+    }
+    return 'Failed to load roster data. Please try again.';
+  }
+}
+
