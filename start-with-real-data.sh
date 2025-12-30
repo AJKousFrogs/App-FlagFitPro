@@ -5,14 +5,31 @@
 echo "🚀 Starting FlagFit Pro with Real Data..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# Set environment variables for Supabase
-export SUPABASE_URL="https://pvziciccwxgftcielknm.supabase.co"
-export SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWN3eGdmdGNpZWxrbm0iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1OTUzNzA1OCwiZXhwIjoyMDc1MTEzMDU4fQ.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU"
-export SUPABASE_SERVICE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWN3eGdmdGNpZWxrbm0iLCJyb2xlIjoic2VydmljZV9yb2xlIiwiaWF0IjoxNzU5NTM3MDU4LCJleHAiOjIwNzUxMTMwNTh9.UwVhLpQOpC50G8D8zL8MCbIe8mm_2EqubaC2s_-Z5mo"
-export JWT_SECRET="flagfit-pro-jwt-secret-2024"
+# Load environment variables from .env file (gitignored)
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+    echo "✅ Loaded environment variables from .env"
+else
+    echo "❌ ERROR: .env file not found"
+    echo "📝 Please create a .env file based on .env.example"
+    echo "   Required variables: JWT_SECRET, SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY"
+    exit 1
+fi
+
+# Verify critical environment variables are set
+if [ -z "$JWT_SECRET" ]; then
+    echo "❌ ERROR: JWT_SECRET not found in .env"
+    echo "📝 Add JWT_SECRET to your .env file (see .env.example)"
+    exit 1
+fi
+
+# Set environment variables for Supabase (can be overridden by .env)
+export SUPABASE_URL="${SUPABASE_URL:-https://pvziciccwxgftcielknm.supabase.co}"
+export SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWN3eGdmdGNpZWxrbm0iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1OTUzNzA1OCwiZXhwIjoyMDc1MTEzMDU4fQ.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU}"
+export SUPABASE_SERVICE_KEY="${SUPABASE_SERVICE_KEY}"
 export NODE_ENV="development"
-export VITE_SUPABASE_URL="https://pvziciccwxgftcielknm.supabase.co"
-export VITE_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWN3eGdmdGNpZWxrbm0iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1OTUzNzA1OCwiZXhwIjoyMDc1MTEzMDU4fQ.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU"
+export VITE_SUPABASE_URL="${SUPABASE_URL}"
+export VITE_SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY}"
 export DATABASE_URL="${SUPABASE_URL}"
 
 echo "✅ Environment variables configured"
