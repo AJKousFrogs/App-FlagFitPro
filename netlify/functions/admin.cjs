@@ -140,8 +140,14 @@ async function getHealthMetrics() {
   }
 }
 
-const USDA_API_KEY = process.env.USDA_API_KEY || 'Mgf4EWBy5hMdlNQvqEUHrTqKUrcECOcczql6flkL';
+// USDA FoodData Central API Key (required)
+// Get your free API key at: https://fdc.nal.usda.gov/api-key-signup.html
+const USDA_API_KEY = process.env.USDA_API_KEY;
 const USDA_BASE_URL = 'https://api.nal.usda.gov/fdc/v1';
+
+if (!USDA_API_KEY) {
+  throw new Error('USDA_API_KEY environment variable is required. Get a free key at https://fdc.nal.usda.gov/api-key-signup.html');
+}
 
 // Nutrient IDs from USDA FoodData Central
 const NUTRIENT_MAP = {

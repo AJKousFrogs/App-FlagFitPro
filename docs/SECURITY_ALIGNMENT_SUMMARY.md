@@ -132,3 +132,4 @@ These files describe features that may have been migrated to Angular or deprecat
 | 2.0.0 | Dec 2025 | Previous version with correct Angular architecture |
 | 3.0.0 | Dec 29, 2025 | Added trust boundaries, explicit CSRF position, known limitations section |
 
+
