@@ -260,9 +260,19 @@ export class PrivacySettingsService {
 
       const birthDate = new Date(user.date_of_birth);
       const today = new Date();
-      const age = today.getFullYear() - birthDate.getFullYear();
-      
+
+      // Calculate age correctly: account for whether birthday has occurred this year
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const dayDiff = today.getDate() - birthDate.getDate();
+
+      // If birthday hasn't occurred yet this year, subtract 1 from age
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+      }
+
       // Only check for minors (13-17)
+      // GDPR Article 8: Parental consent required for users under 18
       if (age < 13 || age >= 18) {
         this._parentalConsent.set(null);
         return;

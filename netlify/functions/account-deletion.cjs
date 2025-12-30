@@ -108,18 +108,11 @@ exports.handler = async (event, context) => {
           return createErrorResponse(error.message, 500, "database_error");
         }
 
-        // Revoke all sessions (sign out from all devices)
-        try {
-          await supabaseAdmin.auth.admin.signOut(userId, "global");
-          
-          // Update the request to note sessions were revoked
-          await supabase
-            .from("account_deletion_requests")
-            .update({ sessions_revoked_at: new Date().toISOString() })
-            .eq("id", result);
-        } catch (sessionError) {
-          console.warn("Could not revoke sessions:", sessionError.message);
-        }
+        // DO NOT revoke sessions during grace period (GDPR Article 17)
+        // User must be able to login to cancel deletion within 30 days
+        // Sessions will be revoked automatically during hard deletion after 30 days
+        //
+        // Note: UI should check deletion_pending status and show warning banner
 
         return createSuccessResponse({
           success: true,
@@ -127,6 +120,7 @@ exports.handler = async (event, context) => {
           message: "Account deletion initiated. Your data will be permanently deleted in 30 days. " +
                    "You can cancel this request by logging back in within that period.",
           scheduledDeletionDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          gracePeriodDays: 30,
         });
       }
 

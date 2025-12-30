@@ -1,7 +1,8 @@
 import { Injectable, inject } from "@angular/core";
-import { Observable, of } from "rxjs";
-import { delay, map, catchError } from "rxjs/operators";
+import { Observable, of, throwError, from } from "rxjs";
+import { delay, map, catchError, switchMap } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
+import { PrivacySettingsService } from "./privacy-settings.service";
 
 interface RecentPerformance {
   type: string;
@@ -76,31 +77,42 @@ export interface TrainingSuggestionParams {
 })
 export class AIService {
   private apiService = inject(ApiService);
+  private privacySettingsService = inject(PrivacySettingsService);
 
   /**
    * Get AI-powered training suggestions based on user history, performance gaps, and goals
+   * GDPR Article 22: Requires explicit AI processing consent
    */
   getTrainingSuggestions(
     params: TrainingSuggestionParams,
   ): Observable<TrainingSuggestion[]> {
-    // Try API first
-    return this.apiService
-      .post<
-        TrainingSuggestion[]
-      >(API_ENDPOINTS.training.suggestions || "/api/training/suggestions", params)
-      .pipe(
-        map((response) => {
-          if (response.success && response.data) {
-            return response.data;
-          }
-          // Fallback to mock suggestions
-          return this.generateMockSuggestions(params);
-        }),
-        catchError(() => {
-          // Fallback to mock suggestions on error
-          return of(this.generateMockSuggestions(params));
-        }),
-      );
+    // GDPR Compliance: Require AI consent before processing
+    return from(this.privacySettingsService.requireAiConsent()).pipe(
+      switchMap(() => {
+        // Try API first (only after consent verified)
+        return this.apiService
+          .post<
+            TrainingSuggestion[]
+          >(API_ENDPOINTS.training.suggestions || "/api/training/suggestions", params)
+          .pipe(
+            map((response) => {
+              if (response.success && response.data) {
+                return response.data;
+              }
+              // Fallback to mock suggestions
+              return this.generateMockSuggestions(params);
+            }),
+            catchError(() => {
+              // Fallback to mock suggestions on error
+              return of(this.generateMockSuggestions(params));
+            }),
+          );
+      }),
+      catchError((error) => {
+        // If consent check fails, throw error (don't fallback to mock)
+        return throwError(() => new Error(error.message || 'AI processing consent required'));
+      })
+    );
   }
 
   /**
@@ -329,28 +341,38 @@ export class AIService {
         });
 
       default:
-        // Try API for advanced processing
-        return this.apiService
-          .post<CommandResponse>("/api/ai/process-command", { command: lowerCommand })
-          .pipe(
-            map((response): CommandResponse => {
-              if (response.success && response.data) {
-                return {
-                  message: response.data.message,
-                  actions: response.data.actions,
-                };
-              }
-              return {
-                message: "I'm not sure I understand. Can you rephrase that?",
-              };
-            }),
-            catchError(() => {
-              return of({
-                message:
-                  "I'm having trouble understanding. Try saying 'help' for assistance.",
-              });
-            }),
-          );
+        // Try API for advanced processing (requires AI consent)
+        return from(this.privacySettingsService.requireAiConsent()).pipe(
+          switchMap(() => {
+            return this.apiService
+              .post<CommandResponse>("/api/ai/process-command", { command: lowerCommand })
+              .pipe(
+                map((response): CommandResponse => {
+                  if (response.success && response.data) {
+                    return {
+                      message: response.data.message,
+                      actions: response.data.actions,
+                    };
+                  }
+                  return {
+                    message: "I'm not sure I understand. Can you rephrase that?",
+                  };
+                }),
+                catchError(() => {
+                  return of({
+                    message:
+                      "I'm having trouble understanding. Try saying 'help' for assistance.",
+                  });
+                }),
+              );
+          }),
+          catchError((error) => {
+            // Consent not given - provide helpful message
+            return of({
+              message: "AI processing is disabled. Enable AI in Privacy Settings to use advanced features.",
+            });
+          })
+        );
     }
 
     return of({
@@ -361,6 +383,7 @@ export class AIService {
 
   /**
    * Analyze training context and generate insights
+   * GDPR Article 22: Requires explicit AI processing consent for advanced analysis
    */
   analyzeContext(context: AnalysisContext): Observable<ContextInsight[]> {
     const insights: ContextInsight[] = [];
@@ -453,15 +476,23 @@ export class AIService {
       }
     }
 
-    // Try API for advanced analysis
-    return this.apiService.post<ContextInsight[]>("/api/ai/analyze-context", context).pipe(
-      map((response) => {
-        if (response.success && response.data) {
-          return response.data;
-        }
-        return insights;
+    // Try API for advanced analysis (requires AI consent)
+    return from(this.privacySettingsService.requireAiConsent()).pipe(
+      switchMap(() => {
+        return this.apiService.post<ContextInsight[]>("/api/ai/analyze-context", context).pipe(
+          map((response) => {
+            if (response.success && response.data) {
+              return response.data;
+            }
+            return insights;
+          }),
+          catchError(() => of(insights)),
+        );
       }),
-      catchError(() => of(insights)),
+      catchError(() => {
+        // Consent not given - return basic insights only (no AI-enhanced analysis)
+        return of(insights);
+      })
     );
   }
 }

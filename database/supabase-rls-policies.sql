@@ -327,18 +327,28 @@ CREATE POLICY "Users can view own training sessions"
 ON training_sessions FOR SELECT
 USING (user_id = auth.user_id());
 
--- Coaches can view their team's training sessions
+-- Coaches can view their team's training sessions (WITH CONSENT CHECK - GDPR Compliance)
 CREATE POLICY "Coaches can view team training sessions"
 ON training_sessions FOR SELECT
 USING (
   user_id IN (
     SELECT tm.user_id FROM team_members tm
     INNER JOIN team_members coach ON coach.team_id = tm.team_id
-    WHERE coach.user_id = auth.user_id() AND coach.role IN ('coach', 'admin')
+    WHERE coach.user_id = auth.user_id()
+      AND coach.role IN ('coach', 'admin')
+      -- GDPR Consent Check: Only show training data if player has enabled performance sharing
+      AND check_performance_sharing(tm.user_id, tm.team_id)
   )
   OR team_id IN (
-    SELECT team_id FROM team_members
-    WHERE user_id = auth.user_id() AND role IN ('coach', 'admin')
+    SELECT tm.team_id FROM team_members tm
+    WHERE tm.user_id = auth.user_id()
+      AND tm.role IN ('coach', 'admin')
+      -- GDPR Consent Check: Only show training data if player has enabled performance sharing
+      AND EXISTS (
+        SELECT 1 FROM team_members player_tm
+        WHERE player_tm.team_id = tm.team_id
+          AND check_performance_sharing(player_tm.user_id, player_tm.team_id)
+      )
   )
 );
 
@@ -425,14 +435,17 @@ CREATE POLICY "Users can view own performance metrics"
 ON performance_metrics FOR SELECT
 USING (user_id = auth.user_id()::text OR user_id = auth.user_id_text());
 
--- Coaches can view their team's metrics
+-- Coaches can view their team's metrics (WITH CONSENT CHECK - GDPR Compliance)
 CREATE POLICY "Coaches can view team performance metrics"
 ON performance_metrics FOR SELECT
 USING (
   user_id IN (
     SELECT tm.user_id::text FROM team_members tm
     INNER JOIN team_members coach ON coach.team_id = tm.team_id
-    WHERE coach.user_id = auth.user_id() AND coach.role IN ('coach', 'admin')
+    WHERE coach.user_id = auth.user_id()
+      AND coach.role IN ('coach', 'admin')
+      -- GDPR Consent Check: Only show data if player has enabled performance sharing
+      AND check_performance_sharing(tm.user_id::uuid, tm.team_id)
   )
   OR user_id IN (
     SELECT tm.user_id::text FROM team_members tm
@@ -440,6 +453,8 @@ USING (
       SELECT team_id FROM team_members
       WHERE user_id = auth.user_id() AND role IN ('coach', 'admin')
     )
+    -- GDPR Consent Check: Only show data if player has enabled performance sharing
+    AND check_performance_sharing(tm.user_id::uuid, tm.team_id)
   )
 );
 
@@ -475,14 +490,17 @@ CREATE POLICY "Users can view own wellness logs"
 ON wellness_logs FOR SELECT
 USING (user_id = auth.user_id()::text OR user_id = auth.user_id());
 
--- Coaches can view their team's wellness logs
+-- Coaches can view their team's wellness logs (WITH CONSENT CHECK - GDPR Compliance)
 CREATE POLICY "Coaches can view team wellness logs"
 ON wellness_logs FOR SELECT
 USING (
   user_id IN (
     SELECT tm.user_id::text FROM team_members tm
     INNER JOIN team_members coach ON coach.team_id = tm.team_id
-    WHERE coach.user_id = auth.user_id() AND coach.role IN ('coach', 'admin')
+    WHERE coach.user_id = auth.user_id()
+      AND coach.role IN ('coach', 'admin')
+      -- GDPR Consent Check: Only show wellness data if player has enabled health sharing
+      AND check_health_sharing(tm.user_id::uuid, tm.team_id)
   )
   OR user_id = auth.user_id()::text
 );
