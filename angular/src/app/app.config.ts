@@ -3,6 +3,7 @@ import {
   provideZonelessChangeDetection,
   isDevMode,
   ErrorHandler,
+  provideExperimentalZonelessChangeDetection,
 } from "@angular/core";
 import {
   provideRouter,
@@ -13,7 +14,7 @@ import {
 } from "@angular/router";
 import { provideServiceWorker } from "@angular/service-worker";
 // Removed provideAnimations() - PrimeNG v21 uses CSS animations (80+ KB bundle savings)
-import { provideHttpClient, withInterceptors } from "@angular/common/http";
+import { provideHttpClient, withInterceptors, withFetch } from "@angular/common/http";
 import { MessageService } from "primeng/api";
 import { routes } from "./app.routes";
 import { authInterceptor } from "./core/interceptors/auth.interceptor";
@@ -28,6 +29,7 @@ import {
   ErrorTrackingService,
   GlobalErrorHandler,
 } from "./core/services/error-tracking.service";
+import { ResourceService } from "./core/services/resource.service";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -52,6 +54,7 @@ export const appConfig: ApplicationConfig = {
     // Note: No provideAnimations() - PrimeNG v21 migrated to native CSS animations
     // Benefits: 80+ KB bundle savings, hardware acceleration, 60+ FPS
     provideHttpClient(
+      withFetch(), // Angular 21: Use fetch API for better performance and streaming support
       withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor])
     ),
     MessageService,
@@ -60,6 +63,10 @@ export const appConfig: ApplicationConfig = {
     AcwrAlertsService,
     CoreWebVitalsService,
     AuthAwarePreloadStrategy, // Register the preloading strategy
+
+    // Angular 21: Resource API service for declarative data fetching
+    ResourceService,
+
     // Error tracking and monitoring (Sentry integration)
     ErrorTrackingService,
     { provide: ErrorHandler, useClass: GlobalErrorHandler },

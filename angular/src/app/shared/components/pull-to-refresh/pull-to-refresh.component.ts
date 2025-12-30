@@ -1,16 +1,18 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   signal,
   computed,
   ChangeDetectionStrategy,
   ElementRef,
   ViewChild,
-  OnInit,
   OnDestroy,
+  inject,
+  afterNextRender,
+  Injector,
 } from "@angular/core";
+import { DOCUMENT } from "@angular/common";
 import { CommonModule } from "@angular/common";
 
 @Component({
@@ -117,28 +119,33 @@ import { CommonModule } from "@angular/common";
     }
   `],
 })
-export class PullToRefreshComponent implements OnInit, OnDestroy {
+export class PullToRefreshComponent implements OnDestroy {
+  private document = inject(DOCUMENT);
+  private injector = inject(Injector);
+
   @ViewChild("container") container!: ElementRef<HTMLDivElement>;
-  
-  @Input() threshold = 80; // Pull distance to trigger refresh
-  @Input() maxPull = 120; // Maximum pull distance
-  @Input() disabled = false;
-  
-  @Output() refresh = new EventEmitter<void>();
+
+  // Angular 21: Use input() signal API
+  threshold = input<number>(80); // Pull distance to trigger refresh
+  maxPull = input<number>(120); // Maximum pull distance
+  disabled = input<boolean>(false);
+
+  // Angular 21: Use output() signal API
+  refresh = output<void>();
 
   isRefreshing = signal(false);
   pullDistance = signal(0);
-  
+
   private startY = 0;
   private currentY = 0;
   private isPulling = false;
 
   showIndicator = computed(() => this.pullDistance() > 10 || this.isRefreshing());
-  pullProgress = computed(() => Math.min(this.pullDistance() / this.threshold, 1));
-  
+  pullProgress = computed(() => Math.min(this.pullDistance() / this.threshold(), 1));
+
   indicatorTransform = computed(() => {
     if (this.isRefreshing()) return "translateY(0)";
-    const distance = Math.min(this.pullDistance(), this.maxPull);
+    const distance = Math.min(this.pullDistance(), this.maxPull());
     return `translateY(${distance - 60}px)`;
   });
 
@@ -149,24 +156,31 @@ export class PullToRefreshComponent implements OnInit, OnDestroy {
 
   contentTransform = computed(() => {
     if (this.isRefreshing()) return "translateY(60px)";
-    const distance = Math.min(this.pullDistance(), this.maxPull);
+    const distance = Math.min(this.pullDistance(), this.maxPull());
     return `translateY(${distance}px)`;
   });
 
-  ngOnInit(): void {
-    // Prevent default pull-to-refresh on mobile browsers
-    document.body.style.overscrollBehavior = "contain";
+  constructor() {
+    // Angular 21: Use afterNextRender for DOM-dependent initialization
+    // This ensures the DOM is ready before modifying document styles
+    afterNextRender(
+      () => {
+        // Prevent default pull-to-refresh on mobile browsers
+        this.document.body.style.overscrollBehavior = "contain";
+      },
+      { injector: this.injector }
+    );
   }
 
   ngOnDestroy(): void {
-    document.body.style.overscrollBehavior = "";
+    this.document.body.style.overscrollBehavior = "";
   }
 
   onTouchStart(event: TouchEvent): void {
-    if (this.disabled || this.isRefreshing()) return;
-    
+    if (this.disabled() || this.isRefreshing()) return;
+
     const scrollTop = this.container?.nativeElement?.scrollTop || 0;
-    
+
     // Only start pull if at top of scroll
     if (scrollTop <= 0) {
       this.startY = event.touches[0].clientY;
@@ -175,18 +189,18 @@ export class PullToRefreshComponent implements OnInit, OnDestroy {
   }
 
   onTouchMove(event: TouchEvent): void {
-    if (!this.isPulling || this.disabled || this.isRefreshing()) return;
-    
+    if (!this.isPulling || this.disabled() || this.isRefreshing()) return;
+
     this.currentY = event.touches[0].clientY;
     const distance = this.currentY - this.startY;
-    
+
     // Only pull down, not up
     if (distance > 0) {
       // Apply resistance to pull
       const resistance = 0.5;
       const resistedDistance = distance * resistance;
-      this.pullDistance.set(Math.min(resistedDistance, this.maxPull));
-      
+      this.pullDistance.set(Math.min(resistedDistance, this.maxPull()));
+
       // Prevent scroll while pulling
       if (distance > 10) {
         event.preventDefault();
@@ -195,11 +209,11 @@ export class PullToRefreshComponent implements OnInit, OnDestroy {
   }
 
   onTouchEnd(): void {
-    if (!this.isPulling || this.disabled) return;
-    
+    if (!this.isPulling || this.disabled()) return;
+
     this.isPulling = false;
-    
-    if (this.pullDistance() >= this.threshold && !this.isRefreshing()) {
+
+    if (this.pullDistance() >= this.threshold() && !this.isRefreshing()) {
       this.triggerRefresh();
     } else {
       this.pullDistance.set(0);

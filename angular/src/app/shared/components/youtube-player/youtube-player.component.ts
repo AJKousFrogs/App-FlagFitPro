@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   OnDestroy,
   signal,
   ChangeDetectionStrategy,
@@ -11,6 +10,8 @@ import {
   DestroyRef,
   input,
   output,
+  afterNextRender,
+  Injector,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
@@ -193,8 +194,10 @@ interface WindowWithYouTubeAPI {
     `,
   ],
 })
-export class YoutubePlayerComponent implements OnInit, OnDestroy {
+export class YoutubePlayerComponent implements OnDestroy {
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
+
   // Angular 21: Use input() signal instead of @Input() with signal assignment
   videoId = input.required<string>();
   width = input<number>(640);
@@ -225,6 +228,15 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   private timeTrackingSubscription: Subscription | null = null;
 
   constructor() {
+    // Angular 21: Use afterNextRender for DOM-dependent initialization
+    // This ensures the DOM is ready before accessing document APIs
+    afterNextRender(
+      () => {
+        this.loadYoutubeApi();
+      },
+      { injector: this.injector }
+    );
+
     // Watch for videoId changes and reload player
     effect(() => {
       const id = this.videoId();
@@ -232,10 +244,6 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
         this.loadVideo(id);
       }
     });
-  }
-
-  ngOnInit(): void {
-    this.loadYoutubeApi();
   }
 
   ngOnDestroy(): void {

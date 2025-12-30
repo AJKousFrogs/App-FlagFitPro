@@ -65,9 +65,11 @@ import {
               formControlName="name"
               placeholder="Enter your full name"
               [class.ng-invalid]="isFieldInvalid('name')"
+              [attr.aria-invalid]="isFieldInvalid('name') ? 'true' : null"
+              [attr.aria-describedby]="isFieldInvalid('name') ? 'name-error' : null"
             />
             @if (isFieldInvalid("name")) {
-              <small class="p-error">
+              <small id="name-error" class="p-error" role="alert">
                 {{ getFieldError("name") }}
               </small>
             }
@@ -83,9 +85,12 @@ import {
               placeholder="Enter your email"
               [class.ng-invalid]="isFieldInvalid('email')"
               autocomplete="email"
+              aria-required="true"
+              [attr.aria-invalid]="isFieldInvalid('email') ? 'true' : null"
+              [attr.aria-describedby]="isFieldInvalid('email') ? 'email-error' : null"
             />
             @if (isFieldInvalid("email")) {
-              <small class="p-error">
+              <small id="email-error" class="p-error" role="alert">
                 {{ getFieldError("email") }}
               </small>
             }
@@ -101,13 +106,16 @@ import {
               placeholder="Create a password"
               [class.ng-invalid]="isFieldInvalid('password')"
               autocomplete="new-password"
+              aria-required="true"
+              [attr.aria-invalid]="isFieldInvalid('password') ? 'true' : null"
+              [attr.aria-describedby]="isFieldInvalid('password') ? 'password-error password-hint' : 'password-hint'"
             />
             @if (isFieldInvalid("password")) {
-              <small class="p-error">
+              <small id="password-error" class="p-error" role="alert">
                 {{ getFieldError("password") }}
               </small>
             }
-            <small class="p-text-secondary mt-2">
+            <small id="password-hint" class="p-text-secondary mt-2">
               Password must be at least 8 characters and include uppercase,
               lowercase, number, and special character.
             </small>
@@ -125,9 +133,12 @@ import {
               placeholder="Confirm your password"
               [class.ng-invalid]="isFieldInvalid('confirmPassword')"
               autocomplete="new-password"
+              aria-required="true"
+              [attr.aria-invalid]="isFieldInvalid('confirmPassword') ? 'true' : null"
+              [attr.aria-describedby]="isFieldInvalid('confirmPassword') ? 'confirmPassword-error' : null"
             />
             @if (isFieldInvalid("confirmPassword")) {
-              <small class="p-error">
+              <small id="confirmPassword-error" class="p-error" role="alert">
                 {{ getFieldError("confirmPassword") }}
               </small>
             }

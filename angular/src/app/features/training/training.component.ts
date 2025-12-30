@@ -2,7 +2,6 @@ import {
   Component,
   OnInit,
   inject,
-  signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { Router } from "@angular/router";
@@ -17,39 +16,19 @@ import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { TrainingBuilderComponent } from "../../shared/components/training-builder/training-builder.component";
-import { WorkoutCalendarComponent, WorkoutEntry } from "../../shared/components/workout-calendar/workout-calendar.component";
-import { RestTimerComponent } from "../../shared/components/rest-timer/rest-timer.component";
 import {
   SwipeGestureDirective,
   SwipeEvent,
 } from "../../shared/directives/swipe-gesture.directive";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
-import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
-import { SupabaseService } from "../../core/services/supabase.service";
-import { WellnessService } from "../../core/services/wellness.service";
-
-interface StatCard {
-  title: string;
-  value: string;
-  subtitle?: string;
-  progress?: number;
-  change?: string;
-  changeType?: "positive" | "negative" | "neutral";
-  icon: string;
-  iconBg: string;
-}
-
-interface Workout {
-  type: string;
-  title: string;
-  description: string;
-  duration: string;
-  intensity: string;
-  location: string;
-  icon: string;
-  iconBg: string;
-}
+import { TrainingStateService } from "../../core/services/training-state.service";
+import { TrainingDataLoaderService } from "../../core/services/training-data-loader.service";
+import {
+  Workout,
+  Achievement,
+  TrainingStatCard,
+  WeeklyScheduleDay,
+} from "../../core/models/training.models";
 
 @Component({
   selector: "app-training",
@@ -711,543 +690,170 @@ interface Workout {
   ],
 })
 export class TrainingComponent implements OnInit {
-  private apiService = inject(ApiService);
-  private authService = inject(AuthService);
+  // Refactored: Now using dedicated services for state and data loading
+  private trainingState = inject(TrainingStateService);
+  private trainingDataLoader = inject(TrainingDataLoaderService);
   private toastService = inject(ToastService);
   private headerService = inject(HeaderService);
-  private supabaseService = inject(SupabaseService);
-  private wellnessService = inject(WellnessService);
   private router = inject(Router);
 
-  userName = signal("Alex");
-  stats = signal<StatCard[]>([]);
-  trainingStats = signal<Array<{
-    label: string;
-    value: string;
-    icon: string;
-    color: string;
-    trend: string;
-    trendType: "positive" | "negative" | "neutral";
-  }>>([]);
-  weeklySchedule = signal<Array<{
-    name: string;
-    sessions: Array<{ time: string; title: string }>;
-  }>>([]);
-  workouts = signal<Workout[]>([]);
-  achievements = signal<Array<{
-    icon: string;
-    title: string;
-    date: string;
-  }>>([]);
-  swipingWorkoutId = signal<string | null>(null);
-  swipeDirection = signal<"left" | "right" | null>(null);
-  isRefreshing = signal(false);
+  // Expose state signals to template (readonly references)
+  readonly userName = this.trainingState.userName;
+  readonly trainingStats = this.trainingState.trainingStats;
+  readonly weeklySchedule = this.trainingState.weeklySchedule;
+  readonly workouts = this.trainingState.workouts;
+  readonly achievements = this.trainingState.achievements;
+  readonly swipingWorkoutId = this.trainingState.swipingWorkoutId;
+  readonly swipeDirection = this.trainingState.swipeDirection;
+  readonly isRefreshing = this.trainingState.isRefreshing;
+  readonly wellnessAlert = this.trainingState.wellnessAlert;
+  readonly readinessScore = this.trainingState.readinessScore;
+  readonly readinessStatus = this.trainingState.readinessStatus;
 
-  // Wellness-based training alerts
-  wellnessAlert = signal<{
-    severity: 'warning' | 'critical' | 'info';
-    message: string;
-    recommendations: string[];
-  } | null>(null);
-  readinessScore = signal(0);
-  readinessStatus = signal<'excellent' | 'good' | 'caution' | 'rest'>('good');
-  wellnessAlertDismissed = signal(false);
+  // Computed signals from state service
+  readonly hasWorkouts = this.trainingState.hasWorkouts;
+  readonly shouldShowWellnessAlert = this.trainingState.shouldShowWellnessAlert;
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // Configure header for training page
     this.headerService.setTrainingHeader();
-    this.loadTrainingData();
-    this.checkWellnessForTraining();
+
+    // Load all training data using data loader service
+    await this.loadData();
   }
 
   /**
-   * Check today's wellness data and show training alerts if needed
+   * Load all training data and update state
+   * Refactored: Delegates to data loader service
    */
-  private checkWellnessForTraining(): void {
-    const latestWellness = this.wellnessService.latestWellnessEntry();
-    
-    if (!latestWellness) {
-      // No wellness data today - prompt to check in
-      return;
-    }
+  private async loadData(): Promise<void> {
+    try {
+      const data = await this.trainingDataLoader.loadAllTrainingData();
 
-    // Check if wellness data is from today
-    const today = new Date().toISOString().split('T')[0];
-    if (latestWellness.date !== today) {
-      return; // Data is from a previous day
-    }
-
-    // Calculate readiness score
-    const readiness = this.wellnessService.calculateReadinessScore(latestWellness);
-    this.readinessScore.set(readiness.score);
-    this.readinessStatus.set(readiness.status);
-
-    // Check for training alerts
-    if (!this.wellnessAlertDismissed()) {
-      const alert = this.wellnessService.getTrainingAlert(latestWellness);
-      if (alert) {
-        this.wellnessAlert.set(alert);
-      }
+      // Update state service with loaded data
+      this.trainingState.setAllTrainingData({
+        userName: data.userName || 'Athlete',
+        stats: data.stats,
+        schedule: data.schedule,
+        workouts: data.workouts,
+        achievements: data.achievements,
+        wellnessAlert: data.wellnessData.alert,
+        readinessScore: data.wellnessData.readinessScore,
+        readinessStatus: data.wellnessData.readinessStatus
+      });
+    } catch (error) {
+      console.error('Error loading training data:', error);
+      this.toastService.error('Failed to load training data');
     }
   }
+
+  // ============================================================================
+  // NAVIGATION METHODS
+  // ============================================================================
 
   goToWellnessCheckin(): void {
     this.router.navigate(['/wellness']);
   }
 
-  dismissWellnessAlert(): void {
-    this.wellnessAlertDismissed.set(true);
-    this.wellnessAlert.set(null);
-  }
-
-  async loadTrainingData(): Promise<void> {
-    const user = this.authService.getUser();
-    if (!user?.id) {
-      this.loadFallbackData();
-      return;
-    }
-
-    try {
-      // Load real training sessions from Supabase
-      const { data: sessions, error: sessionsError } = await this.supabaseService.client
-        .from('training_sessions')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('scheduled_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
-        .order('scheduled_date', { ascending: false });
-
-      if (sessionsError) throw sessionsError;
-
-      // Calculate real stats
-      const now = new Date();
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - now.getDay());
-      weekStart.setHours(0, 0, 0, 0);
-
-      const thisWeekSessions = (sessions || []).filter(s => 
-        new Date(s.scheduled_date) >= weekStart && s.status === 'completed'
-      );
-      const totalMinutes = (sessions || []).reduce((acc, s) => acc + (s.duration_minutes || 0), 0);
-      
-      // Calculate streak
-      let streak = 0;
-      const sortedSessions = [...(sessions || [])].filter(s => s.status === 'completed')
-        .sort((a, b) => new Date(b.completed_at || b.scheduled_date).getTime() - new Date(a.completed_at || a.scheduled_date).getTime());
-      
-      if (sortedSessions.length > 0) {
-        let checkDate = new Date();
-        checkDate.setHours(0, 0, 0, 0);
-        
-        for (const session of sortedSessions) {
-          const sessionDate = new Date(session.completed_at || session.scheduled_date);
-          sessionDate.setHours(0, 0, 0, 0);
-          
-          const daysDiff = Math.floor((checkDate.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
-          
-          if (daysDiff <= 1) {
-            streak++;
-            checkDate = sessionDate;
-          } else {
-            break;
-          }
-        }
-      }
-
-      // Find next scheduled session
-      const upcomingSessions = (sessions || []).filter(s => 
-        s.status === 'scheduled' && new Date(s.scheduled_date) >= now
-      ).sort((a, b) => new Date(a.scheduled_date).getTime() - new Date(b.scheduled_date).getTime());
-
-      const nextSession = upcomingSessions[0];
-      const nextSessionText = nextSession 
-        ? this.formatNextSession(nextSession)
-        : 'No upcoming sessions';
-
-      // Set real stats
-      this.trainingStats.set([
-        {
-          label: "This Week",
-          value: `${thisWeekSessions.length}/7`,
-          icon: "pi-bolt",
-          color: "#f1c40f",
-          trend: thisWeekSessions.length > 0 ? "🔥 Sessions Completed" : "Start training!",
-          trendType: thisWeekSessions.length >= 4 ? "positive" : "neutral",
-        },
-        {
-          label: "Current Streak",
-          value: streak > 0 ? `${streak} days` : "0 days",
-          icon: "pi-bullseye",
-          color: "#89c300",
-          trend: streak >= 7 ? "📊 Great consistency!" : streak > 0 ? "Keep it going!" : "Start your streak!",
-          trendType: streak >= 7 ? "positive" : "neutral",
-        },
-        {
-          label: "Total Hours",
-          value: `${(totalMinutes / 60).toFixed(1)}h`,
-          icon: "pi-clock",
-          color: "#10c96b",
-          trend: `⬆️ ${(thisWeekSessions.reduce((a, s) => a + (s.duration_minutes || 0), 0) / 60).toFixed(1)}h this week`,
-          trendType: "positive",
-        },
-        {
-          label: "Next Session",
-          value: nextSession?.session_type || "Schedule one",
-          icon: "pi-calendar",
-          color: "#89c300",
-          trend: nextSessionText,
-          trendType: "neutral",
-        },
-      ]);
-
-      // Load real weekly schedule from database
-      await this.loadWeeklySchedule(user.id);
-
-      // Load available workouts (templates)
-      await this.loadAvailableWorkouts();
-
-      // Load real achievements
-      await this.loadAchievements(user.id, streak, sessions?.length || 0);
-
-    } catch (error) {
-      console.error('Error loading training data:', error);
-      this.loadFallbackData();
-    }
-  }
-
-  private formatNextSession(session: any): string {
-    const date = new Date(session.scheduled_date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const sessionDay = new Date(date);
-    sessionDay.setHours(0, 0, 0, 0);
-    
-    const daysDiff = Math.floor((sessionDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-    
-    if (daysDiff === 0) return `📅 Today at ${time}`;
-    if (daysDiff === 1) return `📅 Tomorrow at ${time}`;
-    return `📅 ${date.toLocaleDateString('en-US', { weekday: 'short' })} at ${time}`;
-  }
-
-  private async loadWeeklySchedule(userId: string): Promise<void> {
-    const now = new Date();
-    const weekStart = new Date(now);
-    weekStart.setDate(now.getDate() - now.getDay());
-    weekStart.setHours(0, 0, 0, 0);
-    
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 7);
-
-    const { data: scheduledSessions } = await this.supabaseService.client
-      .from('training_sessions')
-      .select('*')
-      .eq('user_id', userId)
-      .gte('scheduled_date', weekStart.toISOString())
-      .lt('scheduled_date', weekEnd.toISOString())
-      .order('scheduled_date', { ascending: true });
-
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const schedule = days.map((name, index) => {
-      const daySessions = (scheduledSessions || []).filter(s => {
-        const sessionDate = new Date(s.scheduled_date);
-        return sessionDate.getDay() === index;
-      });
-
-      return {
-        name,
-        sessions: daySessions.map(s => ({
-          time: new Date(s.scheduled_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-          title: s.session_type || 'Training'
-        }))
-      };
-    });
-
-    this.weeklySchedule.set(schedule);
-  }
-
-  private async loadAvailableWorkouts(): Promise<void> {
-    // These are workout templates - could be loaded from a workout_templates table
-    // For now, using sensible defaults for Olympic flag football training
-    this.workouts.set([
-      {
-        type: "speed",
-        title: "Sprint Training",
-        description: "40-yard dash work, acceleration drills",
-        duration: "45 min",
-        intensity: "High intensity",
-        location: "Track / Field",
-        icon: "🏃",
-        iconBg: "linear-gradient(135deg, #f1c40f, #f39c12)",
-      },
-      {
-        type: "agility",
-        title: "Route Running",
-        description: "Cuts, breaks, and route precision",
-        duration: "40 min",
-        intensity: "High intensity",
-        location: "Field",
-        icon: "⚡",
-        iconBg: "linear-gradient(135deg, #3498db, #2980b9)",
-      },
-      {
-        type: "strength",
-        title: "Functional Strength",
-        description: "Core, legs, and explosive power",
-        duration: "60 min",
-        intensity: "Medium intensity",
-        location: "Gym",
-        icon: "💪",
-        iconBg: "linear-gradient(135deg, var(--color-brand-primary-light), var(--ds-primary-green))",
-      },
-      {
-        type: "skills",
-        title: "Flag Pulling Drills",
-        description: "Defensive positioning and timing",
-        duration: "30 min",
-        intensity: "Medium intensity",
-        location: "Field",
-        icon: "🎯",
-        iconBg: "linear-gradient(135deg, #9b59b6, #8e44ad)",
-      },
-    ]);
-  }
-
-  private async loadAchievements(userId: string, currentStreak: number, totalSessions: number): Promise<void> {
-    const achievements: Array<{ icon: string; title: string; date: string }> = [];
-
-    // Real achievements based on actual data
-    if (currentStreak >= 7) {
-      achievements.push({ icon: "🔥", title: `${currentStreak}-Day Streak`, date: "Current" });
-    }
-    if (totalSessions >= 10) {
-      achievements.push({ icon: "🏃", title: "10 Sessions Complete", date: "Milestone" });
-    }
-    if (totalSessions >= 25) {
-      achievements.push({ icon: "⭐", title: "25 Sessions Complete", date: "Milestone" });
-    }
-    if (totalSessions >= 50) {
-      achievements.push({ icon: "🏆", title: "50 Sessions Complete", date: "Milestone" });
-    }
-
-    // If no achievements yet, show encouraging message
-    if (achievements.length === 0) {
-      achievements.push({ icon: "🎯", title: "First Achievement Awaits", date: "Complete 10 sessions" });
-    }
-
-    this.achievements.set(achievements);
-  }
-
-  private loadFallbackData(): void {
-    // Empty state - encourage user to start training
-    this.trainingStats.set([
-      {
-        label: "This Week",
-        value: "0/7",
-        icon: "pi-bolt",
-        color: "#f1c40f",
-        trend: "Start training!",
-        trendType: "neutral",
-      },
-      {
-        label: "Current Streak",
-        value: "0 days",
-        icon: "pi-bullseye",
-        color: "#89c300",
-        trend: "Begin your journey",
-        trendType: "neutral",
-      },
-      {
-        label: "Total Hours",
-        value: "0h",
-        icon: "pi-clock",
-        color: "#10c96b",
-        trend: "Log your first session",
-        trendType: "neutral",
-      },
-      {
-        label: "Next Session",
-        value: "Schedule one",
-        icon: "pi-calendar",
-        color: "#89c300",
-        trend: "📅 Plan your training",
-        trendType: "neutral",
-      },
-    ]);
-
-    this.weeklySchedule.set([
-      { name: "Monday", sessions: [] },
-      { name: "Tuesday", sessions: [] },
-      { name: "Wednesday", sessions: [] },
-      { name: "Thursday", sessions: [] },
-      { name: "Friday", sessions: [] },
-      { name: "Saturday", sessions: [] },
-      { name: "Sunday", sessions: [] },
-    ]);
-
-    this.workouts.set([
-      {
-        type: "speed",
-        title: "Sprint Training",
-        description: "40-yard dash work, acceleration drills",
-        duration: "45 min",
-        intensity: "High intensity",
-        location: "Track / Field",
-        icon: "🏃",
-        iconBg: "linear-gradient(135deg, #f1c40f, #f39c12)",
-      },
-      {
-        type: "agility",
-        title: "Route Running",
-        description: "Cuts, breaks, and route precision",
-        duration: "40 min",
-        intensity: "High intensity",
-        location: "Field",
-        icon: "⚡",
-        iconBg: "linear-gradient(135deg, #3498db, #2980b9)",
-      },
-      {
-        type: "strength",
-        title: "Functional Strength",
-        description: "Core, legs, and explosive power",
-        duration: "60 min",
-        intensity: "Medium intensity",
-        location: "Gym",
-        icon: "💪",
-        iconBg: "linear-gradient(135deg, var(--color-brand-primary-light), var(--ds-primary-green))",
-      },
-    ]);
-
-    this.achievements.set([
-      { icon: "🎯", title: "First Achievement Awaits", date: "Complete 10 sessions" },
-    ]);
-  }
-
-  openScheduleBuilder(): void {
-    // Training builder is now integrated directly in the template
-    // Scroll to builder if needed
-    const builderElement = document.querySelector("app-training-builder");
-    if (builderElement) {
-      builderElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
-
   toggleScheduleView(): void {
-    // Navigate to full schedule view
     this.router.navigate(['/training/schedule']);
   }
 
+  openScheduleBuilder(): void {
+    this.router.navigate(['/training/builder']);
+  }
+
+  // ============================================================================
+  // WELLNESS METHODS
+  // ============================================================================
+
+  dismissWellnessAlert(): void {
+    this.trainingState.dismissWellnessAlert();
+  }
+
+  // ============================================================================
+  // WORKOUT ACTION METHODS
+  // ============================================================================
+
+  /**
+   * Start a workout session
+   * Navigates to workout page with context
+   */
   startWorkout(workout: Workout): void {
-    // Navigate to workout page with workout context
     this.toastService.info(`Starting ${workout.title}`);
-    this.router.navigate(['/workout'], { 
-      queryParams: { 
-        type: workout.type, 
+    this.router.navigate(['/workout'], {
+      queryParams: {
+        type: workout.type,
         title: workout.title,
-        duration: workout.duration 
-      } 
+        duration: workout.duration
+      }
     });
   }
 
-  onSwipeRight(event: SwipeEvent, workout: Workout): void {
-    this.swipingWorkoutId.set(workout.title);
-    this.swipeDirection.set("right");
+  /**
+   * Handle swipe right gesture - marks workout as complete
+   */
+  async onSwipeRight(event: SwipeEvent, workout: Workout): Promise<void> {
+    // Set swipe animation state
+    this.trainingState.setSwipeState(workout.title, 'right');
 
-    setTimeout(() => {
-      this.markWorkoutComplete(workout);
-      this.swipingWorkoutId.set(null);
-      this.swipeDirection.set(null);
+    // Animate, then complete workout
+    setTimeout(async () => {
+      const success = await this.trainingDataLoader.markWorkoutComplete(workout);
+
+      if (success) {
+        this.trainingState.removeWorkout(workout.title);
+        this.toastService.success(`${workout.title} marked as complete!`);
+      } else {
+        this.toastService.error('Failed to mark workout as complete');
+      }
+
+      this.trainingState.clearSwipeState();
     }, 300);
   }
 
-  onSwipeLeft(event: SwipeEvent, workout: Workout): void {
-    this.swipingWorkoutId.set(workout.title);
-    this.swipeDirection.set("left");
+  /**
+   * Handle swipe left gesture - postpones workout to tomorrow
+   */
+  async onSwipeLeft(event: SwipeEvent, workout: Workout): Promise<void> {
+    // Set swipe animation state
+    this.trainingState.setSwipeState(workout.title, 'left');
 
-    setTimeout(() => {
-      this.postponeWorkout(workout);
-      this.swipingWorkoutId.set(null);
-      this.swipeDirection.set(null);
+    // Animate, then postpone workout
+    setTimeout(async () => {
+      const success = await this.trainingDataLoader.postponeWorkout(workout);
+
+      if (success) {
+        this.trainingState.removeWorkout(workout.title);
+        this.toastService.info(`${workout.title} postponed to tomorrow`);
+      } else {
+        this.toastService.error('Failed to postpone workout');
+      }
+
+      this.trainingState.clearSwipeState();
     }, 300);
   }
 
-  async markWorkoutComplete(workout: Workout): Promise<void> {
-    try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+  /**
+   * Refresh all training data
+   * Triggered by pull-to-refresh gesture
+   */
+  async refreshTrainingData(): Promise<void> {
+    this.trainingState.setRefreshing(true);
 
-      // Log completed workout to training_sessions
-      await this.supabaseService.client
-        .from("training_sessions")
-        .insert({
-          user_id: user.id,
-          session_type: workout.type || workout.title,
-          duration_minutes: parseInt(workout.duration) || 45,
-          intensity: workout.intensity?.toLowerCase() || "moderate",
-          status: "completed",
-          completed_at: new Date().toISOString(),
-          scheduled_date: new Date().toISOString(),
-          notes: `Completed: ${workout.title}`,
-        });
-
-      this.toastService.success(`${workout.title} marked as complete! 🎉`);
-
-      // Remove from workouts list
-      this.workouts.update((workouts) =>
-        workouts.filter((w) => w.title !== workout.title)
-      );
-    } catch (error) {
-      this.toastService.error("Failed to mark workout as complete");
-    }
-  }
-
-  async postponeWorkout(workout: Workout): Promise<void> {
-    try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
-
-      // Schedule for tomorrow
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(9, 0, 0, 0);
-
-      await this.supabaseService.client
-        .from("training_sessions")
-        .insert({
-          user_id: user.id,
-          session_type: workout.type || workout.title,
-          duration_minutes: parseInt(workout.duration) || 45,
-          intensity: workout.intensity?.toLowerCase() || "moderate",
-          status: "scheduled",
-          scheduled_date: tomorrow.toISOString(),
-          notes: `Postponed: ${workout.title}`,
-        });
-
-      this.toastService.info(`${workout.title} postponed to tomorrow`);
-
-      // Remove from today's workouts
-      this.workouts.update((workouts) =>
-        workouts.filter((w) => w.title !== workout.title)
-      );
-    } catch (error) {
-      this.toastService.error("Failed to postpone workout");
-    }
-  }
-
-  refreshTrainingData(): void {
-    this.isRefreshing.set(true);
-    this.loadTrainingData();
+    await this.loadData();
 
     setTimeout(() => {
-      this.isRefreshing.set(false);
-      this.toastService.success("Training data has been refreshed");
+      this.trainingState.setRefreshing(false);
+      this.toastService.success('Training data refreshed');
     }, 1000);
   }
 
-  trackByStatTitle(index: number, stat: StatCard): string {
-    return stat.title;
-  }
+  // ============================================================================
+  // TRACKBY FUNCTIONS - Template Optimization
+  // ============================================================================
 
-  trackByDayName(index: number, day: { name: string; sessions: Array<{ time: string; title: string }> }): string {
+  trackByDayName(index: number, day: WeeklyScheduleDay): string {
     return day.name;
   }
 
@@ -1256,10 +862,10 @@ export class TrainingComponent implements OnInit {
   }
 
   trackByWorkoutTitle(index: number, workout: Workout): string {
-    return workout.title;
+    return workout.title || workout.id || index.toString();
   }
 
-  trackByAchievementTitle(index: number, achievement: { icon: string; title: string; date: string }): string {
-    return achievement.title || index.toString();
+  trackByAchievementTitle(index: number, achievement: Achievement): string {
+    return achievement.title || achievement.id || index.toString();
   }
 }

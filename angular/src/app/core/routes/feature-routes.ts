@@ -233,6 +233,57 @@ export const trainingRoutes: Routes = [
     canActivate: [authGuard],
     data: { preload: true, priority: "medium" },
   },
+  // === NEW ROUTES: Previously orphaned training components ===
+  {
+    path: "training/ai-companion",
+    loadComponent: () =>
+      import("../../features/training/ai-training-companion.component").then(
+        (m) => m.AITrainingCompanionComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // AI features load on demand
+  },
+  {
+    path: "training/load-analysis",
+    loadComponent: () =>
+      import("../../features/training/flag-load.component").then(
+        (m) => m.FlagLoadComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/goal-planner",
+    loadComponent: () =>
+      import("../../features/training/goal-based-planner.component").then(
+        (m) => m.GoalBasedPlannerComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/microcycle",
+    loadComponent: () =>
+      import("../../features/training/microcycle-planner.component").then(
+        (m) => m.MicrocyclePlannerComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/import",
+    loadComponent: () =>
+      import("../../features/training/import-dataset.component").then(
+        (m) => m.ImportDatasetComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/periodization",
+    loadComponent: () =>
+      import("../../features/training/components/periodization-dashboard/periodization-dashboard.component").then(
+        (m) => m.PeriodizationDashboardComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "medium" },
+  },
 ];
 
 /**
@@ -295,6 +346,16 @@ export const teamRoutes: Routes = [
         (m) => m.CoachDashboardComponent,
       ),
     canActivate: [authGuard],
+  },
+  // === NEW ROUTE: Coach Activity Feed ===
+  {
+    path: "coach/activity",
+    loadComponent: () =>
+      import("../../features/coach/coach-activity-feed.component").then(
+        (m) => m.CoachActivityFeedComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "medium" }, // Important for coach workflow
   },
   {
     path: "team/create",
@@ -386,6 +447,16 @@ export const gameRoutes: Routes = [
         (m) => m.TournamentsComponent,
       ),
     canActivate: [authGuard],
+  },
+  // === NEW ROUTE: Live Game Tracker ===
+  {
+    path: "game-tracker/live",
+    loadComponent: () =>
+      import("../../features/game-tracker/live-game-tracker.component").then(
+        (m) => m.LiveGameTrackerComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false }, // Heavy real-time component
   },
 ];
 

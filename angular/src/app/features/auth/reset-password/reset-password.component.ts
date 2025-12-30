@@ -56,9 +56,12 @@ import { LoggerService } from "../../../core/services/logger.service";
               placeholder="Enter your email"
               [class.ng-invalid]="isFieldInvalid('email')"
               autocomplete="email"
+              aria-required="true"
+              [attr.aria-invalid]="isFieldInvalid('email') ? 'true' : null"
+              [attr.aria-describedby]="isFieldInvalid('email') ? 'email-error' : null"
             />
             @if (isFieldInvalid("email")) {
-              <small class="p-error">
+              <small id="email-error" class="p-error" role="alert">
                 {{ getFieldError("email") }}
               </small>
             }

@@ -76,9 +76,12 @@ import {
               placeholder="Enter your email"
               [class.ng-invalid]="emailError()"
               autocomplete="email"
+              aria-required="true"
+              [attr.aria-invalid]="emailError() ? 'true' : null"
+              [attr.aria-describedby]="emailError() ? 'email-error' : null"
             />
             @if (emailError()) {
-              <small class="p-error">
+              <small id="email-error" class="p-error" role="alert">
                 {{ emailError() }}
               </small>
             }
@@ -94,9 +97,12 @@ import {
               placeholder="Enter your password"
               [class.ng-invalid]="passwordError()"
               autocomplete="current-password"
+              aria-required="true"
+              [attr.aria-invalid]="passwordError() ? 'true' : null"
+              [attr.aria-describedby]="passwordError() ? 'password-error' : null"
             />
             @if (passwordError()) {
-              <small class="p-error">
+              <small id="password-error" class="p-error" role="alert">
                 {{ passwordError() }}
               </small>
             }

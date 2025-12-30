@@ -256,6 +256,8 @@ import { NotificationsPanelComponent } from "../notifications-panel/notification
         cursor: pointer;
         padding: var(--space-2);
         color: var(--text-primary);
+        min-width: 44px; /* WCAG touch target minimum */
+        min-height: 44px;
       }
 
       /* Logo Styles */
@@ -335,8 +337,10 @@ import { NotificationsPanelComponent } from "../notifications-panel/notification
       }
 
       .header-icon-btn {
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 2.75rem; /* 44px - WCAG touch target minimum */
+        height: 2.75rem;
+        min-width: 2.75rem;
+        min-height: 2.75rem;
       }
 
       /* Variants */
