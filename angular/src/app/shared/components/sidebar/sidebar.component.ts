@@ -140,8 +140,8 @@ interface NavItem {
         position: absolute;
         top: var(--space-3);
         right: var(--space-3);
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
         border: none;
         background: var(--p-surface-100);
         border-radius: 50%;
@@ -154,6 +154,15 @@ interface NavItem {
       .sidebar-close-btn:hover {
         background: var(--p-surface-200);
         color: var(--text-primary);
+      }
+
+      .sidebar-close-btn:focus-visible {
+        outline: 2px solid var(--color-brand-primary);
+        outline-offset: 2px;
+      }
+
+      .sidebar-close-btn:focus:not(:focus-visible) {
+        outline: none;
       }
 
       .sidebar-logo {
@@ -256,7 +265,7 @@ interface NavItem {
         align-items: center;
         gap: var(--space-3);
         padding: var(--space-3) var(--space-4);
-        margin-bottom: var(--space-2);
+        margin-bottom: var(--space-1);
         border-radius: var(--p-border-radius);
         color: var(--text-secondary);
         text-decoration: none;
@@ -265,8 +274,18 @@ interface NavItem {
         background: transparent;
         width: 100%;
         cursor: pointer;
-        font-size: 0.9375rem;
+        font-size: 0.875rem;
         font-family: inherit;
+        min-height: 44px; /* WCAG touch target minimum */
+      }
+
+      .nav-item:focus-visible {
+        outline: 2px solid var(--color-brand-primary);
+        outline-offset: 2px;
+      }
+
+      .nav-item:focus:not(:focus-visible) {
+        outline: none;
       }
 
       .nav-item:hover {

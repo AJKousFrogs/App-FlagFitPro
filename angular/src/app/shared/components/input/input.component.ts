@@ -33,7 +33,12 @@ import { CommonModule } from "@angular/common";
   template: `
     <div class="form-group">
       @if (label()) {
-        <label [for]="id()">{{ label() }}</label>
+        <label [for]="id()" [class.required]="required()">
+          {{ label() }}
+          @if (required()) {
+            <span class="required-indicator" aria-hidden="true">*</span>
+          }
+        </label>
       }
       <input
         [id]="id()"
@@ -47,13 +52,16 @@ import { CommonModule } from "@angular/common";
         (input)="onChange($event)"
         class="form-control"
         [attr.aria-invalid]="invalid() ? 'true' : null"
-        [attr.aria-describedby]="errorMessage() ? id() + '-error' : null"
+        [attr.aria-required]="required() ? 'true' : null"
+        [attr.aria-describedby]="getAriaDescribedBy()"
+        [attr.autocomplete]="autocomplete() || null"
       />
       @if (helpText() && !errorMessage()) {
-        <div class="form-help">{{ helpText() }}</div>
+        <div [id]="id() + '-help'" class="form-help">{{ helpText() }}</div>
       }
       @if (errorMessage()) {
-        <div [id]="id() + '-error'" class="form-error">
+        <div [id]="id() + '-error'" class="form-error" role="alert" aria-live="polite">
+          <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
           {{ errorMessage() }}
         </div>
       }
@@ -76,6 +84,14 @@ import { CommonModule } from "@angular/common";
         color: var(--color-text-primary, var(--p-text-color));
         font-size: var(--font-body-sm, 0.875rem);
         transition: color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+        display: flex;
+        align-items: center;
+        gap: var(--space-1, 0.25rem);
+      }
+
+      .required-indicator {
+        color: var(--color-status-error, #ef4444);
+        font-weight: var(--font-weight-bold, 700);
       }
 
       .form-control {
@@ -195,6 +211,22 @@ export class InputComponent implements ControlValueAccessor {
   disabled = input<boolean>(false);
   invalid = input<boolean>(false);
   valid = input<boolean>(false);
+  required = input<boolean>(false);
+  autocomplete = input<string>();
+
+  /**
+   * Compute aria-describedby based on help text and error message
+   */
+  getAriaDescribedBy(): string | null {
+    const ids: string[] = [];
+    if (this.errorMessage()) {
+      ids.push(this.id() + '-error');
+    }
+    if (this.helpText() && !this.errorMessage()) {
+      ids.push(this.id() + '-help');
+    }
+    return ids.length > 0 ? ids.join(' ') : null;
+  }
 
   // Value signal for ControlValueAccessor
   value = signal<string>("");

@@ -1346,7 +1346,80 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     return "Senior";
   }
 
+  /**
+   * Validate current step before advancing
+   */
+  validateCurrentStep(): { valid: boolean; message?: string } {
+    const step = this.currentStep();
+    
+    switch (step) {
+      case 0: // Personal Info
+        if (!this.onboardingData.name?.trim()) {
+          return { valid: false, message: "Please enter your full name" };
+        }
+        if (!this.onboardingData.dateOfBirth) {
+          return { valid: false, message: "Please select your date of birth" };
+        }
+        return { valid: true };
+        
+      case 1: // Team & Position
+        if (!this.onboardingData.team) {
+          return { valid: false, message: "Please select your team" };
+        }
+        if (!this.onboardingData.position) {
+          return { valid: false, message: "Please select your primary position" };
+        }
+        if (!this.onboardingData.experience) {
+          return { valid: false, message: "Please select your experience level" };
+        }
+        if (this.isQBSelected() && !this.onboardingData.throwingArm) {
+          return { valid: false, message: "Please select your throwing arm" };
+        }
+        return { valid: true };
+        
+      case 2: // Physical Measurements
+        if (this.onboardingData.unitSystem === "metric") {
+          if (!this.onboardingData.heightCm) {
+            return { valid: false, message: "Please enter your height" };
+          }
+          if (!this.onboardingData.weightKg) {
+            return { valid: false, message: "Please enter your weight" };
+          }
+        } else {
+          if (!this.onboardingData.heightFt && !this.onboardingData.heightIn) {
+            return { valid: false, message: "Please enter your height" };
+          }
+          if (!this.onboardingData.weightLbs) {
+            return { valid: false, message: "Please enter your weight" };
+          }
+        }
+        return { valid: true };
+        
+      case 5: // Goals
+        if (this.onboardingData.goals.length === 0) {
+          return { valid: false, message: "Please select at least one training goal" };
+        }
+        return { valid: true };
+        
+      case 6: // Schedule
+        if (!this.onboardingData.scheduleType) {
+          return { valid: false, message: "Please select your schedule type" };
+        }
+        return { valid: true };
+        
+      default:
+        return { valid: true };
+    }
+  }
+
   nextStep(): void {
+    // Validate current step before advancing
+    const validation = this.validateCurrentStep();
+    if (!validation.valid) {
+      this.toastService.warn(validation.message || "Please complete all required fields");
+      return;
+    }
+    
     if (this.currentStep() < this.steps().length - 1) {
       const steps = this.steps();
       steps[this.currentStep()].completed = true;
