@@ -706,7 +706,7 @@ export class CoachComponent implements OnInit {
    */
   requestDataSharing(member: TeamMember): void {
     this.toastService.info(`Sending data sharing request to ${member.name}...`);
-    this.router.navigate(['/help/privacy-sharing'], { 
+    this.router.navigate(['/settings/privacy'], { 
       queryParams: { player: member.id, action: 'request' } 
     });
   }

@@ -5,6 +5,17 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
 const { createErrorResponse } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
+// Handler registry pattern - cleaner than switch statement
+const ENDPOINT_HANDLERS = {
+  measurements: handleMeasurements,
+  "performance-tests": handlePerformanceTests,
+  wellness: handleWellness,
+  supplements: handleSupplements,
+  injuries: handleInjuries,
+  trends: handleTrends,
+  export: handleExport,
+};
+
 exports.handler = async (event, context) => {
   // Determine rate limit type based on HTTP method
   const rateLimitType = event.httpMethod === "GET" ? "READ" : "CREATE";
@@ -19,64 +30,19 @@ exports.handler = async (event, context) => {
       const pathSegments = path.split("/").filter(Boolean);
       const endpoint = pathSegments[pathSegments.length - 1];
 
-      let response;
+      // Use handler registry instead of switch statement
+      const handler = ENDPOINT_HANDLERS[endpoint];
 
-      switch (endpoint) {
-        case "measurements":
-          response = await handleMeasurements(
-            httpMethod,
-            userId,
-            body,
-            queryStringParameters,
-          );
-          break;
-        case "performance-tests":
-          response = await handlePerformanceTests(
-            httpMethod,
-            userId,
-            body,
-            queryStringParameters,
-          );
-          break;
-        case "wellness":
-          response = await handleWellness(
-            httpMethod,
-            userId,
-            body,
-            queryStringParameters,
-          );
-          break;
-        case "supplements":
-          response = await handleSupplements(
-            httpMethod,
-            userId,
-            body,
-            queryStringParameters,
-          );
-          break;
-        case "injuries":
-          response = await handleInjuries(
-            httpMethod,
-            userId,
-            body,
-            queryStringParameters,
-          );
-          break;
-        case "trends":
-          response = await handleTrends(
-            httpMethod,
-            userId,
-            queryStringParameters,
-          );
-          break;
-        case "export":
-          response = await handleExport(userId, queryStringParameters);
-          break;
-        default:
-          return createErrorResponse("Endpoint not found", 404, "not_found");
+      if (!handler) {
+        return createErrorResponse("Endpoint not found", 404, "not_found");
       }
 
-      return response;
+      // Special handling for export endpoint (different signature)
+      if (endpoint === "export") {
+        return await handler(userId, queryStringParameters);
+      }
+
+      return await handler(httpMethod, userId, body, queryStringParameters);
     },
   });
 };
@@ -1115,13 +1081,21 @@ function calculateMeasurementsSummary(measurements) {
 }
 
 function calculatePerformanceTrends(tests) {
-  const trends = {};
-  const testTypes = [...new Set(tests.map((t) => t.testType))];
+  // Group tests by type in single pass O(n) instead of O(n²)
+  const testsByType = tests.reduce((acc, test) => {
+    if (!acc[test.testType]) {
+      acc[test.testType] = [];
+    }
+    acc[test.testType].push(test);
+    return acc;
+  }, {});
 
-  testTypes.forEach((type) => {
-    const typeTests = tests
-      .filter((t) => t.testType === type)
-      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+  const trends = {};
+
+  // Process each group
+  Object.entries(testsByType).forEach(([type, typeTests]) => {
+    // Sort once per type
+    typeTests.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
     if (typeTests.length >= 2) {
       const latest = typeTests[typeTests.length - 1].result;
@@ -1145,14 +1119,30 @@ function calculateWellnessAverages(wellness) {
   }
 
   const metrics = ["sleep", "energy", "stress", "soreness", "motivation"];
-  const averages = {};
 
+  // Single pass through wellness data O(n) instead of O(n*m) where m = metrics
+  const sums = {};
+  const counts = {};
+
+  metrics.forEach(metric => {
+    sums[metric] = 0;
+    counts[metric] = 0;
+  });
+
+  wellness.forEach((w) => {
+    metrics.forEach((metric) => {
+      if (w[metric] !== null && w[metric] !== undefined) {
+        sums[metric] += w[metric];
+        counts[metric]++;
+      }
+    });
+  });
+
+  const averages = {};
   metrics.forEach((metric) => {
-    const values = wellness.map((w) => w[metric]).filter((v) => v !== null);
-    averages[metric] =
-      values.length > 0
-        ? (values.reduce((sum, v) => sum + v, 0) / values.length).toFixed(1)
-        : null;
+    averages[metric] = counts[metric] > 0
+      ? (sums[metric] / counts[metric]).toFixed(1)
+      : null;
   });
 
   return averages;

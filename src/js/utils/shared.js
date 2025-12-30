@@ -78,27 +78,50 @@ export function setSafeContent(element, content, isHTML = false, allowRichText =
   // Clear existing content
   element.textContent = '';
 
-  if (!content) {return;}
+  if (content === null || content === undefined) {return;}
 
   if (isHTML && allowRichText) {
-    // For trusted HTML content (e.g., from database, not user input)
-    // Use a temporary container to sanitize
-    const temp = document.createElement('div');
-    // eslint-disable-next-line no-restricted-syntax
-    temp.innerHTML = escapeHtml(content);
+    // For trusted HTML content (e.g., from local config, NOT user input)
+    // We still sanitize to be safe
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+    
+    // Only allow specific safe tags and attributes
+    const allowedTags = ['b', 'i', 'em', 'strong', 'br', 'p', 'span', 'div', 'ul', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+    const allowedAttrs = ['style', 'class', 'id']; // Be careful with style
 
-    // Only allow specific safe tags
-    const allowedTags = ['b', 'i', 'em', 'strong', 'br', 'p', 'span', 'div'];
-    const children = Array.from(temp.childNodes);
-
-    children.forEach(child => {
-      if (child.nodeType === Node.TEXT_NODE ||
-          (child.nodeType === Node.ELEMENT_NODE && allowedTags.includes(child.tagName.toLowerCase()))) {
-        element.appendChild(child.cloneNode(true));
+    const sanitize = (node) => {
+      const sanitizedNode = node.cloneNode(false);
+      
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const tag = node.tagName.toLowerCase();
+        if (!allowedTags.includes(tag)) {
+          return document.createTextNode(node.textContent);
+        }
+        
+        // Sanitize attributes
+        if (sanitizedNode.attributes) {
+          Array.from(sanitizedNode.attributes).forEach(attr => {
+            if (!allowedAttrs.includes(attr.name.toLowerCase())) {
+              sanitizedNode.removeAttribute(attr.name);
+            }
+          });
+        }
       }
+      
+      Array.from(node.childNodes).forEach(child => {
+        sanitizedNode.appendChild(sanitize(child));
+      });
+      
+      return sanitizedNode;
+    };
+
+    const sanitizedBody = sanitize(doc.body);
+    Array.from(sanitizedBody.childNodes).forEach(child => {
+      element.appendChild(child.cloneNode(true));
     });
   } else if (isHTML) {
-    // Escape HTML but preserve line breaks
+    // Treat as plain text even if isHTML is true, unless allowRichText is also true
     element.textContent = content;
   } else {
     // Plain text - safest option

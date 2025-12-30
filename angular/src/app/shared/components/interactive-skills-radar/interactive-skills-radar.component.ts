@@ -308,7 +308,7 @@ export class InteractiveSkillsRadarComponent {
     const category = skillToCategory[subSkill.name] || "general";
 
     // Navigate to exercise library filtered by skill
-    this.router.navigate(["/exercises"], {
+    this.router.navigate(["/exercise-library"], {
       queryParams: { category, skill: subSkill.name },
     });
   }

@@ -10,9 +10,8 @@ import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import {
   DataState,
-  DataWithState,
-  DataSourceService,
 } from '../../../core/services/data-source.service';
+import { DATA_STATE_MESSAGES, DataStateMessage, DataStateType } from '../../utils/privacy-ux-copy';
 
 /**
  * Data Source Banner Component
@@ -22,6 +21,8 @@ import {
  * - No data
  * - Insufficient data for reliable metrics
  * - Demo/mock data
+ * 
+ * Now uses centralized privacy-ux-copy.ts for all messages.
  * 
  * Based on PLAYER_DATA_SAFETY_GUIDE.md requirements.
  * 
@@ -252,6 +253,13 @@ export class DataSourceBannerComponent {
 
   private dismissed = false;
 
+  private getPrivacyMessage(): DataStateMessage {
+    const stateKey = (this.dataState === DataState.INSUFFICIENT_DATA ? 'INSUFFICIENT_DATA' : 
+                     this.dataState === DataState.NO_DATA ? 'NO_DATA' :
+                     this.dataState === DataState.DEMO_DATA ? 'DEMO_DATA' : 'REAL_DATA') as DataStateType;
+    return DATA_STATE_MESSAGES[stateKey];
+  }
+
   // Computed properties
   shouldShow = computed(() => {
     if (this.dismissed) return false;
@@ -269,34 +277,16 @@ export class DataSourceBannerComponent {
   });
 
   icon = computed(() => {
-    switch (this.dataState) {
-      case DataState.NO_DATA: return 'pi-inbox';
-      case DataState.INSUFFICIENT_DATA: return 'pi-exclamation-triangle';
-      case DataState.DEMO_DATA: return 'pi-info-circle';
-      case DataState.REAL_DATA: return 'pi-check-circle';
-    }
+    return this.getPrivacyMessage().icon || 'pi-info-circle';
   });
 
   title = computed(() => {
-    switch (this.dataState) {
-      case DataState.NO_DATA: return 'No Data Available';
-      case DataState.INSUFFICIENT_DATA: return 'Building Your Data Profile';
-      case DataState.DEMO_DATA: return '⚠️ Demo Data - Not Your Real Metrics';
-      case DataState.REAL_DATA: return 'Real Data';
-    }
+    return this.getPrivacyMessage().title;
   });
 
   message = computed(() => {
-    switch (this.dataState) {
-      case DataState.NO_DATA:
-        return `Start logging your training to see ${this.metricName}. We need real data to provide accurate insights.`;
-      case DataState.INSUFFICIENT_DATA:
-        return `We're collecting data to calculate your ${this.metricName}. Keep logging your training!`;
-      case DataState.DEMO_DATA:
-        return `These are example values for demonstration purposes only. They do not reflect your actual performance.`;
-      case DataState.REAL_DATA:
-        return `Your ${this.metricName} are calculated from your actual training data.`;
-    }
+    const msg = this.getPrivacyMessage();
+    return msg.reason.replace('training data', this.metricName + ' data');
   });
 
   showProgress = computed(() => {

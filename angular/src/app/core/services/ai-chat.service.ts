@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { Observable, of, BehaviorSubject } from "rxjs";
+import { Observable, of } from "rxjs";
 import { map, catchError, tap } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 
@@ -97,16 +97,18 @@ interface ChatApiResponse {
 export class AiChatService {
   private apiService = inject(ApiService);
 
-  // State
-  private currentSessionSubject = new BehaviorSubject<ChatSession | null>(null);
-  readonly currentSession$ = this.currentSessionSubject.asObservable();
+  // State - All using signals for consistent reactivity
+  private currentSession = signal<ChatSession | null>(null);
 
   loading = signal(false);
   error = signal<string | null>(null);
 
-  // Computed
-  messages = computed(() => this.currentSessionSubject.value?.messages || []);
-  sessionId = computed(() => this.currentSessionSubject.value?.id || null);
+  // Computed signals
+  messages = computed(() => this.currentSession()?.messages || []);
+  sessionId = computed(() => this.currentSession()?.id || null);
+
+  // For backward compatibility with components using Observable pattern
+  readonly currentSession$ = computed(() => this.currentSession());
 
   /**
    * Send a message to the AI coach
@@ -179,7 +181,7 @@ export class AiChatService {
    * Start a new chat session
    */
   startNewSession(): void {
-    this.currentSessionSubject.next({
+    this.currentSession.set({
       id: "",
       startedAt: new Date(),
       messages: [],
@@ -201,7 +203,7 @@ export class AiChatService {
               startedAt: new Date(),
               messages: response.data.messages || [],
             };
-            this.currentSessionSubject.next(session);
+            this.currentSession.set(session);
             return session;
           }
           return null;
@@ -218,7 +220,7 @@ export class AiChatService {
    * Clear current session
    */
   clearSession(): void {
-    this.currentSessionSubject.next(null);
+    this.currentSession.set(null);
     this.error.set(null);
   }
 
@@ -239,15 +241,15 @@ export class AiChatService {
    * Add message to current session
    */
   private addMessageToSession(message: ChatMessage): void {
-    const currentSession = this.currentSessionSubject.value;
-    if (currentSession) {
-      this.currentSessionSubject.next({
-        ...currentSession,
-        messages: [...currentSession.messages, message],
-      });
+    const session = this.currentSession();
+    if (session) {
+      this.currentSession.update(current => ({
+        ...current!,
+        messages: [...current!.messages, message],
+      }));
     } else {
       // Create new session with this message
-      this.currentSessionSubject.next({
+      this.currentSession.set({
         id: "",
         startedAt: new Date(),
         messages: [message],
@@ -259,12 +261,12 @@ export class AiChatService {
    * Update session ID (after first message)
    */
   private updateSessionId(sessionId: string): void {
-    const currentSession = this.currentSessionSubject.value;
-    if (currentSession && !currentSession.id) {
-      this.currentSessionSubject.next({
-        ...currentSession,
+    const session = this.currentSession();
+    if (session && !session.id) {
+      this.currentSession.update(current => ({
+        ...current!,
         id: sessionId,
-      });
+      }));
     }
   }
 }

@@ -259,14 +259,17 @@ if (document.readyState === "loading") {
 }
 
 // Re-run after Lucide icons are created
-if (typeof lucide !== "undefined") {
+if (typeof lucide !== "undefined" && !window.lucide_patched) {
   const originalCreateIcons = lucide.createIcons;
   lucide.createIcons = function (...args) {
     const result = originalCreateIcons.apply(this, args);
-    setTimeout(() => {
+    // Use requestAnimationFrame to ensure DOM is updated before running fixes
+    requestAnimationFrame(() => {
       fixDecorativeIcons();
       fixIconOnlyButtons();
-    }, 100);
+    });
     return result;
   };
+  window.lucide_patched = true;
+  logger.info("Accessibility fixes: Lucide createIcons patched for auto-fixes.");
 }

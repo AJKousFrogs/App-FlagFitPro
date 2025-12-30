@@ -149,26 +149,9 @@ import { ButtonModule } from "primeng/button";
           <div class="footer-links">
             <h4>Resources</h4>
             <ul>
-              <li><a href="/docs/PRIVACY_POLICY.md" target="_blank">Privacy Policy</a></li>
-              <li><a href="/docs/TERMS_OF_USE.md" target="_blank">Terms of Use</a></li>
+              <li><a routerLink="/settings/privacy">Privacy Settings</a></li>
               <li><a href="mailto:support&#64;flagfitpro.com">Contact Support</a></li>
             </ul>
-          </div>
-
-          <!-- Social -->
-          <div class="footer-social">
-            <h4>Connect With Us</h4>
-            <div class="social-icons">
-              <a href="https://twitter.com" target="_blank" aria-label="Twitter">
-                <i class="pi pi-twitter"></i>
-              </a>
-              <a href="https://instagram.com" target="_blank" aria-label="Instagram">
-                <i class="pi pi-instagram"></i>
-              </a>
-              <a href="https://youtube.com" target="_blank" aria-label="YouTube">
-                <i class="pi pi-youtube"></i>
-              </a>
-            </div>
           </div>
         </div>
 
@@ -631,7 +614,7 @@ import { ButtonModule } from "primeng/button";
 
       .footer-grid {
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr 1fr;
         gap: var(--space-10);
         margin-bottom: var(--space-10);
       }
@@ -671,8 +654,7 @@ import { ButtonModule } from "primeng/button";
         margin: 0;
       }
 
-      .footer-links h4,
-      .footer-social h4 {
+      .footer-links h4 {
         font-size: var(--font-body-md);
         font-weight: var(--font-weight-semibold);
         color: var(--text-primary);
@@ -700,31 +682,6 @@ import { ButtonModule } from "primeng/button";
       .footer-links a:hover {
         color: var(--color-brand-primary);
         transform: translateX(4px);
-      }
-
-      .social-icons {
-        display: flex;
-        gap: var(--space-3);
-      }
-
-      .social-icons a {
-        width: 44px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        background: var(--surface-secondary);
-        color: var(--text-secondary);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        font-size: 1.1rem;
-      }
-
-      .social-icons a:hover {
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
-        color: white;
-        transform: translateY(-4px);
-        box-shadow: 0 10px 20px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.3);
       }
 
       .footer-bottom {
@@ -792,10 +749,6 @@ import { ButtonModule } from "primeng/button";
         .footer-grid {
           grid-template-columns: 1fr;
           text-align: center;
-        }
-
-        .social-icons {
-          justify-content: center;
         }
 
         .features-grid {

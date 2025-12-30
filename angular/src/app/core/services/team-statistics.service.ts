@@ -8,6 +8,12 @@ import { LoggerService } from './logger.service';
 // INTERFACES
 // ============================================================================
 
+export interface ConsentInfo {
+  blockedPlayerIds: string[];
+  blockedCount: number;
+  accessibleCount: number;
+}
+
 export interface TeamOverviewStats {
   teamId: string;
   teamName: string;
@@ -39,6 +45,10 @@ export interface TeamOverviewStats {
   avgTeamWorkload: number;
   playersAtRisk: number;
   trainingConsistency: number;
+
+  // Consent
+  consentInfo?: ConsentInfo;
+  dataState?: string;
 }
 
 export interface PlayerPerformanceStats {
@@ -64,6 +74,9 @@ export interface PlayerPerformanceStats {
   
   // Position-specific stats (varies by position)
   positionStats: PositionStats;
+
+  // Consent
+  _consentBlocked?: boolean;
 }
 
 export interface PositionStats {
@@ -176,7 +189,11 @@ export class TeamStatisticsService {
       .pipe(
         map(response => {
           if (response.success && response.data) {
-            return response.data;
+            return {
+              ...response.data,
+              consentInfo: response.data.consentInfo,
+              dataState: response.data.dataState
+            };
           }
           return this.getMockTeamOverview();
         }),
@@ -190,18 +207,24 @@ export class TeamStatisticsService {
   /**
    * Get all players with their performance statistics
    */
-  getTeamPlayersStats(teamId: string): Observable<PlayerPerformanceStats[]> {
-    return this.apiService.get<PlayerPerformanceStats[]>(API_ENDPOINTS.coach.team, { teamId })
+  getTeamPlayersStats(teamId: string): Observable<{ members: PlayerPerformanceStats[], consentInfo?: ConsentInfo, dataState?: string }> {
+    return this.apiService.get<any>(API_ENDPOINTS.coach.team, { teamId })
       .pipe(
         map(response => {
-          if (response.success && response.data && Array.isArray(response.data)) {
-            return this.processPlayersData(response.data);
+          if (response.success && response.data) {
+            const data = response.data;
+            const members = Array.isArray(data.members) ? data.members : (Array.isArray(data) ? data : []);
+            return {
+              members: this.processPlayersData(members),
+              consentInfo: data.consentInfo,
+              dataState: data.dataState
+            };
           }
-          return this.getMockPlayersStats();
+          return { members: this.getMockPlayersStats() };
         }),
         catchError(error => {
           this.logger.warn('Using mock players stats:', error);
-          return of(this.getMockPlayersStats());
+          return of({ members: this.getMockPlayersStats() });
         })
       );
   }

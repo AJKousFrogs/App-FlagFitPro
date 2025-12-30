@@ -1739,7 +1739,24 @@ export class CoachDashboardComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.teamOverview.set(data.overview);
-        this.players.set(data.players);
+        this.players.set(data.players.members);
+        
+        // Update consent info from players data
+        if (data.players.consentInfo) {
+          this.consentInfo.set({
+            blockedPlayerIds: data.players.consentInfo.blockedPlayerIds,
+            partialDataNotice: data.players.dataState === 'partial' ? 
+              'Some player data is hidden due to privacy settings.' : undefined
+          });
+        } else if (data.overview.consentInfo) {
+          // Fallback to overview consent info
+          this.consentInfo.set({
+            blockedPlayerIds: data.overview.consentInfo.blockedPlayerIds,
+            partialDataNotice: data.overview.dataState === 'partial' ? 
+              'Some player data is hidden due to privacy settings.' : undefined
+          });
+        }
+
         this.recentGames.set(data.recentGames);
         this.upcomingGames.set(data.upcomingGames);
         this.trainingSessions.set(data.trainingSessions);
@@ -1784,7 +1801,7 @@ export class CoachDashboardComponent implements OnInit {
    */
   requestDataSharing(playerId: string): void {
     this.toastService.info('Sending data sharing request to athlete...');
-    this.router.navigate(['/help/privacy-sharing'], { 
+    this.router.navigate(['/settings/privacy'], { 
       queryParams: { player: playerId, action: 'request' } 
     });
   }

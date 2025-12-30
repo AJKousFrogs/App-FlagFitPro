@@ -5,7 +5,7 @@
  */
 
 import { logger } from "../logger.js";
-import { mlPredictor } from "../ml-performance-predictor.js";
+// import { mlPredictor } from "../ml-performance-predictor.js"; // Legacy predictor ported to MlPerformancePredictorService in Angular
 import { ComponentWithCleanup } from "../event-cleanup-utils.js";
 
 export class QBTrainingModule extends ComponentWithCleanup {
@@ -203,10 +203,12 @@ export class QBTrainingModule extends ComponentWithCleanup {
       const performanceAnalysis = await this.analyzeQBPerformance(playerData);
 
       // Get ML predictions for improvement potential
-      const predictions = await mlPredictor.predictDecisionMaking(
-        playerData,
-        "QB",
-      );
+      // Legacy prediction call - ml-performance-predictor.js has been ported to Angular
+      // const predictions = await mlPredictor.predictDecisionMaking(
+      //   playerData,
+      //   "QB",
+      // );
+      const predictions = null;
 
       // Create personalized training plan
       const trainingPlan = {

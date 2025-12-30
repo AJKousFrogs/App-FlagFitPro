@@ -850,6 +850,6 @@ export class GameDayReadinessComponent implements OnInit {
   }
 
   viewGamePlan(): void {
-    this.router.navigate(['/game/tracker']);
+    this.router.navigate(['/game-tracker']);
   }
 }

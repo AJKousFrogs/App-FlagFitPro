@@ -5,7 +5,7 @@
  */
 
 import { logger } from "../logger.js";
-import { mlPredictor } from "../ml-performance-predictor.js";
+// import { mlPredictor } from "../ml-performance-predictor.js"; // Legacy predictor ported to MlPerformancePredictorService in Angular
 import { ComponentWithCleanup } from "../event-cleanup-utils.js";
 
 export class DBTrainingModule extends ComponentWithCleanup {
@@ -139,10 +139,12 @@ export class DBTrainingModule extends ComponentWithCleanup {
       const performanceAnalysis = await this.analyzeDBPerformance(playerData);
 
       // Get ML predictions for improvement areas
-      const predictions = await mlPredictor.predictDecisionMaking(
-        playerData,
-        "DB",
-      );
+      // Legacy prediction call - ml-performance-predictor.js has been ported to Angular
+      // const predictions = await mlPredictor.predictDecisionMaking(
+      //   playerData,
+      //   "DB",
+      // );
+      const predictions = null;
 
       // Create customized training plan
       const trainingPlan = {

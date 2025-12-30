@@ -47,20 +47,13 @@ function determineAccessContext(requesterId, targetUserId, teamId = null) {
     };
   }
 
-  // If teamId is provided, this is a coach context
-  if (teamId) {
-    return {
-      accessContext: AccessContext.COACH_TEAM_DATA,
-      requiresConsentFiltering: true,
-      isOwnData: false,
-    };
-  }
-
-  // Default to player own data context (will be filtered by RLS anyway)
+  // If requester is not the target user, it's a coach context
+  // Even if teamId is missing, we should treat it as coach context
+  // and let the reader handle it (it will likely fail if teamId is missing but required)
   return {
-    accessContext: AccessContext.PLAYER_OWN_DATA,
-    requiresConsentFiltering: false,
-    isOwnData: true,
+    accessContext: AccessContext.COACH_TEAM_DATA,
+    requiresConsentFiltering: true,
+    isOwnData: false,
   };
 }
 

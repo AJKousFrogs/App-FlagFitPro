@@ -1,12 +1,13 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import {
   CONSENT_BLOCKED_MESSAGES,
   PrivacyMessage,
   getConsentBlockedMessage,
+  UserRole
 } from '../../utils/privacy-ux-copy';
 
 /**
@@ -169,6 +170,7 @@ export class ConsentBlockedMessageComponent {
   @Input() variant: 'default' | 'inline' | 'card' = 'default';
   @Input() customMessage?: string;
   @Input() context: 'single_player' | 'team_partial' | 'health_data' = 'single_player';
+  @Input() role: UserRole = 'coach';
 
   /**
    * Get the appropriate privacy message based on context
@@ -180,7 +182,7 @@ export class ConsentBlockedMessageComponent {
     }
     
     // Use centralized helper for context-based message
-    return getConsentBlockedMessage('coach', this.context);
+    return getConsentBlockedMessage(this.role, this.context);
   }
 
   getTitle(): string {

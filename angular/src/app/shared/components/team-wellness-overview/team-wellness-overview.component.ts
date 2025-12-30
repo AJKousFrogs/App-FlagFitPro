@@ -228,7 +228,8 @@ interface TeamWellnessSummary {
                   icon="pi pi-arrow-right"
                   [rounded]="true"
                   [text]="true"
-                  [routerLink]="['/roster', athlete.id]"
+                  [routerLink]="['/roster']"
+                  [queryParams]="{ player: athlete.id }"
                   pTooltip="View athlete details"
                 ></p-button>
               </div>

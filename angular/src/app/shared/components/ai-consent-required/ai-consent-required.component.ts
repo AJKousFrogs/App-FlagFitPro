@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
+import { AI_PROCESSING_MESSAGES, PrivacyMessage } from '../../utils/privacy-ux-copy';
 
 /**
  * AI Consent Required Component
  * 
  * Displays a message when AI features are disabled due to missing consent.
  * Provides a link to privacy settings to enable AI processing.
+ * 
+ * Now uses centralized privacy-ux-copy.ts for all messages.
  * 
  * Usage:
  * <app-ai-consent-required
@@ -27,17 +30,17 @@ import { RouterLink } from '@angular/router';
   template: `
     <div class="ai-consent-required" [class]="variant">
       <div class="consent-icon">
-        <i class="pi pi-sparkles"></i>
+        <i [class]="'pi ' + getIcon()"></i>
       </div>
       <div class="consent-content">
-        <h4 class="consent-title">AI Processing Disabled</h4>
+        <h4 class="consent-title">{{ getTitle() }}</h4>
         <p class="consent-message">
           @if (featureName) {
             <strong>{{ featureName }}</strong> requires AI processing to work.
           } @else {
             This feature requires AI processing to work.
           }
-          You have disabled AI processing in your privacy settings.
+          {{ getReason() }}
         </p>
         <p class="consent-explanation">
           <small>
@@ -49,11 +52,11 @@ import { RouterLink } from '@angular/router';
         @if (showSettingsLink) {
           <div class="consent-actions">
             <p-button
-              label="Enable AI Processing"
+              [label]="getActionLabel()"
               icon="pi pi-cog"
               [outlined]="true"
               size="small"
-              routerLink="/settings/privacy"
+              [routerLink]="getHelpLink()"
             ></p-button>
             @if (showDismiss) {
               <p-button
@@ -166,7 +169,32 @@ export class AiConsentRequiredComponent {
   @Input() showSettingsLink = true;
   @Input() showDismiss = false;
   @Input() variant: 'default' | 'banner' | 'card' = 'default';
+  @Input() status: 'disabled' | 'not_consented' | 'consent_required' = 'consent_required';
   
   @Output() onDismiss = new EventEmitter<void>();
+
+  private getPrivacyMessage(): PrivacyMessage {
+    return AI_PROCESSING_MESSAGES[this.status] || AI_PROCESSING_MESSAGES.consentRequired;
+  }
+
+  getTitle(): string {
+    return this.getPrivacyMessage().title;
+  }
+
+  getReason(): string {
+    return this.getPrivacyMessage().reason;
+  }
+
+  getActionLabel(): string {
+    return this.getPrivacyMessage().actionLabel || 'Privacy Settings';
+  }
+
+  getHelpLink(): string {
+    return this.getPrivacyMessage().helpLink || '/settings/privacy#ai';
+  }
+
+  getIcon(): string {
+    return this.getPrivacyMessage().icon || 'pi-sparkles';
+  }
 }
 
