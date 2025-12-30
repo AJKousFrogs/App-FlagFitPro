@@ -1,1500 +1,691 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
-    <title>FlagFit Pro - Coach Analytics Dashboard (Black &amp; White)</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap"
-      rel="stylesheet"
-    >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FlagFit Pro Coach Analytics - Performance data and insights wireframe">
+    <title>FlagFit Pro - Coach Analytics Wireframe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wireframe-design-system.css">
     <style>
-      /* Black and White Coach Design System with Poppins Typography */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family:
-          "Poppins",
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
-        font-weight: 400;
-        font-size: 16px;
-        color: #1a1a1a;
-        background-color: #ffffff;
-        min-height: 100vh;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-
-      /* Typography Hierarchy - All Poppins */
-      h1 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        line-height: 1.2;
-        color: #1a1a1a;
-        margin-bottom: 1rem;
-      }
-
-      h2 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.875rem;
-        line-height: 1.3;
-        color: #1a1a1a;
-        margin-bottom: 0.75rem;
-      }
-
-      h3 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h4 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.25rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h5 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.125rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
-      }
-
-      p,
-      .body-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 1rem;
-        line-height: 1.6;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .small-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        color: #6b6b6b;
-      }
-
-      .caption {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.75rem;
-        line-height: 1.4;
-        color: #8a8a8a;
-      }
-
-      /* Black and White Design Variables */
-      :root {
-        --coach-primary: #1a1a1a;
-        --coach-secondary: #4a4a4a;
-        --coach-accent: #6b6b6b;
-        --coach-success: #1a1a1a;
-        --coach-warning: #1a1a1a;
-        --coach-danger: #1a1a1a;
-        --coach-dark: #1a1a1a;
-        --coach-light: #ffffff;
-        --shadow-coach: 0 10px 25px rgba(0, 0, 0, 0.1);
-        --border-coach: 2px solid #e5e5e5;
-      }
-
-      /* Header &amp; Navigation */
-      .coach-header {
-        background-color: #ffffff;
-        border-bottom: 2px solid #e5e5e5;
-        padding: 1rem 2rem;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .coach-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .coach-logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-      }
-
-      .coach-nav-tabs {
-        display: flex;
-        gap: 2rem;
-      }
-
-      .nav-tab {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        padding: 12px 24px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: #6b6b6b;
-        transition: all 0.3s ease;
-        border: none;
-        background: none;
-        cursor: pointer;
-      }
-
-      .nav-tab.active {
-        background-color: #1a1a1a;
-        color: #ffffff;
-      }
-
-      .nav-tab:hover:not(.active) {
-        background-color: #e5e5e5;
-        color: #1a1a1a;
-      }
-
-      .coach-user-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .coach-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.125rem;
-      }
-
-      /* Main Container */
-      .coach-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem;
-      }
-
+      /* Page-specific styles */
       .page-header {
-        margin-bottom: 2rem;
+        padding: var(--space-8) 0;
+        border-bottom: var(--border-default);
+        margin-bottom: var(--space-8);
       }
 
-      .page-title {
-        font-family: "Poppins", sans-serif;
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      .page-subtitle {
-        font-family: "Poppins", sans-serif;
-        font-size: 1.125rem;
-        color: #4a4a4a;
-        font-weight: 400;
-      }
-
-      /* Analytics Overview Cards */
-      .analytics-overview-grid {
+      /* Overview Grid */
+      .overview-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
       .overview-card {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
-        transition: all 0.3s ease;
-        position: relative;
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        transition: all var(--transition-normal);
       }
 
       .overview-card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-black);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
       }
 
-      .card-header {
+      .overview-card .card-icon {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-3);
+      }
+
+      .overview-card .card-value {
+        font-size: var(--font-size-4xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        line-height: 1;
+        margin-bottom: var(--space-2);
+      }
+
+      .overview-card .card-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-3);
+      }
+
+      .overview-card .card-trend {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 1.5rem;
+        gap: var(--space-2);
       }
 
-      .card-icon {
-        font-size: 2rem;
-        /* Emojis keep their natural colors */
-      }
-
-      .card-icon-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .card-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-        color: #1a1a1a;
-      }
-
-      .card-metric {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-        display: block;
-      }
-
-      .card-description {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .card-trend {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.875rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      /* Performance Charts */
-      .performance-charts {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-      }
-
-      .section-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: 1rem;
-      }
-
-      .btn {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 12px 24px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .btn-primary {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      .btn-primary:hover {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .btn-secondary {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .btn-secondary:hover {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
+      /* Charts Section */
+      .charts-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
       .charts-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 2rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-6);
+        margin-top: var(--space-4);
       }
 
-      .chart-container {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 1px solid #e5e5e5;
+      .chart-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
       }
 
       .chart-header {
         display: flex;
-        justify-content: between;
+        justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: var(--space-4);
       }
 
       .chart-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
       }
 
       .chart-period {
-        font-family: "Poppins", sans-serif;
-        color: #6b6b6b;
-        font-size: 0.875rem;
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
       }
 
-      .chart-visualization {
-        height: 200px;
-        background-color: #f9f9f9;
-        border-radius: 8px;
+      .chart-placeholder {
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-8);
+        text-align: center;
+        color: var(--color-text-muted);
+        min-height: 200px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #6b6b6b;
-        font-family: "Poppins", sans-serif;
-        font-style: italic;
-        margin-bottom: 1rem;
-        text-align: center;
-      }
-
-      .chart-insights {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .insight-item {
-        text-align: center;
-      }
-
-      .insight-value {
-        font-family: "Poppins", sans-serif;
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-
-      .insight-label {
-        font-family: "Poppins", sans-serif;
-        font-size: 0.75rem;
-        color: #6b6b6b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
       }
 
       /* Player Analytics */
       .player-analytics {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
-      .player-analytics-grid {
+      .player-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
       }
 
       .player-analytics-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 1px solid #e5e5e5;
-        transition: all 0.3s ease;
-        position: relative;
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
+        transition: all var(--transition-normal);
+        cursor: pointer;
       }
 
       .player-analytics-card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
       .player-header {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
       }
 
       .player-avatar {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background-color: #1a1a1a;
-        color: #ffffff;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--border-radius-full);
+        background: var(--color-gray-200);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-base);
       }
 
-      .player-info h3 {
-        font-family: "Poppins", sans-serif;
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
+      .player-info {
+        flex: 1;
+      }
+
+      .player-name {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
       }
 
       .player-position {
-        font-family: "Poppins", sans-serif;
-        color: #6b6b6b;
-        font-size: 0.875rem;
-        font-weight: 500;
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
       }
 
-      .analytics-metrics {
+      .player-metrics {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: var(--space-2);
       }
 
-      .metric-item {
+      .player-metric {
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-sm);
+        padding: var(--space-2);
         text-align: center;
-        padding: 1rem;
-        background-color: #f9f9f9;
-        border-radius: 8px;
       }
 
-      .metric-value {
-        font-family: "Poppins", sans-serif;
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1a1a1a;
-        display: block;
-        margin-bottom: 0.25rem;
+      .player-metric-value {
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+        font-size: var(--font-size-base);
       }
 
-      .metric-label {
-        font-family: "Poppins", sans-serif;
-        font-size: 0.75rem;
-        color: #6b6b6b;
+      .player-metric-label {
+        font-size: 10px;
+        color: var(--color-text-muted);
         text-transform: uppercase;
-        letter-spacing: 0.5px;
       }
 
-      .performance-trend {
+      .player-trend {
+        margin-top: var(--space-3);
+        padding-top: var(--space-3);
+        border-top: var(--border-default);
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin-bottom: 1rem;
+        gap: var(--space-2);
       }
 
-      .trend-indicator {
-        font-family: "Poppins", sans-serif;
-        padding: 0.25rem 0.5rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        background-color: #1a1a1a;
-        color: #ffffff;
-      }
-
-      .player-actions {
-        display: flex;
-        gap: 0.5rem;
-      }
-
-      .btn-small {
-        font-family: "Poppins", sans-serif;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
-        border-radius: 8px;
-      }
-
-      /* Olympic Analytics */
-      .olympic-analytics {
-        background-color: #fafafa;
-        border: 2px solid #1a1a1a;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
+      /* Olympic Qualification Analytics */
+      .olympic-section {
+        background: var(--color-gray-50);
+        border: var(--border-width-thick) solid var(--color-black);
+        border-radius: var(--border-radius-xl);
+        padding: var(--space-8);
+        margin-bottom: var(--space-8);
       }
 
       .olympic-header {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: var(--space-6);
       }
 
       .olympic-probability {
-        font-family: "Poppins", sans-serif;
-        font-size: 4rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
+        font-size: var(--font-size-5xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        margin: var(--space-4) 0;
       }
 
-      .olympic-status {
-        font-family: "Poppins", sans-serif;
-        font-size: 1.125rem;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .olympic-factors {
+      .olympic-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-6);
       }
 
-      .factor-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 1px solid #e5e5e5;
+      .olympic-card {
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
+        text-align: center;
       }
 
-      .factor-header {
-        display: flex;
-        justify-content: between;
-        align-items: center;
-        margin-bottom: 1rem;
+      .olympic-card-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
       }
 
-      .factor-name {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-
-      .factor-score {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        color: #1a1a1a;
-      }
-
-      .factor-progress {
-        width: 100%;
-        height: 8px;
-        background-color: #e5e5e5;
-        border-radius: 4px;
-        overflow: hidden;
-        margin-bottom: 0.5rem;
-      }
-
-      .progress-fill {
-        height: 100%;
-        background-color: #1a1a1a;
-        border-radius: 4px;
-        transition: width 0.3s ease;
-      }
-
-      .factor-detail {
-        font-family: "Poppins", sans-serif;
-        font-size: 0.875rem;
-        color: #4a4a4a;
+      .olympic-card-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin-top: var(--space-1);
       }
 
       /* Predictive Analytics */
-      .predictive-analytics {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
+      .predictive-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
       }
 
-      .predictions-grid {
+      .predictive-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
       }
 
-      .prediction-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 1px solid #e5e5e5;
+      .predictive-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
+        text-align: center;
       }
 
-      .prediction-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
+      .predictive-icon {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-2);
       }
 
-      .prediction-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        background-color: #f5f5f5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        /* Emojis keep their natural colors */
+      .predictive-title {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        font-size: var(--font-size-sm);
+        margin-bottom: var(--space-2);
       }
 
-      .prediction-info h3 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
+      .predictive-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+        margin-bottom: var(--space-2);
       }
 
-      .prediction-confidence {
-        font-family: "Poppins", sans-serif;
-        font-size: 0.875rem;
-        color: #6b6b6b;
+      .predictive-confidence {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
       }
 
-      .prediction-value {
-        font-family: "Poppins", sans-serif;
-        font-size: 2rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      .prediction-description {
-        font-family: "Poppins", sans-serif;
-        color: #4a4a4a;
-        font-size: 0.875rem;
-        margin-bottom: 1rem;
-      }
-
-      .prediction-factors {
-        background-color: #f9f9f9;
-        border-radius: 6px;
-        padding: 0.75rem;
-      }
-
-      .prediction-factors h4 {
-        font-family: "Poppins", sans-serif;
-        font-size: 0.75rem;
-        color: #1a1a1a;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.5rem;
-      }
-
-      .factor-list {
-        list-style: none;
-      }
-
-      .factor-list li {
-        font-family: "Poppins", sans-serif;
-        font-size: 0.75rem;
-        color: #4a4a4a;
-        margin-bottom: 0.25rem;
-      }
-
-      /* Responsive Design */
-      @media (max-width: 768px) {
-        .coach-container {
-          padding: 1rem;
-        }
-
-        .page-title {
-          font-size: 2rem;
-        }
-
-        .analytics-overview-grid {
-          grid-template-columns: 1fr;
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .overview-grid {
+          grid-template-columns: repeat(2, 1fr);
         }
 
         .charts-grid {
           grid-template-columns: 1fr;
         }
 
-        .player-analytics-grid {
+        .player-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .olympic-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .predictive-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .overview-grid {
           grid-template-columns: 1fr;
         }
 
-        .coach-nav-tabs {
-          display: none;
+        .player-grid {
+          grid-template-columns: 1fr;
         }
-      }
 
-      /* Animations */
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
+        .olympic-grid {
+          grid-template-columns: 1fr;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
 
-      .performance-charts,
-      .player-analytics,
-      .olympic-analytics,
-      .predictive-analytics {
-        animation: fadeInUp 0.6s ease-out;
+        .predictive-grid {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
-    <!-- Coach Header -->
-    <header class="coach-header">
-      <nav class="coach-nav">
-        <div class="coach-logo">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav-container">
+        <a href="#" class="nav-brand">
           <span>🏈</span>
-          <span>FlagFit Pro Coach</span>
-        </div>
-        <div class="coach-nav-tabs">
-          <button type="button" class="nav-tab">Team Management</button>
-          <button type="button" class="nav-tab">Training</button>
-          <button type="button" class="nav-tab">Games</button>
-          <button type="button" class="nav-tab active">Analytics</button>
-        </div>
-        <div class="coach-user-info">
-          <div class="coach-avatar">CJ</div>
-          <div style="font-family: &quot;Poppins&quot;, sans-serif">
-            <h4 style="font-weight: 600; color: #1a1a1a; margin-bottom: 0">
-              Coach Johnson
-            </h4>
-            <div style="font-weight: 400; color: #6b6b6b; font-size: 0.875rem">
-              Head Coach
-            </div>
-          </div>
-        </div>
-      </nav>
-    </header>
+          <span>FlagFit Pro</span>
+        </a>
 
-    <!-- Main Container -->
-    <div class="coach-container">
+        <ul class="nav-menu">
+          <li><a href="coach-dashboard-wireframe.html" class="nav-link">Dashboard</a></li>
+          <li><a href="coach-team-management-wireframe.html" class="nav-link">Team</a></li>
+          <li><a href="coach-training-wireframe.html" class="nav-link">Training</a></li>
+          <li><a href="coach-games-wireframe.html" class="nav-link">Games</a></li>
+          <li><a href="#" class="nav-link active">Analytics</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button type="button" class="btn btn-icon" aria-label="Search">🔍</button>
+          <button type="button" class="btn btn-icon" aria-label="Notifications">🔔</button>
+          <div class="avatar avatar-primary">CM</div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
       <!-- Page Header -->
-      <div class="page-header">
-        <h1 class="page-title">Analytics Dashboard</h1>
-        <p class="page-subtitle">
-          Deep insights and predictive analytics for Olympic preparation
-        </p>
-      </div>
+      <header class="page-header">
+        <h1>Analytics Dashboard 📊</h1>
+        <p>Deep insights into team and player performance</p>
+      </header>
 
-      <!-- Analytics Overview Grid -->
-      <div class="analytics-overview-grid">
+      <!-- Overview Grid -->
+      <section class="overview-grid">
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">📊</span>
-              <h3 class="card-title">Team Performance</h3>
-            </div>
-          </div>
-          <div class="card-metric">87/100</div>
-          <p class="card-description">Olympic Readiness Score</p>
-          <div class="card-trend trend-positive">
+          <div class="card-icon">📈</div>
+          <div class="card-value">87%</div>
+          <div class="card-label">Team Performance</div>
+          <div class="card-trend">
             <span>📈</span>
-            <span>+3 points this month</span>
+            <span>+5% this month</span>
           </div>
         </div>
 
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">🤝</span>
-              <h3 class="card-title">Team Chemistry</h3>
-            </div>
-          </div>
-          <div class="card-metric">8.4/10</div>
-          <p class="card-description">AI-Analyzed Cohesion</p>
-          <div class="card-trend trend-positive">
+          <div class="card-icon">🤝</div>
+          <div class="card-value">8.4</div>
+          <div class="card-label">Team Chemistry</div>
+          <div class="card-trend">
             <span>📈</span>
-            <span>+0.6 improvement this week</span>
+            <span>+0.3 this week</span>
           </div>
         </div>
 
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">👤</span>
-              <h3 class="card-title">Player Development</h3>
-            </div>
-          </div>
-          <div class="card-metric">92%</div>
-          <p class="card-description">Players Meeting Targets</p>
-          <div class="card-trend trend-positive">
-            <span>📈</span>
-            <span>11/12 players on track</span>
-          </div>
-        </div>
-
-        <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">🔮</span>
-              <h3 class="card-title">Win Probability</h3>
-            </div>
-          </div>
-          <div class="card-metric">78%</div>
-          <p class="card-description">Next Game Prediction</p>
-          <div class="card-trend trend-neutral">
+          <div class="card-icon">⚡</div>
+          <div class="card-value">92</div>
+          <div class="card-label">Player Development</div>
+          <div class="card-trend">
             <span>🎯</span>
-            <span>vs Fire Hawks (Dec 15)</span>
+            <span>Above target</span>
           </div>
         </div>
-      </div>
+
+        <div class="overview-card">
+          <div class="card-icon">🏆</div>
+          <div class="card-value">78%</div>
+          <div class="card-label">Win Probability</div>
+          <div class="card-trend">
+            <span>📊</span>
+            <span>Next game vs Germany</span>
+          </div>
+        </div>
+      </section>
 
       <!-- Performance Charts -->
-      <div class="performance-charts">
+      <section class="charts-section">
         <div class="section-header">
           <h2 class="section-title">
             <span>📈</span>
-            Performance Analytics
+            Performance Charts
           </h2>
-          <div class="action-buttons">
-            <button type="button" class="btn btn-secondary">
-              <span>📊</span>
-              Export Data
-            </button>
-            <button type="button" class="btn btn-primary">
-              <span>⚙️</span>
-              Customize Charts
-            </button>
+          <div class="filters">
+            <button type="button" class="filter-btn active">Week</button>
+            <button type="button" class="filter-btn">Month</button>
+            <button type="button" class="filter-btn">Season</button>
           </div>
         </div>
 
         <div class="charts-grid">
-          <div class="chart-container">
+          <div class="chart-card">
             <div class="chart-header">
-              <h3 class="chart-title">Olympic Performance Trend</h3>
-              <span class="chart-period">Last 10 Games</span>
+              <span class="chart-title">Olympic Performance Trend</span>
+              <span class="chart-period">Last 12 weeks</span>
             </div>
-            <div class="chart-visualization">
-              📈 Interactive Performance Chart
-              <br>
-              <small>Olympic Score: 82 → 87 (+5 points)</small>
-            </div>
-            <div class="chart-insights">
-              <div class="insight-item">
-                <div class="insight-value">87</div>
-                <div class="insight-label">Current Score</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">+5</div>
-                <div class="insight-label">Improvement</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">85</div>
-                <div class="insight-label">Olympic Target</div>
-              </div>
+            <div class="chart-placeholder">
+              📈 Performance Trend Chart
             </div>
           </div>
 
-          <div class="chart-container">
+          <div class="chart-card">
             <div class="chart-header">
-              <h3 class="chart-title">Team Chemistry Evolution</h3>
-              <span class="chart-period">Last 8 Weeks</span>
+              <span class="chart-title">Team Chemistry Evolution</span>
+              <span class="chart-period">Last 12 weeks</span>
             </div>
-            <div class="chart-visualization">
-              🤝 Team Chemistry Timeline
-              <br>
-              <small>Chemistry Score: 7.8 → 8.4 (+0.6)</small>
-            </div>
-            <div class="chart-insights">
-              <div class="insight-item">
-                <div class="insight-value">8.4</div>
-                <div class="insight-label">Current</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">3</div>
-                <div class="insight-label">AI Interventions</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">94%</div>
-                <div class="insight-label">Success Rate</div>
-              </div>
+            <div class="chart-placeholder">
+              🤝 Chemistry Evolution Chart
             </div>
           </div>
 
-          <div class="chart-container">
+          <div class="chart-card">
             <div class="chart-header">
-              <h3 class="chart-title">Speed Development</h3>
-              <span class="chart-period">Season Progress</span>
+              <span class="chart-title">Speed Development</span>
+              <span class="chart-period">40-yard dash times</span>
             </div>
-            <div class="chart-visualization">
-              ⚡ Speed Analytics Chart
-              <br>
-              <small>Avg 40-Yard: 4.65s → 4.52s (-0.13s)</small>
-            </div>
-            <div class="chart-insights">
-              <div class="insight-item">
-                <div class="insight-value">4.52s</div>
-                <div class="insight-label">Team Average</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">-0.13s</div>
-                <div class="insight-label">Improvement</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">4.50s</div>
-                <div class="insight-label">Olympic Target</div>
-              </div>
+            <div class="chart-placeholder">
+              🏃 Speed Development Chart
             </div>
           </div>
 
-          <div class="chart-container">
+          <div class="chart-card">
             <div class="chart-header">
-              <h3 class="chart-title">Injury Risk Analysis</h3>
-              <span class="chart-period">Real-time Monitoring</span>
+              <span class="chart-title">Injury Risk Analysis</span>
+              <span class="chart-period">Team overview</span>
             </div>
-            <div class="chart-visualization">
-              🏥 Injury Prevention Dashboard
-              <br>
-              <small>Current Team Risk: 12% (Low)</small>
-            </div>
-            <div class="chart-insights">
-              <div class="insight-item">
-                <div class="insight-value">12%</div>
-                <div class="insight-label">Risk Level</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">2</div>
-                <div class="insight-label">Current Injuries</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">85%</div>
-                <div class="insight-label">Prevention Score</div>
-              </div>
+            <div class="chart-placeholder">
+              🏥 Injury Risk Chart
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Player Analytics -->
-      <div class="player-analytics">
+      <section class="player-analytics">
         <div class="section-header">
           <h2 class="section-title">
-            <span>👤</span>
-            Individual Player Analytics
+            <span>👥</span>
+            Player Analytics
           </h2>
-          <div class="action-buttons">
-            <button type="button" class="btn btn-secondary">
-              <span>📋</span>
-              Player Reports
-            </button>
-            <button type="button" class="btn btn-primary">
-              <span>🎯</span>
-              Development Plans
-            </button>
-          </div>
+          <button type="button" class="btn btn-secondary btn-sm">View All Players</button>
         </div>
 
-        <div class="player-analytics-grid">
-          <!-- Player 1 Analytics -->
+        <div class="player-grid">
           <div class="player-analytics-card">
             <div class="player-header">
               <div class="player-avatar">MJ</div>
               <div class="player-info">
-                <h3>Marcus Johnson</h3>
+                <div class="player-name">Marcus Johnson</div>
                 <div class="player-position">Quarterback</div>
               </div>
             </div>
-            <div class="analytics-metrics">
-              <div class="metric-item">
-                <span class="metric-value">92</span>
-                <span class="metric-label">Olympic Score</span>
+            <div class="player-metrics">
+              <div class="player-metric">
+                <div class="player-metric-value">87%</div>
+                <div class="player-metric-label">Completion</div>
               </div>
-              <div class="metric-item">
-                <span class="metric-value">94%</span>
-                <span class="metric-label">Pass Accuracy</span>
+              <div class="player-metric">
+                <div class="player-metric-value">4.52s</div>
+                <div class="player-metric-label">40-Yard</div>
               </div>
-              <div class="metric-item">
-                <span class="metric-value">2.1s</span>
-                <span class="metric-label">Decision Speed</span>
+              <div class="player-metric">
+                <div class="player-metric-value">94</div>
+                <div class="player-metric-label">Rating</div>
               </div>
-              <div class="metric-item">
-                <span class="metric-value">87</span>
-                <span class="metric-label">Game IQ</span>
+              <div class="player-metric">
+                <div class="player-metric-value">12%</div>
+                <div class="player-metric-label">Injury Risk</div>
               </div>
             </div>
-            <div class="performance-trend">
-              <div class="trend-indicator trend-up">↗ Improving</div>
-              <span>+4 Olympic points this month</span>
-            </div>
-            <div class="player-actions">
-              <button type="button" class="btn btn-primary btn-small">
-                Detailed Analysis
-              </button>
-              <button type="button" class="btn btn-secondary btn-small">Training Plan</button>
+            <div class="player-trend">
+              <span>📈</span>
+              <span>+5% improvement this month</span>
             </div>
           </div>
 
-          <!-- Player 2 Analytics -->
           <div class="player-analytics-card">
             <div class="player-header">
-              <div class="player-avatar">SW</div>
+              <div class="player-avatar">SJ</div>
               <div class="player-info">
-                <h3>Sarah Williams</h3>
+                <div class="player-name">Sarah Johnson</div>
                 <div class="player-position">Wide Receiver</div>
               </div>
             </div>
-            <div class="analytics-metrics">
-              <div class="metric-item">
-                <span class="metric-value">85</span>
-                <span class="metric-label">Olympic Score</span>
+            <div class="player-metrics">
+              <div class="player-metric">
+                <div class="player-metric-value">92%</div>
+                <div class="player-metric-label">Catch Rate</div>
               </div>
-              <div class="metric-item">
-                <span class="metric-value">5.15s</span>
-                <span class="metric-label">40-Yard Dash</span>
+              <div class="player-metric">
+                <div class="player-metric-value">4.42s</div>
+                <div class="player-metric-label">40-Yard</div>
               </div>
-              <div class="metric-item">
-                <span class="metric-value">91%</span>
-                <span class="metric-label">Route Precision</span>
+              <div class="player-metric">
+                <div class="player-metric-value">98</div>
+                <div class="player-metric-label">Rating</div>
               </div>
-              <div class="metric-item">
-                <span class="metric-value">89%</span>
-                <span class="metric-label">Catch Rate</span>
+              <div class="player-metric">
+                <div class="player-metric-value">8%</div>
+                <div class="player-metric-label">Injury Risk</div>
               </div>
             </div>
-            <div class="performance-trend">
-              <div class="trend-indicator trend-up">↗ Improving</div>
-              <span>Speed improved 0.05s this month</span>
-            </div>
-            <div class="player-actions">
-              <button type="button" class="btn btn-primary btn-small">Speed Analysis</button>
-              <button type="button" class="btn btn-secondary btn-small">Olympic Focus</button>
+            <div class="player-trend">
+              <span>📈</span>
+              <span>Top performer this week</span>
             </div>
           </div>
 
-          <!-- Player 3 Analytics -->
           <div class="player-analytics-card">
             <div class="player-header">
-              <div class="player-avatar">DC</div>
+              <div class="player-avatar">AR</div>
               <div class="player-info">
-                <h3>David Chen</h3>
+                <div class="player-name">Alex Rivera</div>
                 <div class="player-position">Defensive Back</div>
               </div>
             </div>
-            <div class="analytics-metrics">
-              <div class="metric-item">
-                <span class="metric-value">76</span>
-                <span class="metric-label">Olympic Score</span>
+            <div class="player-metrics">
+              <div class="player-metric">
+                <div class="player-metric-value">85%</div>
+                <div class="player-metric-label">Coverage</div>
               </div>
-              <div class="metric-item">
-                <span class="metric-value">68%</span>
-                <span class="metric-label">Coverage Rate</span>
+              <div class="player-metric">
+                <div class="player-metric-value">4.48s</div>
+                <div class="player-metric-label">40-Yard</div>
               </div>
-              <div class="metric-item">
-                <span class="metric-value">0.42s</span>
-                <span class="metric-label">Reaction Time</span>
+              <div class="player-metric">
+                <div class="player-metric-value">89</div>
+                <div class="player-metric-label">Rating</div>
               </div>
-              <div class="metric-item">
-                <span class="metric-value">74</span>
-                <span class="metric-label">Agility Score</span>
-              </div>
-            </div>
-            <div class="performance-trend">
-              <div class="trend-indicator trend-stable">→ Stable</div>
-              <span>Needs focused improvement plan</span>
-            </div>
-            <div class="player-actions">
-              <button type="button" class="btn btn-primary btn-small">
-                Priority Training
-              </button>
-              <button type="button" class="btn btn-secondary btn-small">Gap Analysis</button>
-            </div>
-          </div>
-
-          <!-- Player 4 Analytics -->
-          <div class="player-analytics-card">
-            <div class="player-header">
-              <div class="player-avatar">ER</div>
-              <div class="player-info">
-                <h3>Emily Rodriguez</h3>
-                <div class="player-position">Wide Receiver</div>
+              <div class="player-metric">
+                <div class="player-metric-value">45%</div>
+                <div class="player-metric-label">Injury Risk</div>
               </div>
             </div>
-            <div class="analytics-metrics">
-              <div class="metric-item">
-                <span class="metric-value">88</span>
-                <span class="metric-label">Olympic Score</span>
-              </div>
-              <div class="metric-item">
-                <span class="metric-value">4.98s</span>
-                <span class="metric-label">40-Yard Dash</span>
-              </div>
-              <div class="metric-item">
-                <span class="metric-value">89%</span>
-                <span class="metric-label">Catch Rate</span>
-              </div>
-              <div class="metric-item">
-                <span class="metric-value">92%</span>
-                <span class="metric-label">Route Running</span>
-              </div>
-            </div>
-            <div class="performance-trend">
-              <div class="trend-indicator trend-down">↓ Injured</div>
-              <span>Ankle injury - 2 weeks recovery</span>
-            </div>
-            <div class="player-actions">
-              <button type="button" class="btn btn-primary btn-small">Recovery Plan</button>
-              <button type="button" class="btn btn-secondary btn-small">
-                Injury Analysis
-              </button>
+            <div class="player-trend">
+              <span>⚠️</span>
+              <span>Recovering from injury</span>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Olympic Analytics -->
-      <div class="olympic-analytics">
+      <!-- Olympic Qualification Analytics -->
+      <section class="olympic-section">
         <div class="olympic-header">
-          <h2 class="section-title">
-            <span>🏆</span>
-            Olympic Qualification Analytics
-          </h2>
+          <h2>🏆 Olympic Qualification Analytics</h2>
+          <p>AI-powered predictions for LA28 qualification</p>
           <div class="olympic-probability">78%</div>
-          <p class="olympic-status">
-            Team Qualification Probability for LA28 Olympics
-          </p>
-          <p
-            style="font-family: &quot;Poppins&quot;, sans-serif; color: #4a4a4a"
-          >
-            Based on current world ranking (#6) and performance trends
-          </p>
+          <p class="text-muted">Team Qualification Probability</p>
         </div>
 
-        <div class="olympic-factors">
-          <div class="factor-card">
-            <div class="factor-header">
-              <span class="factor-name">World Ranking Position</span>
-              <span class="factor-score">85/100</span>
-            </div>
-            <div class="factor-progress">
-              <div class="progress-fill" style="width: 85%"></div>
-            </div>
-            <p class="factor-detail">
-              #6 out of 16 qualifying teams - Inside Olympic zone
-            </p>
+        <div class="olympic-grid">
+          <div class="olympic-card">
+            <div class="olympic-card-value">#6</div>
+            <div class="olympic-card-label">World Ranking</div>
           </div>
-
-          <div class="factor-card">
-            <div class="factor-header">
-              <span class="factor-name">Performance Benchmarks</span>
-              <span class="factor-score">82/100</span>
-            </div>
-            <div class="factor-progress">
-              <div class="progress-fill" style="width: 82%"></div>
-            </div>
-            <p class="factor-detail">
-              Team average exceeds Olympic standards in 7/10 metrics
-            </p>
+          <div class="olympic-card">
+            <div class="olympic-card-value">87/100</div>
+            <div class="olympic-card-label">Olympic Score</div>
           </div>
-
-          <div class="factor-card">
-            <div class="factor-header">
-              <span class="factor-name">Team Chemistry</span>
-              <span class="factor-score">84/100</span>
-            </div>
-            <div class="factor-progress">
-              <div class="progress-fill" style="width: 84%"></div>
-            </div>
-            <p class="factor-detail">
-              8.4/10 - Well above Olympic requirement (8.0)
-            </p>
+          <div class="olympic-card">
+            <div class="olympic-card-value">4/6</div>
+            <div class="olympic-card-label">Standards Met</div>
           </div>
-
-          <div class="factor-card">
-            <div class="factor-header">
-              <span class="factor-name">Competition Experience</span>
-              <span class="factor-score">76/100</span>
-            </div>
-            <div class="factor-progress">
-              <div class="progress-fill" style="width: 76%"></div>
-            </div>
-            <p class="factor-detail">
-              Need more high-level international tournament experience
-            </p>
-          </div>
-
-          <div class="factor-card">
-            <div class="factor-header">
-              <span class="factor-name">Training Consistency</span>
-              <span class="factor-score">88/100</span>
-            </div>
-            <div class="factor-progress">
-              <div class="progress-fill" style="width: 88%"></div>
-            </div>
-            <p class="factor-detail">
-              92% practice attendance - Excellent commitment level
-            </p>
-          </div>
-
-          <div class="factor-card">
-            <div class="factor-header">
-              <span class="factor-name">Injury Management</span>
-              <span class="factor-score">73/100</span>
-            </div>
-            <div class="factor-progress">
-              <div class="progress-fill" style="width: 73%"></div>
-            </div>
-            <p class="factor-detail">
-              Current: 2 injuries - Focus on prevention protocols
-            </p>
+          <div class="olympic-card">
+            <div class="olympic-card-value">+12%</div>
+            <div class="olympic-card-label">Trend (3 months)</div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Predictive Analytics -->
-      <div class="predictive-analytics">
+      <section class="predictive-section">
         <div class="section-header">
           <h2 class="section-title">
             <span>🔮</span>
-            Predictive Analytics &amp; Forecasting
+            Predictive Analytics & Forecasting
           </h2>
-          <div class="action-buttons">
-            <button type="button" class="btn btn-secondary">
-              <span>⚙️</span>
-              Model Settings
-            </button>
-            <button type="button" class="btn btn-primary">
-              <span>📊</span>
-              Scenario Planning
-            </button>
-          </div>
+          <button type="button" class="btn btn-secondary btn-sm">Configure Models</button>
         </div>
 
-        <div class="predictions-grid">
-          <div class="prediction-card">
-            <div class="prediction-header">
-              <div class="prediction-icon wins">🏆</div>
-              <div class="prediction-info">
-                <h3>Season Win Prediction</h3>
-                <div class="prediction-confidence">87% Confidence</div>
-              </div>
-            </div>
-            <div class="prediction-value">11-3</div>
-            <div class="prediction-description">
-              Expected final record based on current trajectory and remaining
-              opponents.
-            </div>
-            <div class="prediction-factors">
-              <h4>Key Factors</h4>
-              <ul class="factor-list">
-                <li>• Current form (4-game win streak)</li>
-                <li>• Team chemistry improvement (+0.6)</li>
-                <li>• Opponent strength analysis</li>
-                <li>• Injury impact assessment</li>
-              </ul>
-            </div>
+        <div class="predictive-grid">
+          <div class="predictive-card">
+            <div class="predictive-icon">🏆</div>
+            <div class="predictive-title">Season Wins</div>
+            <div class="predictive-value">12-4</div>
+            <div class="predictive-confidence">85% confidence</div>
           </div>
 
-          <div class="prediction-card">
-            <div class="prediction-header">
-              <div class="prediction-icon performance">📈</div>
-              <div class="prediction-info">
-                <h3>Olympic Score Projection</h3>
-                <div class="prediction-confidence">91% Confidence</div>
-              </div>
-            </div>
-            <div class="prediction-value">92/100</div>
-            <div class="prediction-description">
-              Projected Olympic readiness score by European Championships (Sept
-              2025).
-            </div>
-            <div class="prediction-factors">
-              <h4>Growth Factors</h4>
-              <ul class="factor-list">
-                <li>• Current improvement rate (+3/month)</li>
-                <li>• Training program effectiveness</li>
-                <li>• Player development trajectories</li>
-                <li>• Competition schedule benefits</li>
-              </ul>
-            </div>
+          <div class="predictive-card">
+            <div class="predictive-icon">🏅</div>
+            <div class="predictive-title">Olympic Score</div>
+            <div class="predictive-value">91</div>
+            <div class="predictive-confidence">By Dec 2025</div>
           </div>
 
-          <div class="prediction-card">
-            <div class="prediction-header">
-              <div class="prediction-icon injury">🏥</div>
-              <div class="prediction-info">
-                <h3>Injury Risk Forecast</h3>
-                <div class="prediction-confidence">78% Confidence</div>
-              </div>
-            </div>
-            <div class="prediction-value">8%</div>
-            <div class="prediction-description">
-              Predicted team injury risk for next 4 weeks based on current load
-              and patterns.
-            </div>
-            <div class="prediction-factors">
-              <h4>Risk Factors</h4>
-              <ul class="factor-list">
-                <li>• Training load management</li>
-                <li>• Player fatigue indicators</li>
-                <li>• Historical injury patterns</li>
-                <li>• Recovery protocol effectiveness</li>
-              </ul>
-            </div>
+          <div class="predictive-card">
+            <div class="predictive-icon">🏥</div>
+            <div class="predictive-title">Injury Risk</div>
+            <div class="predictive-value">Low</div>
+            <div class="predictive-confidence">Next 30 days</div>
           </div>
 
-          <div class="prediction-card">
-            <div class="prediction-header">
-              <div class="prediction-icon chemistry">🤝</div>
-              <div class="prediction-info">
-                <h3>Team Chemistry Outlook</h3>
-                <div class="prediction-confidence">93% Confidence</div>
-              </div>
-            </div>
-            <div class="prediction-value">9.1/10</div>
-            <div class="prediction-description">
-              Expected team chemistry score by championship game based on
-              current AI interventions.
-            </div>
-            <div class="prediction-factors">
-              <h4>Enhancement Factors</h4>
-              <ul class="factor-list">
-                <li>• AI intervention success (94% rate)</li>
-                <li>• Team bonding activities</li>
-                <li>• Communication improvements</li>
-                <li>• Leadership development</li>
-              </ul>
-            </div>
+          <div class="predictive-card">
+            <div class="predictive-icon">🤝</div>
+            <div class="predictive-title">Team Chemistry</div>
+            <div class="predictive-value">8.8</div>
+            <div class="predictive-confidence">Projected peak</div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <!-- JavaScript -->
     <script>
-      // Tab navigation
-      document.querySelectorAll(".nav-tab").forEach((tab) => {
-        tab.addEventListener("click", function () {
-          document
-            .querySelectorAll(".nav-tab")
-            .forEach((t) => t.classList.remove("active"));
-          this.classList.add("active");
-
-          const tabName = this.textContent.trim();
-          console.log(`Navigating to ${tabName}`);
+      // Filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          console.log('Filter selected:', this.textContent);
         });
       });
 
-      // Chart container interactions
-      document.querySelectorAll(".chart-container").forEach((chart) => {
-        chart.addEventListener("click", function () {
-          console.log(
-            `Chart clicked: ${this.querySelector(".chart-title").textContent}`,
-          );
-          // Open detailed chart view
-        });
-      });
-
-      // Player analytics card interactions
-      document.querySelectorAll(".player-analytics-card").forEach((card) => {
-        card.addEventListener("click", function () {
-          console.log(
-            `Player analytics clicked: ${this.querySelector("h3").textContent}`,
-          );
-          // Open detailed player analytics
-        });
-      });
-
-      // Olympic factor interactions
-      document.querySelectorAll(".factor-card").forEach((card) => {
-        card.addEventListener("click", function () {
-          console.log(
-            `Olympic factor clicked: ${this.querySelector(".factor-name").textContent}`,
-          );
-          // Open detailed factor analysis
-        });
-      });
-
-      // Prediction card interactions
-      document.querySelectorAll(".prediction-card").forEach((card) => {
-        card.addEventListener("click", function () {
-          console.log(
-            `Prediction clicked: ${this.querySelector("h3").textContent}`,
-          );
-          // Open detailed prediction model
-        });
-      });
-
-      // Button interactions
-      document.querySelectorAll(".btn").forEach((btn) => {
-        btn.addEventListener("click", function (e) {
-          e.stopPropagation();
-          console.log(`Button clicked: ${this.textContent.trim()}`);
-
-          // Add click animation
-          this.style.transform = "translateY(-4px)";
-          setTimeout(() => {
-            this.style.transform = "";
-          }, 150);
-        });
-      });
-
-      // Initialize animations on page load
-      document.addEventListener("DOMContentLoaded", function () {
-        // Stagger card animations
-        const cards = document.querySelectorAll(
-          ".overview-card, .chart-container, .player-analytics-card, .factor-card, .prediction-card",
-        );
-        cards.forEach((card, index) => {
-          card.style.animationDelay = `${index * 0.1}s`;
-        });
-
-        // Animate progress bars
-        const progressBars = document.querySelectorAll(".progress-fill");
-        progressBars.forEach((bar, index) => {
-          setTimeout(() => {
-            bar.style.width = bar.style.width || "0%";
-          }, index * 100);
+      // Player card interactions
+      document.querySelectorAll('.player-analytics-card').forEach(card => {
+        card.addEventListener('click', function() {
+          console.log('Player clicked:', this.querySelector('.player-name').textContent);
         });
       });
     </script>
   </body>
+</html>
+
 </html>

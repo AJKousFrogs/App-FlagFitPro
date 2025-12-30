@@ -404,6 +404,7 @@ exports.handler = async (event, context) => {
       .upsert(
         {
           athlete_id: athleteId,
+          user_id: athleteId, // Standardized ID
           day: dayStr,
           score,
           level,

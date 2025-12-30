@@ -359,6 +359,8 @@ export class WellnessService {
 
   /**
    * Get wellness score (average of all metrics)
+   * @deprecated Use ReadinessService.calculateToday() for a full evidence-based readiness score.
+   * This method only provides a simplified average of wellness metrics.
    */
   getWellnessScore(data: WellnessData): number {
     const metrics = [
@@ -514,6 +516,7 @@ export class WellnessService {
 
   /**
    * Check if wellness data indicates training should be modified
+   * @deprecated Use ReadinessService or AcwrService for comprehensive training alerts.
    * Used by training components to show warnings
    */
   getTrainingAlert(data: WellnessData): {
@@ -584,6 +587,7 @@ export class WellnessService {
 
   /**
    * Calculate readiness score for training (0-100)
+   * @deprecated Use ReadinessService.calculateToday() for the unified evidence-based readiness score.
    * Based on Olympic athlete performance science
    */
   calculateReadinessScore(data: WellnessData): {

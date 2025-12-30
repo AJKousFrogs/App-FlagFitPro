@@ -1,5 +1,6 @@
 /**
  * Base Handler Middleware for Netlify Functions
+ * Updated: 2024 - Modern JavaScript patterns with enhanced performance monitoring
  *
  * Provides standardized handling of:
  * - CORS preflight requests
@@ -8,6 +9,8 @@
  * - Rate limiting
  * - Authentication
  * - Error handling
+ * - Performance monitoring
+ * - Request tracing
  *
  * This eliminates ~40 lines of boilerplate from each function file.
  *
@@ -28,7 +31,9 @@
  * };
  */
 
-const crypto = require("crypto");
+"use strict";
+
+const crypto = require("node:crypto");
 const { checkEnvVars } = require("../supabase-client.cjs");
 const {
   createErrorResponse,

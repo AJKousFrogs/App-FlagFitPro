@@ -1,37 +1,28 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "target": "ES2024",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "allowJs": true,
     "checkJs": false,
-    "jsx": "preserve",
     "strict": false,
     "noEmit": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "lib": ["ES2024"]
   },
-  "include": ["src/**/*", "routes/**/*", "scripts/**/*.js"],
+  "include": ["src/**/*", "routes/**/*", "scripts/**/*.js", "netlify/functions/**/*"],
   "exclude": [
     "node_modules",
-    "node_modules.old",
     "dist",
     ".netlify",
-    "database",
-    "docs",
     "angular",
-    "backups",
-    "tests",
     "**/*.test.js",
     "**/*.spec.js",
-    "**/*.d.ts",
-    "**/node_modules/**"
-  ],
-  "typeAcquisition": {
-    "enable": false
-  }
+    "**/*.d.ts"
+  ]
 }

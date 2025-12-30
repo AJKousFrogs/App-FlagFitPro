@@ -1,294 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
-    <meta
-      name="description"
-      content="Personal training wireframe for FlagFit Pro flag football skills development and workout planning"
-    >
-    <title>FlagFit Pro - Personal Training Journey (Black &amp; White)</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap"
-      rel="stylesheet"
-    >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FlagFit Pro Training - Personal training journey wireframe">
+    <title>FlagFit Pro - Training Wireframe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wireframe-design-system.css">
     <style>
-      /* Black and White Wireframe Design System with Poppins Typography */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      /* Page-specific styles */
+      .page-header {
+        padding: var(--space-8) 0;
+        border-bottom: var(--border-default);
+        margin-bottom: var(--space-8);
       }
 
-      body {
-        font-family:
-          "Poppins",
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
-        font-weight: 400;
-        font-size: 16px;
-        color: #1a1a1a;
-        background-color: #ffffff;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
+      /* Today's Focus Section */
+      .focus-section {
+        background: var(--color-gray-50);
+        border: var(--border-width-thick) solid var(--color-black);
+        border-radius: var(--border-radius-xl);
+        padding: var(--space-8);
+        margin-bottom: var(--space-8);
+        text-align: center;
       }
 
-      /* Typography Hierarchy - All Poppins */
-      h1 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        line-height: 1.2;
-        color: #1a1a1a;
-        margin-bottom: 1rem;
+      .focus-section h2 {
+        margin-bottom: var(--space-2);
       }
 
-      h2 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.875rem;
-        line-height: 1.3;
-        color: #1a1a1a;
-        margin-bottom: 0.75rem;
+      .focus-type {
+        font-size: var(--font-size-5xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        margin: var(--space-4) 0;
       }
 
-      h3 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h4 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.25rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h5 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.125rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
-      }
-
-      p,
-      .body-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 1rem;
-        line-height: 1.6;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .small-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        color: #6b6b6b;
-      }
-
-      .caption {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.75rem;
-        line-height: 1.4;
-        color: #8a8a8a;
-      }
-
-      /* CTA and Button Styles - Black and White */
-      .btn,
-      .cta-primary,
-      .cta-secondary {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 12px 24px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .cta-primary {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-primary:hover {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-secondary {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-secondary:hover {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      /* Layout Structure */
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-      }
-
-      /* Header */
-      .header {
-        background-color: #ffffff;
-        border-bottom: 2px solid #e5e5e5;
-        padding: 1rem 2rem;
-        margin-bottom: 2rem;
-      }
-
-      .nav {
+      .focus-details {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .logo {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 2rem;
-        list-style: none;
-      }
-
-      .nav-link {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #4a4a4a;
-        text-decoration: none;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-      }
-
-      .nav-link:hover,
-      .nav-link.active {
-        background-color: #f5f5f5;
-        color: #1a1a1a;
-      }
-
-      .user-profile {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        display: flex;
-        align-items: center;
         justify-content: center;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
+        gap: var(--space-8);
+        margin-top: var(--space-6);
       }
 
-      /* Personal Training Timeline - Unique Layout */
+      .focus-stat {
+        text-align: center;
+      }
+
+      .focus-stat-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+      }
+
+      .focus-stat-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+      }
+
+      /* Training Timeline */
       .training-timeline {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        margin-bottom: 3rem;
-      }
-
-      .today-focus {
-        background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
-        border: 3px solid #1a1a1a;
-        border-radius: 20px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        position: relative;
-      }
-
-      .focus-badge {
-        position: absolute;
-        top: -15px;
-        left: 2rem;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 0.875rem;
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
       .training-session {
         display: flex;
-        gap: 2rem;
-        align-items: center;
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
-        position: relative;
+        gap: var(--space-6);
+        padding: var(--space-6);
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        margin-bottom: var(--space-4);
+        transition: all var(--transition-normal);
       }
 
       .training-session:hover {
-        border-color: #1a1a1a;
-        transform: translateX(8px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-black);
+        box-shadow: var(--shadow-md);
+      }
+
+      .training-session.session-current {
+        border-color: var(--color-black);
+        border-width: var(--border-width-medium);
+        background: var(--color-gray-50);
       }
 
       .session-time {
-        min-width: 100px;
+        min-width: 80px;
         text-align: center;
       }
 
       .session-time-display {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: #1a1a1a;
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
         display: block;
-        margin-bottom: 0.25rem;
       }
 
       .session-duration {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #6b6b6b;
-        font-size: 0.75rem;
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
       }
 
       .session-content {
@@ -296,626 +111,691 @@
       }
 
       .session-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-2);
       }
 
       .session-description {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        margin-bottom: 0.75rem;
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        margin-bottom: var(--space-3);
       }
 
       .session-metrics {
         display: flex;
-        gap: 1rem;
         flex-wrap: wrap;
+        gap: var(--space-2);
       }
 
       .session-metric {
-        background-color: #f5f5f5;
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        color: #1a1a1a;
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-medium);
+        padding: var(--space-1) var(--space-2);
+        background: var(--color-gray-100);
+        border-radius: var(--border-radius-sm);
+        color: var(--color-text-secondary);
       }
 
       .session-status {
-        min-width: 80px;
-        text-align: center;
+        display: flex;
+        align-items: flex-start;
       }
 
       .status-badge {
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 0.75rem;
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--border-radius-full);
         text-transform: uppercase;
-      }
-
-      .status-active {
-        background-color: #1a1a1a;
-        color: #ffffff;
+        letter-spacing: 0.05em;
       }
 
       .status-completed {
-        background-color: #f5f5f5;
-        color: #1a1a1a;
-        border: 1px solid #e5e5e5;
+        background: var(--color-black);
+        color: var(--color-white);
+      }
+
+      .status-active {
+        background: var(--color-gray-200);
+        color: var(--color-black);
+        border: var(--border-width-medium) solid var(--color-black);
       }
 
       .status-upcoming {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
+        background: var(--color-gray-100);
+        color: var(--color-text-muted);
       }
 
       .timeline-connector {
         width: 2px;
-        height: 20px;
-        background-color: #e5e5e5;
+        height: 24px;
+        background: var(--color-gray-200);
         margin: 0 auto;
       }
 
-      .session-current {
-        border-color: #1a1a1a;
-        background-color: #fafafa;
+      /* Olympic Training Plans */
+      .olympic-plans {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
-      .session-current::before {
-        content: "";
-        position: absolute;
-        left: -8px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 4px;
-        height: 60%;
-        background-color: #1a1a1a;
-        border-radius: 2px;
-      }
-
-      /* Cards */
-      .card {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 2rem;
-        transition: all 0.3s ease;
-      }
-
-      .card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      }
-
-      .card-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .card-icon {
-        font-size: 2rem;
-        /* Emojis keep their natural colors */
-      }
-
-      .card-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-        color: #1a1a1a;
-      }
-
-      .card-metric {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      .card-description {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .card-trend {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.875rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      /* Sections */
-      .section {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e5e5e5;
-      }
-
-      .section-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-      }
-
-      /* Training Session Cards */
-      .session-card {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        transition: all 0.3s ease;
-      }
-
-      .session-card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-1px);
-      }
-
-      .session-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-
-      .session-type {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        font-size: 1.125rem;
-      }
-
-      .session-time {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #4a4a4a;
-        font-size: 0.875rem;
-      }
-
-      .session-details {
+      .plan-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-6);
+        margin-top: var(--space-6);
       }
 
-      .detail-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .detail-icon {
-        font-size: 1rem;
-        /* Emojis keep their natural colors */
-      }
-
-      .detail-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        font-size: 0.875rem;
-      }
-
-      /* Progress Bars */
-      .progress-bar {
-        width: 100%;
-        height: 8px;
-        background-color: #e5e5e5;
-        border-radius: 4px;
-        overflow: hidden;
-        margin: 0.5rem 0;
-      }
-
-      .progress-fill {
-        height: 100%;
-        background-color: #1a1a1a;
-        border-radius: 4px;
-        transition: width 0.3s ease;
-      }
-
-      /* Stats Grid */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-      }
-
-      .stat-item {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 1rem;
+      .plan-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
         text-align: center;
+        transition: all var(--transition-normal);
+        cursor: pointer;
       }
 
-      .stat-value {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-        display: block;
-        margin-bottom: 0.5rem;
+      .plan-card:hover {
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
-      .stat-label {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #4a4a4a;
-        font-size: 0.875rem;
+      .plan-card.active {
+        border-color: var(--color-black);
+        border-width: var(--border-width-medium);
+        background: var(--color-white);
       }
 
-      /* Olympic Section Styles */
-      .olympic-section {
-        background-color: #fafafa;
-        border: 2px solid #1a1a1a;
+      .plan-icon {
+        font-size: var(--font-size-4xl);
+        margin-bottom: var(--space-3);
       }
 
-      .olympic-metrics {
+      .plan-name {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-2);
+      }
+
+      .plan-duration {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-4);
+      }
+
+      .plan-progress {
+        margin-bottom: var(--space-2);
+      }
+
+      .plan-progress-label {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        margin-top: var(--space-2);
+      }
+
+      /* Main Content Grid */
+      .main-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
-      .olympic-metric {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 1.5rem;
+      /* Wearables Section */
+      .wearables-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+      }
+
+      .wearable-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .wearable-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-4);
         text-align: center;
+        transition: all var(--transition-normal);
       }
 
-      .metric-value {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2rem;
-        color: #1a1a1a;
-        display: block;
-        margin-bottom: 0.5rem;
+      .wearable-card:hover {
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
-      .metric-label {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #4a4a4a;
-        font-size: 0.875rem;
+      .wearable-icon {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-2);
       }
 
-      .metric-trend {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        color: #6b6b6b;
-        margin-top: 0.5rem;
+      .wearable-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
       }
 
-      /* Training Schedule */
-      .training-schedule {
+      .wearable-label {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        margin-top: var(--space-1);
+      }
+
+      .wearable-status {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        margin-top: var(--space-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-1);
+      }
+
+      /* AI Training Section */
+      .ai-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+      }
+
+      .ai-recommendation {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-4);
+        margin-bottom: var(--space-3);
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+      }
+
+      .ai-recommendation:last-child {
+        margin-bottom: 0;
+      }
+
+      .ai-icon {
+        font-size: var(--font-size-xl);
+        flex-shrink: 0;
+      }
+
+      .ai-content {
+        flex: 1;
+      }
+
+      .ai-title {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
+      }
+
+      .ai-description {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+      }
+
+      /* Weekly Schedule */
+      .weekly-schedule {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .schedule-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 1rem;
-        margin-top: 2rem;
+        gap: var(--space-3);
+        margin-top: var(--space-4);
       }
 
-      .day-column {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 1rem;
-        min-height: 300px;
-      }
-
-      .day-header {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
+      .schedule-day {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-3);
         text-align: center;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #e5e5e5;
-        margin-bottom: 1rem;
-      }
-
-      .training-slot {
-        background-color: #f5f5f5;
-        border: 1px solid #e5e5e5;
-        border-radius: 6px;
-        padding: 0.75rem;
-        margin-bottom: 0.5rem;
+        min-height: 120px;
+        transition: all var(--transition-normal);
         cursor: pointer;
-        transition: all 0.3s ease;
       }
 
-      .training-slot:hover {
-        border-color: #1a1a1a;
-        background-color: #ffffff;
+      .schedule-day:hover {
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
-      .slot-time {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        font-size: 0.875rem;
+      .schedule-day.today {
+        border-color: var(--color-black);
+        border-width: var(--border-width-medium);
+        background: var(--color-white);
       }
 
-      .slot-activity {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        font-size: 0.75rem;
-        margin-top: 0.25rem;
+      .schedule-day-name {
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: var(--space-1);
       }
 
-      /* Lists */
-      .feature-list {
-        list-style: none;
-        padding: 0;
+      .schedule-day-number {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+        margin-bottom: var(--space-2);
       }
 
-      .feature-item {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #f0f0f0;
+      .schedule-day-type {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
+      }
+
+      /* Injury Prevention */
+      .injury-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .injury-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .injury-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-4);
+        text-align: center;
+      }
+
+      .injury-icon {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-2);
+      }
+
+      .injury-status {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
+      }
+
+      .injury-label {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      /* Program Library */
+      .program-library {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .program-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .program-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-5);
+        transition: all var(--transition-normal);
+        cursor: pointer;
+      }
+
+      .program-card:hover {
+        border-color: var(--color-black);
+        background: var(--color-white);
+        transform: translateY(-2px);
+      }
+
+      .program-header {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--space-3);
+        margin-bottom: var(--space-3);
       }
 
-      .feature-icon {
-        font-size: 1rem;
-        /* Emojis keep their natural colors */
+      .program-icon {
+        font-size: var(--font-size-2xl);
       }
 
-      /* Responsive Design */
+      .program-info {
+        flex: 1;
+      }
+
+      .program-name {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+      }
+
+      .program-duration {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      .program-description {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        margin-bottom: var(--space-3);
+      }
+
+      .program-stats {
+        display: flex;
+        justify-content: space-between;
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      /* Performance Tracking */
+      .performance-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .performance-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .performance-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-4);
+        text-align: center;
+      }
+
+      .performance-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+      }
+
+      .performance-label {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        margin-top: var(--space-1);
+      }
+
+      .performance-trend {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
+        margin-top: var(--space-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-1);
+      }
+
+      /* Gear Recommendations */
+      .gear-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .gear-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .gear-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-4);
+        text-align: center;
+        transition: all var(--transition-normal);
+        cursor: pointer;
+      }
+
+      .gear-card:hover {
+        border-color: var(--color-black);
+        background: var(--color-white);
+      }
+
+      .gear-icon {
+        font-size: var(--font-size-3xl);
+        margin-bottom: var(--space-2);
+      }
+
+      .gear-name {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
+      }
+
+      .gear-brand {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      /* IFAF Section */
+      .ifaf-section {
+        background: var(--color-gray-50);
+        border: var(--border-width-medium) solid var(--color-black);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+      }
+
+      .ifaf-updates {
+        margin-top: var(--space-4);
+      }
+
+      .ifaf-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        margin-bottom: var(--space-3);
+      }
+
+      .ifaf-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .ifaf-icon {
+        font-size: var(--font-size-xl);
+        flex-shrink: 0;
+      }
+
+      .ifaf-content {
+        flex: 1;
+      }
+
+      .ifaf-title {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
+      }
+
+      .ifaf-description {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .plan-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .injury-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .program-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .performance-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .gear-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
       @media (max-width: 768px) {
-        .container {
-          padding: 1rem;
-        }
-
-        .nav {
+        .focus-details {
           flex-direction: column;
-          gap: 1rem;
-        }
-
-        .nav-links {
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-
-        .training-timeline {
-          gap: 0.5rem;
+          gap: var(--space-4);
         }
 
         .training-session {
           flex-direction: column;
-          text-align: center;
-          gap: 1rem;
+          gap: var(--space-4);
         }
 
         .session-time {
-          min-width: auto;
+          text-align: left;
         }
 
-        .session-metrics {
-          justify-content: center;
-        }
-
-        .today-focus {
-          padding: 1.5rem;
-        }
-
-        .training-schedule {
+        .plan-grid {
           grid-template-columns: 1fr;
         }
 
-        .section-header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 1rem;
+        .schedule-grid {
+          grid-template-columns: repeat(4, 1fr);
         }
 
-        h1 {
-          font-size: 2rem;
+        .wearable-grid {
+          grid-template-columns: 1fr;
         }
 
-        h2 {
-          font-size: 1.5rem;
+        .injury-grid {
+          grid-template-columns: 1fr;
         }
-      }
 
-      /* Animations */
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
+        .program-grid {
+          grid-template-columns: 1fr;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
 
-      .card,
-      .section,
-      .session-card {
-        animation: fadeInUp 0.6s ease-out;
+        .performance-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .gear-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
       }
     </style>
   </head>
   <body>
-    <!-- Header -->
-    <header class="header">
-      <nav class="nav">
-        <div class="logo">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav-container">
+        <a href="#" class="nav-brand">
           <span>🏈</span>
           <span>FlagFit Pro</span>
-        </div>
-        <ul class="nav-links">
-          <li><a href="#" class="nav-link">Dashboard</a></li>
-          <li><a href="#" class="nav-link active">Training</a></li>
-          <li><a href="#" class="nav-link">Community</a></li>
-          <li><a href="#" class="nav-link">Tournament</a></li>
-        </ul>
-        <div class="user-profile">
-          <div class="avatar">JD</div>
-          <span class="small-text">John Doe</span>
-        </div>
-      </nav>
-    </header>
+        </a>
 
-    <!-- Main Container -->
-    <div class="container">
-      <!-- Page Header -->
-      <div class="page-header">
-        <h1>Personal Training Journey</h1>
-        <p>
-          Your daily training timeline with real-time progress tracking and
-          Olympic preparation
-        </p>
+        <ul class="nav-menu">
+          <li><a href="dashboard-complete-wireframe.html" class="nav-link">Dashboard</a></li>
+          <li><a href="#" class="nav-link active">Training</a></li>
+          <li><a href="community-complete-wireframe.html" class="nav-link">Community</a></li>
+          <li><a href="tournament-complete-wireframe.html" class="nav-link">Tournament</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button type="button" class="btn btn-icon" aria-label="Search">🔍</button>
+          <button type="button" class="btn btn-icon" aria-label="Notifications">🔔</button>
+          <div class="avatar avatar-primary">MJ</div>
+        </div>
       </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+      <!-- Page Header -->
+      <header class="page-header">
+        <h1>Personal Training Journey 🏃</h1>
+        <p>Your path to Olympic excellence starts here</p>
+      </header>
 
       <!-- Today's Training Focus -->
-      <div class="today-focus">
-        <div class="focus-badge">TODAY'S FOCUS</div>
-        <h2 style="margin-top: 1rem; margin-bottom: 1rem">
-          🎯 Speed &amp; Agility Development
-        </h2>
-        <p style="font-size: 1.125rem; margin-bottom: 1.5rem">
-          Olympic standard training session targeting 40-yard dash improvement
-        </p>
+      <section class="focus-section">
+        <h2>⚡ Today's Training Focus</h2>
+        <p>Wednesday, December 25, 2024</p>
+        <div class="focus-type">Speed & Agility</div>
+        <p class="text-muted">High-intensity drills focusing on acceleration and quick direction changes</p>
 
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 2rem;
-          "
-        >
-          <div style="text-align: center">
-            <div
-              style="
-                font-family: &quot;Poppins&quot;, sans-serif;
-                font-weight: 700;
-                font-size: 2rem;
-                color: #1a1a1a;
-              "
-            >
-              4.52s
-            </div>
-            <div
-              style="
-                font-family: &quot;Poppins&quot;, sans-serif;
-                font-weight: 500;
-                color: #4a4a4a;
-              "
-            >
-              Current 40-yard
-            </div>
+        <div class="focus-details">
+          <div class="focus-stat">
+            <div class="focus-stat-value">4</div>
+            <div class="focus-stat-label">Sessions Today</div>
           </div>
-          <div style="text-align: center">
-            <div
-              style="
-                font-family: &quot;Poppins&quot;, sans-serif;
-                font-weight: 700;
-                font-size: 2rem;
-                color: #1a1a1a;
-              "
-            >
-              4.40s
-            </div>
-            <div
-              style="
-                font-family: &quot;Poppins&quot;, sans-serif;
-                font-weight: 500;
-                color: #4a4a4a;
-              "
-            >
-              Olympic target
-            </div>
+          <div class="focus-stat">
+            <div class="focus-stat-value">3h 45m</div>
+            <div class="focus-stat-label">Total Duration</div>
           </div>
-          <div style="text-align: center">
-            <div
-              style="
-                font-family: &quot;Poppins&quot;, sans-serif;
-                font-weight: 700;
-                font-size: 2rem;
-                color: #1a1a1a;
-              "
-            >
-              42min
-            </div>
-            <div
-              style="
-                font-family: &quot;Poppins&quot;, sans-serif;
-                font-weight: 500;
-                color: #4a4a4a;
-              "
-            >
-              Session progress
-            </div>
+          <div class="focus-stat">
+            <div class="focus-stat-value">2,400</div>
+            <div class="focus-stat-label">Est. Calories</div>
           </div>
-          <div style="text-align: center">
-            <div
-              style="
-                font-family: &quot;Poppins&quot;, sans-serif;
-                font-weight: 700;
-                font-size: 2rem;
-                color: #1a1a1a;
-              "
-            >
-              87%
-            </div>
-            <div
-              style="
-                font-family: &quot;Poppins&quot;, sans-serif;
-                font-weight: 500;
-                color: #4a4a4a;
-              "
-            >
-              Readiness level
-            </div>
+          <div class="focus-stat">
+            <div class="focus-stat-value">Zone 4-5</div>
+            <div class="focus-stat-label">Target HR Zone</div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Personal Training Timeline -->
-      <div class="training-timeline">
+      <!-- Training Timeline -->
+      <section class="training-timeline">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>📅</span>
+            Today's Training Schedule
+          </h2>
+          <button type="button" class="btn btn-secondary btn-sm">Edit Schedule</button>
+        </div>
+
         <!-- Morning Session -->
         <div class="training-session">
           <div class="session-time">
@@ -924,9 +804,7 @@
           </div>
           <div class="session-content">
             <h3 class="session-title">🏃 Morning Cardio Base</h3>
-            <p class="session-description">
-              Low-intensity aerobic foundation building
-            </p>
+            <p class="session-description">Low-intensity aerobic foundation building</p>
             <div class="session-metrics">
               <span class="session-metric">Zone 2</span>
               <span class="session-metric">130-145 bpm</span>
@@ -947,11 +825,8 @@
             <span class="session-duration">60 min</span>
           </div>
           <div class="session-content">
-            <h3 class="session-title">⚡ Speed &amp; Agility Training</h3>
-            <p class="session-description">
-              High-intensity drills focusing on acceleration and quick direction
-              changes
-            </p>
+            <h3 class="session-title">⚡ Speed & Agility Training</h3>
+            <p class="session-description">High-intensity drills focusing on acceleration and quick direction changes</p>
             <div class="session-metrics">
               <span class="session-metric">Zone 4-5</span>
               <span class="session-metric">165+ bpm</span>
@@ -974,9 +849,7 @@
           </div>
           <div class="session-content">
             <h3 class="session-title">🏈 Tactical Strategy</h3>
-            <p class="session-description">
-              Team formations, play analysis, and game situation practice
-            </p>
+            <p class="session-description">Team formations, play analysis, and game situation practice</p>
             <div class="session-metrics">
               <span class="session-metric">Mental focus</span>
               <span class="session-metric">Team sync</span>
@@ -997,10 +870,8 @@
             <span class="session-duration">30 min</span>
           </div>
           <div class="session-content">
-            <h3 class="session-title">🧘 Recovery &amp; Flexibility</h3>
-            <p class="session-description">
-              Cool-down stretches, foam rolling, and relaxation techniques
-            </p>
+            <h3 class="session-title">🧘 Recovery & Flexibility</h3>
+            <p class="session-description">Cool-down stretches, foam rolling, and relaxation techniques</p>
             <div class="session-metrics">
               <span class="session-metric">Active recovery</span>
               <span class="session-metric">Flexibility</span>
@@ -1011,722 +882,449 @@
             <div class="status-badge status-upcoming">Later</div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- 🏆 LA28 Olympic Training Plan -->
-      <div class="section olympic-section">
+      <!-- Olympic Training Plans -->
+      <section class="olympic-plans">
         <div class="section-header">
-          <h2>🏆 LA28 Olympic Training Plan</h2>
-          <button type="button" class="cta-primary">Adjust Plan</button>
+          <h2 class="section-title">
+            <span>🏆</span>
+            Olympic Training Plans
+          </h2>
+          <button type="button" class="btn btn-primary btn-sm">View All Plans</button>
         </div>
 
-        <div class="olympic-metrics">
-          <div class="olympic-metric">
-            <span class="metric-value">Phase 3</span>
-            <span class="metric-label">Competition Preparation</span>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 67%"></div>
-            </div>
-            <div class="metric-trend">
-              12 weeks until European Championships
-            </div>
-          </div>
-
-          <div class="olympic-metric">
-            <span class="metric-value">4.48s</span>
-            <span class="metric-label">40-Yard Dash (Target: 4.40s)</span>
-            <div class="metric-trend">📈 -0.08s improvement needed</div>
-          </div>
-
-          <div class="olympic-metric">
-            <span class="metric-value">84%</span>
-            <span class="metric-label">Olympic Standards Met</span>
-            <div class="metric-trend">🎯 2 standards remaining</div>
-          </div>
-        </div>
-
-        <h4>🛤️ 5-Phase Olympic Preparation Timeline</h4>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">✅</span>
-            <span class="stat-label">Phase 1: Foundation</span>
-            <div class="small-text">Completed - Base fitness</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">✅</span>
-            <span class="stat-label">Phase 2: Strength</span>
-            <div class="small-text">Completed - Power development</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">🏃</span>
-            <span class="stat-label">Phase 3: Competition</span>
-            <div class="small-text">In Progress - Game-specific</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">⏳</span>
-            <span class="stat-label">Phase 4: Peak</span>
-            <div class="small-text">Upcoming - Elite performance</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">🏅</span>
-            <span class="stat-label">Phase 5: Olympics</span>
-            <div class="small-text">LA28 - Medal pursuit</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ⌚ Multi-Device Wearables Integration -->
-      <div class="section">
-        <div class="section-header">
-          <h2>⌚ Live Wearables Data</h2>
-          <button type="button" class="cta-secondary">Manage Devices</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">165 bpm</span>
-            <span class="stat-label">Heart Rate</span>
-            <div class="small-text">🍎 Apple Watch - Zone 4</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">847</span>
-            <span class="stat-label">Calories Burned</span>
-            <div class="small-text">⌚ Fitbit - Session total</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">4.2 mph</span>
-            <span class="stat-label">Average Speed</span>
-            <div class="small-text">🏃 Garmin - GPS tracking</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">92%</span>
-            <span class="stat-label">Recovery Status</span>
-            <div class="small-text">📊 Combined data - Excellent</div>
-          </div>
-        </div>
-
-        <h4>🤖 AI Workout Analysis</h4>
-        <div class="session-card">
-          <div class="session-header">
-            <div class="session-type">Flag Football Drills</div>
-            <div class="session-time">In Progress • 42 min</div>
-          </div>
-          <div class="session-details">
-            <div class="detail-item">
-              <span class="detail-icon">⚡</span>
-              <span class="detail-text">High intensity detected</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-icon">🎯</span>
-              <span class="detail-text">Agility focus</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-icon">📈</span>
-              <span class="detail-text">Performance optimal</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-icon">🔥</span>
-              <span class="detail-text">Fat burn zone</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🤖 AI Training Optimization -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🤖 AI Training Optimization</h2>
-          <button type="button" class="cta-secondary">View Recommendations</button>
-        </div>
-
-        <h4>💡 Current Recommendations</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">⏰</span>
-            <span
-              >Optimal training window: 4:30-6:30 PM (based on biorhythm)</span
-            >
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🌡️</span>
-            <span
-              >Weather adjustment: Indoor drills recommended tomorrow
-              (rain)</span
-            >
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">💪</span>
-            <span>Recovery focus: 15% more stretching needed this week</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🎯</span>
-            <span>Skill gap: Additional route running practice suggested</span>
-          </div>
-        </div>
-
-        <h4>📊 Performance Analytics</h4>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">94%</span>
-            <span class="stat-label">Training Adherence</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">8.7/10</span>
-            <span class="stat-label">Intensity Score</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">12%</span>
-            <span class="stat-label">Injury Risk</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">87%</span>
-            <span class="stat-label">Goal Progress</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🗓️ Weekly Training Schedule -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🗓️ Weekly Training Schedule</h2>
-          <button type="button" class="cta-secondary">Edit Schedule</button>
-        </div>
-
-        <div class="training-schedule">
-          <div class="day-column">
-            <div class="day-header">Monday</div>
-            <div class="training-slot">
-              <div class="slot-time">6:00 AM</div>
-              <div class="slot-activity">🏃 Cardio Base</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">4:30 PM</div>
-              <div class="slot-activity">🏈 Skills Training</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Tuesday</div>
-            <div class="training-slot">
-              <div class="slot-time">5:30 AM</div>
-              <div class="slot-activity">💪 Strength</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">6:00 PM</div>
-              <div class="slot-activity">🎯 Tactical</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Wednesday</div>
-            <div class="training-slot">
-              <div class="slot-time">6:00 AM</div>
-              <div class="slot-activity">⚡ Speed &amp; Agility</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">7:00 PM</div>
-              <div class="slot-activity">🧘 Recovery</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Thursday</div>
-            <div class="training-slot">
-              <div class="slot-time">5:30 AM</div>
-              <div class="slot-activity">💪 Power</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">4:30 PM</div>
-              <div class="slot-activity">🏈 Scrimmage</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Friday</div>
-            <div class="training-slot">
-              <div class="slot-time">6:00 AM</div>
-              <div class="slot-activity">🏃 Conditioning</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">6:00 PM</div>
-              <div class="slot-activity">🎮 Game Prep</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Saturday</div>
-            <div class="training-slot">
-              <div class="slot-time">9:00 AM</div>
-              <div class="slot-activity">🏆 Competition</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">2:00 PM</div>
-              <div class="slot-activity">📊 Analysis</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Sunday</div>
-            <div class="training-slot">
-              <div class="slot-time">10:00 AM</div>
-              <div class="slot-activity">🧘 Active Recovery</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">3:00 PM</div>
-              <div class="slot-activity">📝 Planning</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🏥 Injury Prevention &amp; Recovery -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🏥 Injury Prevention System</h2>
-          <button type="button" class="cta-secondary">Full Report</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">8%</span>
-            <span class="stat-label">Injury Risk</span>
-            <div class="small-text">↓ Decreasing</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">96%</span>
-            <span class="stat-label">Movement Quality</span>
-            <div class="small-text">Excellent form</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">42ms</span>
-            <span class="stat-label">HRV</span>
-            <div class="small-text">Optimal recovery</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">20min</span>
-            <span class="stat-label">Recovery Protocol</span>
-            <div class="small-text">Post-workout routine</div>
-          </div>
-        </div>
-
-        <h4>🔬 Biomechanical Analysis</h4>
-        <div class="session-card">
-          <p>
-            <strong>Latest Analysis:</strong> Running gait optimal, landing
-            mechanics excellent
-          </p>
-          <p class="small-text">
-            Motion capture: Knee valgus angle within safe range, ground contact
-            time improved
-          </p>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: 96%"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 📚 Training Library -->
-      <div class="section">
-        <div class="section-header">
-          <h2>📚 Training Program Library</h2>
-          <button type="button" class="cta-secondary">Browse All</button>
-        </div>
-
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">🏆</span>
-            <span
-              >Olympic Preparation Program - 24 weeks to peak performance</span
-            >
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">💪</span>
-            <span>Strength &amp; Conditioning - Power development focus</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">⚡</span>
-            <span>Speed &amp; Agility - Explosive movement training</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🎯</span>
-            <span>Technical Skills - Position-specific drills</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🧠</span>
-            <span>Mental Preparation - Visualization and focus</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏥</span>
-            <span>Injury Prevention - Movement quality and mobility</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 📊 Performance Tracking -->
-      <div class="section">
-        <div class="section-header">
-          <h2>📊 Performance Tracking</h2>
-          <button type="button" class="cta-secondary">Detailed Analytics</button>
-        </div>
-
-        <h4>🎯 Key Performance Indicators</h4>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">4.48s</span>
-            <span class="stat-label">40-Yard Dash</span>
-            <div class="small-text">Target: 4.40s (-0.08s)</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">85%</span>
-            <span class="stat-label">Passing Accuracy</span>
-            <div class="small-text">Target: 87% (+2%)</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">4.12s</span>
-            <span class="stat-label">Agility Shuttle</span>
-            <div class="small-text">Target: 4.00s (-0.12s)</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">89</span>
-            <span class="stat-label">Game IQ Score</span>
-            <div class="small-text">Target: 92 (+3 points)</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">92%</span>
-            <span class="stat-label">Catch Rate</span>
-            <div class="small-text">Target: 95% (+3%)</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">18.2 mph</span>
-            <span class="stat-label">Top Speed</span>
-            <div class="small-text">Target: 19.0 mph (+0.8)</div>
-          </div>
-        </div>
-
-        <h4>📈 Progress Trends</h4>
-        <div class="session-card">
-          <p>
-            <strong>This Month:</strong> Significant improvement in speed and
-            agility metrics
-          </p>
-          <p class="small-text">
-            40-yard dash: -0.04s improvement • Agility: -0.08s improvement •
-            Strength: +12%
-          </p>
-        </div>
-      </div>
-
-      <!-- 🏈 Game Stats Upload with LA28 Tracking -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🏈 Game Stats Upload &amp; LA28 Tracking</h2>
-          <button type="button" class="cta-primary">Upload Stats</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">+2.3</span>
-            <span class="stat-label">Olympic Points</span>
-            <div class="small-text">Last game performance</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">87/100</span>
-            <span class="stat-label">Game Score</span>
-            <div class="small-text">vs 85/100 Olympic standard</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">3</span>
-            <span class="stat-label">Upload Methods</span>
-            <div class="small-text">Video, Manual, App</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">12</span>
-            <span class="stat-label">Games Tracked</span>
-            <div class="small-text">This season</div>
-          </div>
-        </div>
-
-        <h4>📤 Upload Options</h4>
-        <div class="upload-methods">
-          <div class="upload-method">
-            <span class="upload-icon">📹</span>
-            <div class="upload-content">
-              <div class="upload-title">Video Analysis</div>
-              <div class="upload-description">
-                Upload game footage for AI analysis
+        <div class="plan-grid">
+          <div class="plan-card active">
+            <div class="plan-icon">⚡</div>
+            <div class="plan-name">Speed Development</div>
+            <div class="plan-duration">8 weeks • Phase 2 of 3</div>
+            <div class="plan-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 67%;"></div>
               </div>
-              <button type="button" class="cta-secondary">Upload Video</button>
             </div>
+            <div class="plan-progress-label">67% Complete</div>
           </div>
-          <div class="upload-method">
-            <span class="upload-icon">✏️</span>
-            <div class="upload-content">
-              <div class="upload-title">Manual Entry</div>
-              <div class="upload-description">
-                Enter stats manually with validation
-              </div>
-              <button type="button" class="cta-secondary">Enter Stats</button>
-            </div>
-          </div>
-          <div class="upload-method">
-            <span class="upload-icon">📱</span>
-            <div class="upload-content">
-              <div class="upload-title">App Integration</div>
-              <div class="upload-description">Sync from official game apps</div>
-              <button type="button" class="cta-secondary">Connect Apps</button>
-            </div>
-          </div>
-        </div>
 
-        <h4>🏆 LA28 Olympic Impact Analysis</h4>
-        <div class="olympic-analysis">
-          <div class="analysis-item">
-            <span class="analysis-icon">📊</span>
-            <span
-              >Performance vs Olympic standards: 87/100 vs 85/100 target</span
-            >
+          <div class="plan-card">
+            <div class="plan-icon">💪</div>
+            <div class="plan-name">Strength Foundation</div>
+            <div class="plan-duration">12 weeks • Phase 1 of 4</div>
+            <div class="plan-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 25%;"></div>
+              </div>
+            </div>
+            <div class="plan-progress-label">25% Complete</div>
           </div>
-          <div class="analysis-item">
-            <span class="analysis-icon">🎯</span>
-            <span>Qualification points earned: +2.3 (strong performance)</span>
-          </div>
-          <div class="analysis-item">
-            <span class="analysis-icon">📈</span>
-            <span
-              >Improvement needed: 3 points to reach elite Olympic level</span
-            >
+
+          <div class="plan-card">
+            <div class="plan-icon">🎯</div>
+            <div class="plan-name">Technical Skills</div>
+            <div class="plan-duration">16 weeks • Phase 3 of 4</div>
+            <div class="plan-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 85%;"></div>
+              </div>
+            </div>
+            <div class="plan-progress-label">85% Complete</div>
           </div>
         </div>
+      </section>
+
+      <!-- Main Content Grid -->
+      <div class="main-grid">
+        <!-- Live Wearables Data -->
+        <section class="wearables-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>⌚</span>
+              Live Wearables Data
+            </h3>
+            <button type="button" class="btn btn-secondary btn-sm">Sync Devices</button>
+          </div>
+
+          <div class="wearable-grid">
+            <div class="wearable-card">
+              <div class="wearable-icon">❤️</div>
+              <div class="wearable-value">168 bpm</div>
+              <div class="wearable-label">Heart Rate</div>
+              <div class="wearable-status">
+                <span>🟢</span>
+                <span>Zone 4 - Optimal</span>
+              </div>
+            </div>
+
+            <div class="wearable-card">
+              <div class="wearable-icon">🔥</div>
+              <div class="wearable-value">847 cal</div>
+              <div class="wearable-label">Calories Burned</div>
+              <div class="wearable-status">
+                <span>📈</span>
+                <span>On track</span>
+              </div>
+            </div>
+
+            <div class="wearable-card">
+              <div class="wearable-icon">🏃</div>
+              <div class="wearable-value">4.2 mi</div>
+              <div class="wearable-label">Distance</div>
+              <div class="wearable-status">
+                <span>⚡</span>
+                <span>High intensity</span>
+              </div>
+            </div>
+
+            <div class="wearable-card">
+              <div class="wearable-icon">⏱️</div>
+              <div class="wearable-value">42:15</div>
+              <div class="wearable-label">Active Time</div>
+              <div class="wearable-status">
+                <span>🎯</span>
+                <span>18 min remaining</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- AI Training Optimization -->
+        <section class="ai-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>🤖</span>
+              AI Recommendations
+            </h3>
+          </div>
+
+          <div class="ai-recommendation">
+            <div class="ai-icon">💡</div>
+            <div class="ai-content">
+              <div class="ai-title">Increase recovery time</div>
+              <div class="ai-description">Your HRV indicates you need an extra rest day this week</div>
+            </div>
+          </div>
+
+          <div class="ai-recommendation">
+            <div class="ai-icon">⚠️</div>
+            <div class="ai-content">
+              <div class="ai-title">Hydration alert</div>
+              <div class="ai-description">Drink 500ml water before your next session</div>
+            </div>
+          </div>
+
+          <div class="ai-recommendation">
+            <div class="ai-icon">✅</div>
+            <div class="ai-content">
+              <div class="ai-title">Great progress!</div>
+              <div class="ai-description">Your 40-yard dash improved by 0.08s this month</div>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <!-- 🎁 Training-Optimized Gear Recommendations -->
-      <div class="section">
+      <!-- Weekly Training Schedule -->
+      <section class="weekly-schedule">
         <div class="section-header">
-          <h2>🎁 Training-Optimized Gear Recommendations</h2>
-          <button type="button" class="cta-secondary">View All Gear</button>
+          <h2 class="section-title">
+            <span>🗓️</span>
+            Weekly Training Schedule
+          </h2>
+          <button type="button" class="btn btn-secondary btn-sm">Edit Week</button>
         </div>
 
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">780</span>
-            <span class="stat-label">Points Cost</span>
-            <div class="small-text">Elite Training Shorts</div>
+        <div class="schedule-grid">
+          <div class="schedule-day">
+            <div class="schedule-day-name">Mon</div>
+            <div class="schedule-day-number">23</div>
+            <div class="schedule-day-type">Rest</div>
           </div>
-          <div class="stat-item">
-            <span class="stat-value">420</span>
-            <span class="stat-label">Points Cost</span>
-            <div class="small-text">Recovery Band Set</div>
+          <div class="schedule-day">
+            <div class="schedule-day-name">Tue</div>
+            <div class="schedule-day-number">24</div>
+            <div class="schedule-day-type">🏃 Speed</div>
           </div>
-          <div class="stat-item">
-            <span class="stat-value">89%</span>
-            <span class="stat-label">Relevance Score</span>
-            <div class="small-text">Training gear match</div>
+          <div class="schedule-day today">
+            <div class="schedule-day-name">Wed</div>
+            <div class="schedule-day-number">25</div>
+            <div class="schedule-day-type">⚡ Agility</div>
           </div>
-          <div class="stat-item">
-            <span class="stat-value">+15%</span>
-            <span class="stat-label">Performance Boost</span>
-            <div class="small-text">With recommended gear</div>
+          <div class="schedule-day">
+            <div class="schedule-day-name">Thu</div>
+            <div class="schedule-day-number">26</div>
+            <div class="schedule-day-type">💪 Strength</div>
+          </div>
+          <div class="schedule-day">
+            <div class="schedule-day-name">Fri</div>
+            <div class="schedule-day-number">27</div>
+            <div class="schedule-day-type">🧘 Recovery</div>
+          </div>
+          <div class="schedule-day">
+            <div class="schedule-day-name">Sat</div>
+            <div class="schedule-day-number">28</div>
+            <div class="schedule-day-type">🏈 Game</div>
+          </div>
+          <div class="schedule-day">
+            <div class="schedule-day-name">Sun</div>
+            <div class="schedule-day-number">29</div>
+            <div class="schedule-day-type">Rest</div>
           </div>
         </div>
+      </section>
 
-        <h4>🏃 Featured Training Gear</h4>
-        <div class="gear-recommendations">
-          <div class="gear-item">
-            <span class="gear-icon">👕</span>
-            <div class="gear-content">
-              <div class="gear-title">GEARXPro Elite Training Shorts</div>
-              <div class="gear-description">
-                Moisture-wicking, compression fit, 780 points
+      <!-- Injury Prevention -->
+      <section class="injury-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>🏥</span>
+            Injury Prevention Status
+          </h2>
+          <button type="button" class="btn btn-secondary btn-sm">Full Report</button>
+        </div>
+
+        <div class="injury-grid">
+          <div class="injury-card">
+            <div class="injury-icon">🦵</div>
+            <div class="injury-status">Good</div>
+            <div class="injury-label">Hamstring Flexibility</div>
+          </div>
+          <div class="injury-card">
+            <div class="injury-icon">💪</div>
+            <div class="injury-status">Low</div>
+            <div class="injury-label">Muscle Fatigue</div>
+          </div>
+          <div class="injury-card">
+            <div class="injury-icon">🔄</div>
+            <div class="injury-status">Optimal</div>
+            <div class="injury-label">Recovery Status</div>
+          </div>
+          <div class="injury-card">
+            <div class="injury-icon">⚠️</div>
+            <div class="injury-status">12%</div>
+            <div class="injury-label">Injury Risk</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Training Program Library -->
+      <section class="program-library">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>📚</span>
+            Training Program Library
+          </h2>
+          <button type="button" class="btn btn-primary btn-sm">Browse All</button>
+        </div>
+
+        <div class="program-grid">
+          <div class="program-card">
+            <div class="program-header">
+              <div class="program-icon">🏆</div>
+              <div class="program-info">
+                <div class="program-name">Olympic Prep</div>
+                <div class="program-duration">24 weeks</div>
               </div>
-              <div class="gear-benefits">
-                ✓ Speed enhancement • ✓ Agility support • ✓ Recovery aid
-              </div>
-              <button type="button" class="cta-secondary">Get with Points</button>
+            </div>
+            <p class="program-description">Complete LA28 preparation program with periodization</p>
+            <div class="program-stats">
+              <span>👥 1.2k enrolled</span>
+              <span>⭐ 4.9</span>
             </div>
           </div>
-          <div class="gear-item">
-            <span class="gear-icon">💪</span>
-            <div class="gear-content">
-              <div class="gear-title">LaPrimaFit Recovery Band Set</div>
-              <div class="gear-description">
-                Professional resistance bands, 420 points
+
+          <div class="program-card">
+            <div class="program-header">
+              <div class="program-icon">⚡</div>
+              <div class="program-info">
+                <div class="program-name">Speed Mastery</div>
+                <div class="program-duration">8 weeks</div>
               </div>
-              <div class="gear-benefits">
-                ✓ Strength building • ✓ Flexibility • ✓ Injury prevention
+            </div>
+            <p class="program-description">Explosive speed and acceleration development</p>
+            <div class="program-stats">
+              <span>👥 856 enrolled</span>
+              <span>⭐ 4.8</span>
+            </div>
+          </div>
+
+          <div class="program-card">
+            <div class="program-header">
+              <div class="program-icon">🎯</div>
+              <div class="program-info">
+                <div class="program-name">Route Running</div>
+                <div class="program-duration">6 weeks</div>
               </div>
-              <button type="button" class="cta-secondary">Get with Points</button>
+            </div>
+            <p class="program-description">Perfect your routes with precision drills</p>
+            <div class="program-stats">
+              <span>👥 643 enrolled</span>
+              <span>⭐ 4.7</span>
             </div>
           </div>
         </div>
+      </section>
 
-        <h4>🎖️ Points Earning Through Training</h4>
-        <div class="points-earning">
-          <div class="points-item">
-            <span class="points-icon">🏃</span>
-            <span>Complete training session: +25 points</span>
-          </div>
-          <div class="points-item">
-            <span class="points-icon">🎯</span>
-            <span>Meet performance goals: +50 points</span>
-          </div>
-          <div class="points-item">
-            <span class="points-icon">🏆</span>
-            <span>Olympic prep session: +100 points</span>
-          </div>
-          <div class="points-item">
-            <span class="points-icon">📈</span>
-            <span>Improve personal best: +75 points</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🏛️ IFAF Governing Body Integration -->
-      <div class="section">
+      <!-- Performance Tracking -->
+      <section class="performance-section">
         <div class="section-header">
-          <h2>🏛️ IFAF Governing Body Integration</h2>
-          <button type="button" class="cta-secondary">View Updates</button>
+          <h2 class="section-title">
+            <span>📊</span>
+            Performance Tracking
+          </h2>
+          <button type="button" class="btn btn-secondary btn-sm">View History</button>
         </div>
 
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">✓</span>
-            <span class="stat-label">Compliance Status</span>
-            <div class="small-text">All requirements met</div>
+        <div class="performance-grid">
+          <div class="performance-card">
+            <div class="performance-value">4.45s</div>
+            <div class="performance-label">40-Yard Dash</div>
+            <div class="performance-trend">
+              <span>📈</span>
+              <span>-0.08s this month</span>
+            </div>
           </div>
-          <div class="stat-item">
-            <span class="stat-value">3</span>
-            <span class="stat-label">New Updates</span>
-            <div class="small-text">This week</div>
+
+          <div class="performance-card">
+            <div class="performance-value">32"</div>
+            <div class="performance-label">Vertical Jump</div>
+            <div class="performance-trend">
+              <span>📈</span>
+              <span>+1.5" this month</span>
+            </div>
           </div>
-          <div class="stat-item">
-            <span class="stat-value">2025-09-24</span>
-            <span class="stat-label">Next Event</span>
-            <div class="small-text">European Championships</div>
+
+          <div class="performance-card">
+            <div class="performance-value">4.12s</div>
+            <div class="performance-label">Agility Shuttle</div>
+            <div class="performance-trend">
+              <span>📈</span>
+              <span>-0.15s this month</span>
+            </div>
           </div>
-          <div class="stat-item">
-            <span class="stat-value">87%</span>
-            <span class="stat-label">Preparation</span>
-            <div class="small-text">For next tournament</div>
+
+          <div class="performance-card">
+            <div class="performance-value">92%</div>
+            <div class="performance-label">Catch Rate</div>
+            <div class="performance-trend">
+              <span>📈</span>
+              <span>+3% this month</span>
+            </div>
           </div>
         </div>
+      </section>
 
-        <h4>📢 Latest IFAF Updates</h4>
+      <!-- Training Gear Recommendations -->
+      <section class="gear-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>👟</span>
+            Training-Optimized Gear
+          </h2>
+          <button type="button" class="btn btn-secondary btn-sm">View All</button>
+        </div>
+
+        <div class="gear-grid">
+          <div class="gear-card">
+            <div class="gear-icon">👟</div>
+            <div class="gear-name">Speed Trainers</div>
+            <div class="gear-brand">Nike Vapor</div>
+          </div>
+
+          <div class="gear-card">
+            <div class="gear-icon">🧤</div>
+            <div class="gear-name">Receiver Gloves</div>
+            <div class="gear-brand">Cutters Rev Pro</div>
+          </div>
+
+          <div class="gear-card">
+            <div class="gear-icon">⌚</div>
+            <div class="gear-name">Training Watch</div>
+            <div class="gear-brand">Garmin Forerunner</div>
+          </div>
+
+          <div class="gear-card">
+            <div class="gear-icon">🎧</div>
+            <div class="gear-name">Sport Earbuds</div>
+            <div class="gear-brand">Beats Fit Pro</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- IFAF Updates -->
+      <section class="ifaf-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>🌍</span>
+            IFAF Governing Body Updates
+          </h2>
+          <button type="button" class="btn btn-secondary btn-sm">View All</button>
+        </div>
+
         <div class="ifaf-updates">
-          <div class="update-item">
-            <span class="update-icon">📢</span>
-            <div class="update-content">
-              <div class="update-title">
-                European Championship Bracket Updated
-              </div>
-              <div class="update-date">2 hours ago</div>
-              <div class="update-description">
-                New seeding based on recent performance
-              </div>
+          <div class="ifaf-item">
+            <div class="ifaf-icon">📋</div>
+            <div class="ifaf-content">
+              <div class="ifaf-title">2025 Rule Changes Announced</div>
+              <div class="ifaf-description">New Olympic format rules effective January 2025</div>
             </div>
           </div>
-          <div class="update-item">
-            <span class="update-icon">🏆</span>
-            <div class="update-content">
-              <div class="update-title">LA28 Olympic Format Confirmed</div>
-              <div class="update-date">1 day ago</div>
-              <div class="update-description">
-                5v5 format, 50x25 yard field confirmed
-              </div>
-            </div>
-          </div>
-          <div class="update-item">
-            <span class="update-icon">📋</span>
-            <div class="update-content">
-              <div class="update-title">Anti-Doping Protocol Update</div>
-              <div class="update-date">3 days ago</div>
-              <div class="update-description">
-                New testing requirements for 2025
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <h4>🔗 Direct IFAF Links</h4>
-        <div class="ifaf-links">
-          <a href="#" class="ifaf-link">📊 Official World Rankings</a>
-          <a href="#" class="ifaf-link">📅 Tournament Calendar</a>
-          <a href="#" class="ifaf-link">📋 Competition Rules</a>
-          <a href="#" class="ifaf-link">🏆 LA28 Qualification Pathway</a>
+          <div class="ifaf-item">
+            <div class="ifaf-icon">🏆</div>
+            <div class="ifaf-content">
+              <div class="ifaf-title">European Championship Dates</div>
+              <div class="ifaf-description">September 24-27, 2025 in Paris, France</div>
+            </div>
+          </div>
+
+          <div class="ifaf-item">
+            <div class="ifaf-icon">📊</div>
+            <div class="ifaf-content">
+              <div class="ifaf-title">World Rankings Updated</div>
+              <div class="ifaf-description">Your team moved up to #6 globally</div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <!-- JavaScript -->
     <script>
-      // Interactive functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        // Card hover effects
-        const cards = document.querySelectorAll(".card, .session-card");
-        cards.forEach((card) => {
-          card.addEventListener("click", function () {
-            console.log(
-              "Card clicked:",
-              this.querySelector(".card-title, .session-type")?.textContent,
-            );
-          });
+      // Session interactions
+      document.querySelectorAll('.training-session').forEach(session => {
+        session.addEventListener('click', function() {
+          console.log('Session clicked:', this.querySelector('.session-title').textContent);
         });
+      });
 
-        // Training session timeline interactions
-        const trainingSessions = document.querySelectorAll(".training-session");
-        trainingSessions.forEach((session) => {
-          session.addEventListener("click", function () {
-            const title = this.querySelector(".session-title").textContent;
-            const status = this.querySelector(".status-badge").textContent;
-            console.log(`Training session clicked: ${title} (${status})`);
-
-            // Add visual feedback for clicked session
-            session.style.transform = "translateX(12px) scale(1.02)";
-            setTimeout(() => {
-              session.style.transform = "";
-            }, 200);
-          });
+      // Plan card interactions
+      document.querySelectorAll('.plan-card').forEach(card => {
+        card.addEventListener('click', function() {
+          document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('active'));
+          this.classList.add('active');
+          console.log('Plan selected:', this.querySelector('.plan-name').textContent);
         });
+      });
 
-        // Today's focus section interaction
-        const todayFocus = document.querySelector(".today-focus");
-        if (todayFocus) {
-          todayFocus.addEventListener("click", function () {
-            console.log("Today focus clicked");
-          });
-        }
-
-        // Button interactions
-        const buttons = document.querySelectorAll(
-          ".cta-primary, .cta-secondary",
-        );
-        buttons.forEach((button) => {
-          button.addEventListener("click", function () {
-            console.log("Button clicked:", this.textContent);
-          });
+      // Schedule day interactions
+      document.querySelectorAll('.schedule-day').forEach(day => {
+        day.addEventListener('click', function() {
+          console.log('Day clicked:', this.querySelector('.schedule-day-number').textContent);
         });
+      });
 
-        // Animate progress bars
-        const progressBars = document.querySelectorAll(".progress-fill");
-        progressBars.forEach((bar) => {
-          const width = bar.style.width;
-          bar.style.width = "0%";
-          setTimeout(() => {
-            bar.style.width = width;
-          }, 500);
+      // Program card interactions
+      document.querySelectorAll('.program-card').forEach(card => {
+        card.addEventListener('click', function() {
+          console.log('Program clicked:', this.querySelector('.program-name').textContent);
         });
+      });
 
-        // Live data simulation
-        setInterval(() => {
-          const heartRateElement = document.querySelector(".stat-value");
-          if (
-            heartRateElement &amp;&amp;
-            heartRateElement.textContent.includes("bpm")
-          ) {
-            const currentRate = parseInt(heartRateElement.textContent);
-            const variation = Math.floor(Math.random() * 6) - 3; // -3 to +3
-            heartRateElement.textContent = `${currentRate + variation} bpm`;
-          }
-        }, 3000);
+      // Gear card interactions
+      document.querySelectorAll('.gear-card').forEach(card => {
+        card.addEventListener('click', function() {
+          console.log('Gear clicked:', this.querySelector('.gear-name').textContent);
+        });
       });
     </script>
   </body>

@@ -21,6 +21,7 @@ build/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+deno.lock
 
 # IDE files
 .vscode/
@@ -51,11 +52,11 @@ sw.js
 # Husky
 .husky/
 
-# Backend build files
-flagfitpro-backend/dist/
-flagfitpro-backend/**/*.d.ts
-flagfitpro-backend/**/*.js
+# Angular build files
+angular/dist/
 
-# Frontend build files
-react-flagfootball-app/dist/
-react-flagfootball-app/build/ 
+# Netlify
+.netlify/
+
+# Supabase types (auto-generated)
+supabase-types.ts

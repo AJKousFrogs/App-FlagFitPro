@@ -3,6 +3,10 @@
 
 import { logger } from "./logger.js";
 
+// Use logger - prefer window.logger for script tag compatibility, otherwise use imported logger
+const loggerInstance =
+  typeof window !== "undefined" && window.logger ? window.logger : logger;
+
 // Create a simple storage wrapper that works with or without storageService
 const storage = {
   get: (key, defaultValue, options = {}) => {
@@ -50,10 +54,6 @@ const storage = {
     }
   },
 };
-
-// Use logger - prefer window.logger for script tag compatibility, otherwise use imported logger
-const loggerInstance =
-  typeof window !== "undefined" && window.logger ? window.logger : logger;
 
 class ThemeSwitcher {
   constructor() {

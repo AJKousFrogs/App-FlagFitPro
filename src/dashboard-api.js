@@ -2,14 +2,15 @@
 // Handles all communication between the HTML wireframe and backend database
 
 import { logger } from "./logger.js";
+import { API_BASE_URL } from "./api-config.js";
 
 class DashboardAPI {
   constructor() {
-    // Use environment variable or fallback to localhost
+    // Use environment variable or fallback to centralized config
     this.baseURL =
       window.FLAGFIT_API_URL ||
       (typeof process !== "undefined" && process.env?.VITE_API_URL) ||
-      "http://localhost:3001/api";
+      API_BASE_URL;
     this.userId = "1"; // Default user ID for demo
     this.cache = new Map();
     this.cacheTTL = 5 * 60 * 1000; // 5 minutes

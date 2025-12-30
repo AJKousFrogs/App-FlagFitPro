@@ -681,8 +681,9 @@ class FlagFitChatbot {
     // Clear history button
     if (clearHistoryBtn) {
       clearHistoryBtn.addEventListener("click", () => {
+        // Use a non-blocking confirmation approach if possible, but keep simple for legacy
         if (
-          confirm(
+          window.confirm(
             "Are you sure you want to clear the conversation history? This cannot be undone.",
           )
         ) {

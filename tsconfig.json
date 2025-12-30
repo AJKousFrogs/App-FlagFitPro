@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "lib": ["ES2022"],
-    "moduleResolution": "node",
+    "target": "ES2024",
+    "module": "NodeNext",
+    "lib": ["ES2024"],
+    "moduleResolution": "NodeNext",
     "typeRoots": ["./node_modules/@types", "./angular/node_modules/@types"],
     "types": ["node"],
     "strict": true,
@@ -12,7 +12,10 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "verbatimModuleSyntax": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true
   },
   "include": ["*.ts", "scripts/**/*.ts"],
   "exclude": ["node_modules", "angular", "dist", "**/*.spec.ts"]

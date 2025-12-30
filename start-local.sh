@@ -13,24 +13,34 @@ echo ""
 # Change to script directory
 cd "$(dirname "$0")"
 
-# Load environment from .env file if it exists (more secure than hardcoding)
-if [[ -f .env ]]; then
+# Load environment from .env.local or .env file if it exists
+if [[ -f .env.local ]]; then
+    echo "📄 Loading environment from .env.local file..."
+    set -a
+    # shellcheck source=/dev/null
+    source .env.local
+    set +a
+elif [[ -f .env ]]; then
     echo "📄 Loading environment from .env file..."
     set -a
+    # shellcheck source=/dev/null
     source .env
     set +a
 else
-    echo "⚠️  No .env file found, using default development credentials..."
-    # Set environment variables (development only - production uses Netlify env vars)
-    export SUPABASE_URL="${SUPABASE_URL:-https://pvziciccwxgftcielknm.supabase.co}"
-    export SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWN3eGdmdGNpZWxrbm0iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1OTUzNzA1OCwiZXhwIjoyMDc1MTEzMDU4fQ.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU}"
-    export SUPABASE_SERVICE_KEY="${SUPABASE_SERVICE_KEY:-}"
-    export JWT_SECRET="${JWT_SECRET:-flagfit-pro-jwt-secret-dev}"
+    echo "⚠️  No .env or .env.local file found."
+    echo "   Please create one with your Supabase credentials."
+    echo "   Required variables: SUPABASE_URL, SUPABASE_ANON_KEY"
+    exit 1
 fi
 
 export NODE_ENV="development"
-export VITE_SUPABASE_URL="$SUPABASE_URL"
-export VITE_SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY"
+export VITE_SUPABASE_URL="${SUPABASE_URL:-}"
+export VITE_SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY:-}"
+
+if [[ -z "${SUPABASE_URL:-}" ]] || [[ -z "${SUPABASE_ANON_KEY:-}" ]]; then
+    echo "❌ Missing required environment variables: SUPABASE_URL, SUPABASE_ANON_KEY"
+    exit 1
+fi
 
 echo "✅ Environment variables set"
 echo ""
@@ -54,4 +64,3 @@ echo ""
 
 # Start Netlify Dev (this will run both frontend and functions)
 netlify dev
-

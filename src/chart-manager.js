@@ -2,6 +2,7 @@
 // Handles all data visualization and chart creation
 
 import { logger } from "./logger.js";
+import { CHART_MOCK_DATA } from "./js/config/chart-mock-data.js";
 
 // Dynamic import with fallback for older browsers
 let Chart;
@@ -166,22 +167,15 @@ class ChartManager {
     }
 
     try {
+      const data = CHART_MOCK_DATA.performanceTrends;
       const chart = new Chart(ctx, {
         type: "line",
         data: {
-          labels: [
-            "Week 1",
-            "Week 2",
-            "Week 3",
-            "Week 4",
-            "Week 5",
-            "Week 6",
-            "Week 7",
-          ],
+          labels: data.weeks,
           datasets: [
             {
               label: "Overall Performance Score",
-              data: [78, 82, 79, 85, 87, 89, 91],
+              data: data.overallScores,
               borderColor: this.chartColors.primary,
               backgroundColor: this.createGradient(
                 ctx,
@@ -197,7 +191,7 @@ class ChartManager {
             },
             {
               label: "Training Effectiveness",
-              data: [75, 78, 80, 83, 86, 88, 90],
+              data: data.trainingScores,
               borderColor: this.chartColors.secondary,
               backgroundColor: this.createGradient(
                 ctx,
@@ -284,21 +278,15 @@ class ChartManager {
     }
 
     try {
+      const data = CHART_MOCK_DATA.teamChemistry;
       const chart = new Chart(ctx, {
         type: "radar",
         data: {
-          labels: [
-            "Communication",
-            "Coordination",
-            "Trust",
-            "Cohesion",
-            "Leadership",
-            "Adaptability",
-          ],
+          labels: data.metrics,
           datasets: [
             {
               label: "Current Team Chemistry",
-              data: [8.5, 7.8, 9.1, 8.2, 7.5, 8.8],
+              data: data.currentScores,
               backgroundColor: "rgba(59, 130, 246, 0.2)",
               borderColor: this.chartColors.primary,
               borderWidth: 3,
@@ -309,7 +297,7 @@ class ChartManager {
             },
             {
               label: "Target Chemistry",
-              data: [9.0, 8.5, 9.5, 8.8, 8.0, 9.2],
+              data: data.targetScores,
               backgroundColor: "rgba(16, 185, 129, 0.2)",
               borderColor: this.chartColors.secondary,
               borderWidth: 2,
@@ -375,19 +363,14 @@ class ChartManager {
     }
 
     try {
+      const data = CHART_MOCK_DATA.trainingDistribution;
       const chart = new Chart(ctx, {
         type: "doughnut",
         data: {
-          labels: [
-            "Agility Training",
-            "Speed Development",
-            "Technical Skills",
-            "Strength Training",
-            "Recovery Sessions",
-          ],
+          labels: data.trainingTypes,
           datasets: [
             {
-              data: [30, 25, 20, 15, 10],
+              data: data.sessionCounts,
               backgroundColor: [
                 this.chartColors.primary,
                 this.chartColors.secondary,
@@ -448,20 +431,15 @@ class ChartManager {
     }
 
     try {
+      const data = CHART_MOCK_DATA.positionPerformance;
       const chart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: [
-            "Quarterback",
-            "Wide Receiver",
-            "Running Back",
-            "Defensive Back",
-            "Rusher",
-          ],
+          labels: data.positions,
           datasets: [
             {
               label: "Current Performance",
-              data: [87, 92, 89, 85, 78],
+              data: data.currentScores,
               backgroundColor: this.chartColors.primary,
               borderColor: this.chartColors.primary,
               borderWidth: 1,
@@ -470,7 +448,7 @@ class ChartManager {
             },
             {
               label: "Target Performance",
-              data: [90, 95, 92, 88, 82],
+              data: data.targetScores,
               backgroundColor: this.chartColors.secondary,
               borderColor: this.chartColors.secondary,
               borderWidth: 1,
@@ -538,13 +516,14 @@ class ChartManager {
     }
 
     try {
+      const data = CHART_MOCK_DATA.olympicProgress;
       const chart = new Chart(ctx, {
         type: "doughnut",
         data: {
           labels: ["Qualification Progress", "Remaining"],
           datasets: [
             {
-              data: [73, 27],
+              data: [data.qualified, data.remaining],
               backgroundColor: [this.chartColors.success, "#E5E7EB"],
               borderColor: "#ffffff",
               borderWidth: 4,
@@ -618,13 +597,14 @@ class ChartManager {
     }
 
     try {
+      const data = CHART_MOCK_DATA.injuryRisk;
       const chart = new Chart(ctx, {
         type: "doughnut",
         data: {
-          labels: ["Low Risk", "Medium Risk", "High Risk"],
+          labels: data.riskLevels,
           datasets: [
             {
-              data: [75, 20, 5],
+              data: data.riskPercentages,
               backgroundColor: [
                 this.chartColors.success,
                 this.chartColors.warning,
@@ -673,22 +653,15 @@ class ChartManager {
     }
 
     try {
+      const data = CHART_MOCK_DATA.speedDevelopment;
       const chart = new Chart(ctx, {
         type: "line",
         data: {
-          labels: [
-            "Week 1",
-            "Week 2",
-            "Week 3",
-            "Week 4",
-            "Week 5",
-            "Week 6",
-            "Week 7",
-          ],
+          labels: data.weeks,
           datasets: [
             {
               label: "40-Yard Dash Time",
-              data: [4.65, 4.62, 4.58, 4.55, 4.52, 4.49, 4.46],
+              data: data.fortyYardTimes,
               borderColor: this.chartColors.accent,
               backgroundColor: this.createGradient(
                 ctx,
@@ -705,7 +678,7 @@ class ChartManager {
             },
             {
               label: "10-Yard Sprint Time",
-              data: [1.68, 1.65, 1.62, 1.6, 1.58, 1.56, 1.54],
+              data: data.tenYardTimes,
               borderColor: this.chartColors.warning,
               backgroundColor: this.createGradient(
                 ctx,
@@ -783,21 +756,15 @@ class ChartManager {
     }
 
     try {
+      const data = CHART_MOCK_DATA.engagementFunnel;
       const chart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: [
-            "App Opens",
-            "Dashboard Views",
-            "Training Started",
-            "Session Complete",
-            "Goal Set",
-            "Goal Achieved",
-          ],
+          labels: data.stages,
           datasets: [
             {
               label: "User Engagement Funnel",
-              data: [1000, 850, 720, 680, 450, 320],
+              data: data.userCounts,
               backgroundColor: [
                 this.chartColors.primary,
                 this.chartColors.secondary,

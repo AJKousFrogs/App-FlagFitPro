@@ -1,2806 +1,1062 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
-    <meta
-      name="description"
-      content="Complete dashboard wireframe for FlagFit Pro flag football training platform"
-    >
-    <title>FlagFit Pro - Complete Dashboard Wireframe (Black &amp; White)</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap"
-      rel="stylesheet"
-    >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FlagFit Pro Dashboard - Complete wireframe for flag football training application">
+    <title>FlagFit Pro - Dashboard Wireframe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wireframe-design-system.css">
     <style>
-      /* Black and White Wireframe Design System with Poppins Typography */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      /* Page-specific styles */
+      .page-header {
+        padding: var(--space-8) 0;
+        border-bottom: var(--border-default);
+        margin-bottom: var(--space-8);
       }
 
-      body {
-        font-family:
-          "Poppins",
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
-        font-weight: 400;
-        font-size: 16px;
-        color: #1a1a1a;
-        background-color: #ffffff;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-
-      /* Typography Hierarchy - All Poppins */
-      h1 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        line-height: 1.2;
-        color: #1a1a1a;
-        margin-bottom: 1rem;
-      }
-
-      h2 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.875rem;
-        line-height: 1.3;
-        color: #1a1a1a;
-        margin-bottom: 0.75rem;
-      }
-
-      h3 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h4 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.25rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h5 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.125rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
-      }
-
-      p,
-      .body-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 1rem;
-        line-height: 1.6;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .small-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        color: #6b6b6b;
-      }
-
-      .caption {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.75rem;
-        line-height: 1.4;
-        color: #8a8a8a;
-      }
-
-      /* CTA and Button Styles - Black and White */
-      .btn,
-      .cta-primary,
-      .cta-secondary {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 12px 24px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .cta-primary {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-primary:hover {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-secondary {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-secondary:hover {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      /* Layout Structure */
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-      }
-
-      /* Header */
-      .header {
-        background-color: #ffffff;
-        border-bottom: 2px solid #e5e5e5;
-        padding: 1rem 2rem;
-        margin-bottom: 2rem;
-      }
-
-      .nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .logo {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 2rem;
-        list-style: none;
-      }
-
-      .nav-link {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #4a4a4a;
-        text-decoration: none;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-      }
-
-      .nav-link:hover,
-      .nav-link.active {
-        background-color: #f5f5f5;
-        color: #1a1a1a;
-      }
-
-      .user-profile {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-      }
-
-      .logout-btn {
-        background: none;
-        border: none;
-        color: #4a4a4a;
-        font-size: 1.25rem;
-        cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-        margin-left: 0.5rem;
-      }
-
-      .logout-btn:hover {
-        background-color: #f8f9fa;
-        color: #1a1a1a;
-      }
-
-      /* Role-Based Access Controls */
-      .role-selector {
-        margin-right: 1rem;
-      }
-
-      .role-toggle {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.875rem;
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 6px;
-        padding: 0.5rem 0.75rem;
-        color: #1a1a1a;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .role-toggle:hover {
-        border-color: #1a1a1a;
-      }
-
-      .role-toggle:focus {
-        outline: 2px solid #1a1a1a;
-        outline-offset: 2px;
-      }
-
-      /* Permission-gated content */
-      .coach-only {
-        display: none;
-      }
-
-      .player-only {
-        display: block;
-      }
-
-      .fan-only {
-        display: none;
-      }
-
-      /* Role-specific styling */
-      body.coach-view .coach-only {
-        display: block;
-      }
-
-      body.coach-view .player-only {
-        display: none;
-      }
-
-      body.fan-view .fan-only {
-        display: block;
-      }
-
-      body.fan-view .player-only,
-      body.fan-view .coach-only {
-        display: none;
-      }
-
-      /* Notification Center */
-      .notification-center {
-        position: fixed;
-        top: 0;
-        right: -400px;
-        width: 400px;
-        height: 100vh;
-        background-color: #ffffff;
-        border-left: 2px solid #e5e5e5;
-        box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
-        transition: right 0.3s ease;
-        z-index: 1001;
-        overflow-y: auto;
-      }
-
-      .notification-center.open {
-        right: 0;
-      }
-
-      .notification-header {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        padding: 1.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .notification-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-        margin: 0;
-      }
-
-      .notification-close {
-        background: none;
-        border: none;
-        color: #ffffff;
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 0;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 4px;
-        transition: background-color 0.3s ease;
-      }
-
-      .notification-close:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-
-      .notification-filters {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #e5e5e5;
-        display: flex;
-        gap: 0.5rem;
-      }
-
-      .filter-btn {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        background-color: #f8f9fa;
-        color: #6b6b6b;
-        border: 1px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 0.375rem 0.75rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .filter-btn.active {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border-color: #1a1a1a;
-      }
-
-      .notification-list {
-        padding: 0;
-      }
-
-      .notification-item {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #f0f0f0;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      .notification-item:hover {
-        background-color: #f8f9fa;
-      }
-
-      .notification-item.unread {
-        background-color: #f8f9fa;
-        border-left: 3px solid #1a1a1a;
-      }
-
-      .notification-content {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-      }
-
-      .notification-icon {
-        font-size: 1.25rem;
-        margin-top: 0.125rem;
-      }
-
-      .notification-text {
-        flex: 1;
-      }
-
-      .notification-message {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #1a1a1a;
-        font-size: 0.875rem;
-        margin-bottom: 0.25rem;
-      }
-
-      .notification-time {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #6b6b6b;
-        font-size: 0.75rem;
-      }
-
-      /* Global Search */
-      .global-search {
-        position: relative;
-        margin-right: 1rem;
-      }
-
-      .search-input {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.875rem;
-        background-color: #f8f9fa;
-        border: 2px solid #e5e5e5;
-        border-radius: 20px;
-        padding: 0.5rem 1rem 0.5rem 2.5rem;
-        width: 300px;
-        color: #1a1a1a;
-        transition: all 0.3s ease;
-      }
-
-      .search-input:focus {
-        outline: none;
-        border-color: #1a1a1a;
-        background-color: #ffffff;
-        width: 400px;
-      }
-
-      .search-icon {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #6b6b6b;
-        font-size: 1rem;
-      }
-
-      .search-shortcut {
-        position: absolute;
-        right: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        color: #6b6b6b;
-        background-color: #e5e5e5;
-        padding: 0.125rem 0.375rem;
-        border-radius: 4px;
-      }
-
-      .notification-bell {
-        position: relative;
-        background: none;
-        border: none;
-        color: #1a1a1a;
-        font-size: 1.25rem;
-        cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 6px;
-        transition: background-color 0.3s ease;
-        margin-right: 0.5rem;
-      }
-
-      .notification-bell:hover {
-        background-color: #f8f9fa;
-      }
-
-      .notification-badge {
-        position: absolute;
-        top: 0.25rem;
-        right: 0.25rem;
-        background-color: #dc3545;
-        color: #ffffff;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 0.625rem;
-        padding: 0.125rem 0.375rem;
-        border-radius: 10px;
-        min-width: 18px;
-        text-align: center;
-      }
-
-      /* Dashboard Grid */
-      .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-bottom: 3rem;
-      }
-
-      /* Cards */
-      .card {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 2rem;
-        transition: all 0.3s ease;
-      }
-
-      .card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      }
-
-      .card-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .card-icon {
-        font-size: 2rem;
-        /* Emojis keep their natural colors */
-      }
-
-      .card-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-        color: #1a1a1a;
-      }
-
-      .card-metric {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      .card-description {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .card-trend {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.875rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      /* Sections */
-      .section {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e5e5e5;
-      }
-
-      .section-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-      }
-
-      /* Welcome Section Styles */
       .welcome-section {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border: 2px solid #1a1a1a;
-        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: var(--space-6);
       }
 
-      .welcome-header h1 {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 1.5rem;
+      .welcome-content h1 {
+        margin-bottom: var(--space-2);
       }
 
       .daily-quote {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 1.5rem;
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4) var(--space-6);
+        max-width: 400px;
       }
 
-      .quote-icon {
-        font-size: 1.5rem;
-        margin-top: 0.25rem;
-      }
-
-      .quote-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.125rem;
-        color: #1a1a1a;
+      .daily-quote p {
         font-style: italic;
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--space-2);
+        color: var(--color-text-secondary);
       }
 
-      .quote-author {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.875rem;
-        color: #6b6b6b;
-        margin: 0;
+      .daily-quote cite {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        font-style: normal;
       }
 
-      /* 7-Day Training Calendar Styles */
+      /* Training Calendar */
       .training-calendar {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 0.5rem;
-        margin-top: 1rem;
+        gap: var(--space-3);
+        margin-top: var(--space-4);
       }
 
       .calendar-day {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 1rem 0.5rem;
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-3);
         text-align: center;
-        transition: all 0.3s ease;
+        min-height: 100px;
+        transition: all var(--transition-normal);
         cursor: pointer;
       }
 
       .calendar-day:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-2px);
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
       .calendar-day.today {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border-color: #1a1a1a;
+        border-color: var(--color-black);
+        border-width: var(--border-width-medium);
+        background: var(--color-white);
       }
 
-      .calendar-day.completed {
-        background-color: #f8f9fa;
-        border-color: #28a745;
+      .calendar-day.has-training {
+        background: var(--color-white);
       }
 
       .day-name {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 0.75rem;
-        color: inherit;
-        margin-bottom: 0.5rem;
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: var(--space-1);
       }
 
-      .day-date {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1rem;
-        color: inherit;
-        margin-bottom: 0.5rem;
+      .day-number {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+        margin-bottom: var(--space-2);
       }
 
       .day-training {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.625rem;
-        color: inherit;
-        opacity: 0.8;
-      }
-
-      .training-status {
-        font-size: 0.75rem;
-        margin-top: 0.25rem;
-      }
-
-      /* AI Coach Chat Widget */
-      .ai-coach-widget {
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        width: 320px;
-        background-color: #ffffff;
-        border: 2px solid #1a1a1a;
-        border-radius: 12px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-      }
-
-      .ai-coach-header {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        padding: 1rem;
-        border-radius: 10px 10px 0 0;
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        justify-content: center;
+        gap: var(--space-1);
       }
 
-      .ai-coach-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1rem;
-        margin: 0;
+      /* Overview Grid */
+      .overview-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
-      .ai-coach-status {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.75rem;
-        opacity: 0.8;
+      .overview-card {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        transition: all var(--transition-normal);
       }
 
-      .ai-coach-content {
-        padding: 1rem;
+      .overview-card:hover {
+        border-color: var(--color-black);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
       }
 
-      .ai-message {
-        background-color: #f8f9fa;
-        border-left: 3px solid #1a1a1a;
-        padding: 0.75rem;
-        border-radius: 0 8px 8px 0;
-        margin-bottom: 1rem;
+      .overview-card .card-icon {
+        font-size: var(--font-size-3xl);
+        margin-bottom: var(--space-3);
       }
 
-      .ai-message-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.875rem;
-        color: #1a1a1a;
-        margin: 0;
+      .overview-card .card-value {
+        font-size: var(--font-size-4xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        line-height: 1;
+        margin-bottom: var(--space-2);
       }
 
-      .ai-quick-actions {
+      .overview-card .card-label {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-3);
+      }
+
+      .overview-card .card-trend {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
+        align-items: center;
+        gap: var(--space-2);
       }
 
-      .ai-quick-btn {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        background-color: #e9ecef;
-        color: #1a1a1a;
-        border: 1px solid #dee2e6;
-        border-radius: 16px;
-        padding: 0.375rem 0.75rem;
+      /* Olympic Qualification Section */
+      .olympic-section {
+        background: var(--color-gray-50);
+        border: var(--border-width-thick) solid var(--color-black);
+        border-radius: var(--border-radius-xl);
+        padding: var(--space-8);
+        margin-bottom: var(--space-8);
+      }
+
+      .olympic-header {
+        text-align: center;
+        margin-bottom: var(--space-8);
+      }
+
+      .olympic-header h2 {
+        margin-bottom: var(--space-2);
+      }
+
+      .olympic-probability {
+        font-size: var(--font-size-5xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        margin: var(--space-4) 0;
+      }
+
+      .olympic-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-6);
+      }
+
+      .olympic-card {
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        text-align: center;
+      }
+
+      .olympic-card .card-value {
+        font-size: var(--font-size-3xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+        margin-bottom: var(--space-2);
+      }
+
+      .olympic-card .card-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-3);
+      }
+
+      /* Main Content Grid */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      /* Wearables Section */
+      .wearables-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+      }
+
+      .device-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .device-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-4);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        transition: all var(--transition-normal);
+      }
+
+      .device-card:hover {
+        border-color: var(--color-black);
+        background: var(--color-white);
+      }
+
+      .device-icon {
+        font-size: var(--font-size-2xl);
+      }
+
+      .device-info {
+        flex: 1;
+      }
+
+      .device-name {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
+      }
+
+      .device-status {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      .device-value {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+      }
+
+      /* Team Chemistry Section */
+      .chemistry-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+      }
+
+      .chemistry-score {
+        text-align: center;
+        padding: var(--space-6) 0;
+      }
+
+      .chemistry-value {
+        font-size: var(--font-size-5xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        line-height: 1;
+      }
+
+      .chemistry-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin-top: var(--space-2);
+      }
+
+      .chemistry-factors {
+        margin-top: var(--space-4);
+      }
+
+      .factor-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-3) 0;
+        border-bottom: var(--border-default);
+      }
+
+      .factor-item:last-child {
+        border-bottom: none;
+      }
+
+      .factor-name {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+      }
+
+      .factor-value {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+      }
+
+      /* Sponsor Section */
+      .sponsor-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .sponsor-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .sponsor-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-4);
+        text-align: center;
+        transition: all var(--transition-normal);
         cursor: pointer;
-        transition: all 0.3s ease;
       }
 
-      .ai-quick-btn:hover {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border-color: #1a1a1a;
+      .sponsor-card:hover {
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
-      .ai-toggle {
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        width: 60px;
-        height: 60px;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: none;
-        border-radius: 50%;
-        font-size: 1.5rem;
+      .sponsor-logo {
+        font-size: var(--font-size-3xl);
+        margin-bottom: var(--space-2);
+      }
+
+      .sponsor-name {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
+      }
+
+      .sponsor-reward {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      /* Role Selector */
+      .role-selector {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .role-selector label {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-secondary);
+      }
+
+      .role-selector select {
+        font-family: var(--font-family);
+        font-size: var(--font-size-sm);
+        padding: var(--space-2) var(--space-3);
+        border: var(--border-card);
+        border-radius: var(--border-radius-md);
+        background: var(--color-white);
+        cursor: pointer;
+        min-width: 120px;
+      }
+
+      .role-selector select:focus {
+        outline: none;
+        border-color: var(--color-black);
+      }
+
+      /* User Profile */
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-2) var(--space-4);
+        border: var(--border-card);
+        border-radius: var(--border-radius-md);
+        cursor: pointer;
+        transition: all var(--transition-normal);
+      }
+
+      .user-profile:hover {
+        border-color: var(--color-black);
+        background: var(--color-gray-50);
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--border-radius-full);
+        background: var(--color-black);
+        color: var(--color-white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-sm);
+      }
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .user-name {
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-sm);
+        color: var(--color-black);
+      }
+
+      .user-role {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      /* Notification Bell */
+      .notification-btn {
+        position: relative;
+        width: 44px;
+        height: 44px;
+        border: var(--border-card);
+        border-radius: var(--border-radius-md);
+        background: var(--color-white);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s ease;
-        z-index: 999;
+        font-size: var(--font-size-lg);
+        transition: all var(--transition-normal);
       }
 
-      .ai-toggle:hover {
-        background-color: #333333;
-        transform: scale(1.1);
+      .notification-btn:hover {
+        border-color: var(--color-black);
+        background: var(--color-gray-50);
       }
 
-      .ai-coach-widget.hidden {
-        display: none;
-      }
-
-      /* Data Integrity States */
-      .loading-state {
-        background: linear-gradient(
-          90deg,
-          #f0f0f0 25%,
-          #e0e0e0 50%,
-          #f0f0f0 75%
-        );
-        background-size: 200% 100%;
-        animation: loading 1.5s infinite;
-        border-radius: 4px;
-        height: 1.5rem;
-        margin: 0.5rem 0;
-      }
-
-      @keyframes loading {
-        0% {
-          background-position: 200% 0;
-        }
-        100% {
-          background-position: -200% 0;
-        }
-      }
-
-      .error-state {
-        background-color: #fef2f2;
-        border: 1px solid #fecaca;
-        color: #dc2626;
-        padding: 0.75rem;
-        border-radius: 6px;
-        font-family: "Poppins", sans-serif;
-        font-size: 0.875rem;
+      .notification-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: var(--color-black);
+        color: var(--color-white);
+        font-size: 10px;
+        font-weight: var(--font-weight-bold);
+        width: 18px;
+        height: 18px;
+        border-radius: var(--border-radius-full);
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        justify-content: center;
       }
 
-      .empty-state {
-        text-align: center;
-        padding: 2rem;
-        color: #6b6b6b;
-        font-family: "Poppins", sans-serif;
-      }
-
-      .empty-state-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        opacity: 0.5;
-      }
-
-      .reconnect-btn {
-        background-color: #dc2626;
-        color: #ffffff;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
+      /* Search Button */
+      .search-btn {
+        width: 44px;
+        height: 44px;
+        border: var(--border-card);
+        border-radius: var(--border-radius-md);
+        background: var(--color-white);
         cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      .reconnect-btn:hover {
-        background-color: #b91c1c;
-      }
-
-      /* Olympic Section Styles */
-      .olympic-section {
-        background-color: #fafafa;
-        border: 2px solid #1a1a1a;
-      }
-
-      .olympic-metrics {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-      }
-
-      .olympic-metric {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 1.5rem;
-        text-align: center;
-      }
-
-      .metric-value {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2rem;
-        color: #1a1a1a;
-        display: block;
-        margin-bottom: 0.5rem;
-      }
-
-      .metric-label {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #4a4a4a;
-        font-size: 0.875rem;
-      }
-
-      .metric-trend {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        color: #6b6b6b;
-        margin-top: 0.5rem;
-      }
-
-      /* Progress Bars */
-      .progress-bar {
-        width: 100%;
-        height: 8px;
-        background-color: #e5e5e5;
-        border-radius: 4px;
-        overflow: hidden;
-        margin: 0.5rem 0;
-      }
-
-      .progress-fill {
-        height: 100%;
-        background-color: #1a1a1a;
-        border-radius: 4px;
-        transition: width 0.3s ease;
-      }
-
-      /* Timeline */
-      .timeline {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-
-      .timeline-item {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
+        justify-content: center;
+        font-size: var(--font-size-lg);
+        transition: all var(--transition-normal);
       }
 
-      .timeline-icon {
-        font-size: 1.5rem;
-        /* Emojis keep their natural colors */
+      .search-btn:hover {
+        border-color: var(--color-black);
+        background: var(--color-gray-50);
       }
 
-      .timeline-content {
-        flex: 1;
+      /* Injury Prevention */
+      .injury-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
       }
 
-      .timeline-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
-      }
-
-      .timeline-date {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        font-size: 0.875rem;
-      }
-
-      .timeline-description {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #6b6b6b;
-        font-size: 0.875rem;
-        margin-top: 0.5rem;
-      }
-
-      /* Stats Grid */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-      }
-
-      .stat-item {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 1rem;
+      .risk-indicator {
         text-align: center;
+        padding: var(--space-4) 0;
       }
 
-      .stat-value {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-        display: block;
-        margin-bottom: 0.5rem;
+      .risk-value {
+        font-size: var(--font-size-4xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
       }
 
-      .stat-label {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #4a4a4a;
-        font-size: 0.875rem;
+      .risk-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin-top: var(--space-1);
       }
 
-      /* Lists */
-      .feature-list {
-        list-style: none;
-        padding: 0;
+      .risk-factors {
+        margin-top: var(--space-4);
       }
 
-      .feature-item {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #f0f0f0;
+      .risk-item {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        background: var(--color-gray-50);
+        border-radius: var(--border-radius-md);
+        margin-bottom: var(--space-2);
       }
 
-      .feature-icon {
-        font-size: 1rem;
-        /* Emojis keep their natural colors */
+      .risk-item:last-child {
+        margin-bottom: 0;
       }
 
-      /* Language Settings */
-      .language-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 1rem;
+      /* Language Selector */
+      .language-selector {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--font-size-sm);
       }
 
-      .language-item {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 1rem;
-        text-align: center;
+      .language-selector select {
+        font-family: var(--font-family);
+        font-size: var(--font-size-sm);
+        padding: var(--space-1) var(--space-2);
+        border: var(--border-default);
+        border-radius: var(--border-radius-sm);
+        background: var(--color-white);
         cursor: pointer;
-        transition: all 0.3s ease;
       }
 
-      .language-item:hover {
-        border-color: #1a1a1a;
-      }
-
-      .language-item.active {
-        background-color: #1a1a1a;
-        color: #ffffff;
-      }
-
-      .language-flag {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        display: block;
-        /* Emojis keep their natural colors */
-      }
-
-      .language-name {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.875rem;
-      }
-
-      /* Responsive Design */
-      @media (max-width: 768px) {
-        .container {
-          padding: 1rem;
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .overview-grid {
+          grid-template-columns: repeat(2, 1fr);
         }
 
-        .nav {
-          flex-direction: column;
-          gap: 1rem;
+        .olympic-grid {
+          grid-template-columns: repeat(2, 1fr);
         }
 
-        .nav-links {
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-
-        .achievement-dashboard {
+        .main-grid {
           grid-template-columns: 1fr;
-          gap: 1rem;
         }
 
-        .main-achievement {
-          padding: 2rem;
+        .sponsor-grid {
+          grid-template-columns: repeat(2, 1fr);
         }
+      }
 
-        .quick-metrics {
-          margin-top: 1rem;
-        }
-
-        .metric-card {
-          padding: 1rem;
-        }
-
-        .goal-card {
-          padding: 1.5rem;
-        }
-
-        .section-header {
+      @media (max-width: 768px) {
+        .welcome-section {
           flex-direction: column;
-          align-items: flex-start;
-          gap: 1rem;
         }
 
-        h1 {
-          font-size: 2rem;
+        .daily-quote {
+          max-width: 100%;
         }
 
-        h2 {
-          font-size: 1.5rem;
+        .calendar-grid {
+          grid-template-columns: repeat(4, 1fr);
         }
-      }
 
-      /* Animations */
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
+        .overview-grid {
+          grid-template-columns: 1fr;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
 
-      .card,
-      .section {
-        animation: fadeInUp 0.6s ease-out;
+        .olympic-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .device-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .sponsor-grid {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
-    <!-- Header -->
-    <header class="header">
-      <nav class="nav">
-        <div class="logo">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav-container">
+        <a href="#" class="nav-brand">
           <span>🏈</span>
           <span>FlagFit Pro</span>
-        </div>
-        <ul class="nav-links">
+        </a>
+
+        <ul class="nav-menu">
           <li><a href="#" class="nav-link active">Dashboard</a></li>
-          <li><a href="#" class="nav-link">Training</a></li>
-          <li><a href="#" class="nav-link">Community</a></li>
-          <li><a href="#" class="nav-link">Tournament</a></li>
+          <li><a href="training-complete-wireframe.html" class="nav-link">Training</a></li>
+          <li><a href="community-complete-wireframe.html" class="nav-link">Community</a></li>
+          <li><a href="tournament-complete-wireframe.html" class="nav-link">Tournament</a></li>
         </ul>
 
-        <!-- Global Search -->
-        <div class="global-search">
-          <span class="search-icon">🔍</span>
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Search training, athletes, stats..."
-            id="globalSearch"
-          >
-          <span class="search-shortcut">⌘K</span>
-        </div>
-
-        <!-- Notification Bell -->
-        <button type="button" class="notification-bell" id="notificationBell">
-          🔔
-          <span class="notification-badge">3</span>
-        </button>
-        <div class="user-profile">
-          <!-- Role Toggle -->
-          <div class="role-selector">
-            <select class="role-toggle" id="roleToggle">
-              <option value="player">👤 Player View</option>
-              <option value="coach">🏃‍♂️ Coach View</option>
-              <option value="fan">👀 Fan View</option>
+        <div class="nav-actions">
+          <div class="language-selector">
+            <span>🌐</span>
+            <select id="languageSelect" aria-label="Select language">
+              <option value="en">EN</option>
+              <option value="de">DE</option>
+              <option value="fr">FR</option>
+              <option value="es">ES</option>
             </select>
           </div>
-          <div class="avatar" id="userAvatar">JD</div>
-          <span class="small-text" id="userName">John Doe</span>
-          <button type="button" class="logout-btn" id="logoutBtn" title="Logout">🚪</button>
-        </div>
-      </nav>
-    </header>
 
-    <!-- Main Container -->
-    <div class="container">
-      <!-- Welcome Back Section with Daily Quote -->
-      <div class="section welcome-section">
-        <div class="welcome-header">
-          <h1>Welcome back, Alex! Ready to dominate today?</h1>
-          <div class="daily-quote">
-            <span class="quote-icon">💭</span>
-            <p class="quote-text">
-              "Champions aren't made in comfort zones. Today's training is
-              tomorrow's victory."
-            </p>
-            <p class="quote-author">- Coach Marcus Rivera</p>
+          <button type="button" class="search-btn" aria-label="Search">
+            🔍
+          </button>
+
+          <button type="button" class="notification-btn" aria-label="Notifications">
+            🔔
+            <span class="notification-badge">3</span>
+          </button>
+
+          <div class="role-selector">
+            <label for="roleToggle">View as:</label>
+            <select id="roleToggle">
+              <option value="player">Player</option>
+              <option value="coach">Coach</option>
+              <option value="fan">Fan</option>
+            </select>
+          </div>
+
+          <div class="user-profile">
+            <div class="user-avatar">MJ</div>
+            <div class="user-info">
+              <span class="user-name">Marcus Johnson</span>
+              <span class="user-role">Wide Receiver</span>
+            </div>
           </div>
         </div>
       </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+      <!-- Page Header -->
+      <header class="page-header">
+        <div class="welcome-section">
+          <div class="welcome-content">
+            <h1>Welcome back, Marcus! 👋</h1>
+            <p>Your training journey continues. Let's make today count!</p>
+          </div>
+          <div class="daily-quote">
+            <p>"Champions are made when no one is watching."</p>
+            <cite>— Olympic Training Philosophy</cite>
+          </div>
+        </div>
+      </header>
 
       <!-- 7-Day Training Calendar -->
-      <div class="section">
+      <section class="training-calendar">
         <div class="section-header">
-          <h2>📅 7-Day Training Schedule</h2>
-          <button type="button" class="cta-secondary">Customize Schedule</button>
-        </div>
-
-        <div class="training-calendar">
-          <div class="calendar-day completed">
-            <div class="day-name">MON</div>
-            <div class="day-date">4</div>
-            <div class="day-training">Speed &amp; Agility</div>
-            <div class="training-status">✅ Completed</div>
-          </div>
-          <div class="calendar-day completed">
-            <div class="day-name">TUE</div>
-            <div class="day-date">5</div>
-            <div class="day-training">Route Running</div>
-            <div class="training-status">✅ Completed</div>
-          </div>
-          <div class="calendar-day completed">
-            <div class="day-name">WED</div>
-            <div class="day-date">6</div>
-            <div class="day-training">Strength Training</div>
-            <div class="training-status">✅ Completed</div>
-          </div>
-          <div class="calendar-day completed">
-            <div class="day-name">THU</div>
-            <div class="day-date">7</div>
-            <div class="day-training">Film Study</div>
-            <div class="training-status">✅ Completed</div>
-          </div>
-          <div class="calendar-day today">
-            <div class="day-name">FRI</div>
-            <div class="day-date">8</div>
-            <div class="day-training">Olympic Prep</div>
-            <div class="training-status">🏃 Active</div>
-          </div>
-          <div class="calendar-day">
-            <div class="day-name">SAT</div>
-            <div class="day-date">9</div>
-            <div class="day-training">Recovery</div>
-            <div class="training-status">⏳ Scheduled</div>
-          </div>
-          <div class="calendar-day">
-            <div class="day-name">SUN</div>
-            <div class="day-date">10</div>
-            <div class="day-training">Game Day</div>
-            <div class="training-status">🏈 Ready</div>
+          <h2 class="section-title">
+            <span>📅</span>
+            7-Day Training Overview
+          </h2>
+          <div class="section-actions">
+            <button type="button" class="btn btn-secondary btn-sm">View Full Calendar</button>
           </div>
         </div>
-      </div>
 
-      <!-- Dashboard Overview Grid -->
-      <div class="dashboard-grid">
-        <!-- Training Progress Card -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-icon">💪</span>
-            <h3 class="card-title">Training Progress</h3>
+        <div class="calendar-grid">
+          <div class="calendar-day">
+            <div class="day-name">Mon</div>
+            <div class="day-number">23</div>
+            <div class="day-training">Rest Day</div>
           </div>
-          <div class="card-metric">87%</div>
-          <p class="card-description">Weekly goals completed</p>
+          <div class="calendar-day has-training">
+            <div class="day-name">Tue</div>
+            <div class="day-number">24</div>
+            <div class="day-training">🏃 Speed</div>
+          </div>
+          <div class="calendar-day has-training today">
+            <div class="day-name">Wed</div>
+            <div class="day-number">25</div>
+            <div class="day-training">💪 Strength</div>
+          </div>
+          <div class="calendar-day has-training">
+            <div class="day-name">Thu</div>
+            <div class="day-number">26</div>
+            <div class="day-training">🎯 Skills</div>
+          </div>
+          <div class="calendar-day">
+            <div class="day-name">Fri</div>
+            <div class="day-number">27</div>
+            <div class="day-training">🧘 Recovery</div>
+          </div>
+          <div class="calendar-day has-training">
+            <div class="day-name">Sat</div>
+            <div class="day-number">28</div>
+            <div class="day-training">🏈 Game Day</div>
+          </div>
+          <div class="calendar-day">
+            <div class="day-name">Sun</div>
+            <div class="day-number">29</div>
+            <div class="day-training">Rest Day</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Overview Grid -->
+      <section class="overview-grid">
+        <div class="overview-card">
+          <div class="card-icon">📊</div>
+          <div class="card-value">87%</div>
+          <div class="card-label">Training Progress</div>
           <div class="card-trend">
             <span>📈</span>
-            <span>+12% from last week</span>
+            <span>+5% this week</span>
           </div>
         </div>
 
-        <!-- Performance Score Card -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-icon">⚡</span>
-            <h3 class="card-title">Performance Score</h3>
-          </div>
-          <div class="card-metric">8.4/10</div>
-          <p class="card-description">Overall athletic performance</p>
+        <div class="overview-card">
+          <div class="card-icon">⚡</div>
+          <div class="card-value">92</div>
+          <div class="card-label">Performance Score</div>
           <div class="card-trend">
             <span>🎯</span>
-            <span>Olympic standard reached</span>
+            <span>Olympic standard: 85</span>
           </div>
         </div>
 
-        <!-- Team Chemistry Card -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-icon">🤝</span>
-            <h3 class="card-title">Team Chemistry</h3>
-          </div>
-          <div class="card-metric">9.1/10</div>
-          <p class="card-description">Team cohesion rating</p>
+        <div class="overview-card">
+          <div class="card-icon">🤝</div>
+          <div class="card-value">8.4</div>
+          <div class="card-label">Team Chemistry</div>
           <div class="card-trend">
-            <span>🔥</span>
-            <span>Excellent team synergy</span>
+            <span>📈</span>
+            <span>+0.3 improvement</span>
           </div>
         </div>
 
-        <!-- Upcoming Sessions Card -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-icon">📅</span>
-            <h3 class="card-title">Next Session</h3>
-          </div>
-          <div class="card-metric">2 hrs</div>
-          <p class="card-description">Olympic preparation training</p>
+        <div class="overview-card">
+          <div class="card-icon">📅</div>
+          <div class="card-value">3</div>
+          <div class="card-label">Upcoming Sessions</div>
           <div class="card-trend">
             <span>⏰</span>
-            <span>Today at 4:00 PM</span>
+            <span>Next: Today 2:30 PM</span>
           </div>
         </div>
+      </section>
+
+      <!-- Olympic Qualification Section -->
+      <section class="olympic-section">
+        <div class="olympic-header">
+          <h2>🏆 LA28 Olympic Qualification Path</h2>
+          <p>Track your progress toward the 2028 Los Angeles Olympics</p>
+          <div class="olympic-probability">78%</div>
+          <p class="text-muted">Qualification Probability</p>
+        </div>
+
+        <div class="olympic-grid">
+          <div class="olympic-card">
+            <div class="card-value">#6</div>
+            <div class="card-label">World Ranking</div>
+            <div class="progress" style="margin-top: var(--space-3);">
+              <div class="progress-bar" style="width: 75%;"></div>
+            </div>
+            <p class="text-sm text-muted" style="margin-top: var(--space-2);">Top 8 qualify</p>
+          </div>
+
+          <div class="olympic-card">
+            <div class="card-value">87/100</div>
+            <div class="card-label">Olympic Score</div>
+            <div class="progress" style="margin-top: var(--space-3);">
+              <div class="progress-bar" style="width: 87%;"></div>
+            </div>
+            <p class="text-sm text-muted" style="margin-top: var(--space-2);">Target: 85</p>
+          </div>
+
+          <div class="olympic-card">
+            <div class="card-value">Sept 2025</div>
+            <div class="card-label">European Championship</div>
+            <div class="progress" style="margin-top: var(--space-3);">
+              <div class="progress-bar" style="width: 60%;"></div>
+            </div>
+            <p class="text-sm text-muted" style="margin-top: var(--space-2);">Next qualifier</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Content Grid -->
+      <div class="main-grid">
+        <!-- Wearables Section -->
+        <section class="wearables-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>⌚</span>
+              Live Wearables Data
+            </h3>
+            <button type="button" class="btn btn-secondary btn-sm">Sync Devices</button>
+          </div>
+
+          <div class="device-grid">
+            <div class="device-card">
+              <div class="device-icon">❤️</div>
+              <div class="device-info">
+                <div class="device-name">Heart Rate</div>
+                <div class="device-status">Apple Watch</div>
+              </div>
+              <div class="device-value">72 bpm</div>
+            </div>
+
+            <div class="device-card">
+              <div class="device-icon">🏃</div>
+              <div class="device-info">
+                <div class="device-name">Steps Today</div>
+                <div class="device-status">Fitbit</div>
+              </div>
+              <div class="device-value">8,432</div>
+            </div>
+
+            <div class="device-card">
+              <div class="device-icon">😴</div>
+              <div class="device-info">
+                <div class="device-name">Sleep Score</div>
+                <div class="device-status">Oura Ring</div>
+              </div>
+              <div class="device-value">85/100</div>
+            </div>
+
+            <div class="device-card">
+              <div class="device-icon">🔥</div>
+              <div class="device-info">
+                <div class="device-name">Calories</div>
+                <div class="device-status">Garmin</div>
+              </div>
+              <div class="device-value">1,847</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Team Chemistry Section -->
+        <section class="chemistry-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>🤝</span>
+              Team Chemistry
+            </h3>
+          </div>
+
+          <div class="chemistry-score">
+            <div class="chemistry-value">8.4/10</div>
+            <div class="chemistry-label">Overall Team Cohesion</div>
+          </div>
+
+          <div class="chemistry-factors">
+            <div class="factor-item">
+              <span class="factor-name">Communication</span>
+              <span class="factor-value">9.1</span>
+            </div>
+            <div class="factor-item">
+              <span class="factor-name">Trust</span>
+              <span class="factor-value">8.7</span>
+            </div>
+            <div class="factor-item">
+              <span class="factor-name">Coordination</span>
+              <span class="factor-value">7.9</span>
+            </div>
+            <div class="factor-item">
+              <span class="factor-name">Leadership</span>
+              <span class="factor-value">8.2</span>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <!-- 🏆 LA28 Olympic Qualification Section -->
-      <div class="section olympic-section">
+      <!-- Sponsor Rewards Section -->
+      <section class="sponsor-section">
         <div class="section-header">
-          <h2>🏆 LA28 Olympic Qualification</h2>
-          <button type="button" class="cta-primary">View Full Pathway</button>
+          <h3 class="section-title">
+            <span>🎁</span>
+            Sponsor Rewards
+          </h3>
+          <button type="button" class="btn btn-secondary btn-sm">View All Rewards</button>
         </div>
 
-        <div class="olympic-metrics">
-          <div class="olympic-metric">
-            <span class="metric-value">73%</span>
-            <span class="metric-label">Qualification Probability</span>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 73%"></div>
-            </div>
-            <div class="metric-trend">
-              Based on current performance and world ranking
-            </div>
+        <div class="sponsor-grid">
+          <div class="sponsor-card">
+            <div class="sponsor-logo">👟</div>
+            <div class="sponsor-name">Nike</div>
+            <div class="sponsor-reward">20% off training gear</div>
           </div>
 
-          <div class="olympic-metric">
-            <span class="metric-value">#8/16</span>
-            <span class="metric-label">Current World Ranking</span>
-            <div class="metric-trend">↗ Moved up 2 positions this month</div>
+          <div class="sponsor-card">
+            <div class="sponsor-logo">🥤</div>
+            <div class="sponsor-name">Gatorade</div>
+            <div class="sponsor-reward">Free hydration pack</div>
           </div>
 
-          <div class="olympic-metric">
-            <span class="metric-value">124 days</span>
-            <span class="metric-label">Until European Championships</span>
-            <div class="metric-trend">🇫🇷 France, September 24-27, 2025</div>
+          <div class="sponsor-card">
+            <div class="sponsor-logo">🏈</div>
+            <div class="sponsor-name">Wilson</div>
+            <div class="sponsor-reward">Premium equipment</div>
+          </div>
+
+          <div class="sponsor-card">
+            <div class="sponsor-logo">🍎</div>
+            <div class="sponsor-name">Apple</div>
+            <div class="sponsor-reward">Fitness+ subscription</div>
           </div>
         </div>
+      </section>
 
-        <h4>🛤️ Official IFAF Qualification Pathway</h4>
-        <div class="timeline">
-          <div class="timeline-item">
-            <span class="timeline-icon">✅</span>
-            <div class="timeline-content">
-              <div class="timeline-title">Regional Tournaments</div>
-              <div class="timeline-date">2024 - Completed</div>
-              <div class="timeline-description">
-                Qualified for Continental Championships
+      <!-- Bottom Grid -->
+      <div class="main-grid">
+        <!-- AI Schedule Optimization -->
+        <section class="wearables-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>🤖</span>
+              AI Schedule Optimization
+            </h3>
+            <button type="button" class="btn btn-primary btn-sm">Optimize Now</button>
+          </div>
+
+          <div class="list">
+            <div class="list-item">
+              <span class="list-item-icon">💡</span>
+              <div class="list-item-content">
+                <div class="list-item-title">Move speed training to morning</div>
+                <div class="list-item-subtitle">Your peak performance window is 6-9 AM</div>
+              </div>
+            </div>
+            <div class="list-item">
+              <span class="list-item-icon">⚠️</span>
+              <div class="list-item-content">
+                <div class="list-item-title">Add recovery session Friday</div>
+                <div class="list-item-subtitle">High training load detected this week</div>
+              </div>
+            </div>
+            <div class="list-item">
+              <span class="list-item-icon">✅</span>
+              <div class="list-item-content">
+                <div class="list-item-title">Sleep schedule optimized</div>
+                <div class="list-item-subtitle">Maintaining 7+ hours consistently</div>
               </div>
             </div>
           </div>
+        </section>
 
-          <div class="timeline-item">
-            <span class="timeline-icon">🏃</span>
-            <div class="timeline-content">
-              <div class="timeline-title">European Championships</div>
-              <div class="timeline-date">September 24-27, 2025</div>
-              <div class="timeline-description">
-                1 automatic Olympic spot available
-              </div>
+        <!-- Injury Prevention -->
+        <section class="injury-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>🏥</span>
+              Injury Prevention
+            </h3>
+          </div>
+
+          <div class="risk-indicator">
+            <div class="risk-value">12%</div>
+            <div class="risk-label">Current Injury Risk</div>
+          </div>
+
+          <div class="risk-factors">
+            <div class="risk-item">
+              <span>🦵</span>
+              <span>Hamstring flexibility: Good</span>
+            </div>
+            <div class="risk-item">
+              <span>💪</span>
+              <span>Muscle fatigue: Low</span>
+            </div>
+            <div class="risk-item">
+              <span>😴</span>
+              <span>Recovery status: Optimal</span>
             </div>
           </div>
-
-          <div class="timeline-item">
-            <span class="timeline-icon">🎯</span>
-            <div class="timeline-content">
-              <div class="timeline-title">2026 World Championship</div>
-              <div class="timeline-date">July 15-21, 2026 (Germany)</div>
-              <div class="timeline-description">6 Olympic spots available</div>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <span class="timeline-icon">🏅</span>
-            <div class="timeline-content">
-              <div class="timeline-title">LA28 Olympics</div>
-              <div class="timeline-date">July 14-30, 2028</div>
-              <div class="timeline-description">
-                6 teams per gender - ONLY 60 ATHLETES
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <h4>📊 LA28 Performance Benchmarks</h4>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">4.52s</span>
-            <span class="stat-label">40-Yard Dash</span>
-            <div class="small-text">Current vs 4.40s elite target</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">82.5%</span>
-            <span class="stat-label">Passing Accuracy</span>
-            <div class="small-text">Current vs 85% elite target</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">4.18s</span>
-            <span class="stat-label">Agility Shuttle</span>
-            <div class="small-text">Current vs 4.00s elite target</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">87</span>
-            <span class="stat-label">Game IQ Score</span>
-            <div class="small-text">Current vs 90 elite target</div>
-          </div>
-        </div>
+        </section>
       </div>
-
-      <!-- 🎁 Comprehensive Sponsor Product Integration -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🎁 Sponsor Rewards &amp; Products</h2>
-          <button type="button" class="cta-secondary">Browse Catalog</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">2,847</span>
-            <span class="stat-label">Available Points</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">GOLD</span>
-            <span class="stat-label">Current Tier</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">147</span>
-            <span class="stat-label">GEARXPro Products</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">89</span>
-            <span class="stat-label">LaPrimaFit Products</span>
-          </div>
-        </div>
-
-        <h4>🏪 Featured Sponsor Products</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">👕</span>
-            <span>Pro Grip Football Socks - 350 pts (92% relevance)</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">💆</span>
-            <span>Recovery Massage Gun - 1,650 pts (78% relevance)</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏃</span>
-            <span>Elite Training Shorts - 780 pts (89% relevance)</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏋️</span>
-            <span>Recovery Band Set - 420 pts (94% relevance)</span>
-          </div>
-        </div>
-
-        <h4>🎖️ Tier Progression</h4>
-        <div class="progress-bar">
-          <div class="progress-fill" style="width: 65%"></div>
-        </div>
-        <div class="small-text">
-          Bronze → Silver → GOLD (current) → Platinum (2,150 pts needed) → Elite
-        </div>
-      </div>
-
-      <!-- ⌚ Advanced Multi-Device Wearables -->
-      <div class="section">
-        <div class="section-header">
-          <h2>⌚ Multi-Device Wearables Integration</h2>
-          <button type="button" class="cta-secondary">Manage Devices</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">142 bpm</span>
-            <span class="stat-label">Heart Rate</span>
-            <div class="small-text">🍎 Apple Watch - Zone 3</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">38ms</span>
-            <span class="stat-label">HRV</span>
-            <div class="small-text">⌚ Fitbit - Excellent</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">87</span>
-            <span class="stat-label">Sleep Score</span>
-            <div class="small-text">📊 Combined data - Good</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">247</span>
-            <span class="stat-label">Training Load</span>
-            <div class="small-text">🎯 Optimal level</div>
-          </div>
-        </div>
-
-        <h4>📱 Connected Devices</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">🍎</span>
-            <span>Apple Watch - ✓ Live connection</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">⌚</span>
-            <span>Fitbit Charge - ✓ Synced 2min ago</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏃</span>
-            <span>Garmin Forerunner - ⚠ Connect required</span>
-          </div>
-        </div>
-
-        <h4>🤖 AI Workout Detection</h4>
-        <div class="card">
-          <p>
-            <strong>Automatically detected:</strong> Flag Football Training
-            session
-          </p>
-          <p class="small-text">
-            2:30-3:45 PM • High Intensity • 156 avg HR • 847 calories • 1.2mi
-          </p>
-        </div>
-      </div>
-
-      <!-- 👥 Enhanced Team Chemistry with AI -->
-      <div class="section">
-        <div class="section-header">
-          <h2>👥 Team Chemistry with AI Interventions</h2>
-          <button type="button" class="cta-secondary">View Analysis</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">8.4/10</span>
-            <span class="stat-label">Overall Chemistry</span>
-            <div class="small-text">↗ +0.6 this week</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">9.1/10</span>
-            <span class="stat-label">Communication</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">8.7/10</span>
-            <span class="stat-label">Trust</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">8.2/10</span>
-            <span class="stat-label">Leadership</span>
-          </div>
-        </div>
-
-        <h4>🤖 AI Team Building Assistant</h4>
-        <div class="card">
-          <p>
-            <strong>Current Status:</strong> Healthy ✅ (no intervention needed)
-          </p>
-          <p class="small-text">
-            Recent intervention: Trust Building Exercise (+1.4 improvement)
-          </p>
-          <div class="cta-primary" style="margin-top: 1rem">
-            View Intervention History
-          </div>
-        </div>
-      </div>
-
-      <!-- 🤖 AI Schedule Optimization -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🤖 AI Schedule Optimization</h2>
-          <button type="button" class="cta-secondary">Adjust Settings</button>
-        </div>
-
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">🌧️</span>
-            <span
-              >Rain alert: Tomorrow's practice moved to 6PM (94%
-              confidence)</span
-            >
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">⏰</span>
-            <span>Optimal training time: 4:30-6:00 PM (87% confidence)</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏟️</span>
-            <span>Resource conflict resolution: Field alternatives ready</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🏥 Advanced Injury Prevention -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🏥 Injury Prevention System</h2>
-          <button type="button" class="cta-secondary">View Analysis</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">12%</span>
-            <span class="stat-label">Current Injury Risk</span>
-            <div class="small-text">↓ Improving</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">94%</span>
-            <span class="stat-label">Running Gait</span>
-            <div class="small-text">Optimal</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">76%</span>
-            <span class="stat-label">Landing Mechanics</span>
-            <div class="small-text">Suboptimal</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">15min</span>
-            <span class="stat-label">Recovery Protocol</span>
-            <div class="small-text">Ice bath + stretching</div>
-          </div>
-        </div>
-
-        <h4>🔬 Movement Pattern Analysis</h4>
-        <div class="card">
-          <p><strong>Focus Area:</strong> Knee alignment during landing</p>
-          <p class="small-text">
-            Automated recovery: Within 30 minutes post-workout
-          </p>
-        </div>
-      </div>
-
-      <!-- 🌍 Multilingual Support -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🌍 Multilingual Support</h2>
-          <button type="button" class="cta-secondary">Language Settings</button>
-        </div>
-
-        <div class="language-grid">
-          <div class="language-item active">
-            <span class="language-flag">🇺🇸</span>
-            <div class="language-name">English</div>
-          </div>
-          <div class="language-item">
-            <span class="language-flag">🇪🇸</span>
-            <div class="language-name">Español</div>
-          </div>
-          <div class="language-item">
-            <span class="language-flag">🇨🇳</span>
-            <div class="language-name">中文</div>
-          </div>
-          <div class="language-item">
-            <span class="language-flag">🇯🇵</span>
-            <div class="language-name">日本語</div>
-          </div>
-          <div class="language-item">
-            <span class="language-flag">🇫🇷</span>
-            <div class="language-name">Français</div>
-          </div>
-        </div>
-
-        <h4>🎭 Cultural Adaptation Features</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">📏</span>
-            <span>Sport terminology: ✓ Localized</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">📐</span>
-            <span>Units &amp; measurements: ✓ Regional</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🔊</span>
-            <span>Voice narration: 🔊 Available</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🏆 LA28 Olympic Qualification Section -->
-      <div class="section olympic-section">
-        <div class="section-header">
-          <h2>🏆 LA28 Olympic Qualification</h2>
-          <button type="button" class="cta-primary">View Full Pathway</button>
-        </div>
-
-        <div class="olympic-metrics">
-          <div class="olympic-metric">
-            <span class="metric-value">73%</span>
-            <span class="metric-label">Qualification Probability</span>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 73%"></div>
-            </div>
-            <div class="metric-trend">
-              Based on current performance and world ranking
-            </div>
-          </div>
-
-          <div class="olympic-metric">
-            <span class="metric-value">#8/16</span>
-            <span class="metric-label">Current World Ranking</span>
-            <div class="metric-trend">↗ Moved up 2 positions this month</div>
-          </div>
-
-          <div class="olympic-metric">
-            <span class="metric-value">124 days</span>
-            <span class="metric-label">Until European Championships</span>
-            <div class="metric-trend">🇫🇷 France, September 24-27, 2025</div>
-          </div>
-        </div>
-
-        <h4>🛤️ Official IFAF Qualification Pathway</h4>
-        <div class="timeline">
-          <div class="timeline-item">
-            <span class="timeline-icon">✅</span>
-            <div class="timeline-content">
-              <div class="timeline-title">Regional Tournaments</div>
-              <div class="timeline-date">2024 - Completed</div>
-              <div class="timeline-description">
-                Qualified for Continental Championships
-              </div>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <span class="timeline-icon">🏃</span>
-            <div class="timeline-content">
-              <div class="timeline-title">European Championships</div>
-              <div class="timeline-date">September 24-27, 2025</div>
-              <div class="timeline-description">
-                1 automatic Olympic spot available
-              </div>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <span class="timeline-icon">🎯</span>
-            <div class="timeline-content">
-              <div class="timeline-title">2026 World Championship</div>
-              <div class="timeline-date">July 15-21, 2026 (Germany)</div>
-              <div class="timeline-description">6 Olympic spots available</div>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <span class="timeline-icon">🏅</span>
-            <div class="timeline-content">
-              <div class="timeline-title">LA28 Olympics</div>
-              <div class="timeline-date">July 14-30, 2028</div>
-              <div class="timeline-description">
-                6 teams per gender - ONLY 60 ATHLETES
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <h4>📊 LA28 Performance Benchmarks</h4>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">4.52s</span>
-            <span class="stat-label">40-Yard Dash</span>
-            <div class="small-text">Current vs 4.40s elite target</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">82.5%</span>
-            <span class="stat-label">Passing Accuracy</span>
-            <div class="small-text">Current vs 85% elite target</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">4.18s</span>
-            <span class="stat-label">Agility Shuttle</span>
-            <div class="small-text">Current vs 4.00s elite target</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">87</span>
-            <span class="stat-label">Game IQ Score</span>
-            <div class="small-text">Current vs 90 elite target</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🎁 Comprehensive Sponsor Product Integration -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🎁 Sponsor Rewards &amp; Products</h2>
-          <button type="button" class="cta-secondary">Browse Catalog</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">2,847</span>
-            <span class="stat-label">Available Points</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">GOLD</span>
-            <span class="stat-label">Current Tier</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">147</span>
-            <span class="stat-label">GEARXPro Products</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">89</span>
-            <span class="stat-label">LaPrimaFit Products</span>
-          </div>
-        </div>
-
-        <h4>🏪 Featured Sponsor Products</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">👕</span>
-            <span>Pro Grip Football Socks - 350 pts (92% relevance)</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">💆</span>
-            <span>Recovery Massage Gun - 1,650 pts (78% relevance)</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏃</span>
-            <span>Elite Training Shorts - 780 pts (89% relevance)</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏋️</span>
-            <span>Recovery Band Set - 420 pts (94% relevance)</span>
-          </div>
-        </div>
-
-        <h4>🎖️ Tier Progression</h4>
-        <div class="progress-bar">
-          <div class="progress-fill" style="width: 65%"></div>
-        </div>
-        <div class="small-text">
-          Bronze → Silver → GOLD (current) → Platinum (2,150 pts needed) → Elite
-        </div>
-      </div>
-
-      <!-- ⌚ Advanced Multi-Device Wearables -->
-      <div class="section">
-        <div class="section-header">
-          <h2>⌚ Multi-Device Wearables Integration</h2>
-          <button type="button" class="cta-secondary">Manage Devices</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">142 bpm</span>
-            <span class="stat-label">Heart Rate</span>
-            <div class="small-text">🍎 Apple Watch - Zone 3</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">38ms</span>
-            <span class="stat-label">HRV</span>
-            <div class="small-text">⌚ Fitbit - Excellent</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">87</span>
-            <span class="stat-label">Sleep Score</span>
-            <div class="small-text">📊 Combined data - Good</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">247</span>
-            <span class="stat-label">Training Load</span>
-            <div class="small-text">🎯 Optimal level</div>
-          </div>
-        </div>
-
-        <h4>📱 Connected Devices</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">🍎</span>
-            <span>Apple Watch - ✓ Live connection</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">⌚</span>
-            <span>Fitbit Charge - ✓ Synced 2min ago</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏃</span>
-            <span>Garmin Forerunner - ⚠ Connect required</span>
-          </div>
-        </div>
-
-        <h4>🤖 AI Workout Detection</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">🏃</span>
-            <span>Automatic session logging - ✓ Active</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">📊</span>
-            <span>Biometric analysis - ✓ Real-time</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">💤</span>
-            <span>Sleep optimization - ✓ Recommendations</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 👥 Enhanced Team Chemistry with AI Interventions -->
-      <div class="section">
-        <div class="section-header">
-          <h2>👥 Team Chemistry &amp; AI Interventions</h2>
-          <button type="button" class="cta-secondary">View Details</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">8.4/10</span>
-            <span class="stat-label">Overall Chemistry</span>
-            <div class="small-text">Excellent team cohesion</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">9.1/10</span>
-            <span class="stat-label">Communication</span>
-            <div class="small-text">Strong verbal &amp; non-verbal</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">8.7/10</span>
-            <span class="stat-label">Trust</span>
-            <div class="small-text">High reliability &amp; support</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">7.9/10</span>
-            <span class="stat-label">Coordination</span>
-            <div class="small-text">Good tactical alignment</div>
-          </div>
-        </div>
-
-        <h4>🤖 AI Team Building Assistant</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">🎯</span>
-            <span
-              >Last intervention: Trust building exercise (+1.4
-              improvement)</span
-            >
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">📅</span>
-            <span>Next recommended: Communication workshop (3 days)</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">📊</span>
-            <span>Success rate: 87% of AI interventions effective</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🤖 AI Schedule Optimization -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🤖 AI Schedule Optimization</h2>
-          <button type="button" class="cta-secondary">View Suggestions</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">94%</span>
-            <span class="stat-label">Confidence Score</span>
-            <div class="small-text">AI recommendation accuracy</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">🌧️</span>
-            <span class="stat-label">Weather Alert</span>
-            <div class="small-text">Tomorrow: Rain expected</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">⏰</span>
-            <span class="stat-label">Optimal Time</span>
-            <div class="small-text">2:00 PM - 5:00 PM</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">🔄</span>
-            <span class="stat-label">Auto-Reschedule</span>
-            <div class="small-text">Training moved to 6:00 PM</div>
-          </div>
-        </div>
-
-        <h4>🎯 Optimization Suggestions</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">🌧️</span>
-            <span>Weather integration: Move outdoor training indoors</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">⏰</span>
-            <span>Time optimization: Peak performance window identified</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏋️</span>
-            <span>Resource conflict: Gym available at 6:00 PM</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🏥 Advanced Injury Prevention -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🏥 Advanced Injury Prevention</h2>
-          <button type="button" class="cta-secondary">View Analysis</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">94%</span>
-            <span class="stat-label">Running Gait</span>
-            <div class="small-text">Optimal biomechanics</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">12%</span>
-            <span class="stat-label">Injury Risk</span>
-            <div class="small-text">Low current risk</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">87%</span>
-            <span class="stat-label">Landing Score</span>
-            <div class="small-text">Good mechanics</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">92%</span>
-            <span class="stat-label">Recovery Status</span>
-            <div class="small-text">Optimal recovery</div>
-          </div>
-        </div>
-
-        <h4>🔬 Movement Pattern Analysis</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">🏃</span>
-            <span>Running gait: 94% optimal biomechanics</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🦵</span>
-            <span>Landing mechanics: 87% optimal form</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">💪</span>
-            <span>Strength balance: 89% left-right symmetry</span>
-          </div>
-        </div>
-
-        <h4>🔄 Automated Recovery Protocols</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">🧊</span>
-            <span>Ice therapy: 15 min post-training recommended</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">💆</span>
-            <span>Massage: Focus on quadriceps and hamstrings</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏃</span>
-            <span>Active recovery: Light jogging tomorrow</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🌍 Multilingual Support Interface -->
-      <div class="section">
-        <div class="section-header">
-          <h2>🌍 Multilingual Support</h2>
-          <button type="button" class="cta-secondary">Change Language</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value">5</span>
-            <span class="stat-label">Languages</span>
-            <div class="small-text">
-              English, Spanish, Chinese, Japanese, French
-            </div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">🇺🇸</span>
-            <span class="stat-label">Current</span>
-            <div class="small-text">English (US)</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">✓</span>
-            <span class="stat-label">Localization</span>
-            <div class="small-text">Sport terminology adapted</div>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">🔊</span>
-            <span class="stat-label">Voice Support</span>
-            <div class="small-text">Available in all languages</div>
-          </div>
-        </div>
-
-        <h4>🌐 Language Options</h4>
-        <div class="language-selector">
-          <div class="language-item active">
-            <span class="language-flag">🇺🇸</span>
-            <div class="language-name">English</div>
-          </div>
-          <div class="language-item">
-            <span class="language-flag">🇪🇸</span>
-            <div class="language-name">Español</div>
-          </div>
-          <div class="language-item">
-            <span class="language-flag">🇨🇳</span>
-            <div class="language-name">中文</div>
-          </div>
-          <div class="language-item">
-            <span class="language-flag">🇯🇵</span>
-            <div class="language-name">日本語</div>
-          </div>
-          <div class="language-item">
-            <span class="language-flag">🇫🇷</span>
-            <div class="language-name">Français</div>
-          </div>
-        </div>
-
-        <h4>🎭 Cultural Adaptation Features</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">📏</span>
-            <span>Sport terminology: ✓ Localized</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">📐</span>
-            <span>Units &amp; measurements: ✓ Regional</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🔊</span>
-            <span>Voice narration: 🔊 Available</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Notification Center -->
-    <div class="notification-center" id="notificationCenter">
-      <div class="notification-header">
-        <h3 class="notification-title">Notifications</h3>
-        <button type="button" class="notification-close" id="notificationClose">×</button>
-      </div>
-      <div class="notification-filters">
-        <button type="button" class="filter-btn active">All</button>
-        <button type="button" class="filter-btn">Unread</button>
-        <button type="button" class="filter-btn">Training</button>
-        <button type="button" class="filter-btn">Injury</button>
-        <button type="button" class="filter-btn">Schedule</button>
-      </div>
-      <div class="notification-list">
-        <div class="notification-item unread">
-          <div class="notification-content">
-            <span class="notification-icon">⚠️</span>
-            <div class="notification-text">
-              <div class="notification-message">
-                Injury risk alert: Landing mechanics suboptimal
-              </div>
-              <div class="notification-time">15 minutes ago</div>
-            </div>
-          </div>
-        </div>
-        <div class="notification-item unread">
-          <div class="notification-content">
-            <span class="notification-icon">🌧️</span>
-            <div class="notification-text">
-              <div class="notification-message">
-                Weather alert: Tomorrow's practice moved to 6PM
-              </div>
-              <div class="notification-time">2 hours ago</div>
-            </div>
-          </div>
-        </div>
-        <div class="notification-item unread">
-          <div class="notification-content">
-            <span class="notification-icon">🏆</span>
-            <div class="notification-text">
-              <div class="notification-message">
-                European Championship bracket updated
-              </div>
-              <div class="notification-time">4 hours ago</div>
-            </div>
-          </div>
-        </div>
-        <div class="notification-item">
-          <div class="notification-content">
-            <span class="notification-icon">📊</span>
-            <div class="notification-text">
-              <div class="notification-message">
-                Weekly performance report ready
-              </div>
-              <div class="notification-time">Yesterday</div>
-            </div>
-          </div>
-        </div>
-        <div class="notification-item">
-          <div class="notification-content">
-            <span class="notification-icon">🎆</span>
-            <div class="notification-text">
-              <div class="notification-message">
-                Congratulations! Achieved Silver tier
-              </div>
-              <div class="notification-time">2 days ago</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- AI Coach Chat Widget -->
-    <div class="ai-coach-widget hidden" id="aiCoachWidget">
-      <div class="ai-coach-header">
-        <span>🤖</span>
-        <div>
-          <div class="ai-coach-title">AI Coach Marcus</div>
-          <div class="ai-coach-status">Online • Ready to help</div>
-        </div>
-      </div>
-      <div class="ai-coach-content">
-        <div class="ai-message">
-          <p class="ai-message-text">
-            Great job on completing 4 training sessions this week! Your sprint
-            times are improving. Ready for today's Olympic prep session?
-          </p>
-        </div>
-        <div class="ai-quick-actions">
-          <button type="button" class="ai-quick-btn">Today's Plan</button>
-          <button type="button" class="ai-quick-btn">Nutrition Tips</button>
-          <button type="button" class="ai-quick-btn">Recovery</button>
-          <button type="button" class="ai-quick-btn">Ask Question</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- AI Coach Toggle Button -->
-    <button type="button" class="ai-toggle" id="aiToggle">🤖</button>
-
-    <!-- Dashboard API Integration -->
-    <script src="src/dashboard-api.js"></script>
+    </main>
 
     <!-- JavaScript -->
     <script>
-      // Interactive functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        // AI Coach Widget Toggle
-        const aiToggle = document.getElementById("aiToggle");
-        const aiWidget = document.getElementById("aiCoachWidget");
-
-        aiToggle.addEventListener("click", function () {
-          aiWidget.classList.toggle("hidden");
-          if (!aiWidget.classList.contains("hidden")) {
-            aiToggle.style.display = "none";
-          } else {
-            aiToggle.style.display = "flex";
-          }
-        });
-
-        // Close AI widget when clicking outside
-        document.addEventListener("click", function (e) {
-          if (!aiWidget.contains(e.target) &amp;&amp; !aiToggle.contains(e.target)) {
-            if (!aiWidget.classList.contains("hidden")) {
-              aiWidget.classList.add("hidden");
-              aiToggle.style.display = "flex";
-            }
-          }
-        });
-
-        // AI Quick Action buttons
-        const aiQuickBtns = document.querySelectorAll(".ai-quick-btn");
-        aiQuickBtns.forEach((btn) => {
-          btn.addEventListener("click", function () {
-            console.log("AI Coach action:", this.textContent);
-            // Here would be the logic to handle different coach actions
-          });
-        });
-
-        // Training Calendar interactions
-        const calendarDays = document.querySelectorAll(".calendar-day");
-        calendarDays.forEach((day) => {
-          day.addEventListener("click", function () {
-            const dayName = this.querySelector(".day-name").textContent;
-            const training = this.querySelector(".day-training").textContent;
-            console.log("Training day clicked:", dayName, training);
-          });
-        });
-
-        // Card interactions
-        const cards = document.querySelectorAll(".card");
-        cards.forEach((card) => {
-          card.addEventListener("click", function () {
-            const title = this.querySelector(".card-title");
-            if (title) {
-              console.log("Card clicked:", title.textContent);
-            }
-          });
-        });
-
-        // Language selection
-        const languageItems = document.querySelectorAll(".language-item");
-        languageItems.forEach((item) => {
-          item.addEventListener("click", function () {
-            languageItems.forEach((i) => i.classList.remove("active"));
-            this.classList.add("active");
-          });
-        });
-
-        // Button interactions
-        const buttons = document.querySelectorAll(
-          ".cta-primary, .cta-secondary",
-        );
-        buttons.forEach((button) => {
-          button.addEventListener("click", function () {
-            console.log("Button clicked:", this.textContent);
-          });
-        });
-
-        // Animate progress bars
-        const progressBars = document.querySelectorAll(".progress-fill");
-        progressBars.forEach((bar) => {
-          const width = bar.style.width;
-          bar.style.width = "0%";
-          setTimeout(() => {
-            bar.style.width = width;
-          }, 500);
-        });
-
-        // Animate training calendar on load
-        calendarDays.forEach((day, index) => {
-          day.style.opacity = "0";
-          day.style.transform = "translateY(20px)";
-          setTimeout(() => {
-            day.style.transition = "all 0.4s ease";
-            day.style.opacity = "1";
-            day.style.transform = "translateY(0)";
-          }, 100 * index);
-        });
-
-        // Role-based access control
-        const roleToggle = document.getElementById("roleToggle");
-        roleToggle.addEventListener("change", function () {
-          const selectedRole = this.value;
-          document.body.className = selectedRole + "-view";
-
-          // Update navigation based on role
-          const navLinks = document.querySelectorAll(".nav-link");
-          navLinks.forEach((link) => {
-            if (
-              selectedRole === "fan" &amp;&amp;
-              (link.textContent.includes("Training") ||
-                link.textContent.includes("Tournament"))
-            ) {
-              link.style.display = "none";
-            } else {
-              link.style.display = "block";
-            }
-          });
-
-          console.log("Role switched to:", selectedRole);
-        });
-
-        // Notification center
-        const notificationBell = document.getElementById("notificationBell");
-        const notificationCenter =
-          document.getElementById("notificationCenter");
-        const notificationClose = document.getElementById("notificationClose");
-
-        notificationBell.addEventListener("click", function () {
-          notificationCenter.classList.add("open");
-          // Clear badge when opened
-          const badge = this.querySelector(".notification-badge");
-          if (badge) {
-            badge.style.display = "none";
-          }
-        });
-
-        notificationClose.addEventListener("click", function () {
-          notificationCenter.classList.remove("open");
-        });
-
-        // Close notification center when clicking outside
-        document.addEventListener("click", function (e) {
-          if (
-            !notificationCenter.contains(e.target) &amp;&amp;
-            !notificationBell.contains(e.target)
-          ) {
-            notificationCenter.classList.remove("open");
-          }
-        });
-
-        // Notification filters
-        const filterBtns = document.querySelectorAll(".filter-btn");
-        filterBtns.forEach((btn) => {
-          btn.addEventListener("click", function () {
-            filterBtns.forEach((b) => b.classList.remove("active"));
-            this.classList.add("active");
-            console.log("Filter:", this.textContent);
-          });
-        });
-
-        // Global search functionality
-        const globalSearch = document.getElementById("globalSearch");
-        globalSearch.addEventListener("keydown", function (e) {
-          if (e.key === "Enter") {
-            console.log("Search:", this.value);
-            // Implement search logic here
-          }
-        });
-
-        // Keyboard shortcut for search (Cmd+K)
-        document.addEventListener("keydown", function (e) {
-          if ((e.metaKey || e.ctrlKey) &amp;&amp; e.key === "k") {
-            e.preventDefault();
-            globalSearch.focus();
-          }
-        });
-
-        // Show AI coach welcome message after 3 seconds
-        setTimeout(() => {
-          if (aiWidget.classList.contains("hidden")) {
-            aiWidget.classList.remove("hidden");
-            aiToggle.style.display = "none";
-            // Auto-hide after 8 seconds
-            setTimeout(() => {
-              aiWidget.classList.add("hidden");
-              aiToggle.style.display = "flex";
-            }, 8000);
-          }
-        }, 3000);
-
-        // Logout functionality
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-          logoutBtn.addEventListener("click", function () {
-            // Clear authentication data
-            localStorage.removeItem("flagfit_token");
-            localStorage.removeItem("flagfit_user");
-
-            // Redirect to login
-            window.location.href = "login.html";
-          });
-        }
-
-        // Initialize Dashboard API and load data
-        initializeDashboard();
+      // Role-based access control
+      const roleToggle = document.getElementById('roleToggle');
+      roleToggle.addEventListener('change', function() {
+        const selectedRole = this.value;
+        document.body.className = selectedRole + '-view';
+        console.log('Role switched to:', selectedRole);
       });
 
-      // Dashboard API initialization and data loading
-      let dashboardAPI;
+      // Language selector
+      const languageSelect = document.getElementById('languageSelect');
+      languageSelect.addEventListener('change', function() {
+        console.log('Language changed to:', this.value);
+      });
 
-      async function initializeDashboard() {
-        try {
-          // Check if user is logged in
-          const token = localStorage.getItem("flagfit_token");
-          const user = JSON.parse(localStorage.getItem("flagfit_user") || "{}");
+      // Notification button
+      document.querySelector('.notification-btn').addEventListener('click', function() {
+        console.log('Notifications panel opened');
+      });
 
-          if (!token) {
-            // Redirect to login if not authenticated
-            window.location.href = "login.html";
-            return;
-          }
+      // Search button
+      document.querySelector('.search-btn').addEventListener('click', function() {
+        console.log('Search overlay opened');
+      });
 
-          // Display user information
-          displayUserInfo(user);
-
-          // Initialize Dashboard API
-          dashboardAPI = new DashboardAPI();
-
-          // Load dashboard data
-          await loadDashboardData();
-
-          console.log("✅ Dashboard initialized successfully");
-        } catch (error) {
-          console.error("❌ Error initializing dashboard:", error);
-        }
-      }
-
-      // Display user information in header
-      function displayUserInfo(user) {
-        const userAvatar = document.getElementById("userAvatar");
-        const userName = document.getElementById("userName");
-
-        if (userAvatar &amp;&amp; userName) {
-          // Set avatar initials
-          const initials = user.fullName
-            ? user.fullName.substring(0, 2).toUpperCase()
-            : "JD";
-          userAvatar.textContent = initials;
-
-          // Set user name
-          userName.textContent = user.fullName || "John Doe";
-        }
-      }
-
-      // Load dashboard data from API
-      async function loadDashboardData() {
-        try {
-          console.log("🔄 Loading dashboard data...");
-
-          // Load overview data
-          const overview = await dashboardAPI.getDashboardOverview();
-          updateDashboardOverview(overview.data);
-
-          // Load training calendar
-          const calendar = await dashboardAPI.getTrainingCalendar();
-          updateTrainingCalendar(calendar.data);
-
-          // Load Olympic qualification data
-          const olympic = await dashboardAPI.getOlympicQualification();
-          updateOlympicData(olympic.data);
-
-          // Load sponsor rewards
-          const sponsor = await dashboardAPI.getSponsorRewards();
-          updateSponsorData(sponsor.data);
-
-          // Load wearables data
-          const wearables = await dashboardAPI.getWearables();
-          updateWearablesData(wearables.data);
-
-          // Load team chemistry
-          const chemistry = await dashboardAPI.getTeamChemistry();
-          updateTeamChemistry(chemistry.data);
-
-          // Load notifications
-          const notifications = await dashboardAPI.getNotifications();
-          updateNotifications(notifications.data);
-
-          // Load daily quote
-          const quote = await dashboardAPI.getDailyQuote();
-          updateDailyQuote(quote.data);
-
-          console.log("✅ Dashboard data loaded successfully");
-        } catch (error) {
-          console.error("❌ Error loading dashboard data:", error);
-          // Show fallback data or error message
-        }
-      }
-
-      // Update dashboard overview
-      function updateDashboardOverview(data) {
-        // Update training progress
-        const progressCard = document.querySelector(
-          ".card:nth-child(1) .card-metric",
-        );
-        if (progressCard) {
-          progressCard.textContent = `${data.trainingProgress.percentage}%`;
-        }
-
-        // Update performance score
-        const performanceCard = document.querySelector(
-          ".card:nth-child(2) .card-metric",
-        );
-        if (performanceCard) {
-          performanceCard.textContent = `${data.performanceScore.score}/10`;
-        }
-
-        // Update team chemistry
-        const chemistryCard = document.querySelector(
-          ".card:nth-child(3) .card-metric",
-        );
-        if (chemistryCard) {
-          chemistryCard.textContent = `${data.teamChemistry.overall}/10`;
-        }
-
-        // Update next session
-        const sessionCard = document.querySelector(
-          ".card:nth-child(4) .card-metric",
-        );
-        if (sessionCard) {
-          sessionCard.textContent = `${Math.round(data.nextSession.duration / 60)} hrs`;
-        }
-      }
-
-      // Update training calendar
-      function updateTrainingCalendar(data) {
-        const calendarContainer = document.querySelector(".training-calendar");
-        if (!calendarContainer) return;
-
-        calendarContainer.innerHTML = "";
-
-        data.forEach((day) => {
-          const dayElement = document.createElement("div");
-          dayElement.className = `calendar-day ${day.isToday ? "today" : ""} ${day.isCompleted ? "completed" : ""}`;
-
-          dayElement.innerHTML = `
-                    <div class="day-name">${day.dayName}</div>
-                    <div class="day-date">${day.dayDate}</div>
-                    <div class="day-training">${day.dayTraining}</div>
-                    <div class="training-status">${day.trainingStatus}</div>
-                `;
-
-          calendarContainer.appendChild(dayElement);
+      // Calendar day interactions
+      document.querySelectorAll('.calendar-day').forEach(day => {
+        day.addEventListener('click', function() {
+          console.log('Calendar day clicked:', this.querySelector('.day-number').textContent);
         });
-      }
+      });
 
-      // Update Olympic data
-      function updateOlympicData(data) {
-        // Update qualification probability
-        const probElement = document.querySelector(
-          ".olympic-metric:nth-child(1) .metric-value",
-        );
-        if (probElement) {
-          probElement.textContent = `${data.qualification.qualification_probability}%`;
-        }
-
-        // Update world ranking
-        const rankElement = document.querySelector(
-          ".olympic-metric:nth-child(2) .metric-value",
-        );
-        if (rankElement) {
-          rankElement.textContent = `#${data.qualification.world_ranking}/16`;
-        }
-
-        // Update days until championship
-        const daysElement = document.querySelector(
-          ".olympic-metric:nth-child(3) .metric-value",
-        );
-        if (daysElement) {
-          daysElement.textContent = `${data.qualification.days_until_championship} days`;
-        }
-      }
-
-      // Update sponsor data
-      function updateSponsorData(data) {
-        // Update available points
-        const pointsElement = document.querySelector(
-          ".stat-item:nth-child(1) .stat-value",
-        );
-        if (pointsElement) {
-          pointsElement.textContent =
-            data.rewards.available_points.toLocaleString();
-        }
-
-        // Update current tier
-        const tierElement = document.querySelector(
-          ".stat-item:nth-child(2) .stat-value",
-        );
-        if (pointsElement) {
-          tierElement.textContent = data.rewards.current_tier;
-        }
-      }
-
-      // Update wearables data
-      function updateWearablesData(data) {
-        if (data.length > 0) {
-          const wearable = data[0];
-
-          // Update heart rate
-          const hrElement = document.querySelector(
-            ".stat-item:nth-child(1) .stat-value",
-          );
-          if (hrElement) {
-            hrElement.textContent = `${wearable.heart_rate} bpm`;
-          }
-
-          // Update HRV
-          const hrvElement = document.querySelector(
-            ".stat-item:nth-child(2) .stat-value",
-          );
-          if (hrvElement) {
-            hrvElement.textContent = `${wearable.hrv}ms`;
-            hrvElement.textContent = `${wearable.hrv}ms`;
-          }
-
-          // Update sleep score
-          const sleepElement = document.querySelector(
-            ".stat-item:nth-child(3) .stat-value",
-          );
-          if (sleepElement) {
-            sleepElement.textContent = wearable.sleep_score;
-          }
-
-          // Update training load
-          const loadElement = document.querySelector(
-            ".stat-item:nth-child(4) .stat-value",
-          );
-          if (loadElement) {
-            loadElement.textContent = wearable.trainload;
-          }
-        }
-      }
-
-      // Update team chemistry
-      function updateTeamChemistry(data) {
-        // Update overall chemistry
-        const overallElement = document.querySelector(
-          ".stat-item:nth-child(1) .stat-value",
-        );
-        if (overallElement) {
-          overallElement.textContent = `${data.overall_chemistry}/10`;
-        }
-
-        // Update communication
-        const commElement = document.querySelector(
-          ".stat-item:nth-child(2) .stat-value",
-        );
-        if (commElement) {
-          commElement.textContent = `${data.communication_score}/10`;
-        }
-
-        // Update trust
-        const trustElement = document.querySelector(
-          ".stat-item:nth-child(3) .stat-value",
-        );
-        if (trustElement) {
-          trustElement.textContent = `${data.trust_score}/10`;
-        }
-
-        // Update leadership
-        const leadElement = document.querySelector(
-          ".stat-item:nth-child(4) .stat-value",
-        );
-        if (leadElement) {
-          leadElement.textContent = `${data.leadership_score}/10`;
-        }
-      }
-
-      // Update notifications
-      function updateNotifications(data) {
-        const notificationList = document.querySelector(".notification-list");
-        if (!notificationList) return;
-
-        notificationList.innerHTML = "";
-
-        data.forEach((notification) => {
-          const notificationElement = document.createElement("div");
-          notificationElement.className = `notification-item ${notification.is_read ? "" : "unread"}`;
-
-          const timeAgo = getTimeAgo(new Date(notification.created_at));
-
-          notificationElement.innerHTML = `
-                    <div class="notification-content">
-                        <span class="notification-icon">${getNotificationIcon(notification.notification_type)}</span>
-                        <div class="notification-text">
-                        <div class="notification-message">${notification.message}</div>
-                        <div class="notification-time">${timeAgo}</div>
-                    </div>
-                `;
-
-          notificationList.appendChild(notificationElement);
+      // Card interactions
+      document.querySelectorAll('.overview-card, .device-card, .sponsor-card').forEach(card => {
+        card.addEventListener('click', function() {
+          console.log('Card clicked');
         });
-      }
-
-      // Update daily quote
-      function updateDailyQuote(data) {
-        const quoteText = document.querySelector(".quote-text");
-        const quoteAuthor = document.querySelector(".quote-author");
-
-        if (quoteText) {
-          quoteText.textContent = `"${data.quote_text}"`;
-        }
-
-        if (quoteAuthor) {
-          quoteAuthor.textContent = `- ${data.author}`;
-        }
-      }
-
-      // Helper function to get time ago
-      function getTimeAgo(date) {
-        const now = new Date();
-        const diffInSeconds = Math.floor((now - date) / 1000);
-
-        if (diffInSeconds < 60) return "Just now";
-        if (diffInSeconds < 3600)
-          return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-        if (diffInSeconds < 86400)
-          return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-        return `${Math.floor(diffInSeconds / 86400)} days ago`;
-      }
-
-      // Helper function to get notification icon
-      function getNotificationIcon(type) {
-        const icons = {
-          injury_risk: "⚠️",
-          weather: "🌧️",
-          tournament: "🏆",
-          training: "🏃",
-          default: "📢",
-        };
-        return icons[type] || icons.default;
-      }
+      });
     </script>
   </body>
 </html>

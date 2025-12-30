@@ -2,12 +2,14 @@
 // Fetches and formats data from the database for Chart.js visualization
 
 import { logger } from "./logger.js";
+import { API_BASE_URL } from "./api-config.js";
+import { CHART_MOCK_DATA } from "./js/config/chart-mock-data.js";
 
 /* global XMLHttpRequest */
 
 class AnalyticsDataService {
   constructor() {
-    this.baseURL = "http://localhost:3001/api";
+    this.baseURL = API_BASE_URL;
     this.cache = new Map();
     this.cacheTTL = 5 * 60 * 1000; // 5 minutes
 
@@ -607,19 +609,15 @@ class AnalyticsDataService {
     }
   }
 
-  // Fallback data methods
+  // Fallback data methods (use central mock data)
   getFallbackPerformanceTrendsData(weeks = 7) {
-    const weekLabels = [];
-    for (let i = 1; i <= weeks; i++) {
-      weekLabels.push(`Week ${i}`);
-    }
-
+    const data = CHART_MOCK_DATA.performanceTrends;
     return {
-      labels: weekLabels,
+      labels: data.weeks.slice(0, weeks),
       datasets: [
         {
           label: "Overall Performance Score",
-          data: [78, 82, 79, 85, 87, 89, 91].slice(0, weeks),
+          data: data.overallScores.slice(0, weeks),
           borderColor: "#3B82F6",
           backgroundColor: "rgba(59, 130, 246, 0.1)",
           borderWidth: 3,
@@ -628,7 +626,7 @@ class AnalyticsDataService {
         },
         {
           label: "Training Effectiveness",
-          data: [75, 78, 80, 83, 86, 88, 90].slice(0, weeks),
+          data: data.trainingScores.slice(0, weeks),
           borderColor: "#10B981",
           backgroundColor: "rgba(16, 185, 129, 0.1)",
           borderWidth: 2,
@@ -640,26 +638,20 @@ class AnalyticsDataService {
   }
 
   getFallbackTeamChemistryData() {
+    const data = CHART_MOCK_DATA.teamChemistry;
     return {
-      labels: [
-        "Communication",
-        "Coordination",
-        "Trust",
-        "Cohesion",
-        "Leadership",
-        "Adaptability",
-      ],
+      labels: data.metrics,
       datasets: [
         {
           label: "Current Team Chemistry",
-          data: [8.5, 7.8, 9.1, 8.2, 7.5, 8.8],
+          data: data.currentScores,
           backgroundColor: "rgba(59, 130, 246, 0.2)",
           borderColor: "#3B82F6",
           borderWidth: 3,
         },
         {
           label: "Target Chemistry",
-          data: [9.0, 8.5, 9.5, 8.8, 8.0, 9.2],
+          data: data.targetScores,
           backgroundColor: "rgba(16, 185, 129, 0.2)",
           borderColor: "#10B981",
           borderWidth: 2,
@@ -670,17 +662,12 @@ class AnalyticsDataService {
   }
 
   getFallbackTrainingDistributionData() {
+    const data = CHART_MOCK_DATA.trainingDistribution;
     return {
-      labels: [
-        "Agility Training",
-        "Speed Development",
-        "Technical Skills",
-        "Strength Training",
-        "Recovery Sessions",
-      ],
+      labels: data.trainingTypes,
       datasets: [
         {
-          data: [30, 25, 20, 15, 10],
+          data: data.sessionCounts,
           backgroundColor: [
             "#3B82F6",
             "#10B981",
@@ -696,18 +683,13 @@ class AnalyticsDataService {
   }
 
   getFallbackPositionPerformanceData() {
+    const data = CHART_MOCK_DATA.positionPerformance;
     return {
-      labels: [
-        "Quarterback",
-        "Wide Receiver",
-        "Center",
-        "Defensive Back",
-        "Blitzer",
-      ],
+      labels: data.positions,
       datasets: [
         {
           label: "Current Performance",
-          data: [87, 92, 89, 85, 78],
+          data: data.currentScores,
           backgroundColor: "#3B82F6",
           borderColor: "#3B82F6",
           borderWidth: 1,
@@ -715,7 +697,7 @@ class AnalyticsDataService {
         },
         {
           label: "Target Performance",
-          data: [90, 95, 92, 88, 82],
+          data: data.targetScores,
           backgroundColor: "#10B981",
           borderColor: "#10B981",
           borderWidth: 1,
@@ -726,11 +708,12 @@ class AnalyticsDataService {
   }
 
   getFallbackOlympicQualificationData() {
+    const data = CHART_MOCK_DATA.olympicProgress;
     return {
       labels: ["Qualification Progress", "Remaining"],
       datasets: [
         {
-          data: [73, 27],
+          data: [data.qualified, data.remaining],
           backgroundColor: ["#22C55E", "#E5E7EB"],
           borderColor: "#ffffff",
           borderWidth: 4,
@@ -741,11 +724,12 @@ class AnalyticsDataService {
   }
 
   getFallbackInjuryRiskData() {
+    const data = CHART_MOCK_DATA.injuryRisk;
     return {
-      labels: ["Low Risk", "Medium Risk", "High Risk"],
+      labels: data.riskLevels,
       datasets: [
         {
-          data: [75, 20, 5],
+          data: data.riskPercentages,
           backgroundColor: ["#22C55E", "#F59E0B", "#EF4444"],
           borderColor: "#ffffff",
           borderWidth: 3,
@@ -756,17 +740,13 @@ class AnalyticsDataService {
   }
 
   getFallbackSpeedDevelopmentData(weeks = 7) {
-    const weekLabels = [];
-    for (let i = 1; i <= weeks; i++) {
-      weekLabels.push(`Week ${i}`);
-    }
-
+    const data = CHART_MOCK_DATA.speedDevelopment;
     return {
-      labels: weekLabels,
+      labels: data.weeks.slice(0, weeks),
       datasets: [
         {
           label: "40-Yard Dash Time",
-          data: [4.65, 4.62, 4.58, 4.55, 4.52, 4.49, 4.46].slice(0, weeks),
+          data: data.fortyYardTimes.slice(0, weeks),
           borderColor: "#F59E0B",
           backgroundColor: "rgba(245, 158, 11, 0.1)",
           borderWidth: 3,
@@ -775,7 +755,7 @@ class AnalyticsDataService {
         },
         {
           label: "10-Yard Sprint Time",
-          data: [1.68, 1.65, 1.62, 1.6, 1.58, 1.56, 1.54].slice(0, weeks),
+          data: data.tenYardTimes.slice(0, weeks),
           borderColor: "#F97316",
           backgroundColor: "rgba(249, 115, 22, 0.1)",
           borderWidth: 2,
@@ -787,19 +767,13 @@ class AnalyticsDataService {
   }
 
   getFallbackUserEngagementData() {
+    const data = CHART_MOCK_DATA.engagementFunnel;
     return {
-      labels: [
-        "App Opens",
-        "Dashboard Views",
-        "Training Started",
-        "Session Complete",
-        "Goal Set",
-        "Goal Achieved",
-      ],
+      labels: data.stages,
       datasets: [
         {
           label: "User Engagement Funnel",
-          data: [1000, 850, 720, 680, 450, 320],
+          data: data.userCounts,
           backgroundColor: [
             "#3B82F6",
             "#10B981",

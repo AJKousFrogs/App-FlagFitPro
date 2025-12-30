@@ -1,6 +1,6 @@
-# Flag Football Training App - Testing Suite
+# FlagFit Pro - Testing Suite
 
-This directory contains comprehensive testing for the Flag Football Training App, implementing a three-tier testing strategy:
+This directory contains comprehensive testing for the FlagFit Pro application, implementing a multi-tier testing strategy for the Angular 21 + PrimeNG frontend with Supabase backend.
 
 ## Testing Strategy
 
@@ -9,14 +9,26 @@ This directory contains comprehensive testing for the Flag Football Training App
 - **Purpose**: Test individual functions and components in isolation
 - **Coverage**: Core services, utilities, and business logic
 - **Framework**: Vitest with jsdom environment
-- **Mock Strategy**: Extensive mocking of external dependencies
+- **Mock Strategy**: Extensive mocking of external dependencies (Supabase, API calls)
+
+**Test Files:**
+- `auth-manager.test.js` - Authentication logic and session management
+- `api-config.test.js` - API configuration and HTTP client
+- `error-handler.test.js` - Error handling and user notifications
+- `performance-utils.test.js` - Performance utilities
 
 ### 🔗 Integration Tests (`tests/integration/`)
 
 - **Purpose**: Test component interactions and API integrations
 - **Coverage**: Database operations, API workflows, service interactions
 - **Framework**: Vitest with realistic data flows
-- **Mock Strategy**: Partial mocking focusing on external services
+- **Mock Strategy**: Partial mocking focusing on external services (Supabase)
+
+**Test Files:**
+- `api-integration.test.js` - Full API workflow tests with Netlify Functions
+- `database-integration.test.js` - Database operation tests (Supabase)
+- `api-endpoints.test.js` - API endpoint validation
+- `notification-flow.test.js` - Notification system tests
 
 ### 🌐 End-to-End Tests (`tests/e2e/`)
 
@@ -25,51 +37,93 @@ This directory contains comprehensive testing for the Flag Football Training App
 - **Framework**: Playwright with multi-browser support
 - **Mock Strategy**: Minimal mocking, real user interactions
 
+**Test Files:**
+- `user-authentication.spec.js` - Login, register, password reset flows
+- `dashboard-navigation.spec.js` - Dashboard and navigation tests
+- `training-workflow.spec.js` - Training session workflows
+- `complete-user-workflows.spec.js` - End-to-end user journeys
+- `notifications.spec.js` - Notification interactions
+
+### 🔒 Privacy & Safety Tests (`tests/privacy-safety/`)
+
+- **Purpose**: Ensure GDPR compliance and data privacy
+- **Coverage**: Consent management, data deletion, age gating
+- **Framework**: Vitest
+
+**Test Files:**
+- `age-gating.test.js` - Age verification tests
+- `consent-gating.test.js` - Consent management
+- `deletion-lifecycle.test.js` - Data deletion flows
+- `coach-consent.test.js` - Coach consent requirements
+
+### ⚡ Performance Tests (`tests/performance/`)
+
+- **Purpose**: Load testing and performance validation
+- **Coverage**: API response times, concurrent users, stress testing
+- **Framework**: Vitest with custom performance runner
+
 ## Quick Start
 
 ```bash
-# Install dependencies (already done if you ran npm install)
+# Install dependencies (if not already done)
 npm install
 
 # Run all tests
 npm run test:all
 
 # Run specific test types
-npm run test:unit
-npm run test:integration
-npm run test:e2e
+npm run test:unit          # Unit tests (Angular)
+npm run test:e2e           # End-to-end tests (Playwright)
+npm run test:privacy       # Privacy/safety tests
 
 # Run tests with coverage
 npm run test:coverage
 
 # Run tests in watch mode (development)
 npm run test:watch
+
+# Run E2E tests with UI
+npm run test:e2e:ui
+
+# Run E2E tests in debug mode
+npm run test:e2e:debug
 ```
 
 ## Test Structure
 
 ```
 tests/
-├── setup.js                     # Global test configuration
-├── test-runner.js               # Custom test runner script
-├── unit/                        # Unit tests
-│   ├── auth-manager.test.js     # Authentication logic tests
-│   ├── api-config.test.js       # API configuration tests
-│   ├── error-handler.test.js    # Error handling tests
-│   └── performance-utils.test.js # Performance utilities tests
-├── integration/                 # Integration tests
-│   ├── api-integration.test.js  # Full API workflow tests
-│   └── database-integration.test.js # Database operation tests
-└── e2e/                        # End-to-end tests
-    ├── user-authentication.spec.js # Login/register workflows
-    ├── training-workflow.spec.js    # Complete training sessions
-    └── dashboard-navigation.spec.js # Dashboard interactions
+├── setup.js                          # Global test configuration
+├── test-runner.js                    # Custom test runner script
+├── test-helpers.js                   # Mock factories and utilities
+├── README.md                         # This file
+├── unit/                             # Unit tests
+│   ├── auth-manager.test.js          # Authentication logic
+│   ├── api-config.test.js            # API configuration
+│   ├── error-handler.test.js         # Error handling
+│   └── performance-utils.test.js     # Performance utilities
+├── integration/                      # Integration tests
+│   ├── api-integration.test.js       # API workflow tests
+│   ├── database-integration.test.js  # Database operations
+│   ├── api-endpoints.test.js         # Endpoint validation
+│   └── notification-flow.test.js     # Notifications
+├── e2e/                              # End-to-end tests
+│   ├── user-authentication.spec.js   # Auth flows
+│   ├── dashboard-navigation.spec.js  # Navigation
+│   ├── training-workflow.spec.js     # Training sessions
+│   └── complete-user-workflows.spec.js
+├── privacy-safety/                   # Privacy tests
+│   ├── age-gating.test.js
+│   ├── consent-gating.test.js
+│   └── deletion-lifecycle.test.js
+└── performance/                      # Performance tests
+    └── load-testing.spec.js
 ```
 
 ## Test Coverage Goals
 
-- **Unit Tests**: 90%+ code coverage
-- **Integration Tests**: All critical user flows
+- **Unit Tests**: 80%+ code coverage for core services
+- **Integration Tests**: All critical API flows
 - **E2E Tests**: Complete user journeys
 - **Cross-browser**: Chrome, Firefox, Safari, Mobile
 
@@ -78,10 +132,11 @@ tests/
 ### 🔐 Authentication & Security
 
 - User registration with validation
-- Login/logout workflows
-- Session management
+- Login/logout workflows (Supabase Auth)
+- Session management and token refresh
 - Password reset functionality
-- Token expiration handling
+- OAuth integration (Google, Facebook, Apple)
+- CSRF protection
 
 ### 🏃‍♂️ Training Workflows
 
@@ -115,13 +170,13 @@ tests/
 
 ## Configuration Files
 
-### `vitest.config.js`
+### `vitest.config.js` (Root)
 
 - Configures Vitest for unit and integration tests
 - Sets up jsdom environment for DOM testing
 - Defines path aliases and coverage settings
 
-### `playwright.config.js`
+### `playwright.config.js` (Root)
 
 - Multi-browser configuration (Chrome, Firefox, Safari)
 - Mobile device testing
@@ -133,6 +188,14 @@ tests/
 - Global mocks for browser APIs
 - Test utilities and helpers
 - DOM API polyfills
+- Storage mocks (localStorage, sessionStorage)
+
+### `tests/test-helpers.js`
+
+- Mock data factories (users, sessions, nutrition)
+- API response helpers
+- Test environment setup
+- Validation utilities
 
 ## Running Tests in CI/CD
 
@@ -140,13 +203,16 @@ The test suite is designed to run in CI/CD environments:
 
 ```bash
 # GitHub Actions / CI environment
-npm run test:all
+npm run test:ci
 
 # Generate coverage reports
 npm run test:coverage
 
 # Run only critical path tests (faster)
-npm run test:unit && npm run test:integration
+npm run test:unit && npm run test:e2e
+
+# Run privacy tests in CI
+npm run test:privacy:ci
 ```
 
 ## Debugging Tests
@@ -168,7 +234,7 @@ npx vitest tests/unit/
 
 ```bash
 # Run with visible browser (headed mode)
-npx playwright test --headed
+npm run test:e2e:headed
 
 # Debug specific test
 npx playwright test tests/e2e/user-authentication.spec.js --debug
@@ -181,7 +247,7 @@ npx playwright show-report
 
 ### User Data
 
-- Test users with different roles (athlete, coach, admin)
+- Test users with different roles (player, coach, admin)
 - Performance data across various time periods
 - Training sessions with different intensities
 
@@ -197,12 +263,47 @@ npx playwright show-report
 - Error scenarios and edge cases
 - Rate limiting and retry logic
 
+## Test Helpers
+
+### Mock Factories
+
+```javascript
+import {
+  createMockUser,
+  createMockTrainingSession,
+  createMockNutritionData,
+  createMockPerformanceData,
+  createMockAIResponse,
+} from "./test-helpers.js";
+
+// Create mock user
+const user = createMockUser({ role: "coach" });
+
+// Create mock training session
+const session = createMockTrainingSession({ duration: 60 });
+
+// Create mock API response
+const response = createMockApiResponse({ success: true });
+```
+
+### Test Environment Setup
+
+```javascript
+import { setupTestEnvironment } from "./test-helpers.js";
+
+beforeEach(() => {
+  const testEnv = setupTestEnvironment();
+  // ... test code
+  testEnv.cleanup();
+});
+```
+
 ## Performance Testing
 
 Tests include performance validations:
 
 - API response times under 500ms
-- Page load times under 2 seconds
+- Page load times under 3 seconds
 - Memory usage optimization
 - Database query efficiency
 
@@ -213,20 +314,14 @@ Tests include performance validations:
 3. **Error Coverage**: Test both success and failure scenarios
 4. **Browser Compatibility**: E2E tests cover multiple browsers and devices
 5. **Accessibility**: Tests include accessibility checks where applicable
-
-## Continuous Improvement
-
-- Tests are updated with new features
-- Performance benchmarks are regularly reviewed
-- Test coverage reports guide development priorities
-- Feedback loops improve test reliability
+6. **Privacy Compliance**: Privacy tests ensure GDPR compliance
 
 ## Troubleshooting
 
 ### Common Issues
 
 1. **Port conflicts**: Tests use dedicated ports to avoid conflicts
-2. **Database state**: Integration tests use isolated test databases
+2. **Database state**: Integration tests use mocked Supabase client
 3. **Browser dependencies**: Playwright automatically manages browser installations
 4. **Memory usage**: Tests include cleanup to prevent memory leaks
 
@@ -237,4 +332,11 @@ Tests include performance validations:
 - Use debugging modes for step-by-step investigation
 - Verify environment setup meets requirements
 
-This testing suite ensures the Flag Football Training App maintains high quality and reliability while supporting rapid development and deployment cycles.
+## Continuous Improvement
+
+- Tests are updated with new features
+- Performance benchmarks are regularly reviewed
+- Test coverage reports guide development priorities
+- Feedback loops improve test reliability
+
+This testing suite ensures the FlagFit Pro application maintains high quality and reliability while supporting rapid development and deployment cycles.

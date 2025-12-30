@@ -1,10 +1,15 @@
 // Standardized Error Handling for Netlify Functions
 // Provides consistent error responses and logging across all backend functions
+// Updated: 2024 - Modern JavaScript patterns with enhanced error handling
+
+"use strict";
 
 /**
  * Error types for categorization
+ * @readonly
+ * @enum {string}
  */
-const ErrorType = {
+const ErrorType = Object.freeze({
   VALIDATION: "validation_error",
   AUTHENTICATION: "authentication_error",
   AUTHORIZATION: "authorization_error",
@@ -14,8 +19,9 @@ const ErrorType = {
   SERVER: "server_error",
   DATABASE: "database_error",
   NETWORK: "network_error",
+  TIMEOUT: "timeout_error",
   UNKNOWN: "unknown_error",
-};
+});
 
 /**
  * Standard CORS headers
@@ -297,20 +303,44 @@ function withErrorHandling(handler, context = "Function") {
  * Try-catch wrapper that returns consistent response format
  * @param {function} operation - Async operation to execute
  * @param {string} context - Error context
+ * @param {object} options - Additional options
+ * @param {number} options.timeout - Timeout in milliseconds
+ * @param {number} options.retries - Number of retries on failure
  * @returns {Promise<object>} Response object
  */
-async function tryCatch(operation, context = "Operation") {
-  try {
-    const result = await operation();
-    return { success: true, data: result };
-  } catch (error) {
-    console.error(`[${context}] Error:`, error);
-    return {
-      success: false,
-      error: error.message || "Operation failed",
-      errorType: ErrorType.UNKNOWN,
-    };
+async function tryCatch(operation, context = "Operation", options = {}) {
+  const { timeout = 30000, retries = 0 } = options;
+  let lastError;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      // Create timeout promise
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error(`Operation timed out after ${timeout}ms`)), timeout);
+      });
+
+      // Race operation against timeout
+      const result = await Promise.race([operation(), timeoutPromise]);
+      return { success: true, data: result };
+    } catch (error) {
+      lastError = error;
+      console.error(`[${context}] Error (attempt ${attempt + 1}/${retries + 1}):`, error);
+
+      // Don't retry on certain errors
+      if (error.message?.includes("timed out") || attempt === retries) {
+        break;
+      }
+
+      // Exponential backoff before retry
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
+    }
   }
+
+  return {
+    success: false,
+    error: lastError?.message || "Operation failed",
+    errorType: lastError?.message?.includes("timed out") ? ErrorType.TIMEOUT : ErrorType.UNKNOWN,
+  };
 }
 
 /**

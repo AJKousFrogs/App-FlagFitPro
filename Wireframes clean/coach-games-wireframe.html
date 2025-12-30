@@ -1,1390 +1,803 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
-    <title>FlagFit Pro - Coach Games Management (Black &amp; White)</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap"
-      rel="stylesheet"
-    >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FlagFit Pro Coach Games - Game management and planning wireframe">
+    <title>FlagFit Pro - Coach Games Wireframe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wireframe-design-system.css">
     <style>
-      /* Black and White Coach Design System with Poppins Typography */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family:
-          "Poppins",
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
-        font-weight: 400;
-        font-size: 16px;
-        color: #1a1a1a;
-        background-color: #ffffff;
-        min-height: 100vh;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-
-      /* Typography Hierarchy - All Poppins */
-      h1 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        line-height: 1.2;
-        color: #1a1a1a;
-        margin-bottom: 1rem;
-      }
-
-      h2 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.875rem;
-        line-height: 1.3;
-        color: #1a1a1a;
-        margin-bottom: 0.75rem;
-      }
-
-      h3 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h4 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.25rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h5 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.125rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
-      }
-
-      p,
-      .body-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 1rem;
-        line-height: 1.6;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .small-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        color: #6b6b6b;
-      }
-
-      .caption {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.75rem;
-        line-height: 1.4;
-        color: #8a8a8a;
-      }
-
-      /* Black and White Design Variables */
-      :root {
-        --coach-primary: #1a1a1a;
-        --coach-secondary: #4a4a4a;
-        --coach-accent: #6b6b6b;
-        --coach-success: #1a1a1a;
-        --coach-warning: #1a1a1a;
-        --coach-danger: #1a1a1a;
-        --coach-dark: #1a1a1a;
-        --coach-light: #ffffff;
-        --shadow-coach: 0 10px 25px rgba(0, 0, 0, 0.1);
-        --border-coach: 2px solid #e5e5e5;
-      }
-
-      /* Header &amp; Navigation */
-      .coach-header {
-        background-color: #ffffff;
-        border-bottom: 2px solid #e5e5e5;
-        padding: 1rem 2rem;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .coach-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .coach-logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-      }
-
-      .coach-nav-tabs {
-        display: flex;
-        gap: 2rem;
-      }
-
-      .nav-tab {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        padding: 12px 24px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: #6b6b6b;
-        transition: all 0.3s ease;
-        border: none;
-        background: none;
-        cursor: pointer;
-      }
-
-      .nav-tab.active {
-        background-color: #1a1a1a;
-        color: #ffffff;
-      }
-
-      .nav-tab:hover:not(.active) {
-        background-color: #e5e5e5;
-        color: #1a1a1a;
-      }
-
-      .coach-user-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .coach-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.125rem;
-      }
-
-      /* Main Container */
-      .coach-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem;
-      }
-
+      /* Page-specific styles */
       .page-header {
-        margin-bottom: 2rem;
+        padding: var(--space-8) 0;
+        border-bottom: var(--border-default);
+        margin-bottom: var(--space-8);
       }
 
-      .page-title {
-        font-family: "Poppins", sans-serif;
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      .page-subtitle {
-        font-family: "Poppins", sans-serif;
-        font-size: 1.125rem;
-        color: #4a4a4a;
-        font-weight: 400;
-      }
-
-      /* Game Overview Cards */
-      .game-overview-grid {
+      /* Overview Grid */
+      .overview-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
       .overview-card {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
-        transition: all 0.3s ease;
-        position: relative;
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        transition: all var(--transition-normal);
       }
 
       .overview-card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-black);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
       }
 
-      .card-header {
+      .overview-card .card-icon {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-3);
+      }
+
+      .overview-card .card-value {
+        font-size: var(--font-size-4xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        line-height: 1;
+        margin-bottom: var(--space-2);
+      }
+
+      .overview-card .card-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-3);
+      }
+
+      .overview-card .card-trend {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 1.5rem;
+        gap: var(--space-2);
       }
 
-      .card-icon {
-        font-size: 2rem;
-        /* Emojis keep their natural colors */
+      /* Upcoming Games */
+      .games-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
-      .card-icon-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .card-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-        color: #1a1a1a;
-      }
-
-      .card-metric {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-        display: block;
-      }
-
-      .card-description {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .card-trend {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.875rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      /* Upcoming Games Section */
-      .upcoming-games {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-      }
-
-      .section-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: 1rem;
-      }
-
-      .btn {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 12px 24px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .btn-primary {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      .btn-primary:hover {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .btn-secondary {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .btn-secondary:hover {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      /* Game Cards */
-      .games-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-        gap: 1.5rem;
+      .games-list {
+        margin-top: var(--space-4);
       }
 
       .game-card {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
-        position: relative;
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-4);
+        transition: all var(--transition-normal);
+        cursor: pointer;
+      }
+
+      .game-card:last-child {
+        margin-bottom: 0;
       }
 
       .game-card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
       .game-header {
         display: flex;
-        justify-content: between;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-
-      .game-date {
-        background-color: #f5f5f5;
-        color: #1a1a1a;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 0.875rem;
-      }
-
-      .game-importance {
-        font-family: "Poppins", sans-serif;
-        font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
-        border-radius: 6px;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        background-color: #1a1a1a;
-        color: #ffffff;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: var(--space-4);
       }
 
       .game-matchup {
-        text-align: center;
-        margin: 1.5rem 0;
-      }
-
-      .teams {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1rem;
+        gap: var(--space-4);
       }
 
-      .team {
+      .team-badge {
         display: flex;
-        flex-direction: column;
         align-items: center;
-        flex: 1;
+        gap: var(--space-2);
       }
 
       .team-logo {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background-color: #f5f5f5;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--border-radius-md);
+        background: var(--color-gray-200);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        /* Emojis and flag symbols keep their natural colors */
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-lg);
       }
 
       .team-name {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        text-align: center;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
       }
 
-      .team-record {
-        font-family: "Poppins", sans-serif;
-        font-size: 0.875rem;
-        color: #6b6b6b;
+      .vs-text {
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-muted);
+        font-size: var(--font-size-lg);
       }
 
-      .vs-divider {
-        font-family: "Poppins", sans-serif;
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #6b6b6b;
-        margin: 0 1rem;
+      .game-badge {
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--border-radius-full);
+        text-transform: uppercase;
+      }
+
+      .game-badge.qualifier {
+        background: var(--color-black);
+        color: var(--color-white);
+      }
+
+      .game-badge.friendly {
+        background: var(--color-gray-200);
+        color: var(--color-black);
       }
 
       .game-details {
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1rem;
+        display: flex;
+        gap: var(--space-6);
+        margin-bottom: var(--space-4);
       }
 
-      .detail-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-      }
-
-      .detail-item {
+      .game-detail {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-family: "Poppins", sans-serif;
-        font-size: 0.875rem;
-        color: #4a4a4a;
-      }
-
-      .detail-icon {
-        width: 16px;
-        height: 16px;
-        /* Emojis keep their natural colors */
+        gap: var(--space-2);
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
       }
 
       .game-actions {
         display: flex;
-        gap: 0.5rem;
+        gap: var(--space-3);
       }
 
-      .btn-small {
-        font-family: "Poppins", sans-serif;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
-        border-radius: 8px;
-      }
-
-      /* Olympic Qualifying Games */
-      .olympic-games {
-        background-color: #fafafa;
-        border: 2px solid #1a1a1a;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
+      /* Olympic Qualification Path */
+      .olympic-section {
+        background: var(--color-gray-50);
+        border: var(--border-width-thick) solid var(--color-black);
+        border-radius: var(--border-radius-xl);
+        padding: var(--space-8);
+        margin-bottom: var(--space-8);
       }
 
       .olympic-header {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: var(--space-6);
       }
 
-      .olympic-title {
-        font-family: "Poppins", sans-serif;
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
+      .olympic-probability {
+        font-size: var(--font-size-5xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        margin: var(--space-4) 0;
       }
 
-      .olympic-subtitle {
-        font-family: "Poppins", sans-serif;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .qualification-status {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-      }
-
-      .tournament-path {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-      }
-
-      .tournament-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 1px solid #e5e5e5;
-        transition: all 0.3s ease;
-      }
-
-      .tournament-card.current {
-        border-color: #1a1a1a;
-        background-color: #f9f9f9;
-      }
-
-      .tournament-card.completed {
-        border-color: #1a1a1a;
-        background-color: #f5f5f5;
-      }
-
-      .tournament-header {
+      .qualification-timeline {
         display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
+        justify-content: space-between;
+        position: relative;
+        margin-top: var(--space-8);
+        padding: 0 var(--space-4);
       }
 
-      .tournament-icon {
+      .qualification-timeline::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 10%;
+        right: 10%;
+        height: 4px;
+        background: var(--color-gray-300);
+      }
+
+      .qualification-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .step-marker {
         width: 40px;
         height: 40px;
-        border-radius: 8px;
-        background-color: #f5f5f5;
+        border-radius: var(--border-radius-full);
+        background: var(--color-white);
+        border: var(--border-width-medium) solid var(--color-gray-300);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
-        /* Emojis keep their natural colors */
+        font-size: var(--font-size-lg);
+        margin-bottom: var(--space-3);
       }
 
-      .tournament-info h3 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
+      .step-marker.completed {
+        background: var(--color-black);
+        border-color: var(--color-black);
+        color: var(--color-white);
       }
 
-      .tournament-date {
-        font-family: "Poppins", sans-serif;
-        color: #6b6b6b;
-        font-size: 0.875rem;
+      .step-marker.current {
+        border-color: var(--color-black);
+        border-width: var(--border-width-thick);
       }
 
-      .tournament-description {
-        font-family: "Poppins", sans-serif;
-        color: #4a4a4a;
-        font-size: 0.875rem;
-        margin-bottom: 1rem;
-      }
-
-      .tournament-requirement {
-        background-color: #f5f5f5;
-        color: #1a1a1a;
-        padding: 0.5rem;
-        border-radius: 6px;
-        font-family: "Poppins", sans-serif;
-        font-size: 0.875rem;
-        font-weight: 500;
+      .step-name {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        font-size: var(--font-size-sm);
         text-align: center;
-        border: 1px solid #e5e5e5;
+      }
+
+      .step-date {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        text-align: center;
       }
 
       /* Game Stats Upload */
-      .game-stats-upload {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
+      .upload-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
-      .upload-methods {
+      .upload-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
       }
 
       .upload-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 1px solid #e5e5e5;
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
         text-align: center;
-        transition: all 0.3s ease;
+        cursor: pointer;
+        transition: all var(--transition-normal);
       }
 
       .upload-card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
       .upload-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 12px;
-        background-color: #f5f5f5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        margin: 0 auto 1rem;
-        /* Emojis keep their natural colors */
+        font-size: var(--font-size-3xl);
+        margin-bottom: var(--space-3);
       }
 
       .upload-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
       }
 
       .upload-description {
-        font-family: "Poppins", sans-serif;
-        color: #4a4a4a;
-        font-size: 0.875rem;
-        margin-bottom: 1rem;
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
       }
 
-      .upload-features {
-        list-style: none;
-        margin-bottom: 1rem;
+      /* Recent Results */
+      .results-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
       }
 
-      .upload-features li {
-        font-family: "Poppins", sans-serif;
-        color: #6b6b6b;
-        font-size: 0.75rem;
-        margin-bottom: 0.25rem;
+      .results-list {
+        margin-top: var(--space-4);
       }
 
-      /* Recent Games */
-      .recent-games {
-        margin-top: 2rem;
-      }
-
-      .recent-game-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 1px solid #e5e5e5;
-        margin-bottom: 1rem;
-      }
-
-      .game-result {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-
-      .result-info {
+      .result-item {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        border-bottom: var(--border-default);
+        transition: background var(--transition-fast);
+        cursor: pointer;
       }
 
-      .result-badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 6px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 0.875rem;
+      .result-item:last-child {
+        border-bottom: none;
+      }
+
+      .result-item:hover {
+        background: var(--color-gray-50);
+      }
+
+      .result-date {
+        min-width: 80px;
+        text-align: center;
+      }
+
+      .result-month {
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-muted);
         text-transform: uppercase;
-        background-color: #1a1a1a;
-        color: #ffffff;
       }
 
-      .olympic-impact {
-        background-color: #f9f9f9;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-top: 1rem;
+      .result-day {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
       }
 
-      .impact-header {
+      .result-matchup {
+        flex: 1;
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
+        gap: var(--space-3);
       }
 
-      .impact-details {
-        font-family: "Poppins", sans-serif;
-        color: #4a4a4a;
-        font-size: 0.875rem;
+      .result-team {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-black);
       }
 
-      /* Responsive Design */
+      .result-score {
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+        font-size: var(--font-size-lg);
+      }
+
+      .result-outcome {
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--border-radius-full);
+        text-transform: uppercase;
+      }
+
+      .result-outcome.win {
+        background: var(--color-black);
+        color: var(--color-white);
+      }
+
+      .result-outcome.loss {
+        background: var(--color-gray-200);
+        color: var(--color-black);
+      }
+
+      .result-impact {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        min-width: 120px;
+        text-align: right;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .overview-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .upload-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
       @media (max-width: 768px) {
-        .coach-container {
-          padding: 1rem;
-        }
-
-        .page-title {
-          font-size: 2rem;
-        }
-
-        .game-overview-grid {
+        .overview-grid {
           grid-template-columns: 1fr;
         }
 
-        .games-grid {
+        .game-matchup {
+          flex-direction: column;
+          gap: var(--space-2);
+        }
+
+        .game-details {
+          flex-direction: column;
+          gap: var(--space-2);
+        }
+
+        .qualification-timeline {
+          flex-direction: column;
+          gap: var(--space-6);
+          align-items: flex-start;
+        }
+
+        .qualification-timeline::before {
+          top: 0;
+          bottom: 0;
+          left: 20px;
+          right: auto;
+          width: 4px;
+          height: auto;
+        }
+
+        .qualification-step {
+          flex-direction: row;
+          gap: var(--space-4);
+        }
+
+        .step-marker {
+          margin-bottom: 0;
+        }
+
+        .upload-grid {
           grid-template-columns: 1fr;
         }
 
-        .tournament-path {
-          grid-template-columns: 1fr;
+        .result-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-3);
         }
 
-        .coach-nav-tabs {
-          display: none;
+        .result-impact {
+          text-align: left;
         }
-      }
-
-      /* Animations */
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .upcoming-games,
-      .olympic-games,
-      .game-stats-upload {
-        animation: fadeInUp 0.6s ease-out;
       }
     </style>
   </head>
   <body>
-    <!-- Coach Header -->
-    <header class="coach-header">
-      <nav class="coach-nav">
-        <div class="coach-logo">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav-container">
+        <a href="#" class="nav-brand">
           <span>🏈</span>
-          <span>FlagFit Pro Coach</span>
-        </div>
-        <div class="coach-nav-tabs">
-          <button type="button" class="nav-tab">Team Management</button>
-          <button type="button" class="nav-tab">Training</button>
-          <button type="button" class="nav-tab active">Games</button>
-          <button type="button" class="nav-tab">Analytics</button>
-        </div>
-        <div class="coach-user-info">
-          <div class="coach-avatar">CJ</div>
-          <div style="font-family: &quot;Poppins&quot;, sans-serif">
-            <h4 style="font-weight: 600; color: #1a1a1a; margin-bottom: 0">
-              Coach Johnson
-            </h4>
-            <div style="font-weight: 400; color: #6b6b6b; font-size: 0.875rem">
-              Head Coach
-            </div>
-          </div>
-        </div>
-      </nav>
-    </header>
+          <span>FlagFit Pro</span>
+        </a>
 
-    <!-- Main Container -->
-    <div class="coach-container">
+        <ul class="nav-menu">
+          <li><a href="coach-dashboard-wireframe.html" class="nav-link">Dashboard</a></li>
+          <li><a href="coach-team-management-wireframe.html" class="nav-link">Team</a></li>
+          <li><a href="coach-training-wireframe.html" class="nav-link">Training</a></li>
+          <li><a href="#" class="nav-link active">Games</a></li>
+          <li><a href="coach-analytics-wireframe.html" class="nav-link">Analytics</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button type="button" class="btn btn-icon" aria-label="Search">🔍</button>
+          <button type="button" class="btn btn-icon" aria-label="Notifications">🔔</button>
+          <div class="avatar avatar-primary">CM</div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
       <!-- Page Header -->
-      <div class="page-header">
-        <h1 class="page-title">Games Management</h1>
-        <p class="page-subtitle">
-          Schedule, analyze, and strategize for all team competitions
-        </p>
-      </div>
+      <header class="page-header">
+        <h1>Games Management 🏈</h1>
+        <p>Plan, track, and analyze your team's games</p>
+      </header>
 
-      <!-- Game Overview Grid -->
-      <div class="game-overview-grid">
+      <!-- Overview Grid -->
+      <section class="overview-grid">
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">🏆</span>
-              <h3 class="card-title">Season Record</h3>
-            </div>
-          </div>
-          <div class="card-metric">8-2</div>
-          <p class="card-description">League Standing: 2nd Place</p>
-          <div class="card-trend trend-positive">
+          <div class="card-icon">📊</div>
+          <div class="card-value">8-2</div>
+          <div class="card-label">Season Record</div>
+          <div class="card-trend">
             <span>📈</span>
-            <span>4-game winning streak</span>
+            <span>Best start in 3 years</span>
           </div>
         </div>
 
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">📅</span>
-              <h3 class="card-title">Upcoming Games</h3>
-            </div>
-          </div>
-          <div class="card-metric">3</div>
-          <p class="card-description">Next 2 weeks</p>
-          <div class="card-trend trend-warning">
-            <span>⚠️</span>
-            <span>1 critical Olympic qualifier</span>
+          <div class="card-icon">📅</div>
+          <div class="card-value">3</div>
+          <div class="card-label">Upcoming Games</div>
+          <div class="card-trend">
+            <span>⏰</span>
+            <span>Next: Aug 15</span>
           </div>
         </div>
 
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">⚡</span>
-              <h3 class="card-title">Team Performance</h3>
-            </div>
-          </div>
-          <div class="card-metric">87/100</div>
-          <p class="card-description">Olympic Performance Score</p>
-          <div class="card-trend trend-positive">
-            <span>📈</span>
-            <span>+3 points this month</span>
-          </div>
-        </div>
-
-        <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">🥇</span>
-              <h3 class="card-title">Olympic Qualification</h3>
-            </div>
-          </div>
-          <div class="card-metric">78%</div>
-          <p class="card-description">Qualification Probability</p>
-          <div class="card-trend trend-positive">
+          <div class="card-icon">⚡</div>
+          <div class="card-value">87%</div>
+          <div class="card-label">Team Performance</div>
+          <div class="card-trend">
             <span>🎯</span>
-            <span>World Ranking: #6</span>
+            <span>Above average</span>
           </div>
         </div>
-      </div>
 
-      <!-- Upcoming Games Section -->
-      <div class="upcoming-games">
+        <div class="overview-card">
+          <div class="card-icon">🏆</div>
+          <div class="card-value">78%</div>
+          <div class="card-label">Olympic Qualification</div>
+          <div class="card-trend">
+            <span>📈</span>
+            <span>On track for LA28</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Upcoming Games -->
+      <section class="games-section">
         <div class="section-header">
           <h2 class="section-title">
             <span>📅</span>
             Upcoming Games
           </h2>
-          <div class="action-buttons">
-            <button type="button" class="btn btn-secondary">
-              <span>📊</span>
-              Game Schedule
-            </button>
-            <button type="button" class="btn btn-primary">
-              <span>➕</span>
-              Add Game
-            </button>
-          </div>
+          <button type="button" class="btn btn-primary btn-sm">Schedule Game</button>
         </div>
 
-        <div class="games-grid">
-          <!-- Game 1 - Championship -->
+        <div class="games-list">
           <div class="game-card">
             <div class="game-header">
-              <div class="game-date">Dec 15, 2024</div>
-              <div class="game-importance importance-critical">
-                Championship
-              </div>
-            </div>
-            <div class="game-matchup">
-              <div class="teams">
-                <div class="team">
-                  <div class="team-logo">⚡</div>
-                  <div class="team-name">Lightning Bolts</div>
-                  <div class="team-record">8-2</div>
+              <div class="game-matchup">
+                <div class="team-badge">
+                  <div class="team-logo">AT</div>
+                  <span class="team-name">Austria</span>
                 </div>
-                <div class="vs-divider">VS</div>
-                <div class="team">
-                  <div class="team-logo">🔥</div>
-                  <div class="team-name">Fire Hawks</div>
-                  <div class="team-record">9-1</div>
+                <span class="vs-text">VS</span>
+                <div class="team-badge">
+                  <div class="team-logo">GE</div>
+                  <span class="team-name">Germany</span>
                 </div>
               </div>
+              <span class="game-badge qualifier">Qualifier</span>
             </div>
             <div class="game-details">
-              <div class="detail-grid">
-                <div class="detail-item">
-                  <span class="detail-icon">🕐</span>
-                  <span>2:00 PM</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-icon">📍</span>
-                  <span>Central Stadium</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-icon">🌤️</span>
-                  <span>Sunny, 72°F</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-icon">📺</span>
-                  <span>ESPN Live</span>
-                </div>
+              <div class="game-detail">
+                <span>📅</span>
+                <span>August 15, 2025</span>
+              </div>
+              <div class="game-detail">
+                <span>⏰</span>
+                <span>2:00 PM</span>
+              </div>
+              <div class="game-detail">
+                <span>📍</span>
+                <span>Munich, Germany</span>
               </div>
             </div>
             <div class="game-actions">
-              <button type="button" class="btn btn-primary btn-small">Game Plan</button>
-              <button type="button" class="btn btn-secondary btn-small">Team Sheet</button>
-              <button type="button" class="btn btn-secondary btn-small">Analytics</button>
+              <button type="button" class="btn btn-secondary btn-sm">Game Plan</button>
+              <button type="button" class="btn btn-secondary btn-sm">Film Study</button>
+              <button type="button" class="btn btn-secondary btn-sm">Roster</button>
             </div>
           </div>
 
-          <!-- Game 2 - Regular Season -->
           <div class="game-card">
             <div class="game-header">
-              <div class="game-date">Dec 22, 2024</div>
-              <div class="game-importance importance-medium">
-                Regular Season
-              </div>
-            </div>
-            <div class="game-matchup">
-              <div class="teams">
-                <div class="team">
-                  <div class="team-logo">⚡</div>
-                  <div class="team-name">Lightning Bolts</div>
-                  <div class="team-record">8-2</div>
+              <div class="game-matchup">
+                <div class="team-badge">
+                  <div class="team-logo">AT</div>
+                  <span class="team-name">Austria</span>
                 </div>
-                <div class="vs-divider">VS</div>
-                <div class="team">
-                  <div class="team-logo">🌪️</div>
-                  <div class="team-name">Storm Chasers</div>
-                  <div class="team-record">5-5</div>
+                <span class="vs-text">VS</span>
+                <div class="team-badge">
+                  <div class="team-logo">FR</div>
+                  <span class="team-name">France</span>
                 </div>
               </div>
+              <span class="game-badge friendly">Friendly</span>
             </div>
             <div class="game-details">
-              <div class="detail-grid">
-                <div class="detail-item">
-                  <span class="detail-icon">🕐</span>
-                  <span>4:00 PM</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-icon">📍</span>
-                  <span>Community Field</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-icon">🌤️</span>
-                  <span>Cloudy, 68°F</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-icon">📱</span>
-                  <span>Stream Only</span>
-                </div>
+              <div class="game-detail">
+                <span>📅</span>
+                <span>August 22, 2025</span>
+              </div>
+              <div class="game-detail">
+                <span>⏰</span>
+                <span>4:00 PM</span>
+              </div>
+              <div class="game-detail">
+                <span>📍</span>
+                <span>Vienna, Austria</span>
               </div>
             </div>
             <div class="game-actions">
-              <button type="button" class="btn btn-primary btn-small">Preparation</button>
-              <button type="button" class="btn btn-secondary btn-small">Roster</button>
-              <button type="button" class="btn btn-secondary btn-small">History</button>
-            </div>
-          </div>
-
-          <!-- Game 3 - Exhibition -->
-          <div class="game-card">
-            <div class="game-header">
-              <div class="game-date">Jan 5, 2025</div>
-              <div class="game-importance importance-high">Olympic Prep</div>
-            </div>
-            <div class="game-matchup">
-              <div class="teams">
-                <div class="team">
-                  <div class="team-logo">⚡</div>
-                  <div class="team-name">Lightning Bolts</div>
-                  <div class="team-record">8-2</div>
-                </div>
-                <div class="vs-divider">VS</div>
-                <div class="team">
-                  <div class="team-logo">🇦🇹</div>
-                  <div class="team-name">Vienna Eagles</div>
-                  <div class="team-record">#2 World</div>
-                </div>
-              </div>
-            </div>
-            <div class="game-details">
-              <div class="detail-grid">
-                <div class="detail-item">
-                  <span class="detail-icon">🕐</span>
-                  <span>1:00 PM</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-icon">📍</span>
-                  <span>Olympic Training Center</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-icon">🌤️</span>
-                  <span>TBD</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-icon">🏆</span>
-                  <span>Olympic Format</span>
-                </div>
-              </div>
-            </div>
-            <div class="game-actions">
-              <button type="button" class="btn btn-primary btn-small">
-                Olympic Strategy
-              </button>
-              <button type="button" class="btn btn-secondary btn-small">
-                International Rules
-              </button>
+              <button type="button" class="btn btn-secondary btn-sm">Game Plan</button>
+              <button type="button" class="btn btn-secondary btn-sm">Film Study</button>
+              <button type="button" class="btn btn-secondary btn-sm">Roster</button>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Olympic Qualifying Path -->
-      <div class="olympic-games">
+      <!-- LA28 Olympic Qualification Path -->
+      <section class="olympic-section">
         <div class="olympic-header">
-          <h2 class="olympic-title">🏆 LA28 Olympic Qualification Path</h2>
-          <p class="olympic-subtitle">
-            Official IFAF pathway to 2028 Los Angeles Olympics
-          </p>
-          <div class="qualification-status">
-            <span>🎯</span>
-            <span
-              >Current Status: #6 World Ranking - Inside Qualification
-              Zone</span
-            >
-          </div>
+          <h2>🏅 LA28 Olympic Qualification Path</h2>
+          <p>Track your team's journey to the 2028 Los Angeles Olympics</p>
+          <div class="olympic-probability">78%</div>
+          <p class="text-muted">Current Qualification Probability</p>
         </div>
 
-        <div class="tournament-path">
-          <div class="tournament-card completed">
-            <div class="tournament-header">
-              <div class="tournament-icon completed">✓</div>
-              <div class="tournament-info">
-                <h3>Regional Qualifiers</h3>
-                <div class="tournament-date">Completed 2024</div>
-              </div>
-            </div>
-            <div class="tournament-description">
-              Successfully qualified for continental championships with 2nd
-              place finish in regional tournament.
-            </div>
-            <div class="tournament-requirement">
-              ✅ Qualified for European Championships
+        <div class="qualification-timeline">
+          <div class="qualification-step">
+            <div class="step-marker completed">✓</div>
+            <div>
+              <div class="step-name">Regional Qualifier</div>
+              <div class="step-date">Completed Aug 2024</div>
             </div>
           </div>
 
-          <div class="tournament-card current">
-            <div class="tournament-header">
-              <div class="tournament-icon current">🏃</div>
-              <div class="tournament-info">
-                <h3>European Championships 2025</h3>
-                <div class="tournament-date">September 24-27, 2025</div>
-              </div>
-            </div>
-            <div class="tournament-description">
-              Critical tournament in France. Winner receives automatic Olympic
-              qualification spot.
-            </div>
-            <div class="tournament-requirement">
-              🎯 NEED: 1st Place for Automatic Olympic Spot
+          <div class="qualification-step">
+            <div class="step-marker completed">✓</div>
+            <div>
+              <div class="step-name">National Championship</div>
+              <div class="step-date">Completed Dec 2024</div>
             </div>
           </div>
 
-          <div class="tournament-card">
-            <div class="tournament-header">
-              <div class="tournament-icon upcoming">🎯</div>
-              <div class="tournament-info">
-                <h3>World Championship 2026</h3>
-                <div class="tournament-date">July 15-21, 2026</div>
-              </div>
-            </div>
-            <div class="tournament-description">
-              Top 16 teams compete in Germany. 6 Olympic qualification spots
-              available per gender.
-            </div>
-            <div class="tournament-requirement">
-              🏆 6 Olympic Spots Available (Top 6)
+          <div class="qualification-step">
+            <div class="step-marker current">3</div>
+            <div>
+              <div class="step-name">European Championship</div>
+              <div class="step-date">Sept 2025</div>
             </div>
           </div>
 
-          <div class="tournament-card">
-            <div class="tournament-header">
-              <div class="tournament-icon upcoming">🏅</div>
-              <div class="tournament-info">
-                <h3>LA28 Olympics</h3>
-                <div class="tournament-date">July 14-30, 2028</div>
-              </div>
+          <div class="qualification-step">
+            <div class="step-marker">4</div>
+            <div>
+              <div class="step-name">World Championship</div>
+              <div class="step-date">July 2026</div>
             </div>
-            <div class="tournament-description">
-              Ultimate goal - compete among the world's elite 6 teams per gender
-              in Los Angeles.
-            </div>
-            <div class="tournament-requirement">
-              🥇 Only 6 Teams Per Gender (60 Total Athletes)
+          </div>
+
+          <div class="qualification-step">
+            <div class="step-marker">🏅</div>
+            <div>
+              <div class="step-name">LA28 Olympics</div>
+              <div class="step-date">July 2028</div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Game Stats Upload -->
-      <div class="game-stats-upload">
+      <section class="upload-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>📤</span>
+            Game Stats & Analysis
+          </h2>
+        </div>
+
+        <div class="upload-grid">
+          <div class="upload-card">
+            <div class="upload-icon">🎥</div>
+            <div class="upload-title">Video Analysis</div>
+            <div class="upload-description">Upload game footage for AI breakdown</div>
+          </div>
+
+          <div class="upload-card">
+            <div class="upload-icon">📝</div>
+            <div class="upload-title">Manual Entry</div>
+            <div class="upload-description">Enter stats manually after games</div>
+          </div>
+
+          <div class="upload-card">
+            <div class="upload-icon">📱</div>
+            <div class="upload-title">App Integration</div>
+            <div class="upload-description">Sync from official scoring apps</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Results -->
+      <section class="results-section">
         <div class="section-header">
           <h2 class="section-title">
             <span>📊</span>
-            Game Stats &amp; Analysis
+            Recent Results
           </h2>
-          <div class="action-buttons">
-            <button type="button" class="btn btn-secondary">
-              <span>📈</span>
-              Performance Trends
-            </button>
-            <button type="button" class="btn btn-primary">
-              <span>🎯</span>
-              Olympic Impact
-            </button>
-          </div>
+          <button type="button" class="btn btn-secondary btn-sm">View All</button>
         </div>
 
-        <div class="upload-methods">
-          <div class="upload-card">
-            <div class="upload-icon video">📹</div>
-            <h3 class="upload-title">Video Analysis</h3>
-            <p class="upload-description">
-              Upload game footage for AI-powered analysis
-            </p>
-            <ul class="upload-features">
-              <li>• Automatic play detection and tagging</li>
-              <li>• Player performance extraction</li>
-              <li>• Olympic benchmark comparison</li>
-              <li>• Team chemistry analysis</li>
-            </ul>
-            <button type="button" class="btn btn-primary btn-small">Upload Video</button>
+        <div class="results-list">
+          <div class="result-item">
+            <div class="result-date">
+              <div class="result-month">Dec</div>
+              <div class="result-day">15</div>
+            </div>
+            <div class="result-matchup">
+              <span class="result-team">Austria</span>
+              <span class="result-score">28 - 21</span>
+              <span class="result-team">Italy</span>
+            </div>
+            <span class="result-outcome win">Win</span>
+            <span class="result-impact">📈 +3 Olympic pts</span>
           </div>
 
-          <div class="upload-card">
-            <div class="upload-icon manual">📝</div>
-            <h3 class="upload-title">Manual Entry</h3>
-            <p class="upload-description">
-              Enter detailed game statistics manually
-            </p>
-            <ul class="upload-features">
-              <li>• Olympic-focused metrics tracking</li>
-              <li>• Real-time qualification impact</li>
-              <li>• Individual player evaluation</li>
-              <li>• Team chemistry scoring</li>
-            </ul>
-            <button type="button" class="btn btn-primary btn-small">Enter Stats</button>
+          <div class="result-item">
+            <div class="result-date">
+              <div class="result-month">Dec</div>
+              <div class="result-day">8</div>
+            </div>
+            <div class="result-matchup">
+              <span class="result-team">Austria</span>
+              <span class="result-score">14 - 21</span>
+              <span class="result-team">Germany</span>
+            </div>
+            <span class="result-outcome loss">Loss</span>
+            <span class="result-impact">📉 -1 Olympic pts</span>
           </div>
 
-          <div class="upload-card">
-            <div class="upload-icon import">📱</div>
-            <h3 class="upload-title">App Integration</h3>
-            <p class="upload-description">
-              Connect with sports tracking platforms
-            </p>
-            <ul class="upload-features">
-              <li>• GameChanger integration</li>
-              <li>• Sports Engine sync</li>
-              <li>• Automatic Olympic scoring</li>
-              <li>• Multi-platform support</li>
-            </ul>
-            <button type="button" class="btn btn-primary btn-small">Connect Apps</button>
-          </div>
-        </div>
-
-        <!-- Recent Games -->
-        <div class="recent-games">
-          <h3 style="margin-bottom: 1rem; color: var(--coach-dark)">
-            Recent Game Results
-          </h3>
-
-          <div class="recent-game-card">
-            <div class="game-result">
-              <div class="result-info">
-                <div class="result-badge result-won">Won</div>
-                <div>
-                  <strong>Lightning Bolts 28 - 14 Thunder Bolts</strong>
-                  <div style="color: #6b7280; font-size: 0.875rem">
-                    December 8, 2024
-                  </div>
-                </div>
-              </div>
-              <button type="button" class="btn btn-secondary btn-small">View Details</button>
+          <div class="result-item">
+            <div class="result-date">
+              <div class="result-month">Nov</div>
+              <div class="result-day">24</div>
             </div>
-            <div class="olympic-impact">
-              <div class="impact-header">
-                <span>🏆</span>
-                <span>Olympic Qualification Impact</span>
-              </div>
-              <div class="impact-details">
-                +2.3 qualification points earned • Team performance: 87/100
-                (Above Olympic standard) • World ranking improved from #8 to #6
-              </div>
+            <div class="result-matchup">
+              <span class="result-team">Austria</span>
+              <span class="result-score">35 - 14</span>
+              <span class="result-team">Switzerland</span>
             </div>
+            <span class="result-outcome win">Win</span>
+            <span class="result-impact">📈 +5 Olympic pts</span>
           </div>
 
-          <div class="recent-game-card">
-            <div class="game-result">
-              <div class="result-info">
-                <div class="result-badge result-won">Won</div>
-                <div>
-                  <strong>Lightning Bolts 21 - 17 Storm Eagles</strong>
-                  <div style="color: #6b7280; font-size: 0.875rem">
-                    December 1, 2024
-                  </div>
-                </div>
-              </div>
-              <button type="button" class="btn btn-secondary btn-small">View Details</button>
+          <div class="result-item">
+            <div class="result-date">
+              <div class="result-month">Nov</div>
+              <div class="result-day">17</div>
             </div>
-            <div class="olympic-impact">
-              <div class="impact-header">
-                <span>🏆</span>
-                <span>Olympic Qualification Impact</span>
-              </div>
-              <div class="impact-details">
-                +1.8 qualification points earned • Close victory shows
-                resilience • Team chemistry score improved to 8.4/10
-              </div>
+            <div class="result-matchup">
+              <span class="result-team">Austria</span>
+              <span class="result-score">21 - 14</span>
+              <span class="result-team">Poland</span>
             </div>
-          </div>
-
-          <div class="recent-game-card">
-            <div class="game-result">
-              <div class="result-info">
-                <div class="result-badge result-lost">Lost</div>
-                <div>
-                  <strong>Lightning Bolts 14 - 24 Fire Hawks</strong>
-                  <div style="color: #6b7280; font-size: 0.875rem">
-                    November 24, 2024
-                  </div>
-                </div>
-              </div>
-              <button type="button" class="btn btn-secondary btn-small">View Details</button>
-            </div>
-            <div class="olympic-impact">
-              <div class="impact-header">
-                <span>⚠️</span>
-                <span>Learning Opportunity</span>
-              </div>
-              <div class="impact-details">
-                -0.5 qualification points • Identified weaknesses in red zone
-                efficiency • Adjusted training focus for improvement
-              </div>
-            </div>
+            <span class="result-outcome win">Win</span>
+            <span class="result-impact">📈 +4 Olympic pts</span>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <!-- JavaScript -->
     <script>
-      // Tab navigation
-      document.querySelectorAll(".nav-tab").forEach((tab) => {
-        tab.addEventListener("click", function () {
-          document
-            .querySelectorAll(".nav-tab")
-            .forEach((t) => t.classList.remove("active"));
-          this.classList.add("active");
-
-          const tabName = this.textContent.trim();
-          console.log(`Navigating to ${tabName}`);
-        });
-      });
-
       // Game card interactions
-      document.querySelectorAll(".game-card").forEach((card) => {
-        card.addEventListener("click", function () {
-          console.log("Game card clicked");
-          // Open game details modal
-        });
-      });
-
-      // Tournament card interactions
-      document.querySelectorAll(".tournament-card").forEach((card) => {
-        card.addEventListener("click", function () {
-          console.log(
-            `Tournament clicked: ${this.querySelector("h3").textContent}`,
-          );
-          // Open tournament details
+      document.querySelectorAll('.game-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          if (!e.target.closest('.btn')) {
+            console.log('Game clicked');
+          }
         });
       });
 
       // Upload card interactions
-      document.querySelectorAll(".upload-card").forEach((card) => {
-        card.addEventListener("click", function () {
-          console.log(
-            `Upload method clicked: ${this.querySelector(".upload-title").textContent}`,
-          );
-          // Open upload interface
+      document.querySelectorAll('.upload-card').forEach(card => {
+        card.addEventListener('click', function() {
+          console.log('Upload option clicked:', this.querySelector('.upload-title').textContent);
         });
       });
 
-      // Recent game interactions
-      document.querySelectorAll(".recent-game-card").forEach((card) => {
-        card.addEventListener("click", function () {
-          console.log("Recent game clicked");
-          // Open game analysis
-        });
-      });
-
-      // Button interactions
-      document.querySelectorAll(".btn").forEach((btn) => {
-        btn.addEventListener("click", function (e) {
-          e.stopPropagation();
-          console.log(`Button clicked: ${this.textContent.trim()}`);
-
-          // Add click animation
-          this.style.transform = "translateY(-4px)";
-          setTimeout(() => {
-            this.style.transform = "";
-          }, 150);
-        });
-      });
-
-      // Initialize animations on page load
-      document.addEventListener("DOMContentLoaded", function () {
-        // Stagger card animations
-        const cards = document.querySelectorAll(
-          ".overview-card, .game-card, .tournament-card",
-        );
-        cards.forEach((card, index) => {
-          card.style.animationDelay = `${index * 0.1}s`;
+      // Result item interactions
+      document.querySelectorAll('.result-item').forEach(item => {
+        item.addEventListener('click', function() {
+          console.log('Result clicked');
         });
       });
     </script>

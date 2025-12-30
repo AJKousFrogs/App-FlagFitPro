@@ -1,467 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
-    <title>FlagFit Pro - Coach Training Management (Black &amp; White)</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap"
-      rel="stylesheet"
-    >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FlagFit Pro Coach Training - Training management and planning wireframe">
+    <title>FlagFit Pro - Coach Training Wireframe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wireframe-design-system.css">
     <style>
-      /* Black and White Coach Design System with Poppins Typography */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      /* Page-specific styles */
+      .page-header {
+        padding: var(--space-8) 0;
+        border-bottom: var(--border-default);
+        margin-bottom: var(--space-8);
       }
 
-      body {
-        font-family:
-          "Poppins",
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
-        font-weight: 400;
-        font-size: 16px;
-        color: #1a1a1a;
-        background-color: #ffffff;
-        min-height: 100vh;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-
-      /* Typography Hierarchy - All Poppins */
-      h1 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        line-height: 1.2;
-        color: #1a1a1a;
-        margin-bottom: 1rem;
-      }
-
-      h2 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.875rem;
-        line-height: 1.3;
-        color: #1a1a1a;
-        margin-bottom: 0.75rem;
-      }
-
-      h3 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h4 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.25rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h5 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.125rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
-      }
-
-      p,
-      .body-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 1rem;
-        line-height: 1.6;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .small-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        color: #6b6b6b;
-      }
-
-      .caption {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.75rem;
-        line-height: 1.4;
-        color: #8a8a8a;
-      }
-
-      /* CTA and Button Styles - Black and White */
-      .btn,
-      .cta-primary,
-      .cta-secondary,
-      .coach-btn {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 12px 24px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .cta-primary,
-      .coach-btn-primary {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-primary:hover,
-      .coach-btn-primary:hover {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-secondary,
-      .coach-btn-secondary {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-secondary:hover,
-      .coach-btn-secondary:hover {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      /* Header &amp; Navigation */
-      .coach-header {
-        background-color: #ffffff;
-        border-bottom: 2px solid #e5e5e5;
-        padding: 1rem 2rem;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .coach-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .coach-logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-      }
-
-      .coach-tabs {
-        display: flex;
-        gap: 0;
-        background-color: #f5f5f5;
-        border-radius: 10px;
-        padding: 4px;
-      }
-
-      .coach-tab {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        padding: 12px 24px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: #6b6b6b;
-        transition: all 0.3s ease;
-        border: none;
-        background: none;
-        cursor: pointer;
-      }
-
-      .coach-tab.active {
-        background-color: #1a1a1a;
-        color: #ffffff;
-      }
-
-      .coach-tab:hover:not(.active) {
-        background-color: #e5e5e5;
-        color: #1a1a1a;
-      }
-
-      .coach-profile {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-      }
-
-      .coach-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.125rem;
-      }
-
-      .coach-info h4 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0;
-      }
-
-      .coach-role {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #6b6b6b;
-        font-size: 0.875rem;
-      }
-
-      /* Main Container */
-      .coach-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem;
-      }
-
-      /* Dashboard Overview */
-      .coach-overview {
+      /* Overview Grid */
+      .overview-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        margin-bottom: 3rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
       .overview-card {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
-        transition: all 0.3s ease;
-        position: relative;
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        transition: all var(--transition-normal);
       }
 
       .overview-card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-black);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
       }
 
-      .card-header {
+      .overview-card .card-icon {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-3);
+      }
+
+      .overview-card .card-value {
+        font-size: var(--font-size-4xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        line-height: 1;
+        margin-bottom: var(--space-2);
+      }
+
+      .overview-card .card-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-3);
+      }
+
+      .overview-card .card-trend {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
-      }
-
-      .card-icon-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .card-icon {
-        font-size: 2rem;
-        /* Emojis keep their natural colors */
-      }
-
-      .card-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-        color: #1a1a1a;
-      }
-
-      .card-metric {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-        display: block;
-      }
-
-      .card-description {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .card-trend {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.875rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      /* Training Sections */
-      .training-section {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e5e5e5;
-      }
-
-      .section-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 12px;
+        gap: var(--space-2);
       }
 
       /* Weekly Schedule */
-      .weekly-schedule {
+      .schedule-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .schedule-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 1rem;
-        margin-top: 2rem;
+        gap: var(--space-3);
+        margin-top: var(--space-4);
       }
 
-      .day-column {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 1rem;
-        min-height: 300px;
-      }
-
-      .day-header {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        text-align: center;
-        padding-bottom: 0.75rem;
-        border-bottom: 1px solid #e5e5e5;
-        margin-bottom: 1rem;
-      }
-
-      .training-slot {
-        background-color: #f9f9f9;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 0.75rem;
-        margin-bottom: 0.5rem;
+      .schedule-day {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-3);
+        min-height: 200px;
+        transition: all var(--transition-normal);
         cursor: pointer;
-        transition: all 0.3s ease;
       }
 
-      .training-slot:hover {
-        border-color: #1a1a1a;
-        background-color: #ffffff;
-        transform: translateY(-1px);
+      .schedule-day:hover {
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
-      .slot-time {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        font-size: 0.875rem;
+      .schedule-day.today {
+        border-color: var(--color-black);
+        border-width: var(--border-width-medium);
+        background: var(--color-white);
       }
 
-      .slot-activity {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        font-size: 0.75rem;
-        margin-top: 0.25rem;
+      .schedule-day-header {
+        text-align: center;
+        padding-bottom: var(--space-3);
+        border-bottom: var(--border-default);
+        margin-bottom: var(--space-3);
       }
 
-      .slot-participants {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #6b6b6b;
-        font-size: 0.625rem;
-        margin-top: 0.25rem;
+      .schedule-day-name {
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .schedule-day-number {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+      }
+
+      .schedule-sessions {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .schedule-session {
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-sm);
+        padding: var(--space-2);
+        font-size: var(--font-size-xs);
+      }
+
+      .session-time {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+      }
+
+      .session-name {
+        color: var(--color-text-secondary);
+      }
+
+      /* Program Library */
+      .program-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .program-list {
+        margin-top: var(--space-4);
+      }
+
+      .program-item {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        border-bottom: var(--border-default);
+        transition: background var(--transition-fast);
+        cursor: pointer;
       }
 
-      /* Program Cards */
-      .programs-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 1.5rem;
+      .program-item:last-child {
+        border-bottom: none;
       }
 
-      .program-card {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
-        position: relative;
-      }
-
-      .program-card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      }
-
-      .program-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
+      .program-item:hover {
+        background: var(--color-gray-50);
       }
 
       .program-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 10px;
-        background-color: #f5f5f5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        /* Emojis keep their natural colors */
+        font-size: var(--font-size-2xl);
+        flex-shrink: 0;
       }
 
       .program-info {
@@ -469,883 +186,675 @@
       }
 
       .program-name {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.125rem;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
       }
 
-      .program-type {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #6b6b6b;
-        font-size: 0.875rem;
-      }
-
-      .program-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-        margin: 1rem 0;
-      }
-
-      .stat-item {
-        text-align: center;
-      }
-
-      .stat-value {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.125rem;
-        color: #1a1a1a;
-        display: block;
-      }
-
-      .stat-label {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #6b6b6b;
-        font-size: 0.75rem;
+      .program-details {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
       }
 
       .program-progress {
-        margin: 1rem 0;
+        width: 150px;
       }
 
-      .progress-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-      }
-
-      .progress-label {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #4a4a4a;
-        font-size: 0.875rem;
-      }
-
-      .progress-percentage {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        font-size: 0.875rem;
-      }
-
-      /* Progress Bars */
-      .progress-bar {
-        width: 100%;
-        height: 8px;
-        background-color: #e5e5e5;
-        border-radius: 4px;
-        overflow: hidden;
-        margin: 0.5rem 0;
-      }
-
-      .progress-fill {
-        height: 100%;
-        background-color: #1a1a1a;
-        border-radius: 4px;
-        transition: width 0.3s ease;
+      .program-progress-label {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        text-align: right;
+        margin-bottom: var(--space-1);
       }
 
       /* Olympic Timeline */
       .olympic-section {
-        background-color: #fafafa;
-        border: 2px solid #1a1a1a;
+        background: var(--color-gray-50);
+        border: var(--border-width-thick) solid var(--color-black);
+        border-radius: var(--border-radius-xl);
+        padding: var(--space-8);
+        margin-bottom: var(--space-8);
       }
 
-      .timeline {
+      .olympic-header {
+        text-align: center;
+        margin-bottom: var(--space-6);
+      }
+
+      .olympic-phases {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin-top: var(--space-8);
+        padding: 0 var(--space-4);
+      }
+
+      .olympic-phases::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 10%;
+        right: 10%;
+        height: 4px;
+        background: var(--color-gray-300);
+      }
+
+      .phase-item {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
-        margin-top: 2rem;
+        align-items: center;
+        position: relative;
+        z-index: 1;
       }
 
-      .timeline-item {
+      .phase-marker {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--border-radius-full);
+        background: var(--color-white);
+        border: var(--border-width-medium) solid var(--color-gray-300);
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding: 1.5rem;
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
+        justify-content: center;
+        font-size: var(--font-size-lg);
+        margin-bottom: var(--space-3);
       }
 
-      .timeline-icon {
-        font-size: 1.5rem;
-        /* Emojis keep their natural colors */
+      .phase-marker.completed {
+        background: var(--color-black);
+        border-color: var(--color-black);
+        color: var(--color-white);
       }
 
-      .timeline-content {
-        flex: 1;
+      .phase-marker.current {
+        border-color: var(--color-black);
+        border-width: var(--border-width-thick);
       }
 
-      .timeline-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
-      }
-
-      .timeline-date {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        font-size: 0.875rem;
-      }
-
-      .timeline-description {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #6b6b6b;
-        font-size: 0.875rem;
-        margin-top: 0.5rem;
-      }
-
-      .timeline-status {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        border: 1px solid #e5e5e5;
-        background-color: #f9f9f9;
-        color: #1a1a1a;
-      }
-
-      .status-completed {
-        background-color: #ffffff;
-        border-color: #1a1a1a;
-        color: #1a1a1a;
-      }
-
-      .status-current {
-        background-color: #1a1a1a;
-        border-color: #1a1a1a;
-        color: #ffffff;
-      }
-
-      .status-upcoming {
-        background-color: #f5f5f5;
-        border-color: #8a8a8a;
-        color: #6b6b6b;
-      }
-
-      /* Stats Grid */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-      }
-
-      .stats-card {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 1rem;
+      .phase-name {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        font-size: var(--font-size-sm);
         text-align: center;
       }
 
-      /* Lists */
-      .feature-list {
-        list-style: none;
-        padding: 0;
+      .phase-date {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        text-align: center;
       }
 
-      .feature-item {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #f0f0f0;
+      /* Team Performance Metrics */
+      .metrics-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .metric-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-4);
+        text-align: center;
+      }
+
+      .metric-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+      }
+
+      .metric-label {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        margin-top: var(--space-1);
+      }
+
+      .metric-trend {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
+        margin-top: var(--space-2);
         display: flex;
         align-items: center;
-        gap: 12px;
+        justify-content: center;
+        gap: var(--space-1);
       }
 
-      .feature-icon {
-        font-size: 1.25rem;
-        /* Emojis keep their natural colors */
+      .focus-areas {
+        margin-top: var(--space-6);
+        padding-top: var(--space-6);
+        border-top: var(--border-default);
       }
 
-      /* Responsive Design */
+      .focus-areas h4 {
+        margin-bottom: var(--space-4);
+      }
+
+      .focus-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+      }
+
+      .focus-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        background: var(--color-gray-50);
+        border-radius: var(--border-radius-md);
+      }
+
+      .focus-icon {
+        font-size: var(--font-size-lg);
+      }
+
+      .focus-content {
+        flex: 1;
+      }
+
+      .focus-title {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-black);
+        font-size: var(--font-size-sm);
+      }
+
+      .focus-status {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .overview-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .schedule-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+
+        .metrics-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .focus-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
       @media (max-width: 768px) {
-        .coach-container {
-          padding: 1rem;
-        }
-
-        .coach-nav {
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .coach-tabs {
-          flex-direction: column;
-          width: 100%;
-        }
-
-        .coach-overview {
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
-
-        .weekly-schedule {
+        .overview-grid {
           grid-template-columns: 1fr;
         }
 
-        .programs-grid {
-          grid-template-columns: 1fr;
+        .schedule-grid {
+          grid-template-columns: repeat(2, 1fr);
         }
 
-        .section-header {
+        .olympic-phases {
           flex-direction: column;
+          gap: var(--space-6);
           align-items: flex-start;
-          gap: 1rem;
         }
 
-        h1 {
-          font-size: 2rem;
+        .olympic-phases::before {
+          top: 0;
+          bottom: 0;
+          left: 20px;
+          right: auto;
+          width: 4px;
+          height: auto;
         }
 
-        h2 {
-          font-size: 1.5rem;
+        .phase-item {
+          flex-direction: row;
+          gap: var(--space-4);
         }
-      }
 
-      /* Animations */
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
+        .phase-marker {
+          margin-bottom: 0;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
 
-      .overview-card,
-      .training-section,
-      .program-card,
-      .timeline-item {
-        animation: fadeInUp 0.6s ease-out;
+        .metrics-grid {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
-    <!-- Coach Header -->
-    <header class="coach-header">
-      <nav class="coach-nav">
-        <div class="coach-logo">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav-container">
+        <a href="#" class="nav-brand">
           <span>🏈</span>
-          <span>FlagFit Pro Coach</span>
-        </div>
+          <span>FlagFit Pro</span>
+        </a>
 
-        <div class="coach-tabs">
-          <button type="button" class="coach-tab">Team Management</button>
-          <button type="button" class="coach-tab active">Training</button>
-          <button type="button" class="coach-tab">Games</button>
-          <button type="button" class="coach-tab">Analytics</button>
-        </div>
+        <ul class="nav-menu">
+          <li><a href="coach-dashboard-wireframe.html" class="nav-link">Dashboard</a></li>
+          <li><a href="coach-team-management-wireframe.html" class="nav-link">Team</a></li>
+          <li><a href="#" class="nav-link active">Training</a></li>
+          <li><a href="coach-games-wireframe.html" class="nav-link">Games</a></li>
+          <li><a href="coach-analytics-wireframe.html" class="nav-link">Analytics</a></li>
+        </ul>
 
-        <div class="coach-profile">
-          <div class="coach-avatar">CW</div>
-          <div class="coach-info">
-            <h4>Coach Williams</h4>
-            <div class="coach-role">Head Coach</div>
-          </div>
+        <div class="nav-actions">
+          <button type="button" class="btn btn-icon" aria-label="Search">🔍</button>
+          <button type="button" class="btn btn-icon" aria-label="Notifications">🔔</button>
+          <div class="avatar avatar-primary">CM</div>
         </div>
-      </nav>
-    </header>
-
-    <!-- Main Container -->
-    <div class="coach-container">
-      <!-- Page Header -->
-      <div class="page-header">
-        <h1>Training Management</h1>
-        <p>
-          Plan, manage, and optimize training programs for Olympic preparation
-        </p>
       </div>
+    </nav>
 
-      <!-- Training Overview Cards -->
-      <div class="coach-overview">
+    <!-- Main Content -->
+    <main class="container">
+      <!-- Page Header -->
+      <header class="page-header">
+        <h1>Training Management 🏃</h1>
+        <p>Plan, schedule, and track team training sessions</p>
+      </header>
+
+      <!-- Overview Grid -->
+      <section class="overview-grid">
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">📊</span>
-              <h3 class="card-title">Weekly Progress</h3>
-            </div>
-          </div>
-          <span class="card-metric">87%</span>
-          <p class="card-description">Training goals met</p>
+          <div class="card-icon">📊</div>
+          <div class="card-value">87%</div>
+          <div class="card-label">Weekly Progress</div>
           <div class="card-trend">
             <span>📈</span>
-            <span>+5% from last week</span>
+            <span>+5% vs last week</span>
           </div>
         </div>
 
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">⚡</span>
-              <h3 class="card-title">Team Performance</h3>
-            </div>
-          </div>
-          <span class="card-metric">8.6/10</span>
-          <p class="card-description">Average performance score</p>
+          <div class="card-icon">⚡</div>
+          <div class="card-value">92</div>
+          <div class="card-label">Team Performance</div>
           <div class="card-trend">
             <span>🎯</span>
-            <span>Excellent level</span>
+            <span>Above Olympic standard</span>
           </div>
         </div>
 
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">🏆</span>
-              <h3 class="card-title">Olympic Timeline</h3>
-            </div>
-          </div>
-          <span class="card-metric">Phase 3</span>
-          <p class="card-description">Competition preparation</p>
+          <div class="card-icon">🏆</div>
+          <div class="card-value">Phase 2</div>
+          <div class="card-label">Olympic Timeline</div>
           <div class="card-trend">
-            <span>⏰</span>
-            <span>On track for LA28</span>
+            <span>📅</span>
+            <span>Speed Development</span>
           </div>
         </div>
 
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">👥</span>
-              <h3 class="card-title">Participation</h3>
-            </div>
-          </div>
-          <span class="card-metric">94%</span>
-          <p class="card-description">Average attendance</p>
+          <div class="card-icon">👥</div>
+          <div class="card-value">94%</div>
+          <div class="card-label">Participation</div>
           <div class="card-trend">
             <span>✅</span>
-            <span>Excellent commitment</span>
+            <span>Excellent attendance</span>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Weekly Training Schedule -->
-      <div class="training-section">
+      <section class="schedule-section">
         <div class="section-header">
           <h2 class="section-title">
-            <span>🗓️</span>
+            <span>📅</span>
             Weekly Training Schedule
           </h2>
-          <button type="button" class="cta-primary">Edit Schedule</button>
-        </div>
-
-        <div class="weekly-schedule">
-          <div class="day-column">
-            <div class="day-header">Monday</div>
-            <div class="training-slot">
-              <div class="slot-time">6:00 AM</div>
-              <div class="slot-activity">🏃 Cardio Base Training</div>
-              <div class="slot-participants">👥 12 players</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">4:30 PM</div>
-              <div class="slot-activity">🏈 Skills Development</div>
-              <div class="slot-participants">👥 10 players</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Tuesday</div>
-            <div class="training-slot">
-              <div class="slot-time">5:30 AM</div>
-              <div class="slot-activity">💪 Strength Training</div>
-              <div class="slot-participants">👥 12 players</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">6:00 PM</div>
-              <div class="slot-activity">🎯 Tactical Training</div>
-              <div class="slot-participants">👥 11 players</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Wednesday</div>
-            <div class="training-slot">
-              <div class="slot-time">6:00 AM</div>
-              <div class="slot-activity">⚡ Speed &amp; Agility</div>
-              <div class="slot-participants">👥 12 players</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">7:00 PM</div>
-              <div class="slot-activity">🧘 Recovery Session</div>
-              <div class="slot-participants">👥 8 players</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Thursday</div>
-            <div class="training-slot">
-              <div class="slot-time">5:30 AM</div>
-              <div class="slot-activity">💪 Power Development</div>
-              <div class="slot-participants">👥 10 players</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">4:30 PM</div>
-              <div class="slot-activity">🏈 Scrimmage</div>
-              <div class="slot-participants">👥 12 players</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Friday</div>
-            <div class="training-slot">
-              <div class="slot-time">6:00 AM</div>
-              <div class="slot-activity">🏃 Conditioning</div>
-              <div class="slot-participants">👥 11 players</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">6:00 PM</div>
-              <div class="slot-activity">🎮 Game Preparation</div>
-              <div class="slot-participants">👥 12 players</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Saturday</div>
-            <div class="training-slot">
-              <div class="slot-time">9:00 AM</div>
-              <div class="slot-activity">🏆 Competition</div>
-              <div class="slot-participants">👥 12 players</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">2:00 PM</div>
-              <div class="slot-activity">📊 Performance Analysis</div>
-              <div class="slot-participants">👥 12 players</div>
-            </div>
-          </div>
-
-          <div class="day-column">
-            <div class="day-header">Sunday</div>
-            <div class="training-slot">
-              <div class="slot-time">10:00 AM</div>
-              <div class="slot-activity">🧘 Active Recovery</div>
-              <div class="slot-participants">👥 8 players</div>
-            </div>
-            <div class="training-slot">
-              <div class="slot-time">3:00 PM</div>
-              <div class="slot-activity">📝 Week Planning</div>
-              <div class="slot-participants">👥 Coaching staff</div>
-            </div>
+          <div class="section-actions">
+            <button type="button" class="btn btn-secondary btn-sm">Export</button>
+            <button type="button" class="btn btn-primary btn-sm">Add Session</button>
           </div>
         </div>
-      </div>
+
+        <div class="schedule-grid">
+          <div class="schedule-day">
+            <div class="schedule-day-header">
+              <div class="schedule-day-name">Mon</div>
+              <div class="schedule-day-number">23</div>
+            </div>
+            <div class="schedule-sessions">
+              <div class="schedule-session">
+                <div class="session-time">9:00 AM</div>
+                <div class="session-name">Conditioning</div>
+              </div>
+              <div class="schedule-session">
+                <div class="session-time">2:00 PM</div>
+                <div class="session-name">Strength</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="schedule-day">
+            <div class="schedule-day-header">
+              <div class="schedule-day-name">Tue</div>
+              <div class="schedule-day-number">24</div>
+            </div>
+            <div class="schedule-sessions">
+              <div class="schedule-session">
+                <div class="session-time">9:00 AM</div>
+                <div class="session-name">Speed Drills</div>
+              </div>
+              <div class="schedule-session">
+                <div class="session-time">4:00 PM</div>
+                <div class="session-name">Team Practice</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="schedule-day today">
+            <div class="schedule-day-header">
+              <div class="schedule-day-name">Wed</div>
+              <div class="schedule-day-number">25</div>
+            </div>
+            <div class="schedule-sessions">
+              <div class="schedule-session">
+                <div class="session-time">9:00 AM</div>
+                <div class="session-name">Agility</div>
+              </div>
+              <div class="schedule-session">
+                <div class="session-time">2:00 PM</div>
+                <div class="session-name">Offense Drills</div>
+              </div>
+              <div class="schedule-session">
+                <div class="session-time">6:00 PM</div>
+                <div class="session-name">Scrimmage</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="schedule-day">
+            <div class="schedule-day-header">
+              <div class="schedule-day-name">Thu</div>
+              <div class="schedule-day-number">26</div>
+            </div>
+            <div class="schedule-sessions">
+              <div class="schedule-session">
+                <div class="session-time">9:00 AM</div>
+                <div class="session-name">Strength</div>
+              </div>
+              <div class="schedule-session">
+                <div class="session-time">4:00 PM</div>
+                <div class="session-name">Defense Drills</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="schedule-day">
+            <div class="schedule-day-header">
+              <div class="schedule-day-name">Fri</div>
+              <div class="schedule-day-number">27</div>
+            </div>
+            <div class="schedule-sessions">
+              <div class="schedule-session">
+                <div class="session-time">10:00 AM</div>
+                <div class="session-name">Recovery</div>
+              </div>
+              <div class="schedule-session">
+                <div class="session-time">2:00 PM</div>
+                <div class="session-name">Film Study</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="schedule-day">
+            <div class="schedule-day-header">
+              <div class="schedule-day-name">Sat</div>
+              <div class="schedule-day-number">28</div>
+            </div>
+            <div class="schedule-sessions">
+              <div class="schedule-session">
+                <div class="session-time">2:00 PM</div>
+                <div class="session-name">Game Day</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="schedule-day">
+            <div class="schedule-day-header">
+              <div class="schedule-day-name">Sun</div>
+              <div class="schedule-day-number">29</div>
+            </div>
+            <div class="schedule-sessions">
+              <div class="schedule-session">
+                <div class="session-time">-</div>
+                <div class="session-name">Rest Day</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <!-- Training Program Library -->
-      <div class="training-section">
+      <section class="program-section">
         <div class="section-header">
           <h2 class="section-title">
             <span>📚</span>
             Training Program Library
           </h2>
-          <button type="button" class="cta-primary">Create Program</button>
+          <button type="button" class="btn btn-primary btn-sm">Create Program</button>
         </div>
 
-        <div class="programs-grid">
-          <!-- Program 1 -->
-          <div class="program-card">
-            <div class="program-header">
-              <div class="program-icon">🏆</div>
-              <div class="program-info">
-                <h4 class="program-name">Olympic Preparation</h4>
-                <div class="program-type">24-week program</div>
-              </div>
+        <div class="program-list">
+          <div class="program-item">
+            <div class="program-icon">⚡</div>
+            <div class="program-info">
+              <div class="program-name">Speed Development</div>
+              <div class="program-details">8 weeks • Phase 2 of 3 • 18 players enrolled</div>
             </div>
-
-            <div class="program-stats">
-              <div class="stat-item">
-                <span class="stat-value">12</span>
-                <span class="stat-label">Participants</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">89%</span>
-                <span class="stat-label">Success Rate</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">18w</span>
-                <span class="stat-label">Duration</span>
-              </div>
-            </div>
-
             <div class="program-progress">
-              <div class="progress-header">
-                <span class="progress-label">Program Progress</span>
-                <span class="progress-percentage">67%</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 67%"></div>
+              <div class="program-progress-label">67% Complete</div>
+              <div class="progress">
+                <div class="progress-bar" style="width: 67%;"></div>
               </div>
             </div>
           </div>
 
-          <!-- Program 2 -->
-          <div class="program-card">
-            <div class="program-header">
-              <div class="program-icon">💪</div>
-              <div class="program-info">
-                <h4 class="program-name">Strength &amp; Conditioning</h4>
-                <div class="program-type">12-week program</div>
-              </div>
+          <div class="program-item">
+            <div class="program-icon">💪</div>
+            <div class="program-info">
+              <div class="program-name">Strength Foundation</div>
+              <div class="program-details">12 weeks • Phase 1 of 4 • 24 players enrolled</div>
             </div>
-
-            <div class="program-stats">
-              <div class="stat-item">
-                <span class="stat-value">10</span>
-                <span class="stat-label">Participants</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">94%</span>
-                <span class="stat-label">Success Rate</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">12w</span>
-                <span class="stat-label">Duration</span>
-              </div>
-            </div>
-
             <div class="program-progress">
-              <div class="progress-header">
-                <span class="progress-label">Program Progress</span>
-                <span class="progress-percentage">85%</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 85%"></div>
+              <div class="program-progress-label">25% Complete</div>
+              <div class="progress">
+                <div class="progress-bar" style="width: 25%;"></div>
               </div>
             </div>
           </div>
 
-          <!-- Program 3 -->
-          <div class="program-card">
-            <div class="program-header">
-              <div class="program-icon">⚡</div>
-              <div class="program-info">
-                <h4 class="program-name">Speed &amp; Agility</h4>
-                <div class="program-type">8-week program</div>
-              </div>
+          <div class="program-item">
+            <div class="program-icon">🎯</div>
+            <div class="program-info">
+              <div class="program-name">Technical Skills</div>
+              <div class="program-details">16 weeks • Phase 3 of 4 • 20 players enrolled</div>
             </div>
-
-            <div class="program-stats">
-              <div class="stat-item">
-                <span class="stat-value">12</span>
-                <span class="stat-label">Participants</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">92%</span>
-                <span class="stat-label">Success Rate</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">8w</span>
-                <span class="stat-label">Duration</span>
-              </div>
-            </div>
-
             <div class="program-progress">
-              <div class="progress-header">
-                <span class="progress-label">Program Progress</span>
-                <span class="progress-percentage">42%</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 42%"></div>
+              <div class="program-progress-label">85% Complete</div>
+              <div class="progress">
+                <div class="progress-bar" style="width: 85%;"></div>
               </div>
             </div>
           </div>
 
-          <!-- Program 4 -->
-          <div class="program-card">
-            <div class="program-header">
-              <div class="program-icon">🎯</div>
-              <div class="program-info">
-                <h4 class="program-name">Technical Skills</h4>
-                <div class="program-type">16-week program</div>
-              </div>
+          <div class="program-item">
+            <div class="program-icon">🏆</div>
+            <div class="program-info">
+              <div class="program-name">Olympic Prep</div>
+              <div class="program-details">24 weeks • Phase 1 of 6 • 24 players enrolled</div>
             </div>
-
-            <div class="program-stats">
-              <div class="stat-item">
-                <span class="stat-value">12</span>
-                <span class="stat-label">Participants</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">88%</span>
-                <span class="stat-label">Success Rate</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">16w</span>
-                <span class="stat-label">Duration</span>
-              </div>
-            </div>
-
             <div class="program-progress">
-              <div class="progress-header">
-                <span class="progress-label">Program Progress</span>
-                <span class="progress-percentage">73%</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 73%"></div>
+              <div class="program-progress-label">15% Complete</div>
+              <div class="progress">
+                <div class="progress-bar" style="width: 15%;"></div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- LA28 Olympic Preparation Timeline -->
-      <div class="training-section olympic-section">
-        <div class="section-header">
-          <h2 class="section-title">
-            <span>🏆</span>
-            LA28 Olympic Preparation Timeline
-          </h2>
-          <button type="button" class="cta-primary">Adjust Timeline</button>
+      <section class="olympic-section">
+        <div class="olympic-header">
+          <h2>🏆 LA28 Olympic Preparation Timeline</h2>
+          <p>Track your team's training phases toward the 2028 Los Angeles Olympics</p>
         </div>
 
-        <div class="timeline">
-          <div class="timeline-item">
-            <span class="timeline-icon">✅</span>
-            <div class="timeline-content">
-              <div class="timeline-title">Phase 1: Foundation Building</div>
-              <div class="timeline-date">January - April 2025</div>
-              <div class="timeline-description">
-                Base fitness, fundamental skills, team chemistry development
-              </div>
+        <div class="olympic-phases">
+          <div class="phase-item">
+            <div class="phase-marker completed">✓</div>
+            <div>
+              <div class="phase-name">Foundation</div>
+              <div class="phase-date">Completed</div>
             </div>
-            <div class="timeline-status status-completed">Completed</div>
           </div>
 
-          <div class="timeline-item">
-            <span class="timeline-icon">✅</span>
-            <div class="timeline-content">
-              <div class="timeline-title">Phase 2: Strength Development</div>
-              <div class="timeline-date">May - August 2025</div>
-              <div class="timeline-description">
-                Power training, speed work, advanced skill refinement
-              </div>
+          <div class="phase-item">
+            <div class="phase-marker current">2</div>
+            <div>
+              <div class="phase-name">Speed Development</div>
+              <div class="phase-date">Current Phase</div>
             </div>
-            <div class="timeline-status status-completed">Completed</div>
           </div>
 
-          <div class="timeline-item">
-            <span class="timeline-icon">🏃</span>
-            <div class="timeline-content">
-              <div class="timeline-title">Phase 3: Competition Preparation</div>
-              <div class="timeline-date">September - December 2025</div>
-              <div class="timeline-description">
-                Game-specific training, tactical mastery, tournament readiness
-              </div>
+          <div class="phase-item">
+            <div class="phase-marker">3</div>
+            <div>
+              <div class="phase-name">Technical Mastery</div>
+              <div class="phase-date">Jan - Mar 2026</div>
             </div>
-            <div class="timeline-status status-current">In Progress</div>
           </div>
 
-          <div class="timeline-item">
-            <span class="timeline-icon">⏳</span>
-            <div class="timeline-content">
-              <div class="timeline-title">Phase 4: Peak Performance</div>
-              <div class="timeline-date">January 2026 - July 2028</div>
-              <div class="timeline-description">
-                Elite-level competition, Olympic standard maintenance
-              </div>
+          <div class="phase-item">
+            <div class="phase-marker">4</div>
+            <div>
+              <div class="phase-name">Competition Prep</div>
+              <div class="phase-date">Apr - Jun 2026</div>
             </div>
-            <div class="timeline-status status-upcoming">Upcoming</div>
           </div>
 
-          <div class="timeline-item">
-            <span class="timeline-icon">🏅</span>
-            <div class="timeline-content">
-              <div class="timeline-title">Phase 5: LA28 Olympics</div>
-              <div class="timeline-date">July 14-30, 2028</div>
-              <div class="timeline-description">
-                Olympic competition, medal pursuit, legacy creation
-              </div>
+          <div class="phase-item">
+            <div class="phase-marker">🏅</div>
+            <div>
+              <div class="phase-name">Peak Performance</div>
+              <div class="phase-date">July 2028</div>
             </div>
-            <div class="timeline-status status-upcoming">Future</div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Performance Metrics -->
-      <div class="training-section">
+      <!-- Team Performance Metrics -->
+      <section class="metrics-section">
         <div class="section-header">
           <h2 class="section-title">
             <span>📊</span>
             Team Performance Metrics
           </h2>
-          <button type="button" class="cta-secondary">Detailed Report</button>
+          <button type="button" class="btn btn-secondary btn-sm">Full Report</button>
         </div>
 
-        <div class="stats-grid">
-          <div class="stats-card">
-            <span class="stat-value">4.52s</span>
-            <span class="stat-label">Avg 40-Yard Dash</span>
-            <div class="small-text">Target: 4.40s</div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value">4.48s</div>
+            <div class="metric-label">Avg 40-Yard Dash</div>
+            <div class="metric-trend">
+              <span>📈</span>
+              <span>-0.05s this month</span>
+            </div>
           </div>
-          <div class="stats-card">
-            <span class="stat-value">85%</span>
-            <span class="stat-label">Strength Goals Met</span>
-            <div class="small-text">↗ +8% this month</div>
+
+          <div class="metric-card">
+            <div class="metric-value">87%</div>
+            <div class="metric-label">Completion Rate</div>
+            <div class="metric-trend">
+              <span>📈</span>
+              <span>+3% this month</span>
+            </div>
           </div>
-          <div class="stats-card">
-            <span class="stat-value">4.18s</span>
-            <span class="stat-label">Agility Shuttle</span>
-            <div class="small-text">Target: 4.00s</div>
+
+          <div class="metric-card">
+            <div class="metric-value">92%</div>
+            <div class="metric-label">Catch Rate</div>
+            <div class="metric-trend">
+              <span>📈</span>
+              <span>+2% this month</span>
+            </div>
           </div>
-          <div class="stats-card">
-            <span class="stat-value">92%</span>
-            <span class="stat-label">Endurance Goals</span>
-            <div class="small-text">Excellent progress</div>
-          </div>
-          <div class="stats-card">
-            <span class="stat-value">87%</span>
-            <span class="stat-label">Technical Skills</span>
-            <div class="small-text">Above target</div>
-          </div>
-          <div class="stats-card">
-            <span class="stat-value">94%</span>
-            <span class="stat-label">Training Adherence</span>
-            <div class="small-text">Outstanding commitment</div>
+
+          <div class="metric-card">
+            <div class="metric-value">12%</div>
+            <div class="metric-label">Injury Risk</div>
+            <div class="metric-trend">
+              <span>✅</span>
+              <span>Low risk</span>
+            </div>
           </div>
         </div>
 
-        <h4>🎯 Key Training Focus Areas</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">⚡</span>
-            <span
-              >Speed development: Focus on 40-yard dash improvement (-0.12s
-              needed)</span
-            >
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🎯</span>
-            <span
-              >Agility training: Shuttle run times need refinement (-0.18s
-              target)</span
-            >
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">💪</span>
-            <span>Strength gains: Power output increased 12% this quarter</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏃</span>
-            <span
-              >Endurance base: Cardiovascular fitness exceeds Olympic
-              standards</span
-            >
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🧠</span>
-            <span
-              >Mental prep: Visualization and focus training integration
-              needed</span
-            >
+        <div class="focus-areas">
+          <h4>🎯 Key Focus Areas</h4>
+          <div class="focus-list">
+            <div class="focus-item">
+              <div class="focus-icon">⚡</div>
+              <div class="focus-content">
+                <div class="focus-title">Speed Development</div>
+                <div class="focus-status">2 players need sub-4.5s 40-yard</div>
+              </div>
+            </div>
+            <div class="focus-item">
+              <div class="focus-icon">🎯</div>
+              <div class="focus-content">
+                <div class="focus-title">Route Precision</div>
+                <div class="focus-status">Focus on timing routes</div>
+              </div>
+            </div>
+            <div class="focus-item">
+              <div class="focus-icon">💪</div>
+              <div class="focus-content">
+                <div class="focus-title">Strength Building</div>
+                <div class="focus-status">Core strength emphasis</div>
+              </div>
+            </div>
+            <div class="focus-item">
+              <div class="focus-icon">🧘</div>
+              <div class="focus-content">
+                <div class="focus-title">Recovery Protocol</div>
+                <div class="focus-status">Maintain low injury rate</div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <!-- JavaScript -->
     <script>
-      // Interactive functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        // Tab navigation
-        const tabs = document.querySelectorAll(".coach-tab");
-        tabs.forEach((tab) => {
-          tab.addEventListener("click", function () {
-            tabs.forEach((t) => t.classList.remove("active"));
-            this.classList.add("active");
-            console.log("Tab switched to:", this.textContent);
-          });
+      // Schedule day interactions
+      document.querySelectorAll('.schedule-day').forEach(day => {
+        day.addEventListener('click', function() {
+          console.log('Day clicked:', this.querySelector('.schedule-day-number').textContent);
         });
+      });
 
-        // Training slot interactions
-        const trainingSlots = document.querySelectorAll(".training-slot");
-        trainingSlots.forEach((slot) => {
-          slot.addEventListener("click", function () {
-            const activity = this.querySelector(".slot-activity").textContent;
-            const time = this.querySelector(".slot-time").textContent;
-            console.log(`Training slot clicked: ${activity} at ${time}`);
-          });
+      // Program item interactions
+      document.querySelectorAll('.program-item').forEach(item => {
+        item.addEventListener('click', function() {
+          console.log('Program clicked:', this.querySelector('.program-name').textContent);
         });
-
-        // Program card interactions
-        const programCards = document.querySelectorAll(".program-card");
-        programCards.forEach((card) => {
-          card.addEventListener("click", function () {
-            const programName = this.querySelector(".program-name").textContent;
-            console.log("Program selected:", programName);
-          });
-        });
-
-        // Timeline interactions
-        const timelineItems = document.querySelectorAll(".timeline-item");
-        timelineItems.forEach((item) => {
-          item.addEventListener("click", function () {
-            const title = this.querySelector(".timeline-title").textContent;
-            console.log("Timeline phase clicked:", title);
-          });
-        });
-
-        // Button interactions
-        const buttons = document.querySelectorAll(
-          ".cta-primary, .cta-secondary, .coach-btn",
-        );
-        buttons.forEach((button) => {
-          button.addEventListener("click", function () {
-            console.log("Button clicked:", this.textContent);
-          });
-        });
-
-        // Animate progress bars
-        const progressBars = document.querySelectorAll(".progress-fill");
-        progressBars.forEach((bar) => {
-          const width = bar.style.width;
-          bar.style.width = "0%";
-          setTimeout(() => {
-            bar.style.width = width;
-          }, 500);
-        });
-
-        // Overview card interactions
-        const overviewCards = document.querySelectorAll(".overview-card");
-        overviewCards.forEach((card) => {
-          card.addEventListener("click", function () {
-            const title = this.querySelector(".card-title").textContent;
-            console.log("Overview card clicked:", title);
-          });
-        });
-
-        // Program progress simulation
-        setInterval(() => {
-          const progressElements = document.querySelectorAll(
-            ".progress-percentage",
-          );
-          progressElements.forEach((element) => {
-            if (Math.random() > 0.95) {
-              // 5% chance to update
-              const currentProgress = parseInt(element.textContent);
-              const newProgress = Math.min(100, currentProgress + 1);
-              element.textContent = `${newProgress}%`;
-
-              const progressBar = element
-                .closest(".program-progress")
-                .querySelector(".progress-fill");
-              progressBar.style.width = `${newProgress}%`;
-            }
-          });
-        }, 5000);
       });
     </script>
   </body>

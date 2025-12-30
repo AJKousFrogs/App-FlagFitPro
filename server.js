@@ -1,25 +1,58 @@
- 
-// Simple development server for Flag Football Training App
-// Serves static files with proper MIME types
+/**
+ * Development server for Flag Football Training App
+ * Serves static files with proper MIME types and provides mock API endpoints
+ */
 
-import express from "express";
-import path from "path";
+import chokidar from "chokidar";
 import cors from "cors";
-import fs from "fs";
+import express from "express";
 import { rateLimit } from "express-rate-limit";
+import fs from "fs";
+import http from "http";
+import path from "path";
 import { fileURLToPath } from "url";
+import { WebSocketServer } from "ws";
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
 const PORT = process.env.PORT || 4000;
 
-// Rate limiting
+// Hot reload WebSocket connection
+wss.on("connection", (ws) => {
+  console.log("🔗 Hot reload client connected");
+  ws.on("close", () => console.log("🔌 Hot reload client disconnected"));
+});
+
+// File watcher for hot reload
+const watcher = chokidar.watch(
+  [
+    "angular/dist/flagfit-pro/browser/**/*",
+    "src/**/*",
+    "index.html",
+    "*.css",
+    "*.js"
+  ],
+  { ignored: /(^|[\/\\])\../, persistent: true }
+);
+
+watcher.on("change", (filePath) => {
+  console.log(`📁 File changed: ${filePath}`);
+  wss.clients.forEach((client) => {
+    if (client.readyState === 1) { // 1 = OPEN
+      client.send(JSON.stringify({ type: "reload", file: filePath, timestamp: Date.now() }));
+    }
+  });
+});
+
+// Rate limiting for auth routes
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // Limit each IP to 10 requests per windowMs for tests
+  max: 10, // Limit each IP to 10 requests per windowMs
   message: {
     success: false,
     error: "Too many attempts. Please try again later.",
@@ -28,32 +61,25 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Enable CORS for all routes
+// Enable CORS
 app.use(cors());
 
-// Parse JSON bodies
-app.use(express.json());
+// Parse JSON and URL-encoded bodies
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Apply rate limiter to auth routes
 app.use("/api/auth/", authLimiter);
 
-app.use(
-  express.urlencoded({
-    extended: true,
-    limit: "10mb",
-  }),
-);
-
 // Serve Angular build files
 app.use(
   express.static("angular/dist/flagfit-pro/browser", {
-    setHeaders: (res, path) => {
-      // Set proper MIME types
-      if (path.endsWith(".js")) {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith(".js")) {
         res.setHeader("Content-Type", "application/javascript");
-      } else if (path.endsWith(".css")) {
+      } else if (filePath.endsWith(".css")) {
         res.setHeader("Content-Type", "text/css");
-      } else if (path.endsWith(".html")) {
+      } else if (filePath.endsWith(".html")) {
         res.setHeader("Content-Type", "text/html");
       }
     },
@@ -76,7 +102,7 @@ app.use(
 );
 
 // Health check endpoint
-app.get("/api/health", (req, res) => {
+app.get("/api/health", (_req, res) => {
   res.json({
     status: "OK",
     message: "Flag Football Training App Server is running",
@@ -84,7 +110,10 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// API Routes - Mock endpoints for development
+// ============================================
+// MOCK API ENDPOINTS FOR DEVELOPMENT
+// ============================================
+
 // Authentication endpoints
 app.post("/api/auth/login", (req, res) => {
   res.json({
@@ -116,7 +145,7 @@ app.post("/api/auth/register", (req, res) => {
   });
 });
 
-app.get("/api/auth/me", (req, res) => {
+app.get("/api/auth/me", (_req, res) => {
   res.json({
     success: true,
     data: {
@@ -128,28 +157,12 @@ app.get("/api/auth/me", (req, res) => {
   });
 });
 
-app.post("/api/auth/logout", (req, res) => {
+app.post("/api/auth/logout", (_req, res) => {
   res.json({ success: true, message: "Logged out successfully" });
 });
 
 // Dashboard endpoints
-app.get("/dashboard", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      stats: {
-        trainingSessions: 24,
-        performanceScore: 85,
-        dayStreak: 7,
-        tournaments: 3,
-      },
-      upcomingSessions: [],
-      recentActivity: [],
-    },
-  });
-});
-
-app.get("/api/dashboard/overview", (req, res) => {
+app.get("/api/dashboard/overview", (_req, res) => {
   res.json({
     success: true,
     data: {
@@ -173,21 +186,8 @@ app.get("/api/dashboard/overview", (req, res) => {
   });
 });
 
-// Note: Dashboard API endpoint is handled above at line 136
-// Angular handles the /dashboard route via the SPA catch-all
-
 // Training endpoints
-app.get("/training-stats", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      weeklyStats: [],
-      achievements: [],
-    },
-  });
-});
-
-app.get("/api/training/stats", (req, res) => {
+app.get("/api/training/stats", (_req, res) => {
   res.json({
     success: true,
     data: {
@@ -209,8 +209,28 @@ app.post("/api/training/session", (req, res) => {
   });
 });
 
+app.get("/api/training/workouts/:id", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: req.params.id,
+      exercises: [],
+    },
+  });
+});
+
+app.put("/api/training/workouts/:id", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: req.params.id,
+      ...req.body,
+    },
+  });
+});
+
 // Analytics endpoints
-app.get("/api/analytics/summary", (req, res) => {
+app.get("/api/analytics/summary", (_req, res) => {
   res.json({
     success: true,
     data: {
@@ -221,79 +241,27 @@ app.get("/api/analytics/summary", (req, res) => {
   });
 });
 
-app.get("/api/dashboard/analytics", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      analytics: {},
-    },
-  });
-});
-
-// Olympic endpoints
-app.get("/api/olympic/qualification-status", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      qualification: {
-        status: "on_track",
-        score: 75,
-      },
-    },
-  });
-});
-
-app.post("/api/olympic/performance-update", (req, res) => {
-  res.status(201).json({
-    success: true,
-    data: {
-      qualificationImpact: 5.5,
-    },
-  });
-});
-
-// AI endpoints
-app.post("/api/ai/predict-performance", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      predictions: [],
-      confidenceScore: 0.85,
-    },
-  });
-});
-
-app.get("/api/ai/model-performance", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      accuracy: 0.89,
-    },
-  });
-});
-
-// System endpoints
-app.get("/api/system/performance-metrics", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      memoryOptimization: {
-        reductionPercentage: 95,
-      },
-    },
-  });
-});
-
 // Tournaments endpoints
-app.get("/api/tournaments", (req, res) => {
+app.get("/api/tournaments", (_req, res) => {
   res.json({
     success: true,
     data: [],
   });
 });
 
+app.post("/api/tournaments/createGame", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: Date.now().toString(),
+      ...req.body,
+      createdAt: new Date().toISOString(),
+    },
+  });
+});
+
 // Community endpoints
-app.get("/api/community/feed", (req, res) => {
+app.get("/api/community/feed", (_req, res) => {
   res.json({
     success: true,
     data: [],
@@ -324,7 +292,7 @@ app.post("/api/wellness/checkin", (req, res) => {
 });
 
 // Coach endpoints
-app.get("/api/coach/dashboard", (req, res) => {
+app.get("/api/coach/dashboard", (_req, res) => {
   res.json({
     success: true,
     data: {
@@ -334,44 +302,12 @@ app.get("/api/coach/dashboard", (req, res) => {
   });
 });
 
-// Game tracker endpoints
-app.post("/api/tournaments/createGame", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      id: Date.now().toString(),
-      ...req.body,
-      createdAt: new Date().toISOString(),
-    },
-  });
-});
-
-// Training workouts endpoint
-app.get("/api/training/workouts/:id", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      id: req.params.id,
-      exercises: [],
-    },
-  });
-});
-
-app.put("/api/training/workouts/:id", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      id: req.params.id,
-      ...req.body,
-    },
-  });
-});
-
-// Netlify Functions endpoints for local development
-// These simulate Netlify Functions behavior
+// ============================================
+// NETLIFY FUNCTIONS MOCK ENDPOINTS
+// ============================================
 
 // Notifications endpoint
-app.get("/.netlify/functions/notifications", (req, res) => {
+app.get("/.netlify/functions/notifications", (_req, res) => {
   res.json({
     success: true,
     data: [
@@ -407,8 +343,7 @@ app.get("/.netlify/functions/notifications", (req, res) => {
 });
 
 app.post("/.netlify/functions/notifications", (req, res) => {
-  const body = req.body || {};
-  const { notificationId, ids } = body;
+  const { notificationId, ids } = req.body || {};
 
   if (notificationId === "all") {
     res.json({
@@ -436,8 +371,7 @@ app.post("/.netlify/functions/notifications", (req, res) => {
   }
 });
 
-// Handle PATCH /notifications/last-opened before the general PATCH route
-app.patch("/.netlify/functions/notifications/last-opened", (req, res) => {
+app.patch("/.netlify/functions/notifications/last-opened", (_req, res) => {
   res.json({
     success: true,
     data: null,
@@ -445,8 +379,7 @@ app.patch("/.netlify/functions/notifications/last-opened", (req, res) => {
   });
 });
 
-// Notifications count endpoint
-app.get("/.netlify/functions/notifications-count", (req, res) => {
+app.get("/.netlify/functions/notifications-count", (_req, res) => {
   res.json({
     success: true,
     data: {
@@ -456,7 +389,6 @@ app.get("/.netlify/functions/notifications-count", (req, res) => {
   });
 });
 
-// Notifications create endpoint
 app.post("/.netlify/functions/notifications-create", (req, res) => {
   res.json({
     success: true,
@@ -468,8 +400,7 @@ app.post("/.netlify/functions/notifications-create", (req, res) => {
   });
 });
 
-// Notifications preferences endpoint
-app.get("/.netlify/functions/notifications-preferences", (req, res) => {
+app.get("/.netlify/functions/notifications-preferences", (_req, res) => {
   res.json({
     success: true,
     data: {
@@ -488,24 +419,55 @@ app.post("/.netlify/functions/notifications-preferences", (req, res) => {
   });
 });
 
-// Catch-all route for Angular SPA routing
-app.get("*", (req, res) => {
-  // Serve Angular app's index.html for all routes
+// Hot reload client script
+const hotReloadScript = `
+<script>
+(function() {
+  const ws = new WebSocket('ws://' + window.location.host);
+  ws.onopen = () => console.log('🔥 Hot reload connected');
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === 'reload') {
+      console.log('🔄 Hot reloading:', data.file);
+      if (data.file.endsWith('.css')) {
+        const links = document.querySelectorAll('link[rel="stylesheet"]');
+        links.forEach(link => { link.href = link.href.split('?')[0] + '?t=' + Date.now(); });
+      } else {
+        window.location.reload();
+      }
+    }
+  };
+})();
+</script>
+`;
+
+// Helper to inject script into HTML
+const injectScript = (filePath) => {
+  let content = fs.readFileSync(filePath, 'utf8');
+  if (content.includes('</body>')) {
+    return content.replace('</body>', hotReloadScript + '</body>');
+  }
+  return content + hotReloadScript;
+};
+
+// SPA CATCH-ALL ROUTE
+app.get(/^(?!\/api).*$/, (_req, res) => {
   const angularIndexPath = path.join(
     __dirname,
     "angular/dist/flagfit-pro/browser/index.html",
   );
 
-  // Check if Angular build exists, otherwise serve root index.html
   if (fs.existsSync(angularIndexPath)) {
-    res.sendFile(angularIndexPath);
+    res.send(injectScript(angularIndexPath));
   } else {
-    // Fallback to root index.html (redirect page)
-    res.sendFile(path.join(__dirname, "index.html"));
+    res.send(injectScript(path.join(__dirname, "index.html")));
   }
 });
 
-// Error handling middleware
+// ============================================
+// ERROR HANDLING
+// ============================================
+
 app.use((err, req, res, _next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
     return res.status(400).json({
@@ -522,13 +484,17 @@ app.use((err, req, res, _next) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
+// ============================================
+// START SERVER
+// ============================================
+
+server.listen(PORT, () => {
   console.log(
     `🏈 Flag Football Training App Server running on http://localhost:${PORT}`,
   );
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🎯 Main app: http://localhost:${PORT}/index.html`);
+  console.log(`🎯 Main app: http://localhost:${PORT}`);
+  console.log(`🔥 Hot reload enabled for Angular dist and legacy src`);
 });
 
 export default app;

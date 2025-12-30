@@ -1,1518 +1,1092 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
-    <meta
-      name="description"
-      content="Coach dashboard wireframe for FlagFit Pro team management and player analytics"
-    >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FlagFit Pro Coach Dashboard - Team management and overview wireframe">
     <title>FlagFit Pro - Coach Dashboard Wireframe</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap"
-      rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wireframe-design-system.css">
     <style>
-      /* Clean Black &amp; White Wireframe Design System */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family:
-          "Poppins",
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
-        font-weight: 400;
-        font-size: 16px;
-        color: #000000;
-        background-color: #ffffff;
-        line-height: 1.6;
-      }
-
-      /* Design System Variables - Black &amp; White Only */
-      :root {
-        --space-xs: 4px;
-        --space-sm: 8px;
-        --space-md: 16px;
-        --space-lg: 24px;
-        --space-xl: 32px;
-        --space-2xl: 48px;
-        --space-3xl: 64px;
-
-        --text-xs: 12px;
-        --text-sm: 14px;
-        --text-base: 16px;
-        --text-lg: 18px;
-        --text-xl: 20px;
-        --text-2xl: 24px;
-        --text-3xl: 30px;
-        --text-4xl: 40px;
-
-        --white: #ffffff;
-        --black: #000000;
-        --gray-100: #f5f5f5;
-        --gray-200: #e5e5e5;
-        --gray-300: #d4d4d4;
-        --gray-400: #a3a3a3;
-        --gray-500: #737373;
-        --gray-600: #525252;
-        --gray-700: #404040;
-        --gray-800: #262626;
-        --gray-900: #171717;
-
-        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-
-        --radius-sm: 4px;
-        --radius-md: 8px;
-        --radius-lg: 12px;
-        --radius-xl: 16px;
-
-        --container-max-width: 1200px;
-        --nav-height: 80px;
-      }
-
-      /* Typography */
-      h1 {
-        font-size: var(--text-4xl);
-        font-weight: 700;
-        color: var(--black);
-        margin-bottom: var(--space-lg);
-      }
-
-      h2 {
-        font-size: var(--text-3xl);
-        font-weight: 600;
-        color: var(--black);
-        margin-bottom: var(--space-md);
-      }
-
-      h3 {
-        font-size: var(--text-2xl);
-        font-weight: 600;
-        color: var(--black);
-        margin-bottom: var(--space-md);
-      }
-
-      h4 {
-        font-size: var(--text-xl);
-        font-weight: 500;
-        color: var(--black);
-        margin-bottom: var(--space-sm);
-      }
-
-      p {
-        font-size: var(--text-base);
-        color: var(--gray-700);
-        margin-bottom: var(--space-sm);
-      }
-
-      /* Navigation */
-      .navigation {
-        background: var(--white);
-        border-bottom: 2px solid var(--black);
-        box-shadow: var(--shadow-sm);
-        position: sticky;
-        top: 0;
-        z-index: 50;
-      }
-
-      .nav-container {
-        max-width: var(--container-max-width);
-        margin: 0 auto;
-        padding: 0 var(--space-md);
+      /* Page-specific styles */
+      .page-header {
+        padding: var(--space-8) 0;
+        border-bottom: var(--border-default);
+        margin-bottom: var(--space-8);
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        height: var(--nav-height);
+        align-items: flex-start;
       }
 
-      .nav-brand {
+      .coach-profile {
         display: flex;
         align-items: center;
-        gap: var(--space-sm);
-        font-weight: 700;
-        font-size: var(--text-xl);
-        color: var(--black);
+        gap: var(--space-4);
+        padding: var(--space-4);
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
       }
 
-      .nav-menu {
-        display: flex;
-        gap: var(--space-2xl);
-        list-style: none;
-      }
-
-      .nav-item {
-        font-weight: 500;
-        color: var(--gray-700);
-        text-decoration: none;
-        padding: var(--space-sm) var(--space-md);
-        border-radius: var(--radius-md);
-        transition: all 0.2s ease;
-        position: relative;
-      }
-
-      .nav-item:hover {
-        color: var(--black);
-        background: var(--gray-100);
-      }
-
-      .nav-item.active {
-        color: var(--black);
-        background: var(--gray-200);
-        font-weight: 600;
-      }
-
-      .nav-item.active::after {
-        content: "";
-        position: absolute;
-        bottom: -2px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 24px;
-        height: 3px;
-        background: var(--black);
-        border-radius: var(--radius-sm);
-      }
-
-      .nav-actions {
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm);
-      }
-
-      .nav-search,
-      .nav-notifications {
-        background: var(--white);
-        border: 2px solid var(--black);
-        padding: var(--space-sm);
-        color: var(--black);
-        cursor: pointer;
-        border-radius: var(--radius-md);
-        min-height: 44px;
-        min-width: 44px;
+      .coach-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: var(--border-radius-full);
+        background: var(--color-black);
+        color: var(--color-white);
         display: flex;
         align-items: center;
         justify-content: center;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-xl);
       }
 
-      .nav-search:hover,
-      .nav-notifications:hover {
-        background: var(--black);
-        color: var(--white);
+      .coach-info h3 {
+        margin-bottom: var(--space-1);
       }
 
-      .nav-notifications {
-        position: relative;
+      .coach-role {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
       }
 
-      .notification-badge {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        background: var(--black);
-        color: var(--white);
-        font-size: 10px;
-        font-weight: 600;
-        padding: 2px 6px;
-        border-radius: 10px;
-      }
-
-      .nav-profile {
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm);
-        background: var(--white);
-        border: 2px solid var(--black);
-        padding: var(--space-sm) var(--space-md);
-        color: var(--black);
-        text-decoration: none;
-        cursor: pointer;
-        border-radius: var(--radius-md);
-        font-weight: 500;
-        min-height: 44px;
-      }
-
-      .nav-profile:hover {
-        background: var(--black);
-        color: var(--white);
-      }
-
-      /* Main Container */
-      .container {
-        max-width: var(--container-max-width);
-        margin: 0 auto;
-        padding: var(--space-lg);
-      }
-
-      /* Coach Header */
-      .coach-header {
-        background: var(--white);
-        color: var(--black);
-        padding: var(--space-2xl);
-        border: 3px solid var(--black);
-        border-radius: var(--radius-xl);
-        margin-bottom: var(--space-2xl);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: var(--shadow-md);
-      }
-
-      .coach-info {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-sm);
-      }
-
-      .coach-title {
-        font-size: var(--text-4xl);
-        font-weight: 800;
-        margin: 0;
-        color: var(--black);
-      }
-
-      .coach-subtitle {
-        font-size: var(--text-lg);
-        color: var(--gray-700);
-      }
-
-      .coach-stats {
-        display: flex;
-        gap: var(--space-2xl);
-      }
-
-      .coach-stat {
-        text-align: center;
-        background: var(--white);
-        border: 2px solid var(--black);
-        padding: var(--space-lg);
-        border-radius: var(--radius-lg);
-        transition: transform 0.2s ease;
-      }
-
-      .coach-stat:hover {
-        transform: translateY(-2px);
-      }
-
-      .coach-stat-value {
-        font-size: var(--text-3xl);
-        font-weight: 800;
-        display: block;
-        margin-bottom: var(--space-xs);
-        color: var(--black);
-      }
-
-      .coach-stat-label {
-        font-size: var(--text-sm);
-        font-weight: 500;
-        color: var(--gray-700);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      /* Team Overview Grid */
-      .team-overview {
+      /* Overview Grid */
+      .overview-grid {
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
-        gap: var(--space-lg);
-        margin-bottom: var(--space-2xl);
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
-      .team-roster {
-        background: var(--white);
-        border: 2px solid var(--black);
-        border-radius: var(--radius-lg);
-        padding: var(--space-xl);
-        box-shadow: var(--shadow-md);
-        transition: transform 0.2s ease;
+      .overview-card {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        transition: all var(--transition-normal);
       }
 
-      .team-roster:hover {
+      .overview-card:hover {
+        border-color: var(--color-black);
         transform: translateY(-2px);
         box-shadow: var(--shadow-lg);
       }
 
-      .roster-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-lg);
+      .overview-card .card-icon {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-3);
       }
 
-      .roster-title {
-        font-size: var(--text-xl);
-        font-weight: 600;
-        color: var(--black);
+      .overview-card .card-value {
+        font-size: var(--font-size-4xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        line-height: 1;
+        margin-bottom: var(--space-2);
       }
 
-      .roster-actions {
-        display: flex;
-        gap: 8px;
+      .overview-card .card-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-3);
       }
 
-      .roster-btn {
-        font-weight: 500;
-        border: 2px solid var(--black);
-        background: var(--white);
-        color: var(--black);
-        padding: var(--space-sm) var(--space-md);
-        border-radius: var(--radius-md);
-        cursor: pointer;
-        font-size: var(--text-sm);
-        transition: all 0.2s ease;
-        min-height: 36px;
-      }
-
-      .roster-btn:hover {
-        background: var(--black);
-        color: var(--white);
-      }
-
-      .roster-btn.active {
-        background: var(--black);
-        color: var(--white);
-      }
-
-      .player-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        max-height: 300px;
-        overflow-y: auto;
-      }
-
-      .player-item {
+      .overview-card .card-trend {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
         display: flex;
         align-items: center;
-        gap: var(--space-md);
-        padding: var(--space-md);
-        background: var(--white);
-        border: 2px solid var(--gray-300);
-        border-radius: var(--radius-md);
+        gap: var(--space-2);
+      }
+
+      /* Team Roster */
+      .roster-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .roster-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .player-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
+        text-align: center;
+        transition: all var(--transition-normal);
         cursor: pointer;
-        transition: all 0.2s ease;
       }
 
-      .player-item:hover {
-        background: var(--gray-100);
-        border-color: var(--black);
-        transform: translateX(4px);
-      }
-
-      .player-item.selected {
-        background: var(--black);
-        color: var(--white);
-        border-color: var(--black);
+      .player-card:hover {
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
       .player-avatar {
-        width: 44px;
-        height: 44px;
-        background: var(--gray-200);
-        border: 2px solid var(--gray-400);
-        border-radius: var(--radius-md);
+        width: 56px;
+        height: 56px;
+        border-radius: var(--border-radius-full);
+        background: var(--color-gray-200);
+        margin: 0 auto var(--space-3);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--text-sm);
-        font-weight: 600;
-        color: var(--gray-700);
-        transition: all 0.2s ease;
-      }
-
-      .player-item:hover .player-avatar {
-        border-color: var(--black);
-        background: var(--gray-100);
-      }
-
-      .player-item.selected .player-avatar {
-        background: var(--white);
-        border-color: var(--white);
-        color: var(--black);
-      }
-
-      .player-details {
-        flex: 1;
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-lg);
       }
 
       .player-name {
-        font-weight: 600;
-        font-size: var(--text-base);
-        color: var(--black);
-      }
-
-      .player-item.selected .player-name {
-        color: var(--white);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
       }
 
       .player-position {
-        font-size: var(--text-sm);
-        font-weight: 500;
-        color: var(--gray-600);
-      }
-
-      .player-item.selected .player-position {
-        color: var(--gray-300);
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-3);
       }
 
       .player-status {
-        font-size: var(--text-xs);
-        font-weight: 600;
-        padding: var(--space-xs) var(--space-sm);
-        border-radius: var(--radius-sm);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-medium);
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--border-radius-full);
+        display: inline-block;
       }
 
-      .status-active {
-        background: var(--black);
-        color: var(--white);
+      .player-status.active {
+        background: var(--color-black);
+        color: var(--color-white);
       }
 
-      .status-injured {
-        background: var(--gray-600);
-        color: var(--white);
+      .player-status.injured {
+        background: var(--color-gray-200);
+        color: var(--color-black);
       }
 
-      .status-inactive {
-        background: var(--gray-300);
-        color: var(--black);
+      .player-status.resting {
+        background: var(--color-gray-100);
+        color: var(--color-text-secondary);
       }
 
-      /* Team Performance */
-      .team-performance {
-        background: var(--white);
-        border: 2px solid var(--black);
-        border-radius: var(--radius-lg);
-        padding: var(--space-xl);
-        box-shadow: var(--shadow-md);
-        transition: transform 0.2s ease;
+      /* Performance Metrics */
+      .metrics-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
-      .team-performance:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
       }
 
-      .performance-title {
-        font-size: var(--text-xl);
-        font-weight: 600;
-        color: var(--black);
-        margin-bottom: var(--space-lg);
-      }
-
-      .performance-metrics {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .metric-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--space-md);
-        background: var(--gray-100);
-        border: 1px solid var(--gray-300);
-        border-radius: var(--radius-md);
-        transition: all 0.2s ease;
-      }
-
-      .metric-item:hover {
-        background: var(--gray-200);
-        border-color: var(--black);
-        transform: translateX(2px);
-      }
-
-      .metric-label {
-        font-weight: 500;
-        color: var(--gray-700);
+      .metric-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-4);
+        text-align: center;
       }
 
       .metric-value {
-        font-size: var(--text-lg);
-        font-weight: 700;
-        color: var(--black);
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+      }
+
+      .metric-label {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        margin-top: var(--space-1);
+      }
+
+      .metric-progress {
+        margin-top: var(--space-3);
       }
 
       /* Quick Actions */
-      .quick-actions {
-        background: var(--white);
-        border: 2px solid var(--black);
-        border-radius: var(--radius-lg);
-        padding: var(--space-xl);
-        box-shadow: var(--shadow-md);
-        transition: transform 0.2s ease;
+      .actions-section {
+        background: var(--color-gray-50);
+        border: var(--border-width-medium) solid var(--color-black);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
-      .quick-actions:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
+      .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
       }
 
-      .actions-title {
-        font-size: var(--text-xl);
-        font-weight: 600;
-        color: var(--black);
-        margin-bottom: var(--space-lg);
-      }
-
-      .action-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .action-btn {
-        font-weight: 500;
-        border: 2px solid var(--black);
-        background: var(--white);
-        color: var(--black);
-        padding: var(--space-md) var(--space-lg);
-        border-radius: var(--radius-md);
+      .action-card {
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
+        text-align: center;
         cursor: pointer;
-        text-align: left;
-        transition: all 0.2s ease;
-        min-height: 48px;
-        display: flex;
-        align-items: center;
-        width: 100%;
+        transition: all var(--transition-normal);
       }
 
-      .action-btn:hover {
-        background: var(--black);
-        color: var(--white);
+      .action-card:hover {
+        border-color: var(--color-black);
         transform: translateY(-2px);
+      }
+
+      .action-icon {
+        font-size: var(--font-size-3xl);
+        margin-bottom: var(--space-2);
+      }
+
+      .action-label {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        font-size: var(--font-size-sm);
       }
 
       /* Main Content Grid */
-      .main-content {
+      .main-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-lg);
-        margin-bottom: var(--space-2xl);
+        grid-template-columns: 2fr 1fr;
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
       /* Training Schedule */
-      .training-schedule {
-        background: var(--white);
-        border: 2px solid var(--black);
-        border-radius: var(--radius-lg);
-        padding: var(--space-xl);
-        box-shadow: var(--shadow-md);
-        transition: transform 0.2s ease;
-      }
-
-      .training-schedule:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-      }
-
-      .schedule-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-lg);
-      }
-
-      .schedule-title {
-        font-size: var(--text-xl);
-        font-weight: 600;
-        color: var(--black);
-      }
-
-      .schedule-filters {
-        display: flex;
-        gap: 8px;
-      }
-
-      .schedule-filter {
-        font-weight: 500;
-        border: 2px solid var(--black);
-        background: var(--white);
-        color: var(--black);
-        padding: var(--space-sm) var(--space-md);
-        border-radius: var(--radius-md);
-        cursor: pointer;
-        font-size: var(--text-sm);
-        transition: all 0.2s ease;
-        min-height: 36px;
-      }
-
-      .schedule-filter:hover {
-        background: var(--black);
-        color: var(--white);
-      }
-
-      .schedule-filter.active {
-        background: var(--black);
-        color: var(--white);
+      .schedule-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
       }
 
       .schedule-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+        margin-top: var(--space-4);
       }
 
       .schedule-item {
-        padding: var(--space-md);
-        background: var(--gray-100);
-        border: 1px solid var(--gray-300);
-        border-radius: var(--radius-md);
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        transition: all 0.2s ease;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        border-bottom: var(--border-default);
+        transition: background var(--transition-fast);
+        cursor: pointer;
+      }
+
+      .schedule-item:last-child {
+        border-bottom: none;
       }
 
       .schedule-item:hover {
-        background: var(--gray-200);
-        border-color: var(--black);
-        transform: translateX(4px);
-      }
-
-      .schedule-info {
-        flex: 1;
+        background: var(--color-gray-50);
       }
 
       .schedule-time {
-        font-weight: 600;
-        color: var(--black);
-        margin-bottom: var(--space-xs);
+        min-width: 60px;
+        text-align: center;
+      }
+
+      .schedule-time-display {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+      }
+
+      .schedule-period {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      .schedule-content {
+        flex: 1;
+      }
+
+      .schedule-title {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
       }
 
       .schedule-details {
-        font-size: var(--text-sm);
-        color: var(--gray-600);
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
       }
 
-      .schedule-status {
-        font-size: var(--text-xs);
-        font-weight: 600;
-        padding: var(--space-xs) var(--space-sm);
-        border-radius: var(--radius-sm);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .status-scheduled {
-        background: var(--gray-600);
-        color: var(--white);
-      }
-
-      .status-completed {
-        background: var(--black);
-        color: var(--white);
-      }
-
-      .status-cancelled {
-        background: var(--gray-400);
-        color: var(--black);
+      .schedule-badge {
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-medium);
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--border-radius-full);
+        background: var(--color-gray-100);
+        color: var(--color-text-secondary);
       }
 
       /* Player Analytics */
-      .player-analytics {
-        background: var(--white);
-        border: 2px solid var(--black);
-        border-radius: var(--radius-lg);
-        padding: var(--space-xl);
-        box-shadow: var(--shadow-md);
-        transition: transform 0.2s ease;
-      }
-
-      .player-analytics:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-      }
-
-      .analytics-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-lg);
-      }
-
-      .analytics-title {
-        font-size: var(--text-xl);
-        font-weight: 600;
-        color: var(--black);
-      }
-
-      .analytics-period {
-        display: flex;
-        gap: 8px;
-      }
-
-      .period-btn {
-        font-weight: 500;
-        border: 2px solid var(--black);
-        background: var(--white);
-        color: var(--black);
-        padding: var(--space-sm) var(--space-md);
-        border-radius: var(--radius-md);
-        cursor: pointer;
-        font-size: var(--text-sm);
-        transition: all 0.2s ease;
-        min-height: 36px;
-      }
-
-      .period-btn:hover {
-        background: var(--black);
-        color: var(--white);
-      }
-
-      .period-btn.active {
-        background: var(--black);
-        color: var(--white);
-      }
-
-      .analytics-chart {
-        height: 200px;
-        border: 2px solid var(--black);
-        border-radius: var(--radius-lg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: var(--space-lg);
-        background: var(--gray-100);
+      .analytics-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
       }
 
       .chart-placeholder {
-        font-size: var(--text-2xl);
-        font-weight: 600;
-        color: var(--gray-500);
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-8);
+        text-align: center;
+        color: var(--color-text-muted);
+        margin-top: var(--space-4);
       }
 
       .analytics-summary {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+        margin-top: var(--space-4);
       }
 
       .summary-item {
-        padding: var(--space-md);
-        background: var(--gray-100);
-        border: 1px solid var(--gray-300);
-        border-radius: var(--radius-md);
-        text-align: center;
-        transition: all 0.2s ease;
-      }
-
-      .summary-item:hover {
-        background: var(--gray-200);
-        border-color: var(--black);
-        transform: translateY(-2px);
-      }
-
-      .summary-value {
-        font-size: var(--text-lg);
-        font-weight: 700;
-        color: var(--black);
-        display: block;
-        margin-bottom: var(--space-xs);
+        display: flex;
+        justify-content: space-between;
+        padding: var(--space-3);
+        background: var(--color-gray-50);
+        border-radius: var(--border-radius-md);
       }
 
       .summary-label {
-        font-size: var(--text-sm);
-        font-weight: 500;
-        color: var(--gray-600);
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+      }
+
+      .summary-value {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
       }
 
       /* Bottom Grid */
       .bottom-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: var(--space-lg);
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-6);
       }
 
       /* Team Communication */
-      .team-communication {
-        background: var(--white);
-        border: 2px solid var(--black);
-        border-radius: var(--radius-lg);
-        padding: var(--space-xl);
-        box-shadow: var(--shadow-md);
-        transition: transform 0.2s ease;
-      }
-
-      .team-communication:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-      }
-
-      .communication-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-lg);
-      }
-
-      .communication-title {
-        font-size: var(--text-xl);
-        font-weight: 600;
-        color: var(--black);
-      }
-
-      .communication-actions {
-        display: flex;
-        gap: 8px;
-      }
-
-      .comm-btn {
-        font-weight: 500;
-        border: 2px solid var(--black);
-        background: var(--white);
-        color: var(--black);
-        padding: var(--space-sm) var(--space-md);
-        border-radius: var(--radius-md);
-        cursor: pointer;
-        font-size: var(--text-sm);
-        transition: all 0.2s ease;
-        min-height: 36px;
-      }
-
-      .comm-btn:hover {
-        background: var(--black);
-        color: var(--white);
+      .communication-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
       }
 
       .message-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        max-height: 200px;
-        overflow-y: auto;
+        margin-top: var(--space-4);
       }
 
       .message-item {
-        padding: var(--space-md);
-        background: var(--gray-100);
-        border: 1px solid var(--gray-300);
-        border-radius: var(--radius-md);
-        transition: all 0.2s ease;
+        display: flex;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        border-radius: var(--border-radius-md);
+        margin-bottom: var(--space-2);
       }
 
       .message-item:hover {
-        background: var(--gray-200);
-        border-color: var(--black);
+        background: var(--color-gray-50);
+      }
+
+      .message-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--border-radius-full);
+        background: var(--color-gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        flex-shrink: 0;
+      }
+
+      .message-content {
+        flex: 1;
+        min-width: 0;
       }
 
       .message-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-xs);
+        margin-bottom: var(--space-1);
       }
 
       .message-author {
-        font-weight: 600;
-        color: var(--black);
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-sm);
+        color: var(--color-black);
       }
 
       .message-time {
-        font-size: var(--text-xs);
-        color: var(--gray-500);
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
       }
 
       .message-text {
-        font-size: var(--text-sm);
-        color: var(--gray-700);
-        line-height: 1.5;
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       /* Game Planning */
-      .game-planning {
-        background: var(--white);
-        border: 2px solid var(--black);
-        border-radius: var(--radius-lg);
-        padding: var(--space-xl);
-        box-shadow: var(--shadow-md);
-        transition: transform 0.2s ease;
+      .planning-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
       }
 
-      .game-planning:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
+      .planning-list {
+        margin-top: var(--space-4);
       }
 
-      .planning-header {
+      .planning-item {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        margin-bottom: 16px;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        border-bottom: var(--border-default);
+      }
+
+      .planning-item:last-child {
+        border-bottom: none;
+      }
+
+      .planning-icon {
+        font-size: var(--font-size-lg);
+      }
+
+      .planning-content {
+        flex: 1;
       }
 
       .planning-title {
-        font-size: 18px;
-        font-weight: bold;
-        color: var(--black);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-black);
+        font-size: var(--font-size-sm);
       }
 
-      .planning-actions {
-        display: flex;
-        gap: 8px;
-      }
-
-      .planning-btn {
-        border: 2px solid var(--black);
-        background: var(--white);
-        color: var(--black);
-        padding: 4px 8px;
-        cursor: pointer;
-        font-size: 12px;
-      }
-
-      .game-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .game-item {
-        padding: 12px;
-        border: 1px solid var(--gray-300);
-        background: var(--gray-100);
-      }
-
-      .game-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
-      }
-
-      .game-teams {
-        font-weight: bold;
-        color: var(--black);
-      }
-
-      .game-date {
-        font-size: 12px;
-        color: var(--gray-600);
-      }
-
-      .game-status {
-        font-size: 12px;
-        padding: 2px 6px;
-        border-radius: 4px;
-      }
-
-      .status-upcoming {
-        background: var(--gray-600);
-        color: var(--white);
-      }
-
-      .status-won {
-        background: var(--black);
-        color: var(--white);
-      }
-
-      .status-lost {
-        background: var(--gray-400);
-        color: var(--black);
+      .planning-status {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
       }
 
       /* Team Health */
-      .team-health {
-        background: var(--white);
-        border: 2px solid var(--black);
-        border-radius: var(--radius-lg);
-        padding: var(--space-xl);
-        box-shadow: var(--shadow-md);
-        transition: transform 0.2s ease;
+      .health-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
       }
 
-      .team-health:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-      }
-
-      .health-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-      }
-
-      .health-title {
-        font-size: 18px;
-        font-weight: bold;
-        color: var(--black);
-      }
-
-      .health-summary {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+      .health-list {
+        margin-top: var(--space-4);
       }
 
       .health-item {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        padding: 8px;
-        border: 1px solid var(--gray-300);
-        background: var(--gray-100);
+        gap: var(--space-3);
+        padding: var(--space-3);
+        border-bottom: var(--border-default);
       }
 
-      .health-player {
-        font-weight: bold;
-        color: var(--black);
+      .health-item:last-child {
+        border-bottom: none;
+      }
+
+      .health-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: var(--border-radius-full);
+        background: var(--color-gray-300);
+      }
+
+      .health-indicator.good {
+        background: var(--color-black);
+      }
+
+      .health-indicator.warning {
+        background: var(--color-gray-400);
+      }
+
+      .health-indicator.alert {
+        background: var(--color-gray-200);
+        border: 2px solid var(--color-black);
+      }
+
+      .health-content {
+        flex: 1;
+      }
+
+      .health-name {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-black);
+        font-size: var(--font-size-sm);
       }
 
       .health-status {
-        font-size: 12px;
-        padding: 2px 6px;
-        border-radius: 4px;
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
       }
 
-      .status-healthy {
-        background: var(--black);
-        color: var(--white);
-      }
-
-      .status-injured {
-        background: var(--gray-600);
-        color: var(--white);
-      }
-
-      .status-recovering {
-        background: var(--gray-400);
-        color: var(--black);
-      }
-
-      /* Responsive Design */
-      @media (max-width: 768px) {
-        .container {
-          padding: var(--space-md);
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .overview-grid {
+          grid-template-columns: repeat(2, 1fr);
         }
 
-        .team-overview {
-          grid-template-columns: 1fr;
-          gap: var(--space-md);
+        .roster-grid {
+          grid-template-columns: repeat(3, 1fr);
         }
 
-        .main-content {
+        .metrics-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .actions-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .main-grid {
           grid-template-columns: 1fr;
-          gap: var(--space-md);
         }
 
         .bottom-grid {
           grid-template-columns: 1fr;
-          gap: var(--space-md);
-        }
-
-        .coach-header {
-          flex-direction: column;
-          gap: var(--space-lg);
-          text-align: center;
-          padding: var(--space-xl);
-        }
-
-        .coach-title {
-          font-size: var(--text-3xl);
-        }
-
-        .coach-stats {
-          justify-content: center;
-          flex-wrap: wrap;
-          gap: var(--space-md);
-        }
-
-        .nav-container {
-          flex-direction: column;
-          gap: var(--space-md);
-          padding: var(--space-sm) var(--space-md);
-        }
-
-        .nav-menu {
-          gap: var(--space-md);
         }
       }
 
-      @media (max-width: 480px) {
-        .container {
-          padding: var(--space-sm);
+      @media (max-width: 768px) {
+        .page-header {
+          flex-direction: column;
+          gap: var(--space-4);
         }
 
-        .coach-header {
-          padding: var(--space-lg);
+        .overview-grid {
+          grid-template-columns: 1fr;
         }
 
-        .coach-title {
-          font-size: var(--text-2xl);
-        }
-
-        .coach-stats {
+        .roster-grid {
           grid-template-columns: repeat(2, 1fr);
-          display: grid;
         }
 
-        .nav-menu {
-          gap: var(--space-sm);
+        .metrics-grid {
+          grid-template-columns: 1fr;
         }
 
-        .nav-item {
-          font-size: var(--text-sm);
-          padding: var(--space-xs) var(--space-sm);
+        .actions-grid {
+          grid-template-columns: repeat(2, 1fr);
         }
       }
     </style>
   </head>
   <body>
     <!-- Navigation -->
-    <nav class="navigation">
+    <nav class="nav">
       <div class="nav-container">
-        <div class="nav-brand">
-          <span class="nav-logo">🏈</span>
-          <span>FlagFit Pro - Coach</span>
-        </div>
+        <a href="#" class="nav-brand">
+          <span>🏈</span>
+          <span>FlagFit Pro</span>
+        </a>
+
         <ul class="nav-menu">
-          <li><a href="#" class="nav-item active">Dashboard</a></li>
-          <li><a href="#" class="nav-item">Team Management</a></li>
-          <li><a href="#" class="nav-item">Training</a></li>
-          <li><a href="#" class="nav-item">Games</a></li>
-          <li><a href="#" class="nav-item">Analytics</a></li>
+          <li><a href="#" class="nav-link active">Dashboard</a></li>
+          <li><a href="coach-team-management-wireframe.html" class="nav-link">Team</a></li>
+          <li><a href="coach-training-wireframe.html" class="nav-link">Training</a></li>
+          <li><a href="coach-games-wireframe.html" class="nav-link">Games</a></li>
+          <li><a href="coach-analytics-wireframe.html" class="nav-link">Analytics</a></li>
         </ul>
+
         <div class="nav-actions">
-          <button type="button" class="nav-search">🔍</button>
-          <button type="button" class="nav-notifications">
-            🔔 <span class="notification-badge">5</span>
-          </button>
-          <div class="nav-profile">
-            <span>👨‍💼</span>
-            <span>Coach Johnson</span>
-          </div>
+          <button type="button" class="btn btn-icon" aria-label="Search">🔍</button>
+          <button type="button" class="btn btn-icon" aria-label="Notifications">🔔</button>
+          <div class="avatar avatar-primary">CM</div>
         </div>
       </div>
     </nav>
 
-    <!-- Main Container -->
-    <div class="container">
-      <!-- Coach Header -->
-      <section class="coach-header">
-        <div class="coach-info">
-          <h1 class="coach-title">🏈 Coach Johnson's Dashboard</h1>
-          <p class="coach-subtitle">
-            Lightning Bolts Head Coach | 8-2 Record | Division Champions
-          </p>
+    <!-- Main Content -->
+    <main class="container">
+      <!-- Page Header -->
+      <header class="page-header">
+        <div>
+          <h1>Coach Dashboard 📋</h1>
+          <p>Manage your team, track performance, and plan for success</p>
         </div>
-        <div class="coach-stats">
-          <div class="coach-stat">
-            <span class="coach-stat-value">12</span>
-            <span class="coach-stat-label">Active Players</span>
+        <div class="coach-profile">
+          <div class="coach-avatar">CM</div>
+          <div class="coach-info">
+            <h3>Coach Martinez</h3>
+            <div class="coach-role">Head Coach • Austria National Team</div>
           </div>
-          <div class="coach-stat">
-            <span class="coach-stat-value">87%</span>
-            <span class="coach-stat-label">Team Chemistry</span>
+        </div>
+      </header>
+
+      <!-- Overview Grid -->
+      <section class="overview-grid">
+        <div class="overview-card">
+          <div class="card-icon">👥</div>
+          <div class="card-value">24</div>
+          <div class="card-label">Active Players</div>
+          <div class="card-trend">
+            <span>✅</span>
+            <span>All available</span>
           </div>
-          <div class="coach-stat">
-            <span class="coach-stat-value">3</span>
-            <span class="coach-stat-label">Injuries</span>
+        </div>
+
+        <div class="overview-card">
+          <div class="card-icon">🤝</div>
+          <div class="card-value">8.4</div>
+          <div class="card-label">Team Chemistry</div>
+          <div class="card-trend">
+            <span>📈</span>
+            <span>+0.3 this week</span>
           </div>
-          <div class="coach-stat">
-            <span class="coach-stat-value">92%</span>
-            <span class="coach-stat-label">Attendance</span>
+        </div>
+
+        <div class="overview-card">
+          <div class="card-icon">🏥</div>
+          <div class="card-value">2</div>
+          <div class="card-label">Injuries</div>
+          <div class="card-trend">
+            <span>⚠️</span>
+            <span>1 returning soon</span>
+          </div>
+        </div>
+
+        <div class="overview-card">
+          <div class="card-icon">📊</div>
+          <div class="card-value">94%</div>
+          <div class="card-label">Attendance</div>
+          <div class="card-trend">
+            <span>🎯</span>
+            <span>Above target</span>
           </div>
         </div>
       </section>
 
-      <!-- Team Overview -->
-      <section class="team-overview">
-        <!-- Team Roster -->
-        <div class="team-roster">
-          <div class="roster-header">
-            <h2 class="roster-title">Team Roster</h2>
-            <div class="roster-actions">
-              <button type="button" class="roster-btn active">All</button>
-              <button type="button" class="roster-btn">Starters</button>
-              <button type="button" class="roster-btn">Bench</button>
-              <button type="button" class="roster-btn">Injured</button>
-            </div>
-          </div>
-          <div class="player-list">
-            <div class="player-item selected">
-              <div class="player-avatar">MJ</div>
-              <div class="player-details">
-                <div class="player-name">Mike Johnson</div>
-                <div class="player-position">Quarterback</div>
-              </div>
-              <div class="player-status status-active">Active</div>
-            </div>
-            <div class="player-item">
-              <div class="player-avatar">CD</div>
-              <div class="player-details">
-                <div class="player-name">Chris Davis</div>
-                <div class="player-position">Wide Receiver</div>
-              </div>
-              <div class="player-status status-active">Active</div>
-            </div>
-            <div class="player-item">
-              <div class="player-avatar">AR</div>
-              <div class="player-details">
-                <div class="player-name">Alex Rodriguez</div>
-                <div class="player-position">Wide Receiver</div>
-              </div>
-              <div class="player-status status-injured">Injured</div>
-            </div>
-            <div class="player-item">
-              <div class="player-avatar">TB</div>
-              <div class="player-details">
-                <div class="player-name">Tom Brown</div>
-                <div class="player-position">Defensive Back</div>
-              </div>
-              <div class="player-status status-active">Active</div>
-            </div>
-            <div class="player-item">
-              <div class="player-avatar">RW</div>
-              <div class="player-details">
-                <div class="player-name">Ryan Wilson</div>
-                <div class="player-position">Linebacker</div>
-              </div>
-              <div class="player-status status-inactive">Inactive</div>
-            </div>
-          </div>
+      <!-- Team Roster -->
+      <section class="roster-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>👥</span>
+            Team Roster
+          </h2>
+          <button type="button" class="btn btn-secondary btn-sm">View All Players</button>
         </div>
 
-        <!-- Team Performance -->
-        <div class="team-performance">
-          <h2 class="performance-title">Team Performance</h2>
-          <div class="performance-metrics">
-            <div class="metric-item">
-              <span class="metric-label">Overall Rating</span>
-              <span class="metric-value">87</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-label">Offense Rating</span>
-              <span class="metric-value">92</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-label">Defense Rating</span>
-              <span class="metric-value">85</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-label">Special Teams</span>
-              <span class="metric-value">78</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-label">Team Chemistry</span>
-              <span class="metric-value">87%</span>
-            </div>
+        <div class="roster-grid">
+          <div class="player-card">
+            <div class="player-avatar">MJ</div>
+            <div class="player-name">Marcus Johnson</div>
+            <div class="player-position">Quarterback</div>
+            <span class="player-status active">Active</span>
           </div>
-        </div>
 
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-          <h2 class="actions-title">Quick Actions</h2>
-          <div class="action-buttons">
-            <button type="button" class="action-btn">📋 Create Practice Plan</button>
-            <button type="button" class="action-btn">📊 View Player Stats</button>
-            <button type="button" class="action-btn">📅 Schedule Game</button>
-            <button type="button" class="action-btn">💬 Team Message</button>
-            <button type="button" class="action-btn">�� Performance Review</button>
-            <button type="button" class="action-btn">🏥 Injury Report</button>
+          <div class="player-card">
+            <div class="player-avatar">SJ</div>
+            <div class="player-name">Sarah Johnson</div>
+            <div class="player-position">Wide Receiver</div>
+            <span class="player-status active">Active</span>
+          </div>
+
+          <div class="player-card">
+            <div class="player-avatar">AR</div>
+            <div class="player-name">Alex Rivera</div>
+            <div class="player-position">Defensive Back</div>
+            <span class="player-status injured">Injured</span>
+          </div>
+
+          <div class="player-card">
+            <div class="player-avatar">TC</div>
+            <div class="player-name">Tom Chen</div>
+            <div class="player-position">Linebacker</div>
+            <span class="player-status active">Active</span>
+          </div>
+
+          <div class="player-card">
+            <div class="player-avatar">EW</div>
+            <div class="player-name">Emma Wilson</div>
+            <div class="player-position">Wide Receiver</div>
+            <span class="player-status active">Active</span>
+          </div>
+
+          <div class="player-card">
+            <div class="player-avatar">JD</div>
+            <div class="player-name">Jake Davis</div>
+            <div class="player-position">Center</div>
+            <span class="player-status resting">Resting</span>
+          </div>
+
+          <div class="player-card">
+            <div class="player-avatar">LM</div>
+            <div class="player-name">Lisa Martinez</div>
+            <div class="player-position">Safety</div>
+            <span class="player-status active">Active</span>
+          </div>
+
+          <div class="player-card">
+            <div class="player-avatar">RB</div>
+            <div class="player-name">Ryan Brown</div>
+            <div class="player-position">Rusher</div>
+            <span class="player-status active">Active</span>
           </div>
         </div>
       </section>
 
-      <!-- Main Content -->
-      <section class="main-content">
+      <!-- Team Performance Metrics -->
+      <section class="metrics-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>📊</span>
+            Team Performance Metrics
+          </h2>
+          <button type="button" class="btn btn-secondary btn-sm">Full Report</button>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value">87%</div>
+            <div class="metric-label">Completion Rate</div>
+            <div class="metric-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 87%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-value">24.5</div>
+            <div class="metric-label">Avg Points/Game</div>
+            <div class="metric-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 82%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-value">4.48s</div>
+            <div class="metric-label">Avg 40-Yard Dash</div>
+            <div class="metric-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 78%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-value">92%</div>
+            <div class="metric-label">Catch Rate</div>
+            <div class="metric-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 92%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Actions -->
+      <section class="actions-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>⚡</span>
+            Quick Actions
+          </h2>
+        </div>
+
+        <div class="actions-grid">
+          <div class="action-card">
+            <div class="action-icon">📝</div>
+            <div class="action-label">Create Practice</div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-icon">📊</div>
+            <div class="action-label">View Analytics</div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-icon">💬</div>
+            <div class="action-label">Team Message</div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-icon">🎮</div>
+            <div class="action-label">Game Plan</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Content Grid -->
+      <div class="main-grid">
         <!-- Training Schedule -->
-        <div class="training-schedule">
-          <div class="schedule-header">
-            <h2 class="schedule-title">Training Schedule</h2>
-            <div class="schedule-filters">
-              <button type="button" class="schedule-filter active">This Week</button>
-              <button type="button" class="schedule-filter">Next Week</button>
-              <button type="button" class="schedule-filter">All</button>
-            </div>
+        <section class="schedule-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>📅</span>
+              Today's Schedule
+            </h3>
+            <button type="button" class="btn btn-secondary btn-sm">View Week</button>
           </div>
+
           <div class="schedule-list">
             <div class="schedule-item">
-              <div class="schedule-info">
-                <div class="schedule-time">Today - 6:00 PM</div>
-                <div class="schedule-details">
-                  Practice: Offensive Drills &amp; Route Running
-                </div>
+              <div class="schedule-time">
+                <div class="schedule-time-display">9:00</div>
+                <div class="schedule-period">AM</div>
               </div>
-              <div class="schedule-status status-scheduled">Scheduled</div>
+              <div class="schedule-content">
+                <div class="schedule-title">Morning Conditioning</div>
+                <div class="schedule-details">Full team • Field A</div>
+              </div>
+              <span class="schedule-badge">Completed</span>
             </div>
+
             <div class="schedule-item">
-              <div class="schedule-info">
-                <div class="schedule-time">Tomorrow - 5:30 PM</div>
-                <div class="schedule-details">
-                  Practice: Defensive Coverage &amp; Tackling
-                </div>
+              <div class="schedule-time">
+                <div class="schedule-time-display">2:30</div>
+                <div class="schedule-period">PM</div>
               </div>
-              <div class="schedule-status status-scheduled">Scheduled</div>
+              <div class="schedule-content">
+                <div class="schedule-title">Offensive Drills</div>
+                <div class="schedule-details">Offense unit • Field B</div>
+              </div>
+              <span class="schedule-badge">In Progress</span>
             </div>
+
             <div class="schedule-item">
-              <div class="schedule-info">
-                <div class="schedule-time">Friday - 6:00 PM</div>
-                <div class="schedule-details">
-                  Practice: Special Teams &amp; Game Prep
-                </div>
+              <div class="schedule-time">
+                <div class="schedule-time-display">4:00</div>
+                <div class="schedule-period">PM</div>
               </div>
-              <div class="schedule-status status-scheduled">Scheduled</div>
+              <div class="schedule-content">
+                <div class="schedule-title">Defensive Practice</div>
+                <div class="schedule-details">Defense unit • Field A</div>
+              </div>
+              <span class="schedule-badge">Upcoming</span>
             </div>
+
             <div class="schedule-item">
-              <div class="schedule-info">
-                <div class="schedule-time">Saturday - 2:00 PM</div>
-                <div class="schedule-details">Game: vs Thunder Bolts</div>
+              <div class="schedule-time">
+                <div class="schedule-time-display">6:00</div>
+                <div class="schedule-period">PM</div>
               </div>
-              <div class="schedule-status status-scheduled">Scheduled</div>
+              <div class="schedule-content">
+                <div class="schedule-title">Team Scrimmage</div>
+                <div class="schedule-details">Full team • Main Field</div>
+              </div>
+              <span class="schedule-badge">Upcoming</span>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- Player Analytics -->
-        <div class="player-analytics">
-          <div class="analytics-header">
-            <h2 class="analytics-title">Player Analytics</h2>
-            <div class="analytics-period">
-              <button type="button" class="period-btn active">Week</button>
-              <button type="button" class="period-btn">Month</button>
-              <button type="button" class="period-btn">Season</button>
-            </div>
+        <section class="analytics-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>📈</span>
+              Player Analytics
+            </h3>
           </div>
-          <div class="analytics-chart">
-            <div class="chart-placeholder">📊 Performance Chart</div>
+
+          <div class="chart-placeholder">
+            📊 Performance Chart Placeholder
           </div>
+
           <div class="analytics-summary">
             <div class="summary-item">
-              <span class="summary-value">+12%</span>
-              <span class="summary-label">Avg Improvement</span>
+              <span class="summary-label">Top Performer</span>
+              <span class="summary-value">Sarah J.</span>
             </div>
             <div class="summary-item">
-              <span class="summary-value">8</span>
-              <span class="summary-label">Players Improved</span>
+              <span class="summary-label">Most Improved</span>
+              <span class="summary-value">Tom C.</span>
             </div>
             <div class="summary-item">
+              <span class="summary-label">Avg Training</span>
+              <span class="summary-value">4.2h/day</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Team Readiness</span>
               <span class="summary-value">92%</span>
-              <span class="summary-label">Attendance</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-value">3</span>
-              <span class="summary-label">Injuries</span>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <!-- Bottom Grid -->
-      <section class="bottom-grid">
+      <div class="bottom-grid">
         <!-- Team Communication -->
-        <div class="team-communication">
-          <div class="communication-header">
-            <h2 class="communication-title">Team Communication</h2>
-            <div class="communication-actions">
-              <button type="button" class="comm-btn">📝 New</button>
-              <button type="button" class="comm-btn">📋 All</button>
-            </div>
+        <section class="communication-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>💬</span>
+              Team Chat
+            </h3>
           </div>
+
           <div class="message-list">
             <div class="message-item">
-              <div class="message-header">
-                <span class="message-author">Mike Johnson</span>
-                <span class="message-time">10:30 AM</span>
-              </div>
-              <div class="message-text">
-                Coach, I'm feeling much better today. Ready for practice!
-              </div>
-            </div>
-            <div class="message-item">
-              <div class="message-header">
-                <span class="message-author">Team Announcement</span>
-                <span class="message-time">9:15 AM</span>
-              </div>
-              <div class="message-text">
-                Practice moved to 6:30 PM due to field maintenance.
+              <div class="message-avatar">MJ</div>
+              <div class="message-content">
+                <div class="message-header">
+                  <span class="message-author">Marcus J.</span>
+                  <span class="message-time">10:32 AM</span>
+                </div>
+                <p class="message-text">Great practice everyone! Ready for tomorrow.</p>
               </div>
             </div>
+
             <div class="message-item">
-              <div class="message-header">
-                <span class="message-author">Alex Rodriguez</span>
-                <span class="message-time">Yesterday</span>
+              <div class="message-avatar">SJ</div>
+              <div class="message-content">
+                <div class="message-header">
+                  <span class="message-author">Sarah J.</span>
+                  <span class="message-time">10:45 AM</span>
+                </div>
+                <p class="message-text">Anyone want to do extra route work?</p>
               </div>
-              <div class="message-text">
-                Coach, I need to discuss my recovery timeline.
+            </div>
+
+            <div class="message-item">
+              <div class="message-avatar">TC</div>
+              <div class="message-content">
+                <div class="message-header">
+                  <span class="message-author">Tom C.</span>
+                  <span class="message-time">11:02 AM</span>
+                </div>
+                <p class="message-text">I'm in! @Marcus want to join?</p>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- Game Planning -->
-        <div class="game-planning">
-          <div class="planning-header">
-            <h2 class="planning-title">Game Planning</h2>
-            <div class="planning-actions">
-              <button type="button" class="planning-btn">📋 New</button>
-              <button type="button" class="planning-btn">📊 Stats</button>
+        <section class="planning-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>🎮</span>
+              Game Planning
+            </h3>
+          </div>
+
+          <div class="planning-list">
+            <div class="planning-item">
+              <div class="planning-icon">📋</div>
+              <div class="planning-content">
+                <div class="planning-title">vs Germany - Game Plan</div>
+                <div class="planning-status">In Progress • 75% complete</div>
+              </div>
+            </div>
+
+            <div class="planning-item">
+              <div class="planning-icon">🎥</div>
+              <div class="planning-content">
+                <div class="planning-title">France Film Review</div>
+                <div class="planning-status">Scheduled • Tomorrow</div>
+              </div>
+            </div>
+
+            <div class="planning-item">
+              <div class="planning-icon">📊</div>
+              <div class="planning-content">
+                <div class="planning-title">Play Analysis</div>
+                <div class="planning-status">12 new plays ready</div>
+              </div>
             </div>
           </div>
-          <div class="game-list">
-            <div class="game-item">
-              <div class="game-header">
-                <span class="game-teams">Lightning Bolts vs Thunder Bolts</span>
-                <span class="game-date">Dec 15, 2:00 PM</span>
-              </div>
-              <div class="game-status status-upcoming">Upcoming</div>
-            </div>
-            <div class="game-item">
-              <div class="game-header">
-                <span class="game-teams">Lightning Bolts vs Storm Riders</span>
-                <span class="game-date">Dec 8, 2:00 PM</span>
-              </div>
-              <div class="game-status status-won">Won 28-14</div>
-            </div>
-            <div class="game-item">
-              <div class="game-header">
-                <span class="game-teams">Lightning Bolts vs Fire Dragons</span>
-                <span class="game-date">Dec 1, 2:00 PM</span>
-              </div>
-              <div class="game-status status-lost">Lost 21-24</div>
-            </div>
-          </div>
-        </div>
+        </section>
 
         <!-- Team Health -->
-        <div class="team-health">
-          <div class="health-header">
-            <h2 class="health-title">Team Health</h2>
+        <section class="health-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>🏥</span>
+              Team Health
+            </h3>
           </div>
-          <div class="health-summary">
+
+          <div class="health-list">
             <div class="health-item">
-              <span class="health-player">Alex Rodriguez</span>
-              <span class="health-status status-injured">Ankle Sprain</span>
+              <div class="health-indicator alert"></div>
+              <div class="health-content">
+                <div class="health-name">Alex Rivera</div>
+                <div class="health-status">Hamstring • 2 weeks recovery</div>
+              </div>
             </div>
+
             <div class="health-item">
-              <span class="health-player">Ryan Wilson</span>
-              <span class="health-status status-recovering">Knee Recovery</span>
+              <div class="health-indicator warning"></div>
+              <div class="health-content">
+                <div class="health-name">Jake Davis</div>
+                <div class="health-status">Fatigue • Rest day</div>
+              </div>
             </div>
+
             <div class="health-item">
-              <span class="health-player">Mike Johnson</span>
-              <span class="health-status status-healthy">Healthy</span>
-            </div>
-            <div class="health-item">
-              <span class="health-player">Chris Davis</span>
-              <span class="health-status status-healthy">Healthy</span>
-            </div>
-            <div class="health-item">
-              <span class="health-player">Tom Brown</span>
-              <span class="health-status status-healthy">Healthy</span>
+              <div class="health-indicator good"></div>
+              <div class="health-content">
+                <div class="health-name">22 Players</div>
+                <div class="health-status">Fully healthy and available</div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+      // Player card interactions
+      document.querySelectorAll('.player-card').forEach(card => {
+        card.addEventListener('click', function() {
+          console.log('Player clicked:', this.querySelector('.player-name').textContent);
+        });
+      });
+
+      // Action card interactions
+      document.querySelectorAll('.action-card').forEach(card => {
+        card.addEventListener('click', function() {
+          console.log('Action clicked:', this.querySelector('.action-label').textContent);
+        });
+      });
+
+      // Schedule item interactions
+      document.querySelectorAll('.schedule-item').forEach(item => {
+        item.addEventListener('click', function() {
+          console.log('Schedule item clicked:', this.querySelector('.schedule-title').textContent);
+        });
+      });
+    </script>
   </body>
 </html>

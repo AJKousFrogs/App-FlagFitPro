@@ -1,9 +1,9 @@
 {
   "primaryStack": {
     "framework": "Angular",
-    "version": "19",
+    "version": "21",
     "uiLibrary": "PrimeNG",
-    "uiLibraryVersion": "19",
+    "uiLibraryVersion": "21",
     "language": "TypeScript",
     "styling": "SCSS with CSS Custom Properties",
     "stateManagement": "Angular Signals + RxJS",
@@ -12,7 +12,8 @@
   "backend": {
     "runtime": "Node.js",
     "framework": "Express",
-    "database": "Neon PostgreSQL",
+    "database": "Supabase PostgreSQL",
+    "authentication": "Supabase Auth",
     "functions": "Netlify Functions",
     "realtime": "Supabase Realtime"
   },
@@ -22,7 +23,7 @@
     "primary": false
   },
   "documentation": {
-    "primary": "Angular 19 + PrimeNG",
-    "migration": "Migrating from vanilla HTML/CSS/JS to Angular 19 + PrimeNG"
+    "primary": "Angular 21 + PrimeNG 21",
+    "migration": "Migrated from vanilla HTML/CSS/JS to Angular 21 + PrimeNG 21"
   }
 }

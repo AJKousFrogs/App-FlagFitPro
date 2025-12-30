@@ -6,8 +6,16 @@ set -euo pipefail
 # Frontend: Angular CLI has built-in hot reload
 
 # Error handling
-trap 'echo ""; echo "🛑 Stopping servers..."; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null || true; exit 0' SIGINT SIGTERM
-trap 'echo "❌ Error at line $LINENO"; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null || true; exit 1' ERR
+cleanup() {
+    echo ""
+    echo "🛑 Stopping servers..."
+    [[ -n "${BACKEND_PID:-}" ]] && kill "$BACKEND_PID" 2>/dev/null || true
+    [[ -n "${FRONTEND_PID:-}" ]] && kill "$FRONTEND_PID" 2>/dev/null || true
+    exit 0
+}
+
+trap cleanup SIGINT SIGTERM
+trap 'echo "❌ Error at line $LINENO"; cleanup' ERR
 
 echo "🚀 Starting FlagFit Pro Development Servers..."
 echo ""
@@ -22,7 +30,7 @@ if ! command -v nodemon &> /dev/null; then
 fi
 
 # Start backend server with nodemon (hot reload)
-echo "📦 Starting backend server on port 3001 (with hot reload)..."
+echo "📦 Starting backend server on port 4000 (with hot reload)..."
 nodemon server.js --watch . --ext js,json --ignore node_modules/ --ignore angular/ --ignore "*.backup" &
 BACKEND_PID=$!
 
@@ -34,11 +42,12 @@ echo "⚡ Starting Angular frontend on port 4200 (with hot reload)..."
 cd angular
 npm start &
 FRONTEND_PID=$!
+cd ..
 
 echo ""
 echo "✅ Servers starting..."
 echo ""
-echo "📊 Backend API: http://localhost:3001"
+echo "📊 Backend API: http://localhost:4000"
 echo "🌐 Frontend App: http://localhost:4200"
 echo ""
 echo "Press Ctrl+C to stop all servers"

@@ -1,401 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
-    <title>FlagFit Pro - Coach Team Management Dashboard (Black &amp; White)</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap"
-      rel="stylesheet"
-    >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FlagFit Pro Coach Team Management - Player roster and team management wireframe">
+    <title>FlagFit Pro - Coach Team Management Wireframe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wireframe-design-system.css">
     <style>
-      /* Black and White Coach Design System with Poppins Typography */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      /* Page-specific styles */
+      .page-header {
+        padding: var(--space-8) 0;
+        border-bottom: var(--border-default);
+        margin-bottom: var(--space-8);
       }
 
-      body {
-        font-family:
-          "Poppins",
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
-        font-weight: 400;
-        font-size: 16px;
-        color: #1a1a1a;
-        background-color: #ffffff;
-        min-height: 100vh;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-
-      /* Typography Hierarchy - All Poppins */
-      h1 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        line-height: 1.2;
-        color: #1a1a1a;
-        margin-bottom: 1rem;
-      }
-
-      h2 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.875rem;
-        line-height: 1.3;
-        color: #1a1a1a;
-        margin-bottom: 0.75rem;
-      }
-
-      h3 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h4 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.25rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-      }
-
-      h5 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 1.125rem;
-        line-height: 1.4;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
-      }
-
-      p,
-      .body-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 1rem;
-        line-height: 1.6;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .small-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        color: #6b6b6b;
-      }
-
-      .caption {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-size: 0.75rem;
-        line-height: 1.4;
-        color: #8a8a8a;
-      }
-
-      /* CTA and Button Styles - Black and White */
-      .btn,
-      .cta-primary,
-      .cta-secondary,
-      .coach-btn {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 12px 24px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .cta-primary,
-      .coach-btn-primary {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-primary:hover,
-      .coach-btn-primary:hover {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-secondary,
-      .coach-btn-secondary {
-        background-color: #ffffff;
-        color: #1a1a1a;
-        border: 2px solid #1a1a1a;
-      }
-
-      .cta-secondary:hover,
-      .coach-btn-secondary:hover {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 2px solid #1a1a1a;
-      }
-
-      /* Header &amp; Navigation */
-      .coach-header {
-        background-color: #ffffff;
-        border-bottom: 2px solid #e5e5e5;
-        padding: 1rem 2rem;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .coach-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .coach-logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-      }
-
-      .coach-tabs {
-        display: flex;
-        gap: 0;
-        background-color: #f5f5f5;
-        border-radius: 10px;
-        padding: 4px;
-      }
-
-      .coach-tab {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        padding: 12px 24px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: #6b6b6b;
-        transition: all 0.3s ease;
-        border: none;
-        background: none;
-        cursor: pointer;
-      }
-
-      .coach-tab.active {
-        background-color: #1a1a1a;
-        color: #ffffff;
-      }
-
-      .coach-tab:hover:not(.active) {
-        background-color: #e5e5e5;
-        color: #1a1a1a;
-      }
-
-      .coach-profile {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-      }
-
-      .coach-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.125rem;
-      }
-
-      .coach-info h4 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0;
-      }
-
-      .coach-role {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #6b6b6b;
-        font-size: 0.875rem;
-      }
-
-      /* Main Container */
-      .coach-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem;
-      }
-
-      /* Dashboard Overview */
-      .coach-overview {
+      /* Overview Grid */
+      .overview-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        margin-bottom: 3rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
       .overview-card {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
-        transition: all 0.3s ease;
-        position: relative;
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        transition: all var(--transition-normal);
       }
 
       .overview-card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-black);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
       }
 
-      .card-header {
+      .overview-card .card-icon {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-3);
+      }
+
+      .overview-card .card-value {
+        font-size: var(--font-size-4xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        line-height: 1;
+        margin-bottom: var(--space-2);
+      }
+
+      .overview-card .card-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-3);
+      }
+
+      .overview-card .card-trend {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
+        gap: var(--space-2);
       }
 
-      .card-icon-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 12px;
+      /* Player Roster */
+      .roster-section {
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
-      .card-icon {
-        font-size: 2rem;
-        /* Emojis keep their natural colors */
-      }
-
-      .card-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-        color: #1a1a1a;
-      }
-
-      .card-metric {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-        display: block;
-      }
-
-      .card-description {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        margin-bottom: 1rem;
-      }
-
-      .card-trend {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.875rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      /* Team Management Sections */
-      .team-section {
-        background-color: #ffffff;
-        border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e5e5e5;
-      }
-
-      .section-title {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.5rem;
-        color: #1a1a1a;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      /* Player Cards */
-      .players-grid {
+      .roster-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
       }
 
       .player-card {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
-        position: relative;
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
+        transition: all var(--transition-normal);
+        cursor: pointer;
       }
 
       .player-card:hover {
-        border-color: #1a1a1a;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-black);
+        background: var(--color-white);
       }
 
       .player-header {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
       }
 
       .player-avatar {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background-color: #e5e5e5;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--border-radius-full);
+        background: var(--color-gray-200);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-        color: #1a1a1a;
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-base);
       }
 
       .player-info {
@@ -403,357 +118,320 @@
       }
 
       .player-name {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.125rem;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
       }
 
       .player-position {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #6b6b6b;
-        font-size: 0.875rem;
-      }
-
-      .player-status {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        border: 1px solid #e5e5e5;
-        background-color: #f9f9f9;
-        color: #1a1a1a;
-      }
-
-      .status-active {
-        background-color: #ffffff;
-        border-color: #1a1a1a;
-        color: #1a1a1a;
-      }
-
-      .status-injured {
-        background-color: #f5f5f5;
-        border-color: #8a8a8a;
-        color: #6b6b6b;
-      }
-
-      .status-rest {
-        background-color: #fafafa;
-        border-color: #e5e5e5;
-        color: #4a4a4a;
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
       }
 
       .player-stats {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin: 1rem 0;
+        gap: var(--space-2);
+        margin-bottom: var(--space-3);
       }
 
-      .stat-item {
+      .player-stat {
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-sm);
+        padding: var(--space-2);
         text-align: center;
       }
 
-      .stat-value {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 1.25rem;
-        color: #1a1a1a;
-        display: block;
+      .player-stat-value {
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+        font-size: var(--font-size-sm);
       }
 
-      .stat-label {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #6b6b6b;
-        font-size: 0.75rem;
+      .player-stat-label {
+        font-size: 10px;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
       }
 
       .player-actions {
         display: flex;
-        gap: 8px;
-        margin-top: 1rem;
+        gap: var(--space-2);
       }
 
-      .action-btn {
+      .player-actions .btn {
         flex: 1;
-        padding: 8px 16px;
-        border: 1px solid #e5e5e5;
-        border-radius: 6px;
-        background-color: #ffffff;
-        color: #4a4a4a;
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.875rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-align: center;
-      }
-
-      .action-btn:hover {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border-color: #1a1a1a;
       }
 
       /* Team Chemistry Section */
       .chemistry-section {
-        background-color: #fafafa;
-        border: 2px solid #1a1a1a;
+        background: var(--color-gray-50);
+        border: var(--border-width-thick) solid var(--color-black);
+        border-radius: var(--border-radius-xl);
+        padding: var(--space-8);
+        margin-bottom: var(--space-8);
+      }
+
+      .chemistry-header {
+        text-align: center;
+        margin-bottom: var(--space-6);
+      }
+
+      .chemistry-score {
+        font-size: var(--font-size-5xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--color-black);
+        margin: var(--space-4) 0;
       }
 
       .chemistry-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-6);
       }
 
       .chemistry-card {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 1.5rem;
-        text-align: center;
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
       }
 
-      .chemistry-score {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2rem;
-        color: #1a1a1a;
-        display: block;
-        margin-bottom: 0.5rem;
-      }
-
-      .chemistry-label {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #4a4a4a;
-        font-size: 0.875rem;
-        margin-bottom: 1rem;
-      }
-
-      .chemistry-trend {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        color: #6b6b6b;
+      .chemistry-card-header {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-        gap: 4px;
+        margin-bottom: var(--space-3);
       }
 
-      /* Progress Bars */
-      .progress-bar {
-        width: 100%;
-        height: 8px;
-        background-color: #e5e5e5;
-        border-radius: 4px;
-        overflow: hidden;
-        margin: 0.5rem 0;
+      .chemistry-card-title {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        font-size: var(--font-size-sm);
       }
 
-      .progress-fill {
-        height: 100%;
-        background-color: #1a1a1a;
-        border-radius: 4px;
-        transition: width 0.3s ease;
+      .chemistry-card-value {
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
+      }
+
+      .chemistry-card-progress {
+        margin-top: var(--space-2);
+      }
+
+      .ai-recommendations {
+        margin-top: var(--space-6);
+        padding-top: var(--space-6);
+        border-top: var(--border-default);
+      }
+
+      .ai-recommendations h4 {
+        margin-bottom: var(--space-4);
+      }
+
+      .recommendation-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .recommendation-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        background: var(--color-white);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+      }
+
+      .recommendation-icon {
+        font-size: var(--font-size-lg);
+        flex-shrink: 0;
+      }
+
+      .recommendation-content {
+        flex: 1;
+      }
+
+      .recommendation-title {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-black);
+        margin-bottom: var(--space-1);
+      }
+
+      .recommendation-description {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
       }
 
       /* Olympic Readiness */
       .olympic-section {
-        background-color: #fafafa;
-        border: 2px solid #1a1a1a;
+        background: var(--color-white);
+        border: var(--border-card);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
       }
 
-      .olympic-metrics {
+      .olympic-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
       }
 
-      .olympic-metric {
-        background-color: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
-        padding: 1.5rem;
+      .olympic-card {
+        background: var(--color-gray-50);
+        border: var(--border-default);
+        border-radius: var(--border-radius-md);
+        padding: var(--space-4);
         text-align: center;
       }
 
-      .metric-value {
-        font-family: "Poppins", sans-serif;
-        font-weight: 700;
-        font-size: 2rem;
-        color: #1a1a1a;
-        display: block;
-        margin-bottom: 0.5rem;
+      .olympic-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-black);
       }
 
-      .metric-label {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        color: #4a4a4a;
-        font-size: 0.875rem;
+      .olympic-label {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        margin-top: var(--space-1);
       }
 
-      .metric-trend {
-        font-family: "Poppins", sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        color: #6b6b6b;
-        margin-top: 0.5rem;
+      .focus-areas {
+        margin-top: var(--space-6);
+        padding-top: var(--space-6);
+        border-top: var(--border-default);
       }
 
-      /* Lists */
-      .feature-list {
-        list-style: none;
-        padding: 0;
+      .focus-areas h4 {
+        margin-bottom: var(--space-4);
       }
 
-      .feature-item {
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        color: #4a4a4a;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #f0f0f0;
+      .focus-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .focus-item {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        background: var(--color-gray-50);
+        border-radius: var(--border-radius-md);
       }
 
-      .feature-icon {
-        font-size: 1.25rem;
-        /* Emojis keep their natural colors */
+      .focus-icon {
+        font-size: var(--font-size-lg);
       }
 
-      /* Responsive Design */
+      .focus-content {
+        flex: 1;
+      }
+
+      .focus-title {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-black);
+        font-size: var(--font-size-sm);
+      }
+
+      .focus-status {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .overview-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .roster-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .chemistry-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .olympic-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
       @media (max-width: 768px) {
-        .coach-container {
-          padding: 1rem;
-        }
-
-        .coach-nav {
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .coach-tabs {
-          flex-direction: column;
-          width: 100%;
-        }
-
-        .coach-overview {
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
-
-        .players-grid {
+        .overview-grid {
           grid-template-columns: 1fr;
         }
 
-        .section-header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 1rem;
+        .roster-grid {
+          grid-template-columns: 1fr;
         }
 
-        h1 {
-          font-size: 2rem;
+        .chemistry-grid {
+          grid-template-columns: 1fr;
         }
 
-        h2 {
-          font-size: 1.5rem;
+        .olympic-grid {
+          grid-template-columns: 1fr;
         }
-      }
-
-      /* Animations */
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .overview-card,
-      .team-section,
-      .player-card {
-        animation: fadeInUp 0.6s ease-out;
       }
     </style>
   </head>
   <body>
-    <!-- Coach Header -->
-    <header class="coach-header">
-      <nav class="coach-nav">
-        <div class="coach-logo">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav-container">
+        <a href="#" class="nav-brand">
           <span>🏈</span>
-          <span>FlagFit Pro Coach</span>
-        </div>
+          <span>FlagFit Pro</span>
+        </a>
 
-        <div class="coach-tabs">
-          <button type="button" class="coach-tab active">Team Management</button>
-          <button type="button" class="coach-tab">Training</button>
-          <button type="button" class="coach-tab">Games</button>
-          <button type="button" class="coach-tab">Analytics</button>
-        </div>
+        <ul class="nav-menu">
+          <li><a href="coach-dashboard-wireframe.html" class="nav-link">Dashboard</a></li>
+          <li><a href="#" class="nav-link active">Team</a></li>
+          <li><a href="coach-training-wireframe.html" class="nav-link">Training</a></li>
+          <li><a href="coach-games-wireframe.html" class="nav-link">Games</a></li>
+          <li><a href="coach-analytics-wireframe.html" class="nav-link">Analytics</a></li>
+        </ul>
 
-        <div class="coach-profile">
-          <div class="coach-avatar">CW</div>
-          <div class="coach-info">
-            <h4>Coach Williams</h4>
-            <div class="coach-role">Head Coach</div>
-          </div>
+        <div class="nav-actions">
+          <button type="button" class="btn btn-icon" aria-label="Search">🔍</button>
+          <button type="button" class="btn btn-icon" aria-label="Notifications">🔔</button>
+          <div class="avatar avatar-primary">CM</div>
         </div>
-      </nav>
-    </header>
-
-    <!-- Main Container -->
-    <div class="coach-container">
-      <!-- Page Header -->
-      <div class="page-header">
-        <h1>Team Management Dashboard</h1>
-        <p>
-          Manage your team roster, track chemistry, and optimize Olympic
-          readiness
-        </p>
       </div>
+    </nav>
 
-      <!-- Team Overview Cards -->
-      <div class="coach-overview">
+    <!-- Main Content -->
+    <main class="container">
+      <!-- Page Header -->
+      <header class="page-header">
+        <h1>Team Management 👥</h1>
+        <p>Manage your roster, track chemistry, and optimize team performance</p>
+      </header>
+
+      <!-- Overview Grid -->
+      <section class="overview-grid">
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">👥</span>
-              <h3 class="card-title">Active Players</h3>
-            </div>
-          </div>
-          <span class="card-metric">12</span>
-          <p class="card-description">Full roster strength</p>
+          <div class="card-icon">👥</div>
+          <div class="card-value">24</div>
+          <div class="card-label">Active Players</div>
           <div class="card-trend">
             <span>✅</span>
-            <span>10/12 available today</span>
+            <span>Full roster</span>
           </div>
         </div>
 
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">🤝</span>
-              <h3 class="card-title">Team Chemistry</h3>
-            </div>
-          </div>
-          <span class="card-metric">8.4/10</span>
-          <p class="card-description">Overall cohesion rating</p>
+          <div class="card-icon">🤝</div>
+          <div class="card-value">8.4</div>
+          <div class="card-label">Team Chemistry</div>
           <div class="card-trend">
             <span>📈</span>
             <span>+0.3 this week</span>
@@ -761,436 +439,324 @@
         </div>
 
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">🏆</span>
-              <h3 class="card-title">Olympic Readiness</h3>
-            </div>
-          </div>
-          <span class="card-metric">78%</span>
-          <p class="card-description">LA28 preparation level</p>
+          <div class="card-icon">🏆</div>
+          <div class="card-value">87%</div>
+          <div class="card-label">Olympic Readiness</div>
           <div class="card-trend">
             <span>🎯</span>
-            <span>Target: 85% by Dec</span>
+            <span>On track</span>
           </div>
         </div>
 
         <div class="overview-card">
-          <div class="card-header">
-            <div class="card-icon-wrapper">
-              <span class="card-icon">🌍</span>
-              <h3 class="card-title">World Ranking</h3>
-            </div>
-          </div>
-          <span class="card-metric">#6</span>
-          <p class="card-description">Current global position</p>
+          <div class="card-icon">🌍</div>
+          <div class="card-value">#6</div>
+          <div class="card-label">World Ranking</div>
           <div class="card-trend">
-            <span>⬆️</span>
-            <span>Up from #8</span>
+            <span>📈</span>
+            <span>+2 positions</span>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Player Management Section -->
-      <div class="team-section">
+      <!-- Player Roster Management -->
+      <section class="roster-section">
         <div class="section-header">
           <h2 class="section-title">
             <span>👥</span>
             Player Roster Management
           </h2>
-          <button type="button" class="cta-primary">Add Player</button>
+          <div class="section-actions">
+            <button type="button" class="btn btn-secondary btn-sm">Import Players</button>
+            <button type="button" class="btn btn-primary btn-sm">Add Player</button>
+          </div>
         </div>
 
-        <div class="players-grid">
-          <!-- Player 1 -->
+        <div class="roster-grid">
           <div class="player-card">
             <div class="player-header">
               <div class="player-avatar">MJ</div>
               <div class="player-info">
-                <h4 class="player-name">Marcus Johnson</h4>
-                <div class="player-position">Quarterback • #12</div>
+                <div class="player-name">Marcus Johnson</div>
+                <div class="player-position">Quarterback</div>
               </div>
-              <div class="player-status status-active">Active</div>
             </div>
-
             <div class="player-stats">
-              <div class="stat-item">
-                <span class="stat-value">92</span>
-                <span class="stat-label">Olympic Score</span>
+              <div class="player-stat">
+                <div class="player-stat-value">87%</div>
+                <div class="player-stat-label">Completion</div>
               </div>
-              <div class="stat-item">
-                <span class="stat-value">89%</span>
-                <span class="stat-label">Accuracy</span>
+              <div class="player-stat">
+                <div class="player-stat-value">4.52s</div>
+                <div class="player-stat-label">40-Yard</div>
               </div>
-              <div class="stat-item">
-                <span class="stat-value">4.45s</span>
-                <span class="stat-label">40-Yard</span>
+              <div class="player-stat">
+                <div class="player-stat-value">94</div>
+                <div class="player-stat-label">Rating</div>
               </div>
-              <div class="stat-item">
-                <span class="stat-value">47</span>
-                <span class="stat-label">Games</span>
+              <div class="player-stat">
+                <div class="player-stat-value">Active</div>
+                <div class="player-stat-label">Status</div>
               </div>
             </div>
-
             <div class="player-actions">
-              <button type="button" class="action-btn">View Profile</button>
-              <button type="button" class="action-btn">Edit</button>
-              <button type="button" class="action-btn">Stats</button>
+              <button type="button" class="btn btn-secondary btn-sm">Profile</button>
+              <button type="button" class="btn btn-secondary btn-sm">Stats</button>
             </div>
           </div>
 
-          <!-- Player 2 -->
+          <div class="player-card">
+            <div class="player-header">
+              <div class="player-avatar">SJ</div>
+              <div class="player-info">
+                <div class="player-name">Sarah Johnson</div>
+                <div class="player-position">Wide Receiver</div>
+              </div>
+            </div>
+            <div class="player-stats">
+              <div class="player-stat">
+                <div class="player-stat-value">92%</div>
+                <div class="player-stat-label">Catch Rate</div>
+              </div>
+              <div class="player-stat">
+                <div class="player-stat-value">4.42s</div>
+                <div class="player-stat-label">40-Yard</div>
+              </div>
+              <div class="player-stat">
+                <div class="player-stat-value">98</div>
+                <div class="player-stat-label">Rating</div>
+              </div>
+              <div class="player-stat">
+                <div class="player-stat-value">Active</div>
+                <div class="player-stat-label">Status</div>
+              </div>
+            </div>
+            <div class="player-actions">
+              <button type="button" class="btn btn-secondary btn-sm">Profile</button>
+              <button type="button" class="btn btn-secondary btn-sm">Stats</button>
+            </div>
+          </div>
+
           <div class="player-card">
             <div class="player-header">
               <div class="player-avatar">AR</div>
               <div class="player-info">
-                <h4 class="player-name">Alex Rivera</h4>
-                <div class="player-position">Wide Receiver • #84</div>
+                <div class="player-name">Alex Rivera</div>
+                <div class="player-position">Defensive Back</div>
               </div>
-              <div class="player-status status-active">Active</div>
             </div>
-
             <div class="player-stats">
-              <div class="stat-item">
-                <span class="stat-value">88</span>
-                <span class="stat-label">Olympic Score</span>
+              <div class="player-stat">
+                <div class="player-stat-value">85%</div>
+                <div class="player-stat-label">Coverage</div>
               </div>
-              <div class="stat-item">
-                <span class="stat-value">94%</span>
-                <span class="stat-label">Catch Rate</span>
+              <div class="player-stat">
+                <div class="player-stat-value">4.48s</div>
+                <div class="player-stat-label">40-Yard</div>
               </div>
-              <div class="stat-item">
-                <span class="stat-value">4.38s</span>
-                <span class="stat-label">40-Yard</span>
+              <div class="player-stat">
+                <div class="player-stat-value">89</div>
+                <div class="player-stat-label">Rating</div>
               </div>
-              <div class="stat-item">
-                <span class="stat-value">44</span>
-                <span class="stat-label">Games</span>
+              <div class="player-stat">
+                <div class="player-stat-value">Injured</div>
+                <div class="player-stat-label">Status</div>
               </div>
             </div>
-
             <div class="player-actions">
-              <button type="button" class="action-btn">View Profile</button>
-              <button type="button" class="action-btn">Edit</button>
-              <button type="button" class="action-btn">Stats</button>
+              <button type="button" class="btn btn-secondary btn-sm">Profile</button>
+              <button type="button" class="btn btn-secondary btn-sm">Stats</button>
             </div>
           </div>
 
-          <!-- Player 3 -->
           <div class="player-card">
             <div class="player-header">
-              <div class="player-avatar">ST</div>
+              <div class="player-avatar">TC</div>
               <div class="player-info">
-                <h4 class="player-name">Sarah Thompson</h4>
-                <div class="player-position">Defensive Back • #21</div>
+                <div class="player-name">Tom Chen</div>
+                <div class="player-position">Linebacker</div>
               </div>
-              <div class="player-status status-injured">Injured</div>
             </div>
-
             <div class="player-stats">
-              <div class="stat-item">
-                <span class="stat-value">85</span>
-                <span class="stat-label">Olympic Score</span>
+              <div class="player-stat">
+                <div class="player-stat-value">78%</div>
+                <div class="player-stat-label">Tackle Rate</div>
               </div>
-              <div class="stat-item">
-                <span class="stat-value">12</span>
-                <span class="stat-label">Interceptions</span>
+              <div class="player-stat">
+                <div class="player-stat-value">4.55s</div>
+                <div class="player-stat-label">40-Yard</div>
               </div>
-              <div class="stat-item">
-                <span class="stat-value">4.52s</span>
-                <span class="stat-label">40-Yard</span>
+              <div class="player-stat">
+                <div class="player-stat-value">86</div>
+                <div class="player-stat-label">Rating</div>
               </div>
-              <div class="stat-item">
-                <span class="stat-value">39</span>
-                <span class="stat-label">Games</span>
+              <div class="player-stat">
+                <div class="player-stat-value">Active</div>
+                <div class="player-stat-label">Status</div>
               </div>
             </div>
-
             <div class="player-actions">
-              <button type="button" class="action-btn">View Profile</button>
-              <button type="button" class="action-btn">Edit</button>
-              <button type="button" class="action-btn">Injury Report</button>
-            </div>
-          </div>
-
-          <!-- Player 4 -->
-          <div class="player-card">
-            <div class="player-header">
-              <div class="player-avatar">DM</div>
-              <div class="player-info">
-                <h4 class="player-name">David Martinez</h4>
-                <div class="player-position">Linebacker • #55</div>
-              </div>
-              <div class="player-status status-rest">Rest Day</div>
-            </div>
-
-            <div class="player-stats">
-              <div class="stat-item">
-                <span class="stat-value">83</span>
-                <span class="stat-label">Olympic Score</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">87</span>
-                <span class="stat-label">Tackles</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">4.61s</span>
-                <span class="stat-label">40-Yard</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">41</span>
-                <span class="stat-label">Games</span>
-              </div>
-            </div>
-
-            <div class="player-actions">
-              <button type="button" class="action-btn">View Profile</button>
-              <button type="button" class="action-btn">Edit</button>
-              <button type="button" class="action-btn">Stats</button>
+              <button type="button" class="btn btn-secondary btn-sm">Profile</button>
+              <button type="button" class="btn btn-secondary btn-sm">Stats</button>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Team Chemistry Analysis -->
-      <div class="team-section chemistry-section">
-        <div class="section-header">
-          <h2 class="section-title">
-            <span>🤝</span>
-            Team Chemistry Management
-          </h2>
-          <button type="button" class="cta-primary">AI Analysis</button>
+      <!-- Team Chemistry Management -->
+      <section class="chemistry-section">
+        <div class="chemistry-header">
+          <h2>🤝 Team Chemistry Management</h2>
+          <p>AI-powered insights into team dynamics and cohesion</p>
+          <div class="chemistry-score">8.4/10</div>
+          <p class="text-muted">Overall Team Chemistry Score</p>
         </div>
 
         <div class="chemistry-grid">
           <div class="chemistry-card">
-            <span class="chemistry-score">9.1/10</span>
-            <div class="chemistry-label">Communication</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 91%"></div>
+            <div class="chemistry-card-header">
+              <span class="chemistry-card-title">Communication</span>
+              <span class="chemistry-card-value">9.1</span>
             </div>
-            <div class="chemistry-trend">
-              <span>📈</span>
-              <span>Excellent</span>
-            </div>
-          </div>
-
-          <div class="chemistry-card">
-            <span class="chemistry-score">8.7/10</span>
-            <div class="chemistry-label">Trust</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 87%"></div>
-            </div>
-            <div class="chemistry-trend">
-              <span>🤝</span>
-              <span>Strong</span>
+            <div class="chemistry-card-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 91%;"></div>
+              </div>
             </div>
           </div>
 
           <div class="chemistry-card">
-            <span class="chemistry-score">7.9/10</span>
-            <div class="chemistry-label">Coordination</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 79%"></div>
+            <div class="chemistry-card-header">
+              <span class="chemistry-card-title">Trust</span>
+              <span class="chemistry-card-value">8.7</span>
             </div>
-            <div class="chemistry-trend">
-              <span>⚡</span>
-              <span>Good</span>
+            <div class="chemistry-card-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 87%;"></div>
+              </div>
             </div>
           </div>
 
           <div class="chemistry-card">
-            <span class="chemistry-score">8.2/10</span>
-            <div class="chemistry-label">Leadership</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 82%"></div>
+            <div class="chemistry-card-header">
+              <span class="chemistry-card-title">Coordination</span>
+              <span class="chemistry-card-value">7.9</span>
             </div>
-            <div class="chemistry-trend">
-              <span>👑</span>
-              <span>Solid</span>
+            <div class="chemistry-card-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 79%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chemistry-card">
+            <div class="chemistry-card-header">
+              <span class="chemistry-card-title">Leadership</span>
+              <span class="chemistry-card-value">8.2</span>
+            </div>
+            <div class="chemistry-card-progress">
+              <div class="progress">
+                <div class="progress-bar" style="width: 82%;"></div>
+              </div>
             </div>
           </div>
         </div>
 
-        <h4>🤖 AI Team Building Recommendations</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">✅</span>
-            <span
-              >Team chemistry is healthy - no immediate intervention
-              needed</span
-            >
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🎯</span>
-            <span>Focus on coordination drills to reach 8.5+ target</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🔄</span>
-            <span>Rotate leadership roles to develop depth</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">📊</span>
-            <span>Schedule team bonding session within 2 weeks</span>
+        <div class="ai-recommendations">
+          <h4>🤖 AI Recommendations</h4>
+          <div class="recommendation-list">
+            <div class="recommendation-item">
+              <div class="recommendation-icon">💡</div>
+              <div class="recommendation-content">
+                <div class="recommendation-title">Improve coordination drills</div>
+                <div class="recommendation-description">Add more team-based exercises to boost coordination score by 0.5 points</div>
+              </div>
+            </div>
+            <div class="recommendation-item">
+              <div class="recommendation-icon">🎯</div>
+              <div class="recommendation-content">
+                <div class="recommendation-title">Leadership development</div>
+                <div class="recommendation-description">Consider rotating captain responsibilities to develop more leaders</div>
+              </div>
+            </div>
+            <div class="recommendation-item">
+              <div class="recommendation-icon">✅</div>
+              <div class="recommendation-content">
+                <div class="recommendation-title">Communication excellence</div>
+                <div class="recommendation-description">Team communication is above Olympic standards - maintain current practices</div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Olympic Readiness Assessment -->
-      <div class="team-section olympic-section">
+      <section class="olympic-section">
         <div class="section-header">
           <h2 class="section-title">
             <span>🏆</span>
             Olympic Readiness Assessment
           </h2>
-          <button type="button" class="cta-primary">Full Report</button>
+          <button type="button" class="btn btn-secondary btn-sm">Full Report</button>
         </div>
 
-        <div class="olympic-metrics">
-          <div class="olympic-metric">
-            <span class="metric-value">78%</span>
-            <span class="metric-label">Team Readiness</span>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 78%"></div>
-            </div>
-            <div class="metric-trend">Target: 85% by December</div>
+        <div class="olympic-grid">
+          <div class="olympic-card">
+            <div class="olympic-value">87%</div>
+            <div class="olympic-label">Overall Readiness</div>
           </div>
-
-          <div class="olympic-metric">
-            <span class="metric-value">#6</span>
-            <span class="metric-label">World Ranking</span>
-            <div class="metric-trend">↗ Up 2 positions this month</div>
+          <div class="olympic-card">
+            <div class="olympic-value">#6</div>
+            <div class="olympic-label">World Ranking</div>
           </div>
-
-          <div class="olympic-metric">
-            <span class="metric-value">84%</span>
-            <span class="metric-label">Standards Met</span>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 84%"></div>
-            </div>
-            <div class="metric-trend">21/25 Olympic benchmarks</div>
+          <div class="olympic-card">
+            <div class="olympic-value">4/6</div>
+            <div class="olympic-label">Standards Met</div>
           </div>
-
-          <div class="olympic-metric">
-            <span class="metric-value">73%</span>
-            <span class="metric-label">Qualification Probability</span>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 73%"></div>
-            </div>
-            <div class="metric-trend">AI prediction model</div>
+          <div class="olympic-card">
+            <div class="olympic-value">78%</div>
+            <div class="olympic-label">Qualification Probability</div>
           </div>
         </div>
 
-        <h4>🎯 Key Focus Areas for LA28</h4>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-icon">⚡</span>
-            <span
-              >Speed improvement needed: Average 40-yard dash 0.08s too
-              slow</span
-            >
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🎯</span>
-            <span>Red zone efficiency: 89% meets Olympic standard</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🛡️</span>
-            <span>Defensive consistency: Top 3 globally in turnovers</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">🏆</span>
-            <span
-              >Experience factor: 67% of roster has international
-              experience</span
-            >
+        <div class="focus-areas">
+          <h4>🎯 Key Focus Areas</h4>
+          <div class="focus-list">
+            <div class="focus-item">
+              <div class="focus-icon">⚡</div>
+              <div class="focus-content">
+                <div class="focus-title">Speed Development</div>
+                <div class="focus-status">2 players need to hit sub-4.5s 40-yard</div>
+              </div>
+            </div>
+            <div class="focus-item">
+              <div class="focus-icon">🎯</div>
+              <div class="focus-content">
+                <div class="focus-title">Completion Rate</div>
+                <div class="focus-status">Target: 90% team average (current: 87%)</div>
+              </div>
+            </div>
+            <div class="focus-item">
+              <div class="focus-icon">🏥</div>
+              <div class="focus-content">
+                <div class="focus-title">Injury Prevention</div>
+                <div class="focus-status">Maintain current low injury rate through Olympics</div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <!-- JavaScript -->
     <script>
-      // Interactive functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        // Tab navigation
-        const tabs = document.querySelectorAll(".coach-tab");
-        tabs.forEach((tab) => {
-          tab.addEventListener("click", function () {
-            tabs.forEach((t) => t.classList.remove("active"));
-            this.classList.add("active");
-            console.log("Tab switched to:", this.textContent);
-          });
-        });
-
-        // Player card interactions
-        const playerCards = document.querySelectorAll(".player-card");
-        playerCards.forEach((card) => {
-          card.addEventListener("click", function () {
-            const playerName = this.querySelector(".player-name").textContent;
-            console.log("Player selected:", playerName);
-          });
-        });
-
-        // Action button handling
-        const actionBtns = document.querySelectorAll(".action-btn");
-        actionBtns.forEach((btn) => {
-          btn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            const action = this.textContent;
-            const playerName =
-              this.closest(".player-card").querySelector(
-                ".player-name",
-              ).textContent;
-            console.log(`${action} clicked for ${playerName}`);
-          });
-        });
-
-        // Button interactions
-        const buttons = document.querySelectorAll(
-          ".cta-primary, .cta-secondary, .coach-btn",
-        );
-        buttons.forEach((button) => {
-          button.addEventListener("click", function () {
-            console.log("Button clicked:", this.textContent);
-          });
-        });
-
-        // Animate progress bars
-        const progressBars = document.querySelectorAll(".progress-fill");
-        progressBars.forEach((bar) => {
-          const width = bar.style.width;
-          bar.style.width = "0%";
-          setTimeout(() => {
-            bar.style.width = width;
-          }, 500);
-        });
-
-        // Overview card interactions
-        const overviewCards = document.querySelectorAll(".overview-card");
-        overviewCards.forEach((card) => {
-          card.addEventListener("click", function () {
-            const title = this.querySelector(".card-title").textContent;
-            console.log("Overview card clicked:", title);
-          });
-        });
-
-        // Chemistry monitoring
-        setInterval(() => {
-          const chemistryScore = document.querySelector(
-            ".overview-card .card-metric",
-          );
-          if (chemistryScore &amp;&amp; chemistryScore.textContent.includes("/10")) {
-            // Simulate minor chemistry fluctuations
-            const currentScore = parseFloat(chemistryScore.textContent);
-            const variation = (Math.random() - 0.5) * 0.1;
-            const newScore = Math.max(
-              7.0,
-              Math.min(10.0, currentScore + variation),
-            );
-            chemistryScore.textContent = newScore.toFixed(1) + "/10";
+      // Player card interactions
+      document.querySelectorAll('.player-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          if (!e.target.closest('.btn')) {
+            console.log('Player clicked:', this.querySelector('.player-name').textContent);
           }
-        }, 10000);
+        });
       });
     </script>
   </body>
