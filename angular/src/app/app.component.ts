@@ -29,7 +29,12 @@ import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loa
         height: 100%;
       }
 
-      main {
+      main:focus {
+        outline: 2px solid var(--ds-primary-green, #089949);
+        outline-offset: -2px;
+      }
+
+      main:focus:not(:focus-visible) {
         outline: none;
       }
 

@@ -130,8 +130,14 @@ export interface FormFieldConfig {
 
       input:focus,
       textarea:focus {
-        outline: none;
+        outline: 2px solid var(--p-primary-color);
+        outline-offset: 2px;
         border-color: var(--p-primary-color);
+      }
+
+      input:focus:not(:focus-visible),
+      textarea:focus:not(:focus-visible) {
+        outline: none;
       }
 
       input.error,

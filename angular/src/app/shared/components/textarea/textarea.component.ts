@@ -100,9 +100,14 @@ import { CommonModule } from "@angular/common";
       }
 
       .form-control:focus {
-        outline: none;
+        outline: 2px solid var(--p-primary-color);
+        outline-offset: 2px;
         border-color: var(--p-primary-color);
         box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+      }
+
+      .form-control:focus:not(:focus-visible) {
+        outline: none;
       }
 
       .form-control:disabled {

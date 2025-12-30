@@ -204,8 +204,13 @@ export type DrawerPosition = "left" | "right" | "top" | "bottom";
       }
 
       .drawer-close:focus-visible {
-        outline: none;
+        outline: 2px solid var(--ds-primary-green, #089949);
+        outline-offset: 2px;
         box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb, 8, 153, 73), 0.3);
+      }
+
+      .drawer-close:focus:not(:focus-visible) {
+        outline: none;
       }
 
       .drawer-content {

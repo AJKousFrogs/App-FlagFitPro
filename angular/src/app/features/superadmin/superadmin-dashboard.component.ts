@@ -605,8 +605,13 @@ import { SuperadminService, ApprovalRequest, SuperadminStats } from '../../core/
     }
 
     .modal-body textarea:focus {
-      outline: none;
+      outline: 2px solid var(--ds-primary-green);
+      outline-offset: 2px;
       border-color: var(--ds-primary-green);
+    }
+
+    .modal-body textarea:focus:not(:focus-visible) {
+      outline: none;
     }
 
     .modal-footer {

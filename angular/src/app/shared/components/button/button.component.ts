@@ -115,8 +115,13 @@ import { CommonModule } from "@angular/common";
       }
 
       button:focus-visible {
-        outline: none;
+        outline: 2px solid var(--ds-primary-green);
+        outline-offset: 2px;
         box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
+      }
+
+      button:focus:not(:focus-visible) {
+        outline: none;
       }
 
       button:disabled {

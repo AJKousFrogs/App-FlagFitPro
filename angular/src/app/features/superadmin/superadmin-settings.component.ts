@@ -646,8 +646,14 @@ interface SuperadminUser {
 
     .form-group input:focus,
     .form-group textarea:focus {
-      outline: none;
+      outline: 2px solid var(--ds-primary-green);
+      outline-offset: 2px;
       border-color: var(--ds-primary-green);
+    }
+
+    .form-group input:focus:not(:focus-visible),
+    .form-group textarea:focus:not(:focus-visible) {
+      outline: none;
     }
 
     .form-group textarea {

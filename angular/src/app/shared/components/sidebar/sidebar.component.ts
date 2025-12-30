@@ -12,6 +12,7 @@ interface NavItem {
   ariaLabel: string;
   badge?: number;
   roles?: string[]; // Optional: restrict to specific roles
+  group?: string; // Navigation group for organization
 }
 
 @Component({
@@ -57,24 +58,34 @@ interface NavItem {
       </div>
 
       <nav class="nav-section" aria-label="Main navigation">
-        @for (item of visibleNavItems(); track trackByRoute($index, item)) {
-          <a
-            [routerLink]="item.route"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
-            class="nav-item"
-            [attr.aria-label]="item.ariaLabel"
-            [id]="'nav-' + item.route.replace('/', '')"
-            (click)="onNavItemClick()"
-          >
-            <span class="nav-item-icon">
-              <i [class]="'pi ' + item.icon"></i>
-              @if (item.badge && item.badge > 0) {
-                <p-badge [value]="item.badge.toString()" severity="danger" class="nav-badge"></p-badge>
+        @for (group of navGroups; track group.id) {
+          @if (getGroupItems(group.id).length > 0) {
+            <div class="nav-group" role="group" [attr.aria-label]="group.label + ' navigation'">
+              <div class="nav-group-header">
+                <i [class]="'pi ' + group.icon" aria-hidden="true"></i>
+                <span class="nav-group-label">{{ group.label }}</span>
+              </div>
+              @for (item of getGroupItems(group.id); track trackByRoute($index, item)) {
+                <a
+                  [routerLink]="item.route"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+                  class="nav-item"
+                  [attr.aria-label]="item.ariaLabel"
+                  [id]="'nav-' + item.route.replace('/', '')"
+                  (click)="onNavItemClick()"
+                >
+                  <span class="nav-item-icon">
+                    <i [class]="'pi ' + item.icon"></i>
+                    @if (item.badge && item.badge > 0) {
+                      <p-badge [value]="item.badge.toString()" severity="danger" class="nav-badge"></p-badge>
+                    }
+                  </span>
+                  <span class="nav-item-label">{{ item.label }}</span>
+                </a>
               }
-            </span>
-            <span class="nav-item-label">{{ item.label }}</span>
-          </a>
+            </div>
+          }
         }
       </nav>
       
@@ -209,9 +220,35 @@ interface NavItem {
       }
 
       .nav-section {
-        padding: var(--space-4);
+        padding: var(--space-2);
         flex: 1;
         overflow-y: auto;
+      }
+
+      .nav-group {
+        margin-bottom: var(--space-2);
+      }
+
+      .nav-group-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-3);
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-tertiary);
+        margin-top: var(--space-2);
+      }
+
+      .nav-group-header i {
+        font-size: 0.75rem;
+        opacity: 0.7;
+      }
+
+      .nav-group:first-child .nav-group-header {
+        margin-top: 0;
       }
 
       .nav-item {
@@ -359,11 +396,25 @@ export class SidebarComponent implements OnInit, OnDestroy {
   isOpen = signal(false);
 
   /**
-   * Reorganized navigation for better UX flow:
+   * Navigation groups for better organization and cognitive load reduction
+   */
+  navGroups = [
+    { id: 'primary', label: 'Daily', icon: 'pi-home' },
+    { id: 'wellness', label: 'Wellness', icon: 'pi-heart' },
+    { id: 'competition', label: 'Competition', icon: 'pi-flag-fill' },
+    { id: 'team', label: 'Team', icon: 'pi-users' },
+    { id: 'resources', label: 'Resources', icon: 'pi-book' },
+    { id: 'community', label: 'Community', icon: 'pi-comments' },
+  ];
+
+  /**
+   * Reorganized navigation for better UX flow with grouping:
    * - Primary: Most-used daily features
-   * - Competition: Game-related features (promoted)
+   * - Wellness: Health & recovery
+   * - Competition: Game-related features
    * - Team: Team management
-   * - Secondary: Less frequent features
+   * - Resources: Learning materials
+   * - Community: Social features
    */
   private baseNavItems: NavItem[] = [
     // === PRIMARY (Daily Use) ===
@@ -372,62 +423,72 @@ export class SidebarComponent implements OnInit, OnDestroy {
       route: "/dashboard",
       icon: "pi-home",
       ariaLabel: "Dashboard Overview",
+      group: "primary",
     },
     {
       label: "Training",
       route: "/training",
       icon: "pi-bolt",
       ariaLabel: "Training Hub",
+      group: "primary",
     },
     {
       label: "Today's Practice",
       route: "/training/daily",
       icon: "pi-play",
       ariaLabel: "Today's Practice",
+      group: "primary",
     },
     {
       label: "Analytics",
       route: "/analytics",
       icon: "pi-chart-bar",
       ariaLabel: "Performance Analytics",
+      group: "primary",
     },
-    // === WELLNESS & RECOVERY (Promoted) ===
+    // === WELLNESS & RECOVERY ===
     {
       label: "Wellness",
       route: "/wellness",
       icon: "pi-heart",
       ariaLabel: "Wellness & Recovery",
+      group: "wellness",
     },
     {
       label: "Travel Recovery",
       route: "/travel/recovery",
       icon: "pi-globe",
       ariaLabel: "Travel & Jet Lag Recovery",
+      group: "wellness",
     },
-    // === COMPETITION (Promoted) ===
+    // === COMPETITION ===
     {
       label: "Game Day",
       route: "/game/readiness",
       icon: "pi-flag-fill",
       ariaLabel: "Game Day Readiness",
+      group: "competition",
     },
     {
       label: "Tournament Fuel",
       route: "/game/nutrition",
       icon: "pi-apple",
       ariaLabel: "Tournament Nutrition",
+      group: "competition",
     },
     {
       label: "Game Tracker",
       route: "/game-tracker",
       icon: "pi-video",
       ariaLabel: "Live Game Tracker",
+      group: "competition",
     },
     {
       label: "Tournaments",
       route: "/tournaments",
       icon: "pi-trophy",
       ariaLabel: "Tournament Schedule",
+      group: "competition",
     },
     // === TEAM ===
     {
@@ -435,6 +496,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       route: "/roster",
       icon: "pi-users",
       ariaLabel: "Team Roster",
+      group: "team",
     },
     {
       label: "Depth Chart",
@@ -442,6 +504,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       icon: "pi-sitemap",
       ariaLabel: "Depth Chart",
       roles: ["coach", "assistant_coach", "admin"],
+      group: "team",
     },
     // === RESOURCES ===
     {
@@ -449,12 +512,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       route: "/training/videos",
       icon: "pi-youtube",
       ariaLabel: "Training Video Library",
+      group: "resources",
     },
     {
       label: "Exercise Library",
       route: "/exercise-library",
       icon: "pi-book",
       ariaLabel: "Exercise Library",
+      group: "resources",
     },
     // === COMMUNITY ===
     {
@@ -462,25 +527,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       route: "/community",
       icon: "pi-comments",
       ariaLabel: "Community",
+      group: "community",
     },
     {
       label: "Chat",
       route: "/chat",
       icon: "pi-inbox",
       ariaLabel: "Team Chat",
-    },
-    // === SECONDARY ===
-    {
-      label: "Equipment",
-      route: "/equipment",
-      icon: "pi-box",
-      ariaLabel: "Equipment Checklist",
-    },
-    {
-      label: "Settings",
-      route: "/settings",
-      icon: "pi-cog",
-      ariaLabel: "Settings",
+      group: "community",
     },
   ];
 
@@ -560,5 +614,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   trackByRoute(index: number, item: NavItem): string {
     return item.route;
+  }
+
+  /**
+   * Get navigation items for a specific group
+   */
+  getGroupItems(groupId: string): NavItem[] {
+    return this.visibleNavItems().filter(item => item.group === groupId);
   }
 }

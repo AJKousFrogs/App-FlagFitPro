@@ -307,8 +307,16 @@
    ================================================================ */
 
 .focus-ring {
-  outline: none;
   position: relative;
+}
+
+.focus-ring:focus {
+  outline: 2px solid var(--ds-primary-green);
+  outline-offset: 2px;
+}
+
+.focus-ring:focus:not(:focus-visible) {
+  outline: none;
 }
 
 .focus-ring::before {

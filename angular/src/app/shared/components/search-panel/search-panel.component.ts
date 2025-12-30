@@ -223,8 +223,12 @@ import { SearchService, SearchResult } from "../../../core/services/search.servi
       }
 
       .search-input:focus {
+        outline: 2px solid var(--color-brand-primary, #089949);
+        outline-offset: 2px;
+      }
+
+      .search-input:focus:not(:focus-visible) {
         outline: none;
-        box-shadow: none;
       }
 
       .clear-btn {

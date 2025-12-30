@@ -214,3 +214,143 @@ export interface TrainingStats {
   averageIntensity: number;
   streak: number;
 }
+
+// ============================================================================
+// TRAINING COMPONENT UI TYPES
+// ============================================================================
+
+/**
+ * Training statistics card for dashboard display
+ */
+export interface TrainingStatCard {
+  label: string;
+  value: string;
+  icon: string;
+  color: string;
+  trend: string;
+  trendType: 'positive' | 'negative' | 'neutral';
+}
+
+/**
+ * Weekly schedule day view for training component
+ */
+export interface WeeklyScheduleDay {
+  name: string;
+  date?: Date;
+  sessions: Array<{
+    time: string;
+    title: string;
+    type?: SessionType;
+    duration?: number;
+  }>;
+  isToday?: boolean;
+}
+
+/**
+ * Workout card for training component
+ * Simplified view optimized for quick actions
+ */
+export interface Workout {
+  id?: string;
+  type: string;
+  title: string;
+  description: string;
+  duration: string;
+  intensity: 'low' | 'medium' | 'high';
+  location: string;
+  icon: string;
+  iconBg: string;
+  scheduledTime?: string;
+  completed?: boolean;
+}
+
+/**
+ * Achievement badge for training component
+ */
+export interface Achievement {
+  id?: string;
+  icon: string;
+  title: string;
+  description?: string;
+  date: string;
+  category?: 'streak' | 'milestone' | 'performance' | 'consistency';
+  level?: 'bronze' | 'silver' | 'gold' | 'platinum';
+}
+
+/**
+ * Wellness alert for training readiness
+ */
+export interface WellnessAlert {
+  severity: 'info' | 'warning' | 'critical';
+  message: string;
+  recommendations: string[];
+  icon?: string;
+  actionLabel?: string;
+  actionRoute?: string;
+}
+
+/**
+ * Readiness status for training
+ */
+export type ReadinessStatus = 'excellent' | 'good' | 'caution' | 'rest';
+
+/**
+ * Wellness data integrated with training
+ */
+export interface WellnessTrainingData {
+  alert: WellnessAlert | null;
+  readinessScore: number;
+  readinessStatus: ReadinessStatus;
+  lastCheckin?: Date;
+  metrics?: {
+    sleep?: number;
+    energy?: number;
+    stress?: number;
+    soreness?: number;
+    motivation?: number;
+  };
+}
+
+/**
+ * Complete training data result from loader
+ * Aggregates all data needed by training component
+ */
+export interface TrainingDataResult {
+  stats: TrainingStatCard[];
+  schedule: WeeklyScheduleDay[];
+  workouts: Workout[];
+  achievements: Achievement[];
+  wellnessData: WellnessTrainingData;
+  userName?: string;
+  lastRefresh?: Date;
+}
+
+/**
+ * Training component state
+ * Used by TrainingStateService
+ */
+export interface TrainingComponentState {
+  userName: string;
+  trainingStats: TrainingStatCard[];
+  weeklySchedule: WeeklyScheduleDay[];
+  workouts: Workout[];
+  achievements: Achievement[];
+  wellnessAlert: WellnessAlert | null;
+  readinessScore: number;
+  readinessStatus: ReadinessStatus;
+  swipingWorkoutId: string | null;
+  swipeDirection: 'left' | 'right' | null;
+  isRefreshing: boolean;
+  wellnessAlertDismissed: boolean;
+}
+
+/**
+ * Swipe event for workout actions
+ */
+export interface SwipeEvent {
+  type: 'swipeleft' | 'swiperight';
+  deltaX: number;
+  deltaY: number;
+  velocity: number;
+  target: HTMLElement;
+}
