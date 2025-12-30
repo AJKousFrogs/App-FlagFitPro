@@ -18,10 +18,12 @@ import { ToastModule } from "primeng/toast";
 import { ProgressBarModule } from "primeng/progressbar";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { AiConsentRequiredComponent } from "../../../shared/components/ai-consent-required/ai-consent-required.component";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
 
 interface AISuggestion {
   id: string;
@@ -70,6 +72,7 @@ interface AthleteMetrics {
     ProgressBarModule,
     MainLayoutComponent,
     PageHeaderComponent,
+    AiConsentRequiredComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -85,8 +88,19 @@ interface AthleteMetrics {
             icon="pi pi-refresh"
             (onClick)="generateNewPlan()"
             [loading]="isGenerating()"
+            [disabled]="!aiEnabled()"
           ></p-button>
         </app-page-header>
+
+        <!-- AI Consent Required Banner -->
+        @if (!aiEnabled()) {
+          <app-ai-consent-required
+            featureName="AI Training Scheduler"
+            [showSettingsLink]="true"
+            [status]="'disabled'"
+            variant="banner"
+          ></app-ai-consent-required>
+        }
 
         <!-- Readiness Overview -->
         <div class="readiness-overview">
@@ -503,6 +517,10 @@ export class AiTrainingSchedulerComponent implements OnInit {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private privacyService = inject(PrivacySettingsService);
+
+  // AI consent check - shows banner when disabled
+  readonly aiEnabled = this.privacyService.aiProcessingEnabled;
 
   selectedDate = signal<Date>(new Date());
   suggestions = signal<AISuggestion[]>([]);

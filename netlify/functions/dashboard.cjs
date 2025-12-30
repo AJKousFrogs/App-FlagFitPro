@@ -102,12 +102,18 @@ const getDashboardData = async (userId) => {
     };
   } catch (error) {
     console.error("[Dashboard] Database error in getDashboardData:", error);
-    // Return fallback data on database error
-    return getFallbackDashboardData();
+    // Return fallback data with indicator flag (RISK-018 fix)
+    return {
+      ...getFallbackDashboardData(),
+      _isFallback: true,
+      _fallbackReason: "database_error",
+      _error: error.message || "Unknown error",
+    };
   }
 };
 
 // Fallback dashboard data if database is unavailable
+// Note: _isFallback flag added at call site to indicate demo data (RISK-018)
 const getFallbackDashboardData = () => {
   return {
     totalGames: 12,
@@ -124,6 +130,9 @@ const getFallbackDashboardData = () => {
       gamesPlayed: { current: 2, target: 3 },
       skillPractice: { current: 5, target: 7 },
     },
+    // Fallback indicator - UI can check this to show "demo data" badge
+    _isFallback: true,
+    _fallbackReason: "no_data",
   };
 };
 

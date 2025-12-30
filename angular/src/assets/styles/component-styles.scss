@@ -455,6 +455,8 @@ select {
   background-position: right var(--space-3) center;
   background-size: 12px;
   padding-right: var(--space-10);
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   cursor: pointer;
 }

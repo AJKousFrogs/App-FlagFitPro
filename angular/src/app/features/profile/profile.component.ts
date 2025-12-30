@@ -14,14 +14,18 @@ import { AvatarModule } from "primeng/avatar";
 import { TagModule } from "primeng/tag";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { TooltipModule } from "primeng/tooltip";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { AuthService } from "../../core/services/auth.service";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { AccountDeletionService } from "../../core/services/account-deletion.service";
+import { DELETION_MESSAGES, getDeletionMessage } from "../../shared/utils/privacy-ux-copy";
 
 interface PendingInvitation {
   id: string;
@@ -51,15 +55,42 @@ interface PendingInvitation {
     TabPanels,
     TabPanel,
     ProgressSpinnerModule,
+    TooltipModule,
     MainLayoutComponent,
     StatsGridComponent,
     EmptyStateComponent,
+    PageErrorStateComponent,
     DatePipe,
     TitleCasePipe,
   ],
   template: `
     <app-main-layout>
       <div class="profile-page">
+        <!-- Deletion Pending Banner - Using Centralized UX Copy -->
+        @if (deletionPending()) {
+          <div class="deletion-pending-banner">
+            <div class="deletion-banner-content">
+              <i class="pi {{ deletionMessage.icon }}"></i>
+              <div class="deletion-banner-text">
+                <h4>{{ deletionMessage.title }}</h4>
+                <p>{{ getDeletionReason() }}</p>
+              </div>
+              <div class="deletion-banner-actions">
+                <p-button
+                  [label]="deletionMessage.actionLabel"
+                  icon="pi pi-times"
+                  severity="warning"
+                  (onClick)="cancelDeletion()"
+                  [loading]="cancellingDeletion()"
+                ></p-button>
+                <a [routerLink]="deletionMessage.helpLink" class="deletion-help-link">
+                  Learn More
+                </a>
+              </div>
+            </div>
+          </div>
+        }
+
         <!-- Loading State -->
         @if (isLoading()) {
           <div class="loading-state">
@@ -71,7 +102,16 @@ interface PendingInvitation {
           </div>
         }
 
-        @if (!isLoading()) {
+        <!-- Error State -->
+        @else if (hasError()) {
+          <app-page-error-state
+            title="Unable to load profile"
+            [message]="errorMessage()"
+            (retry)="retryLoad()"
+          ></app-page-error-state>
+        }
+
+        @else {
           <!-- Profile Header -->
           <div class="profile-header">
           <div class="profile-avatar-section">
@@ -106,6 +146,8 @@ interface PendingInvitation {
               icon="pi pi-cog"
               [outlined]="true"
               [routerLink]="['/settings']"
+              [disabled]="deletionPending()"
+              [pTooltip]="deletionPending() ? 'Cannot edit while deletion is pending' : ''"
             ></p-button>
           </div>
         </div>
@@ -284,6 +326,77 @@ interface PendingInvitation {
     `
       .profile-page {
         padding: var(--space-6);
+      }
+
+      /* Deletion Pending Banner - Centralized UX Copy */
+      .deletion-pending-banner {
+        background: linear-gradient(135deg, var(--color-status-warning-bg, #fff8e1) 0%, #fff3cd 100%);
+        border: 1px solid var(--color-status-warning, #f59e0b);
+        border-radius: var(--radius-lg);
+        padding: var(--space-4);
+        margin-bottom: var(--space-6);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .deletion-banner-content {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-4);
+      }
+
+      .deletion-banner-content > i {
+        font-size: 1.75rem;
+        color: var(--color-status-warning, #f59e0b);
+        flex-shrink: 0;
+        margin-top: var(--space-1);
+      }
+
+      .deletion-banner-text {
+        flex: 1;
+      }
+
+      .deletion-banner-text h4 {
+        margin: 0 0 var(--space-2) 0;
+        font-size: var(--font-heading-sm);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-status-warning-dark, #b45309);
+      }
+
+      .deletion-banner-text p {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: var(--font-body-md);
+      }
+
+      .deletion-banner-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: var(--space-2);
+        flex-shrink: 0;
+      }
+
+      .deletion-help-link {
+        font-size: var(--font-body-sm);
+        color: var(--color-status-warning-dark, #b45309);
+        text-decoration: underline;
+      }
+
+      .deletion-help-link:hover {
+        color: var(--color-status-warning, #f59e0b);
+      }
+
+      @media (max-width: 640px) {
+        .deletion-banner-content {
+          flex-direction: column;
+        }
+
+        .deletion-banner-actions {
+          flex-direction: row;
+          width: 100%;
+          justify-content: space-between;
+          align-items: center;
+        }
       }
 
       .loading-state {
@@ -588,8 +701,20 @@ export class ProfileComponent implements OnInit {
   private supabaseService = inject(SupabaseService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private accountDeletionService = inject(AccountDeletionService);
+
+  // Centralized UX copy for deletion state
+  readonly deletionMessage = DELETION_MESSAGES.pending;
+  
+  // Deletion state - restricts profile actions when pending
+  deletionPending = this.accountDeletionService.hasPendingDeletion;
+  daysUntilDeletion = this.accountDeletionService.daysRemaining;
+  cancellingDeletion = signal(false);
 
   isLoading = signal(true);
+  hasError = signal(false);
+  errorMessage = signal('Something went wrong while loading your profile. Please try again.');
+  
   userName = signal("Loading...");
   userEmail = signal("Loading...");
   userRole = signal("Player");
@@ -606,8 +731,26 @@ export class ProfileComponent implements OnInit {
   processingInvitation = signal<string | null>(null);
 
   ngOnInit(): void {
+    this.initializePage();
+  }
+
+  /**
+   * Initialize page with error handling
+   */
+  private initializePage(): void {
+    this.isLoading.set(true);
+    this.hasError.set(false);
     this.loadProfileData();
     this.loadPendingInvitations();
+    // Check for pending deletion to show banner and restrict actions
+    this.accountDeletionService.checkDeletionStatus();
+  }
+
+  /**
+   * Retry loading the page
+   */
+  retryLoad(): void {
+    this.initializePage();
   }
 
   async loadProfileData(): Promise<void> {
@@ -765,7 +908,15 @@ export class ProfileComponent implements OnInit {
 
     } catch (error) {
       this.logger.error('Error loading profile data:', error);
-      this.loadEmptyState();
+      
+      // Check if it's a critical error
+      if (error instanceof Error && (error.message.includes('auth') || error.message.includes('401'))) {
+        this.hasError.set(true);
+        this.errorMessage.set('Your session has expired. Please log in again.');
+      } else {
+        // For non-critical errors, show empty state
+        this.loadEmptyState();
+      }
     }
 
     this.isLoading.set(false);
@@ -958,5 +1109,36 @@ export class ProfileComponent implements OnInit {
   requestNewInvitation(invitation: PendingInvitation): void {
     // This would typically send a notification to the team admin
     this.toastService.info(`A request has been sent to ${invitation.teamName} for a new invitation.`);
+  }
+
+  // ============================================================================
+  // DELETION STATE HANDLING - Using Centralized UX Copy
+  // ============================================================================
+
+  /**
+   * Get the deletion reason with days remaining interpolated
+   * Uses centralized getDeletionMessage helper for consistent UX
+   */
+  getDeletionReason(): string {
+    const days = this.daysUntilDeletion();
+    // Use the centralized helper which handles days interpolation
+    const message = getDeletionMessage('pending', days ?? undefined);
+    return message.reason;
+  }
+
+  /**
+   * Cancel pending account deletion
+   */
+  async cancelDeletion(): Promise<void> {
+    this.cancellingDeletion.set(true);
+    try {
+      const success = await this.accountDeletionService.cancelDeletion();
+      if (success) {
+        // Reload profile data to refresh state
+        this.loadProfileData();
+      }
+    } finally {
+      this.cancellingDeletion.set(false);
+    }
   }
 }

@@ -26,6 +26,8 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -133,6 +135,8 @@ type TeamRole =
     MainLayoutComponent, 
     PageHeaderComponent, 
     EmptyStateComponent,
+    PageErrorStateComponent,
+    PageLoadingStateComponent,
     DialogModule,
     InputTextModule,
     SelectModule,
@@ -148,6 +152,25 @@ type TeamRole =
   ],
   template: `
     <app-main-layout>
+      <!-- Loading State -->
+      @if (isPageLoading()) {
+        <app-page-loading-state
+          message="Loading roster..."
+          variant="skeleton"
+        ></app-page-loading-state>
+      }
+
+      <!-- Error State -->
+      @else if (hasPageError()) {
+        <app-page-error-state
+          title="Unable to load roster"
+          [message]="pageErrorMessage()"
+          (retry)="retryLoad()"
+        ></app-page-error-state>
+      }
+
+      <!-- Content -->
+      @else {
       <div class="roster-page">
         <!-- Page Header -->
         <app-page-header
@@ -1058,6 +1081,8 @@ type TeamRole =
 
       <!-- Confirmation Dialog -->
       <p-confirmDialog></p-confirmDialog>
+      </div>
+      } <!-- End of @else for content -->
     </app-main-layout>
   `,
   styles: [
@@ -1770,9 +1795,75 @@ type TeamRole =
         margin-top: var(--space-2);
       }
 
+      /* ================================================================
+         RESPONSIVE BREAKPOINTS - Full Coverage
+         ================================================================ */
+      
+      /* Extra Large Screens (> 1400px) */
+      @media (min-width: 1400px) {
+        .roster-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+        
+        .team-overview-grid {
+          grid-template-columns: repeat(6, 1fr);
+        }
+      }
+      
+      /* Large Screens (1200px - 1399px) */
+      @media (min-width: 1200px) and (max-width: 1399px) {
+        .roster-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .team-overview-grid {
+          grid-template-columns: repeat(5, 1fr);
+        }
+      }
+      
+      /* Medium-Large Screens (1024px - 1199px) */
+      @media (min-width: 1024px) and (max-width: 1199px) {
+        .roster-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .team-overview-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      
+      /* Tablet Landscape (769px - 1023px) */
+      @media (min-width: 769px) and (max-width: 1023px) {
+        .roster-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .team-overview-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .search-filter-bar {
+          flex-wrap: wrap;
+        }
+        
+        .search-box {
+          min-width: 200px;
+        }
+        
+        .filter-select {
+          min-width: 130px;
+        }
+      }
+      
+      /* Tablet Portrait (768px) */
       @media (max-width: 768px) {
+        .roster-page {
+          padding: var(--space-4);
+        }
+        
         .roster-grid {
           grid-template-columns: 1fr;
+          gap: var(--space-4);
         }
 
         .team-overview-grid {
@@ -1782,10 +1873,20 @@ type TeamRole =
         .search-filter-bar {
           flex-direction: column;
           align-items: stretch;
+          padding: var(--space-3);
+        }
+        
+        .search-box {
+          min-width: 100%;
         }
 
         .filter-group {
           flex-direction: column;
+          width: 100%;
+        }
+        
+        .filter-select {
+          min-width: 100%;
         }
 
         .bulk-actions {
@@ -1795,6 +1896,7 @@ type TeamRole =
           border-top: 1px solid var(--p-surface-200);
           margin-left: 0;
           justify-content: center;
+          width: 100%;
         }
 
         .header-actions {
@@ -1818,6 +1920,197 @@ type TeamRole =
         .details-grid {
           grid-template-columns: 1fr;
         }
+        
+        .player-header {
+          flex-direction: column;
+          text-align: center;
+        }
+        
+        .player-jersey {
+          width: 48px;
+          height: 48px;
+          font-size: var(--font-body-md);
+        }
+        
+        .card-actions {
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+        
+        .section-title {
+          font-size: var(--font-heading-md);
+        }
+        
+        .card-title {
+          font-size: var(--font-heading-md);
+        }
+        
+        .invitation-item {
+          flex-direction: column;
+          gap: var(--space-3);
+          align-items: flex-start;
+        }
+        
+        .invitation-actions {
+          width: 100%;
+          justify-content: flex-end;
+        }
+      }
+      
+      /* Mobile Large (481px - 767px) */
+      @media (min-width: 481px) and (max-width: 767px) {
+        .team-overview-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      
+      /* Mobile Small (< 480px) */
+      @media (max-width: 480px) {
+        .roster-page {
+          padding: var(--space-3);
+        }
+        
+        .team-overview-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: var(--space-2);
+        }
+        
+        .overview-stat {
+          padding: var(--space-3);
+        }
+        
+        .overview-value {
+          font-size: var(--font-heading-lg);
+        }
+        
+        .player-card,
+        .staff-card {
+          padding: var(--space-3);
+        }
+        
+        .player-jersey {
+          width: 40px;
+          height: 40px;
+          font-size: var(--font-body-sm);
+        }
+        
+        .details-jersey {
+          width: 60px;
+          height: 60px;
+          font-size: var(--font-heading-lg);
+        }
+        
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .player-details {
+          flex-direction: column;
+          gap: var(--space-2);
+        }
+        
+        .invitation-meta {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-1);
+        }
+        
+        .invitations-list {
+          max-height: 300px;
+        }
+        
+        .status-options {
+          gap: var(--space-1);
+        }
+        
+        .status-option {
+          padding: var(--space-2) var(--space-3);
+        }
+      }
+      
+      /* Extra Small Screens (< 375px) */
+      @media (max-width: 374px) {
+        .roster-page {
+          padding: var(--space-2);
+        }
+        
+        .team-overview-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .header-actions {
+          flex-direction: column;
+        }
+        
+        .section-title {
+          font-size: var(--font-body-lg);
+          flex-wrap: wrap;
+        }
+        
+        .position-count {
+          width: 100%;
+        }
+      }
+      
+      /* Landscape Mode on Mobile */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .roster-page {
+          padding: var(--space-3);
+        }
+        
+        .roster-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .player-card,
+        .staff-card {
+          padding: var(--space-3);
+        }
+      }
+      
+      /* Touch Device Optimizations */
+      @media (hover: none) and (pointer: coarse) {
+        .player-card:hover,
+        .staff-card:hover {
+          transform: none;
+          box-shadow: var(--shadow-md);
+        }
+        
+        .overview-stat:hover {
+          transform: none;
+        }
+        
+        .card-actions button,
+        .header-actions button {
+          min-height: 44px;
+          min-width: 44px;
+        }
+      }
+      
+      /* Print Styles */
+      @media print {
+        .search-filter-bar,
+        .header-actions,
+        .card-actions,
+        .bulk-actions {
+          display: none !important;
+        }
+        
+        .roster-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: var(--space-2);
+        }
+        
+        .player-card,
+        .staff-card {
+          box-shadow: none;
+          border: 1px solid #ccc;
+          page-break-inside: avoid;
+        }
       }
     `,
   ],
@@ -1838,6 +2131,11 @@ export class RosterComponent implements OnInit {
   
   isLoading = signal(true);
   isSaving = signal(false);
+  
+  // Runtime guard signals - prevent white screen crashes
+  isPageLoading = signal<boolean>(true);
+  hasPageError = signal<boolean>(false);
+  pageErrorMessage = signal<string>('Something went wrong while loading the roster. Please try again.');
   
   // Dialog visibility
   showPlayerDialog = signal(false);
@@ -2072,8 +2370,24 @@ export class RosterComponent implements OnInit {
   // ============================================================================
   
   ngOnInit(): void {
+    this.initializePage();
+  }
+
+  /**
+   * Initialize page with error handling
+   */
+  private initializePage(): void {
+    this.isPageLoading.set(true);
+    this.hasPageError.set(false);
     this.loadRosterData();
     this.loadPendingInvitations();
+  }
+
+  /**
+   * Retry loading the page
+   */
+  retryLoad(): void {
+    this.initializePage();
   }
 
   // ============================================================================
@@ -2207,9 +2521,19 @@ export class RosterComponent implements OnInit {
 
     } catch (error: any) {
       this.logger.error('[Roster] Error loading roster:', error);
-      this.toastService.error('Failed to load roster data');
+      this.hasPageError.set(true);
+      
+      // Set user-friendly error message
+      if (error?.status === 401 || error?.status === 403) {
+        this.pageErrorMessage.set('Your session has expired. Please log in again.');
+      } else if (error?.status >= 500) {
+        this.pageErrorMessage.set('The server is temporarily unavailable. Please try again later.');
+      } else {
+        this.pageErrorMessage.set('Failed to load roster data. Please try again.');
+      }
     } finally {
       this.isLoading.set(false);
+      this.isPageLoading.set(false);
     }
   }
 

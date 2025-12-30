@@ -17,6 +17,8 @@ import { Tabs, TabPanel } from "primeng/tabs";
 import { Select } from "primeng/select";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
 import {
   DEFAULT_CHART_OPTIONS,
   LINE_CHART_OPTIONS,
@@ -34,6 +36,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 interface Metric {
   icon: string;
@@ -61,9 +64,30 @@ interface Metric {
     Select,
     MainLayoutComponent,
     PageHeaderComponent,
+    PageErrorStateComponent,
+    PageLoadingStateComponent,
   ],
   template: `
     <app-main-layout>
+      <!-- Loading State -->
+      @if (isPageLoading()) {
+        <app-page-loading-state
+          message="Loading analytics..."
+          variant="skeleton"
+        ></app-page-loading-state>
+      }
+
+      <!-- Error State -->
+      @else if (hasPageError()) {
+        <app-page-error-state
+          title="Unable to load analytics"
+          [message]="pageErrorMessage()"
+          (retry)="retryLoad()"
+        ></app-page-error-state>
+      }
+
+      <!-- Content -->
+      @else {
       <div class="analytics-page">
         <app-page-header
           title="FlagFit Pro Analytics"
@@ -134,13 +158,13 @@ interface Metric {
                 </div>
               } @else {
                 <div class="empty-chart-state">
-                  <i class="pi pi-chart-line empty-icon"></i>
-                  <h4>No Performance Data Yet</h4>
-                  <p>Complete training sessions and wellness check-ins to see your performance trends.</p>
+                  <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
+                  <h4>{{ noDataMessage.title }}</h4>
+                  <p>{{ noDataMessage.reason }}</p>
                   <p-button 
-                    label="Start Training" 
+                    [label]="noDataMessage.actionLabel" 
                     icon="pi pi-bolt"
-                    [routerLink]="['/training']"
+                    [routerLink]="noDataMessage.helpLink"
                   ></p-button>
                 </div>
               }
@@ -262,13 +286,13 @@ interface Metric {
                 </div>
               } @else {
                 <div class="empty-chart-state">
-                  <i class="pi pi-chart-pie empty-icon"></i>
-                  <h4>No Training Data Yet</h4>
+                  <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
+                  <h4>{{ noDataMessage.title }}</h4>
                   <p>Log your training sessions to see how your time is distributed across different workout types.</p>
                   <p-button 
-                    label="Log Training" 
+                    [label]="noDataMessage.actionLabel" 
                     icon="pi pi-plus"
-                    [routerLink]="['/training']"
+                    [routerLink]="noDataMessage.helpLink"
                   ></p-button>
                 </div>
               }
@@ -739,6 +763,7 @@ interface Metric {
           </p-tabs>
         </p-card>
       </div>
+      } <!-- End of @else for content -->
     </app-main-layout>
   `,
   styles: [
@@ -1030,6 +1055,14 @@ export class AnalyticsComponent implements OnInit {
   private trainingDataService = inject(TrainingDataService);
   private logger = inject(LoggerService);
 
+  // Runtime guard signals - prevent white screen crashes
+  isPageLoading = signal<boolean>(true);
+  hasPageError = signal<boolean>(false);
+  pageErrorMessage = signal<string>('Something went wrong while loading analytics. Please try again.');
+
+  // Centralized UX copy for data states
+  readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
+
   metrics = signal<Metric[]>([]);
   performanceChartData = signal<any>(null);
   chemistryChartData = signal<any>(null);
@@ -1071,9 +1104,36 @@ export class AnalyticsComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.loadAnalyticsData();
-    this.loadPlayerStatistics();
-    this.loadTrainingStatistics();
+    this.initializePage();
+  }
+
+  /**
+   * Initialize page with error handling
+   */
+  private initializePage(): void {
+    this.isPageLoading.set(true);
+    this.hasPageError.set(false);
+
+    try {
+      this.loadAnalyticsData();
+      this.loadPlayerStatistics();
+      this.loadTrainingStatistics();
+      
+      // Set loading to false after initial data load starts
+      setTimeout(() => this.isPageLoading.set(false), 500);
+    } catch (error) {
+      this.isPageLoading.set(false);
+      this.hasPageError.set(true);
+      this.logger.error('[Analytics] Init error:', error);
+      this.pageErrorMessage.set('Failed to initialize analytics. Please try again.');
+    }
+  }
+
+  /**
+   * Retry loading the page
+   */
+  retryLoad(): void {
+    this.initializePage();
   }
 
   loadTrainingStatistics(): void {

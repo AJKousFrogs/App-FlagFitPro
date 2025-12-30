@@ -19,6 +19,7 @@ import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -29,7 +30,8 @@ interface TrainingSession {
   date: Date;
   type: string;
   duration: number;
-  status: "scheduled" | "completed" | "missed";
+  /** Maps DB status (planned/in_progress/completed/cancelled) to UI status */
+  status: "scheduled" | "completed" | "missed" | "in_progress";
 }
 
 @Component({
@@ -48,6 +50,7 @@ interface TrainingSession {
     TooltipModule,
     MainLayoutComponent,
     PageHeaderComponent,
+    PageErrorStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -82,7 +85,16 @@ interface TrainingSession {
               <h3>Upcoming Sessions</h3>
             </ng-template>
             <div class="sessions-list">
-              @if (isLoading()) {
+              <!-- Error State -->
+              @if (hasError()) {
+                <app-page-error-state
+                  title="Unable to load sessions"
+                  [message]="errorMessage()"
+                  icon="pi-calendar-times"
+                  (retry)="loadSessions()"
+                ></app-page-error-state>
+              }
+              @else if (isLoading()) {
                 @for (i of [1, 2, 3]; track i) {
                   <div class="session-item">
                     <div class="session-info">
@@ -222,6 +234,10 @@ export class TrainingScheduleComponent implements OnInit {
   selectedDate = signal<Date>(new Date());
   sessions = signal<TrainingSession[]>([]);
   isLoading = signal<boolean>(false);
+  
+  // Runtime guard signals - prevent white screen crashes
+  hasError = signal<boolean>(false);
+  errorMessage = signal<string>('Failed to load training sessions. Please try again.');
 
   // Filter sessions based on selected date
   filteredSessions = computed(() => {
@@ -250,11 +266,13 @@ export class TrainingScheduleComponent implements OnInit {
 
   async loadSessions(): Promise<void> {
     this.isLoading.set(true);
+    this.hasError.set(false);
 
     try {
       const user = this.authService.getUser();
       if (!user?.id) {
         this.logger.warn("No user found, cannot load sessions");
+        this.isLoading.set(false);
         return;
       }
 
@@ -283,13 +301,25 @@ export class TrainingScheduleComponent implements OnInit {
         date: new Date(session.scheduled_date),
         type: session.session_type || "Training",
         duration: session.duration_minutes || 60,
-        status: session.status as "scheduled" | "completed" | "missed",
+        // Map DB status to UI status: planned/scheduled -> scheduled, cancelled -> missed
+        status: this.mapDbStatusToUiStatus(session.status),
       }));
 
       this.sessions.set(mappedSessions);
     } catch (error) {
       this.logger.error("Error loading sessions:", error);
-      this.toastService.error("Failed to load training sessions");
+      this.hasError.set(true);
+      
+      // Set user-friendly error message based on error type
+      if (error instanceof Error) {
+        if (error.message.includes('network') || error.message.includes('fetch')) {
+          this.errorMessage.set('Unable to connect to the server. Please check your internet connection.');
+        } else if (error.message.includes('permission') || error.message.includes('denied')) {
+          this.errorMessage.set('You don\'t have permission to view these sessions.');
+        } else {
+          this.errorMessage.set('Failed to load training sessions. Please try again.');
+        }
+      }
     } finally {
       this.isLoading.set(false);
     }
@@ -359,8 +389,32 @@ export class TrainingScheduleComponent implements OnInit {
         return "success";
       case "missed":
         return "danger";
+      case "in_progress":
+        return "warn";
       default:
         return "info";
+    }
+  }
+
+  /**
+   * Maps database status values to UI-friendly status values
+   * DB enum: planned, in_progress, completed, cancelled, scheduled
+   * UI expects: scheduled, completed, missed, in_progress
+   */
+  private mapDbStatusToUiStatus(
+    dbStatus: string | null | undefined
+  ): "scheduled" | "completed" | "missed" | "in_progress" {
+    switch (dbStatus) {
+      case "completed":
+        return "completed";
+      case "cancelled":
+        return "missed";
+      case "in_progress":
+        return "in_progress";
+      case "planned":
+      case "scheduled":
+      default:
+        return "scheduled";
     }
   }
 }

@@ -4,12 +4,14 @@ import {
   OnDestroy,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
   DestroyRef,
   effect,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CarouselModule } from "primeng/carousel";
@@ -22,6 +24,8 @@ import { PerformanceMonitorService } from "../../core/services/performance-monit
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { PrivacySettingsService } from "../../core/services/privacy-settings.service";
+import { AI_PROCESSING_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { timer } from "rxjs";
 
 interface Insight {
@@ -118,6 +122,7 @@ declare global {
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     ButtonModule,
     CardModule,
     CarouselModule,
@@ -125,6 +130,23 @@ declare global {
   ],
   animations: [scaleInOut],
   template: `
+    <!-- AI Disabled Banner -->
+    @if (!aiEnabled()) {
+      <div class="ai-disabled-banner">
+        <div class="ai-disabled-content">
+          <i class="pi {{ aiDisabledMessage.icon }}"></i>
+          <div class="ai-disabled-text">
+            <h4>{{ aiDisabledMessage.title }}</h4>
+            <p>{{ aiDisabledMessage.reason }}</p>
+          </div>
+          <a [routerLink]="aiDisabledMessage.helpLink" class="ai-enable-link">
+            {{ aiDisabledMessage.actionLabel }}
+          </a>
+        </div>
+      </div>
+    }
+
+    @if (aiEnabled()) {
     <div
       class="training-companion"
       [class.active]="isActive()"
@@ -309,6 +331,7 @@ declare global {
         </div>
       }
     </div>
+    } <!-- End of aiEnabled() check -->
   `,
   styles: [
     `
@@ -615,6 +638,64 @@ declare global {
           max-width: none;
         }
       }
+
+      /* AI Disabled Banner Styles */
+      .ai-disabled-banner {
+        position: fixed;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-4));
+        right: var(--space-4);
+        z-index: var(--z-index-dropdown);
+        background: var(--surface-primary);
+        border: 1px solid var(--p-surface-200);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-md);
+        max-width: 320px;
+      }
+
+      .ai-disabled-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: var(--space-4);
+        gap: var(--space-3);
+      }
+
+      .ai-disabled-content i {
+        font-size: 2rem;
+        color: var(--color-text-secondary);
+      }
+
+      .ai-disabled-text h4 {
+        font-size: var(--font-body-lg);
+        font-weight: var(--font-weight-semibold);
+        margin: 0;
+        color: var(--color-text-primary);
+      }
+
+      .ai-disabled-text p {
+        font-size: var(--font-body-sm);
+        color: var(--color-text-secondary);
+        margin: 0;
+      }
+
+      .ai-enable-link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-4);
+        background: var(--color-brand-primary);
+        color: var(--color-text-on-primary);
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        font-size: var(--font-body-sm);
+        font-weight: var(--font-weight-medium);
+        transition: background var(--transition-base);
+      }
+
+      .ai-enable-link:hover {
+        background: var(--color-brand-primary-hover);
+      }
     `,
   ],
 })
@@ -626,6 +707,11 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
   private apiService = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
+  private privacyService = inject(PrivacySettingsService);
+
+  // AI consent check - shows disabled banner when AI processing is off
+  readonly aiEnabled = this.privacyService.aiProcessingEnabled;
+  readonly aiDisabledMessage = AI_PROCESSING_MESSAGES.disabled;
 
   isActive = signal(false);
   isMinimized = signal(false);

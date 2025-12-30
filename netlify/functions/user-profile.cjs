@@ -86,15 +86,26 @@ exports.handler = async (event, context) => {
       const sessionCount = parseInt(trainingData.session_count) || 0;
       const trainingFrequency = Math.round((sessionCount / 30) * 7);
 
-      // Build comprehensive profile
+      // Build comprehensive profile with null-safety flags (RISK-019 fix)
+      const heightCm = userInfo.height_cm ? parseFloat(userInfo.height_cm) : null;
+      const weightKg = userInfo.weight_kg ? parseFloat(userInfo.weight_kg) : null;
+      
+      // Flag incomplete profile data so UI can prompt user
+      const profileComplete = !!(heightCm && weightKg && userInfo.birth_date && userInfo.position);
+      const missingFields = [];
+      if (!heightCm) missingFields.push('height');
+      if (!weightKg) missingFields.push('weight');
+      if (!userInfo.birth_date) missingFields.push('birthDate');
+      if (!userInfo.position) missingFields.push('position');
+
       const profile = {
         userId: userInfo.id,
-        heightCm: userInfo.height_cm ? parseFloat(userInfo.height_cm) : null,
-        weightKg: userInfo.weight_kg ? parseFloat(userInfo.weight_kg) : null,
-        position: userInfo.position,
-        birthDate: userInfo.birth_date,
-        role: userInfo.role,
-        experienceLevel: userInfo.experience_level,
+        heightCm,
+        weightKg,
+        position: userInfo.position || null,
+        birthDate: userInfo.birth_date || null,
+        role: userInfo.role || 'athlete',
+        experienceLevel: userInfo.experience_level || 'beginner',
         injuries: injuriesResult.rows.map((row) => ({
           type: row.type,
           severity: row.severity,
@@ -106,17 +117,20 @@ exports.handler = async (event, context) => {
         trainingFrequency,
         typicalDuration: trainingData.avg_duration
           ? Math.round(parseFloat(trainingData.avg_duration))
-          : null,
+          : 60, // Default to 60 min if no data
         avgIntensity: trainingData.avg_intensity
           ? parseFloat(trainingData.avg_intensity).toFixed(1)
-          : null,
+          : '5.0', // Default to moderate if no data
         recentSessions: recentSessionsResult.rows.map((row) => ({
-          type: row.session_type,
-          duration: row.duration_minutes,
-          intensity: row.intensity_level,
+          type: row.session_type || 'Training',
+          duration: row.duration_minutes || 60,
+          intensity: row.intensity_level || 5,
           date: row.session_date,
         })),
         sessionTypes: trainingData.session_types || [],
+        // Profile completeness indicators for UI
+        _profileComplete: profileComplete,
+        _missingFields: missingFields,
       };
 
       return createSuccessResponse(profile);

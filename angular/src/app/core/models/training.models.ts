@@ -74,13 +74,21 @@ export interface TrainingSession {
   performance?: SessionPerformance;
 }
 
+/**
+ * Session types - aligned with DB training_sessions.session_type
+ * DB also accepts: conditioning, technique, team_practice, scrimmage
+ */
 export type SessionType =
   | 'speed'
   | 'strength'
   | 'skills'
   | 'game'
   | 'recovery'
-  | 'mixed';
+  | 'mixed'
+  | 'conditioning'
+  | 'technique'
+  | 'team_practice'
+  | 'scrimmage';
 
 export interface Exercise {
   id: string;
@@ -121,6 +129,18 @@ export interface TrainingPlan {
 }
 
 export type PlanStatus = 'draft' | 'active' | 'completed' | 'cancelled';
+
+/**
+ * Training session status - aligned with DB enum training_session_status
+ * DB values: planned, in_progress, completed, cancelled, scheduled
+ * UI may map these to display-friendly values
+ */
+export type TrainingSessionStatus = 
+  | 'planned' 
+  | 'in_progress' 
+  | 'completed' 
+  | 'cancelled' 
+  | 'scheduled';
 
 export interface WeeklyPlan {
   weekNumber: number;

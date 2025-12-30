@@ -342,6 +342,7 @@ interface NavItem {
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
         z-index: 999;
+        -webkit-backdrop-filter: blur(2px);
         backdrop-filter: blur(2px);
       }
 

@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
@@ -15,10 +16,13 @@ import { InputNumberModule } from "primeng/inputnumber";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { WellnessService } from "../../core/services/wellness.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ToastService } from "../../core/services/toast.service";
+import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 interface WellnessMetric {
   label: string;
@@ -34,6 +38,7 @@ interface WellnessMetric {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
+    RouterModule,
     CardModule,
     ButtonModule,
     ChartModule,
@@ -41,9 +46,30 @@ interface WellnessMetric {
     MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent,
+    PageErrorStateComponent,
+    PageLoadingStateComponent,
   ],
   template: `
     <app-main-layout>
+      <!-- Loading State -->
+      @if (isPageLoading()) {
+        <app-page-loading-state
+          message="Loading wellness data..."
+          variant="skeleton"
+        ></app-page-loading-state>
+      }
+
+      <!-- Error State -->
+      @else if (hasPageError()) {
+        <app-page-error-state
+          title="Unable to load wellness data"
+          [message]="pageErrorMessage()"
+          (retry)="retryLoad()"
+        ></app-page-error-state>
+      }
+
+      <!-- Content -->
+      @else {
       <div class="wellness-page">
         <app-page-header
           title="Wellness & Recovery"
@@ -251,6 +277,7 @@ interface WellnessMetric {
           </div>
         </p-card>
       </div>
+      } <!-- End of @else for content -->
     </app-main-layout>
   `,
   styles: [
@@ -391,6 +418,11 @@ export class WellnessComponent implements OnInit {
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
 
+  // Runtime guard signals - prevent white screen crashes
+  isPageLoading = signal<boolean>(true);
+  hasPageError = signal<boolean>(false);
+  pageErrorMessage = signal<string>('Something went wrong while loading wellness data. Please try again.');
+
   isSubmitting = signal(false);
 
   metrics = signal<WellnessMetric[]>([]);
@@ -413,7 +445,23 @@ export class WellnessComponent implements OnInit {
   chartOptions = DEFAULT_CHART_OPTIONS;
 
   ngOnInit(): void {
+    this.initializePage();
+  }
+
+  /**
+   * Initialize page with error handling
+   */
+  private initializePage(): void {
+    this.isPageLoading.set(true);
+    this.hasPageError.set(false);
     this.loadWellnessData();
+  }
+
+  /**
+   * Retry loading the page
+   */
+  retryLoad(): void {
+    this.initializePage();
   }
 
   loadWellnessData(): void {
@@ -422,6 +470,9 @@ export class WellnessComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
       next: (response) => {
+        this.isPageLoading.set(false);
+        this.hasPageError.set(false);
+        
         if (response.success && response.data && response.data.length > 0) {
           const latestData = response.data[0];
           const overallScore =
@@ -518,44 +569,60 @@ export class WellnessComponent implements OnInit {
         }
       },
       error: (err) => {
+        this.isPageLoading.set(false);
         this.logger.error("Error loading wellness data:", err);
-        this.loadFallbackData();
+        
+        // Check if it's a critical error that should show error state
+        if (err?.status === 401 || err?.status === 403) {
+          this.hasPageError.set(true);
+          this.pageErrorMessage.set('Your session has expired. Please log in again.');
+        } else if (err?.status >= 500) {
+          this.hasPageError.set(true);
+          this.pageErrorMessage.set('The server is temporarily unavailable. Please try again later.');
+        } else {
+          // For non-critical errors, show fallback data instead of error state
+          this.loadFallbackData();
+        }
       },
     });
   }
 
+  // Centralized UX copy for no data state
+  readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
+
   private loadFallbackData(): void {
+    // Use centralized UX copy for consistent messaging
     this.wellnessStats.set([
       {
         label: "Sleep Quality",
-        value: "No data",
+        value: this.noDataMessage.title,
         icon: "pi-moon",
         color: "#3498db",
-        trend: "Log check-in",
+        trend: this.noDataMessage.actionLabel,
         trendType: "neutral",
       },
       {
         label: "Recovery Score",
-        value: "N/A",
+        value: this.noDataMessage.title,
         icon: "pi-heart",
         color: "var(--ds-primary-green)",
-        trend: "Log check-in",
+        trend: this.noDataMessage.actionLabel,
         trendType: "neutral",
       },
       {
         label: "Energy Level",
-        value: "N/A",
+        value: this.noDataMessage.title,
         icon: "pi-bolt",
         color: "#f1c40f",
-        trend: "Log check-in",
+        trend: this.noDataMessage.actionLabel,
         trendType: "neutral",
       },
       {
         label: "Stress Level",
-        value: "N/A",
+        value: this.noDataMessage.title,
         icon: "pi-shield",
         color: "#10c96b",
-        trend: "Log check-in",
+        trend: this.noDataMessage.actionLabel,
         trendType: "neutral",
       },
     ]);

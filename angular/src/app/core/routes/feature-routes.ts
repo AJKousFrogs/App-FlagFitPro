@@ -590,6 +590,61 @@ export const superadminRoutes: Routes = [
 ];
 
 /**
+ * Help Routes (Redirect to docs or landing until help center is built)
+ * Prevents 404s on privacy-ux-copy.ts help links
+ */
+export const helpRoutes: Routes = [
+  {
+    path: "help/privacy-sharing",
+    redirectTo: "/settings/privacy",
+  },
+  {
+    path: "help/team-privacy",
+    redirectTo: "/settings/privacy",
+  },
+  {
+    path: "help/data-requirements",
+    redirectTo: "/acwr",
+  },
+  {
+    path: "help/acwr",
+    redirectTo: "/acwr",
+  },
+  {
+    path: "help/acute-load",
+    redirectTo: "/acwr",
+  },
+  {
+    path: "help/chronic-load",
+    redirectTo: "/acwr",
+  },
+  {
+    path: "help/monotony",
+    redirectTo: "/acwr",
+  },
+  {
+    path: "help/tsb",
+    redirectTo: "/acwr",
+  },
+  {
+    path: "help/injury-risk",
+    redirectTo: "/acwr",
+  },
+  {
+    path: "help/parental-consent",
+    redirectTo: "/settings/privacy",
+  },
+  {
+    path: "help/data-deletion",
+    redirectTo: "/settings/privacy",
+  },
+  {
+    path: "help",
+    redirectTo: "/",
+  },
+];
+
+/**
  * Combined Feature Routes
  * Organized by priority and feature area
  */
@@ -604,6 +659,7 @@ export const featureRoutes: Routes = [
   ...wellnessRoutes,
   ...socialRoutes,
   ...profileRoutes,
+  ...helpRoutes, // Help redirects before wildcard
   {
     path: "**",
     loadComponent: () =>

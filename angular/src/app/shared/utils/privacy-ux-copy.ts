@@ -238,7 +238,7 @@ export const DATA_STATE_MESSAGES = {
     reason: 'We don\'t have any training data for you yet.',
     action: 'Start logging your training sessions to see metrics and insights.',
     actionLabel: 'Log Training',
-    helpLink: '/training/new',
+    helpLink: '/training/log',
     icon: 'pi-database',
     severity: 'info' as const,
   },

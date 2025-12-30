@@ -13,7 +13,7 @@
 
 import { Component, computed, signal, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Router } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { AcwrService } from "../../core/services/acwr.service";
 import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
 import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
@@ -26,13 +26,35 @@ import {
   RiskZone,
   TrainingSession,
 } from "../../core/models/acwr.models";
+import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
 
 @Component({
   selector: "app-acwr-dashboard",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule, PageErrorStateComponent, PageLoadingStateComponent],
   template: `
+    <!-- Loading State -->
+    @if (isPageLoading()) {
+      <app-page-loading-state
+        message="Loading ACWR data..."
+        variant="skeleton"
+      ></app-page-loading-state>
+    }
+
+    <!-- Error State -->
+    @else if (hasPageError()) {
+      <app-page-error-state
+        title="Unable to load ACWR dashboard"
+        [message]="pageErrorMessage()"
+        (retry)="retryLoad()"
+      ></app-page-error-state>
+    }
+
+    <!-- Content -->
+    @else {
     <div class="acwr-dashboard">
       <!-- Header -->
       <div class="dashboard-header">
@@ -66,11 +88,11 @@ import {
       <!-- Main ACWR Display -->
       <div class="acwr-main-card">
         @if (hasInsufficientData()) {
-          <!-- Empty State for New Athletes -->
+          <!-- Empty State for New Athletes - Using Centralized UX Copy -->
           <div class="acwr-empty-state">
-            <div class="empty-icon">📊</div>
-            <h3>Build Your Training Baseline</h3>
-            <p>ACWR requires at least <strong>21 days</strong> and <strong>10 training sessions</strong> to calculate your injury risk accurately.</p>
+            <div class="empty-icon"><i [class]="'pi ' + insufficientDataMessage.icon"></i></div>
+            <h3>{{ insufficientDataMessage.title }}</h3>
+            <p>{{ insufficientDataMessage.reason }}</p>
             
             <div class="data-progress">
               <div class="progress-item">
@@ -91,10 +113,10 @@ import {
             
             <p class="empty-tip">💡 <strong>Olympic Tip:</strong> Consistent training logging helps prevent overtraining injuries during your LA28 preparation.</p>
             
-            <button class="action-btn primary" (click)="logSession()">
+            <a [routerLink]="insufficientDataMessage.helpLink" class="action-btn primary">
               <i class="icon-plus"></i>
-              Log Your First Session
-            </button>
+              {{ insufficientDataMessage.actionLabel }}
+            </a>
           </div>
         } @else {
           <!-- Full ACWR Display -->
@@ -277,6 +299,7 @@ import {
         <small> Last updated: {{ lastUpdated() | date: "short" }} </small>
       </div>
     </div>
+    } <!-- End of @else for content -->
   `,
   styles: [
     `
@@ -644,6 +667,11 @@ export class AcwrDashboardComponent implements OnInit {
   private readonly alertsService = inject(AcwrAlertsService);
   private logger = inject(LoggerService);
 
+  // Runtime guard signals - prevent white screen crashes
+  isPageLoading = signal<boolean>(false);
+  hasPageError = signal<boolean>(false);
+  pageErrorMessage = signal<string>('Something went wrong while loading ACWR data. Please try again.');
+
   // Reactive signals from services
   public readonly acwrRatio = this.acwrService.acwrRatio;
   public readonly riskZone = this.acwrService.riskZone;
@@ -672,13 +700,37 @@ export class AcwrDashboardComponent implements OnInit {
     return quality?.level === 'insufficient' || quality?.level === 'low';
   });
 
+  // Centralized UX copy for insufficient data state
+  public readonly insufficientDataMessage = METRIC_INSUFFICIENT_DATA.acwr;
+
   ngOnInit(): void {
-    // Request notification permission for alerts
-    this.alertsService.requestNotificationPermission();
-    
-    // Real training data is loaded automatically by AcwrService 
-    // when user authenticates (via effect in constructor)
-    this.logger.info('[ACWR Dashboard] Initialized - waiting for real training data');
+    this.initializeDashboard();
+  }
+
+  /**
+   * Initialize dashboard with error handling
+   */
+  private initializeDashboard(): void {
+    try {
+      // Request notification permission for alerts
+      this.alertsService.requestNotificationPermission();
+      
+      // Real training data is loaded automatically by AcwrService 
+      // when user authenticates (via effect in constructor)
+      this.logger.info('[ACWR Dashboard] Initialized - waiting for real training data');
+    } catch (error) {
+      this.logger.error('[ACWR Dashboard] Init error:', error);
+      this.hasPageError.set(true);
+      this.pageErrorMessage.set('Failed to initialize ACWR dashboard. Please try again.');
+    }
+  }
+
+  /**
+   * Retry loading the dashboard
+   */
+  retryLoad(): void {
+    this.hasPageError.set(false);
+    this.initializeDashboard();
   }
 
   private router = inject(Router);

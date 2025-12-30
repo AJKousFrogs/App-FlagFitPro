@@ -472,5 +472,114 @@
 }
 
 /* ================================================================
+   RESPONSIVE LAYOUT ENHANCEMENTS
+   Cross-browser and mobile-specific fixes
+   ================================================================ */
+
+/* Safari 100vh fix - use dynamic viewport height */
+.dashboard-layout,
+.full-height-layout {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  min-height: 100dvh;
+}
+
+/* iOS Safari fixed position fix */
+.dashboard-sidebar {
+  /* Prevent iOS rubber-band scrolling issues */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Mobile landscape adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .dashboard-sidebar {
+    width: 200px;
+  }
+  
+  .dashboard-main {
+    margin-left: 200px;
+  }
+  
+  .page-header {
+    padding: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+  
+  .page-title {
+    font-size: var(--font-heading-md);
+  }
+}
+
+/* Extra small screens (< 375px) */
+@media (max-width: 374px) {
+  .content-container {
+    padding: 0 var(--space-3);
+  }
+  
+  .grid.grid-cols-2,
+  .grid.grid-cols-3,
+  .grid.grid-cols-4 {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  
+  .page-header {
+    padding: var(--space-4);
+  }
+  
+  .section {
+    margin-bottom: var(--space-6);
+  }
+}
+
+/* Large screens (> 1920px) */
+@media (min-width: 1921px) {
+  .content-container {
+    max-width: 1600px;
+  }
+  
+  .content-container-wide {
+    max-width: 1800px;
+  }
+  
+  .grid.grid-cols-4 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Tablet-specific layouts (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .dashboard-sidebar {
+    width: 72px;
+  }
+  
+  .dashboard-main {
+    margin-left: 72px;
+  }
+  
+  .page-header {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .page-header-actions {
+    margin-left: auto;
+    width: auto;
+  }
+}
+
+/* Safe area support for fixed elements */
+.dashboard-header {
+  padding-top: max(var(--space-4), var(--safe-area-top, 0px));
+}
+
+.dashboard-sidebar {
+  padding-top: var(--safe-area-top, 0px);
+  padding-bottom: var(--safe-area-bottom, 0px);
+  padding-left: var(--safe-area-left, 0px);
+}
+
+/* ================================================================
    END OF LAYOUT SYSTEM
    ================================================================ */

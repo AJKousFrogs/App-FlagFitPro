@@ -284,6 +284,7 @@ interface Play {
         align-items: center;
         padding: 1rem;
         background: rgba(0, 0, 0, 0.8);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
       }
 
@@ -366,6 +367,7 @@ interface Play {
         padding: var(--space-3) var(--space-4);
         border-radius: var(--radius-2xl);
         font-weight: var(--font-weight-semibold);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
         transition: transform var(--transition-base);
         cursor: pointer;
@@ -386,6 +388,7 @@ interface Play {
         align-items: center;
         padding: 1rem;
         background: rgba(0, 0, 0, 0.6);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
       }
 

@@ -1489,6 +1489,71 @@ interface TournamentBudget {
         color: var(--color-brand-primary);
       }
 
+      /* ================================================================
+         RESPONSIVE BREAKPOINTS - Full Coverage
+         ================================================================ */
+      
+      /* Extra Large Screens (> 1400px) */
+      @media (min-width: 1400px) {
+        .tournaments-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .tournament-info {
+          grid-template-columns: repeat(4, 1fr);
+        }
+        
+        .budget-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      
+      /* Large Screens (1200px - 1399px) */
+      @media (min-width: 1200px) and (max-width: 1399px) {
+        .tournaments-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .tournament-info {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      
+      /* Medium-Large Screens (1024px - 1199px) */
+      @media (min-width: 1024px) and (max-width: 1199px) {
+        .tournaments-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .tournament-info {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .availability-summary {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      
+      /* Tablet Landscape (769px - 1023px) */
+      @media (min-width: 769px) and (max-width: 1023px) {
+        .tournaments-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .tournament-info {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .availability-options {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .budget-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      
+      /* Tablet Portrait (768px) */
       @media (max-width: 768px) {
         .header-actions {
           flex-direction: column;
@@ -1497,6 +1562,7 @@ interface TournamentBudget {
 
         .tournaments-grid {
           grid-template-columns: 1fr;
+          gap: var(--space-4);
         }
 
         .tournament-info {
@@ -1522,6 +1588,120 @@ interface TournamentBudget {
         .player-availability-item {
           grid-template-columns: 1fr;
           gap: var(--space-2);
+        }
+        
+        .tournament-card {
+          padding: var(--space-4);
+        }
+        
+        .countdown-section {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+      
+      /* Mobile Large (481px - 767px) */
+      @media (min-width: 481px) and (max-width: 767px) {
+        .availability-options {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .budget-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      
+      /* Mobile Small (< 480px) */
+      @media (max-width: 480px) {
+        .tournaments-page {
+          padding: var(--space-3);
+        }
+        
+        .header-actions {
+          gap: var(--space-2);
+        }
+        
+        .tournament-card {
+          padding: var(--space-3);
+        }
+        
+        .availability-options {
+          grid-template-columns: 1fr;
+        }
+        
+        .availability-summary {
+          grid-template-columns: 1fr;
+        }
+        
+        .budget-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .calc-row {
+          flex-direction: column;
+          gap: var(--space-1);
+          text-align: center;
+        }
+        
+        .calc-row.highlight {
+          padding: var(--space-2);
+        }
+      }
+      
+      /* Extra Small Screens (< 375px) */
+      @media (max-width: 374px) {
+        .tournaments-page {
+          padding: var(--space-2);
+        }
+        
+        .tournament-title {
+          font-size: var(--font-body-lg);
+        }
+        
+        .tournament-meta {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+      
+      /* Landscape Mode on Mobile */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .tournaments-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .tournament-card {
+          padding: var(--space-3);
+        }
+      }
+      
+      /* Touch Device Optimizations */
+      @media (hover: none) and (pointer: coarse) {
+        .tournament-card:hover {
+          transform: none;
+        }
+        
+        .availability-option,
+        .header-actions button {
+          min-height: 44px;
+        }
+      }
+      
+      /* Print Styles */
+      @media print {
+        .header-actions,
+        .tournament-actions {
+          display: none !important;
+        }
+        
+        .tournaments-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .tournament-card {
+          box-shadow: none;
+          border: 1px solid #ccc;
+          page-break-inside: avoid;
         }
       }
     `,

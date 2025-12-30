@@ -2,26 +2,31 @@ import {
   Component,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
   OnInit,
 } from "@angular/core";
-
+import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
 import { Tabs, TabPanel } from "primeng/tabs";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { AiConsentRequiredComponent } from "../../../shared/components/ai-consent-required/ai-consent-required.component";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
+import { DATA_STATE_MESSAGES, METRIC_INSUFFICIENT_DATA } from "../../../shared/utils/privacy-ux-copy";
 
 @Component({
   selector: "app-enhanced-analytics",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    RouterModule,
     CardModule,
     ButtonModule,
     ChartModule,
@@ -29,6 +34,7 @@ import { LoggerService } from "../../../core/services/logger.service";
     TabPanel,
     MainLayoutComponent,
     PageHeaderComponent,
+    AiConsentRequiredComponent,
   ],
   template: `
     <app-main-layout>
@@ -52,7 +58,19 @@ import { LoggerService } from "../../../core/services/logger.service";
               <ng-template pTemplate="header">
                 <h3>7-Week Performance Trend</h3>
               </ng-template>
-              @if (performanceChartData()) {
+              @if (hasNoData()) {
+                <!-- No data state with actionable CTA -->
+                <div class="no-data-state">
+                  <i class="pi {{ noDataMessage.icon }}"></i>
+                  <h4>{{ noDataMessage.title }}</h4>
+                  <p>{{ noDataMessage.reason }}</p>
+                  <p-button
+                    [label]="noDataMessage.actionLabel"
+                    icon="pi pi-plus"
+                    [routerLink]="noDataMessage.helpLink"
+                  ></p-button>
+                </div>
+              } @else if (performanceChartData()) {
                 <p-chart
                   type="line"
                   [data]="performanceChartData()"
@@ -67,16 +85,31 @@ import { LoggerService } from "../../../core/services/logger.service";
               <ng-template pTemplate="header">
                 <h3>Injury Risk Analysis</h3>
               </ng-template>
-              <div class="risk-analysis">
-                <p>
-                  Based on your training load and wellness data, your current
-                  injury risk is:
-                </p>
-                <div class="risk-score">
-                  <span class="score-value">{{ injuryRisk() }}%</span>
-                  <span class="score-label">Low Risk</span>
+              @if (hasInsufficientDataForInjuryRisk()) {
+                <!-- Insufficient data state with actionable CTA -->
+                <div class="insufficient-data-state">
+                  <i class="pi {{ injuryRiskInsufficientMessage.icon }}"></i>
+                  <h4>{{ injuryRiskInsufficientMessage.title }}</h4>
+                  <p>{{ injuryRiskInsufficientMessage.reason }}</p>
+                  <p-button
+                    [label]="injuryRiskInsufficientMessage.actionLabel || 'Learn More'"
+                    icon="pi pi-info-circle"
+                    [outlined]="true"
+                    [routerLink]="injuryRiskInsufficientMessage.helpLink"
+                  ></p-button>
                 </div>
-              </div>
+              } @else {
+                <div class="risk-analysis">
+                  <p>
+                    Based on your training load and wellness data, your current
+                    injury risk is:
+                  </p>
+                  <div class="risk-score">
+                    <span class="score-value">{{ injuryRisk() }}%</span>
+                    <span class="score-label">{{ getRiskLabel() }}</span>
+                  </div>
+                </div>
+              }
             </p-card>
           </p-tabpanel>
 
@@ -85,9 +118,14 @@ import { LoggerService } from "../../../core/services/logger.service";
               <ng-template pTemplate="header">
                 <h3>Performance Predictions</h3>
               </ng-template>
-              <div class="predictions">
-                <p>AI-powered predictions coming soon...</p>
-              </div>
+              <!-- AI consent check for predictions -->
+              @if (!aiEnabled()) {
+                <app-ai-consent-required></app-ai-consent-required>
+              } @else {
+                <div class="predictions">
+                  <p>AI-powered predictions coming soon...</p>
+                </div>
+              }
             </p-card>
           </p-tabpanel>
         </p-tabs>
@@ -129,6 +167,32 @@ import { LoggerService } from "../../../core/services/logger.service";
         text-align: center;
         color: var(--text-secondary);
       }
+
+      .no-data-state,
+      .insufficient-data-state {
+        text-align: center;
+        padding: var(--space-8);
+      }
+
+      .no-data-state i,
+      .insufficient-data-state i {
+        font-size: 3rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-4);
+      }
+
+      .no-data-state h4,
+      .insufficient-data-state h4 {
+        font-size: var(--font-heading-sm);
+        margin: 0 0 var(--space-2) 0;
+        color: var(--text-primary);
+      }
+
+      .no-data-state p,
+      .insufficient-data-state p {
+        color: var(--text-secondary);
+        margin: 0 0 var(--space-4) 0;
+      }
     `,
   ],
 })
@@ -137,10 +201,23 @@ export class EnhancedAnalyticsComponent implements OnInit {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private privacyService = inject(PrivacySettingsService);
 
   performanceChartData = signal<any>(null);
   injuryRisk = signal(15);
   isLoading = signal(false);
+  sessionCount = signal(0);
+
+  // AI consent check
+  readonly aiEnabled = this.privacyService.aiProcessingEnabled;
+
+  // Centralized privacy messages
+  readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
+  readonly injuryRiskInsufficientMessage = METRIC_INSUFFICIENT_DATA.injuryRisk;
+
+  // Computed states for data availability
+  hasNoData = computed(() => this.sessionCount() === 0);
+  hasInsufficientDataForInjuryRisk = computed(() => this.sessionCount() < 28);
 
   chartOptions = {
     responsive: true,
@@ -185,13 +262,18 @@ export class EnhancedAnalyticsComponent implements OnInit {
       }
 
       if (sessions && sessions.length > 0) {
+        this.sessionCount.set(sessions.length);
+        
         // Group by week and calculate performance scores
         const weeklyData = this.calculateWeeklyPerformance(sessions);
         this.performanceChartData.set(weeklyData);
 
-        // Calculate injury risk based on recent data
-        this.calculateInjuryRisk(sessions);
+        // Calculate injury risk based on recent data (only if sufficient data)
+        if (sessions.length >= 28) {
+          this.calculateInjuryRisk(sessions);
+        }
       } else {
+        this.sessionCount.set(0);
         this.setDefaultChartData();
       }
     } catch (error) {
@@ -283,6 +365,14 @@ export class EnhancedAnalyticsComponent implements OnInit {
     }
 
     this.injuryRisk.set(Math.min(risk, 100));
+  }
+
+  getRiskLabel(): string {
+    const risk = this.injuryRisk();
+    if (risk < 20) return 'Low Risk';
+    if (risk < 40) return 'Moderate Risk';
+    if (risk < 60) return 'Elevated Risk';
+    return 'High Risk';
   }
 
   private setDefaultChartData(): void {

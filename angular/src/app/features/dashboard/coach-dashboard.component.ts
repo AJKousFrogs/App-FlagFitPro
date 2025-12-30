@@ -28,6 +28,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { forkJoin } from "rxjs";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
 import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -80,9 +82,30 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
     DatePicker,
     Select,
     MainLayoutComponent,
+    PageErrorStateComponent,
+    PageLoadingStateComponent,
   ],
   template: `
     <app-main-layout>
+      <!-- Loading State -->
+      @if (isPageLoading()) {
+        <app-page-loading-state
+          message="Loading coach dashboard..."
+          variant="skeleton"
+        ></app-page-loading-state>
+      }
+
+      <!-- Error State -->
+      @else if (hasPageError()) {
+        <app-page-error-state
+          title="Unable to load dashboard"
+          [message]="pageErrorMessage()"
+          (retry)="retryLoad()"
+        ></app-page-error-state>
+      }
+
+      <!-- Content -->
+      @else {
       <div class="dashboard-content">
         <!-- Header with Team Name & Quick Actions -->
         <div class="dashboard-header">
@@ -747,6 +770,8 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
           <p-button label="Send" icon="pi pi-send" (onClick)="sendTeamMessage()"></p-button>
         </ng-template>
       </p-dialog>
+      </div>
+      } <!-- End of @else for content -->
     </app-main-layout>
   `,
   styles: [`
@@ -1512,7 +1537,18 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
       color: var(--text-color-secondary);
     }
 
-    /* Responsive */
+    /* ================================================================
+       RESPONSIVE BREAKPOINTS - Full Coverage
+       ================================================================ */
+    
+    /* Extra Large Screens (> 1600px) */
+    @media (min-width: 1600px) {
+      .stats-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+    
+    /* Large Screens (1400px - 1599px) */
     @media (max-width: 1400px) {
       .stats-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -1528,7 +1564,15 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
         grid-template-columns: repeat(2, 1fr);
       }
     }
+    
+    /* Medium-Large Screens (1200px - 1399px) */
+    @media (min-width: 1200px) and (max-width: 1399px) {
+      .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
 
+    /* Tablet Landscape (1024px - 1199px) */
     @media (max-width: 1024px) {
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1555,7 +1599,30 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
         justify-content: center;
       }
     }
+    
+    /* Tablet Portrait (769px - 1023px) */
+    @media (min-width: 769px) and (max-width: 1023px) {
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .roster-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    /* Mobile Large (641px - 768px) */
+    @media (min-width: 641px) and (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .dashboard-content {
+        padding: var(--space-4);
+      }
+    }
 
+    /* Mobile (< 640px) */
     @media (max-width: 640px) {
       .stats-grid {
         grid-template-columns: 1fr;
@@ -1563,6 +1630,107 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
 
       .roster-filters {
         flex-wrap: wrap;
+      }
+      
+      .dashboard-content {
+        padding: var(--space-3);
+      }
+      
+      .stat-card {
+        padding: var(--space-3);
+      }
+      
+      .stat-value {
+        font-size: var(--font-heading-lg);
+      }
+    }
+    
+    /* Mobile Small (< 480px) */
+    @media (max-width: 480px) {
+      .dashboard-content {
+        padding: var(--space-2);
+      }
+      
+      .dashboard-header h1 {
+        font-size: var(--font-heading-md);
+      }
+      
+      .header-actions {
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+      
+      .quick-actions-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .player-card {
+        padding: var(--space-3);
+      }
+    }
+    
+    /* Extra Small Screens (< 375px) */
+    @media (max-width: 374px) {
+      .stats-grid {
+        gap: var(--space-2);
+      }
+      
+      .stat-card {
+        padding: var(--space-2);
+      }
+      
+      .stat-value {
+        font-size: var(--font-heading-md);
+      }
+      
+      .stat-label {
+        font-size: var(--font-body-xs);
+      }
+    }
+    
+    /* Landscape Mode on Mobile */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .dashboard-content {
+        padding: var(--space-3);
+      }
+    }
+    
+    /* Touch Device Optimizations */
+    @media (hover: none) and (pointer: coarse) {
+      .stat-card:hover,
+      .quick-action:hover,
+      .player-card:hover {
+        transform: none;
+      }
+      
+      .quick-action,
+      .header-actions button {
+        min-height: 44px;
+      }
+    }
+    
+    /* Print Styles */
+    @media print {
+      .header-actions,
+      .quick-actions-grid {
+        display: none !important;
+      }
+      
+      .dashboard-content {
+        padding: 0;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .stat-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
       }
     }
   `],
@@ -1575,6 +1743,11 @@ export class CoachDashboardComponent implements OnInit {
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
+
+  // Runtime guard signals - prevent white screen crashes
+  isPageLoading = signal<boolean>(true);
+  hasPageError = signal<boolean>(false);
+  pageErrorMessage = signal<string>('Something went wrong while loading the dashboard. Please try again.');
 
   // Data signals
   teamOverview = signal<TeamOverviewStats>({
@@ -1717,7 +1890,23 @@ export class CoachDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.headerService.setDashboardHeader();
+    this.initializePage();
+  }
+
+  /**
+   * Initialize page with error handling
+   */
+  private initializePage(): void {
+    this.isPageLoading.set(true);
+    this.hasPageError.set(false);
     this.loadDashboardData();
+  }
+
+  /**
+   * Retry loading the page
+   */
+  retryLoad(): void {
+    this.initializePage();
   }
 
   loadDashboardData(): void {
@@ -1738,6 +1927,9 @@ export class CoachDashboardComponent implements OnInit {
     .pipe(takeUntilDestroyed(this.destroyRef))
     .subscribe({
       next: (data) => {
+        this.isPageLoading.set(false);
+        this.hasPageError.set(false);
+        
         this.teamOverview.set(data.overview);
         this.players.set(data.players.members);
         
@@ -1764,8 +1956,18 @@ export class CoachDashboardComponent implements OnInit {
         this.performanceTrend.set(data.performanceTrend);
       },
       error: (error) => {
+        this.isPageLoading.set(false);
+        this.hasPageError.set(true);
         this.logger.error('Error loading dashboard data:', error);
-        this.toastService.error('Failed to load some dashboard data');
+        
+        // Set user-friendly error message
+        if (error?.status === 401 || error?.status === 403) {
+          this.pageErrorMessage.set('Your session has expired. Please log in again.');
+        } else if (error?.status >= 500) {
+          this.pageErrorMessage.set('The server is temporarily unavailable. Please try again later.');
+        } else {
+          this.pageErrorMessage.set('Failed to load dashboard data. Please try again.');
+        }
       },
     });
   }

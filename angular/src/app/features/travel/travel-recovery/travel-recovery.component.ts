@@ -2279,8 +2279,73 @@ interface TimezoneOption {
       font-size: var(--font-body-sm);
     }
 
-    /* Responsive */
+    /* ================================================================
+       RESPONSIVE BREAKPOINTS - Full Coverage
+       ================================================================ */
+    
+    /* Extra Large Screens (> 1400px) */
+    @media (min-width: 1400px) {
+      .protocol-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .form-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .exercises-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    /* Large Screens (1200px - 1399px) */
+    @media (min-width: 1200px) and (max-width: 1399px) {
+      .protocol-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .exercises-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    /* Medium-Large Screens (1024px - 1199px) */
+    @media (min-width: 1024px) and (max-width: 1199px) {
+      .protocol-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .exercises-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    /* Tablet Landscape (769px - 1023px) */
+    @media (min-width: 769px) and (max-width: 1023px) {
+      .protocol-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .exercises-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .olympic-impact {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+    
+    /* Tablet Portrait (768px) */
     @media (max-width: 768px) {
+      .travel-recovery-page {
+        padding: var(--space-4);
+      }
+      
       .severity-content {
         flex-direction: column;
         align-items: center;
@@ -2289,6 +2354,7 @@ interface TimezoneOption {
 
       .protocol-grid {
         grid-template-columns: 1fr;
+        gap: var(--space-3);
       }
 
       .olympic-buttons {
@@ -2317,6 +2383,166 @@ interface TimezoneOption {
 
       .stop-marker {
         width: 100%;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .olympic-impact {
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+      
+      .today-header {
+        flex-direction: column;
+        gap: var(--space-3);
+        text-align: center;
+      }
+      
+      .header-left {
+        flex-direction: column;
+      }
+    }
+    
+    /* Mobile Large (481px - 767px) */
+    @media (min-width: 481px) and (max-width: 767px) {
+      .olympic-buttons {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .compression-timing {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    /* Mobile Small (< 480px) */
+    @media (max-width: 480px) {
+      .travel-recovery-page {
+        padding: var(--space-3);
+      }
+      
+      .card-header {
+        padding: var(--space-3);
+      }
+      
+      .card-header h3 {
+        font-size: var(--font-body-lg);
+      }
+      
+      .gauge-circle {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .gauge-circle::before {
+        width: 75px;
+        height: 75px;
+      }
+      
+      .gauge-value {
+        font-size: 1.5rem;
+      }
+      
+      .protocol-section {
+        padding: var(--space-3);
+      }
+      
+      .protocol-section h4 {
+        font-size: var(--font-body-sm);
+      }
+      
+      .sleep-times {
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+      
+      .detail-chips {
+        justify-content: center;
+      }
+      
+      .symptom-chip {
+        font-size: var(--font-body-xs);
+      }
+      
+      .impact-stat .stat-value {
+        font-size: 1.25rem;
+      }
+    }
+    
+    /* Extra Small Screens (< 375px) */
+    @media (max-width: 374px) {
+      .travel-recovery-page {
+        padding: var(--space-2);
+      }
+      
+      .olympic-btn {
+        padding: var(--space-3);
+      }
+      
+      .venue-flag {
+        font-size: 1.5rem;
+      }
+      
+      .day-badge {
+        padding: var(--space-1) var(--space-2);
+        font-size: var(--font-body-sm);
+      }
+    }
+    
+    /* Landscape Mode on Mobile */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .travel-recovery-page {
+        padding: var(--space-3);
+      }
+      
+      .protocol-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .gauge-circle {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .gauge-circle::before {
+        width: 60px;
+        height: 60px;
+      }
+    }
+    
+    /* Touch Device Optimizations */
+    @media (hover: none) and (pointer: coarse) {
+      .olympic-btn:hover {
+        transform: none;
+      }
+      
+      .olympic-btn:active {
+        transform: scale(0.98);
+      }
+      
+      .checklist-item,
+      .exercise-card,
+      .protocol-section {
+        min-height: 44px;
+      }
+    }
+    
+    /* Print Styles */
+    @media print {
+      .travel-type-selector,
+      .form-actions,
+      .olympic-buttons {
+        display: none !important;
+      }
+      
+      .travel-recovery-page {
+        padding: 0;
+        max-width: 100%;
+      }
+      
+      .protocol-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   `],

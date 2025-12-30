@@ -788,6 +788,8 @@ select {
   background-position: right var(--space-3) center;
   background-size: 12px;
   padding-right: var(--space-10);
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   cursor: pointer;
 }
@@ -2114,6 +2116,210 @@ select {
 
   &.gap-6 {
     gap: var(--space-6);
+  }
+}
+
+/* ================================================================
+   CROSS-BROWSER RESPONSIVE FIXES
+   Safari, Firefox, Chrome, Brave compatibility
+   ================================================================ */
+
+/* Safari flexbox gap fallback */
+@supports not (gap: 1rem) {
+  .flex,
+  .btn-group,
+  .grid {
+    margin: calc(var(--space-4) / -2);
+  }
+  
+  .flex > *,
+  .btn-group > *,
+  .grid > * {
+    margin: calc(var(--space-4) / 2);
+  }
+}
+
+/* Safari position:sticky fix */
+.header,
+.dashboard-header {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+/* Safari/iOS input zoom prevention (font-size >= 16px) */
+@media (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Mobile-first responsive table */
+@media (max-width: 767px) {
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table {
+    min-width: 600px;
+  }
+  
+  /* Alternative: Stacked table layout for mobile */
+  .table-responsive-stack {
+    min-width: auto;
+  }
+  
+  .table-responsive-stack thead {
+    display: none;
+  }
+  
+  .table-responsive-stack tbody tr {
+    display: block;
+    margin-bottom: var(--space-4);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+  }
+  
+  .table-responsive-stack tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-border-secondary);
+  }
+  
+  .table-responsive-stack tbody td:last-child {
+    border-bottom: none;
+  }
+  
+  .table-responsive-stack tbody td::before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    margin-right: var(--space-4);
+  }
+}
+
+/* Modal responsive fixes */
+@media (max-width: 767px) {
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    margin: 0;
+  }
+  
+  .modal-sm,
+  .modal-lg,
+  .modal-xl {
+    max-width: 100%;
+  }
+  
+  .modal-body {
+    padding: var(--space-4);
+  }
+  
+  .modal-header,
+  .modal-footer {
+    padding: var(--space-4);
+  }
+}
+
+/* Toast positioning for mobile */
+@media (max-width: 767px) {
+  .toast {
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: calc(var(--space-4) + var(--safe-area-bottom, 0px));
+    min-width: auto;
+    max-width: none;
+  }
+}
+
+/* Sidebar responsive fixes */
+@media (max-width: 767px) {
+  .sidebar {
+    width: 100%;
+    max-width: 300px;
+    padding-bottom: var(--safe-area-bottom, var(--space-4));
+  }
+}
+
+/* Bottom navigation safe area */
+@media (max-width: 767px) {
+  .bottom-nav {
+    padding-bottom: var(--safe-area-bottom, 0px);
+  }
+  
+  /* Ensure main content doesn't get hidden behind bottom nav */
+  main,
+  .main-content,
+  .dashboard-content {
+    padding-bottom: calc(64px + var(--safe-area-bottom, 0px));
+  }
+}
+
+/* Firefox-specific fixes */
+@-moz-document url-prefix() {
+  /* Firefox button padding fix */
+  button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+  
+  /* Firefox select arrow fix */
+  select {
+    text-indent: 0.01px;
+    text-overflow: '';
+  }
+}
+
+/* Print styles */
+@media print {
+  .sidebar,
+  .bottom-nav,
+  .header,
+  .modal-backdrop,
+  .toast,
+  .btn {
+    display: none !important;
+  }
+  
+  .main-content,
+  .dashboard-content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* Landscape orientation fixes for mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .modal {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .bottom-nav {
+    height: 48px;
+  }
+  
+  .sidebar {
+    overflow-y: auto;
   }
 }
 

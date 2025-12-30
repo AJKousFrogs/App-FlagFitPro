@@ -32,6 +32,117 @@
   box-sizing: border-box;
 }
 
+/* ================================================================
+   CROSS-BROWSER COMPATIBILITY FIXES
+   Safari, Firefox, Chrome, Brave support
+   ================================================================ */
+
+/* Safe Area Support for iOS devices (notch, home indicator) */
+@supports (padding: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Safari-specific backdrop-filter fix */
+@supports (-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px)) {
+  .glass-effect,
+  .modal-backdrop,
+  .sidebar-overlay {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-primary) transparent;
+}
+
+/* Webkit scrollbar styling (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-primary);
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-muted);
+}
+
+/* Cross-browser text selection */
+::selection {
+  background-color: rgba(var(--ds-primary-green-rgb), 0.2);
+  color: var(--color-text-primary);
+}
+
+::-moz-selection {
+  background-color: rgba(var(--ds-primary-green-rgb), 0.2);
+  color: var(--color-text-primary);
+}
+
+/* Cross-browser appearance reset for form elements */
+input,
+button,
+select,
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Cross-browser user-select */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Cross-browser touch-action for swipeable elements */
+.swipeable {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Safari fix for 100vh on mobile */
+.full-height {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  min-height: 100dvh;
+}
+
+/* Firefox focus-visible polyfill behavior */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    border: 2px solid currentColor;
+  }
+  
+  .card {
+    border: 1px solid currentColor;
+  }
+}
+
 :root {
   font-family: var(--font-family-sans);
   font-size: 16px;

@@ -530,6 +530,7 @@ interface FilterChip {
         border: 2px solid rgba(255, 255, 255, 0.5) !important;
         color: white !important;
         font-weight: var(--font-weight-semibold) !important;
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
         transition: all 0.2s ease !important;
       }
@@ -548,6 +549,7 @@ interface FilterChip {
         gap: var(--space-2);
         font-size: var(--font-body-sm);
         font-weight: var(--font-weight-medium);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
       }
 

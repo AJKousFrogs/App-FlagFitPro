@@ -49,6 +49,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 
       :host ::ng-deep .quick-actions-mask {
         background: rgba(0, 0, 0, 0.4);
+        -webkit-backdrop-filter: blur(4px);
         backdrop-filter: blur(4px);
       }
 

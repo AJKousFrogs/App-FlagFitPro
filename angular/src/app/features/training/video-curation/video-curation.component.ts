@@ -1457,7 +1457,59 @@ interface PlaylistForm {
         align-items: center;
       }
 
-      /* Responsive */
+      /* ================================================================
+         RESPONSIVE BREAKPOINTS - Full Coverage
+         ================================================================ */
+      
+      /* Extra Large Screens (> 1400px) */
+      @media (min-width: 1400px) {
+        .pending-grid,
+        .playlists-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+        
+        .analytics-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      
+      /* Large Screens (1200px - 1399px) */
+      @media (min-width: 1200px) and (max-width: 1399px) {
+        .pending-grid,
+        .playlists-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .analytics-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      
+      /* Medium-Large Screens (1024px - 1199px) */
+      @media (min-width: 1024px) and (max-width: 1199px) {
+        .pending-grid,
+        .playlists-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .analytics-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      
+      /* Tablet Landscape (769px - 1023px) */
+      @media (min-width: 769px) and (max-width: 1023px) {
+        .pending-grid,
+        .playlists-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .table-filters {
+          flex-wrap: wrap;
+        }
+      }
+      
+      /* Tablet Portrait (768px) */
       @media (max-width: 768px) {
         .curation-page {
           padding: var(--space-4);
@@ -1466,10 +1518,12 @@ interface PlaylistForm {
         .header-content {
           flex-direction: column;
           align-items: flex-start;
+          gap: var(--space-3);
         }
 
         .table-filters {
           flex-direction: column;
+          width: 100%;
         }
 
         .filter-input {
@@ -1480,6 +1534,108 @@ interface PlaylistForm {
         .playlists-grid,
         .analytics-grid {
           grid-template-columns: 1fr;
+          gap: var(--space-3);
+        }
+        
+        .video-card {
+          padding: var(--space-3);
+        }
+      }
+      
+      /* Mobile Large (481px - 767px) */
+      @media (min-width: 481px) and (max-width: 767px) {
+        .pending-grid,
+        .playlists-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .analytics-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      
+      /* Mobile Small (< 480px) */
+      @media (max-width: 480px) {
+        .curation-page {
+          padding: var(--space-3);
+        }
+        
+        .header-content h1 {
+          font-size: var(--font-heading-md);
+        }
+        
+        .header-actions {
+          width: 100%;
+          flex-direction: column;
+        }
+        
+        .video-thumbnail {
+          height: 150px;
+        }
+        
+        .video-meta {
+          flex-direction: column;
+          gap: var(--space-1);
+        }
+        
+        .playlist-card {
+          padding: var(--space-3);
+        }
+      }
+      
+      /* Extra Small Screens (< 375px) */
+      @media (max-width: 374px) {
+        .curation-page {
+          padding: var(--space-2);
+        }
+        
+        .tab-buttons {
+          flex-direction: column;
+        }
+        
+        .video-card-actions {
+          flex-direction: column;
+          gap: var(--space-1);
+        }
+      }
+      
+      /* Landscape Mode on Mobile */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .pending-grid,
+        .playlists-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .video-thumbnail {
+          height: 120px;
+        }
+      }
+      
+      /* Touch Device Optimizations */
+      @media (hover: none) and (pointer: coarse) {
+        .video-card:hover,
+        .playlist-card:hover {
+          transform: none;
+        }
+        
+        .video-card-actions button,
+        .header-actions button {
+          min-height: 44px;
+          min-width: 44px;
+        }
+      }
+      
+      /* Print Styles */
+      @media print {
+        .header-actions,
+        .table-filters,
+        .video-card-actions {
+          display: none !important;
+        }
+        
+        .pending-grid,
+        .playlists-grid {
+          grid-template-columns: repeat(2, 1fr);
         }
       }
     `,

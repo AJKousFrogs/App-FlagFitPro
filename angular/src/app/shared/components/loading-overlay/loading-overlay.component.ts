@@ -40,6 +40,7 @@ import { LoadingService } from "../../core/services/loading.service";
       justify-content: center;
       align-items: center;
       z-index: 9999;
+      -webkit-backdrop-filter: blur(4px);
       backdrop-filter: blur(4px);
       transition: opacity 0.3s ease;
     }

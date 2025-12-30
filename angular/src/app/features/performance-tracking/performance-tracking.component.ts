@@ -15,13 +15,17 @@ import { TagModule } from "primeng/tag";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { InputNumberModule } from "primeng/inputnumber";
+import { RouterModule } from "@angular/router";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { ToastService } from "../../core/services/toast.service";
 import { SupabaseService } from "../../core/services/supabase.service";
+import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 interface PerformanceMetric {
   name: string;
@@ -47,9 +51,31 @@ interface PerformanceMetric {
     MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent,
+    PageErrorStateComponent,
+    PageLoadingStateComponent,
+    RouterModule,
   ],
   template: `
     <app-main-layout>
+      <!-- Loading State -->
+      @if (isPageLoading()) {
+        <app-page-loading-state
+          message="Loading performance data..."
+          variant="skeleton"
+        ></app-page-loading-state>
+      }
+
+      <!-- Error State -->
+      @else if (hasPageError()) {
+        <app-page-error-state
+          title="Unable to load performance data"
+          [message]="pageErrorMessage()"
+          (retry)="retryLoad()"
+        ></app-page-error-state>
+      }
+
+      <!-- Content -->
+      @else {
       <div class="performance-page">
         <app-page-header
           title="Performance Tracking"
@@ -112,38 +138,51 @@ interface PerformanceMetric {
           <ng-template pTemplate="header">
             <h3>Performance History</h3>
           </ng-template>
-          <p-table
-            [value]="performanceHistory()"
-            [paginator]="true"
-            [rows]="10"
-          >
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Date</th>
-                <th>40-Yard Dash</th>
-                <th>Vertical Jump</th>
-                <th>Broad Jump</th>
-                <th>Bench Press</th>
-                <th>Overall Score</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-record>
-              <tr>
-                <td>{{ record.date }}</td>
-                <td>{{ record.dash40 }}</td>
-                <td>{{ record.vertical }}</td>
-                <td>{{ record.broad }}</td>
-                <td>{{ record.bench }}</td>
-                <td>
-                  <p-tag
-                    [value]="record.score + '%'"
-                    [severity]="getScoreSeverity(record.score)"
-                  >
-                  </p-tag>
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
+          @if (performanceHistory().length === 0) {
+            <div class="empty-state">
+              <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
+              <h4>{{ noDataMessage.title }}</h4>
+              <p>{{ noDataMessage.reason }}</p>
+              <p-button 
+                [label]="noDataMessage.actionLabel"
+                icon="pi pi-plus"
+                (onClick)="openLogDialog()"
+              ></p-button>
+            </div>
+          } @else {
+            <p-table
+              [value]="performanceHistory()"
+              [paginator]="true"
+              [rows]="10"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Date</th>
+                  <th>40-Yard Dash</th>
+                  <th>Vertical Jump</th>
+                  <th>Broad Jump</th>
+                  <th>Bench Press</th>
+                  <th>Overall Score</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-record>
+                <tr>
+                  <td>{{ record.date }}</td>
+                  <td>{{ record.dash40 }}</td>
+                  <td>{{ record.vertical }}</td>
+                  <td>{{ record.broad }}</td>
+                  <td>{{ record.bench }}</td>
+                  <td>
+                    <p-tag
+                      [value]="record.score + '%'"
+                      [severity]="getScoreSeverity(record.score)"
+                    >
+                    </p-tag>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
         </p-card>
       </div>
 
@@ -226,6 +265,8 @@ interface PerformanceMetric {
           ></p-button>
         </ng-template>
       </p-dialog>
+      </div>
+      } <!-- End of @else for content -->
     </app-main-layout>
   `,
   styles: [
@@ -275,6 +316,28 @@ interface PerformanceMetric {
         margin-bottom: var(--space-6);
       }
 
+      .empty-state {
+        text-align: center;
+        padding: var(--space-8);
+      }
+
+      .empty-state .empty-icon {
+        font-size: 3rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-4);
+      }
+
+      .empty-state h4 {
+        font-size: var(--font-heading-sm);
+        margin: 0 0 var(--space-2) 0;
+        color: var(--text-primary);
+      }
+
+      .empty-state p {
+        color: var(--text-secondary);
+        margin: 0 0 var(--space-4) 0;
+      }
+
       @media (max-width: 768px) {
         .charts-grid {
           grid-template-columns: 1fr;
@@ -287,6 +350,14 @@ export class PerformanceTrackingComponent implements OnInit {
   private apiService = inject(ApiService);
   private toastService = inject(ToastService);
   private supabaseService = inject(SupabaseService);
+
+  // Runtime guard signals - prevent white screen crashes
+  isPageLoading = signal<boolean>(true);
+  hasPageError = signal<boolean>(false);
+  pageErrorMessage = signal<string>('Something went wrong while loading performance data. Please try again.');
+
+  // Centralized UX copy for data states
+  readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
 
   metrics = signal<PerformanceMetric[]>([]);
   performanceStats = signal<any[]>([]);
@@ -308,7 +379,23 @@ export class PerformanceTrackingComponent implements OnInit {
   chartOptions = DEFAULT_CHART_OPTIONS;
 
   ngOnInit(): void {
+    this.initializePage();
+  }
+
+  /**
+   * Initialize page with error handling
+   */
+  private initializePage(): void {
+    this.isPageLoading.set(true);
+    this.hasPageError.set(false);
     this.loadPerformanceData();
+  }
+
+  /**
+   * Retry loading the page
+   */
+  retryLoad(): void {
+    this.initializePage();
   }
 
   loadPerformanceData(): void {
@@ -400,6 +487,10 @@ export class PerformanceTrackingComponent implements OnInit {
         score: 88,
       },
     ]);
+    
+    // Mark page as loaded
+    this.isPageLoading.set(false);
+    this.hasPageError.set(false);
   }
 
   openLogDialog(): void {

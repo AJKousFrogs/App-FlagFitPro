@@ -448,10 +448,11 @@ import { ToastService } from '../../../core/services/toast.service';
                   <h5>View Audit Log</h5>
                   <p>See a history of how your data has been accessed.</p>
                   <p-button
-                    label="View Log"
+                    label="Coming Soon"
                     [outlined]="true"
                     size="small"
-                    (onClick)="showAuditLog()"
+                    [disabled]="true"
+                    pTooltip="Audit log feature is under development"
                   ></p-button>
                 </div>
               </div>

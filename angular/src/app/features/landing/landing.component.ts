@@ -310,6 +310,7 @@ import { ButtonModule } from "primeng/button";
         border-radius: 50px;
         font-size: var(--font-body-sm);
         font-weight: var(--font-weight-semibold);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
         animation: badge-glow 2s ease-in-out infinite alternate;
       }

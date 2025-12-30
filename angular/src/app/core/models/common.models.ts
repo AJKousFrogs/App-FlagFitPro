@@ -51,7 +51,8 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   dateOfBirth?: Date;
-  gender?: 'male' | 'female' | 'other';
+  /** Aligned with DB constraint: male, female, other, undisclosed */
+  gender?: 'male' | 'female' | 'other' | 'undisclosed';
   avatar?: string;
   bio?: string;
   position?: string;

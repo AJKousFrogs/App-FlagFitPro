@@ -13,7 +13,10 @@ import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
@@ -69,6 +72,7 @@ interface TrainingSession {
     TagModule,
     ButtonModule,
     TooltipModule,
+    ProgressSpinnerModule,
     MainLayoutComponent,
     PageHeaderComponent,
     TrafficLightIndicatorComponent,
@@ -82,9 +86,31 @@ interface TrainingSession {
     TournamentModeWidgetComponent,
     ActionableInsightsComponent,
     GameDayCountdownComponent,
+    // Runtime guard components
+    PageErrorStateComponent,
+    PageLoadingStateComponent,
   ],
   template: `
     <app-main-layout>
+      <!-- Loading State -->
+      @if (isLoading()) {
+        <app-page-loading-state
+          message="Loading your dashboard..."
+          variant="skeleton"
+        ></app-page-loading-state>
+      }
+
+      <!-- Error State -->
+      @else if (hasError()) {
+        <app-page-error-state
+          [title]="errorTitle()"
+          [message]="errorMessage()"
+          (retry)="retryLoad()"
+        ></app-page-error-state>
+      }
+
+      <!-- Content -->
+      @else {
       <div class="dashboard-content">
         <app-page-header
           title="Athlete Dashboard"
@@ -252,6 +278,7 @@ interface TrainingSession {
         </div>
         } <!-- End of @else for isFirstTimeUser -->
       </div>
+      } <!-- End of @else for content -->
     </app-main-layout>
   `,
   styles: [
@@ -362,6 +389,12 @@ export class AthleteDashboardComponent
   private destroyRef = inject(DestroyRef);
   private supabaseService = inject(SupabaseService);
 
+  // Runtime guard signals - prevent white screen crashes
+  isLoading = signal<boolean>(true);
+  hasError = signal<boolean>(false);
+  errorTitle = signal<string>('Unable to load dashboard');
+  errorMessage = signal<string>('Something went wrong while loading your dashboard. Please try again.');
+
   athleteId = signal<string | undefined>(undefined);
   todayWorkload = signal<number>(0);
   nextSession = signal<{ title: string; date: Date } | null>(null);
@@ -411,10 +444,57 @@ export class AthleteDashboardComponent
 
   ngOnInit(): void {
     this.headerService.setDashboardHeader();
-    this.loadDashboardData();
-    this.setupRealtimeSubscriptions();
-    this.checkDataSource();
-    this.checkForUpcomingGame();
+    this.initializeDashboard();
+  }
+
+  /**
+   * Initialize dashboard with error handling
+   */
+  private initializeDashboard(): void {
+    this.isLoading.set(true);
+    this.hasError.set(false);
+
+    try {
+      this.loadDashboardData();
+      this.setupRealtimeSubscriptions();
+      this.checkDataSource();
+      this.checkForUpcomingGame();
+      
+      // Set loading to false after initial data load attempt
+      // Individual data loads handle their own errors gracefully
+      setTimeout(() => this.isLoading.set(false), 500);
+    } catch (error) {
+      this.handleInitError(error);
+    }
+  }
+
+  /**
+   * Handle initialization errors
+   */
+  private handleInitError(error: unknown): void {
+    this.isLoading.set(false);
+    this.hasError.set(true);
+    this.errorTitle.set('Unable to load dashboard');
+    
+    if (error instanceof Error) {
+      this.logger.error('[AthleteDashboard] Init error:', error.message);
+      if (error.message.includes('network') || error.message.includes('fetch')) {
+        this.errorMessage.set('Unable to connect to the server. Please check your internet connection.');
+      } else if (error.message.includes('auth') || error.message.includes('401')) {
+        this.errorMessage.set('Your session has expired. Please log in again.');
+      } else {
+        this.errorMessage.set('Something went wrong while loading your dashboard. Please try again.');
+      }
+    } else {
+      this.errorMessage.set('An unexpected error occurred. Please try again.');
+    }
+  }
+
+  /**
+   * Retry loading the dashboard
+   */
+  retryLoad(): void {
+    this.initializeDashboard();
   }
 
   /**

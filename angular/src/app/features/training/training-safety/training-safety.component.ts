@@ -21,6 +21,7 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -43,6 +44,7 @@ import { ReturnToPlayService } from "../../../core/services/return-to-play.servi
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { METRIC_INSUFFICIENT_DATA, DATA_STATE_MESSAGES } from "../../../shared/utils/privacy-ux-copy";
 
 @Component({
   selector: "app-training-safety",
@@ -50,6 +52,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    RouterModule,
     CardModule,
     ButtonModule,
     TagModule,
@@ -87,25 +90,42 @@ import { SupabaseService } from "../../../core/services/supabase.service";
             <div class="card-content">
               <div class="card-header">
                 <h3>ACWR Status</h3>
-                <app-traffic-light-risk
-                  [riskZone]="acwrRiskZone()"
-                  [acwrValue]="acwrValue()"
-                ></app-traffic-light-risk>
+                @if (!hasInsufficientAcwrData()) {
+                  <app-traffic-light-risk
+                    [riskZone]="acwrRiskZone()"
+                    [acwrValue]="acwrValue()"
+                  ></app-traffic-light-risk>
+                }
               </div>
-              <div class="metric-display">
-                <span class="metric-value">{{ acwrValue() | number: "1.2-2" }}</span>
-                <span class="metric-label">Acute:Chronic Ratio</span>
-              </div>
-              <div class="metric-details">
-                <div class="detail-item">
-                  <span class="detail-label">Acute Load (7d)</span>
-                  <span class="detail-value">{{ acuteLoad() | number: "1.0-0" }} AU</span>
+              @if (hasInsufficientAcwrData()) {
+                <!-- Insufficient ACWR data - use centralized message -->
+                <div class="insufficient-data-notice">
+                  <i class="pi {{ acwrInsufficientMessage.icon }}"></i>
+                  <h4>{{ acwrInsufficientMessage.title }}</h4>
+                  <p>{{ acwrInsufficientMessage.reason }}</p>
+                  <p-button
+                    [label]="acwrInsufficientMessage.actionLabel || 'Log Training'"
+                    icon="pi pi-plus"
+                    [outlined]="true"
+                    routerLink="/training/log"
+                  ></p-button>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Chronic Load (28d)</span>
-                  <span class="detail-value">{{ chronicLoad() | number: "1.0-0" }} AU</span>
+              } @else {
+                <div class="metric-display">
+                  <span class="metric-value">{{ acwrValue() | number: "1.2-2" }}</span>
+                  <span class="metric-label">Acute:Chronic Ratio</span>
                 </div>
-              </div>
+                <div class="metric-details">
+                  <div class="detail-item">
+                    <span class="detail-label">Acute Load (7d)</span>
+                    <span class="detail-value">{{ acuteLoad() | number: "1.0-0" }} AU</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">Chronic Load (28d)</span>
+                    <span class="detail-value">{{ chronicLoad() | number: "1.0-0" }} AU</span>
+                  </div>
+                </div>
+              }
             </div>
           </p-card>
 
@@ -537,6 +557,30 @@ import { SupabaseService } from "../../../core/services/supabase.service";
         color: var(--text-secondary);
       }
 
+      .insufficient-data-notice {
+        text-align: center;
+        padding: var(--space-6);
+      }
+
+      .insufficient-data-notice i {
+        font-size: 2.5rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-3);
+      }
+
+      .insufficient-data-notice h4 {
+        font-size: var(--font-body-lg);
+        font-weight: var(--font-weight-semibold);
+        margin: 0 0 var(--space-2) 0;
+        color: var(--text-primary);
+      }
+
+      .insufficient-data-notice p {
+        color: var(--text-secondary);
+        margin: 0 0 var(--space-4) 0;
+        font-size: var(--font-body-sm);
+      }
+
       @media (max-width: 768px) {
         .safety-overview {
           grid-template-columns: 1fr;
@@ -566,6 +610,13 @@ export class TrainingSafetyComponent implements OnInit {
   acwrRiskZone = computed(() => this.acwrService.riskZone());
   acuteLoad = computed(() => this.acwrService.acuteLoad());
   chronicLoad = computed(() => this.acwrService.chronicLoad());
+
+  // Centralized privacy/safety messages
+  readonly acwrInsufficientMessage = METRIC_INSUFFICIENT_DATA.acwr;
+  readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
+
+  // Data state checks
+  hasInsufficientAcwrData = computed(() => this.chronicLoad() === 0);
 
   // Age-adjusted recovery signals
   ageGroup = signal<string>("Adult");

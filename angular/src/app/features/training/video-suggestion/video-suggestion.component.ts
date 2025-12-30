@@ -604,6 +604,7 @@ interface VideoSuggestion {
         display: flex;
         align-items: center;
         justify-content: center;
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
       }
 
@@ -640,6 +641,7 @@ interface VideoSuggestion {
         gap: var(--space-2);
         font-size: var(--font-body-sm);
         font-weight: var(--font-weight-medium);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
       }
 

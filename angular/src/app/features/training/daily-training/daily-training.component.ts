@@ -463,6 +463,7 @@ interface ScheduleBlock {
 
       .motivation-badge {
         background: rgba(255, 255, 255, 0.15);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
         border-radius: 12px;
         padding: var(--space-4) var(--space-6);

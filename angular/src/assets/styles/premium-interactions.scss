@@ -1076,5 +1076,91 @@
 .transition-slower { transition-duration: var(--anim-slower) !important; }
 
 /* ================================================================
+   CROSS-BROWSER ANIMATION FIXES
+   Safari, Firefox, Chrome compatibility
+   ================================================================ */
+
+/* Safari transform GPU acceleration fix */
+.hover-lift,
+.hover-scale,
+.hover-shine,
+.card-interactive,
+.card-elevated,
+.btn {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Safari animation flicker fix */
+@-webkit-keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@-webkit-keyframes fade-up {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@-webkit-keyframes spin {
+  from { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@-webkit-keyframes pulse {
+  0%, 100% { -webkit-transform: scale(1); transform: scale(1); }
+  50% { -webkit-transform: scale(1.05); transform: scale(1.05); }
+}
+
+/* Firefox animation performance */
+@-moz-document url-prefix() {
+  .animate-fade-in,
+  .animate-fade-up,
+  .animate-scale-in,
+  .animate-pop-in {
+    will-change: opacity, transform;
+  }
+}
+
+/* Safari sticky hover fix */
+@media (hover: hover) {
+  .hover-lift,
+  .hover-scale,
+  .hover-glow {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* iOS Safari touch feedback */
+@media (hover: none) and (pointer: coarse) {
+  .hover-lift:active,
+  .hover-scale:active,
+  .btn:active,
+  .card-interactive:active {
+    -webkit-transform: scale(0.98);
+    transform: scale(0.98);
+    transition-duration: 0.1s;
+  }
+}
+
+/* Brave browser specific (uses Chrome engine but may have shield issues) */
+/* Ensure animations work with Brave Shields */
+.shimmer::after,
+.skeleton-pulse,
+.hover-shine::before {
+  pointer-events: none;
+}
+
+/* ================================================================
    END OF PREMIUM INTERACTIONS
    ================================================================ */
