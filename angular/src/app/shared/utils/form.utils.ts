@@ -90,6 +90,39 @@ export const FormValidators = {
       return pattern.test(value) ? null : message;
     },
 
+  /**
+   * Password strength validator
+   * Returns specific error message for first failed requirement
+   */
+  passwordStrength: (value: string | null | undefined): string | null => {
+    if (!value) return null;
+
+    if (value.length < 8) {
+      return "Password must be at least 8 characters";
+    }
+
+    if (!/[A-Z]/.test(value)) {
+      return "Password must include at least one uppercase letter";
+    }
+
+    if (!/[a-z]/.test(value)) {
+      return "Password must include at least one lowercase letter";
+    }
+
+    if (!/\d/.test(value)) {
+      return "Password must include at least one number";
+    }
+
+    if (!/[@$!%*?&]/.test(value)) {
+      return "Password must include at least one special character (@$!%*?&)";
+    }
+
+    return null;
+  },
+
+  /**
+   * Legacy password validator (kept for backwards compatibility)
+   */
   password: (value: string | null | undefined): string | null => {
     if (!value) return null;
     const passwordRegex =
@@ -98,6 +131,119 @@ export const FormValidators = {
       ? null
       : "Password must be at least 8 characters and include uppercase, lowercase, number, and special character";
   },
+
+  /**
+   * Phone number validator (E.164 format)
+   */
+  phone: (value: string | null | undefined): string | null => {
+    if (!value) return null;
+    const cleaned = value.replace(/[\s\-\(\)]/g, '');
+    const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+    return phoneRegex.test(cleaned) ? null : "Please enter a valid phone number";
+  },
+
+  /**
+   * URL validator
+   */
+  url: (value: string | null | undefined): string | null => {
+    if (!value) return null;
+    try {
+      new URL(value);
+      return null;
+    } catch {
+      return "Please enter a valid URL (must start with http:// or https://)";
+    }
+  },
+
+  /**
+   * Username validator
+   */
+  username: (value: string | null | undefined): string | null => {
+    if (!value) return null;
+
+    if (value.length < 3) {
+      return "Username must be at least 3 characters";
+    }
+
+    if (value.length > 20) {
+      return "Username cannot exceed 20 characters";
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+      return "Username can only contain letters, numbers, and underscores";
+    }
+
+    return null;
+  },
+
+  /**
+   * Numeric range validator
+   */
+  range:
+    (min: number, max: number) =>
+    (value: number | null | undefined): string | null => {
+      if (value === null || value === undefined) return null;
+      if (value < min || value > max) {
+        return `Value must be between ${min} and ${max}`;
+      }
+      return null;
+    },
+
+  /**
+   * Date validator
+   */
+  date: (value: string | Date | null | undefined): string | null => {
+    if (!value) return null;
+    const date = value instanceof Date ? value : new Date(value);
+    return isNaN(date.getTime()) ? "Please enter a valid date" : null;
+  },
+
+  /**
+   * Future date validator
+   */
+  futureDate: (value: string | Date | null | undefined): string | null => {
+    if (!value) return null;
+    const date = value instanceof Date ? value : new Date(value);
+    if (isNaN(date.getTime())) return "Please enter a valid date";
+    if (date <= new Date()) return "Date must be in the future";
+    return null;
+  },
+
+  /**
+   * Past date validator
+   */
+  pastDate: (value: string | Date | null | undefined): string | null => {
+    if (!value) return null;
+    const date = value instanceof Date ? value : new Date(value);
+    if (isNaN(date.getTime())) return "Please enter a valid date";
+    if (date >= new Date()) return "Date must be in the past";
+    return null;
+  },
+
+  /**
+   * Age validator (for date of birth)
+   */
+  minAge:
+    (minAge: number) =>
+    (value: string | Date | null | undefined): string | null => {
+      if (!value) return null;
+      const birthDate = value instanceof Date ? value : new Date(value);
+      if (isNaN(birthDate.getTime())) return "Please enter a valid date";
+
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+
+      if (
+        age < minAge ||
+        (age === minAge && monthDiff < 0) ||
+        (age === minAge && monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        return `You must be at least ${minAge} years old`;
+      }
+
+      return null;
+    },
 
   match:
     (

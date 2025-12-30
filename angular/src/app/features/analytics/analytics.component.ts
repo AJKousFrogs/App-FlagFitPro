@@ -4,7 +4,12 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
+  ViewChildren,
+  QueryList,
+  AfterViewInit,
+  HostListener,
 } from "@angular/core";
+import { UIChart } from "primeng/chart";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -25,6 +30,15 @@ import {
   BAR_CHART_OPTIONS,
   DOUGHNUT_CHART_OPTIONS,
 } from "../../shared/config/chart.config";
+import {
+  ENHANCED_LINE_CHART_OPTIONS,
+  ENHANCED_BAR_CHART_OPTIONS,
+  ENHANCED_DOUGHNUT_CHART_OPTIONS,
+  ENHANCED_RADAR_CHART_OPTIONS,
+  exportChartAsPNG,
+  resetChartZoom,
+  updateChartFontSizes,
+} from "../../shared/config/enhanced-chart.config";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import {
   PlayerStatisticsService,
@@ -122,13 +136,25 @@ interface Metric {
                   @if (performanceChartData()) {
                     <div class="chart-actions">
                       <p-button
-                        label="Export"
+                        icon="pi pi-refresh"
+                        [text]="true"
+                        [rounded]="true"
+                        size="small"
+                        aria-label="Reset zoom"
+                        pTooltip="Reset Zoom"
+                        (onClick)="resetChartZoom('performance')"
+                      ></p-button>
+                      <p-button
+                        icon="pi pi-download"
+                        label="Export PNG"
                         [outlined]="true"
                         size="small"
                         (onClick)="exportChart('performance')"
                       ></p-button>
-                      <p-button 
-                        label="Customize" 
+                      <p-button
+                        icon="pi pi-question-circle"
+                        label="Help"
+                        [text]="true"
                         size="small"
                         (onClick)="customizeChart('performance')"
                       ></p-button>
@@ -155,6 +181,10 @@ interface Metric {
                     <div class="insight-value">+5.2%</div>
                     <div class="insight-label">Weekly Trend</div>
                   </div>
+                </div>
+                <div class="chart-help-note">
+                  <i class="pi pi-info-circle"></i>
+                  <small>Scroll to zoom • Shift+drag to pan • Click legend to toggle • Hover for trends</small>
                 </div>
               } @else {
                 <div class="empty-chart-state">
@@ -1044,10 +1074,34 @@ interface Metric {
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-primary);
       }
+
+      .chart-help-note {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin-top: var(--space-3);
+        padding: var(--space-2) var(--space-3);
+        background: var(--surface-secondary);
+        border-radius: var(--radius-sm);
+        color: var(--color-text-secondary);
+        font-size: var(--text-xs);
+      }
+
+      .chart-help-note i {
+        color: var(--color-brand-primary);
+      }
+
+      @media (max-width: 768px) {
+        .chart-help-note {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
     `,
   ],
 })
-export class AnalyticsComponent implements OnInit {
+export class AnalyticsComponent implements OnInit, AfterViewInit {
+  @ViewChildren(UIChart) chartRefs!: QueryList<UIChart>;
   private apiService = inject(ApiService);
   private playerStatsService = inject(PlayerStatisticsService);
   private authService = inject(AuthService);
@@ -1089,22 +1143,40 @@ export class AnalyticsComponent implements OnInit {
     "Agility Tests",
   ];
 
-  readonly lineChartOptions = LINE_CHART_OPTIONS;
-  readonly BAR_CHART_OPTIONS = BAR_CHART_OPTIONS;
-  readonly DOUGHNUT_CHART_OPTIONS = DOUGHNUT_CHART_OPTIONS;
+  // Enhanced chart options with zoom, pan, custom tooltips
+  readonly lineChartOptions = ENHANCED_LINE_CHART_OPTIONS;
+  readonly BAR_CHART_OPTIONS = ENHANCED_BAR_CHART_OPTIONS;
+  readonly DOUGHNUT_CHART_OPTIONS = ENHANCED_DOUGHNUT_CHART_OPTIONS;
+  readonly radarChartOptions = ENHANCED_RADAR_CHART_OPTIONS;
 
-  radarChartOptions = {
-    ...DEFAULT_CHART_OPTIONS,
-    scales: {
-      r: {
-        beginAtZero: true,
-        max: 10,
-      },
-    },
-  };
+  // Chart instances map for export/zoom functionality
+  private chartInstances = new Map<string, any>();
 
   ngOnInit(): void {
     this.initializePage();
+  }
+
+  ngAfterViewInit(): void {
+    // Store chart instances for export/zoom functionality
+    setTimeout(() => {
+      this.chartRefs.forEach((chartRef, index) => {
+        if (chartRef.chart) {
+          // Map chart instances by type
+          const chartTypes = ['performance', 'chemistry', 'distribution', 'position', 'speed'];
+          if (chartTypes[index]) {
+            this.chartInstances.set(chartTypes[index], chartRef.chart);
+          }
+        }
+      });
+    }, 500);
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    // Update font sizes for all charts on resize
+    this.chartInstances.forEach(chart => {
+      updateChartFontSizes(chart);
+    });
   }
 
   /**
@@ -1508,22 +1580,70 @@ export class AnalyticsComponent implements OnInit {
 
   // Chart action methods
   exportChart(chartType: string): void {
-    this.logger.info(`Exporting ${chartType} chart data`);
-    // Export chart data as CSV/JSON
-    const data = this.getChartDataForExport(chartType);
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${chartType}-analytics-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    this.logger.info(`Exporting ${chartType} chart as PNG`);
+
+    const chart = this.chartInstances.get(chartType);
+
+    if (!chart) {
+      this.logger.error(`Chart instance not found for type: ${chartType}`);
+      return;
+    }
+
+    try {
+      // Export chart as PNG image
+      exportChartAsPNG(chart, `${chartType}-analytics`);
+      this.logger.info(`Chart exported successfully: ${chartType}`);
+    } catch (error) {
+      this.logger.error(`Failed to export chart: ${chartType}`, error);
+    }
+  }
+
+  resetChartZoom(chartType: string): void {
+    this.logger.info(`Resetting zoom for ${chartType} chart`);
+
+    const chart = this.chartInstances.get(chartType);
+
+    if (!chart) {
+      this.logger.error(`Chart instance not found for type: ${chartType}`);
+      return;
+    }
+
+    try {
+      resetChartZoom(chart);
+      this.logger.info(`Zoom reset successfully: ${chartType}`);
+    } catch (error) {
+      this.logger.error(`Failed to reset zoom: ${chartType}`, error);
+    }
   }
 
   customizeChart(chartType: string): void {
     this.logger.info(`Customizing ${chartType} chart`);
-    // For now, show a message - in future could open a customization dialog
-    alert(`Chart customization for ${chartType} coming soon! You can adjust time periods using the dropdowns above.`);
+
+    // Chart interaction instructions
+    const instructions = `Chart Interactions Available:
+
+🔍 Zoom:
+  • Scroll with mouse wheel to zoom in/out
+  • Pinch on touch devices
+
+↔️ Pan:
+  • Hold Shift + drag to pan left/right
+
+👁️ Legend:
+  • Click legend items to show/hide datasets
+
+🖱️ Details:
+  • Click on data points to view details
+
+📊 Export:
+  • Click "Export" button to download as PNG
+
+🔄 Reset:
+  • Click "Reset Zoom" to restore original view
+
+💡 Tip: Hover over data points to see trend information!`;
+
+    alert(instructions);
   }
 
   viewChartDetails(chartType: string): void {

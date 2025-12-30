@@ -1,0 +1,84 @@
+/**
+ * Main Layout Component Styles
+ * Responsive layout with sidebar, header, and content area
+ */
+
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  margin-left: 250px; // Sidebar width
+
+  // Tablet landscape and below - remove sidebar margin
+  @include respond-to(lg) {
+    margin-left: 0;
+  }
+}
+
+.content-wrapper {
+  flex: 1;
+  padding: space(6);
+  overflow-y: auto;
+
+  // Tablet
+  @include respond-to(lg) {
+    padding: space(5);
+  }
+
+  // Mobile - add bottom padding for bottom nav
+  @include respond-to(md) {
+    padding: space(4);
+    padding-bottom: calc(#{space(4)} + 80px);
+  }
+
+  // Small mobile
+  @include respond-to(xs) {
+    padding: space(3);
+    padding-bottom: calc(#{space(3)} + 80px);
+  }
+}
+
+// Desktop-only elements (Quick Actions FAB)
+.desktop-only {
+  display: block;
+
+  // Hide on mobile - bottom nav handles navigation
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+// Animations
+.dashboard-container {
+  @include fade-in;
+  @include respect-motion-preference;
+}
+
+// Print styles
+@media print {
+  .dashboard-container {
+    display: block;
+    min-height: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .content-wrapper {
+    padding: 0;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+}

@@ -1,0 +1,117 @@
+/**
+ * Athlete Dashboard Component Styles
+ * Migrated from inline styles to SCSS using design system
+ */
+
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
+
+.dashboard-content {
+  padding: space(6);
+
+  @include respond-to(md) {
+    padding: space(4);
+  }
+}
+
+// Key Metrics Section
+.metrics-row {
+  @include grid-responsive(250px, space(4));
+  margin-bottom: space(6);
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metric-card {
+  min-height: 150px;
+  transition: transform get-transition(fast) get-easing(smooth),
+              box-shadow get-transition(fast) get-easing(smooth);
+
+  @include hover-support {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: get-shadow(md);
+    }
+  }
+}
+
+.metric-content {
+  @include flex-column;
+  height: 100%;
+}
+
+.metric-header {
+  @include flex-between;
+  margin-bottom: space(4);
+
+  h3 {
+    @include text-style(sm, semibold);
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  i {
+    font-size: var(--icon-lg);
+    color: var(--color-brand-primary);
+  }
+}
+
+.metric-value {
+  @include text-style(4xl, bold);
+  color: var(--text-primary);
+  margin-bottom: space(2);
+}
+
+.metric-subtitle {
+  @include text-style(sm, normal);
+  color: var(--text-secondary);
+}
+
+// Readiness Section
+.readiness-section {
+  margin-bottom: space(6);
+}
+
+// Trends Section
+.trends-section {
+  margin-top: space(6);
+}
+
+.section-title {
+  @include text-style(xl, semibold);
+  color: var(--text-primary);
+  margin-bottom: space(4);
+}
+
+.trends-grid {
+  @include grid-responsive(300px, space(4));
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Insights Section
+.insights-section {
+  margin-bottom: space(6);
+}
+
+// Animation on mount
+.dashboard-content {
+  @include fade-in;
+  @include respect-motion-preference;
+}
+
+// Print styles
+.dashboard-content {
+  @media print {
+    padding: 0;
+  }
+}
+
+// Accessibility improvements
+.metric-card {
+  @include focus-visible;
+}

@@ -22,7 +22,7 @@ import { OfflineBannerComponent } from "../offline-banner/offline-banner.compone
   template: `
     <!-- Offline Banner -->
     <app-offline-banner></app-offline-banner>
-    
+
     <div class="dashboard-container">
       <app-sidebar #sidebar></app-sidebar>
       <main class="main-content">
@@ -32,63 +32,14 @@ import { OfflineBannerComponent } from "../offline-banner/offline-banner.compone
           <ng-content></ng-content>
         </div>
       </main>
-      
+
       <!-- Quick Actions FAB (hidden on mobile, bottom nav takes over) -->
       <app-quick-actions-fab class="desktop-only"></app-quick-actions-fab>
-      
+
       <!-- Mobile Bottom Navigation -->
       <app-bottom-nav></app-bottom-nav>
     </div>
   `,
-  styles: [
-    `
-      .dashboard-container {
-        display: flex;
-        min-height: 100vh;
-      }
-
-      .main-content {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        margin-left: 250px;
-      }
-
-      .content-wrapper {
-        flex: 1;
-        padding: var(--space-6);
-        overflow-y: auto;
-      }
-
-      /* Hide FAB on mobile - bottom nav handles navigation */
-      .desktop-only {
-        display: block;
-      }
-
-      @media (max-width: 768px) {
-        .desktop-only {
-          display: none;
-        }
-        
-        .content-wrapper {
-          padding: var(--space-4);
-          padding-bottom: calc(var(--space-4) + 80px); /* Space for bottom nav */
-        }
-      }
-
-      @media (max-width: 1024px) {
-        .main-content {
-          margin-left: 0;
-        }
-      }
-
-      @media (min-width: 769px) and (max-width: 1024px) {
-        .main-content {
-          margin-left: 0;
-        }
-      }
-    `,
-  ],
+  styleUrls: ['./main-layout.component.scss'],
 })
 export class MainLayoutComponent {}
