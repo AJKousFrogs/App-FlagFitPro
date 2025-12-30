@@ -99,6 +99,8 @@ temp/
 # Backup files
 *.backup
 *.bak
+*.bak.*
+node_modules.bak.*
 *.orig
 
 # Hot reload development files

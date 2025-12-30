@@ -1,0 +1,47 @@
+# Ripgrep ignore file
+# This file tells ripgrep which files/directories to skip
+
+# Dependencies
+node_modules/
+node_modules.bak*/
+angular/node_modules/
+angular/node_modules.bak*/
+
+# Build outputs
+dist/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+angular/dist/
+
+# Coverage and test reports
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# System files
+.DS_Store
+*.log
+
+# Backup files
+*.backup
+*.bak
+*.bak.*
+*.orig
+
+# Lock files (usually don't need to search these)
+package-lock.json
+angular/package-lock.json
+yarn.lock
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.test
+
+# IDE files
+.vscode/
+.idea/
