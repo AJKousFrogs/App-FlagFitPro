@@ -1,7 +1,7 @@
-import { Injectable, inject, signal, effect, untracked } from "@angular/core";
+import { Injectable, effect, inject, signal, untracked } from "@angular/core";
 import { Router } from "@angular/router";
-import { Observable, throwError, from, of } from "rxjs";
-import { tap, catchError, map } from "rxjs/operators";
+import { Observable, from, of, throwError } from "rxjs";
+import { catchError, map, tap } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 
 export interface UserMetadata {
@@ -19,6 +19,8 @@ export interface User {
   email: string;
   name?: string;
   role?: string;
+  position?: string;
+  avatar_url?: string;
   isSuperadmin?: boolean;
   user_metadata?: UserMetadata;
 }

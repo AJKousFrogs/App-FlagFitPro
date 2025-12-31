@@ -55,21 +55,23 @@ export interface PlayerFormData {
     >
       <form [formGroup]="playerForm" class="player-form">
         <div class="form-field">
-          <label for="name">Full Name *</label>
+          <label for="roster-player-name">Full Name *</label>
           <input 
             pInputText 
-            id="name" 
+            id="roster-player-name"
+            name="name"
             formControlName="name" 
             placeholder="Enter player name"
             class="w-full"
+            autocomplete="name"
           />
         </div>
         
         <div class="form-row">
           <div class="form-field">
-            <label for="position">Position *</label>
+            <label for="roster-player-position">Position *</label>
             <p-select 
-              id="position"
+              inputId="roster-player-position"
               formControlName="position"
               [options]="positionOptions"
               optionLabel="label"
@@ -80,33 +82,37 @@ export interface PlayerFormData {
           </div>
           
           <div class="form-field">
-            <label for="jersey">Jersey # *</label>
+            <label for="roster-player-jersey">Jersey # *</label>
             <input 
               pInputText 
-              id="jersey" 
+              id="roster-player-jersey"
+              name="jersey"
               formControlName="jersey" 
               placeholder="00"
               class="w-full"
+              autocomplete="off"
             />
           </div>
         </div>
         
         <div class="form-row">
           <div class="form-field">
-            <label for="country">Country</label>
+            <label for="roster-player-country">Country</label>
             <input 
               pInputText 
-              id="country" 
+              id="roster-player-country"
+              name="country"
               formControlName="country" 
               placeholder="Country"
               class="w-full"
+              autocomplete="country-name"
             />
           </div>
           
           <div class="form-field">
-            <label for="age">Age</label>
+            <label for="roster-player-age">Age</label>
             <p-inputNumber 
-              id="age" 
+              inputId="roster-player-age"
               formControlName="age" 
               [min]="16" 
               [max]="60"
@@ -117,24 +123,28 @@ export interface PlayerFormData {
         
         <div class="form-row">
           <div class="form-field">
-            <label for="height">Height</label>
+            <label for="roster-player-height">Height</label>
             <input 
               pInputText 
-              id="height" 
+              id="roster-player-height"
+              name="height"
               formControlName="height" 
               placeholder="e.g., 6'2&quot;"
               class="w-full"
+              autocomplete="off"
             />
           </div>
           
           <div class="form-field">
-            <label for="weight">Weight</label>
+            <label for="roster-player-weight">Weight</label>
             <input 
               pInputText 
-              id="weight" 
+              id="roster-player-weight"
+              name="weight"
               formControlName="weight" 
               placeholder="e.g., 210 lbs"
               class="w-full"
+              autocomplete="off"
             />
           </div>
         </div>
@@ -142,32 +152,36 @@ export interface PlayerFormData {
         @if (showContactFields()) {
           <div class="form-row">
             <div class="form-field">
-              <label for="email">Email</label>
+              <label for="roster-player-email">Email</label>
               <input 
                 pInputText 
-                id="email" 
+                id="roster-player-email"
+                name="email"
                 formControlName="email" 
                 placeholder="player@email.com"
                 class="w-full"
+                autocomplete="email"
               />
             </div>
             
             <div class="form-field">
-              <label for="phone">Phone</label>
+              <label for="roster-player-phone">Phone</label>
               <input 
                 pInputText 
-                id="phone" 
+                id="roster-player-phone"
+                name="phone"
                 formControlName="phone" 
                 placeholder="+1 234 567 8900"
                 class="w-full"
+                autocomplete="tel"
               />
             </div>
           </div>
 
           <div class="form-field">
-            <label for="status">Status</label>
+            <label for="roster-player-status">Status</label>
             <p-select 
-              id="status"
+              inputId="roster-player-status"
               formControlName="status"
               [options]="statusOptions"
               optionLabel="label"

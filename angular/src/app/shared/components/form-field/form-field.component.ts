@@ -46,6 +46,7 @@ export interface FormFieldConfig {
       @if (config().type === "textarea") {
         <textarea
           [id]="fieldId()"
+          [name]="fieldId()"
           [placeholder]="config().placeholder || ''"
           [disabled]="config().disabled || disabled()"
           [autocomplete]="config().autocomplete || 'off'"
@@ -61,6 +62,7 @@ export interface FormFieldConfig {
       } @else {
         <input
           [id]="fieldId()"
+          [name]="fieldId()"
           [type]="config().type || 'text'"
           [placeholder]="config().placeholder || ''"
           [disabled]="config().disabled || disabled()"

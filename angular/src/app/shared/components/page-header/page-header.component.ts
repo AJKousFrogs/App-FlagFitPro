@@ -28,12 +28,13 @@ import { ButtonModule } from "primeng/button";
       .page-header {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: center;
         margin-bottom: var(--space-6);
-        padding: var(--space-6);
-        background-color: var(--surface-primary);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-sm);
+        padding: var(--space-5) var(--space-6);
+        background-color: var(--surface-primary, #ffffff);
+        border: 1px solid var(--color-border-primary, #e0e0e0);
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       }
 
       .header-content {

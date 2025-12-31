@@ -1,25 +1,20 @@
 import {
-  Component,
-  computed,
-  inject,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
 import { BreadcrumbModule } from "primeng/breadcrumb";
-import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
-import { MenuItem } from "primeng/api";
-import {
-  ContextService,
-  QuickAction,
-} from "../../../core/services/context.service";
+import { ContextService } from "../../../core/services/context.service";
 
 @Component({
   selector: "app-smart-breadcrumbs",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, BreadcrumbModule, Select, TagModule],
+  imports: [RouterModule, BreadcrumbModule, TagModule],
   template: `
     <nav class="smart-breadcrumbs" aria-label="Navigation path">
       <div class="breadcrumbs-container">
@@ -54,24 +49,6 @@ import {
             </div>
           </ng-template>
         </p-breadcrumb>
-
-        <!-- Quick Actions Dropdown -->
-        <p-select
-          [options]="quickActionsDropdown()"
-          optionLabel="label"
-          placeholder="Quick Actions"
-          appendTo="body"
-          (onChange)="executeQuickAction($event.value)"
-          [showClear]="true"
-          class="quick-actions-dropdown"
-        >
-          <ng-template let-action pTemplate="item">
-            <div class="quick-action-item">
-              <i [class]="action.icon"></i>
-              <span>{{ action.label }}</span>
-            </div>
-          </ng-template>
-        </p-select>
       </div>
     </nav>
   `,
@@ -100,18 +77,32 @@ import {
       :host ::ng-deep .custom-breadcrumb .p-breadcrumb-list {
         margin: 0;
         padding: 0;
+        gap: 0.5rem;
       }
 
       :host ::ng-deep .custom-breadcrumb .p-breadcrumb-item {
         padding: 0;
       }
 
+      /* Separator styling */
+      :host ::ng-deep .custom-breadcrumb .p-breadcrumb-separator {
+        margin: 0 0.75rem;
+        color: var(--text-tertiary, #64748b);
+        font-size: 0.75rem;
+      }
+
+      :host ::ng-deep .custom-breadcrumb .p-breadcrumb-separator .p-icon {
+        width: 0.75rem;
+        height: 0.75rem;
+      }
+
       .breadcrumb-item {
         display: flex;
         align-items: center;
-        gap: var(--space-2);
+        gap: 0.625rem;
         color: var(--text-secondary);
-        font-size: 0.875rem;
+        font-size: 0.9375rem;
+        padding: 0.375rem 0;
       }
 
       .breadcrumb-item.current {
@@ -120,7 +111,13 @@ import {
       }
 
       .breadcrumb-item i {
-        font-size: var(--icon-sm);
+        font-size: 1rem;
+        opacity: 0.7;
+      }
+
+      .breadcrumb-item.current i {
+        opacity: 1;
+        color: var(--ds-primary-green, #089949);
       }
 
       .breadcrumb-link {
@@ -130,7 +127,7 @@ import {
       }
 
       .breadcrumb-link:hover {
-        color: var(--color-brand-primary);
+        color: var(--ds-primary-green, #089949);
       }
 
       .breadcrumb-text {
@@ -138,35 +135,12 @@ import {
       }
 
       .breadcrumb-badge {
-        margin-left: var(--space-2);
-      }
-
-      .quick-actions-dropdown {
-        min-width: 180px;
-      }
-
-      .quick-action-item {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .quick-action-item i {
-        font-size: var(--icon-sm);
+        margin-left: 0.5rem;
       }
 
       @media (max-width: 768px) {
         .smart-breadcrumbs {
           padding: var(--space-3) var(--space-4);
-        }
-
-        .breadcrumbs-container {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .quick-actions-dropdown {
-          width: 100%;
         }
       }
     `,
@@ -188,26 +162,4 @@ export class SmartBreadcrumbsComponent {
       data: item, // Store original item for template access
     }));
   });
-
-  quickActionsDropdown = computed(() => {
-    const currentPage = this.contextService.getCurrentPage();
-    const actions = this.contextService.getQuickActions(currentPage);
-    return actions.map((action) => ({
-      label: action.label,
-      icon: action.icon,
-      route: action.route,
-      action: action.action,
-      badge: action.badge,
-    }));
-  });
-
-  executeQuickAction(action: QuickAction | null): void {
-    if (!action) return;
-
-    if (action.route) {
-      this.router.navigate([action.route]);
-    } else if (action.action) {
-      action.action();
-    }
-  }
 }

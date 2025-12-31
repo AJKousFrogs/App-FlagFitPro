@@ -57,13 +57,15 @@ import {
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           <div class="p-field mb-4">
-            <label for="name" class="p-label">Full Name</label>
+            <label for="register-name" class="p-label">Full Name</label>
             <input
-              id="name"
+              id="register-name"
+              name="name"
               type="text"
               pInputText
               formControlName="name"
               placeholder="Enter your full name"
+              autocomplete="name"
               [class.ng-invalid]="isFieldInvalid('name')"
               [attr.aria-invalid]="isFieldInvalid('name') ? 'true' : null"
               [attr.aria-describedby]="isFieldInvalid('name') ? 'name-error' : null"
@@ -76,9 +78,10 @@ import {
           </div>
 
           <div class="p-field mb-4">
-            <label for="email" class="p-label required">Email</label>
+            <label for="register-email" class="p-label required">Email</label>
             <input
-              id="email"
+              id="register-email"
+              name="email"
               type="email"
               pInputText
               formControlName="email"
@@ -87,19 +90,20 @@ import {
               autocomplete="email"
               aria-required="true"
               [attr.aria-invalid]="isFieldInvalid('email') ? 'true' : null"
-              [attr.aria-describedby]="isFieldInvalid('email') ? 'email-error' : null"
+              [attr.aria-describedby]="isFieldInvalid('email') ? 'register-email-error' : null"
             />
             @if (isFieldInvalid("email")) {
-              <small id="email-error" class="p-error" role="alert">
+              <small id="register-email-error" class="p-error" role="alert">
                 {{ getFieldError("email") }}
               </small>
             }
           </div>
 
           <div class="p-field mb-4">
-            <label for="password" class="p-label required">Password</label>
+            <label for="register-password" class="p-label required">Password</label>
             <input
-              id="password"
+              id="register-password"
+              name="password"
               type="password"
               pInputText
               formControlName="password"
@@ -108,25 +112,26 @@ import {
               autocomplete="new-password"
               aria-required="true"
               [attr.aria-invalid]="isFieldInvalid('password') ? 'true' : null"
-              [attr.aria-describedby]="isFieldInvalid('password') ? 'password-error password-hint' : 'password-hint'"
+              [attr.aria-describedby]="isFieldInvalid('password') ? 'register-password-error register-password-hint' : 'register-password-hint'"
             />
             @if (isFieldInvalid("password")) {
-              <small id="password-error" class="p-error" role="alert">
+              <small id="register-password-error" class="p-error" role="alert">
                 {{ getFieldError("password") }}
               </small>
             }
-            <small id="password-hint" class="p-text-secondary mt-2">
+            <small id="register-password-hint" class="p-text-secondary mt-2">
               Password must be at least 8 characters and include uppercase,
               lowercase, number, and special character.
             </small>
           </div>
 
           <div class="p-field mb-4">
-            <label for="confirmPassword" class="p-label required"
+            <label for="register-confirmPassword" class="p-label required"
               >Confirm Password</label
             >
             <input
-              id="confirmPassword"
+              id="register-confirmPassword"
+              name="confirmPassword"
               type="password"
               pInputText
               formControlName="confirmPassword"
@@ -135,10 +140,10 @@ import {
               autocomplete="new-password"
               aria-required="true"
               [attr.aria-invalid]="isFieldInvalid('confirmPassword') ? 'true' : null"
-              [attr.aria-describedby]="isFieldInvalid('confirmPassword') ? 'confirmPassword-error' : null"
+              [attr.aria-describedby]="isFieldInvalid('confirmPassword') ? 'register-confirmPassword-error' : null"
             />
             @if (isFieldInvalid("confirmPassword")) {
-              <small id="confirmPassword-error" class="p-error" role="alert">
+              <small id="register-confirmPassword-error" class="p-error" role="alert">
                 {{ getFieldError("confirmPassword") }}
               </small>
             }

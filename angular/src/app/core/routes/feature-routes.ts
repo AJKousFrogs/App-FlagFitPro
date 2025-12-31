@@ -518,6 +518,15 @@ export const socialRoutes: Routes = [
       import("../../features/chat/chat.component").then((m) => m.ChatComponent),
     canActivate: [authGuard],
   },
+  {
+    path: "ai-coach",
+    loadComponent: () =>
+      import("../../features/ai-coach/ai-coach-chat.component").then(
+        (m) => m.AiCoachChatComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "high" }, // AI Coach is frequently used
+  },
 ];
 
 /**

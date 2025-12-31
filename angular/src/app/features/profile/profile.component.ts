@@ -1,30 +1,32 @@
 import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    OnInit,
+    ViewChild,
+    inject,
+    signal,
 } from "@angular/core";
 
+import { CommonModule, DatePipe, TitleCasePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { DatePipe, TitleCasePipe } from "@angular/common";
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
 import { AvatarModule } from "primeng/avatar";
-import { TagModule } from "primeng/tag";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
+import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
-import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
-import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { AccountDeletionService } from "../../core/services/account-deletion.service";
+import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
-import { LoggerService } from "../../core/services/logger.service";
-import { AccountDeletionService } from "../../core/services/account-deletion.service";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { DELETION_MESSAGES, getDeletionMessage } from "../../shared/utils/privacy-ux-copy";
 
 interface PendingInvitation {
@@ -44,6 +46,7 @@ interface PendingInvitation {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
     RouterModule,
     CardModule,
     ButtonModule,
@@ -112,57 +115,119 @@ interface PendingInvitation {
         }
 
         @else {
-          <!-- Profile Header -->
-          <div class="profile-header">
-          <div class="profile-avatar-section">
-            <p-avatar
-              [label]="userInitials()"
-              size="xlarge"
-              shape="circle"
-              [style]="{
-                'background-color': 'var(--ds-primary-green)',
-                color: 'var(--color-text-on-primary)',
-                'font-size': '3rem',
-              }"
-            >
-            </p-avatar>
-            <p-button
-              icon="pi pi-camera"
-              [rounded]="true"
-              [text]="true"
-              styleClass="avatar-edit-btn"
-              ariaLabel="Change profile picture"
-              (onClick)="changeProfilePicture()"
-            ></p-button>
+          <!-- Profile Header - Redesigned -->
+          <div class="profile-header-card">
+            <!-- Background Decoration -->
+            <div class="profile-header-bg">
+              <div class="bg-pattern"></div>
+            </div>
+            
+            <!-- Avatar Section -->
+            <div class="profile-avatar-container">
+              <div class="avatar-wrapper">
+                @if (avatarUrl()) {
+                  <img [src]="avatarUrl()" alt="Profile picture" class="profile-avatar-img" />
+                } @else {
+                  <div class="profile-avatar-fallback">
+                    <span>{{ userInitials() }}</span>
+                  </div>
+                }
+                <button class="avatar-upload-btn" (click)="triggerFileUpload()" [disabled]="isUploadingAvatar()">
+                  @if (isUploadingAvatar()) {
+                    <i class="pi pi-spin pi-spinner"></i>
+                  } @else {
+                    <i class="pi pi-camera"></i>
+                  }
+                </button>
+                <input 
+                  #fileInput
+                  type="file" 
+                  accept="image/jpeg,image/png,image/webp"
+                  class="hidden-file-input"
+                  (change)="onFileSelected($event)"
+                />
+              </div>
+              
+              <!-- Jersey Number Badge -->
+              @if (jerseyNumber()) {
+                <div class="jersey-badge">
+                  <span>#{{ jerseyNumber() }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- User Info -->
+            <div class="profile-info-section">
+              <h1 class="profile-display-name">{{ userName() }}</h1>
+              
+              <!-- Position & Team Info -->
+              <div class="profile-position-team">
+                @if (userPosition()) {
+                  <span class="position-tag">
+                    <i class="pi pi-user"></i>
+                    {{ userPosition() }}
+                  </span>
+                }
+                @if (teamName()) {
+                  <span class="team-tag">
+                    <i class="pi pi-users"></i>
+                    {{ teamName() }}
+                  </span>
+                }
+              </div>
+              
+              <p class="profile-email-text">{{ userEmail() }}</p>
+              
+              <!-- Member Since -->
+              <p class="member-since">
+                <i class="pi pi-calendar"></i>
+                Member since {{ memberSince() }}
+              </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="profile-header-actions">
+              <button 
+                class="edit-profile-btn"
+                [routerLink]="['/settings']"
+                [disabled]="deletionPending()"
+              >
+                <i class="pi pi-cog"></i>
+                <span>Edit Profile</span>
+              </button>
+              <button class="share-profile-btn" (click)="shareProfile()">
+                <i class="pi pi-share-alt"></i>
+              </button>
+            </div>
           </div>
-          <div class="profile-info">
-            <h1 class="profile-name">{{ userName() }}</h1>
-            <p class="profile-role">{{ userRole() }}</p>
-            <p class="profile-email">{{ userEmail() }}</p>
-          </div>
-          <div class="profile-actions">
-            <p-button
-              label="Edit Profile"
-              icon="pi pi-cog"
-              [outlined]="true"
-              [routerLink]="['/settings']"
-              [disabled]="deletionPending()"
-              [pTooltip]="deletionPending() ? 'Cannot edit while deletion is pending' : ''"
-            ></p-button>
-          </div>
-        </div>
 
         <!-- Profile Stats -->
         <app-stats-grid [stats]="stats()"></app-stats-grid>
 
         <!-- Profile Tabs -->
-        <p-tabs [(value)]="activeTab">
-          <p-tablist>
-            <p-tab value="overview"><i class="pi pi-chart-line"></i> Overview</p-tab>
-            <p-tab value="achievements"><i class="pi pi-trophy"></i> Achievements</p-tab>
-            <p-tab value="statistics"><i class="pi pi-bar-chart"></i> Statistics</p-tab>
-            <p-tab value="invitations"><i class="pi pi-envelope"></i> Invitations @if (pendingInvitations().length > 0) { ({{ pendingInvitations().length }}) }</p-tab>
-          </p-tablist>
+        <div class="profile-tabs-container">
+          <p-tabs [(value)]="activeTab">
+            <p-tablist>
+              <p-tab value="overview">
+                <i class="pi pi-chart-line"></i>
+                <span class="tab-label">Overview</span>
+              </p-tab>
+              <p-tab value="achievements">
+                <i class="pi pi-trophy"></i>
+                <span class="tab-label">Achievements</span>
+              </p-tab>
+              <p-tab value="statistics">
+                <i class="pi pi-chart-bar"></i>
+                <span class="tab-label">Statistics</span>
+              </p-tab>
+              <p-tab value="invitations">
+                <i class="pi pi-envelope"></i>
+                <span class="tab-label">Invitations</span>
+                @if (pendingInvitations().length > 0) {
+                  <span class="invitation-badge">{{ pendingInvitations().length }}</span>
+                }
+              </p-tab>
+            </p-tablist>
           <p-tabpanels>
             <p-tabpanel value="overview">
             <div class="overview-content">
@@ -184,7 +249,7 @@ interface PendingInvitation {
                       track trackByActivityTitle($index, activity)
                     ) {
                       <div class="activity-item">
-                        <div class="activity-icon">{{ activity.icon }}</div>
+                        <div class="activity-icon"><i class="pi" [ngClass]="activity.icon"></i></div>
                         <div class="activity-content">
                           <div class="activity-title">{{ activity.title }}</div>
                           <div class="activity-time">{{ activity.time }}</div>
@@ -210,7 +275,7 @@ interface PendingInvitation {
                   track trackByAchievementTitle($index, achievement)
                 ) {
                   <p-card class="achievement-card">
-                    <div class="achievement-icon">{{ achievement.icon }}</div>
+                    <div class="achievement-icon"><i class="pi" [ngClass]="achievement.icon"></i></div>
                     <h4 class="achievement-title">{{ achievement.title }}</h4>
                     <p class="achievement-description">
                       {{ achievement.description }}
@@ -317,7 +382,8 @@ interface PendingInvitation {
             </div>
             </p-tabpanel>
           </p-tabpanels>
-        </p-tabs>
+          </p-tabs>
+        </div>
         }
       </div>
     </app-main-layout>
@@ -414,50 +480,253 @@ interface PendingInvitation {
         color: var(--text-secondary);
       }
 
-      .profile-header {
+      /* ========== Redesigned Profile Header ========== */
+      .profile-header-card {
+        position: relative;
+        background: var(--surface-primary, #ffffff);
+        border-radius: 20px;
+        margin-bottom: var(--space-6);
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--color-border-secondary, #f0f0f0);
+      }
+
+      .profile-header-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 120px;
+        background: linear-gradient(135deg, var(--ds-primary-green, #089949) 0%, #0ab85a 50%, #067a3b 100%);
+        overflow: hidden;
+      }
+
+      .bg-pattern {
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+
+      .profile-avatar-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 60px;
+        z-index: 1;
+      }
+
+      .avatar-wrapper {
+        position: relative;
+        width: 140px;
+        height: 140px;
+      }
+
+      .profile-avatar-img,
+      .profile-avatar-fallback {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 5px solid var(--surface-primary, #ffffff);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+
+      .profile-avatar-img {
+        object-fit: cover;
+      }
+
+      .profile-avatar-fallback {
+        background: linear-gradient(135deg, var(--ds-primary-green, #089949) 0%, #0ab85a 100%);
         display: flex;
         align-items: center;
-        gap: var(--space-6);
-        padding: var(--space-6);
-        background: var(--surface-primary);
-        border-radius: var(--p-border-radius);
-        margin-bottom: var(--space-6);
-        box-shadow: var(--shadow-sm);
+        justify-content: center;
       }
 
-      .profile-avatar-section {
-        position: relative;
+      .profile-avatar-fallback span {
+        font-family: 'Poppins', sans-serif;
+        font-size: 3rem;
+        font-weight: 700;
+        color: white;
+        letter-spacing: 2px;
       }
 
-      .avatar-edit-btn {
+      .avatar-upload-btn {
         position: absolute;
-        bottom: 0;
-        right: 0;
-        background: var(--surface-primary);
-        border: 2px solid var(--p-surface-200);
+        bottom: 8px;
+        right: 8px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--ds-primary-green, #089949);
+        border: 3px solid var(--surface-primary, #ffffff);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
       }
 
-      .profile-info {
-        flex: 1;
+      .avatar-upload-btn:hover:not(:disabled) {
+        transform: scale(1.1);
+        background: #067a3b;
       }
 
-      .profile-name {
-        font-size: var(--font-heading-2xl);
-        font-weight: var(--font-weight-bold);
-        margin-bottom: var(--space-2);
-        color: var(--text-primary);
+      .avatar-upload-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
       }
 
-      .profile-role {
-        font-size: var(--font-body-md);
-        color: var(--text-secondary);
-        margin-bottom: var(--space-1);
+      .avatar-upload-btn i {
+        font-size: 1.125rem;
       }
 
-      .profile-email {
-        font-size: var(--font-body-sm);
-        color: var(--text-secondary);
+      .hidden-file-input {
+        display: none;
+      }
+
+      .jersey-badge {
+        margin-top: 0.75rem;
+        padding: 0.375rem 1rem;
+        background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .jersey-badge span {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.125rem;
+        font-weight: 800;
+        color: white;
+        letter-spacing: 1px;
+      }
+
+      .profile-info-section {
+        text-align: center;
+        padding: 1.5rem 2rem 2rem;
+      }
+
+      .profile-display-name {
+        font-family: 'Poppins', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-text-primary, #1a1a1a);
+        margin: 0 0 0.75rem 0;
+        line-height: 1.2;
+      }
+
+      .profile-position-team {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+
+      .position-tag,
+      .team-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      .position-tag {
+        background: rgba(8, 153, 73, 0.1);
+        color: var(--ds-primary-green, #089949);
+      }
+
+      .team-tag {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+      }
+
+      .position-tag i,
+      .team-tag i {
+        font-size: 0.875rem;
+      }
+
+      .profile-email-text {
+        font-size: 0.9375rem;
+        color: var(--color-text-secondary, #6b7280);
+        margin: 0 0 0.75rem 0;
+      }
+
+      .member-since {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+        color: var(--color-text-tertiary, #9ca3af);
         margin: 0;
+      }
+
+      .member-since i {
+        font-size: 0.75rem;
+      }
+
+      .profile-header-actions {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0 2rem 2rem;
+      }
+
+      .edit-profile-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: white;
+        background: linear-gradient(135deg, var(--ds-primary-green, #089949) 0%, #0ab85a 100%);
+        border: none;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
+      }
+
+      .edit-profile-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(8, 153, 73, 0.4);
+      }
+
+      .edit-profile-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .share-profile-btn {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--surface-secondary, #f8f8f8);
+        border: 2px solid var(--color-border-primary, #e0e0e0);
+        border-radius: 50%;
+        color: var(--color-text-secondary, #6b7280);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .share-profile-btn:hover {
+        background: var(--ds-primary-green, #089949);
+        border-color: var(--ds-primary-green, #089949);
+        color: white;
+      }
+
+      .share-profile-btn i {
+        font-size: 1.125rem;
       }
 
       .profile-stats {
@@ -586,6 +855,33 @@ interface PendingInvitation {
         margin-bottom: var(--space-2);
       }
 
+      /* ========== Profile Tabs - Design System Segment Control ========== */
+      .profile-tabs-container {
+        margin-top: 1.5rem;
+      }
+
+      /* Invitation badge */
+      .invitation-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        color: white;
+        background: var(--color-status-error, #ef4444);
+        border-radius: 10px;
+        margin-left: 6px;
+        line-height: 1;
+      }
+
+      /* Tab label */
+      .tab-label {
+        color: inherit;
+      }
+
       /* Invitations Section */
       .invitations-section {
         margin-top: var(--space-4);
@@ -668,15 +964,66 @@ interface PendingInvitation {
       }
 
       @media (max-width: 768px) {
-        .profile-header {
+        .profile-header-card {
+          border-radius: 16px;
+        }
+
+        .profile-header-bg {
+          height: 100px;
+        }
+
+        .profile-avatar-container {
+          padding-top: 40px;
+        }
+
+        .avatar-wrapper {
+          width: 120px;
+          height: 120px;
+        }
+
+        .profile-avatar-img,
+        .profile-avatar-fallback {
+          width: 120px;
+          height: 120px;
+          border-width: 4px;
+        }
+
+        .profile-avatar-fallback span {
+          font-size: 2.5rem;
+        }
+
+        .avatar-upload-btn {
+          width: 40px;
+          height: 40px;
+        }
+
+        .profile-display-name {
+          font-size: 1.5rem;
+        }
+
+        .profile-position-team {
           flex-direction: column;
-          text-align: center;
+          gap: 0.5rem;
+        }
+
+        .profile-info-section {
+          padding: 1rem 1.5rem 1.5rem;
+        }
+
+        .profile-header-actions {
+          padding: 0 1.5rem 1.5rem;
+        }
+
+        .edit-profile-btn {
+          flex: 1;
+          justify-content: center;
         }
 
         .profile-stats {
           grid-template-columns: repeat(2, 1fr);
         }
 
+        /* Mobile tabs styling */
         .invitation-header {
           flex-direction: column;
           align-items: flex-start;
@@ -692,6 +1039,17 @@ interface PendingInvitation {
           flex-direction: column;
         }
       }
+
+      /* Mobile responsive - Icon only on small screens */
+      @media (max-width: 540px) {
+        .tab-label {
+          display: none;
+        }
+
+        .invitation-badge {
+          margin-left: 0;
+        }
+      }
     `,
   ],
 })
@@ -702,6 +1060,8 @@ export class ProfileComponent implements OnInit {
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private accountDeletionService = inject(AccountDeletionService);
+
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   // Centralized UX copy for deletion state
   readonly deletionMessage = DELETION_MESSAGES.pending;
@@ -718,6 +1078,12 @@ export class ProfileComponent implements OnInit {
   userName = signal("Loading...");
   userEmail = signal("Loading...");
   userRole = signal("Player");
+  userPosition = signal<string | null>(null);
+  teamName = signal<string | null>(null);
+  jerseyNumber = signal<string | null>(null);
+  memberSince = signal("Recently");
+  avatarUrl = signal<string | null>(null);
+  isUploadingAvatar = signal(false);
   userInitials = signal("U");
   activeTab = signal<string>('overview');
   stats = signal<Array<{ value: string; label: string }>>([]);
@@ -762,6 +1128,16 @@ export class ProfileComponent implements OnInit {
       this.userEmail.set(user.email || "");
       this.userRole.set(user.role || "Player");
       this.userInitials.set(this.getInitials(this.userName()));
+      
+      // Load position from user data or profile
+      if (user.position) {
+        this.userPosition.set(user.position);
+      }
+      
+      // Load avatar URL
+      if (user.avatar_url) {
+        this.avatarUrl.set(user.avatar_url);
+      }
     }
 
     if (!user?.id) {
@@ -769,15 +1145,28 @@ export class ProfileComponent implements OnInit {
       this.isLoading.set(false);
       return;
     }
+    
+    // Load extended profile data from Supabase
+    await this.loadExtendedProfileData(user.id);
 
     try {
       // Load real training sessions count
+      // Using session_date (not scheduled_date) and correct column names
       const { data: sessions, error: sessionsError } = await this.supabaseService.client
         .from('training_sessions')
-        .select('id, status, completed_at, scheduled_date, duration_minutes')
+        .select('id, status, completed_at, session_date, duration_minutes')
         .eq('user_id', user.id);
 
-      if (sessionsError) throw sessionsError;
+      if (sessionsError) {
+        // If table doesn't exist or user_id column missing, use empty data
+        if (sessionsError.code === '42P01' || sessionsError.code === '42703') {
+          this.logger.warn('Training sessions query failed:', sessionsError.message);
+          this.loadEmptyState();
+          this.isLoading.set(false);
+          return;
+        }
+        throw sessionsError;
+      }
 
       const completedSessions = (sessions || []).filter(s => s.status === 'completed');
       const totalSessions = completedSessions.length;
@@ -785,14 +1174,14 @@ export class ProfileComponent implements OnInit {
       // Calculate streak
       let streak = 0;
       const sortedSessions = [...completedSessions]
-        .sort((a, b) => new Date(b.completed_at || b.scheduled_date).getTime() - new Date(a.completed_at || a.scheduled_date).getTime());
+        .sort((a, b) => new Date(b.completed_at || b.session_date).getTime() - new Date(a.completed_at || a.session_date).getTime());
       
       if (sortedSessions.length > 0) {
         let checkDate = new Date();
         checkDate.setHours(0, 0, 0, 0);
         
         for (const session of sortedSessions) {
-          const sessionDate = new Date(session.completed_at || session.scheduled_date);
+          const sessionDate = new Date(session.completed_at || session.session_date);
           sessionDate.setHours(0, 0, 0, 0);
           
           const daysDiff = Math.floor((checkDate.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -807,19 +1196,22 @@ export class ProfileComponent implements OnInit {
       }
 
       // Load wellness data for performance score
+      // Using checkin_date (not date) and energy_level (not energy)
       const { data: wellness } = await this.supabaseService.client
         .from('wellness_checkins')
-        .select('*')
+        .select('energy_level, motivation_level, sleep_quality, checkin_date')
         .eq('user_id', user.id)
-        .order('date', { ascending: false })
+        .order('checkin_date', { ascending: false })
         .limit(7);
 
       // Calculate performance score based on wellness and training
       let performanceScore = 0;
       if (wellness && wellness.length > 0) {
-        const avgEnergy = wellness.reduce((a, w) => a + (w.energy || 0), 0) / wellness.length;
-        const avgReadiness = wellness.reduce((a, w) => a + (w.readiness || 5), 0) / wellness.length;
-        performanceScore = Math.round((avgEnergy + avgReadiness) * 5);
+        const avgEnergy = wellness.reduce((a, w) => a + (w.energy_level || 0), 0) / wellness.length;
+        const avgMotivation = wellness.reduce((a, w) => a + (w.motivation_level || 5), 0) / wellness.length;
+        const avgSleep = wellness.reduce((a, w) => a + (w.sleep_quality || 5), 0) / wellness.length;
+        // Score out of 100 based on averages (each is 1-10 scale)
+        performanceScore = Math.round(((avgEnergy + avgMotivation + avgSleep) / 30) * 100);
       }
 
       // Load stats with real data
@@ -832,10 +1224,10 @@ export class ProfileComponent implements OnInit {
 
       // Load recent activities from training sessions
       const recentActivities = sortedSessions.slice(0, 5).map(session => {
-        const date = new Date(session.completed_at || session.scheduled_date);
+        const date = new Date(session.completed_at || session.session_date);
         const timeAgo = this.getTimeAgo(date);
         return {
-          icon: "🏃",
+          icon: "pi-play",
           title: `Completed ${session.duration_minutes || 0} min training`,
           time: timeAgo
         };
@@ -848,7 +1240,7 @@ export class ProfileComponent implements OnInit {
       
       if (streak >= 7) {
         achievements.push({
-          icon: "🔥",
+          icon: "pi-bolt",
           title: `${streak}-Day Streak`,
           description: `Completed ${streak} consecutive training days`,
           date: "Current"
@@ -856,7 +1248,7 @@ export class ProfileComponent implements OnInit {
       }
       if (totalSessions >= 10) {
         achievements.push({
-          icon: "🏃",
+          icon: "pi-play",
           title: "10 Sessions Complete",
           description: "Reached your first training milestone",
           date: "Achieved"
@@ -864,7 +1256,7 @@ export class ProfileComponent implements OnInit {
       }
       if (totalSessions >= 25) {
         achievements.push({
-          icon: "⭐",
+          icon: "pi-star",
           title: "25 Sessions Complete",
           description: "Consistent training pays off",
           date: "Achieved"
@@ -872,7 +1264,7 @@ export class ProfileComponent implements OnInit {
       }
       if (totalSessions >= 50) {
         achievements.push({
-          icon: "🏆",
+          icon: "pi-trophy",
           title: "Dedicated Athlete",
           description: "50+ training sessions logged",
           date: "Achieved"
@@ -989,21 +1381,179 @@ export class ProfileComponent implements OnInit {
     return stat.label || index.toString();
   }
 
-  changeProfilePicture(): void {
-    // Create file input to select image
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e: Event) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        // For now, show a message - in production, upload to Supabase Storage
-        this.logger.info('Selected file:', file.name);
-        // TODO: Implement actual image upload to Supabase Storage
-        alert('Profile picture upload coming soon! Selected: ' + file.name);
+  /**
+   * Trigger file input click
+   */
+  triggerFileUpload(): void {
+    this.fileInput?.nativeElement?.click();
+  }
+
+  /**
+   * Handle file selection for profile picture upload
+   */
+  async onFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    
+    if (!file) return;
+    
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      this.toastService.error('Please select a JPEG, PNG, or WebP image');
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      this.toastService.error('Image must be smaller than 5MB');
+      return;
+    }
+    
+    this.isUploadingAvatar.set(true);
+    
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) throw new Error('Not logged in');
+      
+      // Create unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/avatar-${Date.now()}.${fileExt}`;
+      
+      // Upload to Supabase Storage
+      const { data: uploadData, error: uploadError } = await this.supabaseService.client
+        .storage
+        .from('avatars')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+      
+      if (uploadError) {
+        // If bucket doesn't exist, show helpful message
+        if (uploadError.message.includes('bucket') || uploadError.message.includes('not found')) {
+          this.toastService.error('Avatar storage is not configured. Please contact support.');
+          this.logger.error('Avatars bucket not found:', uploadError);
+          return;
+        }
+        throw uploadError;
       }
-    };
-    input.click();
+      
+      // Get public URL
+      const { data: urlData } = this.supabaseService.client
+        .storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+      
+      const avatarUrl = urlData.publicUrl;
+      
+      // Update profile in database
+      const { error: updateError } = await this.supabaseService.client
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          avatar_url: avatarUrl,
+          updated_at: new Date().toISOString()
+        });
+      
+      if (updateError) {
+        this.logger.warn('Could not save avatar to profiles table:', updateError);
+      }
+      
+      // Update local state
+      this.avatarUrl.set(avatarUrl);
+      this.toastService.success('Profile picture updated!');
+      
+    } catch (error) {
+      this.logger.error('Error uploading avatar:', error);
+      this.toastService.error('Failed to upload profile picture');
+    } finally {
+      this.isUploadingAvatar.set(false);
+      // Reset file input
+      if (this.fileInput?.nativeElement) {
+        this.fileInput.nativeElement.value = '';
+      }
+    }
+  }
+
+  /**
+   * Share profile
+   */
+  shareProfile(): void {
+    if (navigator.share) {
+      navigator.share({
+        title: `${this.userName()} - FlagFit Pro`,
+        text: `Check out ${this.userName()}'s profile on FlagFit Pro!`,
+        url: window.location.href
+      }).catch(() => {
+        // User cancelled or error - ignore
+      });
+    } else {
+      // Fallback: copy URL to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      this.toastService.success('Profile link copied to clipboard!');
+    }
+  }
+
+  /**
+   * Load extended profile data from Supabase
+   * Uses team_members table for position, jersey number, and team info
+   */
+  private async loadExtendedProfileData(userId: string): Promise<void> {
+    try {
+      // Load team membership data (includes position, jersey number, team)
+      const { data: membership, error: memberError } = await this.supabaseService.client
+        .from('team_members')
+        .select(`
+          position,
+          jersey_number,
+          role,
+          joined_at,
+          teams:team_id(name)
+        `)
+        .eq('user_id', userId)
+        .eq('status', 'active')
+        .limit(1)
+        .maybeSingle();
+      
+      if (!memberError && membership) {
+        // Load position
+        if (membership.position) {
+          this.userPosition.set(membership.position);
+        }
+        
+        // Load jersey number
+        if (membership.jersey_number) {
+          this.jerseyNumber.set(membership.jersey_number.toString());
+        }
+        
+        // Load team name - teams is returned as an object from the join
+        const teamsData = membership.teams as unknown as { name: string } | null;
+        if (teamsData?.name) {
+          this.teamName.set(teamsData.name);
+        }
+        
+        // Format member since date from joined_at
+        if (membership.joined_at) {
+          const date = new Date(membership.joined_at);
+          this.memberSince.set(date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
+        }
+      }
+      
+      // Set member since from Supabase auth user if not set from team membership
+      if (this.memberSince() === 'Recently') {
+        const { data: { user: authUser } } = await this.supabaseService.client.auth.getUser();
+        if (authUser?.created_at) {
+          const date = new Date(authUser.created_at);
+          this.memberSince.set(date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
+        }
+      }
+      
+    } catch (error) {
+      this.logger.warn('Could not load extended profile data:', error);
+      // Non-critical error, continue with basic profile
+    }
   }
 
   // ============================================================================
@@ -1015,28 +1565,35 @@ export class ProfileComponent implements OnInit {
     
     try {
       const user = this.authService.currentUser();
-      if (!user?.email) return;
+      if (!user?.email) {
+        this.loadingInvitations.set(false);
+        return;
+      }
 
+      // Query invitations without the problematic join - invited_by doesn't have a FK relationship
       const { data, error } = await this.supabaseService.client
         .from('team_invitations')
         .select(`
           id,
           team_id,
           role,
-          message,
           status,
           expires_at,
           created_at,
-          teams:team_id(name),
-          inviter:invited_by(raw_user_meta_data)
+          invited_by,
+          teams:team_id(name)
         `)
         .eq('email', user.email)
         .in('status', ['pending', 'expired'])
         .order('created_at', { ascending: false });
 
       if (error) {
-        if (error.code !== '42P01') throw error;
-        return;
+        // Table doesn't exist or other non-critical error
+        if (error.code === '42P01' || error.code === 'PGRST200') {
+          this.logger.warn('Team invitations table not configured:', error.message);
+          return;
+        }
+        throw error;
       }
 
       const invitations: PendingInvitation[] = (data || []).map((inv: any) => ({
@@ -1044,8 +1601,8 @@ export class ProfileComponent implements OnInit {
         teamId: inv.team_id,
         teamName: inv.teams?.name || 'Unknown Team',
         role: inv.role,
-        message: inv.message,
-        invitedBy: inv.inviter?.raw_user_meta_data?.full_name || 'Team Admin',
+        message: '', // No message column in table
+        invitedBy: 'Team Admin', // Can't join to auth.users directly
         createdAt: inv.created_at,
         expiresAt: inv.expires_at,
         isExpired: new Date(inv.expires_at) < new Date()

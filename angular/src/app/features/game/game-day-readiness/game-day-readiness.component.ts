@@ -64,7 +64,7 @@ interface ReadinessMetric {
       <!-- Header -->
       <div class="readiness-header">
         <div class="header-content">
-          <h1>🏈 Game Day Readiness</h1>
+          <h1><i class="pi pi-flag"></i> Game Day Readiness</h1>
           <p class="subtitle">Pre-Competition Check-in for {{ gameInfo() }}</p>
         </div>
         <div class="acwr-badge" [class]="acwrStatus()">

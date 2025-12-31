@@ -1,10 +1,10 @@
-import {
-  Component,
-  input,
-  computed,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    input,
+} from "@angular/core";
 
 /**
  * Avatar Component - Angular 21
@@ -46,38 +46,50 @@ import { CommonModule } from "@angular/common";
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        background-color: var(--p-surface-200);
-        color: var(--p-text-color);
-        font-weight: 600;
+        background: linear-gradient(135deg, var(--ds-primary-green, #089949) 0%, var(--ds-primary-green-dark, #067a3b) 100%);
+        color: #ffffff;
+        font-weight: 700;
         position: relative;
         overflow: hidden;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 2px 8px rgba(8, 153, 73, 0.25);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .avatar:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(8, 153, 73, 0.35);
       }
 
       .avatar-sm {
         width: 2rem;
         height: 2rem;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
       }
 
       .avatar-md {
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 2.75rem;
+        height: 2.75rem;
         font-size: 0.875rem;
+        letter-spacing: 0.75px;
       }
 
       .avatar-lg {
         width: 3.5rem;
         height: 3.5rem;
         font-size: 1.125rem;
+        letter-spacing: 1px;
       }
 
       .avatar-xl {
-        width: 4.5rem;
-        height: 4.5rem;
+        width: 5rem;
+        height: 5rem;
         font-size: 1.5rem;
+        letter-spacing: 1.5px;
       }
 
       .avatar-square {
@@ -87,6 +99,7 @@ import { CommonModule } from "@angular/common";
       .avatar-initials {
         text-transform: uppercase;
         user-select: none;
+        font-weight: 700;
       }
 
       .avatar-badge {

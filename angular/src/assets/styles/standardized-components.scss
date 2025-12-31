@@ -43,7 +43,7 @@
 
   /* Visual */
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full, 9999px);
   min-height: var(--touch-target-min, 44px);
 
   /* Animation - Modern CSS with will-change for performance */
@@ -857,118 +857,58 @@ select {
 /* ================================================================
    PRIMENG COMPONENT OVERRIDES
    Ensure PrimeNG components match our design system
+   
+   NOTE: Button text colors are enforced in primeng-theme.scss
+   to ensure WHITE ON GREEN, GREEN ON WHITE design rules.
    ================================================================ */
 
-/* PrimeNG Button Overrides */
-:host ::ng-deep {
-  .p-button {
-    &.p-button-primary {
-      background-color: var(--ds-primary-green);
-      border-color: var(--ds-primary-green);
-      color: var(--color-text-on-primary);
-
-      &:hover:not(:disabled) {
-        background-color: var(--ds-primary-green-hover);
-        border-color: var(--ds-primary-green-hover);
-      }
-    }
-
-    &.p-button-secondary {
-      background-color: var(--surface-primary);
-      border-color: var(--color-border-primary);
-      color: var(--ds-primary-green);
-
-      &:hover:not(:disabled) {
-        background-color: var(--surface-secondary);
-        border-color: var(--ds-primary-green);
-        color: var(--ds-primary-green-hover);
-      }
-    }
-
-    &.p-button-outlined {
-      background-color: transparent;
-      border-color: var(--ds-primary-green);
-      color: var(--ds-primary-green);
-
-      &:hover:not(:disabled) {
-        background-color: var(--ds-primary-green-ultra-subtle);
-        border-color: var(--ds-primary-green-hover);
-        color: var(--ds-primary-green-hover);
-      }
-    }
-
-    &.p-button-text {
-      background-color: transparent;
-      border-color: transparent;
-      color: var(--ds-primary-green);
-
-      &:hover:not(:disabled) {
-        background-color: var(--ds-primary-green-ultra-subtle);
-        color: var(--ds-primary-green-hover);
-      }
-    }
-
-    &.p-button-danger {
-      background-color: var(--color-status-error);
-      border-color: var(--color-status-error);
-      color: var(--color-text-on-primary);
-
-      &:hover:not(:disabled) {
-        background-color: #dc2626;
-        border-color: #dc2626;
-      }
-    }
+/* PrimeNG Tag/Badge Overrides */
+.p-tag {
+  &.p-tag-success {
+    background-color: var(--color-status-success);
+    color: #ffffff; /* White text on success green */
   }
 
-  /* PrimeNG Tag/Badge Overrides */
-  .p-tag {
-    &.p-tag-success {
-      background-color: var(--color-status-success);
-      color: var(--color-text-primary);
-    }
-
-    &.p-tag-warning {
-      background-color: var(--color-status-warning);
-      color: var(--color-text-on-primary);
-    }
-
-    &.p-tag-danger {
-      background-color: var(--color-status-error);
-      color: var(--color-text-on-primary);
-    }
+  &.p-tag-warning {
+    background-color: var(--color-status-warning);
+    color: #78350f; /* Dark text on warning yellow for contrast */
   }
 
-  /* PrimeNG Card Overrides */
-  .p-card {
-    background-color: var(--surface-primary);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+  &.p-tag-danger {
+    background-color: var(--color-status-error);
+    color: #ffffff; /* White text on danger red */
+  }
+}
 
-    .p-card-header {
-      background-color: var(--surface-secondary);
-      border-bottom: 1px solid var(--color-border-primary);
-    }
+/* PrimeNG Card Overrides */
+.p-card {
+  background-color: var(--surface-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 
-    .p-card-body {
-      padding: var(--space-6);
-    }
-
-    .p-card-footer {
-      background-color: var(--surface-secondary);
-      border-top: 1px solid var(--color-border-primary);
-    }
+  .p-card-header {
+    background-color: var(--surface-secondary);
   }
 
-  /* PrimeNG Input Overrides */
-  .p-inputtext {
-    border-color: var(--color-border-primary);
-    color: var(--color-text-primary);
-    background-color: var(--surface-primary);
+  .p-card-body {
+    padding: var(--space-6);
+  }
 
-    &:focus {
-      border-color: var(--color-border-focus);
-      box-shadow: var(--shadow-focus);
-    }
+  .p-card-footer {
+    background-color: var(--surface-secondary);
+    border-top: 1px solid var(--color-border-primary);
+  }
+}
+
+/* PrimeNG Input Overrides */
+.p-inputtext {
+  border-color: var(--color-border-primary);
+  color: var(--color-text-primary);
+  background-color: var(--surface-primary);
+
+  &:focus {
+    border-color: var(--color-border-focus);
+    box-shadow: var(--shadow-focus);
   }
 }
 

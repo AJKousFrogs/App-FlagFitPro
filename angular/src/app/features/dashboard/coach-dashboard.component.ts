@@ -1,51 +1,49 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  DestroyRef,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Router, RouterModule } from "@angular/router";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
-import { ChartModule } from "primeng/chart";
-import { DialogModule } from "primeng/dialog";
-import { TooltipModule } from "primeng/tooltip";
-import { ProgressBar } from "primeng/progressbar";
+import { Router, RouterModule } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
-import { InputTextModule } from "primeng/inputtext";
-import { Textarea } from "primeng/textarea";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ChartModule } from "primeng/chart";
 import { DatePicker } from "primeng/datepicker";
+import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
+import { Textarea } from "primeng/textarea";
+import { TooltipModule } from "primeng/tooltip";
 import { forkJoin } from "rxjs";
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
 import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
-import { ToastService } from "../../core/services/toast.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { DEFAULT_CHART_OPTIONS, LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import {
-  TeamStatisticsService,
-  TeamOverviewStats,
-  PlayerPerformanceStats,
-  GameResult,
-  UpcomingGame,
-  TrainingSession,
-  RiskAlert,
-  TeamMessage,
+    GameResult,
+    PlayerPerformanceStats,
+    RiskAlert,
+    TeamMessage,
+    TeamOverviewStats,
+    TeamStatisticsService,
+    TrainingSession,
+    UpcomingGame,
 } from "../../core/services/team-statistics.service";
-import { ConsentBlockedMessageComponent } from "../../shared/components/consent-blocked-message/consent-blocked-message.component";
+import { ToastService } from "../../core/services/toast.service";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
+import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 /**
@@ -111,7 +109,7 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
         <div class="dashboard-header">
           <div class="header-info">
             <h1 class="team-name">
-              <span class="team-icon">🏈</span>
+              <i class="team-icon pi pi-flag"></i>
               {{ teamOverview().teamName }} Dashboard
             </h1>
             <p class="header-subtitle">
@@ -139,7 +137,7 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
         <!-- Key Stats Row -->
         <div class="stats-grid">
           <div class="stat-card primary">
-            <div class="stat-icon">🏆</div>
+            <div class="stat-icon"><i class="pi pi-trophy"></i></div>
             <div class="stat-info">
               <div class="stat-value">{{ teamOverview().wins }}-{{ teamOverview().losses }}</div>
               <div class="stat-label">Season Record</div>
@@ -148,7 +146,7 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
           </div>
           
           <div class="stat-card">
-            <div class="stat-icon">👥</div>
+            <div class="stat-icon"><i class="pi pi-users"></i></div>
             <div class="stat-info">
               <div class="stat-value">{{ teamOverview().activePlayers }}/{{ teamOverview().totalPlayers }}</div>
               <div class="stat-label">Active Players</div>
@@ -159,7 +157,7 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
           </div>
           
           <div class="stat-card">
-            <div class="stat-icon">⭐</div>
+            <div class="stat-icon"><i class="pi pi-star"></i></div>
             <div class="stat-info">
               <div class="stat-value">{{ teamOverview().overallRating }}</div>
               <div class="stat-label">Team Rating</div>
@@ -168,7 +166,7 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
           </div>
           
           <div class="stat-card" [class.alert]="teamOverview().playersAtRisk > 0">
-            <div class="stat-icon">⚠️</div>
+            <div class="stat-icon"><i class="pi pi-exclamation-triangle"></i></div>
             <div class="stat-info">
               <div class="stat-value">{{ teamOverview().playersAtRisk }}</div>
               <div class="stat-label">Risk Alerts</div>
@@ -682,20 +680,22 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
       >
         <div class="session-form">
           <div class="form-field">
-            <label for="sessionTitle">Session Title</label>
+            <label for="coach-sessionTitle">Session Title</label>
             <input
-              id="sessionTitle"
+              id="coach-sessionTitle"
+              name="sessionTitle"
               type="text"
               pInputText
               [(ngModel)]="newSession.title"
               placeholder="e.g., Offensive Drills"
               class="w-full"
+              autocomplete="off"
             />
           </div>
           <div class="form-field">
-            <label for="sessionType">Type</label>
+            <label for="coach-sessionType">Type</label>
             <p-select
-              id="sessionType"
+              inputId="coach-sessionType"
               [(ngModel)]="newSession.type"
               [options]="sessionTypes"
               optionLabel="label"
@@ -705,9 +705,9 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
             ></p-select>
           </div>
           <div class="form-field">
-            <label for="sessionDate">Date & Time</label>
+            <label for="coach-sessionDate">Date & Time</label>
             <p-datepicker
-              id="sessionDate"
+              inputId="coach-sessionDate"
               [(ngModel)]="newSession.date"
               [showTime]="true"
               [showIcon]="true"
@@ -716,25 +716,29 @@ type SortField = 'name' | 'position' | 'performance' | 'acwr' | 'readiness';
             ></p-datepicker>
           </div>
           <div class="form-field">
-            <label for="sessionDuration">Duration (minutes)</label>
+            <label for="coach-sessionDuration">Duration (minutes)</label>
             <input
-              id="sessionDuration"
+              id="coach-sessionDuration"
+              name="sessionDuration"
               type="number"
               pInputText
               [(ngModel)]="newSession.duration"
               placeholder="90"
               class="w-full"
+              autocomplete="off"
             />
           </div>
           <div class="form-field">
-            <label for="sessionNotes">Notes</label>
+            <label for="coach-sessionNotes">Notes</label>
             <textarea
               pTextarea
-              id="sessionNotes"
+              id="coach-sessionNotes"
+              name="sessionNotes"
               [(ngModel)]="newSession.notes"
               placeholder="Session notes..."
               rows="3"
               class="w-full"
+              autocomplete="off"
             ></textarea>
           </div>
         </div>

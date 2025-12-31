@@ -10,44 +10,43 @@
  * - Message pinning and importance flags
  */
 
+import { ScrollingModule } from "@angular/cdk/scrolling";
+import { CommonModule } from "@angular/common";
 import {
-  Component,
-  OnInit,
-  OnDestroy,
-  inject,
-  signal,
-  computed,
-  ViewChild,
-  ElementRef,
-  AfterViewInit,
-  ChangeDetectionStrategy,
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    ElementRef,
+    inject,
+    OnDestroy,
+    OnInit,
+    signal,
+    ViewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
-import { ToastService } from "../../core/services/toast.service";
-import { AuthService } from "../../core/services/auth.service";
-import {
-  ChannelService,
-  Channel,
-  ChatMessage,
-  ChannelType,
-} from "../../core/services/channel.service";
-import { TeamNotificationService } from "../../core/services/team-notification.service";
-import { ScrollingModule } from "@angular/cdk/scrolling";
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
-import { ScrollPanelModule } from "primeng/scrollpanel";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
+import { MenuModule } from "primeng/menu";
+import { ScrollPanelModule } from "primeng/scrollpanel";
 import { Select } from "primeng/select";
+import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
-import { MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
+import { AuthService } from "../../core/services/auth.service";
+import {
+    Channel,
+    ChannelService,
+    ChannelType,
+    ChatMessage,
+} from "../../core/services/channel.service";
+import { TeamNotificationService } from "../../core/services/team-notification.service";
+import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { MenuItem } from "primeng/api";
 
 @Component({
   selector: "app-chat",
@@ -379,12 +378,15 @@ import { MenuItem } from "primeng/api";
                     }
                     
                     <input
+                      id="chat-newMessage"
+                      name="message"
                       pInputText
                       [(ngModel)]="newMessage"
                       (keydown.enter)="sendMessage()"
                       (input)="onMessageInput($event)"
                       [placeholder]="getInputPlaceholder()"
                       class="message-input"
+                      autocomplete="off"
                     />
                     
                     <p-button
@@ -417,23 +419,34 @@ import { MenuItem } from "primeng/api";
     >
       <div class="create-channel-form">
         <div class="form-field">
-          <label>Channel Name</label>
-          <input pInputText [(ngModel)]="newChannelName" placeholder="e.g., qb-room" />
+          <label for="chat-channelName">Channel Name</label>
+          <input 
+            id="chat-channelName"
+            name="channelName"
+            pInputText 
+            [(ngModel)]="newChannelName" 
+            placeholder="e.g., qb-room"
+            autocomplete="off"
+          />
         </div>
         
         <div class="form-field">
-          <label>Description</label>
+          <label for="chat-channelDescription">Description</label>
           <textarea 
+            id="chat-channelDescription"
+            name="channelDescription"
             pInputTextarea 
             [(ngModel)]="newChannelDescription" 
             rows="2"
             placeholder="What's this channel about?"
+            autocomplete="off"
           ></textarea>
         </div>
         
         <div class="form-field">
-          <label>Channel Type</label>
+          <label for="chat-channelType">Channel Type</label>
           <p-select
+            inputId="chat-channelType"
             [(ngModel)]="newChannelType"
             [options]="channelTypeOptions"
             optionLabel="label"

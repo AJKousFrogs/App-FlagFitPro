@@ -128,7 +128,7 @@ interface HydrationLog {
         <!-- Tournament Overview Banner -->
         <div class="tournament-banner">
           <div class="banner-content">
-            <div class="banner-icon">🏆</div>
+            <div class="banner-icon"><i class="pi pi-trophy"></i></div>
             <div class="banner-info">
               <h2>{{ tournamentName() }}</h2>
               <p>{{ games().length }} Games · {{ tournamentDuration() }}</p>
@@ -1318,7 +1318,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
       type: 'halftime',
       startTime: halftimeStart,
       endTime: this.addMinutes(halftimeStart, 10),
-      title: `🏈 Halftime - Game ${gameNum}`,
+      title: `Halftime - Game ${gameNum}`,
       priority: 'high',
       hydrationTarget: 200,
       relatedGameId: game.id,
@@ -1490,7 +1490,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
       type: 'post-game',
       startTime,
       endTime: this.addMinutes(startTime, 120),
-      title: `🏆 Post-Tournament Recovery`,
+      title: `Post-Tournament Recovery`,
       priority: 'high',
       hydrationTarget: 750,
       recommendations: [

@@ -682,7 +682,7 @@ export class TournamentModeWidgetComponent {
       )
     ) {
       this.tournamentService.endTournament();
-      this.toastService.info("Tournament ended. Great job! 🏆");
+      this.toastService.info("Tournament ended. Great job!");
     }
   }
 }

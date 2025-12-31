@@ -289,7 +289,7 @@ interface TimelineEvent {
 
             <!-- Flag Football Sprint Tips -->
             <div class="sprint-tips">
-              <h4>🏈 Flag Football Sprint Tips</h4>
+              <h4><i class="pi pi-flag"></i> Flag Football Sprint Tips</h4>
               <ul>
                 @for (tip of sprintRecommendations(); track tip) {
                   <li>{{ tip }}</li>

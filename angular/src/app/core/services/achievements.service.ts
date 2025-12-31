@@ -150,7 +150,7 @@ export class AchievementsService {
           if (achievement) {
             this.toastService.success(
               `${achievement.name} - ${achievement.description}`,
-              '🏆 Achievement Unlocked!'
+              'Achievement Unlocked!'
             );
           }
           // Reload achievements to get updated state

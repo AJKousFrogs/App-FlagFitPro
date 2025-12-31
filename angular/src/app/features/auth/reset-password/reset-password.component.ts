@@ -47,9 +47,10 @@ import { LoggerService } from "../../../core/services/logger.service";
 
         <form [formGroup]="resetForm" (ngSubmit)="onSubmit()">
           <div class="p-field mb-4">
-            <label for="email" class="p-label required">Email</label>
+            <label for="reset-email" class="p-label required">Email</label>
             <input
-              id="email"
+              id="reset-email"
+              name="email"
               type="email"
               pInputText
               formControlName="email"
@@ -58,10 +59,10 @@ import { LoggerService } from "../../../core/services/logger.service";
               autocomplete="email"
               aria-required="true"
               [attr.aria-invalid]="isFieldInvalid('email') ? 'true' : null"
-              [attr.aria-describedby]="isFieldInvalid('email') ? 'email-error' : null"
+              [attr.aria-describedby]="isFieldInvalid('email') ? 'reset-email-error' : null"
             />
             @if (isFieldInvalid("email")) {
-              <small id="email-error" class="p-error" role="alert">
+              <small id="reset-email-error" class="p-error" role="alert">
                 {{ getFieldError("email") }}
               </small>
             }

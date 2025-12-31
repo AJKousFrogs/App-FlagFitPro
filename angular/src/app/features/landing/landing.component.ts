@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy, inject, signal, afterNextRender } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
 
 @Component({
   selector: "app-landing",
@@ -31,24 +31,53 @@ import { ButtonModule } from "primeng/button";
         <div class="hero-content" [class.hero-content-visible]="isLoaded()">
           <div class="hero-logo-wrapper animate-item" style="--delay: 0">
             <div class="hero-logo">
-              <i class="pi pi-football"></i>
+              <span class="merlin-icon">🏈</span>
             </div>
             <div class="hero-badge">🏆 Pro Platform</div>
           </div>
 
-          <h1 class="hero-title animate-item" style="--delay: 1">
+          <!-- Olympic Countdown Timer -->
+          <div class="olympic-countdown animate-item" style="--delay: 1">
+            <div class="countdown-label">
+              <span class="countdown-label-text">TIME LEFT UNTIL THE</span>
+              <span class="countdown-label-event">LA28 OLYMPIC GAMES</span>
+            </div>
+            <div class="countdown-timer">
+              <div class="countdown-segment countdown-days">
+                <span class="countdown-value">{{ olympicCountdown().days }}</span>
+                <span class="countdown-unit">DAYS</span>
+              </div>
+              <div class="countdown-separator">:</div>
+              <div class="countdown-segment">
+                <span class="countdown-value">{{ olympicCountdown().hours | number:'2.0-0' }}</span>
+                <span class="countdown-unit">HOURS</span>
+              </div>
+              <div class="countdown-separator">:</div>
+              <div class="countdown-segment">
+                <span class="countdown-value">{{ olympicCountdown().minutes | number:'2.0-0' }}</span>
+                <span class="countdown-unit">MINS</span>
+              </div>
+              <div class="countdown-separator">:</div>
+              <div class="countdown-segment">
+                <span class="countdown-value">{{ olympicCountdown().seconds | number:'2.0-0' }}</span>
+                <span class="countdown-unit">SEC</span>
+              </div>
+            </div>
+          </div>
+
+          <h1 class="hero-title animate-item" style="--delay: 2">
             Elevate Your
             <span class="hero-title-accent">Flag Football</span>
             Game
           </h1>
 
-          <p class="hero-description animate-item" style="--delay: 2">
+          <p class="hero-description animate-item" style="--delay: 3">
             The ultimate training and competition platform for serious players.
             Track performance, join tournaments, and connect with a community
             that shares your passion for the game.
           </p>
 
-          <div class="hero-actions animate-item" style="--delay: 3">
+          <div class="hero-actions animate-item" style="--delay: 4">
             <p-button
               label="Get Started Free"
               icon="pi pi-arrow-right"
@@ -65,7 +94,7 @@ import { ButtonModule } from "primeng/button";
             ></p-button>
           </div>
 
-          <div class="hero-stats animate-item" style="--delay: 4">
+          <div class="hero-stats animate-item" style="--delay: 5">
             @for (stat of heroStats; track stat.label) {
               <div class="hero-stat" [style.--stat-delay]="$index">
                 <div class="hero-stat-number">{{ stat.value }}</div>
@@ -77,7 +106,7 @@ import { ButtonModule } from "primeng/button";
       </div>
 
       <!-- Scroll indicator -->
-      <div class="scroll-indicator animate-item" style="--delay: 5" [class.visible]="isLoaded()">
+      <div class="scroll-indicator animate-item" style="--delay: 6" [class.visible]="isLoaded()">
         <div class="scroll-mouse">
           <div class="scroll-wheel"></div>
         </div>
@@ -284,12 +313,16 @@ import { ButtonModule } from "primeng/button";
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        background: linear-gradient(135deg, var(--ds-primary-green-light, #0ab85a) 0%, var(--ds-primary-green, #089949) 100%);
         border-radius: 50%;
-        color: white;
-        font-size: 2.5rem;
-        box-shadow: 0 20px 40px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.3);
+        box-shadow: 0 20px 40px rgba(8, 153, 73, 0.3);
         animation: logo-pulse 3s ease-in-out infinite;
+      }
+
+      .merlin-icon {
+        font-size: 3rem;
+        line-height: 1;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
       }
 
       @keyframes logo-pulse {
@@ -318,6 +351,125 @@ import { ButtonModule } from "primeng/button";
       @keyframes badge-glow {
         0% { box-shadow: 0 0 20px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1); }
         100% { box-shadow: 0 0 30px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2); }
+      }
+
+      /* ===== OLYMPIC COUNTDOWN ===== */
+      .olympic-countdown {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(2rem, 6vw, 5rem);
+        margin-bottom: var(--space-10);
+        padding: var(--space-6) var(--space-8);
+        background: var(--surface-primary);
+        border-radius: var(--radius-xl);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        flex-wrap: wrap;
+      }
+
+      .countdown-label {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.125rem;
+      }
+
+      .countdown-label-text {
+        font-family: 'Poppins', system-ui, sans-serif;
+        font-size: clamp(0.625rem, 1.5vw, 0.875rem);
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+      }
+
+      .countdown-label-event {
+        font-family: 'Poppins', system-ui, sans-serif;
+        font-size: clamp(0.875rem, 2vw, 1.25rem);
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        color: var(--text-primary);
+        text-transform: uppercase;
+      }
+
+      .countdown-timer {
+        display: flex;
+        align-items: flex-start;
+        gap: clamp(0.5rem, 2vw, 1rem);
+      }
+
+      .countdown-segment {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .countdown-value {
+        font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
+        font-size: clamp(2rem, 8vw, 4.5rem);
+        font-weight: 900;
+        line-height: 1;
+        color: var(--text-primary);
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        min-width: 1.8ch;
+        text-align: center;
+      }
+
+      .countdown-days .countdown-value {
+        min-width: 2.5ch;
+      }
+
+      .countdown-unit {
+        font-family: 'Poppins', system-ui, sans-serif;
+        font-size: clamp(0.5rem, 1.5vw, 0.875rem);
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+      }
+
+      .countdown-separator {
+        font-family: 'JetBrains Mono', 'SF Mono', 'Roboto Mono', monospace;
+        font-size: clamp(2rem, 8vw, 4.5rem);
+        font-weight: 900;
+        line-height: 1;
+        color: var(--text-primary);
+        opacity: 0.3;
+        padding-top: 0;
+      }
+
+      /* Responsive for countdown */
+      @media (max-width: 768px) {
+        .olympic-countdown {
+          flex-direction: column;
+          gap: var(--space-4);
+          padding: var(--space-5) var(--space-4);
+        }
+
+        .countdown-label {
+          align-items: center;
+          text-align: center;
+        }
+
+        .countdown-timer {
+          gap: 0.25rem;
+        }
+
+        .countdown-separator {
+          padding: 0 0.125rem;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .countdown-value {
+          font-size: 1.75rem;
+        }
+
+        .countdown-separator {
+          font-size: 1.75rem;
+        }
       }
 
       .hero-title {
@@ -353,28 +505,55 @@ import { ButtonModule } from "primeng/button";
         margin-bottom: var(--space-14);
       }
 
-      /* Premium button styles */
+      /* Premium button styles - WHITE ON GREEN for primary (design system rule) */
       :host ::ng-deep .hero-btn-primary {
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%) !important;
+        background: linear-gradient(135deg, var(--ds-primary-green-light, #0ab85a) 0%, var(--ds-primary-green, #089949) 100%) !important;
         border: none !important;
-        box-shadow: 0 10px 30px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.3);
+        border-radius: var(--radius-full, 9999px) !important;
+        color: #ffffff !important; /* WHITE ON GREEN - design system rule */
+        box-shadow: 0 10px 30px rgba(8, 153, 73, 0.35);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        padding: 0.875rem 2rem !important;
+        font-weight: 600 !important;
+      }
+
+      :host ::ng-deep .hero-btn-primary .p-button-label {
+        color: #ffffff !important; /* Ensure label is white */
+      }
+
+      :host ::ng-deep .hero-btn-primary .p-button-icon {
+        color: #ffffff !important; /* Ensure icon is white */
       }
 
       :host ::ng-deep .hero-btn-primary:hover {
         transform: translateY(-3px) !important;
-        box-shadow: 0 15px 40px rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.4) !important;
+        box-shadow: 0 15px 40px rgba(8, 153, 73, 0.45) !important;
+        background: linear-gradient(135deg, var(--ds-primary-green, #089949) 0%, var(--ds-primary-green-hover, #036d35) 100%) !important;
       }
 
+      /* GREEN ON WHITE for secondary/outlined button (design system rule) */
       :host ::ng-deep .hero-btn-secondary {
-        border-color: var(--color-brand-primary) !important;
-        color: var(--color-brand-primary) !important;
+        background: transparent !important;
+        border: 2px solid var(--ds-primary-green, #089949) !important;
+        border-radius: var(--radius-full, 9999px) !important;
+        color: var(--ds-primary-green, #089949) !important; /* GREEN ON WHITE */
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        padding: 0.875rem 2rem !important;
+        font-weight: 600 !important;
+      }
+
+      :host ::ng-deep .hero-btn-secondary .p-button-label {
+        color: var(--ds-primary-green, #089949) !important;
+      }
+
+      :host ::ng-deep .hero-btn-secondary .p-button-icon {
+        color: var(--ds-primary-green, #089949) !important;
       }
 
       :host ::ng-deep .hero-btn-secondary:hover {
-        background: rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1) !important;
+        background: rgba(8, 153, 73, 0.08) !important;
         transform: translateY(-3px) !important;
+        border-color: var(--ds-primary-green-hover, #036d35) !important;
       }
 
       .hero-stats {
@@ -564,6 +743,16 @@ import { ButtonModule } from "primeng/button";
         color: #8b5cf6;
       }
 
+      .feature-icon-ai-coach {
+        background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(236, 72, 153, 0.2) 100%);
+        color: #ec4899;
+      }
+
+      .feature-icon-progress {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.2) 100%);
+        color: #06b6d4;
+      }
+
       .feature-card-title {
         font-size: var(--font-heading-lg);
         font-weight: var(--font-weight-semibold);
@@ -713,7 +902,10 @@ import { ButtonModule } from "primeng/button";
         .hero-logo {
           width: 80px;
           height: 80px;
-          font-size: 2rem;
+        }
+
+        .merlin-icon {
+          font-size: 2.5rem;
         }
 
         .hero-actions {
@@ -784,11 +976,24 @@ import { ButtonModule } from "primeng/button";
     `,
   ],
 })
-export class LandingComponent {
+export class LandingComponent implements OnInit {
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   
   // Signals for reactive state
   isLoaded = signal(false);
+  
+  // Olympic countdown - LA 2028 Opening Ceremony: July 14, 2028
+  olympicCountdown = signal({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+  
+  // LA 2028 Olympics Opening Ceremony date
+  private olympicDate = new Date('2028-07-14T20:00:00-07:00'); // Pacific Time
+  private countdownInterval: ReturnType<typeof setInterval> | null = null;
   
   currentYear = new Date().getFullYear();
 
@@ -837,6 +1042,20 @@ export class LandingComponent {
         "Access structured workouts and skill development plans designed by professional coaches and trainers.",
       icon: "pi-bolt",
     },
+    {
+      id: "ai-coach",
+      title: "AI Coach - Merlin",
+      description:
+        "Get personalized training advice from Merlin, your AI coach. Ask questions, get drill recommendations, and improve faster.",
+      icon: "pi-sparkles",
+    },
+    {
+      id: "progress",
+      title: "Progress Reports",
+      description:
+        "Get detailed weekly and monthly reports on your development. Visualize your journey from beginner to elite athlete.",
+      icon: "pi-chart-line",
+    },
   ];
 
   constructor() {
@@ -847,6 +1066,44 @@ export class LandingComponent {
         this.isLoaded.set(true);
       }, 100);
     });
+  }
+
+  ngOnInit(): void {
+    // Start countdown immediately
+    this.updateCountdown();
+    
+    // Update every second
+    this.countdownInterval = setInterval(() => {
+      this.updateCountdown();
+    }, 1000);
+    
+    // Cleanup on destroy
+    this.destroyRef.onDestroy(() => {
+      if (this.countdownInterval) {
+        clearInterval(this.countdownInterval);
+      }
+    });
+  }
+
+  private updateCountdown(): void {
+    const now = new Date().getTime();
+    const target = this.olympicDate.getTime();
+    const difference = target - now;
+    
+    if (difference > 0) {
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+      
+      this.olympicCountdown.set({ days, hours, minutes, seconds });
+    } else {
+      // Olympic games have started!
+      this.olympicCountdown.set({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      if (this.countdownInterval) {
+        clearInterval(this.countdownInterval);
+      }
+    }
   }
 
   trackByFeatureId(index: number, feature: { id: string }): string {
@@ -868,6 +1125,8 @@ export class LandingComponent {
       tournament: '/tournaments',
       community: '/community',
       training: '/training',
+      'ai-coach': '/ai-coach',
+      progress: '/analytics',
     };
 
     const route = featureRoutes[featureId];

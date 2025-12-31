@@ -57,6 +57,7 @@ export type ValidationState = 'idle' | 'validating' | 'valid' | 'invalid';
         <!-- Input Field -->
         <input
           [id]="inputId()"
+          [name]="inputId()"
           [type]="showPassword() ? 'text' : type()"
           [placeholder]="placeholder()"
           [disabled]="isDisabled()"

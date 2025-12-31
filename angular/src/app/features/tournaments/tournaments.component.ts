@@ -1,35 +1,35 @@
+import { CommonModule, DecimalPipe } from "@angular/common";
 import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    inject,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CommonModule, DecimalPipe } from "@angular/common";
 
-import { CardModule } from "primeng/card";
+import { ConfirmationService, MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
-import { TagModule } from "primeng/tag";
-import { ProgressBarModule } from "primeng/progressbar";
-import { Tabs, TabPanel } from "primeng/tabs";
-import { Dialog } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { TextareaModule } from "primeng/textarea";
-import { DatePicker } from "primeng/datepicker";
-import { Select } from "primeng/select";
-import { InputNumber } from "primeng/inputnumber";
+import { CardModule } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
-import { ToastModule } from "primeng/toast";
 import { ConfirmDialog } from "primeng/confirmdialog";
-import { MessageService, ConfirmationService } from "primeng/api";
+import { DatePicker } from "primeng/datepicker";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { InputTextModule } from "primeng/inputtext";
+import { ProgressBarModule } from "primeng/progressbar";
+import { Select } from "primeng/select";
+import { TabPanel, Tabs } from "primeng/tabs";
+import { TagModule } from "primeng/tag";
+import { TextareaModule } from "primeng/textarea";
+import { ToastModule } from "primeng/toast";
 
+import { AuthService } from "../../core/services/auth.service";
+import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
+import { CreateTournamentDto, Tournament, TournamentService } from "../../core/services/tournament.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { TournamentService, Tournament, CreateTournamentDto } from "../../core/services/tournament.service";
-import { AuthService } from "../../core/services/auth.service";
-import { SupabaseService } from "../../core/services/supabase.service";
-import { LoggerService } from "../../core/services/logger.service";
 
 interface PlayerAvailability {
   playerId: string;
@@ -363,64 +363,75 @@ interface TournamentBudget {
           <div class="form-grid">
             <!-- Name -->
             <div class="form-field full-width">
-              <label for="name">Tournament Name *</label>
+              <label for="tournament-name">Tournament Name *</label>
               <input 
                 pInputText 
-                id="name" 
+                id="tournament-name"
+                name="tournamentName"
                 [(ngModel)]="formData.name" 
                 placeholder="e.g., Adria Bowl 2026"
                 class="w-full"
+                autocomplete="off"
               />
             </div>
 
             <!-- Short Name -->
             <div class="form-field">
-              <label for="shortName">Short Name</label>
+              <label for="tournament-shortName">Short Name</label>
               <input 
                 pInputText 
-                id="shortName" 
+                id="tournament-shortName"
+                name="shortName"
                 [(ngModel)]="formData.short_name" 
                 placeholder="e.g., Adria Bowl"
+                autocomplete="off"
               />
             </div>
 
             <!-- Country -->
             <div class="form-field">
-              <label for="country">Country</label>
+              <label for="tournament-country">Country</label>
               <input 
                 pInputText 
-                id="country" 
+                id="tournament-country"
+                name="country"
                 [(ngModel)]="formData.country" 
                 placeholder="e.g., Croatia"
+                autocomplete="country-name"
               />
             </div>
 
             <!-- Location -->
             <div class="form-field">
-              <label for="location">City/Location</label>
+              <label for="tournament-location">City/Location</label>
               <input 
                 pInputText 
-                id="location" 
+                id="tournament-location"
+                name="location"
                 [(ngModel)]="formData.location" 
                 placeholder="e.g., Zagreb"
+                autocomplete="address-level2"
               />
             </div>
 
             <!-- Venue -->
             <div class="form-field">
-              <label for="venue">Venue</label>
+              <label for="tournament-venue">Venue</label>
               <input 
                 pInputText 
-                id="venue" 
+                id="tournament-venue"
+                name="venue"
                 [(ngModel)]="formData.venue" 
                 placeholder="e.g., Stadium Name"
+                autocomplete="off"
               />
             </div>
 
             <!-- Start Date -->
             <div class="form-field">
-              <label for="startDate">Start Date *</label>
+              <label for="tournament-startDate">Start Date *</label>
               <p-datepicker 
+                inputId="tournament-startDate"
                 [(ngModel)]="formData.start_date_obj"
                 [showIcon]="true"
                 dateFormat="yy-mm-dd"
@@ -431,8 +442,9 @@ interface TournamentBudget {
 
             <!-- End Date -->
             <div class="form-field">
-              <label for="endDate">End Date</label>
+              <label for="tournament-endDate">End Date</label>
               <p-datepicker 
+                inputId="tournament-endDate"
                 [(ngModel)]="formData.end_date_obj"
                 [showIcon]="true"
                 dateFormat="yy-mm-dd"
@@ -443,8 +455,9 @@ interface TournamentBudget {
 
             <!-- Tournament Type -->
             <div class="form-field">
-              <label for="type">Tournament Type</label>
+              <label for="tournament-type">Tournament Type</label>
               <p-select 
+                inputId="tournament-type"
                 [(ngModel)]="formData.tournament_type"
                 [options]="tournamentTypes"
                 optionLabel="label"
@@ -456,8 +469,9 @@ interface TournamentBudget {
 
             <!-- Competition Level -->
             <div class="form-field">
-              <label for="level">Competition Level</label>
+              <label for="tournament-level">Competition Level</label>
               <p-select 
+                inputId="tournament-level"
                 [(ngModel)]="formData.competition_level"
                 [options]="competitionLevels"
                 optionLabel="label"
@@ -469,8 +483,9 @@ interface TournamentBudget {
 
             <!-- Expected Teams -->
             <div class="form-field">
-              <label for="teams">Expected Teams</label>
+              <label for="tournament-teams">Expected Teams</label>
               <p-inputNumber 
+                inputId="tournament-teams"
                 [(ngModel)]="formData.expected_teams"
                 [min]="2"
                 [max]="100"
@@ -481,8 +496,9 @@ interface TournamentBudget {
 
             <!-- Registration Deadline -->
             <div class="form-field">
-              <label for="deadline">Registration Deadline</label>
+              <label for="tournament-deadline">Registration Deadline</label>
               <p-datepicker 
+                inputId="tournament-deadline"
                 [(ngModel)]="formData.registration_deadline_obj"
                 [showIcon]="true"
                 dateFormat="yy-mm-dd"
@@ -493,26 +509,30 @@ interface TournamentBudget {
 
             <!-- Website URL -->
             <div class="form-field full-width">
-              <label for="website">Website URL</label>
+              <label for="tournament-website">Website URL</label>
               <input 
                 pInputText 
-                id="website" 
+                id="tournament-website"
+                name="website"
                 [(ngModel)]="formData.website_url" 
                 placeholder="https://..."
                 class="w-full"
+                autocomplete="url"
               />
             </div>
 
             <!-- Notes -->
             <div class="form-field full-width">
-              <label for="notes">Notes</label>
+              <label for="tournament-notes">Notes</label>
               <textarea 
                 pTextarea 
-                id="notes" 
+                id="tournament-notes"
+                name="notes"
                 [(ngModel)]="formData.notes" 
                 rows="3"
                 placeholder="Additional information..."
                 class="w-full"
+                autocomplete="off"
               ></textarea>
             </div>
 

@@ -1,5 +1,5 @@
-import { Component, signal, ChangeDetectionStrategy, inject, computed, OnInit, OnDestroy } from "@angular/core";
-import { Router, RouterModule, NavigationEnd } from "@angular/router";
+import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from "@angular/core";
+import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { BadgeModule } from "primeng/badge";
 import { filter, Subscription } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
@@ -36,15 +36,17 @@ interface NavItem {
         <i class="pi pi-times"></i>
       </button>
       
-      <div
+      <a
         class="sidebar-logo"
-        (click)="navigateToDashboard()"
-        title="FlagFit Pro"
+        routerLink="/dashboard"
+        title="FlagFit Pro - Go to Dashboard"
         aria-label="Go to dashboard"
       >
-        <i class="pi pi-activity icon-logo"></i>
+        <div class="logo-icon-wrapper">
+          <i class="pi pi-flag-fill"></i>
+        </div>
         <span class="logo-text">FlagFit Pro</span>
-      </div>
+      </a>
 
       <!-- User Info Section -->
       <div class="user-section">
@@ -120,19 +122,36 @@ interface NavItem {
   `,
   styles: [
     `
+      :host {
+        display: block;
+      }
+
+      /* Reset any potential styling bleeding through */
+      :host::before,
+      :host::after {
+        display: none !important;
+        content: none !important;
+      }
+
       .sidebar {
         position: fixed;
         left: 0;
         top: 0;
         height: 100vh;
         width: 250px;
-        background: var(--surface-primary);
-        border-right: 1px solid var(--p-surface-200);
+        background: var(--surface-primary, #ffffff);
+        border-right: 1px solid var(--color-border-primary, #e0e0e0);
         z-index: 1000;
         transition: transform 0.3s ease;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
+      }
+
+      .sidebar::before,
+      .sidebar::after {
+        display: none !important;
+        content: none !important;
       }
 
       .sidebar-close-btn {
@@ -166,23 +185,50 @@ interface NavItem {
       }
 
       .sidebar-logo {
-        padding: var(--space-5);
+        padding: var(--space-4) var(--space-5);
         display: flex;
         align-items: center;
         gap: var(--space-3);
         cursor: pointer;
-        color: var(--color-brand-primary);
-        border-bottom: 1px solid var(--p-surface-200);
+        background: var(--surface-primary, #ffffff);
+        border-bottom: 1px solid var(--color-border-primary, #e0e0e0);
+        transition: all 0.2s ease;
+        min-height: 64px;
+        text-decoration: none;
       }
 
-      .icon-logo {
-        font-size: 1.75rem;
+      .sidebar-logo:hover {
+        background: var(--surface-secondary, #f8f8f8);
+      }
+
+      .sidebar-logo:hover .logo-icon-wrapper {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
+      }
+
+      .logo-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #0ab85a 0%, #089949 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(8, 153, 73, 0.2);
+        flex-shrink: 0;
+      }
+
+      .logo-icon-wrapper i {
+        font-size: 1.25rem;
+        color: #ffffff;
       }
 
       .logo-text {
         font-size: 1.125rem;
         font-weight: 700;
-        color: var(--text-primary);
+        color: var(--text-primary, #1a1a1a);
+        letter-spacing: -0.01em;
       }
 
       .user-section {
@@ -381,18 +427,29 @@ interface NavItem {
         .logo-text,
         .nav-item-label,
         .user-info,
+        .nav-group-label,
         .sidebar-footer .nav-item-label {
           display: none;
         }
 
         .sidebar-logo {
           justify-content: center;
-          padding: var(--space-4);
+          padding: var(--space-3);
+        }
+
+        .logo-icon-wrapper {
+          width: 36px;
+          height: 36px;
         }
 
         .user-section {
           justify-content: center;
           padding: var(--space-3);
+        }
+
+        .nav-group-header {
+          justify-content: center;
+          padding: var(--space-2);
         }
 
         .nav-item {
@@ -604,11 +661,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.routerSub?.unsubscribe();
-  }
-
-  navigateToDashboard(): void {
-    this.router.navigate(['/dashboard']);
-    this.closeSidebar();
   }
 
   toggleSidebar(): void {

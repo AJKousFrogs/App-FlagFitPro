@@ -49,13 +49,7 @@
    ================================================================ */
 
 /* Safe Area Support for iOS devices (notch, home indicator) */
-@supports (padding: env(safe-area-inset-top)) {
-  body {
-    padding-top: env(safe-area-inset-top);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-  }
-}
+/* Note: Safe area handled by specific components, not body padding */
 
 /* Safari-specific backdrop-filter fix */
 @supports (-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px)) {
@@ -315,4 +309,728 @@ html.no-transitions * {
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
   }
+}
+
+/* ================================================================
+   GLOBAL BUTTON FIXES - CRITICAL OVERRIDES
+   Ensure all buttons are pill-shaped and have proper contrast
+   ================================================================ */
+
+/* Force pill-shaped (fully rounded) buttons globally */
+.p-button,
+.p-button.p-component,
+button.p-button,
+p-button .p-button,
+p-button > .p-button {
+  border-radius: 9999px !important;
+  padding: 0.875rem 1.75rem !important;
+  gap: 0.625rem !important;
+  font-weight: 600 !important;
+  font-size: 0.9375rem !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Better icon spacing and CONSISTENT sizing within buttons */
+.p-button .p-button-icon {
+  width: 1rem !important;
+  height: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  min-height: 1rem !important;
+  max-height: 1rem !important;
+  font-size: 1rem !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  overflow: hidden !important;
+}
+
+.p-button .p-button-icon-left {
+  margin-right: 0.5rem !important;
+}
+
+.p-button .p-button-icon-right {
+  margin-left: 0.5rem !important;
+}
+
+/* Force ALL PrimeIcons inside buttons to exact same size */
+.p-button .pi,
+.p-button i.pi,
+.p-button span.pi,
+.p-button [class^="pi-"],
+.p-button [class*=" pi-"] {
+  width: 1rem !important;
+  height: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  min-height: 1rem !important;
+  max-height: 1rem !important;
+  font-size: 1rem !important;
+  line-height: 1 !important;
+  display: inline-block !important;
+  text-align: center !important;
+}
+
+/* Specific fix for icons that render larger (like pi-desktop) */
+.p-button .pi-desktop,
+.p-button .pi-monitor,
+.p-button .pi-tv {
+  font-size: 0.9rem !important;
+}
+
+/* Specific fix for icons that render smaller */
+.p-button .pi-key {
+  font-size: 1rem !important;
+}
+
+/* Icon-only buttons should be circles */
+.p-button.p-button-icon-only,
+.p-button-icon-only {
+  border-radius: 50% !important;
+}
+
+/* Primary buttons - GREEN background, WHITE text (light & dark mode) */
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(.p-button-success):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) {
+  background: linear-gradient(180deg, #0ab85a 0%, #089949 100%) !important;
+  border: 2px solid #089949 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(8, 153, 73, 0.3) !important;
+  padding: 0.875rem 1.75rem !important;
+  gap: 0.625rem !important;
+}
+
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(.p-button-success):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) .p-button-label,
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(.p-button-success):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) .p-button-icon,
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(.p-button-success):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) span {
+  color: #ffffff !important;
+}
+
+/* Hover state for primary buttons */
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link):not(.p-button-danger):not(.p-button-warning):not(.p-button-success):not(.p-button-info):not(.p-button-help):not(.p-button-contrast):hover {
+  background: linear-gradient(180deg, #089949 0%, #067a3a 100%) !important;
+  box-shadow: 0 6px 20px rgba(8, 153, 73, 0.4) !important;
+  transform: translateY(-2px);
+}
+
+/* Outlined buttons - transparent background, GREEN border & text */
+.p-button.p-button-outlined {
+  background: transparent !important;
+  border: 2px solid #089949 !important;
+  color: #089949 !important;
+  padding: 0.75rem 1.5rem !important;
+  min-width: 120px !important;
+  justify-content: center !important;
+}
+
+.p-button.p-button-outlined .p-button-label,
+.p-button.p-button-outlined .p-button-icon {
+  color: #089949 !important;
+}
+
+/* Consistent icon sizing for outlined buttons */
+.p-button.p-button-outlined .p-button-icon,
+.p-button.p-button-outlined .pi {
+  width: 1rem !important;
+  height: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  font-size: 1rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Fix desktop icon specifically in outlined buttons */
+.p-button.p-button-outlined .pi-desktop {
+  font-size: 0.875rem !important;
+}
+
+.p-button.p-button-outlined:hover {
+  background: rgba(8, 153, 73, 0.1) !important;
+}
+
+/* Text buttons */
+.p-button.p-button-text {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #089949 !important;
+}
+
+.p-button.p-button-text .p-button-label,
+.p-button.p-button-text .p-button-icon {
+  color: #089949 !important;
+}
+
+/* Secondary buttons - subtle background */
+.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
+  background: var(--surface-secondary, #f5f5f5) !important;
+  border: 2px solid var(--color-border-primary, #e5e5e5) !important;
+  color: var(--color-text-primary, #1a1a1a) !important;
+}
+
+.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) .p-button-label,
+.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) .p-button-icon {
+  color: var(--color-text-primary, #1a1a1a) !important;
+}
+
+/* Danger buttons */
+.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) {
+  background: linear-gradient(180deg, #ff4d6a 0%, #ff003c 100%) !important;
+  border: 2px solid #ff003c !important;
+  color: #ffffff !important;
+}
+
+.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) .p-button-label,
+.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) .p-button-icon {
+  color: #ffffff !important;
+}
+
+/* ================================================================
+   PRIMENG SELECT/DROPDOWN - GLOBAL DESIGN SYSTEM
+   Consistent styling for ALL dropdown menus
+   ================================================================ */
+
+/* Dropdown animation keyframes */
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dropdownItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Base Select Input Styling */
+.p-select {
+  border: 1px solid var(--color-border-primary, #e0e0e0) !important;
+  border-radius: 12px !important;
+  background: var(--surface-primary, #ffffff) !important;
+  transition: all 0.2s ease !important;
+}
+
+.p-select:hover {
+  border-color: var(--ds-primary-green, #089949) !important;
+}
+
+.p-select.p-focus,
+.p-select:focus {
+  border-color: var(--ds-primary-green, #089949) !important;
+  box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.1) !important;
+}
+
+.p-select .p-select-label {
+  padding: 0.875rem 1rem !important;
+  font-size: 0.9375rem !important;
+  color: var(--color-text-primary, #1a1a1a) !important;
+}
+
+.p-select .p-select-dropdown {
+  padding: 0 1rem !important;
+  color: var(--color-text-secondary, #6b7280) !important;
+  transition: transform 0.2s ease !important;
+}
+
+.p-select.p-select-open .p-select-dropdown {
+  transform: rotate(180deg) !important;
+}
+
+/* Dropdown Overlay Panel - THE KEY FIX */
+.p-select-overlay,
+.p-select-overlay.p-component {
+  border: 1px solid var(--color-border-primary, #e0e0e0) !important;
+  border-radius: 16px !important;
+  background: var(--surface-primary, #ffffff) !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.12),
+    0 8px 20px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  margin-top: 8px !important;
+  overflow: hidden !important;
+  animation: dropdownSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  transform-origin: top center !important;
+  z-index: 10000 !important;
+}
+
+/* List Container */
+.p-select-overlay .p-select-list-container,
+.p-select-overlay .p-select-items-wrapper {
+  padding: 0 !important;
+  max-height: 320px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.p-select-overlay .p-select-list,
+.p-select-overlay .p-select-items,
+.p-select-overlay ul {
+  padding: 0.5rem !important;
+  margin: 0 !important;
+  list-style: none !important;
+  display: block !important;
+}
+
+/* Ensure wrapper and content are visible */
+.p-select-overlay *,
+.p-select-overlay .p-select-list-container *,
+.p-select-overlay .p-select-items-wrapper * {
+  visibility: visible !important;
+}
+
+/* Individual Option Items */
+.p-select-overlay .p-select-option,
+.p-select-overlay .p-select-item,
+.p-select-overlay .p-listbox-option,
+.p-select-overlay li {
+  padding: 0.875rem 1rem !important;
+  border-radius: 10px !important;
+  margin: 0 0 0.25rem 0 !important;
+  cursor: pointer !important;
+  font-size: 0.9375rem !important;
+  font-weight: 500 !important;
+  color: var(--color-text-primary, #1a1a1a) !important;
+  background: transparent !important;
+  transition: all 0.15s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.p-select-overlay .p-select-option:last-child,
+.p-select-overlay .p-select-item:last-child,
+.p-select-overlay li:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Hover state */
+.p-select-overlay .p-select-option:hover,
+.p-select-overlay .p-select-item:hover,
+.p-select-overlay .p-listbox-option:hover,
+.p-select-overlay li:hover {
+  background: var(--surface-secondary, #f8f9fa) !important;
+}
+
+/* Selected/Highlighted state */
+.p-select-overlay .p-select-option.p-select-option-selected,
+.p-select-overlay .p-select-option.p-highlight,
+.p-select-overlay .p-select-item.p-highlight,
+.p-select-overlay .p-listbox-option.p-highlight,
+.p-select-overlay li.p-highlight {
+  background: rgba(8, 153, 73, 0.1) !important;
+  color: var(--ds-primary-green, #089949) !important;
+}
+
+/* Focus state */
+.p-select-overlay .p-select-option.p-focus,
+.p-select-overlay .p-select-item.p-focus,
+.p-select-overlay .p-listbox-option.p-focus,
+.p-select-overlay li.p-focus {
+  background: var(--surface-secondary, #f8f9fa) !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Checkmark for selected items */
+.p-select-overlay .p-select-option.p-select-option-selected::after,
+.p-select-overlay .p-select-option.p-highlight::after,
+.p-select-overlay .p-listbox-option.p-highlight::after,
+.p-select-overlay li.p-highlight::after {
+  content: '\e909'; /* pi-check */
+  font-family: 'primeicons';
+  margin-left: auto;
+  font-size: 0.875rem;
+  color: var(--ds-primary-green, #089949);
+  opacity: 1;
+}
+
+/* Custom scrollbar for dropdown */
+.p-select-overlay .p-select-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.p-select-overlay .p-select-list-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.p-select-overlay .p-select-list-container::-webkit-scrollbar-thumb {
+  background: var(--color-border-primary, #e0e0e0);
+  border-radius: 3px;
+}
+
+.p-select-overlay .p-select-list-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted, #9ca3af);
+}
+
+/* Language selector specific - item with flag and details */
+.lang-item,
+.lang-selected {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.875rem !important;
+  width: 100% !important;
+}
+
+.lang-flag {
+  font-size: 1.75rem !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+.lang-details {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.125rem !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.lang-label {
+  font-weight: 600 !important;
+  color: var(--color-text-primary, #1a1a1a) !important;
+  font-size: 0.9375rem !important;
+  line-height: 1.3 !important;
+}
+
+.lang-native {
+  font-size: 0.8125rem !important;
+  color: var(--color-text-tertiary, #9ca3af) !important;
+  line-height: 1.2 !important;
+}
+
+.lang-check {
+  opacity: 0 !important;
+  color: var(--ds-primary-green, #089949) !important;
+  font-size: 1rem !important;
+  transition: opacity 0.2s ease, transform 0.2s ease !important;
+  transform: scale(0.8) !important;
+  margin-left: auto !important;
+}
+
+/* Show checkmark on selected language item */
+.p-select-option.p-highlight .lang-check,
+.p-select-option.p-select-option-selected .lang-check {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+/* Selected state text colors for language */
+.p-select-option.p-highlight .lang-label,
+.p-select-option.p-select-option-selected .lang-label {
+  color: var(--ds-primary-green, #089949) !important;
+}
+
+.p-select-option.p-highlight .lang-native,
+.p-select-option.p-select-option-selected .lang-native {
+  color: var(--ds-primary-green, #089949) !important;
+  opacity: 0.7 !important;
+}
+
+/* ================================================================
+   TOAST NOTIFICATIONS - GLOBAL DESIGN SYSTEM
+   Beautiful, accessible notification toasts
+   ================================================================ */
+
+/* Toast container positioning */
+.p-toast {
+  opacity: 1 !important;
+  z-index: 99999 !important;
+}
+
+.p-toast.p-toast-top-right {
+  top: 1.5rem !important;
+  right: 1.5rem !important;
+}
+
+/* Toast message container */
+.p-toast-message,
+.p-toast .p-toast-message {
+  margin-bottom: 0.75rem !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.1),
+    0 2px 6px rgba(0, 0, 0, 0.05) !important;
+  border: none !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Toast content wrapper */
+.p-toast-message-content,
+.p-toast .p-toast-message-content {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 1rem !important;
+  padding: 1.25rem 1.5rem !important;
+}
+
+/* Toast icon */
+.p-toast-message-icon,
+.p-toast .p-toast-message-icon,
+.p-toast .p-toast-icon {
+  font-size: 1.5rem !important;
+  flex-shrink: 0 !important;
+  margin-top: 0.125rem !important;
+}
+
+/* Toast text container */
+.p-toast-message-text,
+.p-toast .p-toast-message-text {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+}
+
+/* Toast summary (title) */
+.p-toast-summary,
+.p-toast .p-toast-summary {
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+/* Toast detail (message) */
+.p-toast-detail,
+.p-toast .p-toast-detail {
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  opacity: 0.9 !important;
+  margin: 0 !important;
+}
+
+/* Close button */
+.p-toast-icon-close,
+.p-toast .p-toast-icon-close {
+  width: 2rem !important;
+  height: 2rem !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0.7 !important;
+  transition: all 0.15s ease !important;
+  flex-shrink: 0 !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+.p-toast-icon-close:hover,
+.p-toast .p-toast-icon-close:hover {
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.p-toast-icon-close .pi,
+.p-toast .p-toast-icon-close .pi {
+  font-size: 0.875rem !important;
+}
+
+/* Success Toast - Green */
+.p-toast-message-success,
+.p-toast .p-toast-message-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+}
+
+.p-toast-message-success .p-toast-icon-close,
+.p-toast .p-toast-message-success .p-toast-icon-close {
+  color: #ffffff !important;
+}
+
+/* Error Toast - Red */
+.p-toast-message-error,
+.p-toast .p-toast-message-error {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+}
+
+.p-toast-message-error .p-toast-icon-close,
+.p-toast .p-toast-message-error .p-toast-icon-close {
+  color: #ffffff !important;
+}
+
+/* Warning Toast - Amber */
+.p-toast-message-warn,
+.p-toast .p-toast-message-warn {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  color: #ffffff !important;
+}
+
+.p-toast-message-warn .p-toast-icon-close,
+.p-toast .p-toast-message-warn .p-toast-icon-close {
+  color: #ffffff !important;
+}
+
+/* Info Toast - Blue */
+.p-toast-message-info,
+.p-toast .p-toast-message-info {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+}
+
+.p-toast-message-info .p-toast-icon-close,
+.p-toast .p-toast-message-info .p-toast-icon-close {
+  color: #ffffff !important;
+}
+
+/* Responsive toast */
+@media (max-width: 480px) {
+  .p-toast.p-toast-top-right {
+    top: 1rem !important;
+    right: 1rem !important;
+    left: 1rem !important;
+    width: auto !important;
+  }
+
+  .p-toast-message,
+  .p-toast .p-toast-message {
+    border-radius: 12px !important;
+  }
+
+  .p-toast-message-content,
+  .p-toast .p-toast-message-content {
+    padding: 1rem 1.25rem !important;
+    gap: 0.75rem !important;
+  }
+}
+
+/* ================================================================
+   PRIMENG PASSWORD INPUT - GLOBAL DESIGN SYSTEM
+   ================================================================ */
+
+.p-password {
+  width: 100% !important;
+  display: block !important;
+}
+
+.p-password .p-inputwrapper,
+.p-password .p-password-wrapper {
+  width: 100% !important;
+  display: block !important;
+  position: relative !important;
+}
+
+.p-password input,
+.p-password .p-password-input,
+.p-password .p-inputtext {
+  width: 100% !important;
+  padding: 1rem 3.5rem 1rem 1.25rem !important;
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  color: var(--color-text-primary, #1a1a1a) !important;
+  background: var(--surface-primary, #ffffff) !important;
+  border: 2px solid var(--color-border-primary, #e0e0e0) !important;
+  border-radius: 14px !important;
+  min-height: 56px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.p-password input:focus,
+.p-password .p-password-input:focus,
+.p-password .p-inputtext:focus {
+  border-color: var(--ds-primary-green, #089949) !important;
+  box-shadow: 0 0 0 4px rgba(8, 153, 73, 0.12) !important;
+  outline: none !important;
+}
+
+.p-password input::placeholder,
+.p-password .p-password-input::placeholder,
+.p-password .p-inputtext::placeholder {
+  color: var(--color-text-tertiary, #9ca3af) !important;
+  font-size: 0.9375rem !important;
+  opacity: 1 !important;
+}
+
+/* Toggle Icon (Eye) - Better positioning and sizing */
+.p-password .p-password-toggle-mask-icon,
+.p-password .p-password-unmask-icon,
+.p-password .p-icon-wrapper,
+.p-password button.p-password-toggle {
+  position: absolute !important;
+  right: 1rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0.5rem !important;
+  cursor: pointer !important;
+  z-index: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.p-password .p-password-toggle-mask-icon svg,
+.p-password .p-password-unmask-icon svg,
+.p-password .p-icon,
+.p-password svg.p-icon {
+  width: 1.375rem !important;
+  height: 1.375rem !important;
+  color: var(--color-text-secondary, #6b7280) !important;
+  transition: color 0.2s ease !important;
+}
+
+.p-password .p-password-toggle-mask-icon:hover svg,
+.p-password .p-password-unmask-icon:hover svg,
+.p-password .p-icon:hover,
+.p-password:hover svg.p-icon {
+  color: var(--ds-primary-green, #089949) !important;
+}
+
+/* Password strength meter styling */
+.p-password-meter {
+  margin-top: 0.75rem !important;
+  height: 6px !important;
+  border-radius: 3px !important;
+  background: var(--surface-secondary, #f0f0f0) !important;
+  overflow: hidden !important;
+}
+
+.p-password-meter-label {
+  margin-top: 0.5rem !important;
+  font-size: 0.8125rem !important;
+  color: var(--color-text-secondary, #6b7280) !important;
+}
+
+/* Password panel (strength indicator dropdown) */
+.p-password-panel {
+  margin-top: 0.5rem !important;
+  padding: 1rem !important;
+  background: var(--surface-primary, #ffffff) !important;
+  border: 1px solid var(--color-border-primary, #e0e0e0) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
 }

@@ -1,34 +1,36 @@
 import {
-  Component,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  effect,
-  DestroyRef,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DestroyRef,
+    effect,
+    inject,
+    signal,
 } from "@angular/core";
 
-import { Router, RouterModule, ActivatedRoute } from "@angular/router";
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  AbstractControl,
-} from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
-import { CheckboxModule } from "primeng/checkbox";
-import { MessageModule } from "primeng/message";
-import { ToastModule } from "primeng/toast";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+    AbstractControl,
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
+} from "@angular/forms";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { CheckboxModule } from "primeng/checkbox";
+import { InputTextModule } from "primeng/inputtext";
+import { MessageModule } from "primeng/message";
+import { PasswordModule } from "primeng/password";
+import { ToastModule } from "primeng/toast";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
-  getFormControlError,
-  isFormControlInvalid,
-  markFormGroupTouched,
+    getFormControlError,
+    isFormControlInvalid,
+    markFormGroupTouched,
 } from "../../../shared/utils/form.utils";
 
 @Component({
@@ -38,12 +40,14 @@ import {
   imports: [
     RouterModule,
     ReactiveFormsModule,
+    FormsModule,
     CardModule,
     ButtonModule,
     InputTextModule,
     CheckboxModule,
     MessageModule,
     ToastModule,
+    PasswordModule,
   ],
   template: `
     <p-toast></p-toast>
@@ -57,7 +61,7 @@ import {
         </ng-template>
 
         @if (isDemoMode()) {
-          <div class="alert alert-info mb-4">
+          <div class="alert alert-info">
             <strong>Demo Mode:</strong> This login accepts any email and
             password for testing purposes.
           </div>
@@ -66,8 +70,8 @@ import {
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <input type="hidden" [value]="csrfToken()" />
 
-          <div class="p-field mb-4">
-            <label for="email" class="p-label required">Email</label>
+          <div class="form-field">
+            <label for="email" class="form-label required">Email</label>
             <input
               id="email"
               type="email"
@@ -87,20 +91,30 @@ import {
             }
           </div>
 
-          <div class="p-field mb-4">
-            <label for="password" class="p-label required">Password</label>
-            <input
-              id="password"
-              type="password"
-              pInputText
-              formControlName="password"
-              placeholder="Enter your password"
-              [class.ng-invalid]="passwordError()"
-              autocomplete="current-password"
-              aria-required="true"
-              [attr.aria-invalid]="passwordError() ? 'true' : null"
-              [attr.aria-describedby]="passwordError() ? 'password-error' : null"
-            />
+          <div class="form-field">
+            <label for="password" class="form-label required">Password</label>
+            <div class="password-input-wrapper">
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                pInputText
+                formControlName="password"
+                placeholder="Enter your password"
+                [class.ng-invalid]="passwordError()"
+                autocomplete="current-password"
+                aria-required="true"
+                [attr.aria-invalid]="passwordError() ? 'true' : null"
+                [attr.aria-describedby]="passwordError() ? 'password-error' : null"
+              />
+              <button 
+                type="button" 
+                class="password-toggle-btn"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+              >
+                <i [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+              </button>
+            </div>
             @if (passwordError()) {
               <small id="password-error" class="p-error" role="alert">
                 {{ passwordError() }}
@@ -108,17 +122,19 @@ import {
             }
           </div>
 
-          <div class="login-form-options mb-4">
-            <div class="flex align-items-center">
-              <p-checkbox
+          <div class="login-form-options">
+            <label class="checkbox-wrapper">
+              <input 
+                type="checkbox" 
                 formControlName="remember"
-                inputId="remember"
-              ></p-checkbox>
-              <label for="remember" class="ml-2">Remember me</label>
-            </div>
-            <a [routerLink]="['/reset-password']" class="text-primary"
-              >Forgot your password?</a
-            >
+                id="remember"
+              />
+              <span class="checkmark"></span>
+              <span class="checkbox-label">Remember me</span>
+            </label>
+            <a [routerLink]="['/reset-password']" class="forgot-link">
+              Forgot your password?
+            </a>
           </div>
 
           <p-button
@@ -127,18 +143,18 @@ import {
             icon="pi pi-lock"
             [loading]="isLoading()"
             [disabled]="!isFormValid()"
-            styleClass="w-full"
+            styleClass="w-full login-submit-btn"
           >
           </p-button>
         </form>
 
-        <div class="login-divider my-4">
+        <div class="login-divider">
           <span>Or</span>
         </div>
 
-        <a [routerLink]="['/register']" class="login-create-link"
-          >create a new account</a
-        >
+        <a [routerLink]="['/register']" class="login-create-link">
+          create a new account
+        </a>
       </p-card>
     </div>
   `,
@@ -157,6 +173,7 @@ export class LoginComponent {
   csrfToken = signal("");
   isDemoMode = signal(false);
   submitted = signal(false);
+  showPassword = signal(false);
   
   // Track form validity as a signal (updated on statusChanges)
   formValid = signal(false);
@@ -227,6 +244,10 @@ export class LoginComponent {
   getFieldError(fieldName: string): string {
     const control = this.loginForm.get(fieldName);
     return getFormControlError(control as AbstractControl) || "";
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword.update(v => !v);
   }
 
   onSubmit(): void {

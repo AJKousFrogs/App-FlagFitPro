@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" fill="none">
+  <!-- Flag icon -->
+  <g transform="translate(5, 5)">
+    <!-- Flag pole -->
+    <rect x="2" y="0" width="3" height="40" rx="1.5" fill="#6366f1"/>
+    <!-- Flag -->
+    <path d="M8 2 L35 2 Q38 2 38 5 L38 20 Q38 23 35 23 L8 23 L14 12.5 L8 2 Z" fill="#6366f1"/>
+    <!-- Football on flag -->
+    <ellipse cx="23" cy="12.5" rx="8" ry="5" fill="#fbbf24"/>
+    <path d="M19 12.5 L27 12.5" stroke="#92400e" stroke-width="1" stroke-linecap="round"/>
+    <path d="M21 10 L21 15 M23 9.5 L23 15.5 M25 10 L25 15" stroke="#92400e" stroke-width="0.8" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Text: FlagFit -->
+  <text x="50" y="32" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="700">
+    <tspan fill="#6366f1">Flag</tspan><tspan fill="#1e293b">Fit</tspan>
+  </text>
+  
+  <!-- Text: Pro -->
+  <text x="142" y="32" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#6366f1">Pro</text>
+</svg>

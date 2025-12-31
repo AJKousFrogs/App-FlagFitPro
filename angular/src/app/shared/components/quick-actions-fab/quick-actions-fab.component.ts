@@ -1,99 +1,276 @@
+import { CommonModule } from "@angular/common";
 import {
-  Component,
-  ChangeDetectionStrategy,
-  signal,
-  inject,
-  computed,
-  OnInit,
-  OnDestroy,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnDestroy,
+    OnInit,
+    signal,
 } from "@angular/core";
 
-import { Router, NavigationEnd } from "@angular/router";
-import { SpeedDialModule } from "primeng/speeddial";
+import { NavigationEnd, Router } from "@angular/router";
 import { TooltipModule } from "primeng/tooltip";
-import { MenuItem } from "primeng/api";
 import { filter, Subscription } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
+
+interface QuickActionItem {
+  icon: string;
+  label: string;
+  route?: string;
+  action?: () => void;
+  color?: string;
+}
 
 @Component({
   selector: "app-quick-actions-fab",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SpeedDialModule, TooltipModule],
+  imports: [CommonModule, TooltipModule],
   template: `
     @if (showFAB()) {
+      <!-- Backdrop -->
+      @if (isExpanded()) {
+        <div class="fab-backdrop" (click)="closeMenu()"></div>
+      }
+
       <div class="quick-actions-container" [class.expanded]="isExpanded()">
-        <p-speedDial
-          [model]="quickActions()"
-          direction="up"
-          [transitionDelay]="80"
-          buttonClassName="p-button-lg p-button-rounded p-button-primary fab-button"
-          [mask]="true"
-          [maskClassName]="'quick-actions-mask'"
-          (onClick)="toggleExpanded()"
-          (onShow)="isExpanded.set(true)"
-          (onHide)="isExpanded.set(false)"
-        ></p-speedDial>
+        <!-- Action Items -->
+        @if (isExpanded()) {
+          <div class="action-items">
+            @for (action of quickActions(); track action.label; let i = $index) {
+              <button 
+                class="action-item"
+                [style.animation-delay]="(i * 0.04) + 's'"
+                (click)="executeAction(action)"
+              >
+                <span class="action-label">{{ action.label }}</span>
+                <div class="action-icon">
+                  <i [class]="'pi ' + action.icon"></i>
+                </div>
+              </button>
+            }
+          </div>
+        }
+
+        <!-- Main FAB Button -->
+        <button 
+          class="main-fab" 
+          [class.active]="isExpanded()"
+          (click)="toggleMenu()"
+        >
+          <div class="fab-icon">
+            <img 
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvE6wGt8diMxqRhHi__HyjI-mheOoOW8m8fg&s" 
+              alt="Merlin"
+              class="merlin-img"
+            />
+            <div class="fab-close">
+              <i class="pi pi-times"></i>
+            </div>
+          </div>
+        </button>
       </div>
     }
   `,
   styles: [
     `
+      /* Backdrop */
+      .fab-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 9998;
+        animation: fadeIn 0.2s ease;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      /* Container */
       .quick-actions-container {
         position: fixed;
         bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
         right: 24px;
-        z-index: 1000;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 16px;
       }
 
-      :host ::ng-deep .quick-actions-mask {
-        background: rgba(0, 0, 0, 0.4);
-        -webkit-backdrop-filter: blur(4px);
-        backdrop-filter: blur(4px);
+      /* Action Items Container */
+      .action-items {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-end;
+        padding-right: 6px; /* Align with main FAB center */
       }
 
-      :host ::ng-deep .fab-button {
-        width: 56px;
-        height: 56px;
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+      /* Individual Action Item */
+      .action-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0;
         border: none;
-        box-shadow: 0 4px 16px rgba(8, 153, 73, 0.35);
-        transition: all 0.3s ease;
+        background: none;
+        cursor: pointer;
+        animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+        transform: translateY(10px);
       }
 
-      :host ::ng-deep .fab-button:hover {
-        transform: scale(1.08) rotate(45deg);
-        box-shadow: 0 6px 20px rgba(8, 153, 73, 0.5);
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
-      :host ::ng-deep .p-speeddial-action {
-        background: var(--surface-primary);
-        border: 1px solid var(--p-surface-200);
-        width: 44px;
-        height: 44px;
-        color: var(--color-brand-primary);
-        box-shadow: var(--shadow-md);
+      .action-label {
+        width: 160px;
+        padding: 12px 20px;
+        background: var(--surface-primary, #ffffff);
+        border-radius: 25px;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--color-text-primary, #1a1a1a);
+        white-space: nowrap;
+        text-align: center;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
         transition: all 0.2s ease;
       }
 
-      :host ::ng-deep .p-speeddial-action:hover {
-        background: var(--color-brand-light);
-        border-color: var(--color-brand-primary);
+      .action-item:hover .action-label {
+        background: var(--ds-primary-green, #089949);
+        color: white;
+      }
+
+      .action-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        min-height: 52px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0ab85a 0%, #089949 100%);
+        box-shadow: 0 4px 16px rgba(8, 153, 73, 0.3);
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .action-icon i {
+        font-size: 1.25rem;
+        color: #ffffff !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .action-item:hover .action-icon {
         transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(8, 153, 73, 0.4);
       }
 
-      :host ::ng-deep .p-speeddial-action .p-speeddial-action-icon {
-        font-size: 1rem;
+      /* Main FAB Button */
+      .main-fab {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        background: linear-gradient(135deg, #0ab85a 0%, #089949 100%);
+        box-shadow: 
+          0 6px 24px rgba(8, 153, 73, 0.4),
+          0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
       }
 
-      :host ::ng-deep .p-speeddial-list {
-        gap: 8px;
+      .main-fab:hover {
+        transform: scale(1.08);
+        box-shadow: 
+          0 8px 32px rgba(8, 153, 73, 0.5),
+          0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .main-fab:active {
+        transform: scale(0.95);
+      }
+
+      .main-fab.active {
+        background: #1a1a1a;
+      }
+
+      .fab-icon {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .merlin-img {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        transition: all 0.3s ease;
+      }
+
+      .main-fab.active .merlin-img {
+        opacity: 0;
+        transform: scale(0.5) rotate(90deg);
+      }
+
+      .fab-close {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: scale(0.5) rotate(-90deg);
+        transition: all 0.3s ease;
+      }
+
+      .fab-close i {
+        font-size: 1.5rem;
+        color: white;
+      }
+
+      .main-fab.active .fab-close {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
       }
 
       /* Hide on mobile - bottom nav handles navigation */
       @media (max-width: 768px) {
         .quick-actions-container {
+          display: none;
+        }
+        .fab-backdrop {
           display: none;
         }
       }
@@ -118,139 +295,33 @@ export class QuickActionsFABComponent implements OnInit, OnDestroy {
     return isAuthenticated && !this.hiddenRoutes.some(r => route === r || route.startsWith("/auth"));
   });
 
-  // Context-aware quick actions based on current route
-  quickActions = computed<MenuItem[]>(() => {
-    const route = this.currentRoute();
-    const userRole = this.authService.getUser()?.role || "player";
-    
-    // Base actions available everywhere
-    const baseActions: MenuItem[] = [
-      {
-        icon: "pi pi-play",
-        label: "Start Training",
-        tooltipOptions: { tooltipLabel: "Start Training", tooltipPosition: "left" },
-        command: () => this.navigateTo("/training"),
-      },
-    ];
-
-    // Route-specific actions
-    if (route.startsWith("/training")) {
-      return [
-        {
-          icon: "pi pi-clock",
-          label: "Rest Timer",
-          tooltipOptions: { tooltipLabel: "Rest Timer", tooltipPosition: "left" },
-          command: () => this.openRestTimer(),
-        },
-        {
-          icon: "pi pi-calendar",
-          label: "Schedule",
-          tooltipOptions: { tooltipLabel: "View Schedule", tooltipPosition: "left" },
-          command: () => this.navigateTo("/training"),
-        },
-        {
-          icon: "pi pi-chart-line",
-          label: "Stats",
-          tooltipOptions: { tooltipLabel: "View Stats", tooltipPosition: "left" },
-          command: () => this.navigateTo("/analytics"),
-        },
-      ];
-    }
-
-    if (route.startsWith("/roster")) {
-      const actions: MenuItem[] = [
-        {
-          icon: "pi pi-chart-bar",
-          label: "Team Stats",
-          tooltipOptions: { tooltipLabel: "Team Stats", tooltipPosition: "left" },
-          command: () => this.navigateTo("/analytics"),
-        },
-      ];
-      
-      if (userRole === "coach" || userRole === "admin") {
-        actions.unshift({
-          icon: "pi pi-user-plus",
-          label: "Add Player",
-          tooltipOptions: { tooltipLabel: "Add Player", tooltipPosition: "left" },
-          command: () => this.navigateTo("/roster"),
-        });
-      }
-      
-      return actions;
-    }
-
-    if (route.startsWith("/analytics")) {
-      return [
-        {
-          icon: "pi pi-download",
-          label: "Export",
-          tooltipOptions: { tooltipLabel: "Export Report", tooltipPosition: "left" },
-          command: () => this.exportReport(),
-        },
-        {
-          icon: "pi pi-share-alt",
-          label: "Share",
-          tooltipOptions: { tooltipLabel: "Share Dashboard", tooltipPosition: "left" },
-          command: () => this.shareDashboard(),
-        },
-        ...baseActions,
-      ];
-    }
-
-    if (route.startsWith("/game-tracker")) {
-      return [
-        {
-          icon: "pi pi-plus",
-          label: "New Game",
-          tooltipOptions: { tooltipLabel: "Start New Game", tooltipPosition: "left" },
-          command: () => this.navigateTo("/game-tracker"),
-        },
-        {
-          icon: "pi pi-chart-line",
-          label: "Stats",
-          tooltipOptions: { tooltipLabel: "Game Stats", tooltipPosition: "left" },
-          command: () => this.navigateTo("/analytics"),
-        },
-      ];
-    }
-
-    if (route.startsWith("/wellness")) {
-      return [
-        {
-          icon: "pi pi-plus",
-          label: "Log Wellness",
-          tooltipOptions: { tooltipLabel: "Log Wellness Check", tooltipPosition: "left" },
-          command: () => this.navigateTo("/wellness"),
-        },
-        {
-          icon: "pi pi-chart-line",
-          label: "Trends",
-          tooltipOptions: { tooltipLabel: "View Trends", tooltipPosition: "left" },
-          command: () => this.navigateTo("/analytics"),
-        },
-      ];
-    }
-
-    // Default dashboard actions
+  // Quick actions - always show these core actions
+  quickActions = computed<QuickActionItem[]>(() => {
     return [
-      ...baseActions,
       {
-        icon: "pi pi-clock",
-        label: "Log Session",
-        tooltipOptions: { tooltipLabel: "Log Training Session", tooltipPosition: "left" },
-        command: () => this.navigateTo("/performance-tracking"),
+        icon: "pi-comments",
+        label: "AI Coach Chat",
+        route: "/ai-coach",
       },
       {
-        icon: "pi pi-chart-line",
-        label: "Quick Stats",
-        tooltipOptions: { tooltipLabel: "View Analytics", tooltipPosition: "left" },
-        command: () => this.navigateTo("/analytics"),
+        icon: "pi-heart",
+        label: "Log Wellness",
+        route: "/wellness",
       },
       {
-        icon: "pi pi-heart",
-        label: "Wellness",
-        tooltipOptions: { tooltipLabel: "Log Wellness", tooltipPosition: "left" },
-        command: () => this.navigateTo("/wellness"),
+        icon: "pi-chart-line",
+        label: "View Analytics",
+        route: "/analytics",
+      },
+      {
+        icon: "pi-bolt",
+        label: "Start Training",
+        route: "/training",
+      },
+      {
+        icon: "pi-play",
+        label: "Today's Practice",
+        route: "/training/daily",
       },
     ];
   });
@@ -270,35 +341,19 @@ export class QuickActionsFABComponent implements OnInit, OnDestroy {
     this.routerSub?.unsubscribe();
   }
 
-  toggleExpanded(): void {
+  toggleMenu(): void {
     this.isExpanded.update((val) => !val);
   }
 
-  navigateTo(route: string): void {
-    this.router.navigate([route]);
+  closeMenu(): void {
     this.isExpanded.set(false);
   }
 
-  openRestTimer(): void {
-    // This would ideally emit an event to open the rest timer component
-    // For now, we'll just navigate to training
-    this.navigateTo("/training");
-  }
-
-  exportReport(): void {
-    // Trigger export functionality
-    this.logger.info("Export report");
-    this.isExpanded.set(false);
-  }
-
-  shareDashboard(): void {
-    // Trigger share functionality
-    if (navigator.share) {
-      navigator.share({
-        title: "FlagFit Pro Analytics",
-        text: "Check out my training analytics!",
-        url: window.location.href,
-      });
+  executeAction(action: QuickActionItem): void {
+    if (action.route) {
+      this.router.navigate([action.route]);
+    } else if (action.action) {
+      action.action();
     }
     this.isExpanded.set(false);
   }

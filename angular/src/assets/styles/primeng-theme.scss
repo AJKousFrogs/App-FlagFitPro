@@ -20,29 +20,56 @@
 @layer primeng-theme {
   /* ================================================================
      BUTTON COMPONENT ENHANCEMENTS
+     Premium button design system with modern aesthetics
      ================================================================ */
   
   .p-button {
     font-family: var(--font-family-sans);
-    font-weight: var(--font-weight-medium);
-    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-semibold);
+    font-size: 0.9375rem; /* 15px - slightly larger for better readability */
+    letter-spacing: 0.01em;
+    border-radius: var(--radius-full, 9999px); /* Pill-shaped rounded buttons */
+    padding: 0.75rem 1.5rem;
+    min-height: var(--button-height-md);
+    border: 2px solid transparent;
     transition: 
-      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     
-    /* Ripple effect base */
+    /* Subtle inner glow effect */
     &::before {
       content: '';
       position: absolute;
       inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0) 50%
+      );
+      opacity: 1;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    
+    /* Ripple effect on click */
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
       background: radial-gradient(
-        circle at center,
+        circle at var(--ripple-x, 50%) var(--ripple-y, 50%),
         rgba(255, 255, 255, 0.3) 0%,
-        transparent 70%
+        transparent 60%
       );
       transform: scale(0);
       opacity: 0;
@@ -50,135 +77,720 @@
       pointer-events: none;
     }
     
-    &:active::before {
+    &:active::after {
       transform: scale(2.5);
       opacity: 1;
       transition: transform 0s, opacity 0s;
     }
+
+    /* Icon styling within buttons */
+    .p-button-icon {
+      font-size: 1.125rem;
+      transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    /* Icon spacing - left icon */
+    .p-button-icon-left {
+      margin-right: 0.5rem;
+    }
+    
+    /* Icon spacing - right icon */
+    .p-button-icon-right {
+      margin-left: 0.5rem;
+    }
+    
+    /* Arrow icon animation on hover */
+    &:hover .pi-arrow-right,
+    &:hover .pi-chevron-right {
+      transform: translateX(3px);
+    }
   }
   
+  /* Hover state for pointer devices */
   @media (hover: hover) and (pointer: fine) {
     .p-button:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 
-        0 4px 12px rgba(0, 0, 0, 0.15),
-        0 2px 4px rgba(0, 0, 0, 0.1);
     }
   }
   
   .p-button:active:not(:disabled) {
     transform: translateY(0) scale(0.98);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Focus visible state for accessibility */
+  .p-button:focus-visible {
+    outline: none;
+    box-shadow: 
+      0 0 0 3px var(--surface-primary),
+      0 0 0 5px var(--ds-primary-green);
   }
   
-  /* Primary Button */
+  /* Disabled state */
+  .p-button:disabled,
+  .p-button.p-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* ================================
+     PRIMARY BUTTON - Main CTA
+     Solid green with white text
+     ================================ */
   .p-button-primary,
   .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-success):not(.p-button-info):not(.p-button-warning):not(.p-button-danger):not(.p-button-help):not(.p-button-contrast) {
-    background: var(--ds-primary-green);
+    background: linear-gradient(180deg, var(--ds-primary-green-light) 0%, var(--ds-primary-green) 100%);
     border-color: var(--ds-primary-green);
     color: var(--color-text-on-primary);
+    box-shadow: 
+      0 2px 8px rgba(var(--ds-primary-green-rgb), 0.25),
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
     
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: var(--ds-primary-green-hover);
+        background: linear-gradient(180deg, var(--ds-primary-green) 0%, var(--ds-primary-green-hover) 100%);
         border-color: var(--ds-primary-green-hover);
+        box-shadow: 
+          0 8px 20px rgba(var(--ds-primary-green-rgb), 0.35),
+          0 4px 8px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
       }
+    }
+    
+    &:active:not(:disabled) {
+      background: var(--ds-primary-green-hover);
+      box-shadow: 
+        0 1px 4px rgba(var(--ds-primary-green-rgb), 0.2),
+        inset 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
     &:focus-visible {
-      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
+      box-shadow: 
+        0 0 0 3px var(--surface-primary),
+        0 0 0 5px var(--ds-primary-green),
+        0 2px 8px rgba(var(--ds-primary-green-rgb), 0.25);
     }
   }
   
-  /* Secondary Button */
+  /* ================================
+     SECONDARY BUTTON - Alternative actions
+     Subtle background with green text
+     ================================ */
   .p-button-secondary {
-    background: var(--surface-primary);
+    background: var(--surface-secondary);
     border-color: var(--color-border-primary);
-    color: var(--ds-primary-green);
+    color: var(--color-text-primary);
+    box-shadow: 
+      0 1px 3px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    
+    &::before {
+      background: none;
+    }
     
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: var(--surface-secondary);
+        background: var(--surface-tertiary);
         border-color: var(--ds-primary-green);
-        color: var(--ds-primary-green-hover);
+        color: var(--ds-primary-green);
+        box-shadow: 
+          0 4px 12px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
       }
+    }
+    
+    &:active:not(:disabled) {
+      background: var(--surface-tertiary);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+    
+    &:focus-visible {
+      box-shadow: 
+        0 0 0 3px var(--surface-primary),
+        0 0 0 5px var(--color-text-secondary);
     }
   }
   
-  /* Outlined Button */
+  /* ================================
+     OUTLINED BUTTON - Ghost style
+     Transparent with colored border
+     ================================ */
   .p-button-outlined {
     background: transparent;
     border: 2px solid var(--ds-primary-green);
     color: var(--ds-primary-green);
+    box-shadow: none;
+    
+    &::before {
+      background: none;
+    }
     
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         background: rgba(var(--ds-primary-green-rgb), 0.08);
         border-color: var(--ds-primary-green-hover);
         color: var(--ds-primary-green-hover);
+        box-shadow: 0 4px 12px rgba(var(--ds-primary-green-rgb), 0.15);
+      }
+    }
+    
+    &:active:not(:disabled) {
+      background: rgba(var(--ds-primary-green-rgb), 0.12);
+    }
+    
+    &:focus-visible {
+      box-shadow: 
+        0 0 0 3px var(--surface-primary),
+        0 0 0 5px var(--ds-primary-green);
+    }
+
+    /* Outlined variants for different severities */
+    &.p-button-secondary {
+      border-color: var(--color-border-primary);
+      color: var(--color-text-secondary);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--surface-secondary);
+          border-color: var(--color-text-secondary);
+          color: var(--color-text-primary);
+        }
+      }
+    }
+    
+    &.p-button-success {
+      border-color: var(--color-status-success);
+      color: var(--color-status-success);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--color-status-success-light);
+        }
+      }
+    }
+    
+    &.p-button-danger {
+      border-color: var(--color-status-error);
+      color: var(--color-status-error);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--color-status-error-light);
+        }
+      }
+    }
+    
+    &.p-button-warning {
+      border-color: var(--color-status-warning);
+      color: var(--color-status-warning-text);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--color-status-warning-light);
+        }
+      }
+    }
+    
+    &.p-button-info {
+      border-color: var(--color-status-info);
+      color: var(--color-status-info);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--color-status-info-light);
+        }
+      }
+    }
+    
+    &.p-button-help {
+      border-color: #8b5cf6;
+      color: #8b5cf6;
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: rgba(139, 92, 246, 0.1);
+        }
+      }
+    }
+    
+    &.p-button-contrast {
+      border-color: var(--color-text-primary);
+      color: var(--color-text-primary);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--color-text-primary);
+          color: var(--surface-primary);
+        }
       }
     }
   }
   
-  /* Text Button */
+  /* ================================
+     TEXT BUTTON - Minimal style
+     No background, just text
+     ================================ */
   .p-button-text {
     background: transparent;
     border-color: transparent;
     color: var(--ds-primary-green);
+    padding: 0.5rem 1rem;
+    box-shadow: none;
+    
+    &::before {
+      background: none;
+    }
     
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         background: rgba(var(--ds-primary-green-rgb), 0.08);
         color: var(--ds-primary-green-hover);
+        transform: translateY(-1px);
+      }
+    }
+    
+    &:active:not(:disabled) {
+      background: rgba(var(--ds-primary-green-rgb), 0.12);
+    }
+
+    /* Text button severity variants */
+    &.p-button-secondary {
+      color: var(--color-text-secondary);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--surface-secondary);
+          color: var(--color-text-primary);
+        }
+      }
+    }
+    
+    &.p-button-success {
+      color: var(--color-status-success);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--color-status-success-light);
+        }
+      }
+    }
+    
+    &.p-button-danger {
+      color: var(--color-status-error);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--color-status-error-light);
+        }
+      }
+    }
+    
+    &.p-button-warning {
+      color: var(--color-status-warning-text);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--color-status-warning-light);
+        }
+      }
+    }
+    
+    &.p-button-info {
+      color: var(--color-status-info);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--color-status-info-light);
+        }
+      }
+    }
+    
+    &.p-button-help {
+      color: #8b5cf6;
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: rgba(139, 92, 246, 0.1);
+        }
+      }
+    }
+    
+    &.p-button-contrast {
+      color: var(--color-text-primary);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--surface-secondary);
+        }
       }
     }
   }
   
-  /* Danger Button */
-  .p-button-danger {
-    background: var(--color-status-error);
-    border-color: var(--color-status-error);
+  /* ================================
+     SUCCESS BUTTON
+     Green/lime for positive actions
+     ================================ */
+  .p-button-success:not(.p-button-outlined):not(.p-button-text) {
+    background: linear-gradient(180deg, #74c41e 0%, var(--color-status-success) 100%);
+    border-color: var(--color-status-success);
+    color: #ffffff;
+    box-shadow: 
+      0 2px 8px rgba(99, 173, 14, 0.25),
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
     
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: #dc2626;
-        border-color: #dc2626;
+        background: linear-gradient(180deg, var(--color-status-success) 0%, #569a0b 100%);
+        box-shadow: 
+          0 8px 20px rgba(99, 173, 14, 0.35),
+          0 4px 8px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
     }
     
     &:focus-visible {
-      box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.3);
+      box-shadow: 
+        0 0 0 3px var(--surface-primary),
+        0 0 0 5px var(--color-status-success);
     }
   }
   
-  /* Success Button */
-  .p-button-success {
-    background: var(--color-status-success);
-    border-color: var(--color-status-success);
-    color: var(--color-text-primary);
+  /* ================================
+     INFO BUTTON
+     Blue for informational actions
+     ================================ */
+  .p-button-info:not(.p-button-outlined):not(.p-button-text) {
+    background: linear-gradient(180deg, #38bdf8 0%, var(--color-status-info) 100%);
+    border-color: var(--color-status-info);
+    color: #ffffff;
+    box-shadow: 
+      0 2px 8px rgba(14, 165, 233, 0.25),
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: linear-gradient(180deg, var(--color-status-info) 0%, #0284c7 100%);
+        box-shadow: 
+          0 8px 20px rgba(14, 165, 233, 0.35),
+          0 4px 8px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+    }
     
     &:focus-visible {
-      box-shadow: 0 0 0 3px rgba(var(--primitive-success-500-rgb), 0.3);
+      box-shadow: 
+        0 0 0 3px var(--surface-primary),
+        0 0 0 5px var(--color-status-info);
     }
   }
   
-  /* Button Sizes */
+  /* ================================
+     WARNING BUTTON
+     Amber/orange for caution actions
+     ================================ */
+  .p-button-warning:not(.p-button-outlined):not(.p-button-text),
+  .p-button-warn:not(.p-button-outlined):not(.p-button-text) {
+    background: linear-gradient(180deg, #fcd34d 0%, var(--color-status-warning) 100%);
+    border-color: var(--color-status-warning);
+    color: #78350f;
+    box-shadow: 
+      0 2px 8px rgba(255, 192, 0, 0.25),
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    
+    &::before {
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.25) 0%,
+        rgba(255, 255, 255, 0) 50%
+      );
+    }
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: linear-gradient(180deg, var(--color-status-warning) 0%, #e6ac00 100%);
+        box-shadow: 
+          0 8px 20px rgba(255, 192, 0, 0.35),
+          0 4px 8px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+    }
+    
+    &:focus-visible {
+      box-shadow: 
+        0 0 0 3px var(--surface-primary),
+        0 0 0 5px var(--color-status-warning);
+    }
+  }
+  
+  /* ================================
+     DANGER BUTTON
+     Red for destructive actions
+     ================================ */
+  .p-button-danger:not(.p-button-outlined):not(.p-button-text) {
+    background: linear-gradient(180deg, #ff4d6a 0%, var(--color-status-error) 100%);
+    border-color: var(--color-status-error);
+    color: #ffffff;
+    box-shadow: 
+      0 2px 8px rgba(255, 0, 60, 0.25),
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: linear-gradient(180deg, var(--color-status-error) 0%, #d9002f 100%);
+        box-shadow: 
+          0 8px 20px rgba(255, 0, 60, 0.35),
+          0 4px 8px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      }
+    }
+    
+    &:focus-visible {
+      box-shadow: 
+        0 0 0 3px var(--surface-primary),
+        0 0 0 5px var(--color-status-error);
+    }
+  }
+  
+  /* ================================
+     HELP BUTTON
+     Purple for help/support actions
+     ================================ */
+  .p-button-help:not(.p-button-outlined):not(.p-button-text) {
+    background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
+    border-color: #8b5cf6;
+    color: #ffffff;
+    box-shadow: 
+      0 2px 8px rgba(139, 92, 246, 0.25),
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
+        box-shadow: 
+          0 8px 20px rgba(139, 92, 246, 0.35),
+          0 4px 8px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      }
+    }
+    
+    &:focus-visible {
+      box-shadow: 
+        0 0 0 3px var(--surface-primary),
+        0 0 0 5px #8b5cf6;
+    }
+  }
+  
+  /* ================================
+     CONTRAST BUTTON
+     High contrast dark/light button
+     ================================ */
+  .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
+    background: linear-gradient(180deg, #404040 0%, var(--color-text-primary) 100%);
+    border-color: var(--color-text-primary);
+    color: var(--surface-primary);
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.25),
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: linear-gradient(180deg, #525252 0%, #262626 100%);
+        box-shadow: 
+          0 8px 20px rgba(0, 0, 0, 0.35),
+          0 4px 8px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+    }
+    
+    &:focus-visible {
+      box-shadow: 
+        0 0 0 3px var(--surface-primary),
+        0 0 0 5px var(--color-text-primary);
+    }
+  }
+  
+  /* ================================
+     ROUNDED BUTTONS
+     Pill-shaped buttons
+     ================================ */
+  .p-button-rounded,
+  .p-button.p-button-rounded {
+    border-radius: var(--radius-full);
+    padding: 0.75rem 1.75rem;
+  }
+
+  /* ================================
+     BUTTON SIZES
+     ================================ */
   .p-button-sm {
     padding: 0.5rem 1rem;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+    min-height: var(--button-height-sm);
+    
+    .p-button-icon {
+      font-size: 0.9375rem;
+    }
+    
+    &.p-button-rounded {
+      padding: 0.5rem 1.25rem;
+    }
   }
   
   .p-button-lg {
-    padding: 0.875rem 1.5rem;
-    font-size: 1.125rem;
+    padding: 1rem 2rem;
+    font-size: 1.0625rem;
+    min-height: var(--button-height-lg);
+    
+    .p-button-icon {
+      font-size: 1.25rem;
+    }
+    
+    &.p-button-rounded {
+      padding: 1rem 2.25rem;
+    }
   }
   
-  /* Icon Button */
+  /* ================================
+     ICON ONLY BUTTONS
+     ================================ */
   .p-button-icon-only {
     padding: 0.75rem;
+    width: var(--button-height-md);
+    height: var(--button-height-md);
+    justify-content: center;
     
     &.p-button-rounded {
       border-radius: 50%;
+    }
+    
+    &.p-button-sm {
+      width: var(--button-height-sm);
+      height: var(--button-height-sm);
+      padding: 0.5rem;
+    }
+    
+    &.p-button-lg {
+      width: var(--button-height-lg);
+      height: var(--button-height-lg);
+      padding: 1rem;
+    }
+  }
+
+  /* ================================
+     BUTTON GROUP STYLES
+     ================================ */
+  .p-button-group {
+    display: inline-flex;
+    
+    .p-button {
+      border-radius: 0;
+      
+      &:first-child {
+        border-top-left-radius: var(--radius-full, 9999px);
+        border-bottom-left-radius: var(--radius-full, 9999px);
+      }
+      
+      &:last-child {
+        border-top-right-radius: var(--radius-full, 9999px);
+        border-bottom-right-radius: var(--radius-full, 9999px);
+      }
+      
+      &:not(:last-child) {
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  /* ================================
+     LOADING STATE
+     ================================ */
+  .p-button-loading {
+    pointer-events: none;
+    position: relative;
+    
+    .p-button-label {
+      opacity: 0.7;
+    }
+    
+    .p-button-loading-icon {
+      animation: button-spin 1s linear infinite;
+    }
+  }
+  
+  @keyframes button-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* ================================
+     DARK MODE BUTTON ADJUSTMENTS
+     ================================ */
+  [data-theme="dark"],
+  .dark-theme {
+    .p-button-secondary {
+      background: var(--surface-secondary);
+      border-color: var(--color-border-primary);
+      color: var(--color-text-primary);
+      
+      &::before {
+        background: none;
+      }
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: var(--surface-tertiary);
+          border-color: var(--ds-primary-green);
+          color: var(--ds-primary-green-light);
+        }
+      }
+    }
+    
+    .p-button-outlined {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: rgba(var(--ds-primary-green-rgb), 0.15);
+        }
+      }
+      
+      &.p-button-contrast {
+        border-color: var(--surface-primary);
+        color: var(--surface-primary);
+        
+        @media (hover: hover) and (pointer: fine) {
+          &:hover:not(:disabled) {
+            background: var(--surface-primary);
+            color: var(--color-text-primary);
+          }
+        }
+      }
+    }
+    
+    .p-button-text {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: rgba(var(--ds-primary-green-rgb), 0.15);
+        }
+      }
+    }
+    
+    .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
+      background: linear-gradient(180deg, #f5f5f5 0%, #e5e5e5 100%);
+      border-color: #e5e5e5;
+      color: var(--primitive-neutral-900);
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(:disabled) {
+          background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+        }
+      }
     }
   }
   
@@ -210,7 +822,6 @@
   
   .p-card-header {
     padding: var(--space-5);
-    border-bottom: 1px solid var(--color-border-secondary);
     background: var(--surface-secondary);
   }
   
@@ -979,7 +1590,7 @@
   }
   
   /* ================================================================
-     TABVIEW COMPONENT ENHANCEMENTS
+     TABVIEW COMPONENT ENHANCEMENTS (Legacy)
      ================================================================ */
   
   .p-tabview {
@@ -1021,6 +1632,270 @@
     }
     to {
       opacity: 1;
+    }
+  }
+  
+  /* ================================================================
+     TABS COMPONENT ENHANCEMENTS (PrimeNG 21+)
+     Modern Segment Control Style - iOS/macOS Inspired
+     ================================================================ */
+  
+  .p-tabs {
+    background: transparent;
+    
+    /* Tab List Container - Segment Control Style */
+    .p-tablist {
+      display: flex;
+      align-items: stretch;
+      background: #f3f4f6;
+      border-radius: 14px;
+      padding: 5px;
+      gap: 4px;
+      border: none;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+    
+    /* Individual Tab - Segment Button */
+    .p-tab {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 20px;
+      font-family: var(--font-family-sans);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      min-height: 48px;
+      flex: 1;
+      outline: none;
+      
+      /* Icon within tab */
+      i, .pi {
+        font-size: 1.125rem;
+        color: #9ca3af;
+        transition: color 0.2s ease;
+      }
+      
+      /* Hover state */
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(.p-tab-active):not([aria-selected="true"]):not([data-p-active="true"]) {
+          background: rgba(255, 255, 255, 0.6);
+          color: #374151;
+          
+          i, .pi {
+            color: var(--ds-primary-green, #089949);
+          }
+        }
+      }
+      
+      /* Focus state */
+      &:focus-visible {
+        box-shadow: 
+          0 0 0 2px #f3f4f6,
+          0 0 0 4px var(--ds-primary-green, #089949);
+      }
+      
+      /* Active/Selected state - White card that pops out */
+      &.p-tab-active,
+      &[aria-selected="true"],
+      &[data-p-active="true"] {
+        background: #ffffff;
+        color: var(--ds-primary-green, #089949);
+        font-weight: 600;
+        box-shadow: 
+          0 1px 3px rgba(0, 0, 0, 0.1),
+          0 2px 8px rgba(0, 0, 0, 0.05);
+        
+        i, .pi {
+          color: var(--ds-primary-green, #089949);
+        }
+      }
+      
+      /* Active press state */
+      &:active:not(:disabled) {
+        transform: scale(0.98);
+      }
+    }
+    
+    /* Tab Panels Container */
+    .p-tabpanels {
+      padding: 0;
+      background: transparent;
+    }
+    
+    /* Individual Tab Panel */
+    .p-tabpanel {
+      padding: 0;
+      animation: tab-panel-fade-in 250ms ease-out;
+    }
+  }
+  
+  @keyframes tab-panel-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* ================================================================
+     TABS RESPONSIVE STYLES
+     Mobile-optimized tabs with horizontal scroll
+     ================================================================ */
+  
+  @media (max-width: 767px) {
+    .p-tabs {
+      .p-tablist {
+        padding: 4px;
+        border-radius: 12px;
+      }
+      
+      .p-tab {
+        padding: 10px 14px;
+        font-size: 0.875rem;
+        gap: 8px;
+        min-height: 44px;
+        border-radius: 8px;
+        
+        i, .pi {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+  
+  /* ================================================================
+     TABS VARIANTS
+     Different tab styles for various contexts
+     ================================================================ */
+  
+  /* Underline variant - classic tab style */
+  .p-tabs.tabs-underline {
+    .p-tablist {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid var(--color-border-secondary);
+      border-radius: 0;
+      padding: 0;
+      gap: 0;
+      box-shadow: none;
+      margin-bottom: 1.25rem;
+    }
+    
+    .p-tab {
+      border-radius: 0;
+      margin-bottom: -2px;
+      border-bottom: 2px solid transparent;
+      
+      &.p-tab-active,
+      &[aria-selected="true"],
+      &[data-p-active="true"] {
+        background: transparent;
+        color: var(--ds-primary-green);
+        border-bottom-color: var(--ds-primary-green);
+        box-shadow: none;
+        
+        i, .pi {
+          color: var(--ds-primary-green);
+        }
+      }
+      
+      @media (hover: hover) and (pointer: fine) {
+        &:hover:not(.p-tab-active):not([aria-selected="true"]) {
+          background: transparent;
+          color: var(--ds-primary-green);
+          border-bottom-color: rgba(var(--ds-primary-green-rgb), 0.3);
+        }
+      }
+    }
+  }
+  
+  /* Pill variant - Green filled active state */
+  .p-tabs.tabs-filled {
+    .p-tab {
+      &.p-tab-active,
+      &[aria-selected="true"],
+      &[data-p-active="true"] {
+        background: linear-gradient(135deg, var(--ds-primary-green, #089949) 0%, #0ab85a 100%);
+        color: white;
+        box-shadow: 
+          0 4px 12px rgba(8, 153, 73, 0.25),
+          0 2px 4px rgba(0, 0, 0, 0.1);
+        
+        i, .pi {
+          color: white;
+        }
+      }
+    }
+  }
+  
+  /* Compact variant for tighter spaces */
+  .p-tabs.tabs-compact {
+    .p-tablist {
+      padding: 3px;
+      gap: 2px;
+      border-radius: 10px;
+    }
+    
+    .p-tab {
+      padding: 8px 14px;
+      font-size: 0.8125rem;
+      border-radius: 8px;
+      min-height: 36px;
+    }
+  }
+  
+  /* Dark mode adjustments */
+  [data-theme="dark"],
+  .dark-theme {
+    .p-tabs {
+      .p-tablist {
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+      
+      .p-tab {
+        color: rgba(255, 255, 255, 0.6);
+        
+        i, .pi {
+          color: rgba(255, 255, 255, 0.4);
+        }
+        
+        &:hover:not(.p-tab-active):not([aria-selected="true"]):not([data-p-active="true"]) {
+          background: rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.9);
+        }
+        
+        &.p-tab-active,
+        &[aria-selected="true"],
+        &[data-p-active="true"] {
+          background: var(--surface-primary);
+          color: var(--ds-primary-green);
+          
+          i, .pi {
+            color: var(--ds-primary-green);
+          }
+        }
+      }
     }
   }
   
@@ -1192,6 +2067,227 @@
 }
 
 /* ================================================================
+   CRITICAL: BUTTON ICON SPACING
+   Ensure proper gap between icon and label
+   ================================================================ */
+
+.p-button .p-button-icon-left {
+  margin-right: 0.5rem !important;
+}
+
+.p-button .p-button-icon-right {
+  margin-left: 0.5rem !important;
+}
+
+/* ================================================================
+   CRITICAL: BUTTON TEXT COLOR ENFORCEMENT
+   Design System Rule: WHITE ON GREEN, GREEN ON WHITE, BLACK ON WHITE
+   NO BLACK ON GREEN - EVER!
+   
+   This section is OUTSIDE @layer to ensure highest specificity
+   ================================================================ */
+
+/* Primary/default buttons - WHITE text on GREEN background */
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link),
+.p-button-primary,
+.p-button-success:not(.p-button-outlined):not(.p-button-text),
+.p-button-info:not(.p-button-outlined):not(.p-button-text),
+.p-button-warning:not(.p-button-outlined):not(.p-button-text),
+.p-button-warn:not(.p-button-outlined):not(.p-button-text),
+.p-button-danger:not(.p-button-outlined):not(.p-button-text),
+.p-button-help:not(.p-button-outlined):not(.p-button-text),
+.p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
+  color: #ffffff !important;
+  
+  .p-button-label {
+    color: #ffffff !important;
+  }
+  
+  .p-button-icon {
+    color: #ffffff !important;
+  }
+  
+  span {
+    color: #ffffff !important;
+  }
+}
+
+/* Warning button - dark text for contrast on yellow/amber */
+.p-button-warning:not(.p-button-outlined):not(.p-button-text),
+.p-button-warn:not(.p-button-outlined):not(.p-button-text) {
+  color: #78350f !important;
+  
+  .p-button-label {
+    color: #78350f !important;
+  }
+  
+  .p-button-icon {
+    color: #78350f !important;
+  }
+  
+  span {
+    color: #78350f !important;
+  }
+}
+
+/* Outlined and text buttons - GREEN text on WHITE/transparent background */
+.p-button-outlined,
+.p-button-text,
+.p-button-link {
+  color: var(--ds-primary-green, #089949) !important;
+  
+  .p-button-label {
+    color: var(--ds-primary-green, #089949) !important;
+  }
+  
+  .p-button-icon {
+    color: var(--ds-primary-green, #089949) !important;
+  }
+}
+
+/* Secondary button - inherit text color or use secondary text */
+.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
+  color: var(--color-text-primary, #1a1a1a) !important;
+  
+  .p-button-label {
+    color: var(--color-text-primary, #1a1a1a) !important;
+  }
+  
+  .p-button-icon {
+    color: var(--color-text-primary, #1a1a1a) !important;
+  }
+}
+
+/* Outlined severity variants */
+.p-button-outlined.p-button-secondary {
+  color: var(--color-text-secondary, #4a4a4a) !important;
+  
+  .p-button-label,
+  .p-button-icon {
+    color: var(--color-text-secondary, #4a4a4a) !important;
+  }
+}
+
+.p-button-outlined.p-button-success {
+  color: var(--color-status-success, #63ad0e) !important;
+  
+  .p-button-label,
+  .p-button-icon {
+    color: var(--color-status-success, #63ad0e) !important;
+  }
+}
+
+.p-button-outlined.p-button-info {
+  color: var(--color-status-info, #0ea5e9) !important;
+  
+  .p-button-label,
+  .p-button-icon {
+    color: var(--color-status-info, #0ea5e9) !important;
+  }
+}
+
+.p-button-outlined.p-button-warning,
+.p-button-outlined.p-button-warn {
+  color: var(--color-status-warning-text, #92400e) !important;
+  
+  .p-button-label,
+  .p-button-icon {
+    color: var(--color-status-warning-text, #92400e) !important;
+  }
+}
+
+.p-button-outlined.p-button-danger {
+  color: var(--color-status-error, #ff003c) !important;
+  
+  .p-button-label,
+  .p-button-icon {
+    color: var(--color-status-error, #ff003c) !important;
+  }
+}
+
+.p-button-outlined.p-button-help {
+  color: #8b5cf6 !important;
+  
+  .p-button-label,
+  .p-button-icon {
+    color: #8b5cf6 !important;
+  }
+}
+
+.p-button-outlined.p-button-contrast {
+  color: var(--color-text-primary, #1a1a1a) !important;
+  
+  .p-button-label,
+  .p-button-icon {
+    color: var(--color-text-primary, #1a1a1a) !important;
+  }
+}
+
+/* Text button severity variants */
+.p-button-text.p-button-secondary {
+  color: var(--color-text-secondary, #4a4a4a) !important;
+}
+
+.p-button-text.p-button-success {
+  color: var(--color-status-success, #63ad0e) !important;
+}
+
+.p-button-text.p-button-info {
+  color: var(--color-status-info, #0ea5e9) !important;
+}
+
+.p-button-text.p-button-warning,
+.p-button-text.p-button-warn {
+  color: var(--color-status-warning-text, #92400e) !important;
+}
+
+.p-button-text.p-button-danger {
+  color: var(--color-status-error, #ff003c) !important;
+}
+
+.p-button-text.p-button-help {
+  color: #8b5cf6 !important;
+}
+
+.p-button-text.p-button-contrast {
+  color: var(--color-text-primary, #1a1a1a) !important;
+}
+
+/* ================================================================
+   GLOBAL BUTTON OVERRIDES - HIGHEST SPECIFICITY
+   Ensures all buttons are pill-shaped and have proper colors
+   ================================================================ */
+
+/* Force pill-shaped border-radius on ALL PrimeNG buttons */
+.p-button,
+button.p-button,
+.p-button.p-component,
+p-button .p-button,
+.p-button:not(.p-button-icon-only) {
+  border-radius: 9999px !important;
+}
+
+/* Icon-only buttons should be circular */
+.p-button.p-button-icon-only {
+  border-radius: 50% !important;
+}
+
+/* Primary button - ensure GREEN background with WHITE text */
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link),
+.p-button.p-button-primary {
+  background: linear-gradient(180deg, var(--ds-primary-green-light, #0ab85a) 0%, var(--ds-primary-green, #089949) 100%) !important;
+  border-color: var(--ds-primary-green, #089949) !important;
+  color: #ffffff !important;
+}
+
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link) .p-button-label,
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-link) .p-button-icon,
+.p-button.p-button-primary .p-button-label,
+.p-button.p-button-primary .p-button-icon {
+  color: #ffffff !important;
+}
+
+/* ================================================================
    DARK MODE ADJUSTMENTS
    ================================================================ */
 
@@ -1211,6 +2307,22 @@
     box-shadow: 
       0 4px 12px rgba(0, 0, 0, 0.3),
       0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Dark mode: Outlined contrast button should be white */
+  .p-button-outlined.p-button-contrast {
+    color: var(--surface-primary, #ffffff) !important;
+    border-color: var(--surface-primary, #ffffff) !important;
+    
+    .p-button-label,
+    .p-button-icon {
+      color: var(--surface-primary, #ffffff) !important;
+    }
+  }
+  
+  /* Dark mode: Text contrast button should be white */
+  .p-button-text.p-button-contrast {
+    color: var(--surface-primary, #ffffff) !important;
   }
 }
 

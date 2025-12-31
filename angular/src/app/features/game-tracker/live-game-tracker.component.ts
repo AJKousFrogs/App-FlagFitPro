@@ -749,6 +749,6 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   private animateTouchdown(): void {
     // Create confetti effect (simplified)
     // In a real implementation, you'd use a confetti library
-    this.logger.info("Touchdown! 🎉");
+    this.logger.info("Touchdown!");
   }
 }

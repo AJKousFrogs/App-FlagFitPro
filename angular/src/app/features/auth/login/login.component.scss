@@ -121,7 +121,7 @@
   font-size: var(--font-heading-lg);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-2);
+  margin: 0 0 var(--space-6);
   letter-spacing: var(--letter-spacing-tight);
 }
 
@@ -129,20 +129,62 @@
 // FORM ELEMENTS
 // ============================================================================
 
-.p-field {
-  margin-bottom: var(--space-4);
+.form-field {
+  margin-bottom: var(--space-5);
 }
 
-.p-label {
+.form-label {
   display: block;
   font-size: var(--font-body-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   margin-bottom: var(--space-2);
 
   &.required::after {
     content: ' *';
     color: var(--color-status-error);
+  }
+}
+
+// Password input with toggle
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input {
+    padding-right: 48px !important;
+  }
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: var(--space-2);
+  cursor: pointer;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: var(--color-text-primary);
+    background: var(--surface-secondary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
+
+  i {
+    font-size: 1rem;
   }
 }
 
@@ -210,54 +252,90 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  margin-top: var(--space-2);
+}
 
-  label {
-    font-size: var(--font-body-sm);
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    user-select: none;
+.forgot-link {
+  font-size: var(--font-body-sm);
+  color: var(--ds-primary-green);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--ds-primary-green-hover);
+    text-decoration: underline;
   }
 
-  a {
-    font-size: var(--font-body-sm);
-    color: var(--ds-primary-green);
-    text-decoration: none;
-    transition: color var(--transition-fast);
-
-    &:hover {
-      color: var(--ds-primary-green-hover);
-      text-decoration: underline;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 2px;
-      border-radius: var(--radius-sm);
-    }
+  &:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
   }
 }
 
-// Checkbox styling
-:host ::ng-deep {
-  .p-checkbox {
-    .p-checkbox-box {
-      width: 20px;
-      height: 20px;
-      border-radius: var(--radius-sm);
-      border: 2px solid var(--color-border-primary);
-      transition: all var(--transition-fast);
+// Custom Checkbox styling
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  user-select: none;
+  position: relative;
 
-      &.p-highlight {
-        background: var(--ds-primary-green);
-        border-color: var(--ds-primary-green);
-      }
+  input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
 
-      &:focus {
-        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
+    &:checked + .checkmark {
+      background: var(--ds-primary-green);
+      border-color: var(--ds-primary-green);
+
+      &::after {
+        display: block;
       }
     }
+
+    &:focus-visible + .checkmark {
+      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);
+    }
+  }
+
+  .checkmark {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border: 2px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+    background: var(--surface-primary);
+    transition: all var(--transition-fast);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &::after {
+      content: '';
+      display: none;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-bottom: 2px;
+    }
+
+    &:hover {
+      border-color: var(--ds-primary-green);
+    }
+  }
+
+  .checkbox-label {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -307,8 +385,8 @@
 .login-divider {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  margin: var(--space-4) 0;
+  gap: var(--space-4);
+  margin: var(--space-6) 0;
   color: var(--color-text-muted);
   font-size: var(--font-body-sm);
 
@@ -354,9 +432,11 @@
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   font-size: var(--font-body-sm);
+  margin-bottom: var(--space-6);
 
   strong {
     font-weight: var(--font-weight-semibold);
+    margin-right: var(--space-2);
   }
 
   &.alert-info {

@@ -110,21 +110,23 @@ interface InjuryEntry {
                 
                 <div class="form-grid">
                   <div class="form-group span-2">
-                    <label for="name">Full Name <span class="required">*</span></label>
+                    <label for="onboarding-name">Full Name <span class="required">*</span></label>
                     <input
-                      id="name"
+                      id="onboarding-name"
+                      name="name"
                       type="text"
                       pInputText
                       [(ngModel)]="onboardingData.name"
                       placeholder="Enter your full name"
                       class="w-full"
+                      autocomplete="name"
                     />
                   </div>
                   
                   <div class="form-group">
-                    <label for="dob">Date of Birth <span class="required">*</span></label>
+                    <label for="onboarding-dob">Date of Birth <span class="required">*</span></label>
                     <p-datepicker
-                      id="dob"
+                      inputId="onboarding-dob"
                       [(ngModel)]="onboardingData.dateOfBirth"
                       [maxDate]="maxDate"
                       [minDate]="minDate"
@@ -139,9 +141,9 @@ interface InjuryEntry {
                   </div>
                   
                   <div class="form-group">
-                    <label for="gender">Gender</label>
+                    <label for="onboarding-gender">Gender</label>
                     <p-select
-                      id="gender"
+                      inputId="onboarding-gender"
                       [options]="genderOptions"
                       [(ngModel)]="onboardingData.gender"
                       placeholder="Select gender"
@@ -150,9 +152,9 @@ interface InjuryEntry {
                   </div>
                   
                   <div class="form-group">
-                    <label for="country">Country <span class="required">*</span></label>
+                    <label for="onboarding-country">Country <span class="required">*</span></label>
                     <p-select
-                      id="country"
+                      inputId="onboarding-country"
                       [options]="countryOptions"
                       [(ngModel)]="onboardingData.country"
                       placeholder="Select your country"
@@ -163,14 +165,16 @@ interface InjuryEntry {
                   </div>
                   
                   <div class="form-group">
-                    <label for="phone">Phone Number <small>(optional)</small></label>
+                    <label for="onboarding-phone">Phone Number <small>(optional)</small></label>
                     <input
-                      id="phone"
+                      id="onboarding-phone"
+                      name="phone"
                       type="tel"
                       pInputText
                       [(ngModel)]="onboardingData.phone"
                       placeholder="+1 234 567 8900"
                       class="w-full"
+                      autocomplete="tel"
                     />
                   </div>
                 </div>
@@ -188,9 +192,9 @@ interface InjuryEntry {
                 
                 <div class="form-grid">
                   <div class="form-group">
-                    <label for="team">Team <span class="required">*</span></label>
+                    <label for="onboarding-team">Team <span class="required">*</span></label>
                     <p-select
-                      id="team"
+                      inputId="onboarding-team"
                       [options]="teams"
                       [(ngModel)]="onboardingData.team"
                       placeholder="Select your team"
@@ -200,9 +204,10 @@ interface InjuryEntry {
                   </div>
                   
                   <div class="form-group jersey-input">
-                    <label for="jerseyNumber">Jersey #</label>
+                    <label for="onboarding-jerseyNumber">Jersey #</label>
                     <input
-                      id="jerseyNumber"
+                      id="onboarding-jerseyNumber"
+                      name="jerseyNumber"
                       type="number"
                       pInputText
                       [(ngModel)]="onboardingData.jerseyNumber"
@@ -210,13 +215,14 @@ interface InjuryEntry {
                       min="0"
                       max="99"
                       class="w-full jersey-field"
+                      autocomplete="off"
                     />
                   </div>
                   
                   <div class="form-group">
-                    <label for="position">Primary Position <span class="required">*</span></label>
+                    <label for="onboarding-position">Primary Position <span class="required">*</span></label>
                     <p-select
-                      id="position"
+                      inputId="onboarding-position"
                       [options]="positions"
                       [(ngModel)]="onboardingData.position"
                       placeholder="Select position"
@@ -225,9 +231,9 @@ interface InjuryEntry {
                   </div>
                   
                   <div class="form-group">
-                    <label for="secondaryPosition">Secondary Position</label>
+                    <label for="onboarding-secondaryPosition">Secondary Position</label>
                     <p-select
-                      id="secondaryPosition"
+                      inputId="onboarding-secondaryPosition"
                       [options]="positions"
                       [(ngModel)]="onboardingData.secondaryPosition"
                       placeholder="Optional"
@@ -257,9 +263,9 @@ interface InjuryEntry {
                   }
                   
                   <div class="form-group span-2">
-                    <label for="experience">Experience Level <span class="required">*</span></label>
+                    <label for="onboarding-experience">Experience Level <span class="required">*</span></label>
                     <p-select
-                      id="experience"
+                      inputId="onboarding-experience"
                       [options]="experienceLevels"
                       [(ngModel)]="onboardingData.experience"
                       placeholder="Select your experience"
@@ -306,9 +312,10 @@ interface InjuryEntry {
                 @if (onboardingData.unitSystem === 'metric') {
                   <div class="form-grid">
                     <div class="form-group">
-                      <label for="height">Height (cm) <span class="required">*</span></label>
+                      <label for="onboarding-height">Height (cm) <span class="required">*</span></label>
                       <input
-                        id="height"
+                        id="onboarding-height"
+                        name="height"
                         type="number"
                         pInputText
                         [(ngModel)]="onboardingData.heightCm"
@@ -316,12 +323,14 @@ interface InjuryEntry {
                         min="100"
                         max="250"
                         class="w-full"
+                        autocomplete="off"
                       />
                     </div>
                     <div class="form-group">
-                      <label for="weight">Weight (kg) <span class="required">*</span></label>
+                      <label for="onboarding-weight">Weight (kg) <span class="required">*</span></label>
                       <input
-                        id="weight"
+                        id="onboarding-weight"
+                        name="weight"
                         type="number"
                         pInputText
                         [(ngModel)]="onboardingData.weightKg"
@@ -329,15 +338,17 @@ interface InjuryEntry {
                         min="30"
                         max="200"
                         class="w-full"
+                        autocomplete="off"
                       />
                     </div>
                   </div>
                 } @else {
                   <div class="form-grid imperial-grid">
                     <div class="form-group">
-                      <label for="heightFt">Height (ft)</label>
+                      <label for="onboarding-heightFt">Height (ft)</label>
                       <input
-                        id="heightFt"
+                        id="onboarding-heightFt"
+                        name="heightFt"
                         type="number"
                         pInputText
                         [(ngModel)]="onboardingData.heightFt"
@@ -345,12 +356,14 @@ interface InjuryEntry {
                         min="3"
                         max="8"
                         class="w-full"
+                        autocomplete="off"
                       />
                     </div>
                     <div class="form-group">
-                      <label for="heightIn">Inches</label>
+                      <label for="onboarding-heightIn">Inches</label>
                       <input
-                        id="heightIn"
+                        id="onboarding-heightIn"
+                        name="heightIn"
                         type="number"
                         pInputText
                         [(ngModel)]="onboardingData.heightIn"
@@ -358,12 +371,14 @@ interface InjuryEntry {
                         min="0"
                         max="11"
                         class="w-full"
+                        autocomplete="off"
                       />
                     </div>
                     <div class="form-group">
-                      <label for="weightLbs">Weight (lbs) <span class="required">*</span></label>
+                      <label for="onboarding-weightLbs">Weight (lbs) <span class="required">*</span></label>
                       <input
-                        id="weightLbs"
+                        id="onboarding-weightLbs"
+                        name="weightLbs"
                         type="number"
                         pInputText
                         [(ngModel)]="onboardingData.weightLbs"
@@ -371,6 +386,7 @@ interface InjuryEntry {
                         min="66"
                         max="440"
                         class="w-full"
+                        autocomplete="off"
                       />
                     </div>
                   </div>

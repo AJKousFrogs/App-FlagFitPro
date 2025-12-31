@@ -106,7 +106,7 @@ interface SessionType {
                   [class.selected]="sessionForm.get('sessionType')?.value === type.value"
                   (click)="selectSessionType(type.value)"
                 >
-                  <span class="type-icon">{{ type.icon }}</span>
+                  <i class="type-icon pi" [ngClass]="type.icon"></i>
                   <span class="type-label">{{ type.label }}</span>
                   <span class="type-description">{{ type.description }}</span>
                 </div>
@@ -437,37 +437,37 @@ export class TrainingLogComponent implements OnInit {
     {
       label: "Practice",
       value: "practice",
-      icon: "🏈",
+      icon: "pi-flag",
       description: "Team practice session",
     },
     {
       label: "Game",
       value: "game",
-      icon: "🏆",
+      icon: "pi-trophy",
       description: "Competitive game",
     },
     {
       label: "Strength",
       value: "strength",
-      icon: "💪",
+      icon: "pi-heart",
       description: "Gym/weight training",
     },
     {
       label: "Speed",
       value: "speed",
-      icon: "⚡",
+      icon: "pi-bolt",
       description: "Sprint/agility work",
     },
     {
       label: "Recovery",
       value: "recovery",
-      icon: "🧘",
+      icon: "pi-sun",
       description: "Light recovery session",
     },
     {
       label: "Skills",
       value: "skills",
-      icon: "🎯",
+      icon: "pi-bullseye",
       description: "Position-specific drills",
     },
   ];

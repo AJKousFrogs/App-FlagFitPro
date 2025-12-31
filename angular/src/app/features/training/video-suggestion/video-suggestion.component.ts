@@ -1490,7 +1490,7 @@ export class VideoSuggestionComponent implements OnInit {
       // Reset form
       this.suggestionForm.reset();
       this.hapticService.success();
-      this.toastService.success("Video submitted for review! 🎉");
+      this.toastService.success("Video submitted for review!");
     } catch (error) {
       console.error("Failed to submit suggestion:", error);
       this.toastService.error("Failed to submit. Please try again.");

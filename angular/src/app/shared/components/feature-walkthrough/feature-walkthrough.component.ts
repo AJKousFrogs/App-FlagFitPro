@@ -11,23 +11,23 @@
  * @version 1.0.0
  */
 
-import {
-  Component,
-  inject,
-  signal,
-  computed,
-  output,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    output,
+    signal,
+} from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 
 // PrimeNG
-import { DialogModule } from "primeng/dialog";
 import { ButtonModule } from "primeng/button";
-import { StepsModule } from "primeng/steps";
-import { ProgressBarModule } from "primeng/progressbar";
 import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
+import { ProgressBarModule } from "primeng/progressbar";
+import { StepsModule } from "primeng/steps";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -341,6 +341,7 @@ interface WalkthroughStep {
       :host ::ng-deep .action-btn {
         width: 100%;
         justify-content: center;
+        border-radius: 50px !important;
       }
 
       /* Navigation */
@@ -353,12 +354,65 @@ interface WalkthroughStep {
       }
 
       :host ::ng-deep .skip-btn {
-        color: var(--text-secondary);
+        color: var(--color-status-error);
+        font-weight: 600;
+      }
+
+      :host ::ng-deep .skip-btn:hover {
+        background: rgba(239, 68, 68, 0.1) !important;
       }
 
       .nav-buttons {
         display: flex;
         gap: var(--space-3);
+      }
+
+      /* Rounded buttons for navigation */
+      :host ::ng-deep .nav-buttons .p-button {
+        border-radius: 50px !important;
+        padding: 0.75rem 1.5rem !important;
+        font-weight: 600 !important;
+      }
+
+      :host ::ng-deep .nav-buttons .p-button-outlined {
+        border-width: 2px !important;
+      }
+
+      /* Primary button (Next) */
+      :host ::ng-deep .nav-buttons .p-button:not(.p-button-outlined):not(.p-button-success) {
+        background: linear-gradient(135deg, var(--ds-primary-green-light, #0ab85a) 0%, var(--ds-primary-green, #089949) 100%) !important;
+        border: none !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
+      }
+
+      :host ::ng-deep .nav-buttons .p-button:not(.p-button-outlined):not(.p-button-success):hover {
+        box-shadow: 0 6px 16px rgba(8, 153, 73, 0.4);
+        transform: translateY(-1px);
+      }
+
+      /* Success button (Get Started) */
+      :host ::ng-deep .nav-buttons .p-button-success {
+        background: linear-gradient(135deg, var(--ds-primary-green-light, #0ab85a) 0%, var(--ds-primary-green, #089949) 100%) !important;
+        border: none !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3);
+      }
+
+      :host ::ng-deep .nav-buttons .p-button-success:hover {
+        box-shadow: 0 6px 16px rgba(8, 153, 73, 0.4);
+        transform: translateY(-1px);
+      }
+
+      /* Outlined button (Back) */
+      :host ::ng-deep .nav-buttons .p-button-outlined {
+        border-color: var(--ds-primary-green, #089949) !important;
+        color: var(--ds-primary-green, #089949) !important;
+        background: transparent !important;
+      }
+
+      :host ::ng-deep .nav-buttons .p-button-outlined:hover {
+        background: rgba(8, 153, 73, 0.08) !important;
       }
 
       /* Responsive */

@@ -335,7 +335,7 @@ export class PushNotificationService {
   async sendTestNotification(): Promise<void> {
     await this.showNotification({
       title: "Test Notification",
-      body: "Push notifications are working correctly! 🎉",
+      body: "Push notifications are working correctly!",
       tag: "test-notification",
       data: { type: "test" },
     });
@@ -391,7 +391,7 @@ export class PushNotificationService {
    */
   async notifyAchievement(achievementName: string, description: string): Promise<void> {
     await this.showNotification({
-      title: "🏆 Achievement Unlocked!",
+      title: "Achievement Unlocked!",
       body: `${achievementName}: ${description}`,
       tag: "achievement",
       data: { type: "achievement", name: achievementName },

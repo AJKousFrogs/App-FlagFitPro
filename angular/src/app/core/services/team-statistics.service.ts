@@ -899,7 +899,7 @@ export class TeamStatisticsService {
       {
         messageId: 'm2',
         author: 'Coach',
-        authorAvatar: '🏈',
+        authorAvatar: 'C',
         content: 'Practice moved to 6:30 PM tomorrow due to field maintenance.',
         timestamp: new Date(now.getTime() - 5 * 60 * 60 * 1000),
         type: 'announcement',
