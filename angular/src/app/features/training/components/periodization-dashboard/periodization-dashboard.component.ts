@@ -27,7 +27,7 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { TooltipModule } from "primeng/tooltip";
 import { ButtonModule } from "primeng/button";
 import { DividerModule } from "primeng/divider";
-import { ChipModule } from "primeng/chip";
+import { Chip } from "primeng/chip";
 import { TimelineModule } from "primeng/timeline";
 import { BadgeModule } from "primeng/badge";
 
@@ -80,7 +80,7 @@ interface TimelineEvent {
     TooltipModule,
     ButtonModule,
     DividerModule,
-    ChipModule,
+    Chip,
     TimelineModule,
     BadgeModule,
   ],

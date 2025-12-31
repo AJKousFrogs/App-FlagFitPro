@@ -31,7 +31,7 @@ import { RouterModule } from "@angular/router";
 // PrimeNG Components
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { SelectModule } from "primeng/select";
+import { Select } from "primeng/select";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
@@ -43,7 +43,7 @@ import { AccordionModule } from "primeng/accordion";
 import { CheckboxModule } from "primeng/checkbox";
 import { TooltipModule } from "primeng/tooltip";
 import { DividerModule } from "primeng/divider";
-import { ChipModule } from "primeng/chip";
+import { Chip } from "primeng/chip";
 import { BadgeModule } from "primeng/badge";
 
 // Services
@@ -81,7 +81,7 @@ interface TimezoneOption {
     RouterModule,
     CardModule,
     ButtonModule,
-    SelectModule,
+    Select,
     DatePickerModule,
     InputNumberModule,
     InputTextModule,
@@ -93,7 +93,7 @@ interface TimezoneOption {
     CheckboxModule,
     TooltipModule,
     DividerModule,
-    ChipModule,
+    Chip,
     BadgeModule,
     MainLayoutComponent,
     PageHeaderComponent,

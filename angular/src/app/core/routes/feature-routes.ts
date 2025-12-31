@@ -135,6 +135,16 @@ export const trainingRoutes: Routes = [
       ),
     canActivate: [authGuard],
   },
+  // TODO: Re-enable after PrimeNG v21 migration of exercisedb component
+  // {
+  //   path: "exercisedb",
+  //   loadComponent: () =>
+  //     import("../../features/exercisedb/exercisedb-manager.component").then(
+  //       (m) => m.ExerciseDBManagerComponent,
+  //     ),
+  //   canActivate: [authGuard],
+  //   data: { preload: false }, // Coach-only feature, load on demand
+  // },
   {
     path: "training/schedule",
     loadComponent: () =>

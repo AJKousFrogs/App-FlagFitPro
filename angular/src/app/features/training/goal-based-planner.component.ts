@@ -10,7 +10,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { SelectModule } from "primeng/select";
+import { Select } from "primeng/select";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import {
@@ -31,7 +31,7 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
     CommonModule,
     FormsModule,
     CardModule,
-    SelectModule,
+    Select,
     ButtonModule,
     TagModule,
     TrafficLightRiskComponent,

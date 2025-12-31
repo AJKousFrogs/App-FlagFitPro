@@ -29,7 +29,7 @@ import { Router, RouterModule } from "@angular/router";
 // PrimeNG
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { SliderModule } from "primeng/slider";
+import { Slider } from "primeng/slider";
 import { InputNumberModule } from "primeng/inputnumber";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
@@ -69,7 +69,7 @@ interface TodaysPlan {
     RouterModule,
     CardModule,
     ButtonModule,
-    SliderModule,
+    Slider,
     InputNumberModule,
     ProgressBarModule,
     TagModule,

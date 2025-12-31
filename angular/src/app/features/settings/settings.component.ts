@@ -29,7 +29,7 @@ import { LoggerService } from "../../core/services/logger.service";
 import { PasswordModule } from "primeng/password";
 import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
-import { ToggleSwitchModule } from "primeng/toggleswitch";
+import { ToggleSwitch } from "primeng/toggleswitch";
 import { TooltipModule } from "primeng/tooltip";
 import { RouterLink } from "@angular/router";
 
@@ -50,7 +50,7 @@ import { RouterLink } from "@angular/router";
     PasswordModule,
     DialogModule,
     DividerModule,
-    ToggleSwitchModule,
+    ToggleSwitch,
     TooltipModule,
     RouterLink,
   ],

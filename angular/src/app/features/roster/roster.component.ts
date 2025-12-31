@@ -31,7 +31,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { BadgeModule } from 'primeng/badge';
-import { SelectModule } from 'primeng/select';
+import { Select } from 'primeng/select';
 
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
@@ -80,7 +80,7 @@ import {
     TooltipModule,
     ConfirmDialogModule,
     BadgeModule,
-    SelectModule,
+    Select,
     // Angular
     FormsModule,
     DatePipe,

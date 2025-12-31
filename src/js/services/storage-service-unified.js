@@ -372,8 +372,32 @@ export const storageService = new UnifiedStorageService();
 // Export class for testing
 export { UnifiedStorageService };
 
-// Backward compatibility exports (to be deprecated)
-export const saveToStorage = (key, data) => storageService.set(key, data);
-export const getFromStorage = (key, defaultValue) =>
-  storageService.get(key, defaultValue);
-export const removeFromStorage = (key) => storageService.remove(key);
+/**
+ * @deprecated Use storageService.set() instead. This function will be removed in a future version.
+ */
+export const saveToStorage = (key, data) => {
+  if (typeof console !== 'undefined' && console.warn) {
+    console.warn('[DEPRECATED] saveToStorage() is deprecated. Use storageService.set() instead.');
+  }
+  return storageService.set(key, data);
+};
+
+/**
+ * @deprecated Use storageService.get() instead. This function will be removed in a future version.
+ */
+export const getFromStorage = (key, defaultValue) => {
+  if (typeof console !== 'undefined' && console.warn) {
+    console.warn('[DEPRECATED] getFromStorage() is deprecated. Use storageService.get() instead.');
+  }
+  return storageService.get(key, defaultValue);
+};
+
+/**
+ * @deprecated Use storageService.remove() instead. This function will be removed in a future version.
+ */
+export const removeFromStorage = (key) => {
+  if (typeof console !== 'undefined' && console.warn) {
+    console.warn('[DEPRECATED] removeFromStorage() is deprecated. Use storageService.remove() instead.');
+  }
+  return storageService.remove(key);
+};

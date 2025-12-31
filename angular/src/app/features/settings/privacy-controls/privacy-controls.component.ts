@@ -10,14 +10,14 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { ToggleSwitch } from 'primeng/toggleswitch';
 import { Select } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { TooltipModule } from 'primeng/tooltip';
-import { ChipModule } from 'primeng/chip';
+import { Chip } from 'primeng/chip';
 import { TagModule } from 'primeng/tag';
 import { AccordionModule } from 'primeng/accordion';
 import { MainLayoutComponent } from '../../../shared/components/layout/main-layout.component';
@@ -56,14 +56,14 @@ import { ToastService } from '../../../core/services/toast.service';
     FormsModule,
     CardModule,
     ButtonModule,
-    ToggleSwitchModule,
+    ToggleSwitch,
     Select,
     InputTextModule,
     ToastModule,
     DialogModule,
     DividerModule,
     TooltipModule,
-    ChipModule,
+    Chip,
     TagModule,
     AccordionModule,
     MainLayoutComponent,

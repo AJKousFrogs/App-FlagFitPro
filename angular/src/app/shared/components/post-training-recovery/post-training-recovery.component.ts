@@ -30,12 +30,12 @@ import { Router, RouterModule } from "@angular/router";
 // PrimeNG
 import { DialogModule } from "primeng/dialog";
 import { ButtonModule } from "primeng/button";
-import { SliderModule } from "primeng/slider";
+import { Slider } from "primeng/slider";
 import { InputNumberModule } from "primeng/inputnumber";
 import { CheckboxModule } from "primeng/checkbox";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
-import { ChipModule } from "primeng/chip";
+import { Chip } from "primeng/chip";
 
 // Services
 import { ToastService } from "../../../core/services/toast.service";
@@ -68,12 +68,12 @@ interface RecoveryRecommendation {
     RouterModule,
     DialogModule,
     ButtonModule,
-    SliderModule,
+    Slider,
     InputNumberModule,
     CheckboxModule,
     TagModule,
     ProgressBarModule,
-    ChipModule,
+    Chip,
   ],
   template: `
     <p-dialog

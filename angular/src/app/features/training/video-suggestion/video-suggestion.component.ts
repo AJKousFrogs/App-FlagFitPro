@@ -37,8 +37,8 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { TextareaModule } from "primeng/textarea";
-import { SelectModule } from "primeng/select";
-import { MultiSelectModule } from "primeng/multiselect";
+import { Select } from "primeng/select";
+import { MultiSelect } from "primeng/multiselect";
 import { ToastModule } from "primeng/toast";
 import { DialogModule } from "primeng/dialog";
 import { TagModule } from "primeng/tag";
@@ -48,7 +48,7 @@ import { SkeletonModule } from "primeng/skeleton";
 import { AvatarModule } from "primeng/avatar";
 import { TimelineModule } from "primeng/timeline";
 import { StepsModule } from "primeng/steps";
-import { ChipModule } from "primeng/chip";
+import { Chip } from "primeng/chip";
 import { DividerModule } from "primeng/divider";
 
 // Services
@@ -98,8 +98,8 @@ interface VideoSuggestion {
     ButtonModule,
     InputTextModule,
     TextareaModule,
-    SelectModule,
-    MultiSelectModule,
+    Select,
+    MultiSelect,
     ToastModule,
     DialogModule,
     TagModule,
@@ -109,7 +109,7 @@ interface VideoSuggestion {
     AvatarModule,
     TimelineModule,
     StepsModule,
-    ChipModule,
+    Chip,
     DividerModule,
     MainLayoutComponent,
   ],

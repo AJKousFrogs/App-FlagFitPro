@@ -32,7 +32,7 @@ import {
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { SliderModule } from "primeng/slider";
+import { Slider } from "primeng/slider";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
 import { Textarea } from "primeng/textarea";
@@ -63,7 +63,7 @@ interface SessionType {
     ReactiveFormsModule,
     CardModule,
     ButtonModule,
-    SliderModule,
+    Slider,
     InputNumberModule,
     InputTextModule,
     Textarea,

@@ -35,7 +35,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { SelectModule } from 'primeng/select';
+import { Select } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -99,7 +99,7 @@ interface HydrationLog {
     CardModule,
     ButtonModule,
     InputNumberModule,
-    SelectModule,
+    Select,
     CheckboxModule,
     TagModule,
     TooltipModule,

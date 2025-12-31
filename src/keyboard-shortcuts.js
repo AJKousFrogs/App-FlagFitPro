@@ -1,7 +1,7 @@
 // Keyboard Shortcuts Manager for FlagFit Pro
 // Provides keyboard navigation and command palette
 
-import { ErrorHandler } from "./error-handler.js";
+import { errorHandler } from "./js/utils/unified-error-handler.js";
 import { setSafeContent } from "./js/utils/shared.js";
 
 export class KeyboardShortcuts {
@@ -407,11 +407,11 @@ export class KeyboardShortcuts {
   }
 
   showNotification(message) {
-    // Use ErrorHandler for consistent notifications
+    // Use errorHandler for consistent notifications
     try {
-      ErrorHandler.showInfo(message);
+      errorHandler.showInfo(message);
     } catch (_e) {
-      // Fallback if ErrorHandler not available
+      // Fallback if errorHandler not available
       const notification = document.createElement("div");
       notification.className = "shortcut-notification";
       notification.textContent = message;

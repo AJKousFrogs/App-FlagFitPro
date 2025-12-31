@@ -18,9 +18,9 @@ import {
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { Select } from "primeng/select";
-import { SliderModule } from "primeng/slider";
-import { ToggleSwitchModule } from "primeng/toggleswitch";
-import { ChipModule } from "primeng/chip";
+import { Slider } from "primeng/slider";
+import { ToggleSwitch } from "primeng/toggleswitch";
+import { Chip } from "primeng/chip";
 import { TagModule } from "primeng/tag";
 import { SelectButtonModule } from "primeng/selectbutton";
 import { ToastModule } from "primeng/toast";
@@ -61,9 +61,9 @@ interface EquipmentOption {
     CardModule,
     ButtonModule,
     Select,
-    SliderModule,
-    ToggleSwitchModule,
-    ChipModule,
+    Slider,
+    ToggleSwitch,
+    Chip,
     TagModule,
     SelectButtonModule,
     ToastModule,

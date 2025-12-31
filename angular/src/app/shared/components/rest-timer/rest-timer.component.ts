@@ -11,14 +11,14 @@ import {
 import { CommonModule } from "@angular/common";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { SliderModule } from "primeng/slider";
+import { Slider } from "primeng/slider";
 import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-rest-timer",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, DialogModule, SliderModule, FormsModule],
+  imports: [CommonModule, ButtonModule, DialogModule, Slider, FormsModule],
   template: `
     <!-- Floating Timer Button (when minimized) -->
     @if (isMinimized() && isRunning()) {

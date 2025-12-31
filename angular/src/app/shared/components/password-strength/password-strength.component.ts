@@ -11,7 +11,7 @@ export interface PasswordStrength {
   label: 'Very Weak' | 'Weak' | 'Fair' | 'Good' | 'Strong';
   color: string;
   suggestions: string[];
-  requir ements: {
+  requirements: {
     length: boolean;
     uppercase: boolean;
     lowercase: boolean;

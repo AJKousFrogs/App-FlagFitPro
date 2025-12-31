@@ -17,7 +17,7 @@ import { TableModule } from "primeng/table";
 import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
 import { InputTextModule } from "primeng/inputtext";
-import { MultiSelectModule } from "primeng/multiselect";
+import { MultiSelect } from "primeng/multiselect";
 import { MenuModule } from "primeng/menu";
 import { MenuItem } from "primeng/api";
 
@@ -72,7 +72,7 @@ export interface TablePreferences {
     ButtonModule,
     CheckboxModule,
     InputTextModule,
-    MultiSelectModule,
+    MultiSelect,
     MenuModule,
   ],
   template: `

@@ -7,7 +7,7 @@ import { logger } from "./logger.js";
 import { secureStorage } from "./secure-storage.js";
 import { config } from "./config/environment.js";
 import { csrfProtection } from "./js/security/csrf-protection.js";
-import { ErrorHandler } from "./error-handler.js";
+import { errorHandler } from "./js/utils/unified-error-handler.js";
 import {
   AUTH,
   ERROR_MESSAGES,
@@ -50,9 +50,6 @@ class AuthManager {
     this.isInitializing = true;
 
     try {
-      // Add session timeout management
-      this.setupSessionTimeout();
-
       // Setup Supabase Auth listener (don't await - let it run in background)
       this.setupSupabaseAuthListener().catch((err) => {
         logger.warn("[Auth] Supabase auth listener setup failed:", err);
@@ -1044,118 +1041,6 @@ class AuthManager {
     );
   }
 
-  // Setup session timeout management
-  // NOTE: Disabled by default for persistent sessions. Set AUTH.ENABLE_SESSION_TIMEOUT=true to enable
-  setupSessionTimeout() {
-    // Check if session timeout is enabled (default: false for persistent sessions)
-    const ENABLE_TIMEOUT =
-      AUTH.ENABLE_SESSION_TIMEOUT !== undefined
-        ? AUTH.ENABLE_SESSION_TIMEOUT
-        : false; // Default to false for persistent sessions
-
-    if (!ENABLE_TIMEOUT) {
-      logger.debug(
-        "[Auth] Session timeout disabled - using persistent sessions",
-      );
-      return; // Exit early if timeout is disabled
-    }
-
-    // Use centralized constants instead of hardcoded values
-    const SESSION_TIMEOUT = AUTH.SESSION_TIMEOUT;
-    const WARNING_TIME = AUTH.SESSION_WARNING_TIME;
-
-    let sessionTimer;
-    let warningTimer;
-    let lastActivity = Date.now();
-
-    const resetSessionTimer = () => {
-      lastActivity = Date.now();
-
-      // Clear existing timers
-      if (sessionTimer) {
-        clearTimeout(sessionTimer);
-      }
-      if (warningTimer) {
-        clearTimeout(warningTimer);
-      }
-
-      // Set warning timer
-      warningTimer = setTimeout(() => {
-        if (this.token && this.user) {
-          this.showWarning(
-            `Your session will expire in ${AUTH.SESSION_WARNING_TIME / 60000} minutes due to inactivity.`,
-          );
-        }
-      }, SESSION_TIMEOUT - WARNING_TIME);
-
-      // Set logout timer
-      sessionTimer = setTimeout(() => {
-        if (this.token && this.user) {
-          this.showError(ERROR_MESSAGES.SESSION_EXPIRED);
-          this.logout();
-        }
-      }, SESSION_TIMEOUT);
-    };
-
-    // Track user activity - store handlers for cleanup
-    // Reduced to 3 strategic events to minimize performance impact
-    const activityEvents = ["mousedown", "keypress", "touchstart"];
-
-    // Clean up existing handlers first to prevent memory leaks
-    if (this.activityHandlers && this.activityHandlers.length > 0) {
-      this.activityHandlers.forEach(({ event, handler }) => {
-        document.removeEventListener(event, handler);
-      });
-      this.activityHandlers = [];
-    }
-
-    // Create debounced handler to prevent excessive calls
-    const activityHandler = debounce(() => {
-      if (
-        this.token &&
-        this.user &&
-        Date.now() - lastActivity > AUTH.ACTIVITY_RESET_THRESHOLD
-      ) {
-        resetSessionTimer();
-      }
-    }, AUTH.ACTIVITY_DEBOUNCE_TIME);
-
-    // Store handlers for cleanup
-    this.activityHandlers = [];
-    activityEvents.forEach((event) => {
-      // Use passive: true for better performance, no capture phase needed
-      document.addEventListener(event, activityHandler, { passive: true });
-      this.activityHandlers.push({ event, handler: activityHandler });
-    });
-
-    // Initialize session timer
-    if (this.token && this.user) {
-      resetSessionTimer();
-    }
-
-    // Reset timer on login
-    this.onLogin(() => {
-      resetSessionTimer();
-    });
-
-    // Clear timers and remove event listeners on logout
-    this.onLogout(() => {
-      if (sessionTimer) {
-        clearTimeout(sessionTimer);
-      }
-      if (warningTimer) {
-        clearTimeout(warningTimer);
-      }
-      // Remove activity event listeners
-      if (this.activityHandlers) {
-        this.activityHandlers.forEach(({ event, handler }) => {
-          document.removeEventListener(event, handler);
-        });
-        this.activityHandlers = [];
-      }
-    });
-  }
-
   // Add login callback
   onLogin(callback) {
     this.loginCallbacks.push(callback);
@@ -1208,13 +1093,25 @@ class AuthManager {
     // This will ONLY work if:
     // 1. Running in development environment (localhost)
     // 2. ALLOW_UNAUTHENTICATED_DEV is explicitly set to "true"
-    if (config.ALLOW_UNAUTHENTICATED_DEV && !(this.token && this.user)) {
+    // 3. Hostname is localhost or 127.0.0.1 (prevents production bypass)
+    const isLocalhost = typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' ||
+       window.location.hostname === '127.0.0.1' ||
+       window.location.hostname === '0.0.0.0');
+
+    if (config.ALLOW_UNAUTHENTICATED_DEV && isLocalhost && !(this.token && this.user)) {
       logger.warn("⚠️ ==========================================");
       logger.warn("⚠️ DEV MODE ONLY: Bypassing authentication");
       logger.warn("⚠️ This is DISABLED in production");
+      logger.warn("⚠️ Hostname check: " + (typeof window !== 'undefined' ? window.location.hostname : 'N/A'));
       logger.warn("⚠️ Set ALLOW_UNAUTHENTICATED_DEV=false to test auth flow");
       logger.warn("⚠️ ==========================================");
       return true;
+    }
+
+    // SECURITY: Log warning if bypass is attempted in production
+    if (config.ALLOW_UNAUTHENTICATED_DEV && !isLocalhost) {
+      logger.error("🚨 SECURITY: Auth bypass attempted on non-localhost hostname. Denying access.");
     }
 
     if (!(this.token && this.user)) {
@@ -1326,27 +1223,27 @@ class AuthManager {
 
   // Show success message - use centralized ErrorHandler
   showSuccess(message) {
-    ErrorHandler.showSuccess(message);
+    errorHandler.showSuccess(message);
   }
 
   // Show error message - use centralized ErrorHandler
   showError(message) {
-    ErrorHandler.showError(message);
+    errorHandler.showError(message);
   }
 
   // Show warning message - use centralized ErrorHandler
   showWarning(message) {
-    ErrorHandler.showWarning(message);
+    errorHandler.showWarning(message);
   }
 
   // Show info message - use centralized ErrorHandler
   showInfo(message) {
-    ErrorHandler.showInfo(message);
+    errorHandler.showInfo(message);
   }
 
   // Show notification - use centralized ErrorHandler
   showNotification(message, type = "info") {
-    ErrorHandler.showNotification(message, type);
+    errorHandler.showNotification(message, type);
   }
 
   // Update user profile

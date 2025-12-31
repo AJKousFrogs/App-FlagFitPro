@@ -19,8 +19,8 @@ import { DialogModule } from "primeng/dialog";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { TextareaModule } from "primeng/textarea";
-import { SelectModule } from "primeng/select";
-import { MultiSelectModule } from "primeng/multiselect";
+import { Select } from "primeng/select";
+import { MultiSelect } from "primeng/multiselect";
 
 import { PlaylistForm, VideoOption } from "../video-curation.models";
 import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
@@ -36,8 +36,8 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
     ButtonModule,
     InputTextModule,
     TextareaModule,
-    SelectModule,
-    MultiSelectModule,
+    Select,
+    MultiSelect,
   ],
   template: `
     <p-dialog

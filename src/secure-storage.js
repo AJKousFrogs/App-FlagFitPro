@@ -714,8 +714,9 @@ export class SecureStorage {
     try {
       const storedHash = sessionStorage.getItem("__token_hash");
       if (!storedHash) {
-        return true;
-      } // No hash stored, assume valid
+        logger.warn("No token hash stored for verification");
+        return true; // No hash stored, allow through (backward compatibility)
+      }
 
       // Compute hash of provided token
       const encoder = new TextEncoder();
@@ -730,10 +731,15 @@ export class SecureStorage {
         .join("")
         .substring(0, CRYPTO_CONFIG.TOKEN_HASH_LENGTH);
 
-      return storedHash === expectedHash;
+      const isValid = storedHash === expectedHash;
+      if (!isValid) {
+        logger.error("Token hash verification failed - possible tampering detected");
+      }
+      return isValid;
     } catch (error) {
       logger.error("Failed to verify token hash:", error);
-      return true; // Assume valid on error
+      // SECURITY: Fail-closed - reject on error to prevent bypass
+      return false;
     }
   }
 

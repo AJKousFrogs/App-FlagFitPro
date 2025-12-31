@@ -12,7 +12,7 @@ import { CommonModule, DatePipe } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputNumberModule } from "primeng/inputnumber";
-import { SelectModule } from "primeng/select";
+import { Select } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { SkeletonModule } from "primeng/skeleton";
 import { ToastModule } from "primeng/toast";
@@ -44,7 +44,7 @@ interface ThrowingSession {
     CardModule,
     ButtonModule,
     InputNumberModule,
-    SelectModule,
+    Select,
     TextareaModule,
     SkeletonModule,
     ToastModule,

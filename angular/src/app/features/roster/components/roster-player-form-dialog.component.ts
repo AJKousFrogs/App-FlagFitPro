@@ -14,7 +14,7 @@ import {
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
+import { Select } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { Player, POSITION_OPTIONS, STATUS_OPTIONS } from '../roster.models';
@@ -40,7 +40,7 @@ export interface PlayerFormData {
     ReactiveFormsModule,
     DialogModule,
     InputTextModule,
-    SelectModule,
+    Select,
     InputNumberModule,
     ButtonModule,
   ],

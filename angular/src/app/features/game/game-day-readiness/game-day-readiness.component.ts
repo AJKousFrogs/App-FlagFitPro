@@ -17,11 +17,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 // PrimeNG Components
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { SliderModule } from 'primeng/slider';
+import { Slider } from 'primeng/slider';
 import { Textarea } from 'primeng/textarea';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TooltipModule } from 'primeng/tooltip';
-import { ChipModule } from 'primeng/chip';
+import { Chip } from 'primeng/chip';
 import { TagModule } from 'primeng/tag';
 
 // Services
@@ -52,11 +52,11 @@ interface ReadinessMetric {
     RouterModule,
     CardModule,
     ButtonModule,
-    SliderModule,
+    Slider,
     Textarea,
     ProgressBarModule,
     TooltipModule,
-    ChipModule,
+    Chip,
     TagModule,
   ],
   template: `

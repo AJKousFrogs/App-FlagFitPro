@@ -17,9 +17,9 @@ import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { StepsModule } from "primeng/steps";
 import { ButtonModule } from "primeng/button";
-import { SelectModule } from "primeng/select";
-import { SliderModule } from "primeng/slider";
-import { ChipModule } from "primeng/chip";
+import { Select } from "primeng/select";
+import { Slider } from "primeng/slider";
+import { Chip } from "primeng/chip";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
 import { DialogModule } from "primeng/dialog";
@@ -65,9 +65,9 @@ interface Goal {
     CardModule,
     StepsModule,
     ButtonModule,
-    SelectModule,
-    SliderModule,
-    ChipModule,
+    Select,
+    Slider,
+    Chip,
     TagModule,
     TimelineModule,
     DialogModule,

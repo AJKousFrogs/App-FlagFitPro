@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common";
 import { TagModule } from "primeng/tag";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
-import { ChipModule } from "primeng/chip";
+import { Chip } from "primeng/chip";
 
 import { InstagramPlaylist } from "../video-curation.models";
 import { formatFocus, formatDuration } from "../video-curation-utils";
@@ -20,7 +20,7 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
   selector: "app-video-curation-playlists",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, ButtonModule, TooltipModule, ChipModule],
+  imports: [CommonModule, TagModule, ButtonModule, TooltipModule, Chip],
   template: `
     <div class="tab-content">
       <div class="playlists-header">

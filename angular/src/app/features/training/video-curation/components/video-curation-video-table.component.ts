@@ -20,7 +20,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
+import { Select } from "primeng/select";
 import { TooltipModule } from "primeng/tooltip";
 import { AvatarModule } from "primeng/avatar";
 
@@ -47,7 +47,7 @@ import {
     TagModule,
     ButtonModule,
     InputTextModule,
-    SelectModule,
+    Select,
     TooltipModule,
     AvatarModule,
   ],

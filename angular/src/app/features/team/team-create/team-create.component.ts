@@ -16,7 +16,7 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ToastModule } from "primeng/toast";
-import { SelectModule } from "primeng/select";
+import { Select } from "primeng/select";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ToastService } from "../../../core/services/toast.service";
@@ -34,7 +34,7 @@ import { AuthService } from "../../../core/services/auth.service";
     ButtonModule,
     InputTextModule,
     ToastModule,
-    SelectModule,
+    Select,
     MainLayoutComponent,
     PageHeaderComponent,
   ],

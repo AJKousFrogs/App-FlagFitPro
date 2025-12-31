@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
+import { Select } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from '../roster.models';
 
@@ -22,7 +22,7 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from '../roster.models';
   imports: [
     FormsModule,
     InputTextModule,
-    SelectModule,
+    Select,
     ButtonModule,
   ],
   template: `

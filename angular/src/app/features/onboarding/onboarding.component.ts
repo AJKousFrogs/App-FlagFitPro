@@ -15,7 +15,7 @@ import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
-import { ChipModule } from "primeng/chip";
+import { Chip } from "primeng/chip";
 import { DatePicker } from "primeng/datepicker";
 import { FileUploadModule } from "primeng/fileupload";
 import { InputTextModule } from "primeng/inputtext";
@@ -61,7 +61,7 @@ interface InjuryEntry {
     CheckboxModule,
     FileUploadModule,
     AvatarModule,
-    ChipModule,
+    Chip,
     ProgressBarModule,
     MainLayoutComponent,
     PageHeaderComponent,

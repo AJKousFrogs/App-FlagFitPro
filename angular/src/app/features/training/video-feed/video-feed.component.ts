@@ -38,13 +38,13 @@ import { FormsModule } from "@angular/forms";
 // PrimeNG Components
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { ChipModule } from "primeng/chip";
+import { Chip } from "primeng/chip";
 import { BadgeModule } from "primeng/badge";
 import { SkeletonModule } from "primeng/skeleton";
 import { TooltipModule } from "primeng/tooltip";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
+import { Select } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { AvatarModule } from "primeng/avatar";
 import { TagModule } from "primeng/tag";
@@ -87,13 +87,13 @@ interface FilterChip {
     FormsModule,
     CardModule,
     ButtonModule,
-    ChipModule,
+    Chip,
     BadgeModule,
     SkeletonModule,
     TooltipModule,
     DialogModule,
     InputTextModule,
-    SelectModule,
+    Select,
     ToastModule,
     AvatarModule,
     TagModule,

@@ -27,7 +27,7 @@ import { Router, RouterModule } from "@angular/router";
 // PrimeNG
 import { DialogModule } from "primeng/dialog";
 import { ButtonModule } from "primeng/button";
-import { SliderModule } from "primeng/slider";
+import { Slider } from "primeng/slider";
 import { InputNumberModule } from "primeng/inputnumber";
 import { CheckboxModule } from "primeng/checkbox";
 import { Textarea } from "primeng/textarea";
@@ -47,7 +47,7 @@ import { LoggerService } from "../../../core/services/logger.service";
     RouterModule,
     DialogModule,
     ButtonModule,
-    SliderModule,
+    Slider,
     InputNumberModule,
     CheckboxModule,
     Textarea,
