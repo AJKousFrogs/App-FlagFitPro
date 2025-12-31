@@ -19,7 +19,7 @@ async function awardTrainingPoints(userId, duration, intensity) {
   const intensityBonus = intensity >= 7 ? 10 : (intensity >= 5 ? 5 : 0);
   const totalPoints = basePoints + intensityBonus;
 
-  if (totalPoints <= 0) return { points: 0 };
+  if (totalPoints <= 0) {return { points: 0 };}
 
   try {
     // Check if user has sponsor_rewards record
@@ -68,7 +68,7 @@ async function createCompletionNotification(userId, sessionType, points) {
     await supabaseAdmin.from("notifications").insert({
       user_id: userId,
       notification_type: "training",
-      message: message,
+      message,
       priority: "medium",
     });
   } catch (error) {
@@ -109,7 +109,7 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       status: "completed",
       completed_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      workload: workload,
+      workload,
       // Update duration and intensity if provided
       ...(completionData.duration && {
         duration_minutes: completionData.duration,
@@ -147,7 +147,7 @@ async function completeTrainingSession(userId, sessionId, completionData) {
     return {
       success: true,
       session: updatedSession,
-      workload: workload,
+      workload,
       pointsEarned: pointsResult.points,
     };
   } catch (error) {

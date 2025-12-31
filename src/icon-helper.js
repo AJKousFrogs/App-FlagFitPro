@@ -60,13 +60,13 @@
         // Restore original console.error immediately
         console.error = originalError;
         // Use a small delay to catch any async errors from Lucide
-        setTimeout(function () {
+        setTimeout(() => {
           isSuppressingIconErrors = false;
         }, 50);
       }
     } else {
       // If Lucide isn't loaded yet, wait for it
-      const checkLucide = setInterval(function () {
+      const checkLucide = setInterval(() => {
         if (typeof lucide !== "undefined") {
           // Temporarily suppress icon errors during initialization
           isSuppressingIconErrors = true;
@@ -75,7 +75,7 @@
             lucide.createIcons();
           } finally {
             console.error = originalError;
-            setTimeout(function () {
+            setTimeout(() => {
               isSuppressingIconErrors = false;
             }, 50);
           }
@@ -84,7 +84,7 @@
       }, 100);
 
       // Clear interval after 5 seconds to prevent infinite checking
-      setTimeout(function () {
+      setTimeout(() => {
         clearInterval(checkLucide);
       }, 5000);
     }
@@ -102,7 +102,7 @@
         lucide.createIcons();
       } finally {
         console.error = originalError;
-        setTimeout(function () {
+        setTimeout(() => {
           isSuppressingIconErrors = false;
         }, 50);
       }
@@ -123,16 +123,16 @@
     let reinitTimeout;
     let isReinitializing = false;
 
-    const observer = new MutationObserver(function (mutations) {
+    const observer = new MutationObserver((mutations) => {
       // Throttle reinitialization to prevent excessive calls
       if (isReinitializing) {
         return;
       }
 
       let shouldReinit = false;
-      mutations.forEach(function (mutation) {
+      mutations.forEach((mutation) => {
         if (mutation.addedNodes.length) {
-          mutation.addedNodes.forEach(function (node) {
+          mutation.addedNodes.forEach((node) => {
             if (node.nodeType === 1) {
               // Element node
               if (node.hasAttribute && node.hasAttribute("data-lucide")) {
@@ -155,11 +155,11 @@
         }
 
         // Debounce reinitialization
-        reinitTimeout = setTimeout(function () {
+        reinitTimeout = setTimeout(() => {
           isReinitializing = true;
           reinitializeIcons();
           // Reset flag after a short delay
-          setTimeout(function () {
+          setTimeout(() => {
             isReinitializing = false;
           }, 100);
         }, 150); // Wait 150ms before reinitializing
@@ -174,7 +174,7 @@
       });
     } else {
       // Wait for body to be available
-      document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener("DOMContentLoaded", () => {
         if (document.body) {
           observer.observe(document.body, {
             childList: true,

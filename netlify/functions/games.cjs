@@ -451,7 +451,7 @@ exports.handler = async (event, context) => {
           path.match(/^([A-Z0-9_-]+)\/player-stats$/i)
         ) {
           const gameId = path.match(/^([A-Z0-9_-]+)\/player-stats$/i)[1];
-          const playerId = queryParams.playerId;
+          const {playerId} = queryParams;
           if (!playerId) {
             return handleValidationError("Player ID is required");
           }

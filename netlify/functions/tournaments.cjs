@@ -305,18 +305,18 @@ async function deleteTournament(event, _context, { userId, requestId }) {
 // =====================================================
 
 function getCalculatedStatus(startDate, endDate, today) {
-  if (!startDate) return "upcoming";
+  if (!startDate) {return "upcoming";}
   
   const start = startDate.split("T")[0];
   const end = (endDate || startDate).split("T")[0];
   
-  if (today < start) return "upcoming";
-  if (today > end) return "completed";
+  if (today < start) {return "upcoming";}
+  if (today > end) {return "completed";}
   return "ongoing";
 }
 
 function getDaysUntil(startDate) {
-  if (!startDate) return null;
+  if (!startDate) {return null;}
   
   const today = new Date();
   today.setHours(0, 0, 0, 0);

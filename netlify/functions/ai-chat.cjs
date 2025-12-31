@@ -316,7 +316,7 @@ async function getUserContext(userId) {
  * @returns {Object} Modified classification with ACWR override if applicable
  */
 function applyACWRSafetyOverride(classification, userContext, query) {
-  const acwr = userContext.acwr;
+  const {acwr} = userContext;
   
   // No override needed if:
   // - No ACWR data available
@@ -528,7 +528,7 @@ function generateACWRBlockedResponse(query, classification, userContext) {
   if (userContext.position) {
     answer += `### Position-Specific Recovery (${userContext.position})\n`;
     const positionRecovery = getPositionSpecificRecovery(userContext.position);
-    answer += positionRecovery + "\n\n";
+    answer += `${positionRecovery  }\n\n`;
   }
 
   // Add timeline estimate
@@ -751,7 +751,7 @@ async function analyzeContext(context, userContext) {
 
   // Analyze ACWR if available
   if (userContext && userContext.acwr) {
-    const acwr = userContext.acwr;
+    const {acwr} = userContext;
     if (acwr.riskZone === "danger" || acwr.riskZone === "critical") {
       insights.push({
         id: "acwr-danger",
@@ -981,7 +981,7 @@ exports.handler = async (event, context) => {
 
         // 3. Build user context (includes ACWR calculation)
         const userContext = await getUserContext(userId);
-        if (team_id) userContext.teamId = team_id;
+        if (team_id) {userContext.teamId = team_id;}
 
         // 4. Apply ACWR safety override if athlete is in danger zone
         const classification = applyACWRSafetyOverride(baseClassification, userContext, message);

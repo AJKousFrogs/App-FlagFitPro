@@ -67,9 +67,9 @@ function getSystemInfo() {
     arch: process.arch,
     uptime: process.uptime(),
     memoryUsage: {
-      heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + "MB",
-      heapTotal: Math.round(process.memoryUsage().heapTotal / 1024 / 1024) + "MB",
-      rss: Math.round(process.memoryUsage().rss / 1024 / 1024) + "MB",
+      heapUsed: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)  }MB`,
+      heapTotal: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)  }MB`,
+      rss: `${Math.round(process.memoryUsage().rss / 1024 / 1024)  }MB`,
     },
     environment: process.env.NODE_ENV || "development",
   };

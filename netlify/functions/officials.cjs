@@ -27,7 +27,7 @@ const getOfficials = async (queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 };
 
@@ -70,7 +70,7 @@ const createOfficial = async (userId, officialData) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -93,7 +93,7 @@ const updateOfficial = async (officialId, updates) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -108,7 +108,7 @@ const deleteOfficial = async (officialId) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -124,7 +124,7 @@ const getGameOfficials = async (gameId) => {
     `)
     .eq("game_id", gameId);
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return (data || []).map((assignment) => ({
     ...assignment,
@@ -161,7 +161,7 @@ const getOfficialGames = async (officialId, queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return (data || []).map((assignment) => ({
     ...assignment,
@@ -202,7 +202,7 @@ const scheduleOfficial = async (scheduleData) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -225,7 +225,7 @@ const updateGameOfficial = async (assignmentId, updates) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -238,7 +238,7 @@ const removeGameOfficial = async (assignmentId) => {
     .delete()
     .eq("id", assignmentId);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return { success: true };
 };
 
@@ -254,7 +254,7 @@ const getOfficialAvailability = async (officialId, startDate, endDate) => {
     .lte("date", endDate)
     .order("date");
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 };
 
@@ -280,7 +280,7 @@ const setOfficialAvailability = async (officialId, availabilityData) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -297,7 +297,7 @@ const getAvailableOfficials = async (queryParams) => {
     .select("official_id, is_available, start_time, end_time")
     .eq("date", date);
 
-  if (availError) throw availError;
+  if (availError) {throw availError;}
 
   // Get all active officials
   const { data: allOfficials, error: officialsError } = await supabaseAdmin
@@ -305,7 +305,7 @@ const getAvailableOfficials = async (queryParams) => {
     .select("*")
     .eq("is_active", true);
 
-  if (officialsError) throw officialsError;
+  if (officialsError) {throw officialsError;}
 
   // Check for scheduling conflicts
   const { data: scheduledGames, error: gamesError } = await supabaseAdmin
@@ -317,7 +317,7 @@ const getAvailableOfficials = async (queryParams) => {
     .eq("games.game_date", date)
     .in("status", ["scheduled", "confirmed"]);
 
-  if (gamesError) throw gamesError;
+  if (gamesError) {throw gamesError;}
 
   const scheduledOfficialIds = new Set((scheduledGames || []).map((g) => g.official_id));
   const availabilityMap = new Map((availabilityRecords || []).map((a) => [a.official_id, a]));
@@ -377,7 +377,7 @@ const getPaymentSummary = async (queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Aggregate by official
   const summaryMap = new Map();

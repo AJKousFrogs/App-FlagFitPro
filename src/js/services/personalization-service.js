@@ -30,8 +30,8 @@ class PersonalizationService {
       }
 
       const response = await fetch(
-        "/.netlify/functions/user-profile?userId=" +
-          encodeURIComponent(this.userId),
+        `/.netlify/functions/user-profile?userId=${ 
+          encodeURIComponent(this.userId)}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,

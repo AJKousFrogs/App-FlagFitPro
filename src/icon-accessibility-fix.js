@@ -138,7 +138,7 @@
   function initialize() {
     // Wait for DOM to be ready
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener("DOMContentLoaded", () => {
         // Wait a bit for Lucide icons to be initialized
         setTimeout(applyIconAccessibilityFixes, 200);
       });
@@ -157,7 +157,7 @@
       };
     } else {
       // Wait for Lucide to be available
-      const checkLucide = setInterval(function () {
+      const checkLucide = setInterval(() => {
         if (typeof lucide !== "undefined") {
           const originalCreateIcons = lucide.createIcons;
           lucide.createIcons = function (...args) {
@@ -170,7 +170,7 @@
       }, 100);
 
       // Clear interval after 5 seconds to prevent infinite checking
-      setTimeout(function () {
+      setTimeout(() => {
         clearInterval(checkLucide);
       }, 5000);
     }

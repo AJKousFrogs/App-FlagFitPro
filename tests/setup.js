@@ -176,7 +176,7 @@ global.Notification.requestPermission = vi.fn().mockResolvedValue("granted");
 // ============================================================================
 
 global.crypto = {
-  randomUUID: vi.fn(() => "test-uuid-" + Math.random().toString(36).substr(2, 9)),
+  randomUUID: vi.fn(() => `test-uuid-${  Math.random().toString(36).substr(2, 9)}`),
   getRandomValues: vi.fn((array) => {
     for (let i = 0; i < array.length; i++) {
       array[i] = Math.floor(Math.random() * 256);
@@ -260,8 +260,8 @@ global.Blob = class MockBlob {
     this.bits = bits;
     this.type = options.type || "";
     this.size = bits.reduce((acc, bit) => {
-      if (typeof bit === "string") return acc + bit.length;
-      if (bit instanceof ArrayBuffer) return acc + bit.byteLength;
+      if (typeof bit === "string") {return acc + bit.length;}
+      if (bit instanceof ArrayBuffer) {return acc + bit.byteLength;}
       return acc;
     }, 0);
   }

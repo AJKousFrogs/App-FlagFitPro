@@ -32,7 +32,7 @@ function processFile(filePath) {
         const lastImport = otherImports[otherImports.length - 1];
         const lastImportIndex = content.lastIndexOf(lastImport);
         const insertIndex = lastImportIndex + lastImport.length;
-        content = content.slice(0, insertIndex) + '\n' + firstImport + content.slice(insertIndex);
+        content = `${content.slice(0, insertIndex)  }\n${  firstImport  }${content.slice(insertIndex)}`;
       } else {
         content = firstImport + content;
       }

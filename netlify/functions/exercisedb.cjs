@@ -30,7 +30,7 @@ const headers = {
  * Verify user has coach/admin role
  */
 async function verifyCoachRole(authHeader) {
-  if (!authHeader) return { authorized: false, error: "No authorization header" };
+  if (!authHeader) {return { authorized: false, error: "No authorization header" };}
   
   const token = authHeader.replace("Bearer ", "");
   const { data: { user }, error } = await supabase.auth.getUser(token);
@@ -58,7 +58,7 @@ async function verifyCoachRole(authHeader) {
 async function fetchFromExerciseDB(endpoint, params = {}) {
   const url = new URL(`${EXERCISEDB_API_URL}${endpoint}`);
   Object.entries(params).forEach(([key, value]) => {
-    if (value) url.searchParams.append(key, value);
+    if (value) {url.searchParams.append(key, value);}
   });
   
   const response = await fetch(url.toString(), {
@@ -240,7 +240,7 @@ async function importExercises(params, userId) {
   let totalFetched = 0;
   let totalImported = 0;
   let totalUpdated = 0;
-  let totalSkipped = 0;
+  const totalSkipped = 0;
   let totalErrors = 0;
   
   try {
@@ -458,7 +458,7 @@ exports.handler = async (event) => {
           .order("created_at", { ascending: false })
           .limit(20);
         
-        if (error) throw error;
+        if (error) {throw error;}
         
         return {
           statusCode: 200,

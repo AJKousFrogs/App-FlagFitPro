@@ -120,7 +120,7 @@ async function logOutcome(userId, data) {
         .insert({
           user_id: userId,
           athlete_id: athleteId,
-          timestamp: timestamp,
+          timestamp,
           injury_flagged: outcomes?.injuryFlagged || false,
           injury_date: outcomes?.injuryDate || null,
           injury_type: outcomes?.injuryType || null,

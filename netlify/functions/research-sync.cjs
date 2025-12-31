@@ -98,15 +98,15 @@ function parsePubMedXML(xmlText) {
         articles.push({
           source: 'pubmed',
           external_id: pmid,
-          doi: doi,
+          doi,
           title: cleanText(title),
           abstract: cleanText(abstractText),
-          authors: authors,
-          journal: journal,
+          authors,
+          journal,
           publication_year: year ? parseInt(year) : null,
           publication_date: year ? `${year}-01-01` : null,
           mesh_terms: meshTerms,
-          keywords: keywords,
+          keywords,
           full_text_url: `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`,
           is_open_access: articleXml.includes('pmc') || articleXml.includes('PMC'),
         });
@@ -150,7 +150,7 @@ function extractAuthors(xml) {
     if (lastName) {
       authors.push({
         name: foreName ? `${foreName} ${lastName}` : lastName,
-        affiliation: affiliation,
+        affiliation,
       });
     }
   }
@@ -187,7 +187,7 @@ function extractKeywords(xml) {
 }
 
 function cleanText(text) {
-  if (!text) return null;
+  if (!text) {return null;}
   return text
     .replace(/<[^>]+>/g, '') // Remove XML tags
     .replace(/\s+/g, ' ')    // Normalize whitespace
@@ -367,7 +367,7 @@ const SPORTS_SCIENCE_INSTITUTIONS = [
  * Reconstruct abstract from OpenAlex inverted index format
  */
 function reconstructAbstract(invertedIndex) {
-  if (!invertedIndex) return null;
+  if (!invertedIndex) {return null;}
   
   const words = [];
   for (const [word, positions] of Object.entries(invertedIndex)) {
@@ -636,8 +636,8 @@ async function syncFromTopInstitutions(topic = null) {
     duration_ms: duration,
     metadata: {
       institutions_synced: institutions.length,
-      topic: topic,
-      errors: errors,
+      topic,
+      errors,
     },
   });
   
@@ -723,7 +723,7 @@ async function syncAllResearch() {
   }
   
   let totalAdded = 0;
-  let totalUpdated = 0;
+  const totalUpdated = 0;
   let totalFailed = 0;
   const errors = [];
   
@@ -775,7 +775,7 @@ async function syncAllResearch() {
     duration_ms: duration,
     metadata: {
       topics_synced: topics.length,
-      errors: errors,
+      errors,
     },
   });
   

@@ -41,7 +41,7 @@ async function getActivityFeed(userId, options = {}) {
     .eq("user_id", userId)
     .in("role", ["coach", "assistant_coach"]);
 
-  if (teamError) throw teamError;
+  if (teamError) {throw teamError;}
 
   if (!teams || teams.length === 0) {
     return [];
@@ -73,7 +73,7 @@ async function getActivityFeed(userId, options = {}) {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Format response
   return (data || []).map((a) => ({
@@ -116,7 +116,7 @@ async function getUnreadCount(userId) {
     .or(`coach_id.eq.${userId},coach_id.is.null`)
     .eq("is_read", false);
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return count || 0;
 }
@@ -158,7 +158,7 @@ async function markActivityRead(userId, activityId) {
     })
     .eq("id", activityId);
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return { success: true };
 }
@@ -193,7 +193,7 @@ async function markAllActivityRead(userId) {
     .eq("is_read", false)
     .select("id");
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return { success: true, updated: data?.length || 0 };
 }

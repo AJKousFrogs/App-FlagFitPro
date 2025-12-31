@@ -133,7 +133,7 @@ const getCommunityLeaderboard = async (_category = "overall", limit = 10) => {
       const userId = post.user_id;
       if (!userStats[userId]) {
         userStats[userId] = {
-          userId: userId,
+          userId,
           name: post.users?.name || "Unknown User",
           avatar: post.users?.avatar_url || null,
           posts: 0,
@@ -217,7 +217,7 @@ const createPost = async (userId, postData) => {
     // Insert post into database using supabase-client helper
     const postToCreate = {
       user_id: userId,
-      content: content,
+      content,
       title: sanitizedData.title || null,
       post_type: postType,
       is_published: sanitizedData.is_published !== false, // Default to published
@@ -253,7 +253,7 @@ exports.handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "community",
     allowedMethods: ["GET", "POST"],
-    rateLimitType: rateLimitType,
+    rateLimitType,
     requireAuth: false, // We handle auth manually for flexibility
     handler: async (event, _context, { requestId }) => {
       // SECURITY: Authentication (optional for GET, required for POST)

@@ -84,7 +84,7 @@ const registerToken = async (userId, tokenData) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   
   return {
     ...data,
@@ -102,7 +102,7 @@ const unregisterToken = async (userId) => {
     .eq("user_id", userId)
     .eq("device_type", "web");
 
-  if (error) throw error;
+  if (error) {throw error;}
   return { success: true };
 };
 
@@ -116,7 +116,7 @@ const getPreferences = async (userId) => {
     .eq("user_id", userId)
     .single();
 
-  if (error && error.code !== "PGRST116") throw error;
+  if (error && error.code !== "PGRST116") {throw error;}
 
   // Return defaults if no preferences set
   return data || {
@@ -151,7 +151,7 @@ const updatePreferences = async (userId, preferences) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -166,7 +166,7 @@ const getDevices = async (userId) => {
     .eq("is_active", true)
     .order("last_used_at", { ascending: false });
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 };
 
@@ -180,7 +180,7 @@ const removeDevice = async (userId, tokenId) => {
     .eq("id", tokenId)
     .eq("user_id", userId);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return { success: true };
 };
 
@@ -243,7 +243,7 @@ const sendNotificationToUser = async (userId, notification) => {
     .eq("user_id", userId)
     .eq("is_active", true);
 
-  if (fetchError) throw fetchError;
+  if (fetchError) {throw fetchError;}
   
   if (!tokens || tokens.length === 0) {
     throw new Error("No registered devices found");

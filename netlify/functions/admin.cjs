@@ -142,7 +142,7 @@ async function getHealthMetrics() {
 
 // USDA FoodData Central API Key (required)
 // Get your free API key at: https://fdc.nal.usda.gov/api-key-signup.html
-const USDA_API_KEY = process.env.USDA_API_KEY;
+const {USDA_API_KEY} = process.env;
 const USDA_BASE_URL = 'https://api.nal.usda.gov/fdc/v1';
 
 if (!USDA_API_KEY) {
@@ -204,7 +204,7 @@ function generateSearchKeywords(food) {
   const keywords = new Set();
   if (food.description) {
     food.description.toLowerCase().split(/\s+/).forEach(word => {
-      if (word.length > 2) keywords.add(word);
+      if (word.length > 2) {keywords.add(word);}
     });
   }
   if (food.foodCategory?.description) {
@@ -632,26 +632,25 @@ async function createDatabaseBackup() {
  * @returns {Array} Mock sync status (PLACEHOLDER)
  */
 async function getSyncStatus() {
-  try {
-    // Try to query actual sync_logs table
-    const { data, error } = await supabaseAdmin
-      .from("sync_logs")
-      .select("*")
-      .order("timestamp", { ascending: false })
-      .limit(10);
+  // Try to query actual sync_logs table
+  const { data, error } = await supabaseAdmin
+    .from("sync_logs")
+    .select("*")
+    .order("timestamp", { ascending: false })
+    .limit(10);
 
-    if (!error && data && data.length > 0) {
-      return data.map((log) => ({
-        source: log.source,
-        timestamp: log.timestamp,
-        result: log.result,
-        severity: log.severity,
-        recordsUpdated: log.records_updated,
-      }));
-    }
+  if (!error && data && data.length > 0) {
+    return data.map((log) => ({
+      source: log.source,
+      timestamp: log.timestamp,
+      result: log.result,
+      severity: log.severity,
+      recordsUpdated: log.records_updated,
+    }));
+  }
 
-    // Fallback to mock data if table doesn't exist or is empty
-    return [
+  // Fallback to mock data if table doesn't exist or is empty
+  return [
       {
         source: "USDA Foods",
         timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
@@ -680,10 +679,6 @@ async function getSyncStatus() {
         _note: "Sync not yet implemented - create sync_logs table",
       },
     ];
-  } catch (error) {
-    // Log error and re-throw
-    throw error;
-  }
 }
 
 /**
@@ -788,54 +783,61 @@ async function handleRequest(event, _context, { userId: _userId, user: _user }) 
     // Route to appropriate handler
     switch (endpoint) {
       case "/health-metrics":
-      case "":
+      case "": {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
         const metrics = await getHealthMetrics();
         return createSuccessResponse(metrics);
+      }
 
-      case "/sync-usda":
+      case "/sync-usda": {
         if (event.httpMethod !== "POST") {
           return createErrorResponse("Method not allowed", 405);
         }
         const usdaResult = await syncUSDAData();
         return createSuccessResponse(usdaResult, usdaResult.success);
+      }
 
-      case "/sync-research":
+      case "/sync-research": {
         if (event.httpMethod !== "POST") {
           return createErrorResponse("Method not allowed", 405);
         }
         const researchResult = await syncResearchData();
         return createSuccessResponse(researchResult, researchResult.success);
+      }
 
-      case "/create-backup":
+      case "/create-backup": {
         if (event.httpMethod !== "POST") {
           return createErrorResponse("Method not allowed", 405);
         }
         const backup = await createDatabaseBackup(); // Now async
         return createSuccessResponse(backup);
+      }
 
-      case "/sync-status":
+      case "/sync-status": {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
         const syncStatus = await getSyncStatus();
         return createSuccessResponse(syncStatus);
+      }
 
-      case "/usda-stats":
+      case "/usda-stats": {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
         const usdaStats = await getUSDADataStats();
         return createSuccessResponse(usdaStats);
+      }
 
-      case "/research-stats":
+      case "/research-stats": {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
         const researchStats = await getResearchDataStats();
         return createSuccessResponse(researchStats);
+      }
 
       default:
         return createErrorResponse("Endpoint not found", 404);

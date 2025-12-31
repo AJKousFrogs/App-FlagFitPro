@@ -55,7 +55,7 @@ async function getPrograms(queryParams) {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -99,7 +99,7 @@ async function getProgram(programId) {
     .eq("id", programId)
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Sort phases by phase_order
   if (data && data.training_phases) {
@@ -115,7 +115,7 @@ async function getProgram(programId) {
 async function getFullProgram(programId) {
   // Get program with phases
   const program = await getProgram(programId);
-  if (!program) return null;
+  if (!program) {return null;}
 
   // Get all weeks for the program's phases
   const phaseIds = program.training_phases.map(p => p.id);
@@ -126,7 +126,7 @@ async function getFullProgram(programId) {
     .in("phase_id", phaseIds)
     .order("week_number", { ascending: true });
 
-  if (weeksError) throw weeksError;
+  if (weeksError) {throw weeksError;}
 
   // Get all session templates for the program
   const { data: sessions, error: sessionsError } = await supabaseAdmin
@@ -166,7 +166,7 @@ async function getFullProgram(programId) {
     .eq("program_id", programId)
     .order("day_of_week", { ascending: true });
 
-  if (sessionsError) throw sessionsError;
+  if (sessionsError) {throw sessionsError;}
 
   // Get movement patterns
   const { data: movementPatterns, error: mpError } = await supabaseAdmin
@@ -174,7 +174,7 @@ async function getFullProgram(programId) {
     .select("*")
     .eq("program_id", programId);
 
-  if (mpError) throw mpError;
+  if (mpError) {throw mpError;}
 
   // Get warmup protocols
   const { data: warmupProtocols, error: wpError } = await supabaseAdmin
@@ -182,7 +182,7 @@ async function getFullProgram(programId) {
     .select("*")
     .eq("program_id", programId);
 
-  if (wpError) throw wpError;
+  if (wpError) {throw wpError;}
 
   // Organize data hierarchically
   const weeksByPhase = {};
@@ -232,7 +232,7 @@ async function getPhases(programId) {
     .eq("program_id", programId)
     .order("phase_order", { ascending: true });
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -246,7 +246,7 @@ async function getWeeks(phaseId) {
     .eq("phase_id", phaseId)
     .order("week_number", { ascending: true });
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -289,7 +289,7 @@ async function getSessions(weekId) {
     .order("day_of_week", { ascending: true })
     .order("session_order", { ascending: true });
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Sort exercises within each session
   data?.forEach(session => {
@@ -327,7 +327,7 @@ async function getExercises(sessionId) {
     .eq("session_template_id", sessionId)
     .order("exercise_order", { ascending: true });
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -352,7 +352,7 @@ async function getCurrentWeek(programId, date) {
     .gte("end_date", targetDate)
     .single();
 
-  if (error && error.code !== "PGRST116") throw error; // PGRST116 = no rows
+  if (error && error.code !== "PGRST116") {throw error;} // PGRST116 = no rows
   return data;
 }
 

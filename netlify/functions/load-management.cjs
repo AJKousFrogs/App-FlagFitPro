@@ -399,7 +399,7 @@ async function calculateMonotony(requesterId, targetUserId, weekStartDate, optio
 
   const mean = nonZeroLoads.reduce((sum, load) => sum + load, 0) / nonZeroLoads.length;
   const variance =
-    nonZeroLoads.reduce((sum, load) => sum + Math.pow(load - mean, 2), 0) / nonZeroLoads.length;
+    nonZeroLoads.reduce((sum, load) => sum + (load - mean)**2, 0) / nonZeroLoads.length;
   const stdDev = Math.sqrt(variance);
 
   if (stdDev === 0) {
@@ -538,7 +538,7 @@ function calculateEWMA(trainingHistory, timeConstant) {
 
   for (let i = sorted.length - 1; i >= 0; i--) {
     const daysAgo = sorted.length - 1 - i;
-    const weight = Math.pow(decayFactor, daysAgo);
+    const weight = decayFactor**daysAgo;
     ewma += sorted[i].load * weight;
     weightSum += weight;
   }

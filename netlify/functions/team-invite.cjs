@@ -307,7 +307,7 @@ exports.handler = async (event, context) => {
       return createSuccessResponse(
         {
           invitationId: invitation.id,
-          email: email,
+          email,
           teamName: team.name,
           expiresAt: expiresAt.toISOString(),
           message: "Invitation sent successfully",

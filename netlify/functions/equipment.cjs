@@ -41,7 +41,7 @@ const getTeamEquipment = async (userId, queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 };
 
@@ -96,7 +96,7 @@ const createEquipmentItem = async (userId, itemData) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -140,7 +140,7 @@ const updateEquipmentItem = async (userId, itemId, updates) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -168,7 +168,7 @@ const deleteEquipmentItem = async (userId, itemId) => {
     .delete()
     .eq("id", itemId);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return { success: true };
 };
 
@@ -203,7 +203,7 @@ const getTeamAssignments = async (userId, queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return (data || []).map((assignment) => ({
     ...assignment,
@@ -227,7 +227,7 @@ const getPlayerEquipment = async (userId, playerId) => {
     .is("returned_at", null)
     .order("assigned_at", { ascending: false });
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return (data || []).map((assignment) => ({
     ...assignment,
@@ -277,7 +277,7 @@ const checkoutEquipment = async (userId, checkoutData) => {
     .select()
     .single();
 
-  if (assignmentError) throw assignmentError;
+  if (assignmentError) {throw assignmentError;}
 
   // Update available quantity
   await supabaseAdmin
@@ -328,7 +328,7 @@ const bulkCheckout = async (userId, bulkData) => {
     .insert(assignments)
     .select();
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Update available quantity
   await supabaseAdmin
@@ -380,7 +380,7 @@ const returnEquipment = async (userId, returnData) => {
     .select()
     .single();
 
-  if (updateError) throw updateError;
+  if (updateError) {throw updateError;}
 
   // Update equipment available quantity and condition
   const updateData = {
@@ -415,7 +415,7 @@ const getEquipmentSummary = async (userId, teamId) => {
     .select("*")
     .eq("team_id", teamId);
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   const summary = {
     total_items: items.length,
@@ -460,7 +460,7 @@ const getEquipmentAlerts = async (userId, teamId) => {
     .eq("team_id", teamId)
     .or("condition.eq.needs_replacement,condition.eq.poor,quantity_available.eq.0");
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 };
 
@@ -492,7 +492,7 @@ const getEquipmentHistory = async (userId, equipmentId) => {
     .eq("equipment_id", equipmentId)
     .order("assigned_at", { ascending: false });
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return (data || []).map((assignment) => ({
     ...assignment,

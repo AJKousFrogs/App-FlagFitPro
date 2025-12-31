@@ -60,7 +60,7 @@ export const createMockErrorResponse = (message, status = 500) => {
  * @returns {object} Mock user data
  */
 export const createMockUser = (overrides = {}) => ({
-  id: "user-" + Math.random().toString(36).substr(2, 9),
+  id: `user-${  Math.random().toString(36).substr(2, 9)}`,
   email: "athlete@flagfitpro.com",
   name: "Test Athlete",
   role: "player",
@@ -478,7 +478,7 @@ export const createMockAIResponse = (query, overrides = {}) => ({
     "Should we adjust your training schedule?",
   ],
   timestamp: new Date().toISOString(),
-  sessionId: "ai-session-" + Math.random().toString(36).substr(2, 9),
+  sessionId: `ai-session-${  Math.random().toString(36).substr(2, 9)}`,
   ...overrides,
 });
 

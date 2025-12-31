@@ -52,14 +52,14 @@ function processFile(filePath) {
       const sharedPath = path.join(srcDir, 'js', 'utils', 'shared.js');
       const relativePath = path.relative(fileDir, sharedPath);
       const importPath = relativePath.split(path.sep).join('/');
-      const importStatement = `import { setSafeContent } from '${importPath.startsWith('.') ? importPath : './' + importPath}';\n`;
+      const importStatement = `import { setSafeContent } from '${importPath.startsWith('.') ? importPath : `./${  importPath}`}';\n`;
 
       // Find a good place to insert the import (after other imports or at the start)
       const lastImportMatch = content.match(/import\s+.*?;/g);
       if (lastImportMatch) {
         const lastImport = lastImportMatch[lastImportMatch.length - 1];
         const lastImportIndex = content.lastIndexOf(lastImport);
-        content = content.slice(0, lastImportIndex + lastImport.length) + '\n' + importStatement + content.slice(lastImportIndex + lastImport.length);
+        content = `${content.slice(0, lastImportIndex + lastImport.length)  }\n${  importStatement  }${content.slice(lastImportIndex + lastImport.length)}`;
       } else {
         content = importStatement + content;
       }

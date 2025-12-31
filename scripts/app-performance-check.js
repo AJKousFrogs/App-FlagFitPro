@@ -109,7 +109,7 @@ class AppPerformanceChecker {
       files.forEach((file) => {
         const filePath = join(distPath, file);
         const fileStat = statSync(filePath);
-        const size = fileStat.size;
+        const {size} = fileStat;
         totalBytes += size;
 
         if (file.endsWith(".js")) {
@@ -179,7 +179,7 @@ class AppPerformanceChecker {
     const k = 1024;
     const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return `${parseFloat((bytes / k**i).toFixed(2))  } ${  sizes[i]}`;
   }
 
   async checkBundleAnalysis() {
@@ -384,7 +384,7 @@ class AppPerformanceChecker {
     console.log("==================================");
 
     // Build Performance
-    const build = this.results.build;
+    const {build} = this.results;
     console.log(
       `🔨 Build: ${build.status === "error" ? "❌" : "✅"} ${build.status}`,
     );
@@ -397,19 +397,19 @@ class AppPerformanceChecker {
     }
 
     // Bundle Analysis
-    const bundle = this.results.bundle;
+    const {bundle} = this.results;
     console.log(
       `📦 Bundle: ${bundle.status === "analyzed" ? "✅" : "ℹ️"} ${bundle.status}`,
     );
 
     // Runtime Performance
-    const runtime = this.results.runtime;
+    const {runtime} = this.results;
     console.log(
       `⚡ Runtime: ${runtime.status === "running" ? "✅" : "ℹ️"} ${runtime.status}`,
     );
 
     // Memory Usage
-    const memory = this.results.memory;
+    const {memory} = this.results;
     console.log(
       `💾 Memory: ${memory.status === "checked" ? "✅" : "❌"} ${memory.status}`,
     );

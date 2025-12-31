@@ -49,7 +49,7 @@ async function getChannels(userId) {
     .eq("user_id", userId)
     .eq("status", "active");
 
-  if (memberError) throw memberError;
+  if (memberError) {throw memberError;}
 
   const teamIds = memberships?.map((m) => m.team_id) || [];
   const isCoach = memberships?.some((m) =>
@@ -80,7 +80,7 @@ async function getChannels(userId) {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Get unread counts for each channel
   const channelsWithUnread = await Promise.all(
@@ -136,7 +136,7 @@ async function createChannel(userId, channelData) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Add members for DMs
   if (
@@ -195,7 +195,7 @@ async function getMessages(userId, channelId, options = {}) {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Format author data
   return (data || []).map((m) => ({
@@ -245,7 +245,7 @@ async function sendMessage(userId, channelId, messageData) {
     `)
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return {
     ...data,
@@ -317,7 +317,7 @@ async function updateMessage(userId, messageId, updates) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return data;
 }
@@ -352,7 +352,7 @@ async function deleteMessage(userId, messageId) {
     .delete()
     .eq("id", messageId);
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return { success: true };
 }
@@ -372,7 +372,7 @@ async function markChannelRead(userId, channelId) {
     { onConflict: "channel_id,user_id" }
   );
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return { success: true };
 }
@@ -391,7 +391,7 @@ async function verifyChannelAccess(userId, channelId) {
     .eq("id", channelId)
     .single();
 
-  if (!channel) return false;
+  if (!channel) {return false;}
 
   // For DMs, check channel_members
   if (channel.channel_type === "direct_message") {
@@ -414,7 +414,7 @@ async function verifyChannelAccess(userId, channelId) {
     .eq("status", "active")
     .single();
 
-  if (!teamMember) return false;
+  if (!teamMember) {return false;}
 
   // Coaches-only channels
   if (channel.channel_type === "coaches_only") {
@@ -433,7 +433,7 @@ async function verifyCanPost(userId, channelId) {
     .eq("id", channelId)
     .single();
 
-  if (!channel) return false;
+  if (!channel) {return false;}
 
   // For announcements and coaches-only, must be coach
   if (["announcements", "coaches_only"].includes(channel.channel_type)) {
@@ -465,7 +465,7 @@ async function verifyIsCoach(userId, channelId) {
     .eq("id", channelId)
     .single();
 
-  if (!channel) return false;
+  if (!channel) {return false;}
 
   const { data: member } = await supabase
     .from("team_members")

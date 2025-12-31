@@ -170,7 +170,7 @@ async function getUserContext(userId) {
       userId: userData.id,
       role: userData.role || "player",
       position: userData.position || null,
-      teamRole: teamRole,
+      teamRole,
       bodyMetrics: {
         height: userData.height || null,
         weight: userData.weight || null,
@@ -187,8 +187,8 @@ async function getUserContext(userId) {
       loadData: {
         acute: acuteLoad,
         chronic: chronicLoad,
-        acwr: acwr,
-        last7Days: last7Days,
+        acwr,
+        last7Days,
       },
       wellness: latestWellness
         ? {
@@ -200,7 +200,7 @@ async function getUserContext(userId) {
             soreness: latestWellness.soreness,
           }
         : null,
-      activeProgram: activeProgram,
+      activeProgram,
       supplements: {
         recentLogs: (supplements || []).map((log) => ({
           supplement: log.supplement,

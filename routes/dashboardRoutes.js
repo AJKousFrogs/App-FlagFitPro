@@ -402,7 +402,7 @@ router.get("/olympic-qualification", async (req, res) => {
     }
 
     // Default data if not found
-    olympicData = olympicData || {
+    olympicData ||= {
       qualification_probability: 73,
       world_ranking: 8,
       days_until_championship: 124,
@@ -423,7 +423,7 @@ router.get("/olympic-qualification", async (req, res) => {
 
     return sendSuccess(res, {
       qualification: olympicData,
-      benchmarks: benchmarks,
+      benchmarks,
     });
   } catch (error) {
     serverLogger.error("Olympic qualification error:", error);
@@ -503,7 +503,7 @@ router.get("/sponsor-rewards", async (req, res) => {
     }
 
     // Default data
-    sponsorData = sponsorData || {
+    sponsorData ||= {
       available_points: 2847,
       current_tier: "GOLD",
       products_available: 236,
@@ -522,7 +522,7 @@ router.get("/sponsor-rewards", async (req, res) => {
 
     return sendSuccess(res, {
       rewards: sponsorData,
-      products: products,
+      products,
     });
   } catch (error) {
     serverLogger.error("Sponsor rewards error:", error);
@@ -645,7 +645,7 @@ router.get("/team-chemistry", async (req, res) => {
     }
 
     // Default data
-    chemistryData = chemistryData || {
+    chemistryData ||= {
       overall_chemistry: 8.4,
       communication_score: 9.1,
       trust_score: 8.7,
@@ -784,7 +784,7 @@ router.get("/daily-quote", async (req, res) => {
     }
 
     // Default quote
-    quote = quote || {
+    quote ||= {
       quote_text:
         "Champions aren't made in comfort zones. Today's training is tomorrow's victory.",
       author: "Coach Marcus Rivera",

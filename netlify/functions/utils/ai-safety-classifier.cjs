@@ -472,7 +472,7 @@ professional medical consultation.
  */
 function getDisclaimer(riskLevel, fullVersion = true) {
   const disclaimer = DISCLAIMERS[riskLevel];
-  if (!disclaimer) return null;
+  if (!disclaimer) {return null;}
 
   return {
     text: fullVersion ? disclaimer.full : disclaimer.short,

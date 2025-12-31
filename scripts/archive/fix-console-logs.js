@@ -53,7 +53,7 @@ function addLoggerImport(content, filePath) {
   const importPath = relativePath.split(path.sep).join('/');
 
   // Add import at the top after any existing imports
-  const importStatement = `import { logger } from '${importPath.startsWith('.') ? importPath : './' + importPath}';\n`;
+  const importStatement = `import { logger } from '${importPath.startsWith('.') ? importPath : `./${  importPath}`}';\n`;
 
   // Find the last import statement
   const importRegex = /^import\s+.*?from\s+['"].*?['"];?\s*$/gm;
@@ -64,10 +64,10 @@ function addLoggerImport(content, filePath) {
     const lastImport = imports[imports.length - 1];
     const lastImportIndex = content.lastIndexOf(lastImport);
     const insertIndex = lastImportIndex + lastImport.length;
-    return content.slice(0, insertIndex) + '\n' + importStatement + content.slice(insertIndex);
+    return `${content.slice(0, insertIndex)  }\n${  importStatement  }${content.slice(insertIndex)}`;
   } else {
     // Add at the beginning
-    return importStatement + '\n' + content;
+    return `${importStatement  }\n${  content}`;
   }
 }
 

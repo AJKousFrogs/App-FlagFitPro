@@ -640,7 +640,7 @@ async function saveAthleteRecoveryProfile(userId, profileData) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -658,7 +658,7 @@ async function logRecoverySession(userId, sessionData) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -673,7 +673,7 @@ async function getRecoveryHistory(userId, limit = 30) {
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 }
 
@@ -692,7 +692,7 @@ async function getStoredProtocols(filters = {}) {
 
   const { data, error } = await query.order("name");
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 }
 

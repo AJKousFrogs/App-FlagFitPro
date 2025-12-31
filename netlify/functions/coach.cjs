@@ -67,7 +67,7 @@ async function getCoachDashboard(userId) {
         const sessionsResult = await consentReader.readTrainingSessions({
           requesterId: userId,
           playerId: member.user_id,
-          teamId: teamId,
+          teamId,
           context: AccessContext.COACH_TEAM_DATA,
           filters: {
             limit: 28, // Last 4 weeks
@@ -111,7 +111,7 @@ async function getCoachDashboard(userId) {
           const wellnessResult = await consentReader.readWellnessEntries({
             requesterId: userId,
             playerId: member.user_id,
-            teamId: teamId,
+            teamId,
             context: AccessContext.COACH_TEAM_DATA,
             filters: {
               limit: 1,
@@ -155,10 +155,10 @@ async function getCoachDashboard(userId) {
           name: userData.name || "Unknown",
           full_name: userData.name || "Unknown",
           position: userData.position || "N/A",
-          workload: workload,
+          workload,
           today_workload: workload / 7, // Daily average
-          acwr: acwr,
-          readiness: readiness,
+          acwr,
+          readiness,
           dataState: {
             training: dataState,
             wellness: wellnessDataState,
@@ -232,7 +232,7 @@ async function getTeamInfo(userId, coachId) {
           const sessionsResult = await consentReader.readTrainingSessions({
             requesterId: userId,
             playerId: member.user_id,
-            teamId: teamId,
+            teamId,
             context: AccessContext.COACH_TEAM_DATA,
             filters: {
               limit: 28,
@@ -271,11 +271,11 @@ async function getTeamInfo(userId, coachId) {
 
           return {
             ...member,
-            acwr: acwr,
-            workload: workload,
+            acwr,
+            workload,
             today_workload: workload / 7,
-            readiness: readiness,
-            dataState: dataState,
+            readiness,
+            dataState,
           };
         } catch (err) {
           console.error(`Error enriching member ${member.user_id}:`, err);
@@ -339,7 +339,7 @@ async function getTrainingAnalytics(userId, coachId) {
     // The reader will handle consent checking internally
     const sessionsResult = await consentReader.readTrainingSessions({
       requesterId: userId,
-      teamId: teamId,
+      teamId,
       context: AccessContext.COACH_TEAM_DATA,
       filters: {
         limit: 100,
@@ -525,14 +525,15 @@ async function handleRequest(event, context, { userId }) {
     // Route to appropriate handler
     switch (endpoint) {
       case "/dashboard":
-      case "":
+      case "": {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
         const dashboard = await getCoachDashboard(coachId);
         return createSuccessResponse(dashboard);
+      }
 
-      case "/team":
+      case "/team": {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
@@ -544,28 +545,32 @@ async function handleRequest(event, context, { userId }) {
           // For backwards compat, also expose members at root if clients expect array
           // Clients should migrate to using result.members
         });
+      }
 
-      case "/training-analytics":
+      case "/training-analytics": {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
         const analytics = await getTrainingAnalytics(userId, coachId);
         return createSuccessResponse(analytics);
+      }
 
-      case "/training-session":
+      case "/training-session": {
         if (event.httpMethod !== "POST") {
           return createErrorResponse("Method not allowed", 405);
         }
         const body = JSON.parse(event.body || "{}");
         const session = await createTrainingSession(userId, body);
         return createSuccessResponse(session);
+      }
 
-      case "/games":
+      case "/games": {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
         const games = await getGames(userId, coachId);
         return createSuccessResponse(games);
+      }
 
       case "/health":
         if (event.httpMethod !== "GET") {

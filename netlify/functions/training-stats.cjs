@@ -115,9 +115,9 @@ const getTrainingStats = async (userId) => {
 
     return {
       weeklyHours: weeklyHours || 0,
-      totalSessions: totalSessions,
+      totalSessions,
       averageScore: averageScore || 0,
-      currentStreak: currentStreak,
+      currentStreak,
       recentSessions:
         formattedRecentSessions.length > 0
           ? formattedRecentSessions
@@ -126,7 +126,7 @@ const getTrainingStats = async (userId) => {
         labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         values: progressValues,
       },
-      workoutTypes: workoutTypes,
+      workoutTypes,
     };
   } catch (error) {
     console.error("Database error in getTrainingStats:", error);
@@ -184,7 +184,7 @@ const formatWorkoutName = (workoutType) => {
   };
   return (
     names[workoutType] ||
-    workoutType.charAt(0).toUpperCase() + workoutType.slice(1) + " Training"
+    `${workoutType.charAt(0).toUpperCase() + workoutType.slice(1)  } Training`
   );
 };
 

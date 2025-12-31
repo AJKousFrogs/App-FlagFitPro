@@ -31,7 +31,7 @@ app.use(
 app.all("/.netlify/functions/:functionName", async (req, res) => {
   try {
     // Extract function name from route parameter
-    const functionName = req.params.functionName;
+    const {functionName} = req.params;
 
     if (!functionName) {
       console.error(`❌ No function name in request: ${req.path}`);
@@ -117,7 +117,7 @@ app.all("/.netlify/functions/:functionName", async (req, res) => {
     // Create Netlify context
     const context = {
       callbackWaitsForEmptyEventLoop: false,
-      functionName: functionName,
+      functionName,
       functionVersion: "$LATEST",
       invokedFunctionArn: `arn:aws:lambda:us-east-1:123456789012:function:${functionName}`,
       memoryLimitInMB: "128",
@@ -384,7 +384,7 @@ const watcher = chokidar.watch(
     "!server.js",
   ],
   {
-    ignored: /(^|[\/\\])\../, // ignore dotfiles
+    ignored: /(^|[/\\])\../, // ignore dotfiles
     persistent: true,
     ignoreInitial: false,
   },
@@ -506,7 +506,7 @@ app.use((req, res, next) => {
     const originalSend = res.send;
     res.send = function (data) {
       if (typeof data === "string" && data.includes("</body>")) {
-        data = data.replace("</body>", hotReloadScript + "</body>");
+        data = data.replace("</body>", `${hotReloadScript  }</body>`);
       }
       originalSend.call(this, data);
     };

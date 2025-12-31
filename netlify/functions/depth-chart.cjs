@@ -47,7 +47,7 @@ const getTeamDepthCharts = async (userId, teamId) => {
     .eq("team_id", teamId)
     .order("chart_type");
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 };
 
@@ -83,7 +83,7 @@ const getDepthChartWithEntries = async (userId, templateId) => {
     .order("position_name")
     .order("depth_order");
 
-  if (entriesError) throw entriesError;
+  if (entriesError) {throw entriesError;}
 
   // Transform entries to include player info
   const transformedEntries = (entries || []).map((entry) => ({
@@ -122,7 +122,7 @@ const createDepthChart = async (userId, chartData) => {
     .select()
     .single();
 
-  if (templateError) throw templateError;
+  if (templateError) {throw templateError;}
 
   // Create default positions if provided or use standard positions
   const positionsToCreate = positions || FLAG_FOOTBALL_POSITIONS[chart_type] || [];
@@ -176,7 +176,7 @@ const updateDepthChart = async (userId, templateId, updates) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -204,7 +204,7 @@ const deleteDepthChart = async (userId, templateId) => {
     .delete()
     .eq("id", templateId);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return { success: true };
 };
 
@@ -260,7 +260,7 @@ const updateEntry = async (userId, entryId, updates) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -364,7 +364,7 @@ const addPosition = async (userId, positionData) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -412,7 +412,7 @@ const getDepthChartHistory = async (userId, templateId, queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return (data || []).map((record) => ({
     ...record,
@@ -443,7 +443,7 @@ const getUnassignedPlayers = async (userId, templateId, teamId) => {
     .eq("team_id", teamId)
     .eq("role", "player");
 
-  if (membersError) throw membersError;
+  if (membersError) {throw membersError;}
 
   // Get assigned players in this depth chart
   const { data: entries, error: entriesError } = await supabaseAdmin
@@ -452,7 +452,7 @@ const getUnassignedPlayers = async (userId, templateId, teamId) => {
     .eq("template_id", templateId)
     .not("player_id", "is", null);
 
-  if (entriesError) throw entriesError;
+  if (entriesError) {throw entriesError;}
 
   const assignedPlayerIds = new Set((entries || []).map((e) => e.player_id));
 
@@ -490,7 +490,7 @@ const initializeTeamDepthCharts = async (userId, teamId) => {
       .select()
       .single();
 
-    if (templateError) throw templateError;
+    if (templateError) {throw templateError;}
 
     const positions = FLAG_FOOTBALL_POSITIONS[chartType] || [];
     if (positions.length > 0) {

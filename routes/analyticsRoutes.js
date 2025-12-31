@@ -169,8 +169,8 @@ router.get("/performance-trends", async (req, res) => {
 
     return sendSuccess(res, {
       weeks: weeksData,
-      overallScores: overallScores,
-      trainingScores: trainingScores,
+      overallScores,
+      trainingScores,
       totalSessions: performanceData.reduce((sum, row) => sum + (row.sessions_count || 0), 0),
       averageScore: Math.round(safeAverage(overallScores, 78)),
     });
@@ -227,7 +227,7 @@ router.get("/team-chemistry", async (req, res) => {
       chemistryData = result.rows[0];
     }
 
-    chemistryData = chemistryData || {};
+    chemistryData ||= {};
 
     const leadershipScore = Math.min(
       10,
@@ -385,7 +385,7 @@ router.get("/training-distribution", async (req, res) => {
       avgDurations: avgDurations.slice(0, 5),
       avgPerformances: avgPerformances.slice(0, 5),
       totalSessions: sessionCounts.reduce((sum, count) => sum + count, 0),
-      period: period,
+      period,
     });
   } catch (error) {
     serverLogger.error("Training distribution error:", error);
@@ -474,8 +474,8 @@ router.get("/position-performance", async (req, res) => {
     }
 
     return sendSuccess(res, {
-      positions: positions,
-      currentScores: currentScores,
+      positions,
+      currentScores,
       targetScores: targetScoresData,
       totalPositions: positions.length,
       averagePerformance: Math.round(safeAverage(currentScores, 87)),
@@ -528,7 +528,7 @@ router.get("/injury-risk", async (req, res) => {
       riskData = result.rows[0];
     }
 
-    riskData = riskData || {};
+    riskData ||= {};
 
     const fatigueScore = safeParseFloat(riskData.avg_fatigue, 3);
     const injuryRiskScore = safeParseFloat(riskData.avg_injury_risk, 2);
@@ -700,8 +700,8 @@ router.get("/speed-development", async (req, res) => {
 
     return sendSuccess(res, {
       weeks: weeksData,
-      fortyYardTimes: fortyYardTimes,
-      tenYardTimes: tenYardTimes,
+      fortyYardTimes,
+      tenYardTimes,
       bestFortyYard: Math.min(...fortyYardTimes),
       bestTenYard: Math.min(...tenYardTimes),
       totalImprovement:
@@ -801,13 +801,13 @@ router.get("/user-engagement", async (req, res) => {
     }
 
     return sendSuccess(res, {
-      stages: stages,
-      userCounts: userCounts,
+      stages,
+      userCounts,
       conversionRates: stages.map((stage, index) => {
-        if (index === 0) return 100;
+        if (index === 0) {return 100;}
         return Math.round((userCounts[index] / userCounts[0]) * 100);
       }),
-      period: period,
+      period,
       totalUsers: userCounts[0],
     });
   } catch (error) {

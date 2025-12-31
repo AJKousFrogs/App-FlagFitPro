@@ -344,9 +344,9 @@ function searchPlayers(query, players) {
         url: `/roster.html#player-${player.id || player.jersey || player.jerseyNumber}`,
         description: `${player.position || "Player"}${player.jersey ? ` • #${player.jersey}` : ""}${player.country ? ` • ${player.country}` : ""}`,
         category: "Player",
-        score: score,
-        matchedFields: matchedFields,
-        player: player,
+        score,
+        matchedFields,
+        player,
       });
     }
   }
@@ -430,8 +430,8 @@ export async function performGlobalSearch(query) {
           url: item.url,
           description: item.description,
           category: item.category,
-          score: score,
-          matchedKeywords: matchedKeywords,
+          score,
+          matchedKeywords,
         });
       }
     }
@@ -512,7 +512,7 @@ async function searchKnowledgeBase(query) {
 
   try {
     const response = await apiClient.post(API_ENDPOINTS.knowledge.search, {
-      query: query,
+      query,
       limit: 5,
     });
 
@@ -579,7 +579,7 @@ async function searchTournaments(query) {
           url: `/tournaments.html?id=${tournament.id || ""}`,
           description: `${tournament.location || ""}${tournament.startDate ? ` • ${tournament.startDate}` : ""}`,
           category: "Tournament",
-          score: score,
+          score,
         });
       }
     }
@@ -638,7 +638,7 @@ async function searchGames(query) {
           url: `/game-tracker.html?gameId=${game.id || ""}`,
           description: `${date || ""}${location ? ` • ${location}` : ""}`,
           category: "Game",
-          score: score,
+          score,
         });
       }
     }
@@ -695,7 +695,7 @@ async function searchCommunityPosts(query) {
           url: `/community.html?postId=${post.id || ""}`,
           description: `${post.author?.name || "User"} • ${content.substring(0, 60)}...`,
           category: "Community",
-          score: score,
+          score,
         });
       }
     }

@@ -237,7 +237,7 @@ class YouTubeTrainingService {
       publishedAt: item.snippet.publishedAt,
       url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
       embedUrl: `https://www.youtube.com/embed/${item.id.videoId}`,
-      query: query,
+      query,
     }));
   }
 
@@ -393,9 +393,9 @@ class YouTubeTrainingService {
     for (const category of categories) {
       const videos = await this.getTrainingVideos(category, 2);
       playlist.push({
-        category: category,
+        category,
         categoryName: this.getTrainingCategories()[category].name,
-        videos: videos,
+        videos,
       });
     }
 

@@ -92,10 +92,10 @@ pagesToUpdate.forEach((filename) => {
   // Find a good insertion point - after <head> tag or before first <script>
   if (content.includes("</head>")) {
     // Insert before </head>
-    content = content.replace("</head>", supabaseConfig + "\n  </head>");
+    content = content.replace("</head>", `${supabaseConfig  }\n  </head>`);
   } else if (content.includes("<script")) {
     // Insert before first script tag
-    content = content.replace(/<script/, supabaseConfig + "\n    <script");
+    content = content.replace(/<script/, `${supabaseConfig  }\n    <script`);
   } else {
      
     console.log(`⚠️  Skipped: ${filename} (no insertion point found)`);

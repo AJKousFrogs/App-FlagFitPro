@@ -38,7 +38,7 @@ const PATTERNS = {
  */
 const VALIDATORS = {
   string: (value, options = {}) => {
-    if (typeof value !== "string") return "must be a string";
+    if (typeof value !== "string") {return "must be a string";}
     if (options.minLength && value.length < options.minLength) {
       return `must be at least ${options.minLength} characters`;
     }
@@ -53,7 +53,7 @@ const VALIDATORS = {
 
   number: (value, options = {}) => {
     const num = typeof value === "string" ? parseFloat(value) : value;
-    if (typeof num !== "number" || isNaN(num)) return "must be a number";
+    if (typeof num !== "number" || isNaN(num)) {return "must be a number";}
     if (options.min !== undefined && num < options.min) {
       return `must be at least ${options.min}`;
     }
@@ -99,7 +99,7 @@ const VALIDATORS = {
   },
 
   datetime: (value) => {
-    if (typeof value !== "string") return "must be a string";
+    if (typeof value !== "string") {return "must be a string";}
     const date = new Date(value);
     if (isNaN(date.getTime())) {
       return "must be a valid datetime";
@@ -108,7 +108,7 @@ const VALIDATORS = {
   },
 
   array: (value, options = {}) => {
-    if (!Array.isArray(value)) return "must be an array";
+    if (!Array.isArray(value)) {return "must be an array";}
     if (options.minLength && value.length < options.minLength) {
       return `must have at least ${options.minLength} items`;
     }
@@ -216,7 +216,7 @@ function validateInput(data, schema) {
  * Sanitize a string to prevent XSS
  */
 function sanitizeString(str) {
-  if (typeof str !== "string") return str;
+  if (typeof str !== "string") {return str;}
   return str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")

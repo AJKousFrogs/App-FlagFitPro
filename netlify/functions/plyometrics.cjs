@@ -32,8 +32,8 @@ exports.handler = async (event) => {
 
   try {
     const params = event.queryStringParameters || {};
-    const difficulty = params.difficulty;
-    const category = params.category;
+    const {difficulty} = params;
+    const {category} = params;
     const limit = parseInt(params.limit) || 10;
 
     let query = supabase

@@ -54,7 +54,7 @@ class AchievementsService {
    * - Uploads any missing achievements to database
    */
   async syncWithDatabase() {
-    if (this.isSyncing) return;
+    if (this.isSyncing) {return;}
     this.isSyncing = true;
 
     try {
@@ -101,7 +101,7 @@ class AchievementsService {
         
         await window.apiClient.put("/api/achievements", {
           achievementIds: localOnly,
-          history: history,
+          history,
         });
       }
 

@@ -114,7 +114,7 @@ class WorkoutService {
 
     return {
       id: Date.now(),
-      type: type,
+      type,
       date: date
         ? date instanceof Date
           ? date.toISOString()
@@ -123,7 +123,7 @@ class WorkoutService {
       startTime: new Date().toISOString(),
       status: "active",
       exercises: exercises.map((ex) => ({ ...ex, completed: false })),
-      template: template,
+      template,
     };
   }
 

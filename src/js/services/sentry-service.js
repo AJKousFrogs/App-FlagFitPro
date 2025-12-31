@@ -176,7 +176,7 @@ class SentryService {
         logger.debug("[Sentry] User context updated");
       } else {
         // Try to get user from auth
-        const authManager = window.authManager;
+        const {authManager} = window;
         if (authManager && authManager.isAuthenticated()) {
           const currentUser = authManager.getCurrentUser();
           if (currentUser) {

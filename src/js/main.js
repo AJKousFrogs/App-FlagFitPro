@@ -193,7 +193,7 @@ class FlagFitApplication {
 
   getCurrentPage() {
     // Try to determine current page from various sources
-    const pathname = window.location.pathname;
+    const {pathname} = window.location;
     const filename = pathname.split("/").pop().replace(".html", "");
 
     // Check body class
@@ -487,7 +487,7 @@ class FlagFitApplication {
     // Report error to analytics service if available
     if (window.analytics && window.analytics.track) {
       window.analytics.track("error", {
-        type: type,
+        type,
         message: error.message || error,
         page: this.getCurrentPage(),
       });

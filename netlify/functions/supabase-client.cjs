@@ -831,8 +831,8 @@ const db = {
           .insert({
             user_id: userId,
             notification_type: type,
-            message: message,
-            priority: priority,
+            message,
+            priority,
             is_read: false,
           })
           .select(

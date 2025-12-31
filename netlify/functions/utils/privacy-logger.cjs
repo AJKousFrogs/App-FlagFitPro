@@ -30,9 +30,9 @@ const CURRENT_LOG_LEVEL = process.env.NODE_ENV === 'production' ? 'info' : 'debu
  * @returns {string} Redacted email
  */
 function redactEmail(email) {
-  if (!email || typeof email !== 'string') return email;
+  if (!email || typeof email !== 'string') {return email;}
   const parts = email.split('@');
-  if (parts.length !== 2) return '***@***';
+  if (parts.length !== 2) {return '***@***';}
   const [user, domain] = parts;
   return `${user[0]}***@${domain}`;
 }
@@ -43,9 +43,9 @@ function redactEmail(email) {
  * @returns {string} Redacted phone
  */
 function redactPhone(phone) {
-  if (!phone || typeof phone !== 'string') return phone;
+  if (!phone || typeof phone !== 'string') {return phone;}
   const digits = phone.replace(/\D/g, '');
-  if (digits.length < 4) return '***';
+  if (digits.length < 4) {return '***';}
   return `***-***-${digits.slice(-4)}`;
 }
 
@@ -55,9 +55,9 @@ function redactPhone(phone) {
  * @returns {string} Redacted name
  */
 function redactName(name) {
-  if (!name || typeof name !== 'string') return name;
+  if (!name || typeof name !== 'string') {return name;}
   const parts = name.trim().split(' ');
-  if (parts.length === 1) return `${parts[0][0]}***`;
+  if (parts.length === 1) {return `${parts[0][0]}***`;}
   return `${parts[0]} ${parts[parts.length - 1][0]}.`;
 }
 
@@ -67,8 +67,8 @@ function redactName(name) {
  * @returns {string} Redacted token
  */
 function redactToken(token) {
-  if (!token || typeof token !== 'string') return token;
-  if (token.length <= 10) return '***';
+  if (!token || typeof token !== 'string') {return token;}
+  if (token.length <= 10) {return '***';}
   return `${token.substring(0, 10)}***`;
 }
 
@@ -78,8 +78,8 @@ function redactToken(token) {
  * @returns {Object} Redacted object
  */
 function redactSensitive(obj) {
-  if (!obj || typeof obj !== 'object') return obj;
-  if (Array.isArray(obj)) return obj.map(redactSensitive);
+  if (!obj || typeof obj !== 'object') {return obj;}
+  if (Array.isArray(obj)) {return obj.map(redactSensitive);}
 
   const redacted = {};
   const sensitiveFields = {
@@ -172,7 +172,7 @@ function logPrivacyEvent(event, details, level = 'info') {
 
   // Clean undefined fields
   Object.keys(logEntry).forEach(key => {
-    if (logEntry[key] === undefined) delete logEntry[key];
+    if (logEntry[key] === undefined) {delete logEntry[key];}
   });
 
   console.log(JSON.stringify(logEntry));

@@ -405,7 +405,7 @@ class GameStatsService {
 
     return {
       totalDrops: drops.length,
-      drops: drops,
+      drops,
       bySeverity: severityCounts,
       byReason: reasonCounts,
       byRoute: routeCounts,
@@ -457,14 +457,14 @@ class GameStatsService {
 
     return {
       totalAttempts: attempts.length,
-      successful: successful,
-      missed: missed,
+      successful,
+      missed,
       successRate:
         attempts.length > 0
           ? ((successful / attempts.length) * 100).toFixed(1)
           : 0,
-      attempts: attempts,
-      missReasons: missReasons,
+      attempts,
+      missReasons,
       mostCommonMissReason: this.getMostCommon(missReasons),
     };
   }
@@ -542,8 +542,8 @@ class GameStatsService {
 
     return {
       totalThrows: throws.length,
-      throws: throws,
-      byRoute: byRoute,
+      throws,
+      byRoute,
     };
   }
 

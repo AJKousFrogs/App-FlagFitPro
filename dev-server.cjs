@@ -92,7 +92,7 @@ const watcher = chokidar.watch(
     "!*.backup",
   ],
   {
-    ignored: /(^|[\/\\])\../, // ignore dotfiles
+    ignored: /(^|[/\\])\../, // ignore dotfiles
     persistent: true,
   },
 );
@@ -176,7 +176,7 @@ app.use((req, res, next) => {
     const originalSend = res.send;
     res.send = function (data) {
       if (typeof data === "string" && data.includes("</body>")) {
-        data = data.replace("</body>", hotReloadScript + "</body>");
+        data = data.replace("</body>", `${hotReloadScript  }</body>`);
       }
       originalSend.call(this, data);
     };

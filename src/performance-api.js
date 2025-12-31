@@ -118,7 +118,7 @@ export class PerformanceAPI {
           method: "POST",
           headers: await this.getAuthHeaders(),
           body: JSON.stringify({
-            testType: testType,
+            testType,
             result: data.result,
             target: data.target,
             conditions: data.conditions || {},
@@ -241,7 +241,7 @@ export class PerformanceAPI {
           body: JSON.stringify({
             supplement: supplementName,
             takenAt: time,
-            notes: notes,
+            notes,
             date: new Date().toISOString().split("T")[0],
           }),
         },
@@ -333,8 +333,8 @@ export class PerformanceAPI {
           method: "PATCH",
           headers: await this.getAuthHeaders(),
           body: JSON.stringify({
-            status: status,
-            notes: notes,
+            status,
+            notes,
             updatedAt: new Date().toISOString(),
           }),
         },
@@ -390,7 +390,7 @@ export class PerformanceAPI {
           headers: await this.getAuthHeaders(),
           body: JSON.stringify({
             athletes: athleteIds,
-            metrics: metrics,
+            metrics,
           }),
         },
       );
@@ -607,7 +607,7 @@ export const TrendAnalyzer = {
 
   calculateVariance(values) {
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    const squaredDiffs = values.map((val) => Math.pow(val - mean, 2));
+    const squaredDiffs = values.map((val) => (val - mean)**2);
     return squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
   },
 

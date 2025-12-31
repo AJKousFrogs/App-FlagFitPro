@@ -182,7 +182,7 @@ class ConsentViolationChecker {
   async run() {
     console.log('🔍 Consent Violation Checker\n');
     console.log('Policy: "All coach-facing performance access must go through consent views"\n');
-    console.log('='.repeat(70) + '\n');
+    console.log(`${'='.repeat(70)  }\n`);
 
     // Get all files to scan
     const files = await this.getFilesToScan();
@@ -374,7 +374,7 @@ class ConsentViolationChecker {
     }
     
     // Check filename
-    if (fileName.includes('coach')) return true;
+    if (fileName.includes('coach')) {return true;}
     
     // Check content for coach-context indicators
     for (const pattern of CONFIG.coachContextIndicators) {

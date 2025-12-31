@@ -54,7 +54,7 @@
     const allNavItems = document.querySelectorAll(
       '.nav-item, .sidebar-link, [class*="nav-"]',
     );
-    allNavItems.forEach(function (item) {
+    allNavItems.forEach((item) => {
       item.classList.remove("active");
     });
 
@@ -79,11 +79,11 @@
     // Also check by href attribute as fallback
     if (!activeNav) {
       const navLinks = document.querySelectorAll(
-        'a.nav-item, a.sidebar-link, a[href*="' + currentPage + '"]',
+        `a.nav-item, a.sidebar-link, a[href*="${  currentPage  }"]`,
       );
-      navLinks.forEach(function (link) {
+      navLinks.forEach((link) => {
         const href = link.getAttribute("href") || "";
-        if (href.includes(currentPage) || href === "/" + currentPage) {
+        if (href.includes(currentPage) || href === `/${  currentPage}`) {
           link.classList.add("active");
         }
       });

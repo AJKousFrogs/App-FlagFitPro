@@ -65,7 +65,7 @@ function checkImportPaths(filePath, content) {
     const resolvedPath = path.resolve(fileDir, importPath);
     const actualPath = resolvedPath.endsWith(".js")
       ? resolvedPath
-      : resolvedPath + ".js";
+      : `${resolvedPath  }.js`;
 
     // Check if file exists
     if (!fs.existsSync(actualPath)) {
@@ -119,12 +119,12 @@ function checkHrefLinks(filePath, content) {
       if (!fs.existsSync(resolvedPath)) {
         // Try with .html extension if not present
         if (!href.endsWith(".html")) {
-          const withHtml = resolvedPath + ".html";
+          const withHtml = `${resolvedPath  }.html`;
           if (!fs.existsSync(withHtml)) {
             issues.hrefLinks.push({
               file: relativePath,
               line: content.substring(0, match.index).split("\n").length,
-              href: href,
+              href,
               resolved: resolvedPath,
               issue: "File not found",
             });
@@ -133,7 +133,7 @@ function checkHrefLinks(filePath, content) {
           issues.hrefLinks.push({
             file: relativePath,
             line: content.substring(0, match.index).split("\n").length,
-            href: href,
+            href,
             resolved: resolvedPath,
             issue: "File not found",
           });
@@ -172,7 +172,7 @@ function checkAssetPaths(filePath, content) {
       issues.assetPaths.push({
         file: relativePath,
         line: content.substring(0, match.index).split("\n").length,
-        src: src,
+        src,
         resolved: resolvedPath,
         issue: "File not found",
       });
@@ -230,12 +230,12 @@ function checkRedirects(filePath, content) {
 
       if (!fs.existsSync(resolvedPath)) {
         if (!redirect.endsWith(".html")) {
-          const withHtml = resolvedPath + ".html";
+          const withHtml = `${resolvedPath  }.html`;
           if (!fs.existsSync(withHtml)) {
             issues.redirects.push({
               file: relativePath,
               line: content.substring(0, match.index).split("\n").length,
-              redirect: redirect,
+              redirect,
               resolved: resolvedPath,
               issue: "Redirect target not found",
             });
@@ -244,7 +244,7 @@ function checkRedirects(filePath, content) {
           issues.redirects.push({
             file: relativePath,
             line: content.substring(0, match.index).split("\n").length,
-            redirect: redirect,
+            redirect,
             resolved: resolvedPath,
             issue: "Redirect target not found",
           });
@@ -273,7 +273,7 @@ function checkApiEndpoints(filePath, content) {
         issues.apiEndpoints.push({
           file: relativePath,
           line: content.substring(0, match.index).split("\n").length,
-          endpoint: endpoint,
+          endpoint,
           issue: "Double slashes in endpoint",
         });
       }
@@ -283,7 +283,7 @@ function checkApiEndpoints(filePath, content) {
         issues.apiEndpoints.push({
           file: relativePath,
           line: content.substring(0, match.index).split("\n").length,
-          endpoint: endpoint,
+          endpoint,
           issue: "Trailing slash in endpoint (may cause issues)",
         });
       }

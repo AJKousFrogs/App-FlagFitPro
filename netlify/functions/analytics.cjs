@@ -44,7 +44,7 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
     const weeklyData = {};
     sessions.forEach((session) => {
       const completedAt = session.completed_at || session.session_date;
-      if (!completedAt) return;
+      if (!completedAt) {return;}
       const date = new Date(completedAt);
       const weekKey = `${date.getFullYear()}-W${getWeekNumber(date)}`;
       if (!weeklyData[weekKey]) {
@@ -160,7 +160,7 @@ const getTeamChemistry = async (userId) => {
 
     const sessionsResult = await consentReader.readTrainingSessions({
       requesterId: userId,
-      teamId: teamId,
+      teamId,
       context: AccessContext.COACH_TEAM_DATA,
       filters: {
         startDate: thirtyDaysAgo.toISOString(),
@@ -325,7 +325,7 @@ const getPositionPerformance = async (userId) => {
 
     const sessionsResult = await consentReader.readTrainingSessions({
       requesterId: userId,
-      teamId: teamId,
+      teamId,
       context: AccessContext.COACH_TEAM_DATA,
       filters: {
         startDate: thirtyDaysAgo.toISOString(),
@@ -341,7 +341,7 @@ const getPositionPerformance = async (userId) => {
     const userScores = {};
     sessions.forEach((session) => {
       const sessionUserId = session.user_id || session.player_id;
-      if (!sessionUserId) return;
+      if (!sessionUserId) {return;}
       if (!userScores[sessionUserId]) {
         userScores[sessionUserId] = { total: 0, count: 0 };
       }

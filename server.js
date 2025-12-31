@@ -37,7 +37,7 @@ const watcher = chokidar.watch(
     "*.css",
     "*.js"
   ],
-  { ignored: /(^|[\/\\])\../, persistent: true }
+  { ignored: /(^|[/\\])\../, persistent: true }
 );
 
 watcher.on("change", (filePath) => {
@@ -443,9 +443,9 @@ const hotReloadScript = `
 
 // Helper to inject script into HTML
 const injectScript = (filePath) => {
-  let content = fs.readFileSync(filePath, 'utf8');
+  const content = fs.readFileSync(filePath, 'utf8');
   if (content.includes('</body>')) {
-    return content.replace('</body>', hotReloadScript + '</body>');
+    return content.replace('</body>', `${hotReloadScript  }</body>`);
   }
   return content + hotReloadScript;
 };
@@ -472,7 +472,7 @@ app.use((err, req, res, _next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
     return res.status(400).json({
       success: false,
-      error: "Invalid JSON: " + err.message,
+      error: `Invalid JSON: ${  err.message}`,
     });
   }
 

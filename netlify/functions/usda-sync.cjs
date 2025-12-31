@@ -14,7 +14,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 // USDA FoodData Central API Key (required)
 // Get your free API key at: https://fdc.nal.usda.gov/api-key-signup.html
-const USDA_API_KEY = process.env.USDA_API_KEY;
+const {USDA_API_KEY} = process.env;
 const USDA_BASE_URL = 'https://api.nal.usda.gov/fdc/v1';
 
 if (!USDA_API_KEY) {
@@ -192,7 +192,7 @@ function generateSearchKeywords(food) {
   // Add words from description
   if (food.description) {
     food.description.toLowerCase().split(/\s+/).forEach(word => {
-      if (word.length > 2) keywords.add(word);
+      if (word.length > 2) {keywords.add(word);}
     });
   }
   
@@ -484,7 +484,7 @@ async function handleSearch(event) {
     
     const { data, error, count } = await queryBuilder;
     
-    if (error) throw error;
+    if (error) {throw error;}
     
     return {
       statusCode: 200,

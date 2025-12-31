@@ -98,7 +98,7 @@ const SEARCH_QUERIES = {
 async function fetchEuropePMC(query, category, maxResults = 100) {
   const baseUrl = "https://www.ebi.ac.uk/europepmc/webservices/rest/search";
   const params = new URLSearchParams({
-    query: query,
+    query,
     format: "json",
     pageSize: maxResults,
     resultType: "core",
@@ -145,7 +145,7 @@ async function fetchEuropePMC(query, category, maxResults = 100) {
 async function fetchSemanticScholar(query, category, maxResults = 50) {
   const baseUrl = "https://api.semanticscholar.org/graph/v1/paper/search";
   const params = new URLSearchParams({
-    query: query,
+    query,
     limit: maxResults.toString(),
     fields: "title,authors,year,venue,abstract,doi,citationCount,openAccessPdf",
   });

@@ -398,7 +398,7 @@ async function saveAthleteNutritionProfile(userId, profileData) {
     .select()
     .single();
   
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -443,7 +443,7 @@ async function saveNutritionPlan(userId, planData) {
     .select()
     .single();
   
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 }
 
@@ -471,7 +471,7 @@ async function getMealTemplates(filters = {}) {
   
   const { data, error } = await query.order("name");
   
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 }
 
@@ -485,7 +485,7 @@ async function searchFoods(searchQuery, limit = 20) {
     .or(`description.ilike.%${searchQuery}%,search_keywords.cs.{${searchQuery.toLowerCase()}}`)
     .limit(limit);
   
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 }
 

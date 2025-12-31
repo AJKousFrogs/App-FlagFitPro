@@ -7,8 +7,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const {SUPABASE_URL} = process.env;
+const {SUPABASE_SERVICE_KEY} = process.env;
 
 console.log("🔍 Testing Supabase Connection\n");
 console.log("URL:", SUPABASE_URL);

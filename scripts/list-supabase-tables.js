@@ -216,7 +216,7 @@ async function listAllTables() {
     });
   }
 
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${  "=".repeat(60)}`);
   console.log(`\n📊 TOTAL TABLES FOUND: ${existingTables.length}`);
   console.log(`\n💡 Note: This script checks known tables from the codebase.`);
   console.log(`   To see ALL tables, use the Supabase Dashboard SQL Editor:`);

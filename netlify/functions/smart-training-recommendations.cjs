@@ -239,7 +239,7 @@ async function calculateMonotony(userId, date) {
   });
 
   const mean = dailyLoads.reduce((a, b) => a + b, 0) / dailyLoads.length;
-  const variance = dailyLoads.reduce((sum, load) => sum + Math.pow(load - mean, 2), 0) / dailyLoads.length;
+  const variance = dailyLoads.reduce((sum, load) => sum + (load - mean)**2, 0) / dailyLoads.length;
   const stdDev = Math.sqrt(variance);
 
   const monotony = stdDev > 0 ? mean / stdDev : 0;
@@ -445,15 +445,15 @@ exports.handler = async (event, context) => {
       if (event.httpMethod === "POST") {
         try {
           const body = JSON.parse(event.body || "{}");
-          if (body.athleteId) athleteId = body.athleteId;
-          if (body.date) targetDate = new Date(body.date);
+          if (body.athleteId) {athleteId = body.athleteId;}
+          if (body.date) {targetDate = new Date(body.date);}
         } catch {
           // Use defaults
         }
       } else {
         const params = event.queryStringParameters || {};
-        if (params.athleteId) athleteId = params.athleteId;
-        if (params.date) targetDate = new Date(params.date);
+        if (params.athleteId) {athleteId = params.athleteId;}
+        if (params.date) {targetDate = new Date(params.date);}
       }
 
       // Gather all data in parallel

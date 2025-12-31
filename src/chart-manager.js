@@ -404,7 +404,7 @@ class ChartManager {
             },
             tooltip: {
               callbacks: {
-                label: function (context) {
+                label (context) {
                   const label = context.label || "";
                   const value = context.parsed;
                   const total = context.dataset.data.reduce((a, b) => a + b, 0);
@@ -556,7 +556,7 @@ class ChartManager {
       if (chart.options && chart.options.plugins) {
         const centerText = {
           id: "centerText",
-          afterDatasetsDraw: function (chart, _args, _options) {
+          afterDatasetsDraw (chart, _args, _options) {
             const {
               ctx,
               chartArea: { width, height },
@@ -729,8 +729,8 @@ class ChartManager {
               ticks: {
                 font: { size: 12 },
                 color: "#6B7280",
-                callback: function (value) {
-                  return value.toFixed(2) + "s";
+                callback (value) {
+                  return `${value.toFixed(2)  }s`;
                 },
               },
             },
@@ -795,7 +795,7 @@ class ChartManager {
             },
             tooltip: {
               callbacks: {
-                label: function (context) {
+                label (context) {
                   const value = context.parsed.x;
                   const total = context.dataset.data[0];
                   const percentage = ((value / total) * 100).toFixed(1);

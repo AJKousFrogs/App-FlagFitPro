@@ -137,7 +137,7 @@ const USER_DATA_TABLES = [
  * Remove sensitive fields from data
  */
 function sanitizeData(data, sensitiveFields = []) {
-  if (!data) return data;
+  if (!data) {return data;}
   
   if (Array.isArray(data)) {
     return data.map(item => sanitizeData(item, sensitiveFields));
@@ -306,7 +306,7 @@ async function getExportRequestStatus(userId) {
     .order("created_at", { ascending: false })
     .limit(5);
   
-  if (error) throw error;
+  if (error) {throw error;}
   
   return {
     recentExports: data || [],
@@ -336,7 +336,7 @@ async function requestDataExport(userId, options = {}) {
     .select()
     .single();
   
-  if (error) throw error;
+  if (error) {throw error;}
   
   return {
     requestId: request.id,

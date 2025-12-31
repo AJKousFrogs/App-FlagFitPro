@@ -660,7 +660,7 @@ class FlagFitChatbot {
 
       // Auto-resize textarea
       e.target.style.height = "auto";
-      e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+      e.target.style.height = `${Math.min(e.target.scrollHeight, 120)  }px`;
     });
 
     input.addEventListener("keydown", (e) => {
@@ -709,7 +709,7 @@ class FlagFitChatbot {
     // Quick action buttons
     quickBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
-        const topic = btn.dataset.topic;
+        const {topic} = btn.dataset;
         this.handleQuickAction(topic);
       });
     });
@@ -1394,7 +1394,7 @@ class FlagFitChatbot {
     }
 
     if (bestMatch && bestMatchScore > 0) {
-      const responses = this.knowledgeBase[bestMatch].responses;
+      const {responses} = this.knowledgeBase[bestMatch];
       if (responses && responses.length > 0) {
         // Return a random response from the best matching category
         return responses[Math.floor(Math.random() * responses.length)];
@@ -1480,7 +1480,7 @@ class FlagFitChatbot {
 
   getLocalKnowledgeEntry(parsedQuestion, _lowerMessage) {
     // Create a knowledge entry structure from local knowledge base
-    const entities = parsedQuestion.entities;
+    const {entities} = parsedQuestion;
 
     // Check for supplements
     if (entities.supplements.length > 0) {
@@ -1622,7 +1622,7 @@ class FlagFitChatbot {
     formatted = formatted.replace(/\n/g, "<br>");
 
     // Convert bullet points (handle both • and -)
-    formatted = formatted.replace(/(?:•|\-)\s*(.+?)(?=<br>|$)/g, "<li>$1</li>");
+    formatted = formatted.replace(/(?:•|-)\s*(.+?)(?=<br>|$)/g, "<li>$1</li>");
 
     // Wrap consecutive list items in ul tags
     formatted = formatted.replace(/(<li>.*?<\/li>(?:<br>)?)+/g, (match) => {

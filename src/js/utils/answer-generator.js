@@ -17,13 +17,13 @@ export class AnswerGenerator {
   }
 
   generateAnswer(parsedQuestion, knowledgeEntry, articles = []) {
-    const intent = parsedQuestion.intent;
+    const {intent} = parsedQuestion;
     const generator = this.templates[intent] || this.templates.general;
 
     return generator({
       question: parsedQuestion,
       knowledge: knowledgeEntry,
-      articles: articles,
+      articles,
       entities: parsedQuestion.entities,
     });
   }
@@ -234,7 +234,7 @@ export class AnswerGenerator {
     let answer = "";
 
     if (knowledge && knowledge.summary) {
-      answer += knowledge.summary + "\n\n";
+      answer += `${knowledge.summary  }\n\n`;
     }
 
     if (knowledge && knowledge.answer) {
@@ -413,7 +413,7 @@ export class AnswerGenerator {
   synthesizeDefinitionFromArticles(articles, topic) {
     const firstArticle = articles[0];
     if (firstArticle.abstract) {
-      return firstArticle.abstract.substring(0, 400) + "...";
+      return `${firstArticle.abstract.substring(0, 400)  }...`;
     }
     return (
       `Based on research, ${topic} is an important aspect of athletic performance. ` +

@@ -54,7 +54,7 @@ class AnalyticsDataService {
         // Use fetch API
         response = await fetch(url, {
           method: options.method || "GET",
-          headers: headers,
+          headers,
           body: options.body ? JSON.stringify(options.body) : undefined,
           ...options,
         });
@@ -145,7 +145,7 @@ class AnalyticsDataService {
   setCachedData(key, data) {
     try {
       const cacheEntry = {
-        data: data,
+        data,
         timestamp: Date.now(),
       };
 

@@ -425,7 +425,7 @@ export class AccessibilityUtils {
   // Enhanced tab navigation
   static enhanceTabNavigation(e) {
     // Skip hidden elements
-    const target = e.target;
+    const {target} = e;
     if (target && this.isHidden(target)) {
       e.preventDefault();
       const direction = e.shiftKey ? -1 : 1;
@@ -435,7 +435,7 @@ export class AccessibilityUtils {
 
   // Arrow key navigation for custom components
   static handleArrowKeyNavigation(e) {
-    const target = e.target;
+    const {target} = e;
 
     // Tab navigation with arrows
     if (target.getAttribute("role") === "tab") {
@@ -478,7 +478,7 @@ export class AccessibilityUtils {
 
   // Handle activation keys
   static handleActivationKeys(e) {
-    const target = e.target;
+    const {target} = e;
 
     // Activate custom buttons
     if (

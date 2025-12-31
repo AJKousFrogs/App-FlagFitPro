@@ -124,7 +124,7 @@ const PRIORITY_LEVELS = {
  * Check if content contains sensitive keywords
  */
 function containsSensitiveKeywords(text) {
-  if (!text) return false;
+  if (!text) {return false;}
   const lowerText = text.toLowerCase();
   return AUTO_FLAG_CRITERIA.sensitiveTopics.keywords.some(keyword => 
     lowerText.includes(keyword)
@@ -255,7 +255,7 @@ async function createReviewRequest(data) {
       .select()
       .single();
     
-    if (insertError) throw insertError;
+    if (insertError) {throw insertError;}
     return newReview;
   }
   
@@ -268,7 +268,7 @@ async function createReviewRequest(data) {
 async function getPendingReviews(filters = {}) {
   const { priority, status = 'pending', limit = 50 } = filters;
   
-  let query = supabaseAdmin
+  const query = supabaseAdmin
     .from("ai_coach_interactions")
     .select(`
       *,
@@ -282,7 +282,7 @@ async function getPendingReviews(filters = {}) {
   
   const { data, error } = await query;
   
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 }
 
@@ -311,7 +311,7 @@ async function submitReview(reviewData) {
     .select()
     .single();
   
-  if (error) throw error;
+  if (error) {throw error;}
   
   // Log the review action
   await supabaseAdmin.from("privacy_audit_log").insert({
@@ -395,7 +395,7 @@ async function getUserReviewHistory(userId, limit = 20) {
     .order("created_at", { ascending: false })
     .limit(limit);
   
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 }
 
@@ -413,7 +413,7 @@ async function flagInteractionForReview(interactionId, reason, flaggedBy) {
     .select()
     .single();
   
-  if (error) throw error;
+  if (error) {throw error;}
   
   // Log the flagging action
   await supabaseAdmin.from("privacy_audit_log").insert({

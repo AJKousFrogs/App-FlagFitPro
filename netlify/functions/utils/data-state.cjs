@@ -112,12 +112,13 @@ function createDataResponse(value, currentDataPoints, metricType, options = {}) 
     case DataState.NO_DATA:
       warnings.push('No data available yet. Start logging your training to see metrics.');
       break;
-    case DataState.INSUFFICIENT_DATA:
+    case DataState.INSUFFICIENT_DATA: {
       const daysNeeded = requirement.minimumDays - currentDataPoints;
       warnings.push(
         `${requirement.description}. You have ${currentDataPoints} days, need ${daysNeeded} more.`
       );
       break;
+    }
     case DataState.DEMO_DATA:
       warnings.push('This is demonstration data, not your actual metrics.');
       break;
@@ -169,7 +170,7 @@ function isDataSafe(dataState) {
  */
 function canCalculate(currentDataPoints, metricType) {
   const requirement = MINIMUM_DATA_REQUIREMENTS[metricType];
-  if (!requirement) return currentDataPoints >= 7;
+  if (!requirement) {return currentDataPoints >= 7;}
   return currentDataPoints >= requirement.minimumDays;
 }
 

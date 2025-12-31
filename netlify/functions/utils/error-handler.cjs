@@ -332,7 +332,7 @@ async function tryCatch(operation, context = "Operation", options = {}) {
       }
 
       // Exponential backoff before retry
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
+      await new Promise(resolve => setTimeout(resolve, 2**attempt * 100));
     }
   }
 

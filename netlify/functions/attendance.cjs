@@ -49,7 +49,7 @@ const getTeamEvents = async (userId, queryParams) => {
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 };
 
@@ -81,7 +81,7 @@ const createEvent = async (userId, eventData) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -121,7 +121,7 @@ const updateEvent = async (userId, eventId, updates) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -149,7 +149,7 @@ const deleteEvent = async (userId, eventId) => {
     .delete()
     .eq("id", eventId);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return { success: true };
 };
 
@@ -185,7 +185,7 @@ const getEventAttendance = async (userId, eventId) => {
     `)
     .eq("event_id", eventId);
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Transform data to include player info
   return (data || []).map((record) => ({
@@ -239,7 +239,7 @@ const recordAttendance = async (userId, attendanceData) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Update player attendance stats
   await updatePlayerAttendanceStats(player_id, event.team_id);
@@ -282,7 +282,7 @@ const bulkRecordAttendance = async (userId, bulkData) => {
     .upsert(attendanceRecords, { onConflict: "event_id,player_id" })
     .select();
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // Update stats for all affected players
   for (const record of records) {
@@ -351,7 +351,7 @@ const getPlayerAttendanceStats = async (userId, playerId, teamId) => {
     .eq("team_id", teamId)
     .single();
 
-  if (error && error.code !== "PGRST116") throw error;
+  if (error && error.code !== "PGRST116") {throw error;}
   return data;
 };
 
@@ -377,7 +377,7 @@ const getTeamAttendanceStats = async (userId, teamId) => {
     .eq("team_id", teamId)
     .order("attendance_rate", { ascending: false });
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 };
 
@@ -413,7 +413,7 @@ const submitAbsenceRequest = async (userId, requestData) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -436,7 +436,7 @@ const getPendingAbsenceRequests = async (userId, teamId) => {
     .eq("team_events.team_id", teamId)
     .eq("status", "pending");
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 };
 
@@ -474,7 +474,7 @@ const reviewAbsenceRequest = async (userId, requestId, status) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   // If approved, update attendance record
   if (status === "approved") {

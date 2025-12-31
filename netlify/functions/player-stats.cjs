@@ -421,8 +421,8 @@ exports.handler = async (event, context) => {
         path === "" ||
         path === "/"
       ) {
-        const season = queryParams.season;
-        const teamId = queryParams.teamId;
+        const {season} = queryParams;
+        const {teamId} = queryParams;
         result = await getPlayerAggregatedStats(playerId, { season, teamId });
       } else if (path.includes("/date-range") || path.endsWith("/date-range")) {
         const startDate = queryParams.startDate

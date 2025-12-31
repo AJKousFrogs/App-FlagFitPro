@@ -360,7 +360,7 @@ export class LoadManagementService {
     // Calculate weighted average (more recent = higher weight)
     for (let i = sorted.length - 1; i >= 0; i--) {
       const daysAgo = sorted.length - 1 - i;
-      const weight = Math.pow(decayFactor, daysAgo);
+      const weight = decayFactor**daysAgo;
       ewma += sorted[i].load * weight;
       weightSum += weight;
     }
@@ -789,7 +789,7 @@ export class LoadManagementService {
     }
     const mean = this.calculateMean(values);
     const variance =
-      values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) /
+      values.reduce((sum, val) => sum + (val - mean)**2, 0) /
       values.length;
     return Math.sqrt(variance);
   }

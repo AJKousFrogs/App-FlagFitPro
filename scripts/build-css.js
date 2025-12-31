@@ -141,7 +141,7 @@ class CSSBuilder {
         try {
           const cssContent = fs.readFileSync(file.path, "utf8");
           bundledCSS += `\n/* File: ${file.relativePath} */\n`;
-          bundledCSS += cssContent + "\n";
+          bundledCSS += `${cssContent  }\n`;
           totalSize += file.size;
         } catch (error) {
           console.error(`❌ Error reading ${file.path}:`, error.message);
@@ -208,7 +208,7 @@ class CSSBuilder {
           if (matches) {
             matches.forEach((match) => {
               if (!criticalCSS.includes(match)) {
-                criticalCSS += match + "\n";
+                criticalCSS += `${match  }\n`;
               }
             });
           }
@@ -374,12 +374,12 @@ class CSSBuilder {
         bundledSize: totalBundledSize,
         criticalCSSSize,
         compressionRatio:
-          (
+          `${(
             ((totalOriginalSize - totalBundledSize) / totalOriginalSize) *
             100
-          ).toFixed(1) + "%",
+          ).toFixed(1)  }%`,
         sizeSaved:
-          ((totalOriginalSize - totalBundledSize) / 1024).toFixed(1) + "KB",
+          `${((totalOriginalSize - totalBundledSize) / 1024).toFixed(1)  }KB`,
       },
       bundles: bundleStats,
       recommendations: [

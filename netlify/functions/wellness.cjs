@@ -47,7 +47,7 @@ async function createWellnessCheckin(userId, checkinData) {
       .from("wellness_checkins")
       .insert({
         user_id: userId,
-        readiness: readiness,
+        readiness,
         sleep: sleep || null,
         energy: energy || null,
         mood: mood || null,

@@ -3,6 +3,13 @@
  * Provides AES-GCM encrypted storage for sensitive data like authentication tokens
  * Uses Web Crypto API for cryptographically secure encryption
  * Falls back to secure localStorage patterns when cookies aren't available
+ *
+ * USAGE GUIDE:
+ * - Use THIS service for: Authentication tokens, user credentials, sensitive data
+ * - Use storage-service-unified.js for: General app data, preferences, non-sensitive info
+ *
+ * This service is specifically designed for security-critical data and should NOT
+ * be used for general-purpose storage. For regular app data, use the unified storage service.
  */
 
 import { logger } from "./logger.js";
@@ -228,7 +235,7 @@ export class SecureStorage {
       const encryptedBuffer = await crypto.subtle.encrypt(
         {
           name: CRYPTO_CONFIG.ALGORITHM,
-          iv: iv,
+          iv,
         },
         this.cryptoKey,
         encodedText,
@@ -278,7 +285,7 @@ export class SecureStorage {
       const decryptedBuffer = await crypto.subtle.decrypt(
         {
           name: CRYPTO_CONFIG.ALGORITHM,
-          iv: iv,
+          iv,
         },
         this.cryptoKey,
         encryptedData,
@@ -384,7 +391,7 @@ export class SecureStorage {
    * @returns {string|null} Cookie value
    */
   getCookie(name) {
-    const nameEQ = name + "=";
+    const nameEQ = `${name  }=`;
     const ca = document.cookie.split(";");
 
     for (let i = 0; i < ca.length; i++) {
@@ -404,7 +411,7 @@ export class SecureStorage {
    * @param {string} name - Cookie name
    */
   deleteCookie(name) {
-    document.cookie = name + "=; Max-Age=-99999999; path=/";
+    document.cookie = `${name  }=; Max-Age=-99999999; path=/`;
   }
 
   /**

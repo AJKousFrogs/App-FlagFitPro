@@ -38,7 +38,7 @@ const getDashboardData = async (userId) => {
         type: "training",
         icon: "🏃",
         title: `Completed ${session.workout_type} Training`,
-        timeAgo: timeAgo,
+        timeAgo,
       });
     });
 
@@ -196,7 +196,7 @@ const getTrainingCalendar = async (userId) => {
     });
 
     return {
-      calendar: calendar,
+      calendar,
       upcomingSessions: sessions || [],
     };
   } catch (error) {
@@ -273,9 +273,9 @@ const getTeamChemistry = async (userId) => {
     }
 
     return {
-      teamId: teamId,
-      chemistry: chemistry,
-      chemistryDetails: chemistryDetails,
+      teamId,
+      chemistry,
+      chemistryDetails,
       members: members || [],
       memberCount: members?.length || 0,
     };

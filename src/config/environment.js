@@ -7,7 +7,7 @@ import { logger } from '../logger.js';
 
 // Detect current environment
 const getEnvironment = () => {
-  const hostname = window.location.hostname;
+  const {hostname} = window.location;
 
   // Production environments
   if (

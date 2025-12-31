@@ -61,7 +61,7 @@ async function fetchImageAsBase64(imageUrl) {
             const base64 = buffer.toString("base64");
             resolve({
               data: base64,
-              contentType: contentType,
+              contentType,
             });
           } catch (error) {
             reject(new Error(`Failed to process image: ${error.message}`));

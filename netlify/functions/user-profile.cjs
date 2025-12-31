@@ -93,10 +93,10 @@ exports.handler = async (event, context) => {
       // Flag incomplete profile data so UI can prompt user
       const profileComplete = !!(heightCm && weightKg && userInfo.birth_date && userInfo.position);
       const missingFields = [];
-      if (!heightCm) missingFields.push('height');
-      if (!weightKg) missingFields.push('weight');
-      if (!userInfo.birth_date) missingFields.push('birthDate');
-      if (!userInfo.position) missingFields.push('position');
+      if (!heightCm) {missingFields.push('height');}
+      if (!weightKg) {missingFields.push('weight');}
+      if (!userInfo.birth_date) {missingFields.push('birthDate');}
+      if (!userInfo.position) {missingFields.push('position');}
 
       const profile = {
         userId: userInfo.id,

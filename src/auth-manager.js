@@ -14,6 +14,7 @@ import {
 } from "./js/config/app-constants.js";
 import { debounce } from "./js/utils/shared.js";
 import { storageService } from "./js/services/storage-service-unified.js";
+import { OAuthHandler } from "./auth/oauth-handler.js";
 
 class AuthManager {
   constructor() {
@@ -587,39 +588,22 @@ class AuthManager {
         await import("./js/services/supabase-client.js");
       const supabase = getSupabase();
 
-      if (!supabase) {
-        throw new Error("Unable to connect to authentication service");
-      }
-
-      // Store role in localStorage temporarily (will be added to user metadata on callback)
-      localStorage.setItem("pending_oauth_role", role);
-
-      // Redirect to OAuth provider
-      const { data: _data, error } = await safeSupabaseQuery(
-        supabase.auth.signInWithOAuth({
-          provider: provider,
-          options: {
-            redirectTo: `${window.location.origin}/auth/callback`,
-            scopes: provider === "google" ? "email profile" : undefined,
-          },
-        }),
-        "Auth:OAuth",
+      // Use extracted OAuth handler
+      const result = await OAuthHandler.signInWithOAuth(
+        supabase,
+        safeSupabaseQuery,
+        provider,
+        role
       );
-
-      if (error) {
-        this.hideLoading();
-        this.showError(error.message || `${provider} sign-in failed`);
-        localStorage.removeItem("pending_oauth_role");
-        return { success: false, error: error.message };
-      }
 
       // User will be redirected to OAuth provider
       // Callback will be handled in /auth/callback page
+      return result;
     } catch (error) {
       this.hideLoading();
       this.showError(`Failed to sign in with ${provider}`);
       logger.error(`${provider} OAuth error:`, error);
-      localStorage.removeItem("pending_oauth_role");
+      OAuthHandler.clearPendingRole();
       return { success: false, error: error.message };
     }
   }
@@ -656,7 +640,7 @@ class AuthManager {
               session.user.user_metadata?.full_name ||
               session.user.email,
             email_verified: session.user.email_confirmed_at !== null || isOAuth, // OAuth users auto-verified
-            provider: provider,
+            provider,
           };
 
           // If OAuth and role was pending, update user metadata
@@ -742,7 +726,7 @@ class AuthManager {
       const { error } = await safeSupabaseQuery(
         supabase.auth.resend({
           type: "signup",
-          email: email,
+          email,
           options: {
             emailRedirectTo: `${window.location.origin}/verify-email.html`,
           },
@@ -1103,7 +1087,7 @@ class AuthManager {
       logger.warn("⚠️ ==========================================");
       logger.warn("⚠️ DEV MODE ONLY: Bypassing authentication");
       logger.warn("⚠️ This is DISABLED in production");
-      logger.warn("⚠️ Hostname check: " + (typeof window !== 'undefined' ? window.location.hostname : 'N/A'));
+      logger.warn(`⚠️ Hostname check: ${  typeof window !== 'undefined' ? window.location.hostname : 'N/A'}`);
       logger.warn("⚠️ Set ALLOW_UNAUTHENTICATED_DEV=false to test auth flow");
       logger.warn("⚠️ ==========================================");
       return true;

@@ -467,7 +467,7 @@ class TestAutomation {
   }
 
   calculateOverallCoverage() {
-    const coverage = this.testResults.coverage;
+    const {coverage} = this.testResults;
     if (!coverage.unit) {
       return 0;
     }

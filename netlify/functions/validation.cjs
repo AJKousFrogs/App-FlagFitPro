@@ -253,12 +253,13 @@ function validateField(fieldName, value, rules) {
         }
         break;
 
-      case "date":
+      case "date": {
         const date = new Date(value);
         if (isNaN(date.getTime())) {
           return `${fieldName} must be a valid date`;
         }
         break;
+      }
 
       case "object":
         if (typeof value !== "object" || value === null) {

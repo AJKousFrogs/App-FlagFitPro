@@ -110,7 +110,7 @@ const results = {
 
 async function main() {
   console.log('🚀 Performance Validation\n');
-  console.log('='.repeat(70) + '\n');
+  console.log(`${'='.repeat(70)  }\n`);
 
   // Get Supabase connection
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -188,7 +188,7 @@ async function runExplainAnalyze(supabase) {
         totalTimeMs: totalTime,
         target: CONFIG.targets.consentViewRead,
         passed: totalTime <= CONFIG.targets.consentViewRead,
-        plan: plan,
+        plan,
       };
 
       results.explainAnalyze.push(result);
@@ -488,7 +488,7 @@ function generateIndexSQL(idx) {
   if (idx.where) {
     sql += ` WHERE ${idx.where}`;
   }
-  return sql + ';';
+  return `${sql  };`;
 }
 
 // ============================================================================

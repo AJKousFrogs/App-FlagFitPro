@@ -69,7 +69,7 @@ function makeRequest(url, options = {}) {
           status: res.statusCode,
           headers: res.headers,
           body: data,
-          url: url,
+          url,
         });
       });
     });
@@ -78,7 +78,7 @@ function makeRequest(url, options = {}) {
       reject({
         error: error.message,
         code: error.code,
-        url: url,
+        url,
       });
     });
 
@@ -86,7 +86,7 @@ function makeRequest(url, options = {}) {
       req.destroy();
       reject({
         error: "Request timeout",
-        url: url,
+        url,
       });
     });
 

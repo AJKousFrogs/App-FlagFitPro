@@ -102,7 +102,7 @@ class SimpleCache {
    * Clear all cache entries
    */
   clear() {
-    const size = this.cache.size;
+    const {size} = this.cache;
     this.cache.clear();
     this.stats.deletes += size;
   }
@@ -117,10 +117,10 @@ class SimpleCache {
       size: this.cache.size,
       hitRate:
         this.stats.hits + this.stats.misses > 0
-          ? (
+          ? `${(
               (this.stats.hits / (this.stats.hits + this.stats.misses)) *
               100
-            ).toFixed(2) + "%"
+            ).toFixed(2)  }%`
           : "0%",
     };
   }

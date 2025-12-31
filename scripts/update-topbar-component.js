@@ -75,12 +75,12 @@ function updateFile(fileName) {
         if (trailingPart) {
           content = content.replace(
             matchedText,
-            topBarContainerReplacement + "\n\n        " + trailingPart[1],
+            `${topBarContainerReplacement  }\n\n        ${  trailingPart[1]}`,
           );
         } else {
           content = content.replace(
             matchedText,
-            topBarContainerReplacement + "\n\n        ",
+            `${topBarContainerReplacement  }\n\n        `,
           );
         }
 

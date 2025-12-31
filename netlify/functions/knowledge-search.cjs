@@ -94,7 +94,7 @@ exports.handler = async (event, context) => {
 
           if (category && !ALLOWED_CATEGORIES.includes(category)) {
             return createErrorResponse(
-              "Invalid category. Allowed: " + ALLOWED_CATEGORIES.join(", "),
+              `Invalid category. Allowed: ${  ALLOWED_CATEGORIES.join(", ")}`,
               400,
               "validation_error",
               requestId

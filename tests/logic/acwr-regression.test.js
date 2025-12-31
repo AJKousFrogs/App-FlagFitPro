@@ -399,7 +399,7 @@ async function testLoadCalculationsAtCheckpoints(supabase) {
   
   for (const [dayStr, expected] of Object.entries(EXPECTED_VALUES)) {
     const day = parseInt(dayStr);
-    if (day === 0) continue; // Skip day 0 (no data)
+    if (day === 0) {continue;} // Skip day 0 (no data)
     
     const checkDate = getDateForDay(day, baseDate);
     
@@ -696,7 +696,7 @@ async function runTests() {
   }
   
   // Summary
-  console.log('\n' + '═'.repeat(72));
+  console.log(`\n${  '═'.repeat(72)}`);
   console.log('TEST SUMMARY');
   console.log('═'.repeat(72));
   
@@ -708,7 +708,7 @@ async function runTests() {
   console.log(`Risk Level Classification: ${results.riskLevels ? '✅ PASS' : '❌ FAIL'}`);
   console.log(`Min Chronic Load Floor:    ${results.chronicFloor ? '✅ PASS' : '❌ FAIL'}`);
   
-  console.log('\n' + '═'.repeat(72));
+  console.log(`\n${  '═'.repeat(72)}`);
   if (allPassed) {
     console.log('✅ ALL TESTS PASSED');
   } else {

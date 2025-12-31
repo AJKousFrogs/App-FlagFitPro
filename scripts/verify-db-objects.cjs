@@ -90,7 +90,7 @@ const results = {
 
 async function main() {
   console.log('🔍 Database Objects & RLS Verification\n');
-  console.log('=' .repeat(60) + '\n');
+  console.log(`${'=' .repeat(60)  }\n`);
 
   // Get Supabase connection
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -243,7 +243,7 @@ async function checkRLS(supabase) {
     `
   });
 
-  let tableRLS = {};
+  const tableRLS = {};
   if (!error && tables) {
     tables.forEach(t => {
       tableRLS[t.tablename] = t.rowsecurity;
