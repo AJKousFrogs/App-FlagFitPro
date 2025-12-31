@@ -15,6 +15,7 @@ import {
 import { debounce } from "./js/utils/shared.js";
 import { storageService } from "./js/services/storage-service-unified.js";
 import { OAuthHandler } from "./auth/oauth-handler.js";
+import { TokenValidator } from "./auth/token-validator.js";
 
 class AuthManager {
   constructor() {
@@ -309,66 +310,24 @@ class AuthManager {
 
   // Validate stored token with backend
   async validateStoredToken(timeoutMs = AUTH.TOKEN_VALIDATION_TIMEOUT) {
-    if (!this.token) {
-      return false;
-    }
+    // Use extracted token validator
+    const result = await TokenValidator.validateToken(
+      this.token,
+      () => auth.getCurrentUser(),
+      timeoutMs
+    );
 
-    try {
-      // Add timeout to prevent hanging on slow/unresponsive API calls
-      const validationPromise = auth.getCurrentUser();
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(
-          () => reject(new Error("Token validation timeout")),
-          timeoutMs,
-        );
-      });
-
-      const response = await Promise.race([validationPromise, timeoutPromise]);
-
-      if (response.success) {
-        this.user = response.user;
+    if (result.success) {
+      if (result.user) {
+        this.user = result.user;
         await this.saveUserData();
         this.notifyLoginCallbacks();
-        return true;
-      } else {
-        logger.warn("Token validation failed on server");
-        // Don't clear auth immediately, let the page handle it
-        return false;
       }
-    } catch (error) {
-      // Handle timeout errors
-      if (error.message === "Token validation timeout") {
-        logger.warn(
-          "Token validation timed out - endpoint may be slow or unavailable",
-        );
-        // Assume token is valid to prevent redirect loops
-        logger.debug("Timeout during validation, assuming token valid");
-        return true;
-      }
-
-      // Check if this is an HTML response (endpoint doesn't exist)
-      if (error.isHTMLResponse) {
-        logger.warn(
-          "Token validation endpoint returned HTML - endpoint may not be configured:",
-          error.message,
-        );
-        // Assume token is valid to prevent redirect loops, but log the issue
-        logger.debug(
-          "HTML response during validation, assuming token valid (endpoint may be misconfigured)",
-        );
-        return true;
-      }
-
-      // Check if this is a 401 error (unauthorized)
-      if (error.status === 401) {
-        logger.warn("Token validation failed: Unauthorized");
-        return false;
-      }
-
-      // For other errors (network errors, etc.), assume token is still valid to prevent redirect loops
-      logger.error("Token validation network error:", error);
-      logger.debug("Network error during validation, assuming token valid");
       return true;
+    } else {
+      logger.warn("Token validation failed on server");
+      // Don't clear auth immediately, let the page handle it
+      return false;
     }
   }
 
