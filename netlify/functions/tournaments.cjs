@@ -2,7 +2,7 @@
 // Full CRUD operations for tournament management
 // Supports: GET (list/single), POST (create), PUT (update), DELETE
 
-const { supabaseAdmin, checkEnvVars } = require("./supabase-client.cjs");
+const { supabaseAdmin, checkEnvVars: _checkEnvVars } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 const {
   createSuccessResponse,
@@ -231,7 +231,7 @@ async function createTournament(event, _context, { userId, requestId }) {
 /**
  * Update an existing tournament
  */
-async function updateTournament(event, _context, { userId, requestId }) {
+async function updateTournament(event, _context, { userId: _userId, requestId }) {
   const queryParams = event.queryStringParameters || {};
   const { id } = queryParams;
 
@@ -339,7 +339,7 @@ async function updateTournament(event, _context, { userId, requestId }) {
 /**
  * Delete a tournament
  */
-async function deleteTournament(event, _context, { userId, requestId }) {
+async function deleteTournament(event, _context, { userId: _userId, requestId }) {
   const queryParams = event.queryStringParameters || {};
   const { id } = queryParams;
 

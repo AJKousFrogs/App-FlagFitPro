@@ -20,7 +20,7 @@
  */
 
 const { supabaseAdmin } = require('../supabase-client.cjs');
-const { DataState, wrapWithDataState, MINIMUM_DATA_REQUIREMENTS } = require('./data-state.cjs');
+const { DataState, wrapWithDataState: _wrapWithDataState, MINIMUM_DATA_REQUIREMENTS } = require('./data-state.cjs');
 
 // ============================================================================
 // CONFIGURATION
@@ -491,7 +491,7 @@ class ConsentDataReader {
     }
   }
 
-  _processConsentResults(data, context) {
+  _processConsentResults(data, _context) {
     if (!data || data.length === 0) {
       return {
         data: [],

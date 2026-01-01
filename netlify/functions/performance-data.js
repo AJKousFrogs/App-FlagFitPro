@@ -5,6 +5,14 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
 const { createErrorResponse } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
+// CORS Headers for cross-origin requests
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+  "Content-Type": "application/json",
+};
+
 // ============================================================================
 // DATA MAPPERS - Reusable transformation functions
 // ============================================================================
@@ -117,7 +125,7 @@ exports.handler = async (event, context) => {
 // Physical Measurements Handler
 async function handleMeasurements(method, userId, body, query) {
   switch (method) {
-    case "GET":
+    case "GET": {
       const timeframe = query?.timeframe || "6m";
       const page = parseInt(query?.page || "1", 10);
       const limit = Math.min(parseInt(query?.limit || "50", 10), 100);
@@ -181,8 +189,9 @@ async function handleMeasurements(method, userId, body, query) {
           }),
         };
       }
+    }
 
-    case "POST":
+    case "POST": {
       const measurementData = JSON.parse(body);
 
       // Validate data
@@ -252,6 +261,7 @@ async function handleMeasurements(method, userId, body, query) {
           body: JSON.stringify({ error: "Failed to save measurement" }),
         };
       }
+    }
 
     default:
       return {
@@ -264,7 +274,7 @@ async function handleMeasurements(method, userId, body, query) {
 // Performance Tests Handler
 async function handlePerformanceTests(method, userId, body, query) {
   switch (method) {
-    case "GET":
+    case "GET": {
       const testType = query?.testType;
       const timeframe = query?.timeframe || "12m";
       const page = parseInt(query?.page || "1", 10);
@@ -333,8 +343,9 @@ async function handlePerformanceTests(method, userId, body, query) {
           }),
         };
       }
+    }
 
-    case "POST":
+    case "POST": {
       const testData = JSON.parse(body);
 
       try {
@@ -389,6 +400,7 @@ async function handlePerformanceTests(method, userId, body, query) {
           body: JSON.stringify({ error: "Failed to save performance test" }),
         };
       }
+    }
 
     default:
       return {
@@ -401,7 +413,7 @@ async function handlePerformanceTests(method, userId, body, query) {
 // Wellness Data Handler
 async function handleWellness(method, userId, body, query) {
   switch (method) {
-    case "GET":
+    case "GET": {
       const timeframe = query?.timeframe || "30d";
       const startDate = getStartDateForTimeframe(timeframe);
 
@@ -438,8 +450,9 @@ async function handleWellness(method, userId, body, query) {
           }),
         };
       }
+    }
 
-    case "POST":
+    case "POST": {
       const wellnessData = JSON.parse(body);
 
       try {
@@ -488,6 +501,7 @@ async function handleWellness(method, userId, body, query) {
           body: JSON.stringify({ error: "Failed to save wellness data" }),
         };
       }
+    }
 
     default:
       return {
@@ -500,7 +514,7 @@ async function handleWellness(method, userId, body, query) {
 // Supplements Handler
 async function handleSupplements(method, userId, body, query) {
   switch (method) {
-    case "GET":
+    case "GET": {
       const timeframe = query?.timeframe || "30d";
       const startDate = getStartDateForTimeframe(timeframe);
 
@@ -545,8 +559,9 @@ async function handleSupplements(method, userId, body, query) {
           }),
         };
       }
+    }
 
-    case "POST":
+    case "POST": {
       const supplementData = JSON.parse(body);
 
       try {
@@ -593,6 +608,7 @@ async function handleSupplements(method, userId, body, query) {
           body: JSON.stringify({ error: "Failed to save supplement data" }),
         };
       }
+    }
 
     default:
       return {
@@ -605,7 +621,7 @@ async function handleSupplements(method, userId, body, query) {
 // Injuries Handler - Fully migrated to Supabase
 async function handleInjuries(method, userId, body, query) {
   switch (method) {
-    case "GET":
+    case "GET": {
       const status = query?.status; // active, recovered, all
 
       // Try Supabase first
@@ -672,8 +688,9 @@ async function handleInjuries(method, userId, body, query) {
           }),
         };
       }
+    }
 
-    case "POST":
+    case "POST": {
       const injuryData = JSON.parse(body);
 
       // Validate required fields
@@ -751,9 +768,10 @@ async function handleInjuries(method, userId, body, query) {
           }),
         };
       }
+    }
 
     case "PATCH":
-    case "PUT":
+    case "PUT": {
       const updateData = JSON.parse(body);
       const pathSegments = query?.path?.split("/") || [];
       const injuryId = pathSegments[pathSegments.length - 1] || query?.id;
@@ -837,6 +855,7 @@ async function handleInjuries(method, userId, body, query) {
           }),
         };
       }
+    }
 
     default:
       return {

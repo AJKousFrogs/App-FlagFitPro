@@ -10,9 +10,9 @@ import { csrfProtection } from "./js/security/csrf-protection.js";
 import { errorHandler } from "./js/utils/unified-error-handler.js";
 import {
   AUTH,
-  ERROR_MESSAGES,
+  ERROR_MESSAGES as _ERROR_MESSAGES,
 } from "./js/config/app-constants.js";
-import { debounce } from "./js/utils/shared.js";
+import { debounce as _debounce } from "./js/utils/shared.js";
 import { storageService } from "./js/services/storage-service-unified.js";
 import { OAuthHandler } from "./auth/oauth-handler.js";
 import { TokenValidator } from "./auth/token-validator.js";

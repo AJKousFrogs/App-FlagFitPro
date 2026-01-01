@@ -364,11 +364,12 @@ export class PerformanceCharts {
     });
 
     Object.keys(grouped).forEach((testType) => {
+      const color = colors[testType] || "#667eea";
       datasets.push({
         label: testType.replace(/([A-Z])/g, " $1").trim(),
         data: grouped[testType].sort((a, b) => new Date(a.x) - new Date(b.x)),
-        borderColor: colors[testType] || "#667eea",
-        backgroundColor: `${colors[testType]  }20` || "#667eea20",
+        borderColor: color,
+        backgroundColor: `${color}20`,
         borderWidth: 2,
         fill: false,
         tension: 0.1,

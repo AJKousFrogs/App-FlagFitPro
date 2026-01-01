@@ -9,7 +9,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { supabase, pool, checkDatabaseHealth } from "./utils/database.js";
+import { supabase, pool as _pool, checkDatabaseHealth } from "./utils/database.js";
 import { safeFormatDate } from "./utils/query-helper.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {

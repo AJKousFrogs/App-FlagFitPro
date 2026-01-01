@@ -246,7 +246,7 @@ exports.handler = async (event, context) => {
     allowedMethods: ["POST"],
     rateLimitType: "AUTH", // Strict rate limiting for email sending
     requireAuth: false, // Email sending may be called during registration
-    handler: async (event, _context, { userId }) => {
+    handler: async (event, _context, { userId: _userId }) => {
       const transporter = getEmailTransporter();
       if (!transporter) {
         return createErrorResponse(
@@ -272,7 +272,7 @@ exports.handler = async (event, context) => {
       let mailOptions;
 
       switch (type) {
-        case "verification":
+        case "verification": {
           if (!verificationUrl && !token) {
             return createErrorResponse(
               "Verification URL or token is required",
@@ -295,6 +295,7 @@ exports.handler = async (event, context) => {
             text: `Hi ${name || "User"},\n\nPlease verify your email address by clicking this link:\n${url}\n\nThis link expires in 24 hours.\n\nBest regards,\nThe FlagFit Pro Team`,
           };
           break;
+        }
 
         case "parental_consent":
           if (!verificationUrl) {

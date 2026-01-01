@@ -415,7 +415,7 @@ router.get("/position-performance", async (req, res) => {
         .eq("is_current", true);
 
       if (positionHistory?.length > 0) {
-        const positionIds = positionHistory.map((p) => p.position_id);
+        const _positionIds = positionHistory.map((p) => p.position_id);
 
         const { data: analytics } = await supabase
           .from("training_analytics")

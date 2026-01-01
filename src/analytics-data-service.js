@@ -5,8 +5,6 @@ import { logger } from "./logger.js";
 import { API_BASE_URL } from "./api-config.js";
 import { CHART_MOCK_DATA } from "./js/config/chart-mock-data.js";
 
-/* global XMLHttpRequest */
-
 class AnalyticsDataService {
   constructor() {
     this.baseURL = API_BASE_URL;

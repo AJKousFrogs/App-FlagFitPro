@@ -147,7 +147,7 @@ async function getHeatmapData(userId, timeRange) {
 /**
  * Generate mock heatmap data for development
  */
-function generateMockHeatmapData(timeRange) {
+function _generateMockHeatmapData(timeRange) {
   const cells = [];
   const endDate = new Date();
   const startDate = new Date();

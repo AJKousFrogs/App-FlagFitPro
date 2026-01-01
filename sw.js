@@ -1,4 +1,4 @@
-/* global self, caches, clients, Response, Headers */
+/* global clients */
 /* eslint-disable no-console */
 // FlagFit Pro - Service Worker
 // Version 1.0.2

@@ -160,7 +160,7 @@ function determinePriority(context) {
  */
 function shouldFlagForReview(decision) {
   const {
-    userId,
+    userId: _userId,
     userAge,
     topic,
     recommendation,
@@ -266,7 +266,7 @@ async function createReviewRequest(data) {
  * Get pending reviews (for reviewers/admins)
  */
 async function getPendingReviews(filters = {}) {
-  const { priority, status = 'pending', limit = 50 } = filters;
+  const { priority: _priority, status: _status = 'pending', limit = 50 } = filters;
   
   const query = supabaseAdmin
     .from("ai_coach_interactions")
@@ -359,7 +359,7 @@ async function getReviewStats() {
   };
   
   outcomes?.forEach(o => {
-    if (o.review_outcome && outcomeBreakdown.hasOwnProperty(o.review_outcome)) {
+    if (o.review_outcome && Object.hasOwn(outcomeBreakdown, o.review_outcome)) {
       outcomeBreakdown[o.review_outcome]++;
     }
   });

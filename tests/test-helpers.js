@@ -735,6 +735,7 @@ export const validateTestData = (data, schema) => {
  * @param {number} ms - Milliseconds to wait
  * @returns {Promise} Promise that resolves after delay
  */
+// eslint-disable-next-line no-promise-executor-return
 export const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**

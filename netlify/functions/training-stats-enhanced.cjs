@@ -6,7 +6,7 @@
 const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
-  createErrorResponse,
+  createErrorResponse: _createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 

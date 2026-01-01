@@ -431,7 +431,7 @@ export class AnswerGenerator {
         text.includes("benefits")
       ) {
         const benefitMatch = text.match(
-          /(?:improves|enhances|benefits)\s+([^\.]+)/i,
+          /(?:improves|enhances|benefits)\s+([^.]+)/i,
         );
         if (benefitMatch) {
           benefits.push(benefitMatch[1].trim());
@@ -448,7 +448,7 @@ export class AnswerGenerator {
   extractBenefitsFromText(text) {
     const benefits = [];
     const benefitMatches = text.matchAll(
-      /(?:improves|enhances|helps|benefits)\s+([^\.]+)/gi,
+      /(?:improves|enhances|helps|benefits)\s+([^.]+)/gi,
     );
     for (const match of benefitMatches) {
       benefits.push(match[1].trim());

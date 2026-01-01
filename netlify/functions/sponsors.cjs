@@ -11,7 +11,7 @@ exports.handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: false, // Sponsors are public data for login page
-    handler: async (event, _context, { userId }) => {
+    handler: async (event, _context, { userId: _userId }) => {
       // Get active sponsors from database
       let sponsors = [];
       try {

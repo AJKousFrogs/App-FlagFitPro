@@ -133,7 +133,7 @@ async function checkViews(supabase) {
   // Check each view by attempting to query it directly
   // This is more reliable than querying information_schema through Supabase
   for (const view of REQUIRED_VIEWS) {
-    const { data, error } = await supabase
+    const { data: _data, error } = await supabase
       .from(view)
       .select('*')
       .limit(0);  // Don't fetch any rows, just check if view exists
@@ -356,7 +356,7 @@ function printSummary() {
 
 // Create the SQL RPC function if it doesn't exist
 // This is a helper that allows running arbitrary SQL for verification
-async function ensureSqlRpc(supabase) {
+async function _ensureSqlRpc(_supabase) {
   // This function should already exist in production
   // If not, verification will use fallback methods
 }

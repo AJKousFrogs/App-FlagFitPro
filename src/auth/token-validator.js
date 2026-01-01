@@ -116,15 +116,15 @@ export class TokenValidator {
    * @returns {boolean} True if token appears expired
    */
   static isTokenExpired(token) {
-    if (!token) return true;
+    if (!token) {return true;}
 
     try {
       // Simple JWT expiration check (without full validation)
       const parts = token.split(".");
-      if (parts.length !== 3) return true;
+      if (parts.length !== 3) {return true;}
 
       const payload = JSON.parse(atob(parts[1]));
-      if (!payload.exp) return false; // No expiration claim
+      if (!payload.exp) {return false;} // No expiration claim
 
       const expirationTime = payload.exp * 1000; // Convert to milliseconds
       const currentTime = Date.now();
@@ -143,11 +143,11 @@ export class TokenValidator {
    * @returns {string|null} User ID or null
    */
   static extractUserId(token) {
-    if (!token) return null;
+    if (!token) {return null;}
 
     try {
       const parts = token.split(".");
-      if (parts.length !== 3) return null;
+      if (parts.length !== 3) {return null;}
 
       const payload = JSON.parse(atob(parts[1]));
       return payload.sub || payload.userId || payload.user_id || null;
@@ -163,11 +163,11 @@ export class TokenValidator {
    * @returns {Object|null} Token payload or null
    */
   static extractPayload(token) {
-    if (!token) return null;
+    if (!token) {return null;}
 
     try {
       const parts = token.split(".");
-      if (parts.length !== 3) return null;
+      if (parts.length !== 3) {return null;}
 
       return JSON.parse(atob(parts[1]));
     } catch (error) {

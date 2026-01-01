@@ -43,101 +43,96 @@ function isAdmin(user) {
  * Get database health metrics
  */
 async function getHealthMetrics() {
-  try {
-    // Get database connection stats
-    const { data: connectionTest, error: connError } = await supabaseAdmin
-      .from("users")
-      .select("id")
-      .limit(1);
+  // Get database connection stats
+  const { data: connectionTest, error: connError } = await supabaseAdmin
+    .from("users")
+    .select("id")
+    .limit(1);
 
-    const isConnected = !connError && connectionTest !== null;
+  const isConnected = !connError && connectionTest !== null;
 
-    // Get table counts
-    const tables = [
-      "users",
-      "training_sessions",
-      "teams",
-      "posts",
-      "tournaments",
-      "games",
-    ];
-    const tableStats = {};
+  // Get table counts
+  const tables = [
+    "users",
+    "training_sessions",
+    "teams",
+    "posts",
+    "tournaments",
+    "games",
+  ];
+  const tableStats = {};
 
-    await Promise.all(
-      tables.map(async (table) => {
-        try {
-          const { count, error } = await supabaseAdmin
-            .from(table)
-            .select("*", { count: "exact", head: true });
+  await Promise.all(
+    tables.map(async (table) => {
+      try {
+        const { count, error } = await supabaseAdmin
+          .from(table)
+          .select("*", { count: "exact", head: true });
 
-          if (!error) {
-            tableStats[table] = count || 0;
-          }
-        } catch {
-          tableStats[table] = "error";
+        if (!error) {
+          tableStats[table] = count || 0;
         }
-      }),
-    );
+      } catch {
+        tableStats[table] = "error";
+      }
+    }),
+  );
 
-    // Calculate total database size estimate (mock for now)
-    const totalRows = Object.values(tableStats).reduce((sum, val) => {
-      return sum + (typeof val === "number" ? val : 0);
-    }, 0);
+  // Calculate total database size estimate (mock for now)
+  const totalRows = Object.values(tableStats).reduce((sum, val) => {
+    return sum + (typeof val === "number" ? val : 0);
+  }, 0);
 
-    return [
-      {
-        name: "Database Connection",
-        value: isConnected ? "Connected" : "Disconnected",
-        status: isConnected ? "healthy" : "error",
-        severity: isConnected ? "success" : "danger",
-        icon: "pi pi-check-circle",
-        color: isConnected ? "#10c96b" : "#ef4444",
-      },
-      {
-        name: "Total Records",
-        value: totalRows.toLocaleString(),
-        status: "healthy",
-        severity: "success",
-        icon: "pi pi-database",
-        color: "#10c96b",
-      },
-      {
-        name: "Users Table",
-        value: (tableStats.users || 0).toLocaleString(),
-        status: "healthy",
-        severity: "success",
-        icon: "pi pi-users",
-        color: "#10c96b",
-      },
-      {
-        name: "Training Sessions",
-        value: (tableStats.training_sessions || 0).toLocaleString(),
-        status: "healthy",
-        severity: "success",
-        icon: "pi pi-calendar",
-        color: "#10c96b",
-      },
-      {
-        name: "Cache Status",
-        value: "Active",
-        status: "healthy",
-        severity: "success",
-        icon: "pi pi-bolt",
-        color: "#10c96b",
-      },
-      {
-        name: "Last Backup",
-        value: "2 hours ago",
-        status: "healthy",
-        severity: "success",
-        icon: "pi pi-save",
-        color: "#10c96b",
-      },
-    ];
-  } catch (error) {
-    // Log error and re-throw
-    throw error;
-  }
+  return [
+    {
+      name: "Database Connection",
+      value: isConnected ? "Connected" : "Disconnected",
+      status: isConnected ? "healthy" : "error",
+      severity: isConnected ? "success" : "danger",
+      icon: "pi pi-check-circle",
+      color: isConnected ? "#10c96b" : "#ef4444",
+    },
+    {
+      name: "Total Records",
+      value: totalRows.toLocaleString(),
+      status: "healthy",
+      severity: "success",
+      icon: "pi pi-database",
+      color: "#10c96b",
+    },
+    {
+      name: "Users Table",
+      value: (tableStats.users || 0).toLocaleString(),
+      status: "healthy",
+      severity: "success",
+      icon: "pi pi-users",
+      color: "#10c96b",
+    },
+    {
+      name: "Training Sessions",
+      value: (tableStats.training_sessions || 0).toLocaleString(),
+      status: "healthy",
+      severity: "success",
+      icon: "pi pi-calendar",
+      color: "#10c96b",
+    },
+    {
+      name: "Cache Status",
+      value: "Active",
+      status: "healthy",
+      severity: "success",
+      icon: "pi pi-bolt",
+      color: "#10c96b",
+    },
+    {
+      name: "Last Backup",
+      value: "2 hours ago",
+      status: "healthy",
+      severity: "success",
+      icon: "pi pi-save",
+      color: "#10c96b",
+    },
+  ];
 }
 
 // USDA FoodData Central API Key (required)
@@ -292,6 +287,7 @@ async function syncUSDAData(options = {}) {
       
       // Rate limiting
       if (page < maxPages) {
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
@@ -693,35 +689,30 @@ async function getSyncStatus() {
  * @returns {Object} Mock USDA stats (PLACEHOLDER)
  */
 async function getUSDADataStats() {
-  try {
-    // Try to query actual usda_foods table
-    const { count, error } = await supabaseAdmin
-      .from("usda_foods")
-      .select("*", { count: "exact", head: true });
+  // Try to query actual usda_foods table
+  const { count, error } = await supabaseAdmin
+    .from("usda_foods")
+    .select("*", { count: "exact", head: true });
 
-    if (!error && count !== null) {
-      return {
-        totalFoods: count,
-        lastUpdated: new Date().toISOString(),
-        categories: 25, // Would need separate query
-        nutrientsTracked: 150,
-        _isMock: false,
-      };
-    }
-
-    // Fallback to mock stats if table doesn't exist
+  if (!error && count !== null) {
     return {
-      totalFoods: 0,
-      lastUpdated: null,
-      categories: 0,
-      nutrientsTracked: 0,
-      _isMock: true,
-      _note: "USDA data not yet synced - table does not exist or is empty",
+      totalFoods: count,
+      lastUpdated: new Date().toISOString(),
+      categories: 25, // Would need separate query
+      nutrientsTracked: 150,
+      _isMock: false,
     };
-  } catch (error) {
-    // Log error and re-throw
-    throw error;
   }
+
+  // Fallback to mock stats if table doesn't exist
+  return {
+    totalFoods: 0,
+    lastUpdated: null,
+    categories: 0,
+    nutrientsTracked: 0,
+    _isMock: true,
+    _note: "USDA data not yet synced - table does not exist or is empty",
+  };
 }
 
 /**
@@ -736,115 +727,105 @@ async function getUSDADataStats() {
  * @returns {Object} Mock research stats (PLACEHOLDER)
  */
 async function getResearchDataStats() {
-  try {
-    // Try to query actual research_studies table
-    const { count: studiesCount, error: studiesError } = await supabaseAdmin
-      .from("research_studies")
-      .select("*", { count: "exact", head: true });
+  // Try to query actual research_studies table
+  const { count: studiesCount, error: studiesError } = await supabaseAdmin
+    .from("research_studies")
+    .select("*", { count: "exact", head: true });
 
-    const { count: protocolsCount, error: protocolsError } = await supabaseAdmin
-      .from("recovery_protocols")
-      .select("*", { count: "exact", head: true });
+  const { count: protocolsCount, error: protocolsError } = await supabaseAdmin
+    .from("recovery_protocols")
+    .select("*", { count: "exact", head: true });
 
-    if (!studiesError && !protocolsError && studiesCount !== null) {
-      return {
-        totalStudies: studiesCount || 0,
-        lastUpdated: new Date().toISOString(),
-        categories: 12, // Would need separate query
-        protocolsTracked: protocolsCount || 0,
-        _isMock: false,
-      };
-    }
-
-    // Fallback to mock stats if tables don't exist
+  if (!studiesError && !protocolsError && studiesCount !== null) {
     return {
-      totalStudies: 0,
-      lastUpdated: null,
-      categories: 0,
-      protocolsTracked: 0,
-      _isMock: true,
-      _note: "Research data not yet synced - tables do not exist or are empty",
+      totalStudies: studiesCount || 0,
+      lastUpdated: new Date().toISOString(),
+      categories: 12, // Would need separate query
+      protocolsTracked: protocolsCount || 0,
+      _isMock: false,
     };
-  } catch (error) {
-    // Log error and re-throw
-    throw error;
   }
+
+  // Fallback to mock stats if tables don't exist
+  return {
+    totalStudies: 0,
+    lastUpdated: null,
+    categories: 0,
+    protocolsTracked: 0,
+    _isMock: true,
+    _note: "Research data not yet synced - tables do not exist or are empty",
+  };
 }
 
 /**
  * Main handler function
  */
 async function handleRequest(event, _context, { userId: _userId, user: _user }) {
-  try {
-    // Extract endpoint from path
-    const path = event.path.replace("/.netlify/functions/admin", "") || "/";
-    const endpoint = path.split("?")[0]; // Remove query params
+  // Extract endpoint from path
+  const path = event.path.replace("/.netlify/functions/admin", "") || "/";
+  const endpoint = path.split("?")[0]; // Remove query params
 
-    // Route to appropriate handler
-    switch (endpoint) {
-      case "/health-metrics":
-      case "": {
-        if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405);
-        }
-        const metrics = await getHealthMetrics();
-        return createSuccessResponse(metrics);
+  // Route to appropriate handler
+  switch (endpoint) {
+    case "/health-metrics":
+    case "": {
+      if (event.httpMethod !== "GET") {
+        return createErrorResponse("Method not allowed", 405);
       }
-
-      case "/sync-usda": {
-        if (event.httpMethod !== "POST") {
-          return createErrorResponse("Method not allowed", 405);
-        }
-        const usdaResult = await syncUSDAData();
-        return createSuccessResponse(usdaResult, usdaResult.success);
-      }
-
-      case "/sync-research": {
-        if (event.httpMethod !== "POST") {
-          return createErrorResponse("Method not allowed", 405);
-        }
-        const researchResult = await syncResearchData();
-        return createSuccessResponse(researchResult, researchResult.success);
-      }
-
-      case "/create-backup": {
-        if (event.httpMethod !== "POST") {
-          return createErrorResponse("Method not allowed", 405);
-        }
-        const backup = await createDatabaseBackup(); // Now async
-        return createSuccessResponse(backup);
-      }
-
-      case "/sync-status": {
-        if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405);
-        }
-        const syncStatus = await getSyncStatus();
-        return createSuccessResponse(syncStatus);
-      }
-
-      case "/usda-stats": {
-        if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405);
-        }
-        const usdaStats = await getUSDADataStats();
-        return createSuccessResponse(usdaStats);
-      }
-
-      case "/research-stats": {
-        if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405);
-        }
-        const researchStats = await getResearchDataStats();
-        return createSuccessResponse(researchStats);
-      }
-
-      default:
-        return createErrorResponse("Endpoint not found", 404);
+      const metrics = await getHealthMetrics();
+      return createSuccessResponse(metrics);
     }
-  } catch (error) {
-    // Log error and re-throw
-    throw error;
+
+    case "/sync-usda": {
+      if (event.httpMethod !== "POST") {
+        return createErrorResponse("Method not allowed", 405);
+      }
+      const usdaResult = await syncUSDAData();
+      return createSuccessResponse(usdaResult, usdaResult.success);
+    }
+
+    case "/sync-research": {
+      if (event.httpMethod !== "POST") {
+        return createErrorResponse("Method not allowed", 405);
+      }
+      const researchResult = await syncResearchData();
+      return createSuccessResponse(researchResult, researchResult.success);
+    }
+
+    case "/create-backup": {
+      if (event.httpMethod !== "POST") {
+        return createErrorResponse("Method not allowed", 405);
+      }
+      const backup = await createDatabaseBackup(); // Now async
+      return createSuccessResponse(backup);
+    }
+
+    case "/sync-status": {
+      if (event.httpMethod !== "GET") {
+        return createErrorResponse("Method not allowed", 405);
+      }
+      const syncStatus = await getSyncStatus();
+      return createSuccessResponse(syncStatus);
+    }
+
+    case "/usda-stats": {
+      if (event.httpMethod !== "GET") {
+        return createErrorResponse("Method not allowed", 405);
+      }
+      const usdaStats = await getUSDADataStats();
+      return createSuccessResponse(usdaStats);
+    }
+
+    case "/research-stats": {
+      if (event.httpMethod !== "GET") {
+        return createErrorResponse("Method not allowed", 405);
+      }
+      const researchStats = await getResearchDataStats();
+      return createSuccessResponse(researchStats);
+    }
+
+    default:
+      return createErrorResponse("Endpoint not found", 404);
   }
 }
 

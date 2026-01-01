@@ -341,7 +341,7 @@ class UnifiedStorageService {
     let size = 0;
     try {
       for (const key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
+        if (Object.hasOwn(localStorage, key)) {
           size += localStorage[key].length + key.length;
         }
       }
@@ -376,9 +376,8 @@ export { UnifiedStorageService };
  * @deprecated Use storageService.set() instead. This function will be removed in a future version.
  */
 export const saveToStorage = (key, data) => {
-  if (typeof console !== 'undefined' && console.warn) {
-    console.warn('[DEPRECATED] saveToStorage() is deprecated. Use storageService.set() instead.');
-  }
+  // eslint-disable-next-line no-console
+  if (typeof console !== 'undefined' && console.warn) {console.warn('[DEPRECATED] saveToStorage() is deprecated. Use storageService.set() instead.');}
   return storageService.set(key, data);
 };
 
@@ -386,9 +385,8 @@ export const saveToStorage = (key, data) => {
  * @deprecated Use storageService.get() instead. This function will be removed in a future version.
  */
 export const getFromStorage = (key, defaultValue) => {
-  if (typeof console !== 'undefined' && console.warn) {
-    console.warn('[DEPRECATED] getFromStorage() is deprecated. Use storageService.get() instead.');
-  }
+  // eslint-disable-next-line no-console
+  if (typeof console !== 'undefined' && console.warn) {console.warn('[DEPRECATED] getFromStorage() is deprecated. Use storageService.get() instead.');}
   return storageService.get(key, defaultValue);
 };
 
@@ -396,8 +394,7 @@ export const getFromStorage = (key, defaultValue) => {
  * @deprecated Use storageService.remove() instead. This function will be removed in a future version.
  */
 export const removeFromStorage = (key) => {
-  if (typeof console !== 'undefined' && console.warn) {
-    console.warn('[DEPRECATED] removeFromStorage() is deprecated. Use storageService.remove() instead.');
-  }
+  // eslint-disable-next-line no-console
+  if (typeof console !== 'undefined' && console.warn) {console.warn('[DEPRECATED] removeFromStorage() is deprecated. Use storageService.remove() instead.');}
   return storageService.remove(key);
 };

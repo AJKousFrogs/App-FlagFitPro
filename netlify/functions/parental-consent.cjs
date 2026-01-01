@@ -226,10 +226,10 @@ exports.handler = async (event, context) => {
             const verificationUrl = `${appUrl}/consent/verify?token=${verificationToken}`;
             
             // Use internal Netlify function call
-            const { handler: sendEmailHandler } = require('./send-email.cjs');
+            const { handler: _sendEmailHandler } = require('./send-email.cjs');
             
             // Create a mock event for the send-email function
-            const emailEvent = {
+            const _emailEvent = {
               httpMethod: 'POST',
               body: JSON.stringify({
                 type: 'parental_consent',

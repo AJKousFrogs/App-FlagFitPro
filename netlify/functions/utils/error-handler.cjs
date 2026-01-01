@@ -332,6 +332,7 @@ async function tryCatch(operation, context = "Operation", options = {}) {
       }
 
       // Exponential backoff before retry
+      // eslint-disable-next-line no-promise-executor-return
       await new Promise(resolve => setTimeout(resolve, 2**attempt * 100));
     }
   }

@@ -107,7 +107,7 @@ async function searchUSDAFoods(query, pageNumber = 1, pageSize = 50) {
 /**
  * Get detailed food information
  */
-async function getFoodDetails(fdcId) {
+async function _getFoodDetails(fdcId) {
   const response = await fetch(
     `${USDA_BASE_URL}/food/${fdcId}?api_key=${USDA_API_KEY}&format=full`
   );
@@ -240,7 +240,7 @@ async function handleSync(event) {
   let body = {};
   try {
     body = JSON.parse(event.body || '{}');
-  } catch (e) {
+  } catch (_e) {
     // Use defaults
   }
   
@@ -295,6 +295,7 @@ async function handleSync(event) {
         
         // Rate limiting - USDA API has limits
         if (page < maxPages) {
+          // eslint-disable-next-line no-promise-executor-return
           await new Promise(resolve => setTimeout(resolve, 100));
         }
       }
@@ -482,7 +483,7 @@ async function handleSearch(event) {
       queryBuilder = queryBuilder.eq('data_type', dataType);
     }
     
-    const { data, error, count } = await queryBuilder;
+    const { data, error, count: _dbCount } = await queryBuilder;
     
     if (error) {throw error;}
     
@@ -513,7 +514,7 @@ async function handleSearch(event) {
 /**
  * Main handler
  */
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   // CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',

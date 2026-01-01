@@ -369,7 +369,7 @@ const sendTestNotification = async (userId) => {
 /**
  * Send notification to multiple users (for team announcements, etc.)
  */
-const sendBulkNotification = async (userIds, notification) => {
+const _sendBulkNotification = async (userIds, notification) => {
   checkEnvVars();
   
   const results = {

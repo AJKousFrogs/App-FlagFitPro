@@ -143,7 +143,7 @@ const getTeamChemistry = async (userId) => {
     const teamId = teamMemberships[0].team_id;
 
     // Get team members
-    const { data: members, error: membersError } = await supabaseAdmin
+    const { data: _members, error: membersError } = await supabaseAdmin
       .from("team_members")
       .select("user_id")
       .eq("team_id", teamId);

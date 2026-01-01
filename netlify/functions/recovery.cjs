@@ -423,9 +423,9 @@ const RECOVERY_PROTOCOLS = {
  */
 function generateRecoveryRecommendations(params) {
   const {
-    trainingType,        // 'strength', 'speed', 'agility', 'game', 'conditioning'
+    trainingType: _trainingType,        // 'strength', 'speed', 'agility', 'game', 'conditioning'
     intensity,           // 1-10 scale
-    duration,            // minutes
+    duration: _duration,            // minutes
     muscleGroups = [],   // ['legs', 'upper_body', 'core', 'full_body']
     timeAvailable,       // minutes available for recovery
     equipment = [],      // ['foam_roller', 'massage_gun', 'ice_bath', 'sauna', 'compression']

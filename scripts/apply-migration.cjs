@@ -67,9 +67,9 @@ async function applyMigration() {
       "─────────────────────────────────────────────────────────────────────────────",
     );
     console.log("1. Go to your Supabase Dashboard → SQL Editor");
+    const projectId = supabaseUrl.split("//")[1]?.split(".")[0] || "your-project";
     console.log(
-      `   https://supabase.com/dashboard/project/${ 
-        supabaseUrl.split("//")[1]?.split(".")[0]}` || "your-project",
+      `   https://supabase.com/dashboard/project/${projectId}`,
     );
     console.log("2. Copy and paste the following SQL:\n");
     console.log("─".repeat(80));

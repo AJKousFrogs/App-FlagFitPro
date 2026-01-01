@@ -81,7 +81,7 @@ exports.handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: false, // Health checks should be public
-    handler: async (event, _context, { requestId }) => {
+    handler: async (_event, _context, { requestId: _requestId }) => {
       const startTime = Date.now();
 
       // Run health checks in parallel

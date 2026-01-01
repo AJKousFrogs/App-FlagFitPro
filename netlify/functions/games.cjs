@@ -3,7 +3,7 @@
 // Supports team games (coach/admin) and personal games (player domestic leagues)
 
 const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
-const { validate, sanitize } = require("./validation.cjs");
+const { validate: _validate, sanitize } = require("./validation.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -12,7 +12,7 @@ const {
   handleAuthorizationError,
 } = require("./utils/error-handler.cjs");
 const {
-  checkTeamMembership,
+  checkTeamMembership: _checkTeamMembership,
   getUserTeamId,
 } = require("./utils/auth-helper.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
@@ -181,7 +181,7 @@ const getGames = async (userId, options = {}) => {
     }
 
     // Apply visibility filtering
-    let filteredGames = [];
+    const filteredGames = [];
 
     for (const game of allGames || []) {
       // Team games - visible to team members
@@ -310,11 +310,11 @@ const updateGame = async (userId, gameId, updates) => {
     };
 
     // Map fields
-    if (sanitizedUpdates.teamScore !== undefined) updateObj.our_score = sanitizedUpdates.teamScore;
-    if (sanitizedUpdates.opponentScore !== undefined) updateObj.opponent_score = sanitizedUpdates.opponentScore;
-    if (sanitizedUpdates.location !== undefined) updateObj.location = sanitizedUpdates.location;
-    if (sanitizedUpdates.notes !== undefined) updateObj.notes = sanitizedUpdates.notes;
-    if (sanitizedUpdates.status !== undefined) updateObj.status = sanitizedUpdates.status;
+    if (sanitizedUpdates.teamScore !== undefined) {updateObj.our_score = sanitizedUpdates.teamScore;}
+    if (sanitizedUpdates.opponentScore !== undefined) {updateObj.opponent_score = sanitizedUpdates.opponentScore;}
+    if (sanitizedUpdates.location !== undefined) {updateObj.location = sanitizedUpdates.location;}
+    if (sanitizedUpdates.notes !== undefined) {updateObj.notes = sanitizedUpdates.notes;}
+    if (sanitizedUpdates.status !== undefined) {updateObj.status = sanitizedUpdates.status;}
     if (sanitizedUpdates.weather !== undefined || sanitizedUpdates.temperature !== undefined) {
       updateObj.weather_conditions = {
         condition: sanitizedUpdates.weather || game.weather_conditions?.condition,
@@ -550,7 +550,7 @@ const manageConsent = async (playerId, coachId, action, options = {}) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {throw error;}
       return { success: true, message: "Consent granted", data };
     } 
     else if (action === "revoke") {
@@ -566,7 +566,7 @@ const manageConsent = async (playerId, coachId, action, options = {}) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {throw error;}
       return { success: true, message: "Consent revoked", data };
     }
     else if (action === "list") {
@@ -579,7 +579,7 @@ const manageConsent = async (playerId, coachId, action, options = {}) => {
         `)
         .eq("player_id", playerId);
 
-      if (error) throw error;
+      if (error) {throw error;}
       return data || [];
     }
 

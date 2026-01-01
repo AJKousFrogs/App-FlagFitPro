@@ -185,7 +185,7 @@ exports.handler = async (event, context) => {
 
     // Get sessions from training_sessions table
     // Include both rpe and intensity_level (fallback for RPE)
-    const { data: sessions, error: sessErr } = await supabaseAdmin
+    let { data: sessions, error: sessErr } = await supabaseAdmin
       .from("training_sessions")
       .select("session_date, date, duration_minutes, rpe, intensity_level")
       .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)

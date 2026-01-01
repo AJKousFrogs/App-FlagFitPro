@@ -482,7 +482,7 @@ async function main() {
   const checker = new AppPerformanceChecker();
 
   switch (command) {
-    case "monitor":
+    case "monitor": {
       console.log(
         "🔄 Starting continuous performance monitoring (Ctrl+C to stop)...\n",
       );
@@ -503,6 +503,7 @@ async function main() {
         process.exit(0);
       });
       break;
+    }
 
     case "check":
     default:

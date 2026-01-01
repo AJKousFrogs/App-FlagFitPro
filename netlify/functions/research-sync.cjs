@@ -507,7 +507,7 @@ function determineSports(article) {
 /**
  * Sync research from all sources for a given topic
  */
-async function syncResearchForTopic(topic, supabase) {
+async function syncResearchForTopic(topic, _supabase) {
   console.log(`Syncing research for topic: ${topic.topic_name}`);
   
   const allArticles = [];
@@ -517,6 +517,7 @@ async function syncResearchForTopic(topic, supabase) {
     const pubmedResults = await searchPubMed(topic.pubmed_query, 10);
     allArticles.push(...pubmedResults);
     // Rate limiting - wait 400ms between API calls
+    // eslint-disable-next-line no-promise-executor-return
     await new Promise(resolve => setTimeout(resolve, 400));
   }
   
@@ -524,6 +525,7 @@ async function syncResearchForTopic(topic, supabase) {
   if (topic.europe_pmc_query) {
     const europePmcResults = await searchEuropePMC(topic.europe_pmc_query, 10);
     allArticles.push(...europePmcResults);
+    // eslint-disable-next-line no-promise-executor-return
     await new Promise(resolve => setTimeout(resolve, 400));
   }
   
@@ -534,6 +536,7 @@ async function syncResearchForTopic(topic, supabase) {
   
   // For AIS-related topics, also search by institution
   if (topic.keywords?.includes('AIS') || topic.keywords?.includes('Australian Institute of Sport')) {
+    // eslint-disable-next-line no-promise-executor-return
     await new Promise(resolve => setTimeout(resolve, 400));
     const aisResults = await searchOpenAlexByInstitution(
       'Australian Institute of Sport',
@@ -610,12 +613,13 @@ async function syncFromTopInstitutions(topic = null) {
           } else {
             totalAdded++;
           }
-        } catch (e) {
+        } catch (_e) {
           totalFailed++;
         }
       }
       
       // Rate limiting
+      // eslint-disable-next-line no-promise-executor-return
       await new Promise(resolve => setTimeout(resolve, 500));
       
     } catch (e) {
@@ -692,6 +696,7 @@ async function getTopInstitutionResearch(topic, limitPerInstitution = 5) {
     });
     
     // Rate limiting
+    // eslint-disable-next-line no-promise-executor-return
     await new Promise(resolve => setTimeout(resolve, 300));
   }
   
@@ -754,6 +759,7 @@ async function syncAllResearch() {
       }
       
       // Rate limiting between topics
+      // eslint-disable-next-line no-promise-executor-return
       await new Promise(resolve => setTimeout(resolve, 1000));
       
     } catch (e) {
@@ -943,7 +949,7 @@ async function getTrainingProtocols(category = null, athleteLevel = null) {
 // NETLIFY HANDLER
 // =============================================================================
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, _context) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -1016,32 +1022,35 @@ exports.handler = async (event, context) => {
         result = await searchOpenAlex(params.q || body.query, parseInt(params.limit) || 10);
         break;
         
-      case 'institution':
+      case 'institution': {
         // Search by institution (e.g., AIS, USOC, EIS)
         const institution = params.institution || body.institution || 'Australian Institute of Sport';
         const topic = params.topic || body.topic || null;
         result = await searchOpenAlexByInstitution(institution, topic, parseInt(params.limit) || 20);
         break;
+      }
         
-      case 'ais':
+      case 'ais': {
         // Shortcut for Australian Institute of Sport research
         const aisTopic = params.topic || body.topic || 'training performance';
         result = await searchOpenAlexByInstitution('Australian Institute of Sport', aisTopic, parseInt(params.limit) || 20);
         break;
+      }
         
       case 'sync-institutions':
         // Sync research from top institutions (admin only)
         result = await syncFromTopInstitutions(params.topic || body.topic);
         break;
         
-      case 'top-research':
+      case 'top-research': {
         // Get research from top-ranked institutions by topic
         const topTopic = params.topic || body.topic || 'sprint training';
         const topLimit = parseInt(params.limit) || 5;
         result = await getTopInstitutionResearch(topTopic, topLimit);
         break;
+      }
         
-      case 'institutions':
+      case 'institutions': {
         // List available sports science institutions from database
         const supabaseInst = getSupabaseAdmin();
         const { data: dbInstitutions, error: instError } = await supabaseInst
@@ -1078,6 +1087,7 @@ exports.handler = async (event, context) => {
           };
         }
         break;
+      }
         
       default:
         return {

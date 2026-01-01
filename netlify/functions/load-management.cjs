@@ -37,7 +37,7 @@ const consentReader = new ConsentDataReader(supabaseAdmin, {
  * @param {string|null} teamId - Optional team ID for coach context
  * @returns {Object} Context info including accessContext and whether consent filtering is needed
  */
-function determineAccessContext(requesterId, targetUserId, teamId = null) {
+function determineAccessContext(requesterId, targetUserId, _teamId = null) {
   // If accessing own data, no consent filtering needed
   if (requesterId === targetUserId) {
     return {

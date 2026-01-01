@@ -133,7 +133,7 @@ async function getCuratedExercises(params) {
     query = query.eq("body_part", body_part);
   }
   
-  const { data, error, count } = await query;
+  const { data, error, count: _count } = await query;
   
   if (error) {
     throw error;
