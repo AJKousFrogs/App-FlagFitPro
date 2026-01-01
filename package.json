@@ -9,11 +9,12 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "start": "cd angular && npm start",
-    "dev": "cd angular && npm start",
+    "start": "concurrently \"npm run dev:api\" \"npm run dev:angular\"",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:angular\"",
     "dev:api": "nodemon server.js --watch . --ext js,json --ignore node_modules/ --ignore *.backup --ignore angular/",
     "dev:angular": "cd angular && npm start",
     "dev:full": "concurrently \"npm run dev:api\" \"npm run dev:angular\"",
+    "dev:angular-only": "cd angular && npm start",
     "build": "cd angular && npm run build",
     "build:production": "cd angular && npm run build",
     "dev:netlify": "netlify dev",

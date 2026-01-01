@@ -109,9 +109,9 @@ netlify/functions/
 
 ### Prerequisites
 
-- Node.js 18+
-- Angular CLI 21
-- Supabase account
+- Node.js 22+
+- npm 10+
+- Supabase account (credentials in `.env`)
 
 ### Installation
 
@@ -120,12 +120,33 @@ netlify/functions/
 git clone <repo-url>
 cd flagfit-pro
 
+# Install root dependencies
+npm install
+
 # Install Angular dependencies
 cd angular
 npm install
+cd ..
 
-# Start development server
-npm start
+# Start development (BOTH servers)
+npm run dev
+```
+
+### ⚠️ IMPORTANT: Local Development
+
+**Always run both servers together!** The app requires:
+
+| Server | Port | Purpose |
+|--------|------|---------|
+| API Server | `localhost:4000` | Backend APIs, Supabase queries |
+| Angular | `localhost:4200` | Frontend UI |
+
+```bash
+# ✅ CORRECT - runs both servers
+npm run dev
+
+# ❌ WRONG - Angular only (no data!)
+npm run dev:angular-only
 ```
 
 The app will be available at `http://localhost:4200`

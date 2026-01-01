@@ -1,7 +1,7 @@
-import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
+import { Injectable, inject } from "@angular/core";
 import { Observable, throwError } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { catchError } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
 
@@ -20,6 +20,10 @@ export class ApiService {
   private logger = inject(LoggerService);
   private baseUrl = this.getApiBaseUrl();
 
+  constructor() {
+    console.log(`[ApiService] Initialized with baseUrl: ${this.baseUrl}`);
+  }
+
   private getApiBaseUrl(): string {
     // Check environment configuration first
     if (environment.apiUrl && environment.apiUrl !== "mock://api") {
@@ -30,30 +34,26 @@ export class ApiService {
     if (typeof window !== "undefined") {
       const hostname = window.location.hostname;
 
+      // Production: Netlify deployment
       if (
         hostname.includes("netlify.app") ||
         hostname.includes("netlify.com")
       ) {
-        return window.location.origin + "/.netlify/functions";
+        return window.location.origin;
       }
 
-      // Check if we're in local development with Netlify Dev (port 8888)
-      // This is the preferred way to access functions locally
-      if (hostname === "localhost" && window.location.port === "8888") {
-        return "http://localhost:8888/.netlify/functions";
-      }
-
-      // Default fallback for development: try to use the Netlify Functions on port 8888
-      // even if the frontend is on 4200 (Angular default)
+      // Local development: use the local Node server
       if (hostname === "localhost" || hostname === "127.0.0.1") {
+        // Use port 4000 for local development (matches server.js)
         this.logger.info(
-          "[ApiService] Development mode: targeting Netlify Functions on port 8888",
+          "[ApiService] Development mode: targeting local server on port 4000",
         );
-        return "http://localhost:8888/.netlify/functions";
+        return "http://localhost:4000";
       }
     }
 
-    return "/.netlify/functions";
+    // Default: use relative paths (same origin)
+    return "";
   }
 
   private normalizeEndpoint(endpoint: string): string {
@@ -95,6 +95,8 @@ export class ApiService {
   post<T = unknown>(endpoint: string, data?: unknown): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
+
+    this.logger.info(`[ApiService] POST ${url}`);
 
     return this.http
       .post<ApiResponse<T>>(url, data)

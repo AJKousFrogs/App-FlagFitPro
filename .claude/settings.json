@@ -48,11 +48,11 @@
   "enableDevtools": true,
   "autoSave": true,
   "workspaceSettings": {
-    "projectName": "Flag Football Training App",
-    "projectType": "react-vite-sports-app",
-    "framework": "React 18 + Vite + TypeScript",
-    "database": "Neon PostgreSQL + Drizzle ORM",
-    "ui": "Radix UI + Tailwind CSS + Ant Design",
+    "projectName": "FlagFit Pro",
+    "projectType": "angular-supabase-sports-app",
+    "framework": "Angular 21 + PrimeNG 21 + TypeScript",
+    "database": "Supabase (PostgreSQL)",
+    "ui": "PrimeNG 21 + SCSS + Design Tokens",
     "features": [
       "AI Coaching System",
       "Nutrition Tracking",
@@ -61,7 +61,14 @@
       "Training Schedules",
       "Player Leaderboards",
       "Community Features"
-    ]
+    ],
+    "localDevelopment": {
+      "CRITICAL": "ALWAYS run both servers together",
+      "startCommand": "npm run dev",
+      "apiServer": "localhost:4000 (server.js)",
+      "angularServer": "localhost:4200 (Angular)",
+      "envFile": ".env (must have valid Supabase keys)"
+    }
   },
   "contextFiles": [
     "CLAUDE.md",
