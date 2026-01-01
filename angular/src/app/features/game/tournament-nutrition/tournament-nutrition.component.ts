@@ -16,41 +16,40 @@
  * @version 1.0.0
  */
 
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  DestroyRef,
-} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnDestroy,
+    OnInit,
+    computed,
+    inject,
+    signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // PrimeNG Components
-import { CardModule } from 'primeng/card';
+import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { Select } from 'primeng/select';
+import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
+import { DividerModule } from 'primeng/divider';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { Select } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { DividerModule } from 'primeng/divider';
-import { BadgeModule } from 'primeng/badge';
 
 // App Components & Services
+import { AuthService } from '../../../core/services/auth.service';
+import { LoggerService } from '../../../core/services/logger.service';
+import { NutritionService } from '../../../core/services/nutrition.service';
+import { SupabaseService } from '../../../core/services/supabase.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { MainLayoutComponent } from '../../../shared/components/layout/main-layout.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { AuthService } from '../../../core/services/auth.service';
-import { ToastService } from '../../../core/services/toast.service';
-import { LoggerService } from '../../../core/services/logger.service';
-import { SupabaseService } from '../../../core/services/supabase.service';
-import { NutritionService } from '../../../core/services/nutrition.service';
 
 interface GameSchedule {
   id: string;
@@ -337,11 +336,53 @@ interface HydrationLog {
           }
         </div>
 
+        <!-- Evidence-Based Supplements Section -->
+        <div class="section-card supplements-section">
+          <div class="section-header">
+            <div class="section-icon"><i class="pi pi-heart-fill"></i></div>
+            <div class="section-title">
+              <h3>Evidence-Based Game Day Supplements</h3>
+              <p>Scientifically proven to enhance performance and recovery</p>
+            </div>
+          </div>
+          <div class="supplements-grid">
+            @for (supp of gameDaySupplements; track supp.name) {
+              <div class="supplement-card" [attr.data-category]="supp.category">
+                <div class="supp-header">
+                  <span class="supp-icon">{{ supp.icon }}</span>
+                  <div class="supp-meta">
+                    <span class="supp-name">{{ supp.name }}</span>
+                    <span class="supp-evidence" [class]="'evidence-' + supp.evidence.toLowerCase()">
+                      {{ supp.evidence }} Evidence
+                    </span>
+                  </div>
+                </div>
+                <div class="supp-details">
+                  <div class="supp-row">
+                    <span class="supp-label">Dose:</span>
+                    <span class="supp-value">{{ supp.dose }}</span>
+                  </div>
+                  <div class="supp-row">
+                    <span class="supp-label">Timing:</span>
+                    <span class="supp-value">{{ supp.timing }}</span>
+                  </div>
+                </div>
+                <p class="supp-reason">{{ supp.reason }}</p>
+                <p class="supp-notes"><i class="pi pi-info-circle"></i> {{ supp.notes }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
         <!-- Cramp Prevention Tips -->
-        <p-card class="tips-card">
-          <ng-template pTemplate="header">
-            <h3><i class="pi pi-exclamation-triangle"></i> Cramp Prevention Protocol</h3>
-          </ng-template>
+        <div class="section-card tips-section">
+          <div class="section-header">
+            <div class="section-icon warning"><i class="pi pi-exclamation-triangle"></i></div>
+            <div class="section-title">
+              <h3>Cramp Prevention Protocol</h3>
+              <p>Essential strategies to stay cramp-free all day</p>
+            </div>
+          </div>
           <div class="tips-grid">
             <div class="tip-item">
               <div class="tip-icon">🧂</div>
@@ -372,7 +413,7 @@ interface HydrationLog {
               </div>
             </div>
           </div>
-        </p-card>
+        </div>
 
         <!-- Referee Duty Alert -->
         @if (hasRefereeDuty()) {
@@ -437,47 +478,54 @@ interface HydrationLog {
   `,
   styles: [`
     .tournament-nutrition-page {
-      padding: var(--space-6);
+      padding: 1.5rem;
       max-width: 1200px;
       margin: 0 auto;
     }
 
-    /* Tournament Banner */
+    /* Tournament Banner - Design System Compliant */
     .tournament-banner {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: var(--space-6);
-      background: linear-gradient(135deg, var(--color-brand-primary) 0%, #065f2d 100%);
-      border-radius: var(--radius-xl);
-      margin-bottom: var(--space-6);
+      padding: 1.5rem 2rem;
+      background: linear-gradient(135deg, var(--ds-primary-green, #089949) 0%, #065f2d 100%);
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
       color: white;
     }
 
     .banner-content {
       display: flex;
       align-items: center;
-      gap: var(--space-4);
+      gap: 1rem;
     }
 
     .banner-icon {
-      font-size: 3rem;
+      font-size: 2.5rem;
+      opacity: 0.9;
+    }
+
+    .banner-icon .pi {
+      color: white;
     }
 
     .banner-info h2 {
-      margin: 0 0 var(--space-1) 0;
-      font-size: var(--text-2xl);
-      font-weight: var(--font-weight-bold);
+      margin: 0 0 0.25rem 0;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
     }
 
     .banner-info p {
       margin: 0;
-      opacity: 0.9;
+      font-size: 0.875rem;
+      opacity: 0.85;
     }
 
     .banner-stats {
       display: flex;
-      gap: var(--space-8);
+      gap: 2.5rem;
     }
 
     .stat {
@@ -486,97 +534,125 @@ interface HydrationLog {
 
     .stat-value {
       display: block;
-      font-size: var(--text-2xl);
-      font-weight: var(--font-weight-bold);
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
     }
 
     .stat-label {
-      font-size: var(--text-sm);
+      font-size: 0.75rem;
       opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
     }
 
-    /* Hydration Card */
+    /* Hydration Card - Design System */
     .hydration-card {
-      margin-bottom: var(--space-6);
+      margin-bottom: 1.5rem;
+      border-radius: 16px !important;
+      border: 1px solid var(--color-border-secondary, #e5e7eb) !important;
+      overflow: hidden;
     }
 
     .hydration-tracker {
-      padding: var(--space-2);
+      padding: 0.5rem;
     }
 
     .hydration-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: var(--space-4);
+      margin-bottom: 1rem;
+      padding: 0 0.5rem;
     }
 
     .hydration-header h3 {
       margin: 0;
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      font-size: var(--text-lg);
-      color: var(--color-text-primary);
+      gap: 0.5rem;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a1a);
     }
 
     .hydration-header h3 i {
-      color: #3b82f6;
+      color: var(--ds-primary-green, #089949);
     }
 
     .hydration-progress {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      font-weight: var(--font-weight-semibold);
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--ds-primary-green, #089949);
     }
 
     .hydration-progress .target {
-      color: var(--color-text-secondary);
-      font-weight: normal;
+      color: var(--color-text-secondary, #6b7280);
+      font-weight: 400;
+    }
+
+    ::ng-deep .hydration-progress .p-progressbar {
+      background: var(--color-border-secondary, #e5e7eb) !important;
+      border-radius: 9999px !important;
+    }
+
+    ::ng-deep .hydration-progress .p-progressbar-value {
+      background: var(--ds-primary-green, #089949) !important;
+      border-radius: 9999px !important;
     }
 
     .hydration-buttons {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: var(--space-3);
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.75rem;
     }
 
     .hydration-btn {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border: 2px solid var(--p-surface-200);
-      border-radius: var(--radius-lg);
+      padding: 1rem 0.75rem;
+      background: var(--surface-secondary, #f8f9fa);
+      border: 1px solid var(--color-border-secondary, #e5e7eb);
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
 
     .hydration-btn:hover {
-      border-color: var(--color-brand-primary);
-      background: var(--p-surface-100);
+      border-color: var(--ds-primary-green, #089949);
+      background: rgba(8, 153, 73, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .hydration-btn.selected {
-      border-color: var(--color-brand-primary);
+      border-color: var(--ds-primary-green, #089949);
       background: rgba(8, 153, 73, 0.1);
+      box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.15);
     }
 
     .hydration-btn .btn-icon {
       font-size: 1.5rem;
-      margin-bottom: var(--space-1);
+      margin-bottom: 0.375rem;
     }
 
     .hydration-btn .btn-label {
-      font-weight: var(--font-weight-medium);
-      color: var(--color-text-primary);
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-text-primary, #1a1a1a);
+      text-align: center;
     }
 
     .hydration-btn .btn-amount {
-      font-size: var(--text-sm);
-      color: var(--color-text-secondary);
+      font-size: 0.6875rem;
+      color: var(--color-text-secondary, #6b7280);
+      margin-top: 0.125rem;
     }
 
     /* Schedule Editor */
@@ -660,44 +736,53 @@ interface HydrationLog {
       justify-content: flex-end;
     }
 
-    /* Timeline */
+    /* Timeline - Design System */
     .nutrition-timeline {
-      margin-bottom: var(--space-6);
+      margin-bottom: 1.5rem;
     }
 
     .timeline-title {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      margin-bottom: var(--space-4);
-      font-size: var(--text-xl);
-      color: var(--color-text-primary);
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a1a);
+    }
+
+    .timeline-title i {
+      color: var(--ds-primary-green, #089949);
     }
 
     .timeline-item {
       display: flex;
-      gap: var(--space-4);
-      margin-bottom: var(--space-4);
+      gap: 1rem;
+      margin-bottom: 1rem;
     }
 
     .timeline-marker {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 24px;
+      width: 20px;
+      flex-shrink: 0;
     }
 
     .marker-dot {
-      width: 16px;
-      height: 16px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background: var(--p-surface-300);
-      border: 3px solid var(--p-surface-100);
+      background: var(--color-border-secondary, #e5e7eb);
+      border: 2px solid var(--surface-primary, #ffffff);
+      box-shadow: 0 0 0 2px var(--color-border-secondary, #e5e7eb);
       z-index: 1;
     }
 
     .timeline-item.current .marker-dot {
-      background: var(--color-brand-primary);
+      background: var(--ds-primary-green, #089949);
+      box-shadow: 0 0 0 2px var(--ds-primary-green, #089949);
     }
 
     .timeline-item.current .marker-dot.pulse {
@@ -705,224 +790,422 @@ interface HydrationLog {
     }
 
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(8, 153, 73, 0.4); }
-      50% { box-shadow: 0 0 0 8px rgba(8, 153, 73, 0); }
+      0%, 100% { box-shadow: 0 0 0 2px var(--ds-primary-green, #089949), 0 0 0 4px rgba(8, 153, 73, 0.3); }
+      50% { box-shadow: 0 0 0 2px var(--ds-primary-green, #089949), 0 0 0 10px rgba(8, 153, 73, 0); }
     }
 
     .timeline-item.completed .marker-dot {
-      background: var(--color-brand-secondary);
+      background: var(--ds-primary-green, #089949);
+      box-shadow: 0 0 0 2px var(--ds-primary-green, #089949);
     }
 
     .timeline-item.critical .marker-dot {
       background: #ef4444;
+      box-shadow: 0 0 0 2px #ef4444;
     }
 
     .marker-line {
       flex: 1;
       width: 2px;
-      background: var(--p-surface-200);
-      margin-top: var(--space-1);
+      background: var(--color-border-secondary, #e5e7eb);
+      margin-top: 0.25rem;
+      min-height: 20px;
     }
 
     .timeline-content {
       flex: 1;
-      background: var(--p-surface-card);
-      border: 1px solid var(--p-surface-200);
-      border-radius: var(--radius-lg);
-      padding: var(--space-4);
+      background: var(--surface-primary, #ffffff);
+      border: 1px solid var(--color-border-secondary, #e5e7eb);
+      border-radius: 12px;
+      padding: 1.25rem;
     }
 
     .timeline-item.current .timeline-content {
-      border-color: var(--color-brand-primary);
+      border-color: var(--ds-primary-green, #089949);
       box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.1);
     }
 
     .timeline-item.critical .timeline-content {
-      border-color: #ef4444;
+      border-left: 3px solid #ef4444;
       background: rgba(239, 68, 68, 0.02);
     }
 
     .window-header {
-      margin-bottom: var(--space-4);
+      margin-bottom: 1rem;
     }
 
     .window-time {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      margin-bottom: var(--space-1);
+      gap: 0.5rem;
+      margin-bottom: 0.375rem;
     }
 
     .window-time .time {
-      font-size: var(--text-sm);
-      color: var(--color-text-secondary);
-      font-weight: var(--font-weight-medium);
+      font-size: 0.75rem;
+      color: var(--color-text-secondary, #6b7280);
+      font-weight: 500;
+    }
+
+    ::ng-deep .window-time .p-tag {
+      font-size: 0.625rem !important;
+      padding: 0.125rem 0.5rem !important;
+      font-weight: 600 !important;
     }
 
     .window-header h4 {
       margin: 0;
-      font-size: var(--text-lg);
-      color: var(--color-text-primary);
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a1a);
     }
 
-    /* Recommendations Grid */
+    /* Recommendations Grid - Design System */
     .recommendations-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--space-3);
-      margin-bottom: var(--space-4);
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
     }
 
     .recommendation-card {
       display: flex;
-      gap: var(--space-3);
-      padding: var(--space-3);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-md);
-      border-left: 3px solid var(--p-surface-300);
+      gap: 0.75rem;
+      padding: 1rem;
+      background: var(--surface-secondary, #f8f9fa);
+      border-radius: 10px;
+      border-left: 3px solid var(--color-border-secondary, #e5e7eb);
     }
 
     .recommendation-card.food {
       border-left-color: #f59e0b;
-      background: rgba(245, 158, 11, 0.05);
+      background: rgba(245, 158, 11, 0.04);
     }
 
     .recommendation-card.drink {
-      border-left-color: #3b82f6;
-      background: rgba(59, 130, 246, 0.05);
+      border-left-color: var(--ds-primary-green, #089949);
+      background: rgba(8, 153, 73, 0.04);
     }
 
     .recommendation-card.supplement {
       border-left-color: #8b5cf6;
-      background: rgba(139, 92, 246, 0.05);
+      background: rgba(139, 92, 246, 0.04);
     }
 
     .recommendation-card.action {
       border-left-color: #10b981;
-      background: rgba(16, 185, 129, 0.05);
+      background: rgba(16, 185, 129, 0.04);
     }
 
     .rec-icon {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
+      flex-shrink: 0;
     }
 
     .rec-content {
       flex: 1;
+      min-width: 0;
     }
 
     .rec-item {
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-text-primary);
-      margin-bottom: var(--space-1);
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a1a);
+      margin-bottom: 0.25rem;
     }
 
     .rec-amount {
-      font-size: var(--text-sm);
-      color: var(--color-brand-primary);
-      font-weight: var(--font-weight-medium);
+      font-size: 0.8125rem;
+      color: var(--ds-primary-green, #089949);
+      font-weight: 600;
     }
 
     .rec-timing {
-      font-size: var(--text-xs);
-      color: var(--color-text-secondary);
+      font-size: 0.6875rem;
+      color: var(--color-text-secondary, #6b7280);
       font-style: italic;
     }
 
     .rec-reason {
-      font-size: var(--text-sm);
-      color: var(--color-text-secondary);
-      margin-top: var(--space-1);
+      font-size: 0.8125rem;
+      color: var(--color-text-secondary, #6b7280);
+      margin-top: 0.375rem;
+      line-height: 1.4;
     }
 
     .rec-alternatives {
-      font-size: var(--text-xs);
-      color: var(--color-text-tertiary);
-      margin-top: var(--space-1);
+      font-size: 0.6875rem;
+      color: var(--color-text-muted, #9ca3af);
+      margin-top: 0.375rem;
     }
 
     .alt-label {
-      font-weight: var(--font-weight-medium);
+      font-weight: 600;
+      color: var(--color-text-secondary, #6b7280);
     }
 
     .window-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: var(--space-3);
-      border-top: 1px solid var(--p-surface-200);
+      padding-top: 1rem;
+      border-top: 1px solid var(--color-border-secondary, #e5e7eb);
     }
 
     .hydration-target {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      color: #3b82f6;
-      font-weight: var(--font-weight-medium);
+      gap: 0.375rem;
+      color: var(--ds-primary-green, #089949);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+
+    .hydration-target i {
+      font-size: 0.875rem;
     }
 
     .completed-badge {
       display: flex;
       align-items: center;
-      gap: var(--space-1);
-      color: var(--color-brand-primary);
-      font-weight: var(--font-weight-medium);
+      gap: 0.25rem;
+      color: var(--ds-primary-green, #089949);
+      font-size: 0.8125rem;
+      font-weight: 600;
     }
 
-    /* Tips Card */
-    .tips-card {
-      margin-bottom: var(--space-6);
+    ::ng-deep .window-footer .p-button {
+      font-size: 0.8125rem !important;
     }
 
-    .tips-card h3 {
+    /* Section Cards - Unified Design */
+    .section-card {
+      background: var(--surface-primary, #ffffff);
+      border: 1px solid var(--color-border-secondary, #e5e7eb);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--color-border-secondary, #e5e7eb);
+    }
+
+    .section-icon {
+      width: 2.5rem;
+      height: 2.5rem;
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      margin: 0;
-      padding: var(--space-4);
+      justify-content: center;
+      background: rgba(8, 153, 73, 0.1);
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .section-icon i {
+      font-size: 1.125rem;
+      color: var(--ds-primary-green, #089949);
+    }
+
+    .section-icon.warning {
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    .section-icon.warning i {
       color: #f59e0b;
     }
 
+    .section-title h3 {
+      margin: 0 0 0.25rem 0;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a1a);
+    }
+
+    .section-title p {
+      margin: 0;
+      font-size: 0.8125rem;
+      color: var(--color-text-secondary, #6b7280);
+    }
+
+    /* Supplements Grid */
+    .supplements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .supplement-card {
+      background: var(--surface-secondary, #f8f9fa);
+      border: 1px solid var(--color-border-secondary, #e5e7eb);
+      border-radius: 12px;
+      padding: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .supplement-card:hover {
+      border-color: var(--ds-primary-green, #089949);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .supplement-card[data-category="performance"] {
+      border-left: 3px solid var(--ds-primary-green, #089949);
+    }
+
+    .supplement-card[data-category="endurance"] {
+      border-left: 3px solid #3b82f6;
+    }
+
+    .supplement-card[data-category="recovery"] {
+      border-left: 3px solid #8b5cf6;
+    }
+
+    .supplement-card[data-category="hydration"] {
+      border-left: 3px solid #06b6d4;
+    }
+
+    .supp-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .supp-icon {
+      font-size: 1.5rem;
+    }
+
+    .supp-meta {
+      flex: 1;
+    }
+
+    .supp-name {
+      display: block;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a1a);
+    }
+
+    .supp-evidence {
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.125rem 0.375rem;
+      border-radius: 4px;
+    }
+
+    .supp-evidence.evidence-strong {
+      background: rgba(8, 153, 73, 0.1);
+      color: var(--ds-primary-green, #089949);
+    }
+
+    .supp-evidence.evidence-conditional {
+      background: rgba(245, 158, 11, 0.1);
+      color: #b45309;
+    }
+
+    .supp-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .supp-row {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+    }
+
+    .supp-label {
+      color: var(--color-text-secondary, #6b7280);
+      min-width: 50px;
+    }
+
+    .supp-value {
+      color: var(--color-text-primary, #1a1a1a);
+      font-weight: 500;
+    }
+
+    .supp-reason {
+      font-size: 0.8125rem;
+      color: var(--color-text-secondary, #6b7280);
+      margin: 0.5rem 0;
+      line-height: 1.4;
+    }
+
+    .supp-notes {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.375rem;
+      font-size: 0.75rem;
+      color: var(--color-text-muted, #9ca3af);
+      margin: 0;
+      padding-top: 0.5rem;
+      border-top: 1px dashed var(--color-border-secondary, #e5e7eb);
+    }
+
+    .supp-notes i {
+      font-size: 0.75rem;
+      margin-top: 0.125rem;
+      flex-shrink: 0;
+    }
+
+    /* Tips Grid */
     .tips-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--space-4);
-      padding: var(--space-4);
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
     }
 
     .tip-item {
       display: flex;
-      gap: var(--space-3);
-      padding: var(--space-3);
-      background: var(--p-surface-50);
-      border-radius: var(--radius-md);
+      gap: 0.75rem;
+      padding: 1rem;
+      background: var(--surface-secondary, #f8f9fa);
+      border-radius: 10px;
     }
 
     .tip-icon {
       font-size: 1.5rem;
+      flex-shrink: 0;
     }
 
     .tip-content h4 {
-      margin: 0 0 var(--space-1) 0;
-      font-size: var(--text-base);
-      color: var(--color-text-primary);
+      margin: 0 0 0.25rem 0;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a1a);
     }
 
     .tip-content p {
       margin: 0;
-      font-size: var(--text-sm);
-      color: var(--color-text-secondary);
+      font-size: 0.8125rem;
+      color: var(--color-text-secondary, #6b7280);
+      line-height: 1.4;
     }
 
     /* Referee Alert */
     .referee-alert-card {
-      margin-bottom: var(--space-6);
+      margin-bottom: 1.5rem;
       border-left: 4px solid #f59e0b;
     }
 
     .referee-alert {
       display: flex;
-      gap: var(--space-4);
-      padding: var(--space-2);
+      gap: 1rem;
+      padding: 0.5rem;
     }
 
     .alert-icon {
@@ -930,53 +1213,110 @@ interface HydrationLog {
     }
 
     .alert-content h4 {
-      margin: 0 0 var(--space-1) 0;
-      color: #f59e0b;
+      margin: 0 0 0.25rem 0;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #b45309;
     }
 
     .alert-content p {
       margin: 0;
-      color: var(--color-text-secondary);
+      font-size: 0.875rem;
+      color: var(--color-text-secondary, #6b7280);
+      line-height: 1.5;
     }
 
     /* Quick Reference */
-    .quick-ref-card h3 {
+    .quick-ref-card {
+      margin-bottom: 1.5rem;
+    }
+
+    ::ng-deep .quick-ref-card .p-card-header {
+      padding: 0 !important;
+      background: transparent !important;
+      border: none !important;
+    }
+
+    ::ng-deep .quick-ref-card .p-card-header h3 {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
+      gap: 0.5rem;
       margin: 0;
-      padding: var(--space-4);
+      padding: 1rem 1.25rem;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a1a);
+      background: linear-gradient(to right, var(--surface-secondary, #f8f9fa), transparent);
+      border-bottom: 1px solid var(--color-border-secondary, #e5e7eb);
+    }
+
+    ::ng-deep .quick-ref-card .p-card-header h3::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 1.25rem;
+      background: var(--ds-primary-green, #089949);
+      border-radius: 2px;
+    }
+
+    ::ng-deep .quick-ref-card .p-card-header h3 i {
+      display: none;
     }
 
     .packing-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: var(--space-4);
-      padding: var(--space-4);
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      padding: 1.25rem;
     }
 
     .pack-category h4 {
-      margin: 0 0 var(--space-2) 0;
-      font-size: var(--text-base);
+      margin: 0 0 0.75rem 0;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1a1a1a);
     }
 
     .pack-category ul {
       margin: 0;
-      padding-left: var(--space-4);
+      padding-left: 1.25rem;
+      list-style-type: disc;
     }
 
     .pack-category li {
-      margin-bottom: var(--space-1);
-      font-size: var(--text-sm);
-      color: var(--color-text-secondary);
+      margin-bottom: 0.375rem;
+      font-size: 0.8125rem;
+      color: var(--color-text-secondary, #6b7280);
+    }
+
+    .pack-category li::marker {
+      color: var(--ds-primary-green, #089949);
     }
 
     /* Responsive */
+    @media (max-width: 1024px) {
+      .packing-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hydration-buttons {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
     @media (max-width: 768px) {
+      .tournament-nutrition-page {
+        padding: 1rem;
+      }
+
       .tournament-banner {
         flex-direction: column;
-        gap: var(--space-4);
+        gap: 1rem;
         text-align: center;
+        padding: 1.25rem;
       }
 
       .banner-stats {
@@ -999,6 +1339,18 @@ interface HydrationLog {
 
       .hydration-buttons {
         grid-template-columns: repeat(3, 1fr);
+      }
+
+      .supplements-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tips-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .packing-list {
+        grid-template-columns: 1fr;
       }
     }
   `],
@@ -1032,6 +1384,90 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     { type: 'smoothie', label: 'Smoothie', amount: 400, icon: '🥤', tooltip: 'Fruit smoothie' },
     { type: 'protein-shake', label: 'Protein Shake', amount: 300, icon: '🥛', tooltip: 'Protein shake' },
     { type: 'coconut', label: 'Coconut Water', amount: 330, icon: '🥥', tooltip: 'Natural electrolytes' },
+  ];
+
+  // Evidence-based supplements for game day
+  gameDaySupplements = [
+    {
+      name: 'Creatine Monohydrate',
+      dose: '3-5g',
+      timing: 'Any time (daily)',
+      icon: '💪',
+      category: 'performance',
+      evidence: 'Strong',
+      reason: 'Improves high-intensity performance, power output, and recovery between sprints',
+      notes: 'Take daily - timing doesn\'t matter. Stay hydrated.',
+    },
+    {
+      name: 'Beta-Alanine',
+      dose: '3-6g',
+      timing: 'Split doses throughout day',
+      icon: '⚡',
+      category: 'endurance',
+      evidence: 'Strong',
+      reason: 'Buffers lactic acid, delays fatigue in repeated sprints and high-intensity efforts',
+      notes: 'May cause tingling (harmless). Split dose to reduce.',
+    },
+    {
+      name: 'Caffeine',
+      dose: '3-6mg/kg bodyweight',
+      timing: '30-60 min before game',
+      icon: '☕',
+      category: 'performance',
+      evidence: 'Strong',
+      reason: 'Enhances alertness, reaction time, and reduces perceived effort',
+      notes: 'Don\'t exceed 400mg/day. Avoid if sensitive or late games.',
+    },
+    {
+      name: 'Magnesium',
+      dose: '200-400mg',
+      timing: 'With breakfast & evening',
+      icon: '🧲',
+      category: 'recovery',
+      evidence: 'Strong',
+      reason: 'Prevents cramps, supports muscle function, improves sleep quality',
+      notes: 'Glycinate or citrate forms best absorbed. Essential on hot days.',
+    },
+    {
+      name: 'Iron',
+      dose: '18-27mg (if deficient)',
+      timing: 'With vitamin C, away from calcium',
+      icon: '🩸',
+      category: 'endurance',
+      evidence: 'Conditional',
+      reason: 'Supports oxygen transport - critical for endurance. Test levels first.',
+      notes: 'Only supplement if blood test shows deficiency. Take with OJ.',
+    },
+    {
+      name: 'Vitamin D3',
+      dose: '2000-5000 IU',
+      timing: 'With fatty meal',
+      icon: '☀️',
+      category: 'recovery',
+      evidence: 'Strong',
+      reason: 'Muscle function, bone health, immune support, injury prevention',
+      notes: 'Most athletes are deficient. Get levels tested.',
+    },
+    {
+      name: 'Omega-3 (EPA/DHA)',
+      dose: '2-3g combined',
+      timing: 'With meals',
+      icon: '🐟',
+      category: 'recovery',
+      evidence: 'Strong',
+      reason: 'Reduces inflammation, supports joint health and recovery',
+      notes: 'Choose high-quality fish oil. Helps with post-game soreness.',
+    },
+    {
+      name: 'Electrolyte Tabs',
+      dose: '1-2 tabs per hour of play',
+      timing: 'Before, during, after games',
+      icon: '🧂',
+      category: 'hydration',
+      evidence: 'Strong',
+      reason: 'Replaces sodium, potassium, magnesium lost in sweat. Prevents cramps.',
+      notes: 'Essential in hot weather. More important than plain water.',
+    },
   ];
 
   // Computed values

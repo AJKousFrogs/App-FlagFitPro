@@ -894,15 +894,23 @@
   }
   
   .p-dialog-header {
-    padding: var(--space-5);
-    border-bottom: 1px solid var(--color-border-secondary);
-    background: var(--surface-primary);
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-border-secondary, #e5e5e5);
+    background: var(--surface-primary, #ffffff);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
   }
   
   .p-dialog-title {
-    font-size: var(--font-heading-md);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1.25rem; /* 20px - heading-sm per design system */
+    font-weight: 600; /* semibold per design system */
+    line-height: 1.4;
+    letter-spacing: 0;
+    color: var(--color-text-primary, #1a1a1a);
+    margin: 0;
   }
   
   .p-dialog-content {
@@ -919,25 +927,230 @@
     gap: var(--space-3);
   }
   
-  .p-dialog-header-close {
+  /* ================================================================
+     GLOBAL CLOSE BUTTON - Premium Design
+     Unified close button styling for dialogs, sidebars, panels, etc.
+     ================================================================ */
+  
+  .p-dialog-header-close,
+  .p-dialog-header-icon,
+  .p-dialog-header-maximize,
+  .p-sidebar-close,
+  .p-panel-header-icon,
+  .p-drawer-close,
+  .close-button,
+  [class*="close-btn"] {
+    /* Base sizing - Touch-friendly 44px minimum */
     width: 2.5rem;
     height: 2.5rem;
-    border-radius: var(--radius-lg);
-    transition: 
-      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    min-width: 2.5rem;
+    min-height: 2.5rem;
     
+    /* Circular design - modern & clean */
+    border-radius: 50%;
+    
+    /* Layout */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    
+    /* Base appearance */
+    background: var(--surface-secondary, #f8f9fa);
+    border: 1px solid var(--color-border-secondary, #e5e7eb);
+    color: var(--color-text-secondary, #6b7280);
+    
+    /* Interaction */
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+    
+    /* Smooth transitions */
+    transition: 
+      background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    /* Icon styling */
+    .pi, 
+    .p-icon,
+    svg,
+    i {
+      font-size: 0.875rem;
+      width: 0.875rem;
+      height: 0.875rem;
+      line-height: 1;
+      transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    /* Subtle inner shadow for depth */
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      0 1px 2px rgba(0, 0, 0, 0.05);
+    
+    /* Hover state - Green accent */
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background: var(--surface-tertiary);
-        transform: scale(1.1);
+        background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
+        border-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.2));
+        color: var(--ds-primary-green, #089949);
+        box-shadow: 
+          inset 0 1px 0 rgba(255, 255, 255, 0.8),
+          0 2px 8px rgba(8, 153, 73, 0.15);
+        
+        .pi,
+        .p-icon,
+        svg,
+        i {
+          transform: rotate(90deg);
+        }
+      }
+    }
+    
+    /* Focus visible - Accessibility */
+    &:focus-visible {
+      box-shadow: 
+        0 0 0 2px var(--surface-primary, #ffffff),
+        0 0 0 4px var(--ds-primary-green, #089949);
+      border-color: var(--ds-primary-green, #089949);
+    }
+    
+    /* Active/Pressed state */
+    &:active {
+      transform: scale(0.92);
+      background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.15));
+      border-color: var(--ds-primary-green, #089949);
+      color: var(--ds-primary-green, #089949);
+      box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+  }
+  
+  /* ================================
+     Close Button Variants
+     ================================ */
+  
+  /* Danger variant - for destructive dialogs */
+  .close-button-danger,
+  .p-dialog-header-close.danger {
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        box-shadow: 
+          inset 0 1px 0 rgba(255, 255, 255, 0.8),
+          0 2px 8px rgba(239, 68, 68, 0.15);
+        
+        .pi,
+        .p-icon,
+        svg,
+        i {
+          transform: rotate(90deg);
+        }
       }
     }
     
     &:active {
-      transform: scale(0.95);
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #ef4444;
+      color: #ef4444;
     }
   }
+  
+  /* Ghost variant - minimal style */
+  .close-button-ghost,
+  .p-dialog-header-close.ghost {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--surface-secondary, #f8f9fa);
+        border-color: transparent;
+        box-shadow: none;
+      }
+    }
+  }
+  
+  /* Small variant */
+  .close-button-sm {
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    
+    .pi,
+    .p-icon,
+    svg,
+    i {
+      font-size: 0.75rem;
+      width: 0.75rem;
+      height: 0.75rem;
+    }
+  }
+  
+  /* Large variant */
+  .close-button-lg {
+    width: 3rem;
+    height: 3rem;
+    min-width: 3rem;
+    min-height: 3rem;
+    
+    .pi,
+    .p-icon,
+    svg,
+    i {
+      font-size: 1.125rem;
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+  }
+  
+/* ================================
+   Dark Mode Adjustments
+   ================================ */
+
+[data-theme="dark"],
+.dark-theme {
+  .p-dialog-header-close,
+  .p-dialog-header-icon,
+  .p-dialog-header-maximize,
+  .p-sidebar-close,
+  .p-panel-header-icon,
+  .p-drawer-close,
+  .close-button,
+  [class*="close-btn"] {
+    background: var(--primitive-neutral-800, #262626);
+    border-color: var(--primitive-neutral-700, #404040);
+    color: var(--primitive-neutral-400, #a3a3a3);
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 1px 2px rgba(0, 0, 0, 0.2);
+    
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: rgba(16, 201, 107, 0.15);
+        border-color: rgba(16, 201, 107, 0.3);
+        color: #10c96b;
+        box-shadow: 
+          inset 0 1px 0 rgba(255, 255, 255, 0.05),
+          0 2px 8px rgba(16, 201, 107, 0.2);
+      }
+    }
+    
+    &:active {
+      background: rgba(16, 201, 107, 0.2);
+      border-color: #10c96b;
+      color: #10c96b;
+    }
+  }
+}
   
   /* ================================================================
      TOAST COMPONENT ENHANCEMENTS
@@ -990,18 +1203,50 @@
   }
   
   .p-toast-close-button {
-    width: 2rem;
-    height: 2rem;
-    border-radius: var(--radius-md);
+    /* Smaller circular close button for toasts */
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    min-height: 1.75rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
     transition: 
       background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    .pi,
+    .p-icon,
+    svg {
+      font-size: 0.75rem;
+      width: 0.75rem;
+      height: 0.75rem;
+      transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
     
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background: rgba(0, 0, 0, 0.1);
-        transform: scale(1.1);
+        background: rgba(255, 255, 255, 0.25);
+        opacity: 1;
+        
+        .pi,
+        .p-icon,
+        svg {
+          transform: rotate(90deg);
+        }
       }
+    }
+    
+    &:active {
+      transform: scale(0.9);
+      background: rgba(255, 255, 255, 0.3);
     }
   }
   
@@ -1942,21 +2187,7 @@
     padding: var(--space-5);
   }
   
-  .p-sidebar-close {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: var(--radius-lg);
-    transition: 
-      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
-    
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        background: var(--surface-tertiary);
-        transform: scale(1.1);
-      }
-    }
-  }
+  /* p-sidebar-close inherits from global close button styles above */
   
   /* ================================================================
      PROGRESSBAR COMPONENT ENHANCEMENTS
@@ -2323,6 +2554,538 @@ p-button .p-button,
   /* Dark mode: Text contrast button should be white */
   .p-button-text.p-button-contrast {
     color: var(--surface-primary, #ffffff) !important;
+  }
+}
+
+/* ================================================================
+   GLOBAL OVERLAY & DROPDOWN Z-INDEX FIXES
+   Ensures all overlays, panels, and dropdowns display correctly
+   ================================================================ */
+
+/* ================================================================
+   DATEPICKER PANEL - Premium Responsive Design
+   ================================================================ */
+
+.p-datepicker-panel,
+.p-datepicker-overlay,
+.p-datepicker:not(.p-datepicker-inline) .p-datepicker-panel {
+  z-index: 10000 !important;
+  background: var(--surface-primary, #ffffff) !important;
+  border-radius: 16px !important;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid var(--color-border-secondary, #e5e7eb) !important;
+  overflow: hidden;
+  min-width: 320px !important;
+  max-width: 360px !important;
+  padding: 0 !important;
+  animation: calendarSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@keyframes calendarSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive: Smaller screens */
+@media (max-width: 400px) {
+  .p-datepicker-panel,
+  .p-datepicker-overlay,
+  .p-datepicker:not(.p-datepicker-inline) .p-datepicker-panel {
+    min-width: 280px !important;
+    max-width: calc(100vw - 32px) !important;
+    left: 16px !important;
+    right: 16px !important;
+  }
+}
+
+/* Select/Dropdown Panel */
+.p-select-overlay,
+.p-select-panel,
+.p-dropdown-panel,
+.p-multiselect-panel,
+.p-autocomplete-panel,
+.p-cascadeselect-panel {
+  z-index: 10000 !important;
+  background: var(--surface-primary, #ffffff) !important;
+  border-radius: var(--radius-lg, 12px) !important;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid var(--color-border-secondary, #e5e5e5) !important;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+/* Ensure overlay container has high z-index */
+.p-overlay,
+.p-component-overlay {
+  z-index: 9999 !important;
+}
+
+/* Dialog should have lower z-index than dropdowns inside it */
+.p-dialog-mask {
+  z-index: 1000 !important;
+}
+
+.p-dialog {
+  z-index: 1001 !important;
+}
+
+/* Dropdown items styling */
+.p-select-list,
+.p-dropdown-items,
+.p-listbox-list {
+  padding: 0.5rem !important;
+  margin: 0 !important;
+}
+
+.p-select-option,
+.p-select-item,
+.p-dropdown-item,
+.p-listbox-item {
+  padding: 0.75rem 1rem !important;
+  border-radius: 8px !important;
+  margin: 2px 0 !important;
+  font-size: 0.9375rem !important;
+  color: var(--color-text-primary, #1a1a1a) !important;
+  transition: all 0.15s ease !important;
+}
+
+.p-select-option:hover,
+.p-select-item:hover,
+.p-dropdown-item:hover,
+.p-listbox-item:hover {
+  background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.08)) !important;
+  color: var(--ds-primary-green, #089949) !important;
+}
+
+.p-select-option.p-highlight,
+.p-select-item.p-highlight,
+.p-dropdown-item.p-highlight,
+.p-listbox-item.p-highlight,
+.p-select-option[aria-selected="true"],
+.p-select-item[data-p-selected="true"] {
+  background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.12)) !important;
+  color: var(--ds-primary-green, #089949) !important;
+  font-weight: 600 !important;
+}
+
+/* ================================================================
+   DATEPICKER CALENDAR - Premium Styling
+   ================================================================ */
+
+/* Calendar Header */
+.p-datepicker-panel .p-datepicker-header {
+  padding: 1rem 1.25rem !important;
+  border-bottom: 1px solid var(--color-border-secondary, #e5e7eb) !important;
+  background: linear-gradient(to bottom, var(--surface-secondary, #f9fafb), var(--surface-primary, #ffffff)) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* Month/Year Title */
+.p-datepicker-panel .p-datepicker-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  flex: 1 !important;
+}
+
+.p-datepicker-panel .p-datepicker-title .p-datepicker-select-month,
+.p-datepicker-panel .p-datepicker-title .p-datepicker-month,
+.p-datepicker-panel .p-datepicker-title .p-datepicker-select-year,
+.p-datepicker-panel .p-datepicker-title .p-datepicker-year,
+.p-datepicker-panel .p-datepicker-title button,
+.p-datepicker-panel .p-datepicker-title span {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  color: var(--color-text-primary, #1a1a1a) !important;
+  margin: 0 0.125rem !important;
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 6px !important;
+  transition: all 0.15s ease !important;
+}
+
+.p-datepicker-panel .p-datepicker-title button:hover,
+.p-datepicker-panel .p-datepicker-title .p-datepicker-select-month:hover,
+.p-datepicker-panel .p-datepicker-title .p-datepicker-select-year:hover {
+  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08)) !important;
+  color: var(--ds-primary-green, #089949) !important;
+}
+
+/* Navigation Arrows */
+.p-datepicker-panel .p-datepicker-prev,
+.p-datepicker-panel .p-datepicker-next {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  min-width: 2.5rem !important;
+  border-radius: 50% !important;
+  color: var(--color-text-secondary, #6b7280) !important;
+  background: var(--surface-secondary, #f3f4f6) !important;
+  border: 1px solid var(--color-border-secondary, #e5e7eb) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  flex-shrink: 0 !important;
+}
+
+.p-datepicker-panel .p-datepicker-prev:hover,
+.p-datepicker-panel .p-datepicker-next:hover {
+  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.1)) !important;
+  border-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.2)) !important;
+  color: var(--ds-primary-green, #089949) !important;
+  transform: scale(1.05) !important;
+}
+
+.p-datepicker-panel .p-datepicker-prev:active,
+.p-datepicker-panel .p-datepicker-next:active {
+  transform: scale(0.95) !important;
+}
+
+.p-datepicker-panel .p-datepicker-prev .pi,
+.p-datepicker-panel .p-datepicker-next .pi {
+  font-size: 0.875rem !important;
+}
+
+/* Calendar Body */
+.p-datepicker-panel .p-datepicker-calendar-container {
+  padding: 0.75rem 1rem 1rem !important;
+}
+
+.p-datepicker-panel .p-datepicker-calendar {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 4px !important;
+  margin: 0 !important;
+}
+
+/* Weekday Headers */
+.p-datepicker-panel .p-datepicker-calendar th {
+  padding: 0.5rem 0 !important;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 0.6875rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--color-text-muted, #9ca3af) !important;
+  text-align: center !important;
+}
+
+/* Date Cells */
+.p-datepicker-panel .p-datepicker-calendar td {
+  padding: 2px !important;
+  text-align: center !important;
+}
+
+.p-datepicker-panel .p-datepicker-calendar td > span,
+.p-datepicker-panel .p-datepicker-calendar td > button {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  border-radius: 10px !important;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--color-text-primary, #1a1a1a) !important;
+}
+
+/* Hover State */
+.p-datepicker-panel .p-datepicker-calendar td > span:hover:not(.p-disabled):not(.p-highlight),
+.p-datepicker-panel .p-datepicker-calendar td > button:hover:not(.p-disabled):not(.p-highlight) {
+  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08)) !important;
+  color: var(--ds-primary-green, #089949) !important;
+}
+
+/* Selected Date */
+.p-datepicker-panel .p-datepicker-calendar td > span.p-highlight,
+.p-datepicker-panel .p-datepicker-calendar td > button.p-highlight,
+.p-datepicker-panel .p-datepicker-calendar td[data-p-selected="true"] > span,
+.p-datepicker-panel .p-datepicker-calendar td[data-p-selected="true"] > button {
+  background: var(--ds-primary-green, #089949) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(8, 153, 73, 0.3) !important;
+}
+
+/* Today's Date */
+.p-datepicker-panel .p-datepicker-calendar td.p-datepicker-today > span:not(.p-highlight),
+.p-datepicker-panel .p-datepicker-calendar td.p-datepicker-today > button:not(.p-highlight),
+.p-datepicker-panel .p-datepicker-calendar td[data-p-today="true"] > span:not(.p-highlight),
+.p-datepicker-panel .p-datepicker-calendar td[data-p-today="true"] > button:not(.p-highlight) {
+  border: 2px solid var(--ds-primary-green, #089949) !important;
+  background: transparent !important;
+  color: var(--ds-primary-green, #089949) !important;
+  font-weight: 600 !important;
+}
+
+/* Disabled/Other Month Dates */
+.p-datepicker-panel .p-datepicker-calendar td > span.p-disabled,
+.p-datepicker-panel .p-datepicker-calendar td > button.p-disabled,
+.p-datepicker-panel .p-datepicker-calendar td.p-datepicker-other-month > span,
+.p-datepicker-panel .p-datepicker-calendar td.p-datepicker-other-month > button {
+  color: var(--color-text-disabled, #d1d5db) !important;
+  cursor: not-allowed !important;
+}
+
+/* Responsive: Smaller cells on mobile */
+@media (max-width: 400px) {
+  .p-datepicker-panel .p-datepicker-calendar td > span,
+  .p-datepicker-panel .p-datepicker-calendar td > button {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    font-size: 0.8125rem !important;
+    border-radius: 8px !important;
+  }
+  
+  .p-datepicker-panel .p-datepicker-header {
+    padding: 0.875rem 1rem !important;
+  }
+  
+  .p-datepicker-panel .p-datepicker-title span,
+  .p-datepicker-panel .p-datepicker-title button {
+    font-size: 0.9375rem !important;
+  }
+  
+  .p-datepicker-panel .p-datepicker-prev,
+  .p-datepicker-panel .p-datepicker-next {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    min-width: 2.25rem !important;
+  }
+}
+
+/* Dark Mode - DatePicker */
+[data-theme="dark"] .p-datepicker-panel,
+.dark-theme .p-datepicker-panel {
+  background: var(--primitive-neutral-800, #262626) !important;
+  border-color: var(--primitive-neutral-700, #404040) !important;
+}
+
+[data-theme="dark"] .p-datepicker-panel .p-datepicker-header,
+.dark-theme .p-datepicker-panel .p-datepicker-header {
+  background: linear-gradient(to bottom, var(--primitive-neutral-700, #404040), var(--primitive-neutral-800, #262626)) !important;
+  border-color: var(--primitive-neutral-700, #404040) !important;
+}
+
+[data-theme="dark"] .p-datepicker-panel .p-datepicker-title span,
+[data-theme="dark"] .p-datepicker-panel .p-datepicker-title button,
+.dark-theme .p-datepicker-panel .p-datepicker-title span,
+.dark-theme .p-datepicker-panel .p-datepicker-title button {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .p-datepicker-panel .p-datepicker-prev,
+[data-theme="dark"] .p-datepicker-panel .p-datepicker-next,
+.dark-theme .p-datepicker-panel .p-datepicker-prev,
+.dark-theme .p-datepicker-panel .p-datepicker-next {
+  background: var(--primitive-neutral-700, #404040) !important;
+  border-color: var(--primitive-neutral-600, #525252) !important;
+  color: var(--primitive-neutral-300, #d4d4d4) !important;
+}
+
+[data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar th,
+.dark-theme .p-datepicker-panel .p-datepicker-calendar th {
+  color: var(--primitive-neutral-500, #737373) !important;
+}
+
+[data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td > span,
+[data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td > button,
+.dark-theme .p-datepicker-panel .p-datepicker-calendar td > span,
+.dark-theme .p-datepicker-panel .p-datepicker-calendar td > button {
+  color: var(--primitive-neutral-200, #e5e5e5) !important;
+}
+
+[data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td.p-datepicker-other-month > span,
+.dark-theme .p-datepicker-panel .p-datepicker-calendar td.p-datepicker-other-month > span {
+  color: var(--primitive-neutral-600, #525252) !important;
+}
+
+/* Input wrapper positioning fix */
+.p-datepicker,
+.p-select,
+.p-dropdown,
+.p-multiselect,
+.p-autocomplete {
+  position: relative !important;
+}
+
+/* Ensure inputs in dialogs work correctly */
+.p-dialog .p-datepicker-panel,
+.p-dialog .p-select-overlay,
+.p-dialog .p-dropdown-panel {
+  position: fixed !important;
+}
+
+/* Animation for panels */
+.p-select-overlay,
+.p-dropdown-panel,
+.p-datepicker-panel {
+  animation: overlayFadeIn 0.15s ease-out !important;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================================================================
+   CONFIRM DIALOG & POPUP CLOSE BUTTONS
+   Apply consistent close button styling
+   ================================================================ */
+
+.p-confirmdialog,
+.p-confirmpopup {
+  .p-dialog-header-close,
+  .p-confirmpopup-close {
+    /* Inherits global close button styles */
+    width: 2.5rem;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-secondary, #f8f9fa);
+    border: 1px solid var(--color-border-secondary, #e5e7eb);
+    color: var(--color-text-secondary, #6b7280);
+    cursor: pointer;
+    transition: 
+      background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      0 1px 2px rgba(0, 0, 0, 0.05);
+
+    .pi,
+    .p-icon {
+      font-size: 0.875rem;
+      transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
+        border-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.2));
+        color: var(--ds-primary-green, #089949);
+        box-shadow: 
+          inset 0 1px 0 rgba(255, 255, 255, 0.8),
+          0 2px 8px rgba(8, 153, 73, 0.15);
+
+        .pi,
+        .p-icon {
+          transform: rotate(90deg);
+        }
+      }
+    }
+
+    &:active {
+      transform: scale(0.92);
+      background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.15));
+    }
+  }
+}
+
+/* Message/Chip close buttons */
+.p-message-close,
+.p-chip-remove-icon,
+.p-tag-close {
+  width: 1.5rem;
+  height: 1.5rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+  margin-left: 0.5rem;
+  transition: 
+    background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    opacity 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  .pi,
+  .p-icon {
+    font-size: 0.625rem;
+    transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+      opacity: 1;
+
+      .pi,
+      .p-icon {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+/* Inline close icon utility class */
+.close-icon-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-muted, #6b7280);
+  cursor: pointer;
+  transition: 
+    background-color 150ms ease,
+    color 150ms ease,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:hover {
+    background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
+    color: var(--ds-primary-green, #089949);
+  }
+
+  &:active {
+    transform: scale(0.9);
   }
 }
 

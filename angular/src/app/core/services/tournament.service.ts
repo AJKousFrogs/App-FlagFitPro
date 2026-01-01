@@ -3,6 +3,9 @@ import { ApiService } from './api.service';
 import { LoggerService } from './logger.service';
 import { firstValueFrom } from 'rxjs';
 
+// Tournament visibility scope
+export type TournamentVisibilityScope = 'team' | 'personal';
+
 // Tournament interface matching database schema
 export interface Tournament {
   id: string;
@@ -13,7 +16,7 @@ export interface Tournament {
   flag?: string;
   start_date: string;
   end_date?: string;
-  tournament_type?: 'league' | 'cup' | 'championship' | 'friendly' | 'qualifier' | 'international';
+  tournament_type?: 'league' | 'cup' | 'championship' | 'friendly' | 'qualifier' | 'international' | 'game_day';
   competition_level?: 'national' | 'regional' | 'european' | 'world' | 'friendly';
   is_home_tournament?: boolean;
   registration_deadline?: string;
@@ -26,6 +29,10 @@ export interface Tournament {
   prize_pool?: string;
   created_at?: string;
   updated_at?: string;
+  created_by?: string;
+  // Visibility control
+  visibility_scope?: TournamentVisibilityScope;
+  player_id?: string; // For personal tournaments, the player it belongs to
   // Calculated fields from API
   calculatedStatus?: 'upcoming' | 'ongoing' | 'completed';
   daysUntil?: number;
@@ -50,6 +57,9 @@ export interface CreateTournamentDto {
   venue?: string;
   expected_teams?: number;
   prize_pool?: string;
+  // Visibility control
+  visibility_scope?: TournamentVisibilityScope;
+  player_id?: string;
 }
 
 export interface UpdateTournamentDto extends Partial<CreateTournamentDto> {}
@@ -96,6 +106,15 @@ export class TournamentService {
       return new Date(t.start_date) < new Date(closest.start_date) ? t : closest;
     }, null as Tournament | null);
   });
+
+  // Filter by visibility scope
+  readonly teamTournaments = computed(() => 
+    this.tournaments().filter(t => t.visibility_scope === 'team' || !t.visibility_scope)
+  );
+
+  readonly personalTournaments = computed(() => 
+    this.tournaments().filter(t => t.visibility_scope === 'personal')
+  );
 
   /**
    * Fetch all tournaments from the API

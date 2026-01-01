@@ -27,7 +27,7 @@ import { ToastModule } from "primeng/toast";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
-import { CreateTournamentDto, Tournament, TournamentService } from "../../core/services/tournament.service";
+import { CreateTournamentDto, Tournament, TournamentService, TournamentVisibilityScope } from "../../core/services/tournament.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -97,7 +97,7 @@ interface TournamentBudget {
             }
             @if (isAuthenticated()) {
               <p-button 
-                label="Add Tournament" 
+                [label]="getAddButtonLabel()" 
                 icon="pi pi-plus"
                 (onClick)="openCreateDialog()"
               ></p-button>
@@ -135,13 +135,23 @@ interface TournamentBudget {
             <p-tabpanel header="2026 Season" leftIcon="pi pi-calendar">
               <div class="tournaments-grid">
                 @for (tournament of tournaments2026(); track tournament.id) {
-                  <p-card class="tournament-card" [attr.data-id]="tournament.id">
+                  <p-card class="tournament-card" [attr.data-id]="tournament.id" [class.personal-tournament]="isPersonalTournament(tournament)">
                     <div class="tournament-header">
                       <div class="header-row">
-                        <p-tag
-                          [value]="tournamentService.getStatusLabel(tournament.calculatedStatus || 'upcoming')"
-                          [severity]="tournamentService.getStatusSeverity(tournament.calculatedStatus || 'upcoming')"
-                        ></p-tag>
+                        <div class="tags-row">
+                          <p-tag
+                            [value]="tournamentService.getStatusLabel(tournament.calculatedStatus || 'upcoming')"
+                            [severity]="tournamentService.getStatusSeverity(tournament.calculatedStatus || 'upcoming')"
+                          ></p-tag>
+                          @if (isPersonalTournament(tournament)) {
+                            <p-tag
+                              value="Personal"
+                              severity="warn"
+                              icon="pi pi-user"
+                              styleClass="personal-badge"
+                            ></p-tag>
+                          }
+                        </div>
                         @if (isAuthenticated()) {
                           <div class="card-actions">
                             <p-button 
@@ -163,7 +173,7 @@ interface TournamentBudget {
                         }
                       </div>
                       <h3 class="tournament-title">{{ tournament.flag }} {{ tournament.name }}</h3>
-                      <p class="tournament-subtitle">{{ tournament.tournament_type || 'Championship' }}</p>
+                      <p class="tournament-subtitle">{{ tournament.tournament_type === 'game_day' ? 'Game Day' : (tournament.tournament_type || 'Championship') }}</p>
                     </div>
                     <div class="tournament-body">
                       <div class="tournament-info">
@@ -272,25 +282,35 @@ interface TournamentBudget {
             <p-tabpanel header="2027 Season" leftIcon="pi pi-calendar">
               <div class="tournaments-grid">
                 @for (tournament of tournaments2027(); track tournament.id) {
-                  <p-card class="tournament-card" [attr.data-id]="tournament.id">
+                  <p-card class="tournament-card" [attr.data-id]="tournament.id" [class.personal-tournament]="isPersonalTournament(tournament)">
                     <div class="tournament-header">
                       <div class="header-row">
-                        <p-tag
-                          [value]="tournamentService.getStatusLabel(tournament.calculatedStatus || 'upcoming')"
-                          [severity]="tournamentService.getStatusSeverity(tournament.calculatedStatus || 'upcoming')"
-                        ></p-tag>
+                        <div class="tags-row">
+                          <p-tag
+                            [value]="tournamentService.getStatusLabel(tournament.calculatedStatus || 'upcoming')"
+                            [severity]="tournamentService.getStatusSeverity(tournament.calculatedStatus || 'upcoming')"
+                          ></p-tag>
+                          @if (isPersonalTournament(tournament)) {
+                            <p-tag
+                              value="Personal"
+                              severity="warn"
+                              icon="pi pi-user"
+                              styleClass="personal-badge"
+                            ></p-tag>
+                          }
+                        </div>
                         @if (isAuthenticated()) {
                           <div class="card-actions">
-                            <p-button 
-                              icon="pi pi-pencil" 
-                              [rounded]="true" 
+                            <p-button
+                              icon="pi pi-pencil"
+                              [rounded]="true"
                               [text]="true"
                               size="small"
                               (onClick)="openEditDialog(tournament)"
                             ></p-button>
-                            <p-button 
-                              icon="pi pi-trash" 
-                              [rounded]="true" 
+                            <p-button
+                              icon="pi pi-trash"
+                              [rounded]="true"
                               [text]="true"
                               severity="danger"
                               size="small"
@@ -300,7 +320,7 @@ interface TournamentBudget {
                         }
                       </div>
                       <h3 class="tournament-title">{{ tournament.flag }} {{ tournament.name }}</h3>
-                      <p class="tournament-subtitle">{{ tournament.tournament_type || 'Championship' }}</p>
+                      <p class="tournament-subtitle">{{ tournament.tournament_type === 'game_day' ? 'Game Day' : (tournament.tournament_type || 'Championship') }}</p>
                     </div>
                     <div class="tournament-body">
                       <div class="tournament-info">
@@ -351,214 +371,484 @@ interface TournamentBudget {
       </div>
 
       <!-- Create/Edit Tournament Dialog -->
-      <p-dialog 
-        [(visible)]="showDialog" 
-        [header]="editingTournament ? 'Edit Tournament' : 'Add Tournament'"
+      <p-dialog
+        [(visible)]="showDialog"
+        [header]="getDialogTitle()"
         [modal]="true"
-        [style]="{ width: '600px' }"
+        [style]="{ width: '680px', maxWidth: '95vw' }"
         [draggable]="false"
         [resizable]="false"
+        styleClass="tournament-dialog"
       >
-        <div class="dialog-content">
-          <div class="form-grid">
-            <!-- Name -->
-            <div class="form-field full-width">
-              <label for="tournament-name">Tournament Name *</label>
-              <input 
-                pInputText 
-                id="tournament-name"
-                name="tournamentName"
-                [(ngModel)]="formData.name" 
-                placeholder="e.g., Adria Bowl 2026"
-                class="w-full"
-                autocomplete="off"
-              />
+        <div class="tournament-form">
+          <!-- Visibility Info Banner -->
+          @if (isPlayer() && !editingTournament) {
+            <div class="visibility-info-banner personal">
+              <div class="banner-icon">
+                <i class="pi pi-user"></i>
+              </div>
+              <div class="banner-content">
+                <strong>Personal Game Day</strong>
+                <p>This will only be visible to you and your coaches. It won't affect other players' schedules or workload calculations.</p>
+              </div>
             </div>
-
-            <!-- Short Name -->
-            <div class="form-field">
-              <label for="tournament-shortName">Short Name</label>
-              <input 
-                pInputText 
-                id="tournament-shortName"
-                name="shortName"
-                [(ngModel)]="formData.short_name" 
-                placeholder="e.g., Adria Bowl"
-                autocomplete="off"
-              />
+          }
+          @if (isCoachOrAdmin() && !editingTournament) {
+            <div class="visibility-info-banner team">
+              <div class="banner-icon">
+                <i class="pi pi-users"></i>
+              </div>
+              <div class="banner-content">
+                <strong>Team Tournament</strong>
+                <p>This will be visible to all team members and will affect everyone's training schedule and workload calculations.</p>
+              </div>
             </div>
-
-            <!-- Country -->
-            <div class="form-field">
-              <label for="tournament-country">Country</label>
-              <input 
-                pInputText 
-                id="tournament-country"
-                name="country"
-                [(ngModel)]="formData.country" 
-                placeholder="e.g., Croatia"
-                autocomplete="country-name"
-              />
+          }
+          @if (editingTournament && isPersonalTournament(editingTournament)) {
+            <div class="visibility-info-banner personal">
+              <div class="banner-icon">
+                <i class="pi pi-user"></i>
+              </div>
+              <div class="banner-content">
+                <strong>Personal Game Day</strong>
+                <p>Only visible to the player who created it and coaches.</p>
+              </div>
             </div>
+          }
 
-            <!-- Location -->
-            <div class="form-field">
-              <label for="tournament-location">City/Location</label>
-              <input 
-                pInputText 
-                id="tournament-location"
-                name="location"
-                [(ngModel)]="formData.location" 
-                placeholder="e.g., Zagreb"
-                autocomplete="address-level2"
-              />
+          <!-- Section: Basic Info -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-trophy"></i>
+              <span>Basic Information</span>
             </div>
-
-            <!-- Venue -->
-            <div class="form-field">
-              <label for="tournament-venue">Venue</label>
-              <input 
-                pInputText 
-                id="tournament-venue"
-                name="venue"
-                [(ngModel)]="formData.venue" 
-                placeholder="e.g., Stadium Name"
-                autocomplete="off"
-              />
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="tournament-name">
+                  <i class="pi pi-tag"></i>
+                  {{ isPlayer() ? 'Game Day Name' : 'Tournament Name' }} <span class="required">*</span>
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-name"
+                  name="tournamentName"
+                  [(ngModel)]="formData.name" 
+                  placeholder="e.g., Adria Bowl 2026"
+                  class="w-full"
+                  autocomplete="off"
+                />
+              </div>
             </div>
-
-            <!-- Start Date -->
-            <div class="form-field">
-              <label for="tournament-startDate">Start Date *</label>
-              <p-datepicker 
-                inputId="tournament-startDate"
-                [(ngModel)]="formData.start_date_obj"
-                [showIcon]="true"
-                dateFormat="yy-mm-dd"
-                placeholder="Select start date"
-                [style]="{ width: '100%' }"
-              ></p-datepicker>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-shortName">
+                  <i class="pi pi-bookmark"></i>
+                  Short Name
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-shortName"
+                  name="shortName"
+                  [(ngModel)]="formData.short_name" 
+                  placeholder="e.g., Adria Bowl"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-teams">
+                  <i class="pi pi-users"></i>
+                  Expected Teams
+                </label>
+                <p-inputNumber 
+                  inputId="tournament-teams"
+                  [(ngModel)]="formData.expected_teams"
+                  [min]="2"
+                  [max]="100"
+                  placeholder="Number of teams"
+                  [style]="{ width: '100%' }"
+                ></p-inputNumber>
+              </div>
             </div>
+          </div>
 
-            <!-- End Date -->
-            <div class="form-field">
-              <label for="tournament-endDate">End Date</label>
-              <p-datepicker 
-                inputId="tournament-endDate"
-                [(ngModel)]="formData.end_date_obj"
-                [showIcon]="true"
-                dateFormat="yy-mm-dd"
-                placeholder="Select end date"
-                [style]="{ width: '100%' }"
-              ></p-datepicker>
+          <!-- Section: Location -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-map-marker"></i>
+              <span>Location</span>
             </div>
-
-            <!-- Tournament Type -->
-            <div class="form-field">
-              <label for="tournament-type">Tournament Type</label>
-              <p-select 
-                inputId="tournament-type"
-                [(ngModel)]="formData.tournament_type"
-                [options]="tournamentTypes"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select type"
-                [style]="{ width: '100%' }"
-              ></p-select>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-country">
+                  <i class="pi pi-globe"></i>
+                  Country
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-country"
+                  name="country"
+                  [(ngModel)]="formData.country" 
+                  placeholder="e.g., Croatia"
+                  autocomplete="country-name"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-location">
+                  <i class="pi pi-building"></i>
+                  City
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-location"
+                  name="location"
+                  [(ngModel)]="formData.location" 
+                  placeholder="e.g., Zagreb"
+                  autocomplete="address-level2"
+                />
+              </div>
             </div>
-
-            <!-- Competition Level -->
-            <div class="form-field">
-              <label for="tournament-level">Competition Level</label>
-              <p-select 
-                inputId="tournament-level"
-                [(ngModel)]="formData.competition_level"
-                [options]="competitionLevels"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select level"
-                [style]="{ width: '100%' }"
-              ></p-select>
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="tournament-venue">
+                  <i class="pi pi-home"></i>
+                  Venue / Stadium
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-venue"
+                  name="venue"
+                  [(ngModel)]="formData.venue" 
+                  placeholder="e.g., Stadium Name or Sports Complex"
+                  autocomplete="off"
+                />
+              </div>
             </div>
+          </div>
 
-            <!-- Expected Teams -->
-            <div class="form-field">
-              <label for="tournament-teams">Expected Teams</label>
-              <p-inputNumber 
-                inputId="tournament-teams"
-                [(ngModel)]="formData.expected_teams"
-                [min]="2"
-                [max]="100"
-                placeholder="Number of teams"
-                [style]="{ width: '100%' }"
-              ></p-inputNumber>
+          <!-- Section: Dates -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-calendar"></i>
+              <span>Dates</span>
             </div>
-
-            <!-- Registration Deadline -->
-            <div class="form-field">
-              <label for="tournament-deadline">Registration Deadline</label>
-              <p-datepicker 
-                inputId="tournament-deadline"
-                [(ngModel)]="formData.registration_deadline_obj"
-                [showIcon]="true"
-                dateFormat="yy-mm-dd"
-                placeholder="Select deadline"
-                [style]="{ width: '100%' }"
-              ></p-datepicker>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-startDate">
+                  <i class="pi pi-calendar-plus"></i>
+                  Start Date <span class="required">*</span>
+                </label>
+                <p-datepicker 
+                  inputId="tournament-startDate"
+                  [(ngModel)]="formData.start_date_obj"
+                  [showIcon]="true"
+                  [iconDisplay]="'input'"
+                  dateFormat="dd M yy"
+                  placeholder="Select start date"
+                  [style]="{ width: '100%' }"
+                  appendTo="body"
+                ></p-datepicker>
+              </div>
+              <div class="form-field">
+                <label for="tournament-endDate">
+                  <i class="pi pi-calendar-minus"></i>
+                  End Date
+                </label>
+                <p-datepicker 
+                  inputId="tournament-endDate"
+                  [(ngModel)]="formData.end_date_obj"
+                  [showIcon]="true"
+                  [iconDisplay]="'input'"
+                  dateFormat="dd M yy"
+                  placeholder="Select end date"
+                  [style]="{ width: '100%' }"
+                  appendTo="body"
+                ></p-datepicker>
+              </div>
             </div>
-
-            <!-- Website URL -->
-            <div class="form-field full-width">
-              <label for="tournament-website">Website URL</label>
-              <input 
-                pInputText 
-                id="tournament-website"
-                name="website"
-                [(ngModel)]="formData.website_url" 
-                placeholder="https://..."
-                class="w-full"
-                autocomplete="url"
-              />
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="tournament-deadline">
+                  <i class="pi pi-clock"></i>
+                  Registration Deadline
+                </label>
+                <p-datepicker 
+                  inputId="tournament-deadline"
+                  [(ngModel)]="formData.registration_deadline_obj"
+                  [showIcon]="true"
+                  [iconDisplay]="'input'"
+                  dateFormat="dd M yy"
+                  placeholder="Select registration deadline"
+                  [style]="{ width: '100%' }"
+                  appendTo="body"
+                ></p-datepicker>
+              </div>
             </div>
+          </div>
 
-            <!-- Notes -->
-            <div class="form-field full-width">
-              <label for="tournament-notes">Notes</label>
-              <textarea 
-                pTextarea 
-                id="tournament-notes"
-                name="notes"
-                [(ngModel)]="formData.notes" 
-                rows="3"
-                placeholder="Additional information..."
-                class="w-full"
-                autocomplete="off"
-              ></textarea>
+          <!-- Section: Classification -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-sliders-h"></i>
+              <span>Classification</span>
             </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-type">
+                  <i class="pi pi-flag"></i>
+                  Tournament Type
+                </label>
+                <p-select 
+                  inputId="tournament-type"
+                  [(ngModel)]="formData.tournament_type"
+                  [options]="tournamentTypes"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select type"
+                  [style]="{ width: '100%' }"
+                  appendTo="body"
+                ></p-select>
+              </div>
+              <div class="form-field">
+                <label for="tournament-level">
+                  <i class="pi pi-star"></i>
+                  Competition Level
+                </label>
+                <p-select 
+                  inputId="tournament-level"
+                  [(ngModel)]="formData.competition_level"
+                  [options]="competitionLevels"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select level"
+                  [style]="{ width: '100%' }"
+                  appendTo="body"
+                ></p-select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field full-width checkbox-field">
+                <p-checkbox 
+                  [(ngModel)]="formData.is_home_tournament"
+                  [binary]="true"
+                  inputId="homeTournament"
+                ></p-checkbox>
+                <label for="homeTournament" class="checkbox-label">
+                  <i class="pi pi-home"></i>
+                  This is a home tournament (we are hosting)
+                </label>
+              </div>
+            </div>
+          </div>
 
-            <!-- Home Tournament Checkbox -->
-            <div class="form-field full-width">
-              <p-checkbox 
-                [(ngModel)]="formData.is_home_tournament"
-                [binary]="true"
-                inputId="homeTournament"
-                label="This is a home tournament"
-              ></p-checkbox>
+          <!-- Section: Links & Social -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-link"></i>
+              <span>Links & Social Media</span>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-website">
+                  <i class="pi pi-globe"></i>
+                  Official Website
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-website"
+                  name="website"
+                  [(ngModel)]="formData.website_url" 
+                  placeholder="https://tournament-website.com"
+                  autocomplete="url"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-instagram">
+                  <i class="pi pi-instagram"></i>
+                  Instagram
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-instagram"
+                  name="instagram"
+                  [(ngModel)]="formData.instagram_url" 
+                  placeholder="https://instagram.com/tournament"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-facebook">
+                  <i class="pi pi-facebook"></i>
+                  Facebook
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-facebook"
+                  name="facebook"
+                  [(ngModel)]="formData.facebook_url" 
+                  placeholder="https://facebook.com/event/..."
+                  autocomplete="off"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-registration">
+                  <i class="pi pi-file-edit"></i>
+                  Registration Link
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-registration"
+                  name="registration"
+                  [(ngModel)]="formData.registration_url" 
+                  placeholder="https://registration-form.com"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Venue & Accommodation -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-map"></i>
+              <span>Venue & Accommodation</span>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-venue-map">
+                  <i class="pi pi-map-marker"></i>
+                  Venue Location (Google Maps)
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-venue-map"
+                  name="venueMap"
+                  [(ngModel)]="formData.venue_maps_url" 
+                  placeholder="https://maps.google.com/..."
+                  autocomplete="off"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-hotel-map">
+                  <i class="pi pi-building"></i>
+                  Hotel Location (Google Maps)
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-hotel-map"
+                  name="hotelMap"
+                  [(ngModel)]="formData.hotel_maps_url" 
+                  placeholder="https://maps.google.com/..."
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-hotel-name">
+                  <i class="pi pi-home"></i>
+                  Recommended Hotel
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-hotel-name"
+                  name="hotelName"
+                  [(ngModel)]="formData.hotel_name" 
+                  placeholder="e.g., Hotel Ambassador"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-hotel-booking">
+                  <i class="pi pi-external-link"></i>
+                  Hotel Booking Link
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-hotel-booking"
+                  name="hotelBooking"
+                  [(ngModel)]="formData.hotel_booking_url" 
+                  placeholder="https://booking.com/..."
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Contact & Notes -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-info-circle"></i>
+              <span>Contact & Notes</span>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-contact-name">
+                  <i class="pi pi-user"></i>
+                  Contact Person
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-contact-name"
+                  name="contactName"
+                  [(ngModel)]="formData.contact_name" 
+                  placeholder="e.g., John Smith"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-contact-email">
+                  <i class="pi pi-envelope"></i>
+                  Contact Email
+                </label>
+                <input 
+                  pInputText 
+                  id="tournament-contact-email"
+                  name="contactEmail"
+                  [(ngModel)]="formData.contact_email" 
+                  placeholder="contact@tournament.com"
+                  autocomplete="email"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="tournament-notes">
+                  <i class="pi pi-pencil"></i>
+                  Notes & Additional Information
+                </label>
+                <textarea 
+                  pTextarea 
+                  id="tournament-notes"
+                  name="notes"
+                  [(ngModel)]="formData.notes" 
+                  rows="3"
+                  placeholder="Travel tips, dress code, parking info, special requirements..."
+                  class="w-full"
+                  autocomplete="off"
+                ></textarea>
+              </div>
             </div>
           </div>
         </div>
 
         <ng-template pTemplate="footer">
-          <p-button 
-            label="Cancel" 
-            [outlined]="true"
-            (onClick)="closeDialog()"
-          ></p-button>
-          <p-button 
-            [label]="editingTournament ? 'Update' : 'Create'"
-            [loading]="tournamentService.loading()"
-            (onClick)="saveTournament()"
-          ></p-button>
+          <div class="dialog-footer">
+            <p-button 
+              label="Cancel" 
+              icon="pi pi-times"
+              [outlined]="true"
+              severity="secondary"
+              (onClick)="closeDialog()"
+            ></p-button>
+            <p-button 
+              [label]="editingTournament ? 'Save Changes' : 'Create Tournament'"
+              [icon]="editingTournament ? 'pi pi-check' : 'pi pi-plus'"
+              [loading]="tournamentService.loading()"
+              (onClick)="saveTournament()"
+            ></p-button>
+          </div>
         </ng-template>
       </p-dialog>
 
@@ -1045,6 +1335,22 @@ interface TournamentBudget {
         box-shadow: var(--shadow-lg);
       }
 
+      /* Personal tournament card styling */
+      .tournament-card.personal-tournament {
+        border-left: 4px solid var(--color-status-warning, #f59e0b);
+      }
+
+      .tags-row {
+        display: flex;
+        gap: var(--space-2);
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      ::ng-deep .personal-badge {
+        font-size: 0.75rem !important;
+      }
+
       .tournament-header {
         margin-bottom: var(--space-4);
       }
@@ -1059,6 +1365,64 @@ interface TournamentBudget {
       .card-actions {
         display: flex;
         gap: var(--space-1);
+      }
+
+      /* Visibility Info Banner */
+      .visibility-info-banner {
+        display: flex;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--space-5);
+        align-items: flex-start;
+      }
+
+      .visibility-info-banner.personal {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+      }
+
+      .visibility-info-banner.team {
+        background: linear-gradient(135deg, rgba(8, 153, 73, 0.1) 0%, rgba(8, 153, 73, 0.05) 100%);
+        border: 1px solid rgba(8, 153, 73, 0.2);
+      }
+
+      .visibility-info-banner .banner-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .visibility-info-banner.personal .banner-icon {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+      }
+
+      .visibility-info-banner.team .banner-icon {
+        background: rgba(8, 153, 73, 0.15);
+        color: var(--ds-primary-green, #089949);
+      }
+
+      .visibility-info-banner .banner-icon i {
+        font-size: 1.25rem;
+      }
+
+      .visibility-info-banner .banner-content strong {
+        display: block;
+        font-size: 0.9375rem;
+        margin-bottom: var(--space-1);
+        color: var(--color-text-primary, #1a1a1a);
+      }
+
+      .visibility-info-banner .banner-content p {
+        margin: 0;
+        font-size: 0.8125rem;
+        color: var(--color-text-secondary, #6b7280);
+        line-height: 1.5;
       }
 
       .tournament-title {
@@ -1151,35 +1515,249 @@ interface TournamentBudget {
         justify-content: flex-end;
       }
 
-      /* Dialog Styles */
-      .dialog-content {
-        padding: var(--space-4) 0;
+      /* ================================================================
+         TOURNAMENT DIALOG - Premium Form Design
+         ================================================================ */
+      
+      .tournament-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 0.5rem 0;
       }
 
+      .form-section {
+        background: #fafafa;
+        border-radius: 12px;
+        padding: 1.25rem;
+        border: 1px solid #f0f0f0;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #e5e5e5;
+      }
+
+      .section-header i {
+        font-size: 1.125rem;
+        color: var(--ds-primary-green, #089949);
+      }
+
+      .section-header span {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .form-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .form-row.two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex: 1;
+      }
+
+      .form-field.full-width {
+        width: 100%;
+      }
+
+      .form-field label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        font-size: 0.8125rem;
+        color: #4b5563;
+      }
+
+      .form-field label i {
+        font-size: 0.875rem;
+        color: #9ca3af;
+      }
+
+      .form-field label .required {
+        color: #ef4444;
+        font-weight: 600;
+      }
+
+      .form-field.checkbox-field {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #e5e5e5;
+      }
+
+      .form-field .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        cursor: pointer;
+        color: #374151;
+        font-weight: 500;
+      }
+
+      .form-field .checkbox-label i {
+        color: var(--ds-primary-green, #089949);
+      }
+
+      /* Input Styling Overrides */
+      .tournament-form ::ng-deep .p-inputtext,
+      .tournament-form ::ng-deep .p-select,
+      .tournament-form ::ng-deep .p-datepicker,
+      .tournament-form ::ng-deep .p-inputnumber {
+        width: 100%;
+      }
+
+      .tournament-form ::ng-deep .p-inputtext,
+      .tournament-form ::ng-deep .p-select .p-select-label,
+      .tournament-form ::ng-deep .p-inputnumber-input {
+        padding: 0.75rem 1rem;
+        font-size: 0.9375rem;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        background: #ffffff;
+        transition: all 0.2s ease;
+      }
+
+      .tournament-form ::ng-deep .p-inputtext:focus,
+      .tournament-form ::ng-deep .p-select.p-focus .p-select-label,
+      .tournament-form ::ng-deep .p-inputnumber-input:focus {
+        border-color: var(--ds-primary-green, #089949);
+        box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.1);
+      }
+
+      .tournament-form ::ng-deep .p-inputtext::placeholder {
+        color: #9ca3af;
+      }
+
+      .tournament-form ::ng-deep textarea.p-inputtextarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+
+      .tournament-form ::ng-deep .p-select {
+        border-radius: 8px;
+      }
+
+      /* DatePicker - Fix icon alignment */
+      .tournament-form ::ng-deep .p-datepicker {
+        display: flex;
+        align-items: center;
+      }
+
+      .tournament-form ::ng-deep .p-datepicker-input {
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        padding-left: 2.75rem;
+        font-size: 0.9375rem;
+      }
+
+      .tournament-form ::ng-deep .p-datepicker .p-datepicker-input-icon-container {
+        position: absolute;
+        left: 0.875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .tournament-form ::ng-deep .p-datepicker .p-datepicker-input-icon {
+        color: #6b7280;
+        font-size: 1rem;
+      }
+
+      /* InputNumber - Fix alignment */
+      .tournament-form ::ng-deep .p-inputnumber {
+        display: flex;
+        align-items: center;
+      }
+
+      .tournament-form ::ng-deep .p-inputnumber .p-inputnumber-input {
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+      }
+
+      /* Select dropdown - Fix alignment */
+      .tournament-form ::ng-deep .p-select {
+        display: flex;
+        align-items: center;
+        min-height: 46px;
+      }
+
+      .tournament-form ::ng-deep .p-select .p-select-label {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+      }
+
+      .tournament-form ::ng-deep .p-select .p-select-dropdown {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Dialog Footer */
+      .dialog-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        padding-top: 0.5rem;
+      }
+
+      /* Legacy form-grid support */
       .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: var(--space-4);
       }
 
-      .form-field {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2);
-      }
-
-      .form-field.full-width {
+      .form-grid .form-field.full-width {
         grid-column: 1 / -1;
-      }
-
-      .form-field label {
-        font-weight: var(--font-weight-medium);
-        color: var(--text-primary);
-        font-size: var(--font-body-sm);
       }
 
       .w-full {
         width: 100%;
+      }
+
+      /* Dialog responsive */
+      @media (max-width: 640px) {
+        .form-row.two-col {
+          grid-template-columns: 1fr;
+        }
+
+        .form-section {
+          padding: 1rem;
+        }
+
+        .tournament-form {
+          gap: 1rem;
+        }
       }
 
       /* Availability Dialog */
@@ -1800,10 +2378,20 @@ export class TournamentsComponent implements OnInit {
     start_date_obj?: Date; 
     end_date_obj?: Date;
     registration_deadline_obj?: Date;
+    instagram_url?: string;
+    facebook_url?: string;
+    registration_url?: string;
+    venue_maps_url?: string;
+    hotel_maps_url?: string;
+    hotel_name?: string;
+    hotel_booking_url?: string;
+    contact_name?: string;
+    contact_email?: string;
   } = this.getEmptyFormData();
 
   // Dropdown options
   tournamentTypes = [
+    { label: 'Game Day', value: 'game_day' },
     { label: 'League', value: 'league' },
     { label: 'Cup', value: 'cup' },
     { label: 'Championship', value: 'championship' },
@@ -1820,8 +2408,56 @@ export class TournamentsComponent implements OnInit {
     { label: 'Friendly', value: 'friendly' },
   ];
 
+  // Visibility options for the form
+  visibilityOptions = [
+    { label: 'Team Event (visible to all team members)', value: 'team', icon: 'pi pi-users' },
+    { label: 'Personal Game Day (only you and coaches)', value: 'personal', icon: 'pi pi-user' },
+  ];
+
   ngOnInit(): void {
     this.loadTournaments();
+  }
+
+  /**
+   * Check if current user is a coach, manager, or admin
+   */
+  isCoachOrAdmin(): boolean {
+    const user = this.authService.currentUser();
+    const role = user?.role?.toLowerCase() || '';
+    return ['coach', 'manager', 'admin', 'head_coach', 'assistant_coach'].includes(role);
+  }
+
+  /**
+   * Check if current user is a player (not coach/admin)
+   */
+  isPlayer(): boolean {
+    return this.isAuthenticated() && !this.isCoachOrAdmin();
+  }
+
+  /**
+   * Get the appropriate button label based on user role
+   */
+  getAddButtonLabel(): string {
+    return this.isPlayer() ? 'Add Game Day' : 'Add Tournament';
+  }
+
+  /**
+   * Get dialog title based on user role and editing state
+   */
+  getDialogTitle(): string {
+    if (this.editingTournament) {
+      return this.editingTournament.visibility_scope === 'personal' 
+        ? 'Edit Game Day' 
+        : 'Edit Tournament';
+    }
+    return this.isPlayer() ? 'Add Personal Game Day' : 'Add Tournament';
+  }
+
+  /**
+   * Check if a tournament is a personal game day
+   */
+  isPersonalTournament(tournament: Tournament): boolean {
+    return tournament.visibility_scope === 'personal';
   }
 
   async loadTournaments(): Promise<void> {
@@ -1832,11 +2468,23 @@ export class TournamentsComponent implements OnInit {
     return this.authService.isAuthenticated();
   }
 
-  getEmptyFormData(): CreateTournamentDto & { 
-    start_date_obj?: Date; 
+  getEmptyFormData(): CreateTournamentDto & {
+    start_date_obj?: Date;
     end_date_obj?: Date;
     registration_deadline_obj?: Date;
+    instagram_url?: string;
+    facebook_url?: string;
+    registration_url?: string;
+    venue_maps_url?: string;
+    hotel_maps_url?: string;
+    hotel_name?: string;
+    hotel_booking_url?: string;
+    contact_name?: string;
+    contact_email?: string;
   } {
+    // Default visibility based on user role
+    const defaultVisibility: TournamentVisibilityScope = this.isCoachOrAdmin() ? 'team' : 'personal';
+    
     return {
       name: '',
       short_name: '',
@@ -1845,16 +2493,26 @@ export class TournamentsComponent implements OnInit {
       venue: '',
       start_date: '',
       end_date: '',
-      tournament_type: 'championship',
+      tournament_type: defaultVisibility === 'personal' ? 'game_day' : 'championship',
       competition_level: 'regional',
       expected_teams: undefined,
       registration_deadline: '',
       website_url: '',
       notes: '',
       is_home_tournament: false,
+      visibility_scope: defaultVisibility,
       start_date_obj: undefined,
       end_date_obj: undefined,
       registration_deadline_obj: undefined,
+      instagram_url: '',
+      facebook_url: '',
+      registration_url: '',
+      venue_maps_url: '',
+      hotel_maps_url: '',
+      hotel_name: '',
+      hotel_booking_url: '',
+      contact_name: '',
+      contact_email: '',
     };
   }
 
@@ -1881,6 +2539,7 @@ export class TournamentsComponent implements OnInit {
       website_url: tournament.website_url || '',
       notes: tournament.notes || '',
       is_home_tournament: tournament.is_home_tournament || false,
+      visibility_scope: tournament.visibility_scope || 'team',
       start_date_obj: tournament.start_date ? new Date(tournament.start_date) : undefined,
       end_date_obj: tournament.end_date ? new Date(tournament.end_date) : undefined,
       registration_deadline_obj: tournament.registration_deadline ? new Date(tournament.registration_deadline) : undefined,

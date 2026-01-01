@@ -16,10 +16,28 @@ const {
 
 /**
  * Get all tournaments or a specific tournament by ID
+ * 
+ * Visibility Rules:
+ * - 'team' scope: Visible to all team members (created by coach/manager/admin)
+ * - 'personal' scope: Visible only to the player who created it + all coaches
+ * 
+ * For players: See all 'team' tournaments + their own 'personal' tournaments
+ * For coaches/managers/admins: See all 'team' tournaments + all 'personal' tournaments
  */
 async function getTournaments(event, _context, { userId, requestId }) {
   const queryParams = event.queryStringParameters || {};
   const { id, year, status, type } = queryParams;
+
+  // Get user role if userId is provided (for visibility filtering)
+  let userRole = null;
+  if (userId) {
+    const { data: userData } = await supabaseAdmin
+      .from("users")
+      .select("role")
+      .eq("id", userId)
+      .single();
+    userRole = userData?.role || 'player';
+  }
 
   // Get single tournament by ID
   if (id) {
@@ -34,6 +52,16 @@ async function getTournaments(event, _context, { userId, requestId }) {
         return handleNotFoundError(`Tournament with ID ${id}`, requestId);
       }
       throw error;
+    }
+
+    // Check visibility for personal tournaments
+    if (data && data.visibility_scope === 'personal') {
+      const isCoachOrAdmin = ['coach', 'manager', 'admin', 'head_coach', 'assistant_coach'].includes(userRole);
+      const isOwner = data.created_by === userId || data.player_id === userId;
+      
+      if (!isCoachOrAdmin && !isOwner) {
+        return handleNotFoundError(`Tournament with ID ${id}`, requestId);
+      }
     }
 
     return createSuccessResponse({ tournament: data }, requestId);
@@ -76,9 +104,24 @@ async function getTournaments(event, _context, { userId, requestId }) {
     throw error;
   }
 
+  // Apply visibility filtering
+  const isCoachOrAdmin = ['coach', 'manager', 'admin', 'head_coach', 'assistant_coach'].includes(userRole);
+  
+  let filteredData = data || [];
+  if (!isCoachOrAdmin && userId) {
+    // Players only see: team tournaments + their own personal tournaments
+    filteredData = filteredData.filter(t => 
+      t.visibility_scope === 'team' || 
+      t.visibility_scope === null || // Legacy tournaments
+      t.created_by === userId ||
+      t.player_id === userId
+    );
+  }
+  // Coaches/managers/admins see all tournaments (team + all personal)
+
   // Transform data to include calculated status
   const today = new Date().toISOString().split("T")[0];
-  const tournaments = (data || []).map((t) => ({
+  const tournaments = filteredData.map((t) => ({
     ...t,
     calculatedStatus: getCalculatedStatus(t.start_date, t.end_date, today),
     daysUntil: getDaysUntil(t.start_date),
@@ -89,6 +132,10 @@ async function getTournaments(event, _context, { userId, requestId }) {
 
 /**
  * Create a new tournament
+ * 
+ * Visibility Rules:
+ * - If created by coach/manager/admin: visibility_scope = 'team' (all team members see it)
+ * - If created by player: visibility_scope = 'personal' (only that player + coaches see it)
  */
 async function createTournament(event, _context, { userId, requestId }) {
   let body;
@@ -115,12 +162,33 @@ async function createTournament(event, _context, { userId, requestId }) {
     );
   }
 
+  // Get user role to determine visibility scope
+  let userRole = 'player';
+  if (userId) {
+    const { data: userData } = await supabaseAdmin
+      .from("users")
+      .select("role")
+      .eq("id", userId)
+      .single();
+    userRole = userData?.role || 'player';
+  }
+
+  // Determine visibility scope based on user role
+  // Coaches/managers/admins create team-wide tournaments
+  // Players create personal tournaments (only visible to them + coaches)
+  const isCoachOrAdmin = ['coach', 'manager', 'admin', 'head_coach', 'assistant_coach'].includes(userRole);
+  const visibilityScope = body.visibility_scope || (isCoachOrAdmin ? 'team' : 'personal');
+  
+  // For personal tournaments, set player_id to the creator
+  const playerId = visibilityScope === 'personal' ? userId : (body.player_id || null);
+
   // Prepare tournament data
   const tournamentData = {
     name: body.name,
     short_name: body.short_name || body.shortName || null,
     location: body.location || null,
     country: body.country || null,
+    flag: body.flag || null,
     start_date: body.start_date || body.startDate,
     end_date: body.end_date || body.endDate || body.start_date || body.startDate,
     tournament_type: body.tournament_type || body.tournamentType || "championship",
@@ -135,6 +203,8 @@ async function createTournament(event, _context, { userId, requestId }) {
     expected_teams: body.expected_teams || body.expectedTeams || null,
     prize_pool: body.prize_pool || body.prizePool || null,
     created_by: userId,
+    visibility_scope: visibilityScope,
+    player_id: playerId,
   };
 
   const { data, error } = await supabaseAdmin
@@ -147,8 +217,12 @@ async function createTournament(event, _context, { userId, requestId }) {
     throw error;
   }
 
+  const scopeMessage = visibilityScope === 'personal' 
+    ? 'Personal game day created (visible to you and coaches)' 
+    : 'Team tournament created (visible to all team members)';
+
   return createSuccessResponse(
-    { tournament: data, message: "Tournament created successfully" },
+    { tournament: data, message: scopeMessage },
     requestId,
     201
   );
@@ -189,6 +263,7 @@ async function updateTournament(event, _context, { userId, requestId }) {
     "short_name",
     "location",
     "country",
+    "flag",
     "start_date",
     "end_date",
     "tournament_type",
@@ -202,6 +277,8 @@ async function updateTournament(event, _context, { userId, requestId }) {
     "venue",
     "expected_teams",
     "prize_pool",
+    "visibility_scope",
+    "player_id",
   ];
 
   // Map camelCase to snake_case
@@ -217,6 +294,8 @@ async function updateTournament(event, _context, { userId, requestId }) {
     websiteUrl: "website_url",
     expectedTeams: "expected_teams",
     prizePool: "prize_pool",
+    visibilityScope: "visibility_scope",
+    playerId: "player_id",
   };
 
   for (const [key, value] of Object.entries(body)) {

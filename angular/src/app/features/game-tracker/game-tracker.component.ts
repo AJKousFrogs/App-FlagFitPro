@@ -1,35 +1,35 @@
 import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-  DestroyRef,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    inject,
+    signal,
 } from "@angular/core";
 
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  FormsModule,
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
 } from "@angular/forms";
-import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
-import { Textarea } from "primeng/textarea";
-import { InputNumberModule } from "primeng/inputnumber";
+import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
+import { InputNumberModule } from "primeng/inputnumber";
+import { InputTextModule } from "primeng/inputtext";
+import { RadioButtonModule } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { RadioButtonModule } from "primeng/radiobutton";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { Textarea } from "primeng/textarea";
+import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 interface Game {
   id: string;
@@ -38,6 +38,9 @@ interface Game {
   location: string;
   score: string;
   result: "win" | "loss" | "tie";
+  visibilityScope?: "team" | "personal";
+  ownerType?: "coach" | "player";
+  isPersonal?: boolean;
 }
 
 interface Player {
@@ -129,6 +132,19 @@ export class GameTrackerComponent implements OnInit {
   opponentScore = signal<number>(0);
   gameForm!: FormGroup;
   playForm!: FormGroup;
+  
+  // Temperature unit preference (stored in localStorage)
+  temperatureUnit: 'F' | 'C' = 'F';
+
+  // User role detection
+  isCoachOrAdmin = signal(false);
+  currentUserId = signal<string | null>(null);
+
+  // Game type options
+  gameTypeOptions = [
+    { label: "Team Game", value: "team", description: "Visible to all team members" },
+    { label: "Personal/Domestic League", value: "personal", description: "Only visible to you and coaches with consent" },
+  ];
 
   homeAwayOptions = [
     { label: "Home", value: "home" },
@@ -150,6 +166,7 @@ export class GameTrackerComponent implements OnInit {
     { label: "Dry", value: "dry" },
     { label: "Wet", value: "wet" },
     { label: "Muddy", value: "muddy" },
+    { label: "Turf", value: "turf" },
     { label: "Indoor", value: "indoor" },
   ];
 
@@ -218,10 +235,81 @@ export class GameTrackerComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.loadTemperaturePreference();
+    this.detectUserRole();
     this.initGameForm();
     this.initPlayForm();
     this.loadGames();
     this.loadPlayers();
+  }
+
+  /**
+   * Detect if user is coach/admin or player
+   */
+  private detectUserRole(): void {
+    const user = this.authService.getUser();
+    if (user) {
+      this.currentUserId.set(user.id);
+      const role = user.role || 'player';
+      const coachRoles = ['coach', 'head_coach', 'assistant_coach', 'manager', 'admin'];
+      this.isCoachOrAdmin.set(coachRoles.includes(role));
+    }
+  }
+
+  /**
+   * Get button label based on user role
+   */
+  getNewGameButtonLabel(): string {
+    return this.isCoachOrAdmin() ? 'New Team Game' : 'Log Game';
+  }
+
+  /**
+   * Get form title based on user role
+   */
+  getFormTitle(): string {
+    return this.isCoachOrAdmin() ? 'Create Team Game' : 'Log Personal Game';
+  }
+
+  /**
+   * Get form subtitle/description based on user role
+   */
+  getFormDescription(): string {
+    if (this.isCoachOrAdmin()) {
+      return 'This game will be visible to all team members and affect team statistics.';
+    }
+    return 'Log a game from your domestic league or personal competition. Only you and coaches you\'ve given consent to can see this.';
+  }
+
+  /**
+   * Load temperature unit preference from localStorage
+   */
+  private loadTemperaturePreference(): void {
+    const savedUnit = localStorage.getItem('temperatureUnit');
+    if (savedUnit === 'C' || savedUnit === 'F') {
+      this.temperatureUnit = savedUnit;
+    }
+  }
+
+  /**
+   * Set temperature unit and save to localStorage
+   */
+  setTemperatureUnit(unit: 'F' | 'C'): void {
+    // Convert existing temperature value if there is one
+    const currentTemp = this.gameForm?.get('temperature')?.value;
+    if (currentTemp !== null && currentTemp !== undefined) {
+      if (unit === 'C' && this.temperatureUnit === 'F') {
+        // Convert F to C
+        const celsius = Math.round((currentTemp - 32) * 5 / 9);
+        this.gameForm.patchValue({ temperature: celsius });
+      } else if (unit === 'F' && this.temperatureUnit === 'C') {
+        // Convert C to F
+        const fahrenheit = Math.round(currentTemp * 9 / 5 + 32);
+        this.gameForm.patchValue({ temperature: fahrenheit });
+      }
+    }
+    
+    this.temperatureUnit = unit;
+    localStorage.setItem('temperatureUnit', unit);
   }
 
   loadPlayers(): void {
@@ -296,6 +384,9 @@ export class GameTrackerComponent implements OnInit {
   }
 
   initGameForm(): void {
+    // Default visibility based on user role
+    const defaultVisibility = this.isCoachOrAdmin() ? 'team' : 'personal';
+    
     this.gameForm = this.fb.group({
       gameDate: [new Date(), Validators.required],
       gameTime: [""],
@@ -305,6 +396,9 @@ export class GameTrackerComponent implements OnInit {
       weather: [""],
       temperature: [null],
       fieldConditions: ["dry"],
+      gameType: ["regular_season"],
+      visibilityScope: [defaultVisibility], // 'team' or 'personal'
+      notes: [""],
     });
   }
 
@@ -414,33 +508,55 @@ export class GameTrackerComponent implements OnInit {
   }
 
   loadGames(): void {
-    // Load games
-    this.games.set([
-      {
-        id: "1",
-        date: "2024-03-15",
-        opponent: "Blue Devils",
-        location: "Home Field",
-        score: "28-21",
-        result: "win",
-      },
-      {
-        id: "2",
-        date: "2024-03-08",
-        opponent: "Thunder Bolts",
-        location: "Away",
-        score: "14-21",
-        result: "loss",
-      },
-      {
-        id: "3",
-        date: "2024-03-01",
-        opponent: "Lightning Strike",
-        location: "Home Field",
-        score: "35-28",
-        result: "win",
-      },
-    ]);
+    this.apiService
+      .get<Array<{
+        game_id: string;
+        id: string;
+        game_date: string;
+        opponent_team_name: string;
+        opponent_name: string;
+        location: string;
+        team_score: number;
+        our_score: number;
+        opponent_score: number;
+        is_home_game: boolean;
+        visibility_scope: string;
+        owner_type: string;
+        player_owner_id: string;
+      }>>("/api/games")
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          const games: Game[] = (response.data || []).map((game) => {
+            const teamScore = game.team_score ?? game.our_score ?? 0;
+            const opponentScore = game.opponent_score ?? 0;
+            let result: "win" | "loss" | "tie" = "tie";
+            if (teamScore > opponentScore) {
+              result = "win";
+            } else if (teamScore < opponentScore) {
+              result = "loss";
+            }
+            
+            return {
+              id: game.game_id || game.id,
+              date: new Date(game.game_date).toLocaleDateString(),
+              opponent: game.opponent_team_name || game.opponent_name,
+              location: game.location || (game.is_home_game ? "Home" : "Away"),
+              score: `${teamScore}-${opponentScore}`,
+              result,
+              visibilityScope: game.visibility_scope as "team" | "personal",
+              ownerType: game.owner_type as "coach" | "player",
+              isPersonal: game.visibility_scope === "personal",
+            };
+          });
+          this.games.set(games);
+        },
+        error: (err) => {
+          console.error('Error loading games:', err);
+          // Set empty array on error
+          this.games.set([]);
+        },
+      });
   }
 
   openNewGame(): void {
@@ -455,12 +571,35 @@ export class GameTrackerComponent implements OnInit {
   submitGame(): void {
     if (this.gameForm.invalid) {
       this.gameForm.markAllAsTouched();
+      // Show which fields are invalid
+      const invalidFields = Object.keys(this.gameForm.controls)
+        .filter(key => this.gameForm.get(key)?.invalid)
+        .join(', ');
+      this.toastService.error(`Please fill required fields: ${invalidFields || 'unknown'}`);
       return;
     }
 
-    const gameData = this.gameForm.value;
+    const formValue = this.gameForm.value;
+    
+    // Map form data to API expected format
+    const gameData = {
+      opponentName: formValue.opponent,
+      gameDate: formValue.gameDate instanceof Date 
+        ? formValue.gameDate.toISOString() 
+        : formValue.gameDate,
+      gameTime: formValue.gameTime || null,
+      location: formValue.location || null,
+      isHomeGame: formValue.homeAway === 'home',
+      weather: formValue.weather || null,
+      temperature: formValue.temperature,
+      fieldConditions: formValue.fieldConditions || null,
+      gameType: formValue.gameType || 'regular_season',
+      visibilityScope: formValue.visibilityScope || (this.isCoachOrAdmin() ? 'team' : 'personal'),
+      notes: formValue.notes || null,
+    };
+
     this.apiService
-      .post("/api/tournaments/games", gameData)
+      .post("/api/games", gameData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: unknown) => {
@@ -475,13 +614,15 @@ export class GameTrackerComponent implements OnInit {
               gameId = respGameId;
             }
           }
+          this.toastService.success('Game created successfully!');
           this.showGameForm.set(false);
           this.gameForm.reset();
           this.loadGames();
           this.startTrackingGame(gameId);
         },
-        error: () => {
-          // Error handled by error interceptor
+        error: (err) => {
+          console.error('Error creating game:', err);
+          this.toastService.error('Failed to create game. Please try again.');
         },
       });
   }

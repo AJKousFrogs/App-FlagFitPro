@@ -2,7 +2,7 @@
   <div class="game-tracker-page">
     <app-page-header
       title="Game Tracker"
-      subtitle="Track every play, drop, flag pull, and performance metric"
+      [subtitle]="isCoachOrAdmin() ? 'Track team games, plays, and performance metrics' : 'Log your personal games and track your performance'"
       icon="pi-list"
     >
       <div class="header-actions">
@@ -13,7 +13,7 @@
           (onClick)="viewGames()"
         ></p-button>
         <p-button
-          label="New Game"
+          [label]="getNewGameButtonLabel()"
           icon="pi pi-plus"
           (onClick)="openNewGame()"
         ></p-button>
@@ -24,10 +24,16 @@
     @if (showGameForm()) {
       <p-card class="game-form-card">
         <ng-template pTemplate="header">
-          <h3>Game Setup</h3>
+          <h3>{{ getFormTitle() }}</h3>
         </ng-template>
+        <!-- Visibility Info Banner -->
+        <div class="visibility-info-banner" [class.personal]="!isCoachOrAdmin()">
+          <i class="pi" [class.pi-users]="isCoachOrAdmin()" [class.pi-user]="!isCoachOrAdmin()"></i>
+          <span>{{ getFormDescription() }}</span>
+        </div>
         <form [formGroup]="gameForm" (ngSubmit)="submitGame()">
-          <div class="form-grid">
+          <!-- Row 1: Date, Time, Opponent, Location -->
+          <div class="form-row four-col">
             <div class="form-field">
               <label for="gameDate">Game Date</label>
               <p-datepicker
@@ -35,6 +41,7 @@
                 formControlName="gameDate"
                 dateFormat="mm/dd/yy"
                 [showIcon]="true"
+                appendTo="body"
               ></p-datepicker>
             </div>
             <div class="form-field">
@@ -53,7 +60,7 @@
                 type="text"
                 pInputText
                 formControlName="opponent"
-                placeholder="Blue Devils"
+                placeholder="Enter team name"
               />
             </div>
             <div class="form-field">
@@ -63,9 +70,12 @@
                 type="text"
                 pInputText
                 formControlName="location"
-                placeholder="Home Field"
+                placeholder="Enter location"
               />
             </div>
+          </div>
+          <!-- Row 2: Home/Away, Weather, Temperature, Field Conditions -->
+          <div class="form-row four-col">
             <div class="form-field">
               <label for="homeAway">Home/Away</label>
               <p-select
@@ -74,6 +84,7 @@
                 [options]="homeAwayOptions"
                 optionLabel="label"
                 optionValue="value"
+                appendTo="body"
               >
               </p-select>
             </div>
@@ -85,19 +96,36 @@
                 [options]="weatherOptions"
                 optionLabel="label"
                 optionValue="value"
+                appendTo="body"
               >
               </p-select>
             </div>
             <div class="form-field">
-              <label for="temperature">Temperature (°F)</label>
-              <p-inputNumber
-                id="temperature"
-                formControlName="temperature"
-                [min]="0"
-                [max]="120"
-                [showButtons]="true"
-              >
-              </p-inputNumber>
+              <label for="temperature">Temperature</label>
+              <div class="temperature-field">
+                <p-inputNumber
+                  id="temperature"
+                  formControlName="temperature"
+                  [min]="temperatureUnit === 'F' ? 0 : -20"
+                  [max]="temperatureUnit === 'F' ? 120 : 50"
+                  [suffix]="temperatureUnit === 'F' ? '°F' : '°C'"
+                  styleClass="temperature-input"
+                >
+                </p-inputNumber>
+                <div class="unit-toggle-switch">
+                  <span class="unit-label" [class.active]="temperatureUnit === 'C'">°C</span>
+                  <button 
+                    type="button" 
+                    class="toggle-track"
+                    [class.fahrenheit]="temperatureUnit === 'F'"
+                    (click)="setTemperatureUnit(temperatureUnit === 'F' ? 'C' : 'F')"
+                    [attr.aria-label]="'Switch to ' + (temperatureUnit === 'F' ? 'Celsius' : 'Fahrenheit')"
+                  >
+                    <span class="toggle-thumb"></span>
+                  </button>
+                  <span class="unit-label" [class.active]="temperatureUnit === 'F'">°F</span>
+                </div>
+              </div>
             </div>
             <div class="form-field">
               <label for="fieldConditions">Field Conditions</label>
@@ -107,6 +135,7 @@
                 [options]="fieldConditionOptions"
                 optionLabel="label"
                 optionValue="value"
+                appendTo="body"
               >
               </p-select>
             </div>
@@ -651,13 +680,14 @@
     <!-- Games List -->
     <p-card class="games-list-card">
       <ng-template pTemplate="header">
-        <h3>Recent Games</h3>
+        <h3>{{ isCoachOrAdmin() ? 'Team & Personal Games' : 'My Games' }}</h3>
       </ng-template>
       <p-table [value]="games()" [paginator]="true" [rows]="10">
         <ng-template pTemplate="header">
           <tr>
             <th>Date</th>
             <th>Opponent</th>
+            <th>Type</th>
             <th>Location</th>
             <th>Score</th>
             <th>Result</th>
@@ -665,9 +695,22 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-game>
-          <tr [attr.data-game-id]="game.id">
+          <tr [attr.data-game-id]="game.id" [class.personal-game-row]="game.isPersonal">
             <td>{{ game.date }}</td>
             <td>{{ game.opponent }}</td>
+            <td>
+              @if (game.isPersonal) {
+                <span class="personal-badge">
+                  <i class="pi pi-user"></i>
+                  Personal
+                </span>
+              } @else {
+                <span class="team-badge">
+                  <i class="pi pi-users"></i>
+                  Team
+                </span>
+              }
+            </td>
             <td>{{ game.location }}</td>
             <td>{{ game.score }}</td>
             <td>

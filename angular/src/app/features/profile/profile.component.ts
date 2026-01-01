@@ -835,11 +835,22 @@ interface PendingInvitation {
         gap: var(--space-4);
       }
 
+      /* Remove borders from statistics card */
+      .profile-tabs-container :host ::ng-deep p-card,
+      .profile-tabs-container ::ng-deep p-card,
+      .profile-tabs-container :host ::ng-deep .p-card,
+      .profile-tabs-container ::ng-deep .p-card {
+        border: none !important;
+        box-shadow: none !important;
+      }
+
       .performance-stat {
         padding: var(--space-4);
-        background: var(--p-surface-50);
-        border-radius: var(--p-border-radius);
+        background: var(--surface-primary, #ffffff);
+        border-radius: var(--radius-lg, 12px);
         text-align: center;
+        border: none;
+        box-shadow: none;
       }
 
       .performance-stat .stat-label {
@@ -855,9 +866,214 @@ interface PendingInvitation {
         margin-bottom: var(--space-2);
       }
 
-      /* ========== Profile Tabs - Design System Segment Control ========== */
+      /* Fix p-tag colors - transparent background with black text */
+      .performance-stat :host ::ng-deep .p-tag,
+      .performance-stat ::ng-deep .p-tag,
+      .performance-stat .p-tag {
+        background: transparent !important;
+        color: var(--color-text-primary, #1a1a1a) !important;
+        border: none !important;
+        padding: 0 !important;
+        font-weight: 500;
+      }
+
+      .performance-stat :host ::ng-deep .p-tag-info,
+      .performance-stat ::ng-deep .p-tag-info,
+      .performance-stat .p-tag-info {
+        background: transparent !important;
+        color: var(--color-text-primary, #1a1a1a) !important;
+      }
+
+      .performance-stat :host ::ng-deep .p-tag-secondary,
+      .performance-stat ::ng-deep .p-tag-secondary,
+      .performance-stat .p-tag-secondary {
+        background: transparent !important;
+        color: var(--color-text-primary, #1a1a1a) !important;
+      }
+
+      .performance-stat :host ::ng-deep .p-tag-success,
+      .performance-stat ::ng-deep .p-tag-success,
+      .performance-stat .p-tag-success {
+        background: transparent !important;
+        color: var(--color-text-primary, #1a1a1a) !important;
+      }
+
+      /* ========== Profile Tabs - Premium Pill Button Design ========== */
       .profile-tabs-container {
         margin-top: 1.5rem;
+      }
+
+      /* Reset all PrimeNG tab styles */
+      .profile-tabs-container ::ng-deep .p-tabs,
+      .profile-tabs-container ::ng-deep .p-tabs * {
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+      }
+
+      .profile-tabs-container ::ng-deep .p-tabs {
+        background: transparent !important;
+      }
+
+      .profile-tabs-container ::ng-deep .p-tablist {
+        display: flex !important;
+        align-items: center !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin-bottom: 1.5rem !important;
+      }
+
+      .profile-tabs-container ::ng-deep .p-tablist-content,
+      .profile-tabs-container ::ng-deep .p-tablist-viewport {
+        background: transparent !important;
+        overflow: visible !important;
+      }
+
+      .profile-tabs-container ::ng-deep .p-tablist-tab-list {
+        display: flex !important;
+        gap: 0.75rem !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        width: 100% !important;
+      }
+
+      /* Hide the active bar indicator */
+      .profile-tabs-container ::ng-deep .p-tablist-active-bar {
+        display: none !important;
+      }
+
+      /* Individual Tab - Premium Pill Button (Inactive) */
+      .profile-tabs-container ::ng-deep .p-tab {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.625rem !important;
+        padding: 0.875rem 1.75rem !important;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-size: 0.9375rem !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.01em !important;
+        color: #374151 !important;
+        background: #ffffff !important;
+        border-radius: 9999px !important;
+        cursor: pointer !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 
+          0 1px 3px rgba(0, 0, 0, 0.08),
+          0 4px 12px rgba(0, 0, 0, 0.04),
+          inset 0 0 0 1px rgba(0, 0, 0, 0.06) !important;
+        min-height: 48px !important;
+        flex: none !important;
+        position: relative !important;
+        overflow: hidden !important;
+      }
+
+      /* Subtle shine effect on inactive tabs */
+      .profile-tabs-container ::ng-deep .p-tab::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 50% !important;
+        background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%) !important;
+        pointer-events: none !important;
+        border-radius: 9999px 9999px 0 0 !important;
+      }
+
+      /* Icon styling in inactive tabs */
+      .profile-tabs-container ::ng-deep .p-tab i,
+      .profile-tabs-container ::ng-deep .p-tab .pi {
+        font-size: 1.125rem !important;
+        color: var(--ds-primary-green, #089949) !important;
+        transition: all 0.25s ease !important;
+      }
+
+      /* Tab label styling */
+      .profile-tabs-container ::ng-deep .p-tab .tab-label {
+        color: #374151 !important;
+        transition: color 0.25s ease !important;
+      }
+
+      /* Hover state for inactive tabs */
+      .profile-tabs-container ::ng-deep .p-tab:hover:not([data-p-active="true"]):not([aria-selected="true"]) {
+        transform: translateY(-3px) !important;
+        box-shadow: 
+          0 4px 12px rgba(8, 153, 73, 0.15),
+          0 8px 24px rgba(8, 153, 73, 0.1),
+          inset 0 0 0 2px rgba(8, 153, 73, 0.2) !important;
+        background: #ffffff !important;
+      }
+
+      .profile-tabs-container ::ng-deep .p-tab:hover:not([data-p-active="true"]):not([aria-selected="true"]) i,
+      .profile-tabs-container ::ng-deep .p-tab:hover:not([data-p-active="true"]):not([aria-selected="true"]) .pi {
+        color: var(--ds-primary-green, #089949) !important;
+        transform: scale(1.1) !important;
+      }
+
+      .profile-tabs-container ::ng-deep .p-tab:hover:not([data-p-active="true"]):not([aria-selected="true"]) .tab-label {
+        color: var(--ds-primary-green, #089949) !important;
+      }
+
+      /* Active Tab - Premium Green Gradient */
+      .profile-tabs-container ::ng-deep .p-tab[data-p-active="true"],
+      .profile-tabs-container ::ng-deep .p-tab[aria-selected="true"],
+      .profile-tabs-container ::ng-deep .p-tab.p-tab-active {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #0ab85a 0%, var(--ds-primary-green, #089949) 50%, #067a3b 100%) !important;
+        box-shadow: 
+          0 4px 14px rgba(8, 153, 73, 0.4),
+          0 8px 24px rgba(8, 153, 73, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+        transform: translateY(-1px) !important;
+      }
+
+      /* Shine effect on active tab */
+      .profile-tabs-container ::ng-deep .p-tab[data-p-active="true"]::before,
+      .profile-tabs-container ::ng-deep .p-tab[aria-selected="true"]::before,
+      .profile-tabs-container ::ng-deep .p-tab.p-tab-active::before {
+        background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%) !important;
+      }
+
+      /* Icon in active tab - white */
+      .profile-tabs-container ::ng-deep .p-tab[data-p-active="true"] i,
+      .profile-tabs-container ::ng-deep .p-tab[data-p-active="true"] .pi,
+      .profile-tabs-container ::ng-deep .p-tab[aria-selected="true"] i,
+      .profile-tabs-container ::ng-deep .p-tab[aria-selected="true"] .pi,
+      .profile-tabs-container ::ng-deep .p-tab.p-tab-active i,
+      .profile-tabs-container ::ng-deep .p-tab.p-tab-active .pi {
+        color: #ffffff !important;
+      }
+
+      /* Tab label in active tab - white */
+      .profile-tabs-container ::ng-deep .p-tab[data-p-active="true"] .tab-label,
+      .profile-tabs-container ::ng-deep .p-tab[aria-selected="true"] .tab-label,
+      .profile-tabs-container ::ng-deep .p-tab.p-tab-active .tab-label {
+        color: #ffffff !important;
+      }
+
+      /* Active tab hover - elevated with glow */
+      .profile-tabs-container ::ng-deep .p-tab[data-p-active="true"]:hover,
+      .profile-tabs-container ::ng-deep .p-tab[aria-selected="true"]:hover,
+      .profile-tabs-container ::ng-deep .p-tab.p-tab-active:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 
+          0 6px 20px rgba(8, 153, 73, 0.5),
+          0 12px 32px rgba(8, 153, 73, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+      }
+
+      /* Active/pressed state */
+      .profile-tabs-container ::ng-deep .p-tab:active {
+        transform: translateY(0) scale(0.98) !important;
+      }
+
+      /* Focus state for accessibility */
+      .profile-tabs-container ::ng-deep .p-tab:focus-visible {
+        box-shadow: 
+          0 0 0 3px #ffffff,
+          0 0 0 5px var(--ds-primary-green, #089949),
+          0 4px 12px rgba(8, 153, 73, 0.2) !important;
       }
 
       /* Invitation badge */
@@ -1040,14 +1256,60 @@ interface PendingInvitation {
         }
       }
 
-      /* Mobile responsive - Icon only on small screens */
+      /* Tablet - Slightly smaller tabs */
+      @media (max-width: 768px) {
+        .profile-tabs-container ::ng-deep .p-tablist-tab-list {
+          gap: 0.5rem !important;
+        }
+
+        .profile-tabs-container ::ng-deep .p-tab {
+          padding: 0.75rem 1.25rem !important;
+          font-size: 0.875rem !important;
+          min-height: 44px !important;
+        }
+
+        .profile-tabs-container ::ng-deep .p-tab i,
+        .profile-tabs-container ::ng-deep .p-tab .pi {
+          font-size: 1rem !important;
+        }
+      }
+
+      /* Mobile - Compact pills */
       @media (max-width: 540px) {
+        .profile-tabs-container ::ng-deep .p-tablist-tab-list {
+          gap: 0.375rem !important;
+          justify-content: space-between !important;
+        }
+
+        .profile-tabs-container ::ng-deep .p-tab {
+          padding: 0.625rem 0.875rem !important;
+          font-size: 0.8125rem !important;
+          min-height: 40px !important;
+          flex: 1 !important;
+          max-width: calc(25% - 0.375rem) !important;
+        }
+
         .tab-label {
-          display: none;
+          display: none !important;
+        }
+
+        .profile-tabs-container ::ng-deep .p-tab i,
+        .profile-tabs-container ::ng-deep .p-tab .pi {
+          font-size: 1.125rem !important;
         }
 
         .invitation-badge {
-          margin-left: 0;
+          margin-left: 0 !important;
+          position: absolute !important;
+          top: -4px !important;
+          right: -4px !important;
+          min-width: 18px !important;
+          height: 18px !important;
+          font-size: 0.625rem !important;
+        }
+
+        .profile-tabs-container ::ng-deep .p-tab {
+          position: relative !important;
         }
       }
     `,
@@ -1205,19 +1467,29 @@ export class ProfileComponent implements OnInit {
         .limit(7);
 
       // Calculate performance score based on wellness and training
+      // Only calculate if we have actual wellness data with real values
       let performanceScore = 0;
       if (wellness && wellness.length > 0) {
-        const avgEnergy = wellness.reduce((a, w) => a + (w.energy_level || 0), 0) / wellness.length;
-        const avgMotivation = wellness.reduce((a, w) => a + (w.motivation_level || 5), 0) / wellness.length;
-        const avgSleep = wellness.reduce((a, w) => a + (w.sleep_quality || 5), 0) / wellness.length;
-        // Score out of 100 based on averages (each is 1-10 scale)
-        performanceScore = Math.round(((avgEnergy + avgMotivation + avgSleep) / 30) * 100);
+        // Filter to only records that have at least one actual value (not null/undefined)
+        const validRecords = wellness.filter(w => 
+          w.energy_level !== null && w.energy_level !== undefined &&
+          w.motivation_level !== null && w.motivation_level !== undefined &&
+          w.sleep_quality !== null && w.sleep_quality !== undefined
+        );
+        
+        if (validRecords.length > 0) {
+          const avgEnergy = validRecords.reduce((a, w) => a + w.energy_level, 0) / validRecords.length;
+          const avgMotivation = validRecords.reduce((a, w) => a + w.motivation_level, 0) / validRecords.length;
+          const avgSleep = validRecords.reduce((a, w) => a + w.sleep_quality, 0) / validRecords.length;
+          // Score out of 100 based on averages (each is 1-10 scale)
+          performanceScore = Math.round(((avgEnergy + avgMotivation + avgSleep) / 30) * 100);
+        }
       }
 
-      // Load stats with real data
+      // Load stats with real data - only show actual data, not placeholders
       this.stats.set([
         { value: totalSessions.toString(), label: "Training Sessions" },
-        { value: performanceScore > 0 ? `${performanceScore}%` : "N/A", label: "Performance Score" },
+        { value: performanceScore > 0 ? `${performanceScore}%` : "—", label: "Performance Score" },
         { value: streak.toString(), label: "Day Streak" },
         { value: "0", label: "Games Played" },
       ]);
@@ -1277,24 +1549,37 @@ export class ProfileComponent implements OnInit {
       const totalMinutes = completedSessions.reduce((a, s) => a + (s.duration_minutes || 0), 0);
       const avgSessionLength = totalSessions > 0 ? Math.round(totalMinutes / totalSessions) : 0;
 
+      // Performance stats - only show meaningful trends when there's actual data
       this.performanceStats.set([
         {
           label: "Performance Score",
-          value: performanceScore > 0 ? `${performanceScore}%` : "N/A",
-          trend: performanceScore >= 80 ? "Excellent" : performanceScore >= 60 ? "Good" : "Building",
-          trendType: performanceScore >= 80 ? "success" : performanceScore >= 60 ? "info" : "secondary",
+          value: performanceScore > 0 ? `${performanceScore}%` : "—",
+          trend: performanceScore > 0 
+            ? (performanceScore >= 80 ? "Excellent" : performanceScore >= 60 ? "Good" : "Building") 
+            : "No wellness data yet",
+          trendType: performanceScore > 0 
+            ? (performanceScore >= 80 ? "success" : performanceScore >= 60 ? "info" : "secondary")
+            : "secondary",
         },
         {
           label: "Avg Session Length",
-          value: avgSessionLength > 0 ? `${avgSessionLength} min` : "N/A",
-          trend: avgSessionLength >= 45 ? "Great duration" : "Keep it up",
-          trendType: avgSessionLength >= 45 ? "success" : "info",
+          value: avgSessionLength > 0 ? `${avgSessionLength} min` : "—",
+          trend: avgSessionLength > 0 
+            ? (avgSessionLength >= 45 ? "Great duration" : "Keep it up") 
+            : "No sessions yet",
+          trendType: avgSessionLength > 0 
+            ? (avgSessionLength >= 45 ? "success" : "info")
+            : "secondary",
         },
         {
           label: "Total Training Hours",
-          value: `${(totalMinutes / 60).toFixed(1)}h`,
-          trend: totalMinutes >= 600 ? "Strong commitment" : "Building base",
-          trendType: totalMinutes >= 600 ? "success" : "info",
+          value: totalMinutes > 0 ? `${(totalMinutes / 60).toFixed(1)}h` : "0h",
+          trend: totalMinutes > 0 
+            ? (totalMinutes >= 600 ? "Strong commitment" : "Building base") 
+            : "Start training to track",
+          trendType: totalMinutes > 0 
+            ? (totalMinutes >= 600 ? "success" : "info")
+            : "secondary",
         },
       ]);
 
@@ -1331,7 +1616,7 @@ export class ProfileComponent implements OnInit {
   private loadEmptyState(): void {
     this.stats.set([
       { value: "0", label: "Training Sessions" },
-      { value: "N/A", label: "Performance Score" },
+      { value: "—", label: "Performance Score" },
       { value: "0", label: "Day Streak" },
       { value: "0", label: "Games Played" },
     ]);
@@ -1341,20 +1626,20 @@ export class ProfileComponent implements OnInit {
     this.performanceStats.set([
       {
         label: "Performance Score",
-        value: "N/A",
-        trend: "Log wellness check-ins",
+        value: "—",
+        trend: "No wellness data yet",
         trendType: "secondary",
       },
       {
         label: "Avg Session Length",
-        value: "N/A",
-        trend: "Start training",
+        value: "—",
+        trend: "No sessions yet",
         trendType: "secondary",
       },
       {
         label: "Total Training Hours",
         value: "0h",
-        trend: "Begin your journey",
+        trend: "Start training to track",
         trendType: "secondary",
       },
     ]);
