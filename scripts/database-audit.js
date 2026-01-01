@@ -190,7 +190,13 @@ async function performDatabaseAudit() {
     console.log("\n👤 USER & ATHLETE PROFILES AUDIT");
     console.log("-".repeat(40));
 
-    const userTables = ["users", "user_supplements", "user_supplement_intake"];
+    const userTables = [
+      "users",
+      "user_supplements",
+      "user_supplement_intake",
+      "wellness_entries",
+      "wellness_checkins",
+    ];
 
     for (const table of userTables) {
       try {

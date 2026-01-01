@@ -150,6 +150,7 @@ interface WalkthroughStep {
             label="Skip Tour"
             [text]="true"
             styleClass="skip-btn"
+            data-testid="skip-tour-btn"
             (onClick)="skipTour()"
           ></p-button>
 

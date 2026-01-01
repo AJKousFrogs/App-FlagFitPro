@@ -78,6 +78,7 @@ import {
               pInputText
               formControlName="email"
               placeholder="Enter your email"
+              data-testid="email-input"
               [class.ng-invalid]="emailError()"
               autocomplete="email"
               aria-required="true"
@@ -100,6 +101,7 @@ import {
                 pInputText
                 formControlName="password"
                 placeholder="Enter your password"
+                data-testid="password-input"
                 [class.ng-invalid]="passwordError()"
                 autocomplete="current-password"
                 aria-required="true"
@@ -146,6 +148,7 @@ import {
             [rounded]="true"
             [loading]="isLoading()"
             [disabled]="!isFormValid()"
+            data-testid="login-submit"
             styleClass="w-full login-submit-btn"
           >
           </p-button>

@@ -66,6 +66,7 @@ import {
               formControlName="name"
               placeholder="Enter your full name"
               autocomplete="name"
+              data-testid="name-input"
               [class.ng-invalid]="isFieldInvalid('name')"
               [attr.aria-invalid]="isFieldInvalid('name') ? 'true' : null"
               [attr.aria-describedby]="
@@ -88,6 +89,7 @@ import {
               pInputText
               formControlName="email"
               placeholder="Enter your email"
+              data-testid="email-input"
               [class.ng-invalid]="isFieldInvalid('email')"
               autocomplete="email"
               aria-required="true"
@@ -114,6 +116,7 @@ import {
               pInputText
               formControlName="password"
               placeholder="Create a password"
+              data-testid="password-input"
               [class.ng-invalid]="isFieldInvalid('password')"
               autocomplete="new-password"
               aria-required="true"
@@ -146,6 +149,7 @@ import {
               pInputText
               formControlName="confirmPassword"
               placeholder="Confirm your password"
+              data-testid="confirm-password-input"
               [class.ng-invalid]="isFieldInvalid('confirmPassword')"
               autocomplete="new-password"
               aria-required="true"
@@ -175,6 +179,7 @@ import {
                 formControlName="ageVerification"
                 [binary]="true"
                 inputId="ageVerification"
+                data-testid="age-checkbox"
               ></p-checkbox>
               <label for="ageVerification" class="age-label">
                 I confirm that I am <strong>16 years of age or older</strong>
@@ -193,6 +198,7 @@ import {
                 formControlName="termsAccepted"
                 [binary]="true"
                 inputId="termsAccepted"
+                data-testid="terms-checkbox"
               ></p-checkbox>
               <label for="termsAccepted" class="terms-label">
                 I agree to the
@@ -214,6 +220,7 @@ import {
             [rounded]="true"
             [loading]="isLoading()"
             [disabled]="registerForm.invalid"
+            data-testid="register-submit"
             styleClass="w-full mb-4"
           >
           </p-button>

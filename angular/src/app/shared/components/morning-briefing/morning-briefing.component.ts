@@ -86,7 +86,7 @@ interface TodaysPlan {
             <div class="greeting">
               <span class="greeting-emoji">{{ getTimeEmoji() }}</span>
               <div class="greeting-text">
-                <h2>{{ getGreeting() }}, {{ userName() }}!</h2>
+                <h2 data-testid="welcome-message">{{ getGreeting() }}, {{ userName() }}!</h2>
                 <p class="date-text">{{ formattedDate() }}</p>
               </div>
             </div>
@@ -152,7 +152,7 @@ interface TodaysPlan {
             <div class="greeting">
               <span class="greeting-emoji">{{ getTimeEmoji() }}</span>
               <div class="greeting-text">
-                <h2>{{ getGreeting() }}, {{ userName() }}!</h2>
+                <h2 data-testid="welcome-message-expanded">{{ getGreeting() }}, {{ userName() }}!</h2>
                 <p class="date-text">{{ formattedDate() }}</p>
               </div>
             </div>

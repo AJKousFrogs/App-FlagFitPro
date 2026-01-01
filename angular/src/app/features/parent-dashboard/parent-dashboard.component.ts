@@ -450,8 +450,9 @@ export class ParentDashboardComponent implements OnInit {
     this.toastService.info("Link athlete feature coming soon");
   }
 
-  onTabChange(event: { index: number }): void {
-    this.activeTabIndex = event.index;
+  onTabChange(event: any): void {
+    const index = event.index;
+    this.activeTabIndex = index;
   }
 
   // Helpers

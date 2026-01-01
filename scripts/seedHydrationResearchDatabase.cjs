@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { Pool } = require("pg");
 
 class HydrationResearchSeeder {
@@ -202,7 +203,7 @@ class HydrationResearchSeeder {
           pre_game_timing_hours, during_game_hydration_ml_per_15min, between_games_hydration_ml_per_kg,
           post_game_hydration_ml_per_kg, sodium_mg_per_liter, potassium_mg_per_liter,
           magnesium_mg_per_liter, calcium_mg_per_liter, urine_color_target, body_weight_loss_limit_kg
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
         ON CONFLICT DO NOTHING
       `,
         [
@@ -465,41 +466,65 @@ class HydrationResearchSeeder {
     console.log("🌍 Seeding competition-specific protocols...");
 
     // European Championships
-    await this.pool.query(`
+    await this.pool.query(
+      `
       INSERT INTO european_championship_protocols (
         championship_year, host_country, climate_zone, teams_participating,
         games_per_team, tournament_duration_days, average_temperature_celsius,
         average_humidity_percentage, pre_tournament_hydration_protocol,
         daily_hydration_targets_ml_per_kg, between_games_hydration_strategy
-      ) VALUES (
-        2024, 'Germany', 'temperate', 8, 5, 7, 22.0, 65.0,
-        'Gradual hydration increase 3 days before, 40ml/kg/day baseline',
-        '45.0', 'Electrolyte replacement drinks between games, 500ml per hour'
-      ) ON CONFLICT DO NOTHING
-    `);
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      ON CONFLICT DO NOTHING
+    `,
+      [
+        2024,
+        "Germany",
+        "temperate",
+        8,
+        5,
+        7,
+        22.0,
+        65.0,
+        "Gradual hydration increase 3 days before, 40ml/kg/day baseline",
+        "45.0",
+        "Electrolyte replacement drinks between games, 500ml per hour",
+      ],
+    );
 
     // World Championship
-    await this.pool.query(`
+    await this.pool.query(
+      `
       INSERT INTO world_championship_protocols (
         championship_year, host_country, climate_zone, teams_participating,
         qualification_process, tournament_format, personalized_hydration_plans,
         real_time_hydration_monitoring, emergency_hydration_protocols
-      ) VALUES (
-        2025, 'USA', 'varied', 16, 'Regional qualifiers + wildcards', 'Group stage + knockout',
-        true, true, 'IV fluids for severe dehydration, cooling protocols for heat illness'
-      ) ON CONFLICT DO NOTHING
-    `);
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      ON CONFLICT DO NOTHING
+    `,
+      [
+        2025,
+        "USA",
+        "varied",
+        16,
+        "Regional qualifiers + wildcards",
+        "Group stage + knockout",
+        true,
+        true,
+        ["IV fluids for severe dehydration", "cooling protocols for heat illness"],
+      ],
+    );
 
     // Olympic Games
-    await this.pool.query(`
+    await this.pool.query(
+      `
       INSERT INTO olympic_games_protocols (
         olympic_year, host_city, flag_football_status, anti_doping_compliance,
         wearable_technology_integration, ai_powered_hydration_optimization
-      ) VALUES (
-        2028, 'Los Angeles', 'demonstration', 'WADA compliance, no banned substances',
-        true, true
-      ) ON CONFLICT DO NOTHING
-    `);
+      ) VALUES ($1, $2, $3, $4, $5, $6)
+      ON CONFLICT DO NOTHING
+    `,
+      [2028, "Los Angeles", "demonstration", ["WADA compliance", "no banned substances"], true, true],
+    );
 
     console.log("✅ Seeded competition-specific protocols");
   }
@@ -510,43 +535,26 @@ class HydrationResearchSeeder {
     const preventionProtocols = [
       {
         injury_type: "cramps",
-        risk_factors: [
-          "dehydration",
-          "electrolyte imbalance",
-          "muscle fatigue",
-          "high intensity",
-        ],
+        risk_factors: ["dehydration", "electrolyte imbalance", "muscle fatigue", "high intensity"],
         hydration_prevention_protocols: [
           "Maintain hydration at 2-3% body weight loss limit",
           "Include 500-700mg sodium per liter in sports drinks",
           "Monitor urine color (target: 3-4 on 8-point scale)",
           "Pre-hydrate 2-4 hours before exercise",
         ],
-        flag_football_specific: [
-          "repeated sprinting",
-          "sudden direction changes",
-          "high intensity periods",
-        ],
+        flag_football_specific: ["repeated sprinting", "sudden direction changes", "high intensity periods"],
         prevention_effectiveness_percentage: 85.0,
       },
       {
         injury_type: "heat_exhaustion",
-        risk_factors: [
-          "high temperature",
-          "high humidity",
-          "dehydration",
-          "overexertion",
-        ],
+        risk_factors: ["high temperature", "high humidity", "dehydration", "overexertion"],
         hydration_prevention_protocols: [
           "Acclimate to heat over 10-14 days",
           "Monitor core temperature during exercise",
           "Implement cooling strategies (ice towels, cold drinks)",
           "Adjust intensity based on heat index",
         ],
-        flag_football_specific: [
-          "tournament play in hot climates",
-          "multiple games per day",
-        ],
+        flag_football_specific: ["tournament play in hot climates", "multiple games per day"],
         prevention_effectiveness_percentage: 90.0,
       },
     ];
@@ -556,7 +564,7 @@ class HydrationResearchSeeder {
         `
         INSERT INTO hydration_injury_prevention (
           injury_type, risk_factors, hydration_prevention_protocols,
-          flag_football_specific, prevention_effectiveness_percentage
+          game_situation_risks, prevention_effectiveness_percentage
         ) VALUES ($1, $2, $3, $4, $5)
         ON CONFLICT DO NOTHING
       `,

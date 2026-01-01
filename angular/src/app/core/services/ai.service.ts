@@ -3,6 +3,7 @@ import { Observable, of, throwError, from } from "rxjs";
 import { delay, map, catchError, switchMap } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { PrivacySettingsService } from "./privacy-settings.service";
+import { LoggerService } from "./logger.service";
 
 interface RecentPerformance {
   type: string;
@@ -78,6 +79,7 @@ export interface TrainingSuggestionParams {
 export class AIService {
   private apiService = inject(ApiService);
   private privacySettingsService = inject(PrivacySettingsService);
+  private logger = inject(LoggerService);
 
   /**
    * Get AI-powered training suggestions based on user history, performance gaps, and goals

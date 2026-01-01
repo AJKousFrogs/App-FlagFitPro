@@ -49,6 +49,7 @@
     "lint:fix": "eslint . --fix && prettier --write .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "lint:format": "npm run lint && npm run format:check",
     "type-check": "cd angular && npm run type-check",
     "start:api": "node server.js",
     "health:check": "node scripts/comprehensive-health-check.js",

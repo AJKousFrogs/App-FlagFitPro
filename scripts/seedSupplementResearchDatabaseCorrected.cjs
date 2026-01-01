@@ -313,30 +313,21 @@ class SupplementResearchSeederCorrected {
       try {
         const query = `
           INSERT INTO athlete_supplement_plans (
-            athlete_id, supplement_id, plan_name, plan_description, dosage,
-            timing, duration_weeks, start_date, end_date, compliance_rate,
-            side_effects_reported, performance_improvements, notes, created_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+            user_id, supplement_id, daily_dosage,
+            timing, start_date, created_at
+          ) VALUES ($1, $2, $3, $4, $5, $6)
         `;
 
         await this.pool.query(query, [
-          plan.athlete_id,
+          plan.athlete_id === "1" ? "00000000-0000-0000-0000-000000000000" : "00000000-0000-0000-0000-000000000001",
           plan.supplement_id,
-          plan.plan_name,
-          plan.plan_description,
           plan.dosage,
           plan.timing,
-          plan.duration_weeks,
           plan.start_date,
-          plan.end_date,
-          plan.compliance_rate,
-          plan.side_effects_reported,
-          plan.performance_improvements,
-          plan.notes,
           plan.created_at,
         ]);
 
-        console.log(`✅ Inserted supplement plan: ${plan.plan_name}`);
+        console.log(`✅ Inserted supplement plan for user: ${plan.athlete_id}`);
       } catch (error) {
         console.error(`❌ Error inserting supplement plan: ${error.message}`);
       }

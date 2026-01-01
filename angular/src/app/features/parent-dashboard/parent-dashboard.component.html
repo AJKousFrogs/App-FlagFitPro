@@ -26,7 +26,7 @@
     </div>
 
     <!-- Main Tabs -->
-    <p-tabs [activeIndex]="activeTabIndex" (onChange)="onTabChange($event)">
+    <p-tabs [value]="activeTabIndex" (onChange)="onTabChange($event)">
       <!-- Children Overview Tab -->
       <p-tabpanel header="My Athletes">
         @if (loadingChildren()) {
@@ -66,7 +66,7 @@
                     }}</span>
                     @if (child.child?.position) {
                       <p-tag
-                        [value]="child.child.position"
+                        [value]="child.child!.position!"
                         [rounded]="true"
                         severity="info"
                       ></p-tag>
@@ -74,32 +74,28 @@
                   </div>
                 </div>
 
-                @if (childStats()[child.child?.id || ""]) {
+                @if (child.child?.id && childStats()[child.child!.id]) {
                   <div class="child-stats">
                     <div class="stat">
                       <span class="stat-value">{{
-                        childStats()[child.child?.id || ""]?.last30Days
-                          .totalQueries
+                        childStats()[child.child!.id].last30Days.totalQueries
                       }}</span>
                       <span class="stat-label">AI Queries</span>
                     </div>
                     <div class="stat">
                       <span class="stat-value"
                         >{{
-                          childStats()[child.child?.id || ""]?.sessions
-                            .completionRate
+                          childStats()[child.child!.id].sessions.completionRate
                         }}%</span
                       >
                       <span class="stat-label">Sessions Done</span>
                     </div>
                     @if (
-                      childStats()[child.child?.id || ""]?.last30Days
-                        .highRiskQueries > 0
+                      childStats()[child.child!.id].last30Days.highRiskQueries > 0
                     ) {
                       <div class="stat alert">
                         <span class="stat-value">{{
-                          childStats()[child.child?.id || ""]?.last30Days
-                            .highRiskQueries
+                          childStats()[child.child!.id].last30Days.highRiskQueries
                         }}</span>
                         <span class="stat-label">High Risk</span>
                       </div>

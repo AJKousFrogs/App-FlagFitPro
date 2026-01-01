@@ -80,6 +80,14 @@ export const publicRoutes: Routes = [
         (m) => m.AcceptInvitationComponent,
       ),
   },
+  {
+    path: "parent",
+    loadComponent: () =>
+      import("../../features/parent-dashboard/parent-dashboard.component").then(
+        (m) => m.ParentDashboardComponent,
+      ),
+    canActivate: [authGuard],
+  },
 ];
 
 /**
@@ -366,6 +374,22 @@ export const teamRoutes: Routes = [
       ),
     canActivate: [authGuard],
     data: { preload: true, priority: "medium" }, // Important for coach workflow
+  },
+  {
+    path: "coach/analytics",
+    loadComponent: () =>
+      import("../../features/coach/coach-analytics/coach-analytics.component").then(
+        (m) => m.CoachAnalyticsComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/inbox",
+    loadComponent: () =>
+      import("../../features/coach/coach-inbox/coach-inbox.component").then(
+        (m) => m.CoachInboxComponent,
+      ),
+    canActivate: [authGuard],
   },
   {
     path: "team/create",
