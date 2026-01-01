@@ -1,5 +1,5 @@
 [build]
-  command = "cd angular && npm ci && npm run build"
+  command = "cd angular && npm ci && npm run build && cd .. && node scripts/inject-env-into-html-angular.js"
   publish = "angular/dist/flagfit-pro/browser"
 
 [build.environment]
@@ -870,6 +870,19 @@
 
 [[redirects]]
   from = "/api/ai/chat/*"
+  to = "/.netlify/functions/ai-chat"
+  status = 200
+  force = true
+
+# Alternative AI Chat endpoint (used by frontend)
+[[redirects]]
+  from = "/api/ai-chat"
+  to = "/.netlify/functions/ai-chat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/ai-chat/*"
   to = "/.netlify/functions/ai-chat"
   status = 200
   force = true
